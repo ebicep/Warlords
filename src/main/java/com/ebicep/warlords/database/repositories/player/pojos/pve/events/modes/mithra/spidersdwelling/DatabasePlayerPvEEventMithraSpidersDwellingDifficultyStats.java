@@ -54,7 +54,10 @@ public class DatabasePlayerPvEEventMithraSpidersDwellingDifficultyStats implemen
     }
 
     @Override
-    public Collection<? extends PvEEventMithraSpidersDwellingStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventMithraSpidersDwellingStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventMithraSpidersDwellingStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

@@ -54,7 +54,10 @@ public class DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats implemen
 
 
     @Override
-    public Collection<? extends PvEEventLibraryArchivesForgottenCodexStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventLibraryArchivesForgottenCodexStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventLibraryArchivesForgottenCodexStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

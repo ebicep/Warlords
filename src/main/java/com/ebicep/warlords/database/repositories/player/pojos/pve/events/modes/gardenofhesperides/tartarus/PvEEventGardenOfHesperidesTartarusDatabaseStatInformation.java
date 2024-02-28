@@ -25,6 +25,7 @@ public class PvEEventGardenOfHesperidesTartarusDatabaseStatInformation extends P
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         boolean won = databaseGame.getWavesCleared() == 1;
         int timeElapsed = databaseGame.getTimeElapsed();
         if (multiplier > 0) {

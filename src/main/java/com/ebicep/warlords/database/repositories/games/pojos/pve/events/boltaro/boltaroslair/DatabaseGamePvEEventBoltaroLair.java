@@ -28,8 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class DatabaseGamePvEEventBoltaroLair extends DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltarosLair> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventBoltarosLair> players = new ArrayList<>();

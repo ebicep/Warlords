@@ -27,8 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventGrimoiresGraveyard> {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventGrimoiresGraveyard> players = new ArrayList<>();

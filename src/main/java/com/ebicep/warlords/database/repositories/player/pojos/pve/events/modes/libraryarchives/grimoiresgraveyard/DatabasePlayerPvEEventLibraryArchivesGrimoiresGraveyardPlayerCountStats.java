@@ -1,6 +1,12 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard;
 
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePlayerPvEEventGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePvEEventGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.classes.*;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 
 public class DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardPlayerCountStats implements PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsClasses {
@@ -24,4 +30,16 @@ public class DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardPlayerCountS
         };
     }
 
+    @Override
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEEventGrimoiresGraveyard databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerPvEEventGrimoiresGraveyard gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+    }
 }

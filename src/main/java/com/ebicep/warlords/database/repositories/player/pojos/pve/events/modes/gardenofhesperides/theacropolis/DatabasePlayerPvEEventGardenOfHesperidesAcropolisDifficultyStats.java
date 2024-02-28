@@ -54,7 +54,10 @@ public class DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats im
     }
 
     @Override
-    public Collection<? extends PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

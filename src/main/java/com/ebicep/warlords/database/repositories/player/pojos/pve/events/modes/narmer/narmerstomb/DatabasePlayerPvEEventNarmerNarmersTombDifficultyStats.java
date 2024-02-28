@@ -53,7 +53,10 @@ public class DatabasePlayerPvEEventNarmerNarmersTombDifficultyStats implements M
     }
 
     @Override
-    public Collection<? extends PvEEventNarmerNarmersTombStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventNarmerNarmersTombStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventNarmerNarmersTombStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

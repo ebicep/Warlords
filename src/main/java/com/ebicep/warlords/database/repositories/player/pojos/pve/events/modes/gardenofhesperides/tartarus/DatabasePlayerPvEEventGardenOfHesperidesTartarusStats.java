@@ -54,7 +54,10 @@ public class DatabasePlayerPvEEventGardenOfHesperidesTartarusStats implements Mu
     }
 
     @Override
-    public Collection<? extends PvEEventGardenOfHesperidesTartarusStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventGardenOfHesperidesTartarusStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventGardenOfHesperidesTartarusStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

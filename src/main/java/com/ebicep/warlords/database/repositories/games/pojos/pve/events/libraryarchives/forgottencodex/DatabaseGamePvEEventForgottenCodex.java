@@ -26,8 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventForgottenCodex> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared; //TODO
     private List<DatabaseGamePlayerPvEEventForgottenCodex> players = new ArrayList<>();

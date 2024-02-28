@@ -54,7 +54,10 @@ public class DatabasePlayerPvEEventBoltaroBonanzaStats implements MultiPvEEventB
 
 
     @Override
-    public Collection<? extends PvEEventBoltaroBonanzaStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventBoltaroBonanzaStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventBoltaroBonanzaStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

@@ -27,6 +27,7 @@ public class DuelDatabaseStatInformation extends AbstractDatabaseStatInformation
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         this.totalTimePlayed += (long) (900 - databaseGame.getTimeLeft()) * multiplier;
     }
 

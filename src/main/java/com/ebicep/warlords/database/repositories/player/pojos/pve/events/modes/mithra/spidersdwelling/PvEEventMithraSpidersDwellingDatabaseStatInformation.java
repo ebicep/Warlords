@@ -30,12 +30,13 @@ public class PvEEventMithraSpidersDwellingDatabaseStatInformation
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         if (multiplier > 0) {
-            this.highestWaveCleared = Math.max((((DatabaseGamePvEEventSpidersDwelling) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
-        } else if (this.highestWaveCleared == ((DatabaseGamePvEEventSpidersDwelling) databaseGame).getWavesCleared()) {
+            this.highestWaveCleared = Math.max((databaseGame.getWavesCleared() * multiplier), highestWaveCleared);
+        } else if (this.highestWaveCleared == databaseGame.getWavesCleared()) {
             this.highestWaveCleared = 0;
         }
-        this.totalWavesCleared += ((DatabaseGamePvEEventSpidersDwelling) databaseGame).getWavesCleared() * multiplier;
+        this.totalWavesCleared += databaseGame.getWavesCleared() * multiplier;
     }
 
     @Override

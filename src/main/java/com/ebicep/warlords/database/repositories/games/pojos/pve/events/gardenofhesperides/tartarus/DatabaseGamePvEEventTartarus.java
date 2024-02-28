@@ -26,8 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventTartarus> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared; //TODO
     private List<DatabaseGamePlayerPvEEventTartarus> players = new ArrayList<>();

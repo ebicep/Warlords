@@ -54,7 +54,10 @@ public class DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats implem
     }
 
     @Override
-    public Collection<? extends PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

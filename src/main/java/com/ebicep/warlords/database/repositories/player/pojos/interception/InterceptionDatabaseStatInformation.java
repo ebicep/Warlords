@@ -31,6 +31,7 @@ public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInf
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         this.pointsCaptured += gamePlayer.getPointsCaptured() * multiplier;
         this.pointsDefended += gamePlayer.getPointsDefended() * multiplier;
         this.totalTimePlayed += (long) (900 - databaseGame.getTimeLeft()) * multiplier;

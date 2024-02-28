@@ -29,8 +29,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBolt
 
     @Field("highest_split")
     private int highestSplit;
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     private List<DatabaseGamePlayerPvEEventBoltaroBonanza> players = new ArrayList<>();
 
     public DatabaseGamePvEEventBoltaroBonanza() {

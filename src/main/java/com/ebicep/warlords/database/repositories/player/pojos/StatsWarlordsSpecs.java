@@ -26,13 +26,6 @@ public interface StatsWarlordsSpecs<
 
     }
 
-//    @Nonnull
-//    private <NumT> NumT getStat(Function<Stats<DatabaseGameT, DatabaseGamePlayerT>, NumT> statFunction, BinaryOperator<NumT> accumulator, NumT defaultValue) {
-//        return Arrays.stream(getSpecs())
-//                     .map(statFunction)
-//                     .reduce(accumulator)
-//                     .orElse(defaultValue);
-//    }
 
     @Override
     default int getDeaths() {

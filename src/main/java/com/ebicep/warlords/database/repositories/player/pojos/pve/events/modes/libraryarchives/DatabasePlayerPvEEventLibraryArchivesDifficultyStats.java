@@ -54,6 +54,9 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats implements Mul
     @Field("active_bounties")
     private List<AbstractBounty> activeBounties = new ArrayList<>();
 
+    public DatabasePlayerPvEEventLibraryArchivesDifficultyStats() {
+    }
+
     @Override
     public long getEventPointsSpent() {
         return eventPointsSpent;
@@ -94,9 +97,6 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats implements Mul
         return activeBounties;
     }
 
-    public DatabasePlayerPvEEventLibraryArchivesDifficultyStats() {
-    }
-
     @Override
     public void updateStats(
             DatabasePlayer databasePlayer,
@@ -122,10 +122,12 @@ public class DatabasePlayerPvEEventLibraryArchivesDifficultyStats implements Mul
     }
 
     @Override
-    public Collection<? extends PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>> getStats() {
+    public Collection<PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>> getStats() {
         return Stream.of(forgottenCodexStats, grimoiresGraveyardStats)
-                     .flatMap(stats -> (Stream<? extends PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>>) stats.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               .stream())
+                     .flatMap(s -> s.getStats()
+                                    .stream()
+                                    .map(ss -> (PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>) (Object) ss)
+                     )
                      .toList();
     }
 

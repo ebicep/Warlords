@@ -10,7 +10,7 @@ import com.ebicep.warlords.game.GameMode;
 
 public class OnslaughtDatabaseStatInformation extends PvEDatabaseStatInformation<DatabaseGamePvEOnslaught, DatabaseGamePlayerPvEOnslaught> implements OnslaughtStats {
 
-    private long longestTicksLived;
+    private long longestTicksLived; // change field name
 
     @Override
     public void updateStats(
@@ -22,6 +22,7 @@ public class OnslaughtDatabaseStatInformation extends PvEDatabaseStatInformation
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         if (multiplier > 0) {
             this.longestTicksLived = Math.max(((long) databaseGame.getTimeElapsed() * multiplier), longestTicksLived);
         } else if (this.longestTicksLived == databaseGame.getTimeElapsed()) {

@@ -58,8 +58,11 @@ public class DatabasePlayerPvEWaveDefenseDifficultyStats implements MultiPvEWave
 
 
     @Override
-    public Collection<? extends WaveDefenseStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<WaveDefenseStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(WaveDefenseStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 
 }

@@ -28,8 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> players = new ArrayList<>();

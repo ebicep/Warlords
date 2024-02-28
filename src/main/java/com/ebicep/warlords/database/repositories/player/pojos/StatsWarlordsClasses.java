@@ -22,8 +22,7 @@ public interface StatsWarlordsClasses<
         extends Stats<DatabaseGameT, DatabaseGamePlayerT>,
         DatabaseWarlordsClasses<DatabaseGameT, DatabaseGamePlayerT, T, R> {
 
-    @Override
-    default void updateStats(
+    default void updateSpecStats(
             DatabasePlayer databasePlayer,
             DatabaseGameT databaseGame,
             GameMode gameMode,
@@ -151,5 +150,4 @@ public interface StatsWarlordsClasses<
                      .reduce(accumulator)
                      .orElse(defaultValue);
     }
-
 }

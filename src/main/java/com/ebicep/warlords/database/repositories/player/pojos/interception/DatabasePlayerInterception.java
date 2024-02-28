@@ -1,9 +1,13 @@
 package com.ebicep.warlords.database.repositories.player.pojos.interception;
 
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayerInterception;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.classes.*;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 
 public class DatabasePlayerInterception implements InterceptionStatsWarlordsClasses {
@@ -25,5 +29,18 @@ public class DatabasePlayerInterception implements InterceptionStatsWarlordsClas
             case ROGUE -> rogue;
             case ARCANIST -> arcanist;
         };
+    }
+
+    @Override
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameInterception databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerInterception gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
     }
 }

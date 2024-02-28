@@ -83,7 +83,7 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats 
     }
 
     @Override
-    public Collection<? extends WaveDefenseStatsWarlordsClasses> getStats() {
+    public Collection<WaveDefenseStatsWarlordsClasses> getStats() {
         return Stream.of(easyStats, normalStats, hardStats, extremeStats, endlessStats)
                      .flatMap(stats -> stats.getStats().stream())
                      .toList();

@@ -50,7 +50,7 @@ public class DatabasePlayerPvEEventMithraStats implements MultiPvEEventMithraSta
     }
 
     @Override
-    public Collection<? extends PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>> getStats() {
+    public Collection<PvEEventMithraStatsWarlordsClasses<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>, PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

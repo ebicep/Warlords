@@ -50,7 +50,7 @@ public class DatabasePlayerPvEEventNarmerStats implements MultiPvEEventNarmerSta
     }
 
     @Override
-    public Collection<? extends PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>> getStats() {
+    public Collection<PvEEventNarmerStatsWarlordsClasses<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>, PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

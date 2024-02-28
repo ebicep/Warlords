@@ -164,7 +164,7 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
 
 
     @Override
-    public Collection<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>>> getStats() {
+    public Collection<PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>>> getStats() {
         return Stream.of(boltaroStats,
                              narmerStats,
                              mithraStats,
@@ -172,8 +172,10 @@ public class DatabasePlayerPvEEventStats implements MultiPvEEventStats<
                              gardenOfHesperidesStats,
                              libraryArchivesStats
                      )
-                     .flatMap(s -> (Stream<? extends PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>>>) s.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                       .stream())
+                     .flatMap(s -> s.getStats()
+                                    .stream()
+                                    .map(ss -> (PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>>) (Object) ss)
+                     )
                      .toList();
     }
 }

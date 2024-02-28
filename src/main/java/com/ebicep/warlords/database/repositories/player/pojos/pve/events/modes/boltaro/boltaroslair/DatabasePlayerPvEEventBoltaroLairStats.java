@@ -53,7 +53,10 @@ public class DatabasePlayerPvEEventBoltaroLairStats implements MultiPvEEventBolt
     }
 
     @Override
-    public Collection<? extends PvEEventBoltaroLairStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventBoltaroLairStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventBoltaroLairStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

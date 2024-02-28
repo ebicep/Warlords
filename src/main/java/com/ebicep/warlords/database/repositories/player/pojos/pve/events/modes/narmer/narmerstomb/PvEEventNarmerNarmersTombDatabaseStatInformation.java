@@ -31,12 +31,13 @@ public class PvEEventNarmerNarmersTombDatabaseStatInformation
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         if (multiplier > 0) {
-            this.highestWaveCleared = Math.max((((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier), highestWaveCleared);
-        } else if (this.highestWaveCleared == ((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared()) {
+            this.highestWaveCleared = Math.max((databaseGame.getWavesCleared() * multiplier), highestWaveCleared);
+        } else if (this.highestWaveCleared == databaseGame.getWavesCleared()) {
             this.highestWaveCleared = 0;
         }
-        this.totalWavesCleared += ((DatabaseGamePvEEventNarmersTomb) databaseGame).getWavesCleared() * multiplier;
+        this.totalWavesCleared += databaseGame.getWavesCleared() * multiplier;
     }
 
     @Override

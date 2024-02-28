@@ -46,6 +46,7 @@ public class SiegeDatabaseStatInformation extends AbstractDatabaseStatInformatio
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         this.pointsCaptured += gamePlayer.getPointsCaptured() * multiplier;
         this.pointsCapturedFail += gamePlayer.getPointsCapturedFail() * multiplier;
         this.timeOnPoint += gamePlayer.getTimeOnPoint() * multiplier;

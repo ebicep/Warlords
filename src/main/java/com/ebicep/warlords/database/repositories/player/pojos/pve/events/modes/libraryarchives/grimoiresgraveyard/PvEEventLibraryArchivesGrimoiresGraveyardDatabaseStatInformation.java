@@ -26,8 +26,9 @@ public class PvEEventLibraryArchivesGrimoiresGraveyardDatabaseStatInformation
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        boolean won = ((DatabaseGamePvEEventGrimoiresGraveyard) databaseGame).getWavesCleared() == 1;
-        int timeElapsed = ((DatabaseGamePvEEventGrimoiresGraveyard) databaseGame).getTimeElapsed();
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        boolean won = databaseGame.getWavesCleared() == 1;
+        int timeElapsed = databaseGame.getTimeElapsed();
         if (multiplier > 0) {
             if (won && (this.fastestGameFinished == 0 || timeElapsed < fastestGameFinished)) {
                 this.fastestGameFinished = timeElapsed;

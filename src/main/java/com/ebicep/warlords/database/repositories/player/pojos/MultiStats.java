@@ -27,7 +27,7 @@ public interface MultiStats<
                 .orElse(defaultValue);
     }
 
-    Collection<? extends StatsWarlordsClassesT> getStats();
+    Collection<StatsWarlordsClassesT> getStats();
 
     default <R> R getStat(Classes classes, Function<StatsT, R> statFunction, BinaryOperator<R> accumulator, R defaultValue) {
         return getStats()

@@ -19,7 +19,7 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
     private DatabaseArcanistSiege arcanist = new DatabaseArcanistSiege();
 
     @Override
-    public void updateStats(
+    public void updateSpecStats(
             DatabasePlayer databasePlayer,
             DatabaseGameSiege databaseGame,
             GameMode gameMode,
@@ -50,5 +50,18 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
             case ROGUE -> rogue;
             case ARCANIST -> arcanist;
         };
+    }
+
+    @Override
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameSiege databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerSiege gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
     }
 }

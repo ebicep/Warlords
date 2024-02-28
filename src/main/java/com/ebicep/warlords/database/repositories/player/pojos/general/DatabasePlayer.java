@@ -15,6 +15,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClass
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
@@ -36,7 +39,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 @Document(collection = "Players_Information")
 public class DatabasePlayer implements MultiStatsGeneral {
@@ -61,7 +63,7 @@ public class DatabasePlayer implements MultiStatsGeneral {
     private DatabaseShaman shaman = new DatabaseShaman();
     private DatabaseRogue rogue = new DatabaseRogue();
     private DatabaseArcanist arcanist = new DatabaseArcanist();
-    private long experience = 0;
+    private long experience;
 
     @Field("comp_stats")
     private DatabasePlayerCompStats compStats = new DatabasePlayerCompStats();
@@ -159,6 +161,7 @@ public class DatabasePlayer implements MultiStatsGeneral {
     ) {
         DatabaseSpecialization spec = getSpec(gamePlayer.getSpec());
         spec.setExperience(spec.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
+        this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //PvE outside all base stats besides universal experience
         if (GameMode.isPvE(gameMode) && databaseGame instanceof DatabaseGamePvEBase gamePvEBase && gamePlayer instanceof DatabaseGamePlayerPvEBase gamePlayerPvEBase) {
             this.pveStats.updateStats(this, gamePvEBase, gameMode, gamePlayerPvEBase, result, multiplier, playersCollection);
@@ -462,11 +465,15 @@ public class DatabasePlayer implements MultiStatsGeneral {
     }
 
     @Override
-    public Collection<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
-        return Stream.of(pubStats, compStats, pveStats, tournamentStats)
-                     .flatMap(s -> (Stream<? extends StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>>) s.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                       .stream())
-                     .toList();
+    public Collection<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
+        List<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> stats = new ArrayList<>();
+        stats.addAll(pubStats.getStats());
+        stats.addAll(compStats.getStats());
+        for (PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> stat : pveStats.getStats()) {
+            stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>) (Object) stat);
+        }
+        stats.addAll(tournamentStats.getStats());
+        return stats;
     }
 
     @Override

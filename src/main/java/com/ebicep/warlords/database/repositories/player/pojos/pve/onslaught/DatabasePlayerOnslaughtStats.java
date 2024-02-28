@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
 import com.ebicep.warlords.pve.Spendable;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
@@ -60,11 +61,28 @@ public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats {
             syntheticPouch.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount * multiplier));
             aspirantPouch.forEach((spendable, amount) -> spendable.addToPlayer(databasePlayer, amount * multiplier));
         }
+        int playerCount = databaseGame.getBasePlayers().size();
+        DatabasePlayerPvEOnslaughtPlayerCountStats countStats = this.getPlayerCountStats(playerCount);
+        if (countStats != null) {
+            countStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
+        } else {
+            ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
+        }
+    }
+
+    public DatabasePlayerPvEOnslaughtPlayerCountStats getPlayerCountStats(int playerCount) {
+        if (playerCount < 1) {
+            return null;
+        }
+        return playerCountStats.computeIfAbsent(playerCount, k -> new DatabasePlayerPvEOnslaughtPlayerCountStats());
     }
 
 
     @Override
-    public Collection<? extends OnslaughtStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<OnslaughtStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(OnslaughtStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

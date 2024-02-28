@@ -1,6 +1,12 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis;
 
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePlayerPvEEventTheAcropolis;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePvEEventTheAcropolis;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.classes.*;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
 
 public class DatabasePlayerPvEEventGardenOfHesperidesAcropolisPlayerCountStats implements PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsClasses {
@@ -24,4 +30,16 @@ public class DatabasePlayerPvEEventGardenOfHesperidesAcropolisPlayerCountStats i
         };
     }
 
+    @Override
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEEventTheAcropolis databaseGame,
+            GameMode gameMode,
+            DatabaseGamePlayerPvEEventTheAcropolis gamePlayer,
+            DatabaseGamePlayerResult result,
+            int multiplier,
+            PlayersCollections playersCollection
+    ) {
+        updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+    }
 }

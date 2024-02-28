@@ -51,7 +51,7 @@ public class DatabasePlayerPvEEventLibraryArchivesStats implements MultiPvEEvent
     }
 
     @Override
-    public Collection<? extends PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>> getStats() {
+    public Collection<PvEEventLibraryArchivesStatsWarlordsClasses<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>, PvEEventLibraryArchivesStatsWarlordsSpecs<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives, PvEEventLibraryArchivesStats<DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventLibraryArchives>, DatabaseGamePlayerPvEEventLibraryArchives>>>> getStats() {
         return eventStats.values()
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())

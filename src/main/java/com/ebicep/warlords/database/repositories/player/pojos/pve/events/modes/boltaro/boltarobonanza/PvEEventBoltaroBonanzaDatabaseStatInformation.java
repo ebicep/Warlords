@@ -24,6 +24,7 @@ public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventDatab
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         int split = databaseGame.getHighestSplit();
         if (multiplier > 0) {
             if (this.highestSplit < split) {

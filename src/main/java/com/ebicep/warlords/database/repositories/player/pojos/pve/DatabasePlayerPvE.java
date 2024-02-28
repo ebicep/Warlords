@@ -18,11 +18,12 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.Dat
 import com.ebicep.warlords.database.repositories.masterworksfair.pojos.MasterworksFair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabasePlayerOnslaughtStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStatsWarlordsClasses;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerWaveDefenseStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStatsWarlordsClasses;
 import com.ebicep.warlords.events.player.AddCurrencyEvent;
 import com.ebicep.warlords.events.player.WeaponSalvageEvent;
 import com.ebicep.warlords.game.GameMode;
@@ -62,7 +63,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 public class DatabasePlayerPvE implements MultiPvEStats<
         PvEStatsWarlordsClasses<
@@ -251,7 +251,6 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         addCurrency(Currencies.ILLUSION_SHARD, gamePlayer.getIllusionShardGained() * multiplier);
         gamePlayer.getMobDropsGained().forEach((mob, integer) -> addMobDrops(mob, integer * multiplier));
 
-        // TODO
         //UPDATE GAME MODE STATS
         if (databaseGame instanceof DatabaseGamePvEEvent gamePvEEvent && gamePlayer instanceof DatabaseGamePlayerPvEEvent gamePlayerPvEEvent) {
             eventStats.updateStats(databasePlayer, gamePvEEvent, gameMode, gamePlayerPvEEvent, result, multiplier, playersCollection);
@@ -517,10 +516,20 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
 
     @Override
-    public Collection<? extends PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>> getStats() {
-        return Stream.of(waveDefenseStats, onslaughtStats, eventStats)
-                     .flatMap(stats -> (Stream<? extends PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>>) stats.getStats()
-                                                                                                                                                                                                                                                                                                                                                                                                                                               .stream())
-                     .toList();
+    public Collection<PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>> getStats() {
+        List<PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>> stats = new ArrayList<>();
+        for (WaveDefenseStatsWarlordsClasses stat : waveDefenseStats.getStats()) {
+            stats.add((PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>)
+                    (Object) stat);
+        }
+        for (OnslaughtStatsWarlordsClasses stat : onslaughtStats.getStats()) {
+            stats.add((PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>)
+                    (Object) stat);
+        }
+        for (PvEEventStatsWarlordsClasses<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>, PvEEventStatsWarlordsSpecs<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent, PvEEventStats<DatabaseGamePvEEvent<DatabaseGamePlayerPvEEvent>, DatabaseGamePlayerPvEEvent>>> stat : eventStats.getStats()) {
+            stats.add((PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>>)
+                    (Object) stat);
+        }
+        return stats;
     }
 }

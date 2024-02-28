@@ -53,7 +53,10 @@ public class DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultySt
     }
 
     @Override
-    public Collection<? extends PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsClasses> getStats() {
-        return playerCountStats.values();
+    public Collection<PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsClasses> getStats() {
+        return playerCountStats.values()
+                               .stream()
+                               .map(PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsClasses.class::cast)
+                               .toList();
     }
 }

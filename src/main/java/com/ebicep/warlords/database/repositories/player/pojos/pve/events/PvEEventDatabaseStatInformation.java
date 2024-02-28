@@ -22,13 +22,14 @@ public class PvEEventDatabaseStatInformation<
     @Override
     public void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGamePvEEvent databaseGame,
+            DatabaseGameT databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerPvEEvent gamePlayer,
+            DatabaseGamePlayerT gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         this.eventPointsCumulative += Math.min(gamePlayer.getPoints(), databaseGame.getPointLimit()) * multiplier;
         if (multiplier > 0) {
             this.highestEventPointsGame = Math.max(this.highestEventPointsGame, gamePlayer.getPoints());
