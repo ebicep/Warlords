@@ -2,16 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.commands.DatabasePlayerFuture;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabaseBasePvEWaveDefense;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerWaveDefenseStats;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseDatabaseStatInformation;
-import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
@@ -20,7 +11,6 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 @CommandAlias("editstats")
@@ -85,60 +75,11 @@ public class EditStatsCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("wipetop")
-    public CompletionStage<?> wipeTopStats(Player player, DatabasePlayerFuture databasePlayerFuture) {
-        return databasePlayerFuture.future().thenAccept(databasePlayer -> {
-            wipeTopStats(databasePlayer);
-            ChatChannels.sendDebugMessage(player, Component.text("Wiped Top Stats of " + databasePlayer.getName(), NamedTextColor.DARK_GREEN));
-        });
-    }
-
-    public static void wipeTopStats(DatabasePlayer databasePlayer) {
-        DatabasePlayerWaveDefenseStats pveStats = databasePlayer.getPveStats().getWaveDefenseStats();
-        wipe(pveStats);
-        for (Classes value : Classes.VALUES) {
-            DatabaseBasePvEWaveDefense databaseBasePvE = pveStats.getClass(value);
-            wipe(databaseBasePvE);
-        }
-        for (Specializations value : Specializations.VALUES) {
-            DatabaseBasePvEWaveDefense databaseBasePvE = pveStats.getSpec(value);
-            wipe(databaseBasePvE);
-        }
-        wipe(pveStats.getNormalStats());
-        wipe(pveStats.getHardStats());
-        wipe(pveStats.getExtremeStats());
-        wipe(pveStats.getEndlessStats());
-        DatabaseManager.playerService.update(databasePlayer, PlayersCollections.LIFETIME);
-    }
-
-    private static void wipe(DatabasePlayerPvEWaveDefenseDifficultyStats difficultyStats) {
-        wipe((WaveDefenseDatabaseStatInformation) difficultyStats);
-        for (Classes value : Classes.VALUES) {
-            WaveDefenseDatabaseStatInformation databaseBasePvE = difficultyStats.getClass(value);
-            wipe(databaseBasePvE);
-        }
-        for (Specializations value : Specializations.VALUES) {
-            WaveDefenseDatabaseStatInformation databaseBasePvE = difficultyStats.getSpec(value);
-            wipe(databaseBasePvE);
-        }
-        difficultyStats.getPlayerCountStats().forEach((integer, databasePlayerPvEPlayerCountStats) -> {
-            wipe(databasePlayerPvEPlayerCountStats);
-            for (Classes value : Classes.VALUES) {
-                WaveDefenseDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getClass(value);
-                wipe(databaseBasePvE);
-            }
-            for (Specializations value : Specializations.VALUES) {
-                WaveDefenseDatabaseStatInformation databaseBasePvE = databasePlayerPvEPlayerCountStats.getSpec(value);
-                wipe(databaseBasePvE);
-            }
-        });
-    }
-
-    private static void wipe(WaveDefenseDatabaseStatInformation statInformation) {
-        statInformation.setHighestWaveCleared(0);
-        statInformation.setMostDamageInRound(0);
-        statInformation.setMostDamageInWave(0);
-        statInformation.setFastestGameFinished(0);
-    }
+//    @Subcommand("wipetop")
+//    public CompletionStage<?> wipeTopStats(Player player, DatabasePlayerFuture databasePlayerFuture) {
+//        return databasePlayerFuture.future().thenAccept(databasePlayer -> {
+//            ChatChannels.sendDebugMessage(player, Component.text("Wiped Top Stats of " + databasePlayer.getName(), NamedTextColor.DARK_GREEN));
+//        });
+//    }
 
 }

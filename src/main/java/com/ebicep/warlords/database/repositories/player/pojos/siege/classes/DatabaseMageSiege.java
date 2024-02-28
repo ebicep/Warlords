@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.siege.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabaseBaseSiege;
+import com.ebicep.warlords.database.repositories.player.pojos.siege.SiegeStatsWarlordsSpecs;
 
-public class DatabaseMageSiege extends DatabaseBaseSiege implements DatabaseWarlordsSpecs {
+public class DatabaseMageSiege implements SiegeStatsWarlordsSpecs {
 
     protected DatabaseBaseSiege pyromancer = new DatabaseBaseSiege();
     protected DatabaseBaseSiege cryomancer = new DatabaseBaseSiege();
@@ -15,7 +13,7 @@ public class DatabaseMageSiege extends DatabaseBaseSiege implements DatabaseWarl
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBaseSiege[] getSpecs() {
         return new DatabaseBaseSiege[]{pyromancer, cryomancer, aquamancer};
     }
 

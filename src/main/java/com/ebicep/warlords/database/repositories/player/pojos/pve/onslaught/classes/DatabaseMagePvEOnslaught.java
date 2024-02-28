@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabaseBasePvEOnslaught;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStatsWarlordsSpecs;
 
-public class DatabaseMagePvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
+public class DatabaseMagePvEOnslaught implements OnslaughtStatsWarlordsSpecs {
 
     protected DatabaseBasePvEOnslaught pyromancer = new DatabaseBasePvEOnslaught();
     protected DatabaseBasePvEOnslaught cryomancer = new DatabaseBasePvEOnslaught();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEOnslaught extends DatabaseBasePvEOnslaught implement
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEOnslaught[] getSpecs() {
         return new DatabaseBasePvEOnslaught[]{pyromancer, cryomancer, aquamancer};
     }
 

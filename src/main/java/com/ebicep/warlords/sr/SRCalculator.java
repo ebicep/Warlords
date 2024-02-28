@@ -2,7 +2,7 @@ package com.ebicep.warlords.sr;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.chat.ChatUtils;
 
@@ -41,26 +41,26 @@ public class SRCalculator {
         ChatUtils.MessageType.WARLORDS.sendMessage("Recalculated player SR PUBS");
     }
 
-    public static int getSR(DatabasePlayer databasePlayer, Function<DatabasePlayer, AbstractDatabaseStatInformation> getStatInformation) {
+    public static int getSR(DatabasePlayer databasePlayer, Function<DatabasePlayer, Stats> getStatInformation) {
         double dhp = averageAdjustedDHP(databasePlayer, getStatInformation) * 2000;
         double wl = averageAdjustedWL(databasePlayer, getStatInformation) * 2000;
         double kda = averageAdjustedKDA(databasePlayer, getStatInformation) * 1000;
         return (int) Math.round(dhp + wl + kda);
     }
 
-    private static double averageAdjustedDHP(DatabasePlayer databasePlayer, Function<DatabasePlayer, AbstractDatabaseStatInformation> getStatInformation) {
+    private static double averageAdjustedDHP(DatabasePlayer databasePlayer, Function<DatabasePlayer, Stats> getStatInformation) {
         double playerDHP = getStatInformation.apply(databasePlayer).getDHPPerGame();
         double totalDHP = getPlayerTotal(db -> (double) getStatInformation.apply(db).getDHPPerGame());
         return averageAdjusted(playerDHP, totalDHP);
     }
 
-    private static double averageAdjustedWL(DatabasePlayer databasePlayer, Function<DatabasePlayer, AbstractDatabaseStatInformation> getStatInformation) {
+    private static double averageAdjustedWL(DatabasePlayer databasePlayer, Function<DatabasePlayer, Stats> getStatInformation) {
         double playerWL = getStatInformation.apply(databasePlayer).getWL();
         double totalWL = getPlayerTotal(db -> getStatInformation.apply(db).getWL());
         return averageAdjusted(playerWL, totalWL);
     }
 
-    private static double averageAdjustedKDA(DatabasePlayer databasePlayer, Function<DatabasePlayer, AbstractDatabaseStatInformation> getStatInformation) {
+    private static double averageAdjustedKDA(DatabasePlayer databasePlayer, Function<DatabasePlayer, Stats> getStatInformation) {
         double playerKDA = getStatInformation.apply(databasePlayer).getKDA();
         double totalKDA = getPlayerTotal(db -> getStatInformation.apply(db).getKDA());
         return averageAdjusted(playerKDA, totalKDA);

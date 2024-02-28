@@ -2,7 +2,6 @@ package com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
@@ -24,11 +23,12 @@ import java.util.List;
 import java.util.Set;
 
 @Document(collection = "Games_Information_Wave_Defense")
-public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements WavesCleared {
+public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase<DatabaseGamePlayerPvEWaveDefense> implements WavesCleared {
 
     @Field("waves_cleared")
     private int wavesCleared;
     protected List<DatabaseGamePlayerPvEWaveDefense> players = new ArrayList<>();
+
     public DatabaseGamePvEWaveDefense() {
 
     }
@@ -46,7 +46,7 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase implements W
     }
 
     @Override
-    public Set<DatabaseGamePlayerPvEBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEWaveDefense> getBasePlayers() {
         return new HashSet<>(players);
     }
 

@@ -4,7 +4,6 @@ import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @Document(collection = "Games_Information_Onslaught")
-public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase {
+public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase<DatabaseGamePlayerPvEOnslaught> {
 
     protected List<DatabaseGamePlayerPvEOnslaught> players = new ArrayList<>();
 
@@ -40,7 +39,7 @@ public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEOnslaught> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvE -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvE,
@@ -51,7 +50,7 @@ public class DatabaseGamePvEOnslaught extends DatabaseGamePvEBase {
     }
 
     @Override
-    public Set<DatabaseGamePlayerPvEBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEOnslaught> getBasePlayers() {
         return new HashSet<>(players);
     }
 

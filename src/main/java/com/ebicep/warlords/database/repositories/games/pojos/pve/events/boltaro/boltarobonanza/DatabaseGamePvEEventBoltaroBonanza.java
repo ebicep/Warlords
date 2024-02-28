@@ -4,8 +4,7 @@ import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -26,19 +25,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
+public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaroBonanza> {
 
     @Field("highest_split")
     private int highestSplit;
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     private List<DatabaseGamePlayerPvEEventBoltaroBonanza> players = new ArrayList<>();
 
     public DatabaseGamePvEEventBoltaroBonanza() {
     }
 
     public DatabaseGamePvEEventBoltaroBonanza(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<BoltaroBonanzaOption> boltaroBonanzaOption = new AtomicReference<>();
@@ -75,7 +73,7 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventBoltaroBonanza> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventBoltaroBonanza -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventBoltaroBonanza,
@@ -112,12 +110,12 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEvent {
     }
 
     @Override
-    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+    public List<DatabaseGamePlayerPvEEventBoltaroBonanza> getPlayers() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventBoltaroBonanza> getBasePlayers() {
         return new HashSet<>(players);
     }
 

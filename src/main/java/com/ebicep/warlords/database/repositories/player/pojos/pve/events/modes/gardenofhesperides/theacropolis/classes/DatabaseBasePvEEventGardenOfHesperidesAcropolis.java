@@ -1,0 +1,7 @@
+package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.classes;
+
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.PvEEventGardenOfHesperidesAcropolisDatabaseStatInformation;
+
+public class DatabaseBasePvEEventGardenOfHesperidesAcropolis extends PvEEventGardenOfHesperidesAcropolisDatabaseStatInformation {
+
+}

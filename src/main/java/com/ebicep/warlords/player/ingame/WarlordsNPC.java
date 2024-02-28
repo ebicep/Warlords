@@ -332,4 +332,8 @@ public class WarlordsNPC extends WarlordsEntity {
         return mob;
     }
 
+    @Override
+    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
+        // override to do nothing, npcs dont need stats, save memory
+    }
 }

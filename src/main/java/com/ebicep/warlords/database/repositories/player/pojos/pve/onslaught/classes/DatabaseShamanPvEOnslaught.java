@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabaseBasePvEOnslaught;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStatsWarlordsSpecs;
 
-public class DatabaseShamanPvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
+public class DatabaseShamanPvEOnslaught implements OnslaughtStatsWarlordsSpecs {
 
     private DatabaseBasePvEOnslaught thunderlord = new DatabaseBasePvEOnslaught();
     private DatabaseBasePvEOnslaught spiritguard = new DatabaseBasePvEOnslaught();
@@ -15,7 +13,7 @@ public class DatabaseShamanPvEOnslaught extends DatabaseBasePvEOnslaught impleme
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEOnslaught[] getSpecs() {
         return new DatabaseBasePvEOnslaught[]{thunderlord, spiritguard, earthwarden};
     }
 

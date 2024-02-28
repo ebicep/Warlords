@@ -1,26 +1,56 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes;
 
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLeaderboardGameType;
-import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabasePlayerPvEWaveDefenseDifficultyStats;
+import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractMultiStatsLeaderboardGameType;
+import com.ebicep.warlords.database.leaderboards.stats.sections.MultiStatsLeaderboardCategory;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.MultiPvEWaveDefenseStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStatsWarlordsSpecs;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import static com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardLocations.*;
 
-public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameType<DatabasePlayerPvEWaveDefenseDifficultyStats> implements PvELeaderboard {
+class MultiStatsLeaderboardCategoryWaveDefense extends MultiStatsLeaderboardCategory<WaveDefenseStatsWarlordsClasses,
+        DatabaseGamePvEWaveDefense,
+        DatabaseGamePlayerPvEWaveDefense,
+        WaveDefenseStats,
+        WaveDefenseStatsWarlordsSpecs,
+        MultiPvEWaveDefenseStats> {
 
-    private static final List<StatsLeaderboardCategory<DatabasePlayerPvEWaveDefenseDifficultyStats>> CATEGORIES = new ArrayList<>() {{
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats(), "All Modes", "All"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEasyStats(), "Easy Mode", "Easy"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getNormalStats(), "Normal Mode", "Normal"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getHardStats(), "Hard Mode", "Hard"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getExtremeStats(), "Extreme Mode", "Extreme"));
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEndlessStats(), "Endless Mode", "Endless"));
+    public MultiStatsLeaderboardCategoryWaveDefense(
+            Function<DatabasePlayer, MultiPvEWaveDefenseStats> databasePlayerMultiPvEWaveDefenseFunction,
+            String categoryName,
+            String shortName
+    ) {
+        super(databasePlayerMultiPvEWaveDefenseFunction, categoryName, shortName);
+    }
+}
+
+public class StatsLeaderboardWaveDefense extends AbstractMultiStatsLeaderboardGameType<
+        WaveDefenseStatsWarlordsClasses,
+        DatabaseGamePvEWaveDefense,
+        DatabaseGamePlayerPvEWaveDefense,
+        WaveDefenseStats,
+        WaveDefenseStatsWarlordsSpecs,
+        MultiPvEWaveDefenseStats,
+        MultiStatsLeaderboardCategoryWaveDefense> implements PvELeaderboard {
+
+    private static final List<MultiStatsLeaderboardCategoryWaveDefense> CATEGORIES = new ArrayList<>() {{
+        add(new MultiStatsLeaderboardCategoryWaveDefense(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats(), "All Modes", "All"));
+        add(new MultiStatsLeaderboardCategoryWaveDefense(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEasyStats(), "Easy Mode", "Easy"));
+        add(new MultiStatsLeaderboardCategoryWaveDefense(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getNormalStats(), "Normal Mode", "Normal"));
+        add(new MultiStatsLeaderboardCategoryWaveDefense(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getHardStats(), "Hard Mode", "Hard"));
+        add(new MultiStatsLeaderboardCategoryWaveDefense(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getExtremeStats(), "Extreme Mode", "Extreme"));
+        add(new MultiStatsLeaderboardCategoryWaveDefense(databasePlayer -> databasePlayer.getPveStats().getWaveDefenseStats().getEndlessStats(), "Endless Mode", "Endless"));
     }};
 
     public StatsLeaderboardWaveDefense() {
@@ -33,7 +63,7 @@ public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameTyp
     }
 
     @Override
-    public void addExtraLeaderboards(StatsLeaderboardCategory<DatabasePlayerPvEWaveDefenseDifficultyStats> statsLeaderboardCategory) {
+    public void addExtraLeaderboards(MultiStatsLeaderboardCategoryWaveDefense statsLeaderboardCategory) {
         List<StatsLeaderboard> statsLeaderboards = statsLeaderboardCategory.getLeaderboards();
 
         statsLeaderboards.add(new StatsLeaderboard("Waves Cleared",
@@ -43,8 +73,8 @@ public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameTyp
         ));
         statsLeaderboards.add(new StatsLeaderboard("Clear Rate",
                 LEAD_5,
-                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClearRate(),
-                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getClearRate() * 100) + "%"
+                databasePlayer -> statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate(),
+                databasePlayer -> NumberFormat.addCommaAndRound(statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getWinRate() * 100) + "%"
         ));
         statsLeaderboards.add(new StatsLeaderboard("Fastest Win", UPPER_CENTER_1,
                 databasePlayer -> -statsLeaderboardCategory.getStatFunction().apply(databasePlayer).getFastestGameFinished(),
@@ -58,5 +88,6 @@ public class StatsLeaderboardWaveDefense extends AbstractStatsLeaderboardGameTyp
                                                                                         .getHighestWaveCleared())
         ));
     }
+
 
 }

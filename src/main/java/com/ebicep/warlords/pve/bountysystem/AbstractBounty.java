@@ -170,7 +170,6 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
         Set<Bounty> excludeBounties = new HashSet<>();
         excludeBounties.add(getBounty());
         EventMode eventMode;
-        EventMode generalEventMode;
         int bountiesCompleted = pveStats.getBountiesCompleted();
         if (isEventBounty) {
             GameEvents event = gameEvent.getEvent();
@@ -180,19 +179,14 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
                 ChatUtils.MessageType.BOUNTIES.sendErrorMessage("Could not claim bounty - Event mode not found");
                 return;
             }
-            generalEventMode = event.generalEventFunction.apply(eventStats);
-
             eventMode.addBountiesCompleted();
-            generalEventMode.addBountiesCompleted();
-            pveStats.getEventStats().addBountiesCompleted();
 
-            activeBounties = eventMode.getActiveBounties();
+            activeBounties = eventMode.getActiveEventBounties();
             excludeBounties.addAll(eventMode.getCompletedBounties().keySet());
 
             bountiesCompleted = eventMode.getBountiesCompleted();
         } else {
             eventMode = null;
-            generalEventMode = null;
             activeBounties = pveStats.getActiveBounties();
             excludeBounties.addAll(pveStats.getCompletedBounties().keySet());
         }
@@ -219,8 +213,6 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
             lifetimePveStats.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
             if (isEventBounty) {
                 eventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-                generalEventMode.getCompletedBounties().merge(getBounty(), 1L, Long::sum);
-                lifetimePveStats.getEventStats().getCompletedBounties().merge(getBounty(), 1L, Long::sum);
             }
         });
     }

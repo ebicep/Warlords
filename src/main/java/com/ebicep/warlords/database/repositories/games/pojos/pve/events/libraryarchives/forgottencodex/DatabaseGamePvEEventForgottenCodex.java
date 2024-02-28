@@ -5,8 +5,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.DatabaseGamePvEEventLibraryArchives;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -25,10 +24,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEvent implements WavesCleared {
+public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventForgottenCodex> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared; //TODO
     private List<DatabaseGamePlayerPvEEventForgottenCodex> players = new ArrayList<>();
@@ -37,7 +35,7 @@ public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEvent imp
     }
 
     public DatabaseGamePvEEventForgottenCodex(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<ForgottenCodexOption> forgottenCodexOption = new AtomicReference<>();
@@ -74,7 +72,7 @@ public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEvent imp
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventForgottenCodex> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventForgottenCodex -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventForgottenCodex,
@@ -107,12 +105,12 @@ public class DatabaseGamePvEEventForgottenCodex extends DatabaseGamePvEEvent imp
     }
 
     @Override
-    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+    public List<DatabaseGamePlayerPvEEventForgottenCodex> getPlayers() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventForgottenCodex> getBasePlayers() {
         return new HashSet<>(players);
     }
 

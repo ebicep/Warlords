@@ -5,8 +5,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.DatabaseGamePvEEventNarmer;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -27,10 +26,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEvent implements WavesCleared {
+public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmersTomb> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventNarmersTomb> players = new ArrayList<>();
@@ -39,7 +37,7 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEvent implem
     }
 
     public DatabaseGamePvEEventNarmersTomb(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<NarmersTombOption> narmersTombOption = new AtomicReference<>();
@@ -71,7 +69,7 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEvent implem
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventNarmersTomb> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventNarmersTomb -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventNarmersTomb,
@@ -106,12 +104,12 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEvent implem
     }
 
     @Override
-    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+    public List<DatabaseGamePlayerPvEEventNarmersTomb> getPlayers() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventNarmersTomb> getBasePlayers() {
         return new HashSet<>(players);
     }
 

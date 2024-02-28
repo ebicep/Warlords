@@ -86,7 +86,7 @@ public class BountyCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
                 return;
             }
-            List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
+            List<AbstractBounty> activeBounties = eventMode.getActiveEventBounties();
             try {
                 AbstractBounty abstractBounty = activeBounties.get(index);
                 abstractBounty.setValue(abstractBounty.getTarget());
@@ -129,7 +129,7 @@ public class BountyCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
                 return;
             }
-            List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
+            List<AbstractBounty> activeBounties = eventMode.getActiveEventBounties();
             for (AbstractBounty activeBounty : activeBounties) {
                 ChatChannels.sendDebugMessage(player, Component.text("Cleared " + activeBounty.getName() + " event bounty"));
             }
@@ -153,7 +153,7 @@ public class BountyCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(player, Component.text("No event mode detected"));
                 return;
             }
-            List<AbstractBounty> activeBounties = eventMode.getActiveBounties();
+            List<AbstractBounty> activeBounties = eventMode.getActiveEventBounties();
             activeBounties.set(index, bounty.create.get());
             ChatChannels.sendDebugMessage(player, Component.text("Set bounty #" + index + " to " + bounty.name() + " in event bounties"));
         });

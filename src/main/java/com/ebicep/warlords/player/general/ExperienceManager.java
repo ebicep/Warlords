@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.general;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -307,7 +308,7 @@ public class ExperienceManager {
 
     public static long getExperienceForClass(UUID uuid, Classes classes) {
         AtomicLong experience = new AtomicLong(0);
-        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getClass(classes).getExperience()));
+        DatabaseManager.getPlayer(uuid, databasePlayer -> databasePlayer.getStat(classes, Stats::getExperience, Long::sum, 0L));
         return experience.get();
     }
 

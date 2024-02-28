@@ -1,13 +1,11 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense;
 
 import co.aikar.commands.CommandIssuer;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -15,7 +13,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefenseDifficultyStats {
+import java.util.Collection;
+import java.util.stream.Stream;
+
+public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats {
 
     @Field("easy_stats")
     private DatabasePlayerPvEWaveDefenseDifficultyStats easyStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
@@ -32,17 +33,16 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
     }
 
     @Override
-    public void updateCustomStats(
+    public void updateStats(
             DatabasePlayer databasePlayer,
-            DatabaseGameBase databaseGame,
+            DatabaseGamePvEWaveDefense databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerPvEWaveDefense gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        PvEDatabaseStatInformation difficultyStats = getDifficultyStats(((DatabaseGamePvEWaveDefense) databaseGame).getDifficulty());
+        DatabasePlayerPvEWaveDefenseDifficultyStats difficultyStats = getDifficultyStats(databaseGame.getDifficulty());
         if (difficultyStats != null) {
             difficultyStats.updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
         } else {
@@ -50,7 +50,7 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
         }
     }
 
-    public PvEDatabaseStatInformation getDifficultyStats(DifficultyIndex difficultyIndex) {
+    public DatabasePlayerPvEWaveDefenseDifficultyStats getDifficultyStats(DifficultyIndex difficultyIndex) {
         return switch (difficultyIndex) {
             case EASY -> getEasyStats();
             case NORMAL -> getNormalStats();
@@ -82,20 +82,10 @@ public class DatabasePlayerWaveDefenseStats extends DatabasePlayerPvEWaveDefense
         return endlessStats;
     }
 
-    public void setEndlessStats(DatabasePlayerPvEWaveDefenseDifficultyStats endlessStats) {
-        this.endlessStats = endlessStats;
+    @Override
+    public Collection<WaveDefenseStatsWarlordsClasses> getStats() {
+        return Stream.of(easyStats, normalStats, hardStats, extremeStats, endlessStats)
+                     .flatMap(stats -> stats.getStats().stream())
+                     .toList();
     }
-
-    public void setHardStats(DatabasePlayerPvEWaveDefenseDifficultyStats hardStats) {
-        this.hardStats = hardStats;
-    }
-
-    public void setNormalStats(DatabasePlayerPvEWaveDefenseDifficultyStats normalStats) {
-        this.normalStats = normalStats;
-    }
-
-    public void setEasyStats(DatabasePlayerPvEWaveDefenseDifficultyStats easyStats) {
-        this.easyStats = easyStats;
-    }
-
 }

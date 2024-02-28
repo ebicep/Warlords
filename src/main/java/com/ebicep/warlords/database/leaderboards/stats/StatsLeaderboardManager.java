@@ -51,7 +51,7 @@ public class StatsLeaderboardManager {
     public static final World MAIN_LOBBY = Bukkit.getWorld("MainLobby");
     public static final Location MAIN_LOBBY_SPAWN = new Location(MAIN_LOBBY, 11.5, 81, 149.5, 0, 0);
     public static final HashMap<UUID, PlayerLeaderboardInfo> PLAYER_LEADERBOARD_INFOS = new HashMap<>();
-    public static final HashMap<GameType, AbstractStatsLeaderboardGameType<?>> STATS_LEADERBOARDS = new HashMap<>() {{
+    public static final HashMap<GameType, AbstractStatsLeaderboardGameType<?, ?, ?, ?>> STATS_LEADERBOARDS = new HashMap<>() {{
         for (GameType value : GameType.values()) {
             put(value, value.createStatsLeaderboardGameType.get());
         }
@@ -117,7 +117,7 @@ public class StatsLeaderboardManager {
                                 boolean lessThan20Plays = databasePlayer.getPlays() + pveStats.getPlays() < 20;
                                 EventMode eventMode = currentGameEvent == null ? null : currentGameEvent.getEvent().eventsStatsFunction.apply(pveStats.getEventStats())
                                                                                                                                        .get(currentGameEvent.getStartDateSecond());
-                                boolean noCurrentEventPlays = currentGameEvent == null || eventMode != null && eventMode.getPlays() == 0;
+                                boolean noCurrentEventPlays = currentGameEvent == null || eventMode != null && eventMode.getEventPlays() == 0;
                                 if (value == PlayersCollections.LIFETIME && lessThan20Plays && noCurrentEventPlays) {
                                     continue;
                                 }
@@ -203,7 +203,7 @@ public class StatsLeaderboardManager {
 //        }
     }
 
-    public static StatsLeaderboardCategory<?> getLeaderboardCategoryFromUUID(UUID uuid) {
+    public static StatsLeaderboardCategory<?, ?, ?> getLeaderboardCategoryFromUUID(UUID uuid) {
         if (!Warlords.holographicDisplaysEnabled) {
             return null;
         }
@@ -213,7 +213,7 @@ public class StatsLeaderboardManager {
         GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
         int selectedCategory = playerLeaderboardInfo.getStatsCategory();
 
-        List<? extends StatsLeaderboardCategory<?>> categories = STATS_LEADERBOARDS.get(selectedGameType).getCategories();
+        List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = STATS_LEADERBOARDS.get(selectedGameType).getCategories();
         if (selectedCategory >= categories.size()) {
             selectedCategory = 0;
             playerLeaderboardInfo.setStatsCategory(selectedCategory);
@@ -231,7 +231,7 @@ public class StatsLeaderboardManager {
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
         PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
         int page = playerLeaderboardInfo.getPage();
-        StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
+        StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
 
         getAllLeaderboardCategories().forEach(category -> {
             category.getAllHolograms()
@@ -317,7 +317,7 @@ public class StatsLeaderboardManager {
                 playerLeaderboardInfo::setStatsGameType
         );
         //CATEGORY
-        List<? extends StatsLeaderboardCategory<?>> categories = STATS_LEADERBOARDS.get(selectedType).getCategories();
+        List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = STATS_LEADERBOARDS.get(selectedType).getCategories();
         int selectedCategory = playerLeaderboardInfo.getStatsCategory();
         createLeaderboardSwitcherHologram(player,
                 StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION,
@@ -366,7 +366,7 @@ public class StatsLeaderboardManager {
             validatePlayerHolograms(player);
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
             PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
-            StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
+            StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
             if (statsLeaderboardCategory == null) {
                 return;
             }
@@ -471,7 +471,7 @@ public class StatsLeaderboardManager {
         PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId()).clearHolograms();
     }
 
-    public static List<StatsLeaderboardCategory<?>> getAllLeaderboardCategories() {
+    public static List<StatsLeaderboardCategory<?, ?, ?>> getAllLeaderboardCategories() {
         return STATS_LEADERBOARDS.values().stream()
                                  .flatMap(statsLeaderboardCategory -> statsLeaderboardCategory.getCategories().stream())
                                  .collect(Collectors.toList());
@@ -512,9 +512,9 @@ public class StatsLeaderboardManager {
 
         public final String name;
         public final String shortName;
-        public final Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType;
+        public final Supplier<AbstractStatsLeaderboardGameType<?, ?, ?, ?>> createStatsLeaderboardGameType;
 
-        GameType(String name, String shortName, Supplier<AbstractStatsLeaderboardGameType<?>> createStatsLeaderboardGameType) {
+        GameType(String name, String shortName, Supplier<AbstractStatsLeaderboardGameType<?, ?, ?, ?>> createStatsLeaderboardGameType) {
             this.name = name;
             this.shortName = shortName;
             this.createStatsLeaderboardGameType = createStatsLeaderboardGameType;

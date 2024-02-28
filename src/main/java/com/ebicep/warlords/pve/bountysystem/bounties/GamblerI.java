@@ -15,7 +15,7 @@ public class GamblerI extends AbstractBounty implements TracksOutsideGame, Daily
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onAddCurrency(AddCurrencyEvent event) {
-        if (!databasePlayer.getPveStats().equals(event.getDatabasePlayerPvE())) {
+        if (!uuid.equals(event.getDatabasePlayerPvE().getDatabasePlayer().getUuid())) {
             return;
         }
         if (event.getCurrency() != Currencies.COIN) {

@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Document(collection = "Games_Information_Siege")
-public class DatabaseGameSiege extends DatabaseGameBase {
+public class DatabaseGameSiege extends DatabaseGameBase<DatabaseGamePlayerSiege> {
 
     @Field("time_elapsed")
     protected int timeElapsed; //seconds
@@ -54,7 +54,7 @@ public class DatabaseGameSiege extends DatabaseGameBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerSiege> databaseGame, int multiplier) {
         for (List<DatabaseGamePlayerSiege> gamePlayerCTFList : players.values()) {
             for (DatabaseGamePlayerSiege gamePlayerCTF : gamePlayerCTFList) {
                 DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
@@ -63,7 +63,7 @@ public class DatabaseGameSiege extends DatabaseGameBase {
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerSiege> getBasePlayers() {
         return players.values().stream()
                       .flatMap(Collection::stream)
                       .collect(Collectors.toSet());
