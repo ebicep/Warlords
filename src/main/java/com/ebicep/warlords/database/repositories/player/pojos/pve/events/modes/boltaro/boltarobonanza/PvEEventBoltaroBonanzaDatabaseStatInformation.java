@@ -1,40 +1,31 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePlayerPvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza.DatabaseGamePvEEventBoltaroBonanza;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.PvEEventBoltaroDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Map;
-
-public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBoltaroDatabaseStatInformation {
+public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventDatabaseStatInformation<DatabaseGamePvEEventBoltaroBonanza, DatabaseGamePlayerPvEEventBoltaroBonanza> implements PvEEventBoltaroBonanzaStats {
 
     @Field("highest_split")
     private int highestSplit;
 
     @Override
-    public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEEventBoltaroBonanza databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerPvEEventBoltaroBonanza gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGamePvEEventBoltaroBonanza;
-        assert gamePlayer instanceof DatabaseGamePlayerPvEEventBoltaroBonanza;
-        super.updateCustomStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-
-        DatabaseGamePvEEventBoltaroBonanza databaseGamePvEEventBoltaroBonanza = (DatabaseGamePvEEventBoltaroBonanza) databaseGame;
-        DatabaseGamePlayerPvEEventBoltaroBonanza databaseGamePlayerPvEEventBoltaroBonanza = (DatabaseGamePlayerPvEEventBoltaroBonanza) gamePlayer;
-
-        int split = databaseGamePvEEventBoltaroBonanza.getHighestSplit();
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        int split = databaseGame.getHighestSplit();
         if (multiplier > 0) {
             if (this.highestSplit < split) {
                 this.highestSplit = split;
@@ -46,27 +37,9 @@ public class PvEEventBoltaroBonanzaDatabaseStatInformation extends PvEEventBolta
         }
     }
 
-    public long getExperiencePvE() {
-        return experiencePvE;
-    }
-
-    public long getTotalTimePlayed() {
-        return totalTimePlayed;
-    }
-
-    public Map<String, Long> getMobKills() {
-        return mobKills;
-    }
-
-    public Map<String, Long> getMobAssists() {
-        return mobAssists;
-    }
-
-    public Map<String, Long> getMobDeaths() {
-        return mobDeaths;
-    }
-
+    @Override
     public int getHighestSplit() {
         return highestSplit;
     }
+
 }

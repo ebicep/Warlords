@@ -5,8 +5,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.DatabaseGamePvEEventMithra;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -27,10 +26,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent implements WavesCleared {
+public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventSpidersDwelling> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventSpidersDwelling> players = new ArrayList<>();
@@ -39,7 +37,7 @@ public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent im
     }
 
     public DatabaseGamePvEEventSpidersDwelling(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<SpidersDwellingOption> spidersDwellingOption = new AtomicReference<>();
@@ -71,7 +69,7 @@ public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent im
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventSpidersDwelling> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventSpidersDwelling -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventSpidersDwelling,
@@ -106,12 +104,12 @@ public class DatabaseGamePvEEventSpidersDwelling extends DatabaseGamePvEEvent im
     }
 
     @Override
-    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+    public List<DatabaseGamePlayerPvEEventSpidersDwelling> getPlayers() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventSpidersDwelling> getBasePlayers() {
         return new HashSet<>(players);
     }
 

@@ -4,8 +4,7 @@ import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.DatabaseGamePvEEventLibraryArchives;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -26,10 +25,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent {
+public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEventLibraryArchives<DatabaseGamePlayerPvEEventGrimoiresGraveyard> {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventGrimoiresGraveyard> players = new ArrayList<>();
@@ -38,7 +36,7 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
     }
 
     public DatabaseGamePvEEventGrimoiresGraveyard(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<GrimoiresGraveyardOption> grimoiresGraveyardOption = new AtomicReference<>();
@@ -76,7 +74,7 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventGrimoiresGraveyard> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventGrimoiresGraveyard -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventGrimoiresGraveyard,
@@ -114,12 +112,12 @@ public class DatabaseGamePvEEventGrimoiresGraveyard extends DatabaseGamePvEEvent
 
 
     @Override
-    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+    public List<DatabaseGamePlayerPvEEventGrimoiresGraveyard> getPlayers() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventGrimoiresGraveyard> getBasePlayers() {
         return new HashSet<>(players);
     }
 

@@ -1,30 +1,11 @@
 package com.ebicep.warlords.pve.commands;
 
-import co.aikar.commands.*;
-import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
-import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
-import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.pve.weapons.WeaponsPvE;
-import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.NumberFormat;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.entity.Player;
-
-import java.util.Comparator;
-import java.util.function.Function;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
 
 @CommandAlias("myposition|mp")
 public class MyPositionCommand extends BaseCommand {
-
+/* TODO
     private static final StatLeaderboardTarget[] STAT_LEADERBOARD_TARGETS = new StatLeaderboardTarget[]{
             new StatLeaderboardTarget("Level", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getLevel())),
             new StatLeaderboardTarget("Kills", pvEDatabaseStatInformation -> String.valueOf(pvEDatabaseStatInformation.getKills())),
@@ -38,7 +19,7 @@ public class MyPositionCommand extends BaseCommand {
     private static void appendStats(
             StatLeaderboardTarget statLeaderboardTarget,
             DatabasePlayer databasePlayer,
-            PvEDatabaseStatInformation statInformation,
+            PvEStats statInformation,
             String prefix,
             TextComponent.Builder stats
     ) {
@@ -183,15 +164,15 @@ public class MyPositionCommand extends BaseCommand {
     static class StatLeaderboardTarget {
         private final String leaderboardName;
         private final String displayName;
-        private final Function<PvEDatabaseStatInformation, String> statFunction;
+        private final Function<PvEStats, String> statFunction;
 
-        public StatLeaderboardTarget(String leaderboardName, Function<PvEDatabaseStatInformation, String> statFunction) {
+        public StatLeaderboardTarget(String leaderboardName, Function<PvEStats, String> statFunction) {
             this.leaderboardName = leaderboardName;
             this.displayName = leaderboardName;
             this.statFunction = statFunction;
         }
 
-        StatLeaderboardTarget(String leaderboardName, String displayName, Function<PvEDatabaseStatInformation, String> statFunction) {
+        StatLeaderboardTarget(String leaderboardName, String displayName, Function<PvEStats, String> statFunction) {
             this.leaderboardName = leaderboardName;
             this.displayName = displayName;
             this.statFunction = statFunction;
@@ -205,10 +186,12 @@ public class MyPositionCommand extends BaseCommand {
             return displayName;
         }
 
-        public Function<PvEDatabaseStatInformation, String> getStatFunction() {
+        public Function<PvEStats, String> getStatFunction() {
             return statFunction;
         }
     }
+
+ */
 
 
 }

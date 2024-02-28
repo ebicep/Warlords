@@ -1,20 +1,15 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.Difficulty;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.MostDamageInWave;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.TimeElapsed;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEDatabaseStatInformation;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformation {
+public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformation<DatabaseGamePvEWaveDefense, DatabaseGamePlayerPvEWaveDefense> implements WaveDefenseStats {
 
     //CUMULATIVE STATS
     @Field("total_waves_cleared")
@@ -31,80 +26,57 @@ public class WaveDefenseDatabaseStatInformation extends PvEDatabaseStatInformati
     }
 
     @Override
-    public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGamePvEWaveDefense databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerPvEWaveDefense gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert gamePlayer instanceof DatabaseGamePlayerPvEWaveDefense;
-        if (databaseGame instanceof WavesCleared wavesCleared) {
-            if (multiplier > 0) {
-                this.highestWaveCleared = Math.max(wavesCleared.getWavesCleared(), this.highestWaveCleared);
-            } else if (this.highestWaveCleared == wavesCleared.getWavesCleared()) {
-                this.highestWaveCleared = 0;
-            }
-            if (databaseGame instanceof TimeElapsed timeElapsed && databaseGame instanceof Difficulty difficulty) {
-                if (multiplier > 0) {
-                    if (wavesCleared.getWavesCleared() == difficulty.getDifficulty().getMaxWaves() &&
-                            (this.fastestGameFinished == 0 || timeElapsed.getTimeElapsed() < fastestGameFinished)
-                    ) {
-                        this.fastestGameFinished = timeElapsed.getTimeElapsed();
-                    }
-                } else if (this.fastestGameFinished == timeElapsed.getTimeElapsed()) {
-                    this.fastestGameFinished = 0;
-                }
-            }
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        if (multiplier > 0) {
+            this.highestWaveCleared = Math.max(databaseGame.getWavesCleared(), this.highestWaveCleared);
+        } else if (this.highestWaveCleared == databaseGame.getWavesCleared()) {
+            this.highestWaveCleared = 0;
         }
-        if (gamePlayer instanceof MostDamageInWave mostDamageInWave) {
-            if (multiplier > 0) {
-                this.mostDamageInWave = Math.max(this.mostDamageInWave, mostDamageInWave.getMostDamageInWave());
-            } else if (this.mostDamageInWave == mostDamageInWave.getMostDamageInWave()) {
-                this.mostDamageInWave = 0;
+        if (multiplier > 0) {
+            if (databaseGame.getWavesCleared() == databaseGame.getDifficulty().getMaxWaves() &&
+                    (this.fastestGameFinished == 0 || databaseGame.getTimeElapsed() < fastestGameFinished)
+            ) {
+                this.fastestGameFinished = databaseGame.getTimeElapsed();
             }
+        } else if (this.fastestGameFinished == databaseGame.getTimeElapsed()) {
+            this.fastestGameFinished = 0;
         }
 
-        if (databaseGame instanceof WavesCleared wavesCleared) {
-            this.totalWavesCleared += wavesCleared.getWavesCleared() * multiplier;
+        if (multiplier > 0) {
+            this.mostDamageInWave = Math.max(this.mostDamageInWave, gamePlayer.getMostDamageInWave());
+        } else if (this.mostDamageInWave == gamePlayer.getMostDamageInWave()) {
+            this.mostDamageInWave = 0;
         }
+
+        this.totalWavesCleared += databaseGame.getWavesCleared() * multiplier;
     }
 
-    public void merge(WaveDefenseDatabaseStatInformation other) {
-        super.merge(other);
-        this.totalWavesCleared += other.totalWavesCleared;
-        this.highestWaveCleared = Math.max(this.highestWaveCleared, other.highestWaveCleared);
-        this.mostDamageInWave = Math.max(this.mostDamageInWave, other.mostDamageInWave);
-        this.fastestGameFinished = Math.min(this.fastestGameFinished, other.fastestGameFinished);
-    }
-
-    public int getHighestWaveCleared() {
-        return highestWaveCleared;
-    }
-
-    public void setHighestWaveCleared(int highestWaveCleared) {
-        this.highestWaveCleared = highestWaveCleared;
-    }
-
-    public long getMostDamageInWave() {
-        return mostDamageInWave;
-    }
-
-    public void setMostDamageInWave(long mostDamageInWave) {
-        this.mostDamageInWave = mostDamageInWave;
-    }
-
+    @Override
     public int getTotalWavesCleared() {
         return totalWavesCleared;
     }
 
+    @Override
+    public int getHighestWaveCleared() {
+        return highestWaveCleared;
+    }
+
+    @Override
+    public long getMostDamageInWave() {
+        return mostDamageInWave;
+    }
+
+    @Override
     public long getFastestGameFinished() {
         return fastestGameFinished;
     }
-
-    public void setFastestGameFinished(long fastestGameFinished) {
-        this.fastestGameFinished = fastestGameFinished;
-    }
-
 }

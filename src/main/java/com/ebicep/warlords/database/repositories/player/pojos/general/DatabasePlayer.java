@@ -6,18 +6,21 @@ import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
-import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePlayerPvEBase;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
-import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
-import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
-import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
-import com.ebicep.warlords.database.repositories.player.pojos.tdm.DatabasePlayerTDM;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsClasses;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlordsSpecs;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.player.general.Classes;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.pve.Currencies;
@@ -38,7 +41,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer extends DatabasePlayerGeneral {
+public class DatabasePlayer implements MultiStatsGeneral {
 
     @Id
     private String id;
@@ -54,16 +57,13 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     private Long discordID = null;
     @Field("future_messages")
     private List<FutureMessage> futureMessages = new ArrayList<>();
-    @Field("ctf_stats")
-    private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
-    @Field("tdm_stats")
-    private DatabasePlayerTDM tdmStats = new DatabasePlayerTDM();
-    @Field("interception_stats")
-    private DatabasePlayerInterception interceptionStats = new DatabasePlayerInterception();
-    @Field("duel_stats")
-    private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
-    @Field("siege_stats")
-    private DatabasePlayerSiege siegeStats = new DatabasePlayerSiege();
+    private DatabaseMage mage = new DatabaseMage();
+    private DatabaseWarrior warrior = new DatabaseWarrior();
+    private DatabasePaladin paladin = new DatabasePaladin();
+    private DatabaseShaman shaman = new DatabaseShaman();
+    private DatabaseRogue rogue = new DatabaseRogue();
+    private DatabaseArcanist arcanist = new DatabaseArcanist();
+    private long experience;
 
     @Field("comp_stats")
     private DatabasePlayerCompStats compStats = new DatabasePlayerCompStats();
@@ -150,53 +150,32 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
     }
 
     @Override
-    public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameBase databaseGame,
             GameMode gameMode,
             DatabaseGamePlayerBase gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        //UPDATE UNIVERSAL EXPERIENCE
+        DatabaseSpecialization spec = getSpec(gamePlayer.getSpec());
+        spec.setExperience(spec.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
         this.experience += gamePlayer.getExperienceEarnedUniversal() * multiplier;
         //PvE outside all base stats besides universal experience
-        AbstractDatabaseStatInformation classStats = this.getClass(Specializations.getClass(gamePlayer.getSpec()));
-        DatabaseSpecialization specStats = this.getSpec(gamePlayer.getSpec());
-        if (GameMode.isPvE(gameMode)) {
-            //this.experience += gamePlayer.getExperienceEarnedSpec() * multiplier;
-            classStats.setExperience(classStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
-            specStats.setExperience(specStats.getExperience() + gamePlayer.getExperienceEarnedSpec() * multiplier);
-            this.pveStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+        if (GameMode.isPvE(gameMode) && databaseGame instanceof DatabaseGamePvEBase gamePvEBase && gamePlayer instanceof DatabaseGamePlayerPvEBase gamePlayerPvEBase) {
+            this.pveStats.updateStats(this, gamePvEBase, gameMode, gamePlayerPvEBase, result, multiplier, playersCollection);
             return;
-        }
-        //UPDATE CLASS, SPEC
-        if (gamePlayer instanceof DatabaseGamePlayerSiege databaseGamePlayerSiege) {
-            databaseGamePlayerSiege.getSpecStats().forEach((specializations, siegePlayer) -> {
-                getClass(Specializations.getClass(specializations)).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
-                getSpec(specializations).updateStats(databasePlayer, databaseGame, siegePlayer, multiplier, playersCollection);
-            });
-        } else {
-            classStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            specStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-        }
-        //UPDATE GAMEMODES
-        switch (gameMode) {
-            case CAPTURE_THE_FLAG -> this.ctfStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case TEAM_DEATHMATCH -> this.tdmStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case INTERCEPTION -> this.interceptionStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case DUEL -> this.duelStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
-            case SIEGE -> this.siegeStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
         }
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         List<GameAddon> gameAddons = databaseGame.getGameAddons();
         if (gameAddons.contains(GameAddon.TOURNAMENT_MODE)) {
-            this.tournamentStats.getCurrentTournamentStats().updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+            this.tournamentStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
         } else {
             if (gameAddons.isEmpty()) {
-                this.pubStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+                this.pubStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             } else if (gameAddons.contains(GameAddon.PRIVATE_GAME) && !gameAddons.contains(GameAddon.CUSTOM_GAME)) {
-                this.compStats.updateStats(this, databaseGame, gamePlayer, multiplier, playersCollection);
+                this.compStats.updateStats(this, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
             }
         }
     }
@@ -263,36 +242,38 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
         }
     }
 
-    public DatabasePlayerCTF getCtfStats() {
-        return ctfStats;
+    public DatabaseSpecialization getSpec(Specializations specializations) {
+        return switch (specializations) {
+            case PYROMANCER -> mage.getPyromancer();
+            case CRYOMANCER -> mage.getCryomancer();
+            case AQUAMANCER -> mage.getAquamancer();
+            case BERSERKER -> warrior.getBerserker();
+            case DEFENDER -> warrior.getDefender();
+            case REVENANT -> warrior.getRevenant();
+            case AVENGER -> paladin.getAvenger();
+            case CRUSADER -> paladin.getCrusader();
+            case PROTECTOR -> paladin.getProtector();
+            case THUNDERLORD -> shaman.getThunderlord();
+            case SPIRITGUARD -> shaman.getSpiritguard();
+            case EARTHWARDEN -> shaman.getEarthwarden();
+            case ASSASSIN -> rogue.getAssassin();
+            case VINDICATOR -> rogue.getVindicator();
+            case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case LUMINARY -> arcanist.getLuminary();
+        };
     }
 
-    public void setCtfStats(DatabasePlayerCTF ctfStats) {
-        this.ctfStats = ctfStats;
-    }
-
-    public DatabasePlayerTDM getTdmStats() {
-        return tdmStats;
-    }
-
-    public void setTdmStats(DatabasePlayerTDM tdmStats) {
-        this.tdmStats = tdmStats;
-    }
-
-    public DatabasePlayerInterception getInterceptionStats() {
-        return interceptionStats;
-    }
-
-    public void setInterceptionStats(DatabasePlayerInterception interceptionStats) {
-        this.interceptionStats = interceptionStats;
-    }
-
-    public DatabasePlayerDuel getDuelStats() {
-        return duelStats;
-    }
-
-    public void setDuelStats(DatabasePlayerDuel duelStats) {
-        this.duelStats = duelStats;
+    public DatabaseBaseGeneral getClass(Classes classes) {
+        return switch (classes) {
+            case MAGE -> mage;
+            case WARRIOR -> warrior;
+            case PALADIN -> paladin;
+            case SHAMAN -> shaman;
+            case ROGUE -> rogue;
+            case ARCANIST -> arcanist;
+        };
     }
 
     public DatabasePlayerCompStats getCompStats() {
@@ -481,6 +462,27 @@ public class DatabasePlayer extends DatabasePlayerGeneral {
 
     public List<Patches> getPatchesApplied() {
         return patchesApplied;
+    }
+
+    @Override
+    public Collection<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> getStats() {
+        List<StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>> stats = new ArrayList<>();
+        stats.addAll(pubStats.getStats());
+        stats.addAll(compStats.getStats());
+        for (PvEStatsWarlordsClasses<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>, PvEStatsWarlordsSpecs<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase, PvEStats<DatabaseGamePvEBase<DatabaseGamePlayerPvEBase>, DatabaseGamePlayerPvEBase>>> stat : pveStats.getStats()) {
+            stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>) (Object) stat);
+        }
+        stats.addAll(tournamentStats.getStats());
+        return stats;
+    }
+
+    @Override
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
     }
 
     public enum Patches {

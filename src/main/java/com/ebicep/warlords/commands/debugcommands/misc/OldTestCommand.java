@@ -114,6 +114,14 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
+            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+                System.out.println("Kills: " + databasePlayer.getPveStats().getKills());
+                System.out.println("Deaths: " + databasePlayer.getPveStats().getDeaths());
+                System.out.println("Wins: " + databasePlayer.getPveStats().getWins());
+                System.out.println("Losses: " + databasePlayer.getPveStats().getLosses());
+                System.out.println("Damage: " + databasePlayer.getPveStats().getDamage());
+                System.out.println("Healing: " + databasePlayer.getPveStats().getHealing());
+            });
 
 
 //            Guardian guard = player.getWorld().spawn(new LocationBuilder(player.getLocation()).forward(10), Guardian.class, guardian -> {

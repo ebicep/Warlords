@@ -1,11 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf.classses;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.CTFStatsWarlordsSpecs;
 
-public class DatabaseWarriorCTF extends DatabaseBaseCTF implements DatabaseWarlordsSpecs {
+public class DatabaseWarriorCTF implements CTFStatsWarlordsSpecs {
 
     private DatabaseBaseCTF berserker = new DatabaseBaseCTF();
     private DatabaseBaseCTF defender = new DatabaseBaseCTF();
@@ -16,7 +14,7 @@ public class DatabaseWarriorCTF extends DatabaseBaseCTF implements DatabaseWarlo
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBaseCTF[] getSpecs() {
         return new DatabaseBaseCTF[]{berserker, defender, revenant};
     }
 

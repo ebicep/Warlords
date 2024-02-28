@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabaseBasePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStatsWarlordsSpecs;
 
-public class DatabaseMagePvEWaveDefense extends DatabaseBasePvEWaveDefense implements DatabaseWarlordsSpecs {
+public class DatabaseMagePvEWaveDefense implements WaveDefenseStatsWarlordsSpecs {
 
     protected DatabaseBasePvEWaveDefense pyromancer = new DatabaseBasePvEWaveDefense();
     protected DatabaseBasePvEWaveDefense cryomancer = new DatabaseBasePvEWaveDefense();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEWaveDefense extends DatabaseBasePvEWaveDefense imple
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEWaveDefense[] getSpecs() {
         return new DatabaseBasePvEWaveDefense[]{pyromancer, cryomancer, aquamancer};
     }
 

@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Document(collection = "Games_Information_CTF")
-public class DatabaseGameCTF extends DatabaseGameBase {
+public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
 
     @Transient
     public static String lastWarlordsPlusString = "";
@@ -156,7 +156,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerCTF> databaseGame, int multiplier) {
         for (List<DatabaseGamePlayerCTF> gamePlayerCTFList : players.values()) {
             for (DatabaseGamePlayerCTF gamePlayerCTF : gamePlayerCTFList) {
                 DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
@@ -165,7 +165,7 @@ public class DatabaseGameCTF extends DatabaseGameBase {
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerCTF> getBasePlayers() {
         return players.values().stream()
                       .flatMap(Collection::stream)
                       .collect(Collectors.toSet());

@@ -5,8 +5,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.DatabaseGamePvEEventGardenOfHesperides;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -25,10 +24,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implements WavesCleared {
+public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventTartarus> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared; //TODO
     private List<DatabaseGamePlayerPvEEventTartarus> players = new ArrayList<>();
@@ -37,7 +35,7 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implement
     }
 
     public DatabaseGamePvEEventTartarus(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<TartarusOption> tartarusOption = new AtomicReference<>();
@@ -74,7 +72,7 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implement
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventTartarus> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventTartarus -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventTartarus,
@@ -107,12 +105,12 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEvent implement
     }
 
     @Override
-    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+    public List<DatabaseGamePlayerPvEEventTartarus> getPlayers() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventTartarus> getBasePlayers() {
         return new HashSet<>(players);
     }
 

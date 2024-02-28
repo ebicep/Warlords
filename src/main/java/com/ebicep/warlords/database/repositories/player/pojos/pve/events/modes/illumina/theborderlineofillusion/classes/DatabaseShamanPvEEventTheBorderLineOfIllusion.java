@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.DatabaseBasePvEEventTheBorderLineOfIllusion;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs;
 
-public class DatabaseShamanPvEEventTheBorderLineOfIllusion extends DatabaseBasePvEEventTheBorderLineOfIllusion implements DatabaseWarlordsSpecs {
+public class DatabaseShamanPvEEventTheBorderLineOfIllusion implements PvEEventIlluminaTheBorderLineOfIllusionStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventTheBorderLineOfIllusion thunderlord = new DatabaseBasePvEEventTheBorderLineOfIllusion();
     private DatabaseBasePvEEventTheBorderLineOfIllusion spiritguard = new DatabaseBasePvEEventTheBorderLineOfIllusion();
@@ -15,7 +13,7 @@ public class DatabaseShamanPvEEventTheBorderLineOfIllusion extends DatabaseBaseP
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEEventTheBorderLineOfIllusion[] getSpecs() {
         return new DatabaseBasePvEEventTheBorderLineOfIllusion[]{thunderlord, spiritguard, earthwarden};
     }
 

@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.guilds.Guild;
@@ -242,7 +242,7 @@ public class CustomScoreboard {
         }
 
         if (StatsLeaderboardManager.loaded) {
-            StatsLeaderboardCategory<?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
+            StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
             if (statsLeaderboardCategory == null) {
                 return;
             }
@@ -274,7 +274,7 @@ public class CustomScoreboard {
                                                                                 .findAny();
             if (optionalDatabasePlayer.isPresent()) {
                 DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
-                AbstractDatabaseStatInformation playerInformation = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
+                Stats playerInformation = statsLeaderboardCategory.getStatFunction().apply(databasePlayer);
                 givePvPSidebar(scoreboardSelection, playerInformation);
             } else {
                 giveNASidebar(scoreboardSelection);
@@ -316,7 +316,7 @@ public class CustomScoreboard {
     }
 
 
-    private void givePvPSidebar(String title, AbstractDatabaseStatInformation statInformation) {
+    private void givePvPSidebar(String title, Stats statInformation) {
         giveNewSideBar(true,
                 Component.text(title, NamedTextColor.GRAY),
                 Component.empty(),

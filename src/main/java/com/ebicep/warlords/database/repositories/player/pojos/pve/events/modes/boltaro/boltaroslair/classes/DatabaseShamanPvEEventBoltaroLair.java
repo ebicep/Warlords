@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.DatabaseBasePvEEventBoltaroLair;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltaroslair.PvEEventBoltaroLairStatsWarlordsSpecs;
 
-public class DatabaseShamanPvEEventBoltaroLair extends DatabaseBasePvEEventBoltaroLair implements DatabaseWarlordsSpecs {
+public class DatabaseShamanPvEEventBoltaroLair implements PvEEventBoltaroLairStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventBoltaroLair thunderlord = new DatabaseBasePvEEventBoltaroLair();
     private DatabaseBasePvEEventBoltaroLair spiritguard = new DatabaseBasePvEEventBoltaroLair();
@@ -15,7 +13,7 @@ public class DatabaseShamanPvEEventBoltaroLair extends DatabaseBasePvEEventBolta
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEEventBoltaroLair[] getSpecs() {
         return new DatabaseBasePvEEventBoltaroLair[]{thunderlord, spiritguard, earthwarden};
     }
 

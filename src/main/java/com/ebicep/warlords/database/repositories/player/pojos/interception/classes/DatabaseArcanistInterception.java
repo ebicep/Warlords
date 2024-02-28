@@ -1,11 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.interception.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabaseBaseInterception;
+import com.ebicep.warlords.database.repositories.player.pojos.interception.InterceptionStatsWarlordsSpecs;
 
-public class DatabaseArcanistInterception extends DatabaseBaseInterception implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistInterception implements InterceptionStatsWarlordsSpecs {
 
     private DatabaseBaseInterception conjurer = new DatabaseBaseInterception();
     private DatabaseBaseInterception sentinel = new DatabaseBaseInterception();
@@ -16,7 +14,7 @@ public class DatabaseArcanistInterception extends DatabaseBaseInterception imple
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBaseInterception[] getSpecs() {
         return new DatabaseBaseInterception[]{conjurer, sentinel, luminary};
     }
 

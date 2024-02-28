@@ -1,11 +1,9 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.classes;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.DatabaseBasePvEEventGardenOfHesperidesAcropolis;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.theacropolis.PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs;
 
-public class DatabaseWarriorPvEEventGardenOfHesperidesAcropolis extends DatabaseBasePvEEventGardenOfHesperidesAcropolis implements DatabaseWarlordsSpecs {
+public class DatabaseWarriorPvEEventGardenOfHesperidesAcropolis implements PvEEventGardenOfHesperidesTheAcropolisStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventGardenOfHesperidesAcropolis berserker = new DatabaseBasePvEEventGardenOfHesperidesAcropolis();
     private DatabaseBasePvEEventGardenOfHesperidesAcropolis defender = new DatabaseBasePvEEventGardenOfHesperidesAcropolis();
@@ -16,7 +14,7 @@ public class DatabaseWarriorPvEEventGardenOfHesperidesAcropolis extends Database
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEEventGardenOfHesperidesAcropolis[] getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesAcropolis[]{berserker, defender, revenant};
     }
 

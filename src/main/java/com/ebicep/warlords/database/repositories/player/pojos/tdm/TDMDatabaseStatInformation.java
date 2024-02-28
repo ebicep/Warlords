@@ -1,7 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm;
 
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
+
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
@@ -11,7 +10,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class TDMDatabaseStatInformation extends AbstractDatabaseStatInformation {
+public class TDMDatabaseStatInformation extends AbstractDatabaseStatInformation<DatabaseGameTDM, DatabaseGamePlayerTDM> implements TDMStats {
 
     @Field("total_time_played")
     private long totalTimePlayed = 0;
@@ -20,18 +19,17 @@ public class TDMDatabaseStatInformation extends AbstractDatabaseStatInformation 
     }
 
     @Override
-    public void updateCustomStats(
-            DatabasePlayer databasePlayer, DatabaseGameBase databaseGame,
+    public void updateStats(
+            DatabasePlayer databasePlayer,
+            DatabaseGameTDM databaseGame,
             GameMode gameMode,
-            DatabaseGamePlayerBase gamePlayer,
+            DatabaseGamePlayerTDM gamePlayer,
             DatabaseGamePlayerResult result,
             int multiplier,
             PlayersCollections playersCollection
     ) {
-        assert databaseGame instanceof DatabaseGameTDM;
-        assert gamePlayer instanceof DatabaseGamePlayerTDM;
-
-        this.totalTimePlayed += (long) (900 - ((DatabaseGameTDM) databaseGame).getTimeLeft()) * multiplier;
+        super.updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        this.totalTimePlayed += (long) (900 - databaseGame.getTimeLeft()) * multiplier;
     }
 
     public long getTotalTimePlayed() {

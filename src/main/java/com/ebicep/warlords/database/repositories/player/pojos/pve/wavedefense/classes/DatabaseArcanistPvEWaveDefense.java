@@ -1,11 +1,9 @@
 
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.DatabaseBasePvEWaveDefense;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense.WaveDefenseStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEWaveDefense extends DatabaseBasePvEWaveDefense implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEWaveDefense implements WaveDefenseStatsWarlordsSpecs {
 
     protected DatabaseBasePvEWaveDefense conjurer = new DatabaseBasePvEWaveDefense();
     protected DatabaseBasePvEWaveDefense sentinel = new DatabaseBasePvEWaveDefense();
@@ -16,7 +14,7 @@ public class DatabaseArcanistPvEWaveDefense extends DatabaseBasePvEWaveDefense i
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEWaveDefense[] getSpecs() {
         return new DatabaseBasePvEWaveDefense[]{conjurer, sentinel, luminary};
     }
 

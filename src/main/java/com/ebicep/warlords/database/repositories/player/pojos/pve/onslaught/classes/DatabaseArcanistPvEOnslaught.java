@@ -1,11 +1,9 @@
 
 package com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabaseBasePvEOnslaught;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStatsWarlordsSpecs;
 
-public class DatabaseArcanistPvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
+public class DatabaseArcanistPvEOnslaught implements OnslaughtStatsWarlordsSpecs {
 
     private DatabaseBasePvEOnslaught conjurer = new DatabaseBasePvEOnslaught();
     private DatabaseBasePvEOnslaught sentinel = new DatabaseBasePvEOnslaught();
@@ -16,10 +14,9 @@ public class DatabaseArcanistPvEOnslaught extends DatabaseBasePvEOnslaught imple
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEOnslaught[] getSpecs() {
         return new DatabaseBasePvEOnslaught[]{conjurer, sentinel, luminary};
     }
-
 
     public DatabaseBasePvEOnslaught getConjurer() {
         return conjurer;

@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.DatabaseBasePvEOnslaught;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught.OnslaughtStatsWarlordsSpecs;
 
-public class DatabaseRoguePvEOnslaught extends DatabaseBasePvEOnslaught implements DatabaseWarlordsSpecs {
+public class DatabaseRoguePvEOnslaught implements OnslaughtStatsWarlordsSpecs {
 
     private DatabaseBasePvEOnslaught assassin = new DatabaseBasePvEOnslaught();
     private DatabaseBasePvEOnslaught vindicator = new DatabaseBasePvEOnslaught();
@@ -15,7 +13,7 @@ public class DatabaseRoguePvEOnslaught extends DatabaseBasePvEOnslaught implemen
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEOnslaught[] getSpecs() {
         return new DatabaseBasePvEOnslaught[]{assassin, vindicator, apothecary};
     }
 

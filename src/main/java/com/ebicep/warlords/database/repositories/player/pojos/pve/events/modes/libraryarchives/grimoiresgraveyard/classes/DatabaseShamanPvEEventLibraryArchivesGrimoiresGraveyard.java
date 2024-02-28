@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.grimoiresgraveyard.PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs;
 
-public class DatabaseShamanPvEEventLibraryArchivesGrimoiresGraveyard extends DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard implements DatabaseWarlordsSpecs {
+public class DatabaseShamanPvEEventLibraryArchivesGrimoiresGraveyard implements PvEEventLibraryArchivesGrimoiresGraveyardStatsWarlordsSpecs {
 
     private DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard thunderlord = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
     private DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard spiritguard = new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard();
@@ -15,7 +13,7 @@ public class DatabaseShamanPvEEventLibraryArchivesGrimoiresGraveyard extends Dat
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[] getSpecs() {
         return new DatabaseBasePvEEventLibraryArchivesGrimoiresGraveyard[]{thunderlord, spiritguard, earthwarden};
     }
 

@@ -1,10 +1,8 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
-import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.DatabaseBasePvEEventGardenOfHesperidesTartarus;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs;
 
-public class DatabaseMagePvEEventGardenOfHesperidesTartarus extends DatabaseBasePvEEventGardenOfHesperidesTartarus implements DatabaseWarlordsSpecs {
+public class DatabaseMagePvEEventGardenOfHesperidesTartarus implements PvEEventGardenOfHesperidesTartarusStatsWarlordsSpecs {
 
     protected DatabaseBasePvEEventGardenOfHesperidesTartarus pyromancer = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
     protected DatabaseBasePvEEventGardenOfHesperidesTartarus cryomancer = new DatabaseBasePvEEventGardenOfHesperidesTartarus();
@@ -15,7 +13,7 @@ public class DatabaseMagePvEEventGardenOfHesperidesTartarus extends DatabaseBase
     }
 
     @Override
-    public AbstractDatabaseStatInformation[] getSpecs() {
+    public DatabaseBasePvEEventGardenOfHesperidesTartarus[] getSpecs() {
         return new DatabaseBasePvEEventGardenOfHesperidesTartarus[]{pyromancer, cryomancer, aquamancer};
     }
 

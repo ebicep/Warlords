@@ -18,7 +18,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.librarya
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.grimoiresgraveyard.DatabaseGamePvEEventGrimoiresGraveyard;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
-import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.DatabasePlayerPvEEventStats;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
@@ -88,9 +87,7 @@ public enum GameEvents {
 
     BOLTARO("Fighter’s Glory",
             Currencies.EVENT_POINTS_BOLTARO,
-            DatabasePlayerPvEEventStats::getBoltaroStats,
             DatabasePlayerPvEEventStats::getBoltaroEventStats,
-            DatabasePlayerPvEEventStats::getBoltaroStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
                     if (option instanceof BoltarosLairOption) {
@@ -320,9 +317,7 @@ public enum GameEvents {
     },
     NARMER("Pharaoh's Revenge",
             Currencies.EVENT_POINTS_NARMER,
-            DatabasePlayerPvEEventStats::getNarmerStats,
             DatabasePlayerPvEEventStats::getNarmerEventStats,
-            DatabasePlayerPvEEventStats::getNarmerStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
                     if (option instanceof NarmersTombOption) {
@@ -529,9 +524,7 @@ public enum GameEvents {
     },
     MITHRA("Spiders Burrow",
             Currencies.EVENT_POINTS_MITHRA,
-            DatabasePlayerPvEEventStats::getMithraStats,
             DatabasePlayerPvEEventStats::getMithraEventStats,
-            DatabasePlayerPvEEventStats::getMithraStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
                     if (option instanceof SpidersDwellingOption) {
@@ -740,9 +733,7 @@ public enum GameEvents {
     },
     ILLUMINA("The Bane Of Impurities",
             Currencies.EVENT_POINTS_ILLUIMINA,
-            DatabasePlayerPvEEventStats::getIlluminaStats,
             DatabasePlayerPvEEventStats::getIlluminaEventStats,
-            DatabasePlayerPvEEventStats::getIlluminaStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
                     if (option instanceof TheBorderlineOfIllusionEvent) {
@@ -939,9 +930,7 @@ public enum GameEvents {
     },
     GARDEN_OF_HESPERIDES("Garden of Hesperides",
             Currencies.EVENT_POINTS_GARDEN_OF_HESPERIDES,
-            DatabasePlayerPvEEventStats::getGardenOfHesperidesStats,
             DatabasePlayerPvEEventStats::getGardenOfHesperidesEventStats,
-            DatabasePlayerPvEEventStats::getGardenOfHesperidesStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
                     if (option instanceof TheAcropolisOption) {
@@ -1196,9 +1185,7 @@ public enum GameEvents {
     },
     LIBRARY_ARCHIVES("Library Archives",
             Currencies.EVENT_POINTS_LIBRARY_ARCHIVES,
-            DatabasePlayerPvEEventStats::getLibraryArchivesStats,
             DatabasePlayerPvEEventStats::getLibraryArchivesEventStats,
-            DatabasePlayerPvEEventStats::getLibraryArchivesStats,
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 for (Option option : game.getOptions()) {
                     if (option instanceof GrimoiresGraveyardOption) {
@@ -1558,26 +1545,20 @@ public enum GameEvents {
 
     public final String name;
     public final Currencies currency;
-    public final Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction;
     public final Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction; // specific event stats (during a time)
-    public final Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction; // general/shared event stats
     public final TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame;
     public final List<SpendableBuyShop> shopRewards;
 
     GameEvents(
             String name,
             Currencies currency,
-            Function<DatabasePlayerPvEEventStats, AbstractDatabaseStatInformation> updateStatsFunction,
             Function<DatabasePlayerPvEEventStats, Map<Long, ? extends EventMode>> eventsStatsFunction,
-            Function<DatabasePlayerPvEEventStats, ? extends EventMode> generalEventFunction,
             TriFunction<Game, WarlordsGameTriggerWinEvent, Boolean, ? extends DatabaseGamePvEEvent> createDatabaseGame,
             List<SpendableBuyShop> shopRewards
     ) {
         this.name = name;
         this.currency = currency;
-        this.updateStatsFunction = updateStatsFunction;
         this.eventsStatsFunction = eventsStatsFunction;
-        this.generalEventFunction = generalEventFunction;
         this.createDatabaseGame = createDatabaseGame;
         this.shopRewards = shopRewards;
     }
@@ -1805,10 +1786,6 @@ public enum GameEvents {
                             pveStats.subtractCurrency(currency, rewardPrice);
                             rewardSpendable.addToPlayer(databasePlayer, rewardAmount);
 
-                            //event
-                            eventStats.getRewardsPurchased().merge(mapName, 1L, Long::sum);
-                            //event mode
-                            generalEventFunction.apply(eventStats).getRewardsPurchased().merge(mapName, 1L, Long::sum);
                             //event in event mode
                             rewardsPurchased.merge(mapName, 1L, Long::sum);
 

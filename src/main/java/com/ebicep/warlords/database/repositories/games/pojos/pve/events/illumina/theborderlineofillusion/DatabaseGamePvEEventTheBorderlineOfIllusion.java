@@ -5,8 +5,7 @@ import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.WavesCleared;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePlayerPvEEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.pve.events.DatabaseGamePvEEvent;
+import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.DatabaseGamePvEEventIllumina;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -27,10 +26,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvEEvent implements WavesCleared {
+public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> implements WavesCleared {
 
-    @Field("total_mobs_killed")
-    private int totalMobsKilled;
+
     @Field("waves_cleared")
     private int wavesCleared;
     private List<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> players = new ArrayList<>();
@@ -39,7 +37,7 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
     }
 
     public DatabaseGamePvEEventTheBorderlineOfIllusion(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
-        super(game, counted);
+        super(game, gameWinEvent, counted);
         AtomicReference<WaveDefenseOption> waveDefenseOption = new AtomicReference<>();
         AtomicReference<EventPointsOption> eventPointsOption = new AtomicReference<>();
         AtomicReference<TheBorderlineOfIllusionEvent> borderlineOfIllusionEvent = new AtomicReference<>();
@@ -71,7 +69,7 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase databaseGame, int multiplier) {
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> databaseGame, int multiplier) {
         players.forEach(databaseGamePlayerPvEEventTheBorderlineOfIllusion -> {
             DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
                     databaseGamePlayerPvEEventTheBorderlineOfIllusion,
@@ -106,12 +104,12 @@ public class DatabaseGamePvEEventTheBorderlineOfIllusion extends DatabaseGamePvE
     }
 
     @Override
-    public List<DatabaseGamePlayerPvEEvent> getPlayers() {
+    public List<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> getPlayers() {
         return new ArrayList<>(players);
     }
 
     @Override
-    public Set<? extends DatabaseGamePlayerBase> getBasePlayers() {
+    public Set<DatabaseGamePlayerPvEEventTheBorderlineOfIllusion> getBasePlayers() {
         return new HashSet<>(players);
     }
 

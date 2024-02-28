@@ -1,11 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsSpecs;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.SkillBoosts;
 
-public class DatabaseWarrior extends DatabaseBaseGeneral implements DatabaseWarlordsSpecs {
+public class DatabaseWarrior extends DatabaseBaseGeneral {
 
     private DatabaseSpecialization berserker = new DatabaseSpecialization(SkillBoosts.WOUNDING_STRIKE_BERSERKER);
     private DatabaseSpecialization defender = new DatabaseSpecialization(SkillBoosts.WOUNDING_STRIKE_DEFENDER);
@@ -15,7 +14,6 @@ public class DatabaseWarrior extends DatabaseBaseGeneral implements DatabaseWarl
         super(ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET);
     }
 
-    @Override
     public DatabaseSpecialization[] getSpecs() {
         return new DatabaseSpecialization[]{berserker, defender, revenant};
     }
