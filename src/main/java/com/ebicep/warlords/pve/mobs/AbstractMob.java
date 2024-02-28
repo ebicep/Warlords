@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.NoTarget;
+import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
@@ -532,8 +533,8 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void toggleStun(boolean stun) {
-        if (stun) {
-            //npc.getNavigator().cancelNavigation(CancelReason.PLUGIN);
+        if (stun && this instanceof Unstunnable) {
+            return;
         }
         npc.getNavigator().setPaused(stun);
     }

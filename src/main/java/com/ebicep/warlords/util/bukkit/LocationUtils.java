@@ -461,4 +461,6 @@ public class LocationUtils {
         }
     }
 
+    public record LocationXYZ(double x, double y, double z) {
+    }
 }

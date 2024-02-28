@@ -37,6 +37,19 @@ public abstract class AbstractPveAbility extends AbstractAbility {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
+    public AbstractPveAbility(
+            String name,
+            float minDamageHeal,
+            float maxDamageHeal,
+            float cooldown,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            float startCooldown
+    ) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
+    }
+
     @Override
     public void updateDescription(Player player) {
 

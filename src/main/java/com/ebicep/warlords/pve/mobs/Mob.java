@@ -392,6 +392,7 @@ public enum Mob {
             Weapons.VOID_EDGE.getItem()
     )),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
+    ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
 
 
     // Boss minions
