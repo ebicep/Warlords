@@ -108,8 +108,10 @@ public class StatsLeaderboard {
     }
 
     public void resetHolograms(PlayersCollections collection, Predicate<DatabasePlayer> externalFilter, String categoryName, String subTitle) {
-        resetSortedPlayers(collection, externalFilter);
-        createLeaderboard(collection, categoryName, subTitle);
+        Warlords.newChain()
+                .async(() -> resetSortedPlayers(collection, externalFilter))
+                .sync(() -> createLeaderboard(collection, categoryName, subTitle))
+                .execute();
     }
 
     public void resetSortedPlayers(PlayersCollections collections, Predicate<DatabasePlayer> externalFilter) {

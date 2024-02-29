@@ -38,12 +38,12 @@ public class StatsLeaderboardCommand extends BaseCommand {
     @Subcommand("reload")
     public void reload(CommandIssuer issuer, @Optional PlayersCollections collection) {
         if (collection == null) {
-            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_COLLECTIONS) {
-                StatsLeaderboardManager.resetLeaderboards(activeCollection, false);
+            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
+                StatsLeaderboardManager.resetLeaderboards(activeCollection, null);
             }
             ChatChannels.sendDebugMessage(issuer, Component.text("All leaderboards reloaded", NamedTextColor.GREEN));
         } else {
-            StatsLeaderboardManager.resetLeaderboards(collection, false);
+            StatsLeaderboardManager.resetLeaderboards(collection, null);
             ChatChannels.sendDebugMessage(issuer, Component.text(collection.name + " leaderboards reloaded", NamedTextColor.GREEN));
         }
     }

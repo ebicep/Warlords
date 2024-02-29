@@ -36,9 +36,7 @@ public class StatsLeaderboardCategory<
     }
 
     public void resetLeaderboards(PlayersCollections collection, Predicate<DatabasePlayer> externalFilter, String subTitle) {
-        for (StatsLeaderboard statsLeaderboard : getStatsLeaderboards()) {
-            statsLeaderboard.resetHolograms(collection, externalFilter, getShortName(), subTitle);
-        }
+        getStatsLeaderboards().parallelStream().forEach(statsLeaderboard -> statsLeaderboard.resetHolograms(collection, externalFilter, getShortName(), subTitle));
     }
 
     public List<List<Hologram>> getCollectionHologramPaged(PlayersCollections collections) {

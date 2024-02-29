@@ -16,6 +16,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
@@ -36,6 +37,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -56,6 +58,8 @@ public class StatsLeaderboardManager {
             put(value, value.createStatsLeaderboardGameType.get());
         }
     }};
+
+    public static final Map<PlayersCollections, Long> LAST_BOARD_RESETS = new HashMap<>();
 
     public static boolean enabled = true;
     public static boolean loaded = false;
@@ -91,7 +95,7 @@ public class StatsLeaderboardManager {
             AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
             Instant minus = Instant.now().minus(10, ChronoUnit.DAYS);
-            for (PlayersCollections value : PlayersCollections.ACTIVE_COLLECTIONS) {
+            for (PlayersCollections value : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.find(value.getQuery(), value))
                         .syncLast((databasePlayers) -> {
@@ -129,7 +133,7 @@ public class StatsLeaderboardManager {
                                     concurrentHashMap.put(databasePlayer.getUuid(), databasePlayer);
                                 }
                             }
-                            resetLeaderboards(value, true);
+                            resetLeaderboards(value, null);
                             loadedBoards.getAndIncrement();
                         }).execute();
             }
@@ -141,7 +145,7 @@ public class StatsLeaderboardManager {
 
                 @Override
                 public void run() {
-                    if (loadedBoards.get() == PlayersCollections.ACTIVE_COLLECTIONS.size()) {
+                    if (loadedBoards.get() >= PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS.size()) {
                         loaded = true;
 
                         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loaded leaderboards in " + ((System.nanoTime() - startTime) / 1000000) + "ms");
@@ -172,9 +176,9 @@ public class StatsLeaderboardManager {
      * All players in PLAYERS_TO_ADD become the new leaderboard players
      *
      * @param playersCollections The collection of players to reload
-     * @param init               If this is the first time the leaderboards are being loaded
+     * @param gameMode
      */
-    public static void resetLeaderboards(PlayersCollections playersCollections, boolean init) {
+    public static void resetLeaderboards(PlayersCollections playersCollections, @Nullable GameMode gameMode) {
         if (!Warlords.holographicDisplaysEnabled) {
             return;
         }
@@ -184,8 +188,20 @@ public class StatsLeaderboardManager {
         if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {
             return;
         }
-
-        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> statsLeaderboardGameType.resetLeaderboards(playersCollections));
+        if (!PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS.contains(playersCollections)) {
+            return;
+        }
+        // boards can only be reset every 5 minutes
+        if (System.currentTimeMillis() - LAST_BOARD_RESETS.getOrDefault(playersCollections, 0L) < 1000 * 60 * 5) {
+            return;
+        }
+        LAST_BOARD_RESETS.put(playersCollections, System.currentTimeMillis());
+        ChatUtils.MessageType.LEADERBOARDS.sendMessage("Resetting leaderboards for " + playersCollections.name + " (" + gameMode + ")");
+        STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> {
+            if (gameMode == null || gameType.shouldUpdateLeaderboard(gameMode)) {
+                statsLeaderboardGameType.resetLeaderboards(playersCollections);
+            }
+        });
         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Loaded " + playersCollections.name +
                 "(" + DatabaseManager.CACHED_PLAYERS.get(playersCollections).values().size() + ") leaderboards");
         if (playersCollections == PlayersCollections.LIFETIME) {
@@ -195,12 +211,6 @@ public class StatsLeaderboardManager {
             }
             EventsLeaderboardManager.EVENT_LEADERBOARDS.forEach((eventLeaderboard, s) -> eventLeaderboard.resetHolograms(null, "", s));
         }
-
-
-//        if (playersCollections == PlayersCollections.SEASON_5 && init) {
-//            SRCalculator.databasePlayerCache = databasePlayers;
-//            SRCalculator.recalculateSR();
-//        }
     }
 
     public static StatsLeaderboardCategory<?, ?, ?> getLeaderboardCategoryFromUUID(UUID uuid) {
@@ -478,11 +488,36 @@ public class StatsLeaderboardManager {
     }
 
     public enum GameType {
-        ALL("All Modes (Excluding PvE)", "", StatsLeaderboardGeneral::new),
-        CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new),
-        PVE("PvE", "PvE", StatsLeaderboardPvE::new),
-        WAVE_DEFENSE("Wave Defense", "Wave Defense", StatsLeaderboardWaveDefense::new),
-        ONSLAUGHT("Onslaught", "Onslaught", StatsLeaderboardOnslaught::new),
+        ALL("All Modes (Excluding PvE)", "", StatsLeaderboardGeneral::new) {
+            @Override
+            public boolean shouldUpdateLeaderboard(GameMode gameMode) {
+                return !GameMode.isPvE(gameMode);
+            }
+        },
+        CTF("Capture The Flag", "CTF", StatsLeaderboardCTF::new) {
+            @Override
+            public boolean shouldUpdateLeaderboard(GameMode gameMode) {
+                return gameMode == GameMode.CAPTURE_THE_FLAG;
+            }
+        },
+        PVE("PvE", "PvE", StatsLeaderboardPvE::new) {
+            @Override
+            public boolean shouldUpdateLeaderboard(GameMode gameMode) {
+                return GameMode.isPvE(gameMode);
+            }
+        },
+        WAVE_DEFENSE("Wave Defense", "Wave Defense", StatsLeaderboardWaveDefense::new) {
+            @Override
+            public boolean shouldUpdateLeaderboard(GameMode gameMode) {
+                return GameMode.isWaveDefense(gameMode);
+            }
+        },
+        ONSLAUGHT("Onslaught", "Onslaught", StatsLeaderboardOnslaught::new) {
+            @Override
+            public boolean shouldUpdateLeaderboard(GameMode gameMode) {
+                return gameMode == GameMode.ONSLAUGHT;
+            }
+        },
 
         ;
 
@@ -519,6 +554,8 @@ public class StatsLeaderboardManager {
             this.shortName = shortName;
             this.createStatsLeaderboardGameType = createStatsLeaderboardGameType;
         }
+
+        public abstract boolean shouldUpdateLeaderboard(GameMode gameMode);
     }
 
 }
