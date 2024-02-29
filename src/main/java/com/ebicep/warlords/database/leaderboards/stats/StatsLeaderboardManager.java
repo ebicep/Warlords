@@ -199,6 +199,7 @@ public class StatsLeaderboardManager {
         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Resetting leaderboards for " + playersCollections.name + " (" + gameMode + ")");
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> {
             if (gameMode == null || gameType.shouldUpdateLeaderboard(gameMode)) {
+                ChatUtils.MessageType.LEADERBOARDS.sendMessage("GameType: " + gameType.name + " - " + playersCollections.name);
                 statsLeaderboardGameType.resetLeaderboards(playersCollections);
             }
         });
