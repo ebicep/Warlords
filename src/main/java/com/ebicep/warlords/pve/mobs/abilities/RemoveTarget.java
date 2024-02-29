@@ -18,7 +18,6 @@ public class RemoveTarget extends AbstractPveAbility {
 
     @Override
     public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
         if (wp instanceof WarlordsNPC warlordsNPC) {
             warlordsNPC.getMob().removeTarget();
         }
