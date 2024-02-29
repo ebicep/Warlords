@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
 import co.aikar.commands.CommandIssuer;
+import co.aikar.taskchain.TaskChain;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
@@ -221,16 +222,15 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 }
                 //only add game if comps
                 //if (databaseGame.isPrivate) {
-                Warlords.newChain()
-                        .delay(4, TimeUnit.SECONDS)
-                        .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
-                        .sync(() -> {
-                            for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
-                                StatsLeaderboardManager.resetLeaderboards(activeCollection, databaseGame.getGameMode());
-                            }
-                            StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
-                        })
-                        .execute();
+                TaskChain<?> taskChain = Warlords.newChain()
+                                                 .delay(4, TimeUnit.SECONDS)
+                                                 .async(() -> DatabaseManager.gameService.create(databaseGame, collection));
+                for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
+                    taskChain.delay(10, TimeUnit.SECONDS)
+                             .sync(() -> StatsLeaderboardManager.resetLeaderboards(activeCollection, databaseGame.getGameMode()));
+                }
+                taskChain.sync(StatsLeaderboardManager::setLeaderboardHologramVisibilityToAll)
+                         .execute();
                 //}
             }
         } catch (Exception e) {
@@ -336,6 +336,8 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
     public void setExactDate(Instant exactDate) {
         this.exactDate = exactDate;
     }
+
+    public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);
 
     private static int getGameBefore(int currentGame) {
         if (currentGame <= 0) {
@@ -464,8 +466,6 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
     }
 
     public abstract Set<T> getBasePlayers();
-
-    public abstract DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player);
 
     public void createHolograms() {
         List<Hologram> holograms = new ArrayList<>();

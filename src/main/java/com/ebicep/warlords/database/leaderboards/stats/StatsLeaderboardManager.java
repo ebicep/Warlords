@@ -38,8 +38,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nullable;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -94,7 +92,6 @@ public class StatsLeaderboardManager {
             //caching all sorted players
             AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
-            Instant minus = Instant.now().minus(10, ChronoUnit.DAYS);
             for (PlayersCollections value : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.find(value.getQuery(), value))
