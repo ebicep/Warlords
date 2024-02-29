@@ -36,6 +36,8 @@ public class WarlordsNPC extends WarlordsEntity {
     private final MobHologram mobHologram;
     private float minMeleeDamage;
     private float maxMeleeDamage;
+    protected float meleeCritChance = 0;
+    protected float meleeCritMultiplier = 100;
     protected NPC npc;
     protected AbstractMob mob;
     protected Component mobNamePrefix = Component.empty();
@@ -53,6 +55,8 @@ public class WarlordsNPC extends WarlordsEntity {
             float walkSpeed,
             float minMeleeDamage,
             float maxMeleeDamage,
+            float meleeCritChance,
+            float meleeCritMultiplier,
             AbstractMob warlordsMob,
             AbstractPlayerClass playerClass,
             MobHologram mobHologram
@@ -72,6 +76,8 @@ public class WarlordsNPC extends WarlordsEntity {
         }
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
+        this.meleeCritChance = meleeCritChance;
+        this.meleeCritMultiplier = meleeCritMultiplier;
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
         this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
         updateEntity();
@@ -131,6 +137,14 @@ public class WarlordsNPC extends WarlordsEntity {
 
     public void setMaxMeleeDamage(int maxMeleeDamage) {
         this.maxMeleeDamage = maxMeleeDamage;
+    }
+
+    public float getMeleeCritChance() {
+        return meleeCritChance;
+    }
+
+    public float getMeleeCritMultiplier() {
+        return meleeCritMultiplier;
     }
 
     public NPC getNpc() {

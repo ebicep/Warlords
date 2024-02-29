@@ -62,6 +62,8 @@ public abstract class TowerDefenseMob extends AbstractMob {
                 walkSpeed,
                 minMeleeDamage,
                 maxMeleeDamage,
+                meleeCritChance,
+                meleeCritMutiplier,
                 this,
                 playerClass,
                 new MobHologram.TextDisplayHologram() {

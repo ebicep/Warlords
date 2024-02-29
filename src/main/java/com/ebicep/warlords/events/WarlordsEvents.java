@@ -339,8 +339,8 @@ public class WarlordsEvents implements Listener {
                             "",
                             warlordsNPC.getMinMeleeDamage(),
                             warlordsNPC.getMaxMeleeDamage(),
-                            0,
-                            100,
+                            warlordsNPC.getMeleeCritChance(),
+                            warlordsNPC.getMeleeCritMultiplier(),
                             EnumSet.of(InstanceFlags.NO_HIT_SOUND)
                     );
                 }

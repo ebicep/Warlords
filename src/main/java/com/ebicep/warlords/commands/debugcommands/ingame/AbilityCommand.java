@@ -26,6 +26,7 @@ public class AbilityCommand extends BaseCommand {
     public void test(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.getSpec().getAbilities().clear();
         warlordsPlayer.getSpec().getAbilities().add(new Enavuris.EnderStones());
+        warlordsPlayer.getSpec().getAbilities().add(new Enavuris.Imprisonment());
         warlordsPlayer.updateInventory(false);
     }
 

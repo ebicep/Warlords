@@ -71,6 +71,8 @@ public abstract class AbstractMob implements Mob {
     protected final float walkSpeed;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    protected final float meleeCritChance;
+    protected final float meleeCritMutiplier;
     protected Location spawnLocation;
     protected NPC npc;
     protected EntityEquipment equipment;
@@ -93,6 +95,32 @@ public abstract class AbstractMob implements Mob {
             float maxMeleeDamage,
             AbstractAbility... abilities
     ) {
+        this(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                0,
+                100,
+                abilities
+        );
+    }
+
+    public AbstractMob(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            int damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            float meleeCritChance,
+            float meleeCritMultiplier,
+            AbstractAbility... abilities
+    ) {
         this.spawnLocation = spawnLocation;
         this.name = name;
         com.ebicep.warlords.pve.mobs.Mob mobRegistry = getMobRegistry();
@@ -103,6 +131,8 @@ public abstract class AbstractMob implements Mob {
         this.walkSpeed = walkSpeed;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
+        this.meleeCritChance = meleeCritChance;
+        this.meleeCritMutiplier = meleeCritMultiplier;
         this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
     }
 
@@ -178,6 +208,8 @@ public abstract class AbstractMob implements Mob {
                 walkSpeed,
                 minMeleeDamage,
                 maxMeleeDamage,
+                meleeCritChance,
+                meleeCritMutiplier,
                 this,
                 playerClass,
                 new MobHologram.ArmorStandHologram() {

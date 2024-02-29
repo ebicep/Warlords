@@ -25,7 +25,9 @@ import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Instrument;
 import org.bukkit.Location;
+import org.bukkit.Note;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -37,10 +39,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -67,7 +66,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     @Nullable
     private static WarlordsEntity getPlayer(WarlordsEntity mob, Comparator<WarlordsEntity> comparator) {
         return PlayerFilter.playingGame(mob.getGame())
-                           .enemiesOf(mob)
+                           .aliveEnemiesOf(mob)
                            .sorted(comparator)
                            .findFirstOrNull();
     }
@@ -164,22 +163,6 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     50,
                     false
             );
-        }
-
-        @Override
-        public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-            new GameRunnable(shooter.getGame()) {
-                int fired = 0;
-
-                @Override
-                public void run() {
-                    fire(shooter, shooter.getEyeLocation());
-                    if (++fired >= 3) {
-                        cancel();
-                    }
-                }
-            }.runTaskTimer(0, 10);
-            return true;
         }
 
         @Override
@@ -282,6 +265,22 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         }
 
         @Override
+        public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+            new GameRunnable(shooter.getGame()) {
+                int fired = 0;
+
+                @Override
+                public void run() {
+                    fire(shooter, shooter.getEyeLocation());
+                    if (++fired >= 3) {
+                        cancel();
+                    }
+                }
+            }.runTaskTimer(0, 10);
+            return true;
+        }
+
+        @Override
         protected void onSpawn(@Nonnull InternalProjectile projectile) {
             super.onSpawn(projectile);
             Location spawn = projectile.getCurrentLocation().clone().add(0, -.5, 0);
@@ -352,6 +351,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private WarlordsEntity caster;
         @Nullable
         private WarlordsEntity imprisonedPlayer;
+        private final List<AbstractMob> cursedPsions = new ArrayList<>();
         private int imprisonTicks = 0;
 
         public Imprisonment() {
@@ -372,7 +372,21 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 return false;
             }
             LocationUtils.LocationXYZ randomCageLocation = CAGE_LOCATIONS[ThreadLocalRandom.current().nextInt(CAGE_LOCATIONS.length)];
-            imprisonedPlayer.teleport(new Location(wp.getWorld(), randomCageLocation.x(), randomCageLocation.y(), randomCageLocation.z()));
+            Location cageLocation = new Location(wp.getWorld(), randomCageLocation.x(), randomCageLocation.y(), randomCageLocation.z());
+            Location floorLocation = LocationUtils.getGroundLocation(cageLocation.clone().add(0, -2, 0));
+            int playerCount = pveOption.playerCount();
+            int spawnAmount = 3;
+            if (playerCount <= 3) {
+                spawnAmount = 1;
+            } else if (playerCount <= 5) {
+                spawnAmount = 2;
+            }
+            for (int i = 0; i < spawnAmount; i++) {
+                AbstractMob psion = Mob.CURSED_PSION.createMob(floorLocation);
+                pveOption.spawnNewMob(psion);
+                cursedPsions.add(psion);
+            }
+            imprisonedPlayer.teleport(cageLocation);
             imprisonedPlayer.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 10 * 20, 1, false, false, false));
             return true;
         }
@@ -383,10 +397,27 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             if (imprisonedPlayer == null) {
                 return;
             }
-            if (imprisonTicks++ >= IMPRISONMENT_TICKS) {
-                imprisonedPlayer.die(caster);
-                imprisonTicks = 0;
+            if (cursedPsions.stream().allMatch(mob -> mob.getWarlordsNPC().isDead())) {
+                Utils.playGlobalSound(imprisonedPlayer.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 2, .5f);
+                reset();
+                return;
             }
+            if (imprisonTicks >= IMPRISONMENT_TICKS) {
+                Utils.playGlobalSound(imprisonedPlayer.getLocation(), Sound.BLOCK_ANVIL_PLACE, 2, .1f);
+                imprisonedPlayer.die(caster);
+                reset();
+            } else if (imprisonTicks > IMPRISONMENT_TICKS - 40 && imprisonTicks % 3 == 0) {
+                Utils.playGlobalSound(imprisonedPlayer.getLocation(), Instrument.PIANO, new Note(24));
+            } else if (imprisonTicks % 20 == 0) {
+                Utils.playGlobalSound(imprisonedPlayer.getLocation(), Instrument.PIANO, new Note(imprisonTicks / 10 + 4));
+            }
+            imprisonTicks++;
+        }
+
+        private void reset() {
+            imprisonedPlayer = null;
+            cursedPsions.clear();
+            imprisonTicks = 0;
         }
     }
 

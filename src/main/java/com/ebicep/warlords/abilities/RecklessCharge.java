@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.flags.Unimmobilizable;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.RecklessChargeBranch;
@@ -142,7 +143,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                                    }
                                                });
 
-                                    if (otherPlayer instanceof WarlordsNPC warlordsNPC) {
+                                    if (otherPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof Unimmobilizable)) {
                                         warlordsNPC.setStunTicks(getStunTimeInTicks());
                                     } else if (otherPlayer instanceof WarlordsPlayer warlordsPlayer) {
                                         warlordsPlayer.stun();
@@ -157,7 +158,6 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                                 Component.text("IMMOBILIZED", NamedTextColor.LIGHT_PURPLE),
                                                 Title.Times.times(Ticks.duration(0), Ticks.duration(stunTimeInTicks), Ticks.duration(0))
                                         ));
-
                                     }
                                 } else if ((pveMasterUpgrade || pveMasterUpgrade2) && otherPlayer.isTeammateAlive(wp)) {
                                     otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
