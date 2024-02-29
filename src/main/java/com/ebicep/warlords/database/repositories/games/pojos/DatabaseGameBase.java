@@ -226,7 +226,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                         .async(() -> DatabaseManager.gameService.create(databaseGame, collection))
                         .sync(() -> {
                             for (PlayersCollections activeCollection : PlayersCollections.ACTIVE_LEADERBOARD_COLLECTIONS) {
-                                StatsLeaderboardManager.resetLeaderboards(activeCollection, null);
+                                StatsLeaderboardManager.resetLeaderboards(activeCollection, databaseGame.getGameMode());
                             }
                             StatsLeaderboardManager.setLeaderboardHologramVisibilityToAll();
                         })
