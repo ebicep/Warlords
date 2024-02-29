@@ -254,7 +254,7 @@ public abstract class AbstractAbility implements AbilityIcon {
             itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
                                          .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
         }
-        if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
+        if (getCritChance() > 0 && getCritMultiplier() != 100) {
             itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
                                          .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)));
             itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)

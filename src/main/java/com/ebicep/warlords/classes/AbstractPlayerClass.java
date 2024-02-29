@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -138,16 +137,7 @@ public abstract class AbstractPlayerClass {
                 return;
             }
 
-            if (slot == 0) {
-                if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
-                    player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
-                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                } else {
-                    onRightClickAbility(ability, wp, player);
-                }
-            } else {
-                onRightClickAbility(ability, wp, player);
-            }
+            onRightClickAbility(ability, wp, player, slot);
 
             if (player.getVehicle() != null) {
                 player.getVehicle().remove();
@@ -159,7 +149,7 @@ public abstract class AbstractPlayerClass {
         }
     }
 
-    public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player) {
+    public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player, int slot) {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD) {
                 ability.runSecondAbilities();
@@ -168,14 +158,14 @@ public abstract class AbstractPlayerClass {
             return;
         }
         if (player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
-            WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability);
+            WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability, slot);
             Bukkit.getPluginManager().callEvent(pre);
             if (pre.isCancelled()) {
                 return;
             }
             boolean shouldApplyCooldown = ability.onActivate(wp);
             if (shouldApplyCooldown) {
-                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability);
+                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability, slot);
                 Bukkit.getPluginManager().callEvent(post);
 
                 wp.subtractEnergy(name, ability.getEnergyCost(), false);

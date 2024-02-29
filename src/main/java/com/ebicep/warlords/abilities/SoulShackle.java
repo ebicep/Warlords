@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -20,6 +21,8 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -28,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
 
@@ -178,7 +182,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
                     Title.Times.times(Ticks.duration(0), Ticks.duration(tickDuration), Ticks.duration(0))
             ));
         }
-        shackleTarget.getCooldownManager().addRegularCooldown(
+        shackleTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Shackle Silence",
                 "SILENCE",
                 SoulShackle.class,
@@ -217,7 +221,23 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
                         }
                     }
                 })
-        );
+        ) {
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+                    @EventHandler
+                    public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
+                        if (!Objects.equals(event.getWarlordsEntity(), shackleTarget) || event.getSlot() != 0) {
+                            return;
+                        }
+                        event.setCancelled(true);
+                        Player player = event.getPlayer();
+                        player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
+                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                    }
+                };
+            }
+        });
     }
 
     @Override

@@ -350,11 +350,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     }
 
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        playSound(projectile);
+    }
+
+    protected void playSound(@Nonnull InternalProjectile projectile) {
         final String activationSound = getActivationSound();
-        final float soundVolume = getSoundVolume();
-        final float soundPitch = getSoundPitch();
         if (activationSound != null) {
-            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, soundVolume, soundPitch);
+            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, getSoundVolume(), getSoundPitch());
         }
     }
 

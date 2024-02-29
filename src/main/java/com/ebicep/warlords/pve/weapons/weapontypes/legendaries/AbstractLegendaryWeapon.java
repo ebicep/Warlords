@@ -555,7 +555,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             return;
         }
         if (!wp.getGame().isFrozen()) {
-            wp.getSpec().onRightClickAbility(getAbility(), wp, player);
+            wp.getSpec().onRightClickAbility(getAbility(), wp, player, upgradeLevel);
         }
         if (hotkeyMode) {
             player.getInventory().setHeldItemSlot(0);

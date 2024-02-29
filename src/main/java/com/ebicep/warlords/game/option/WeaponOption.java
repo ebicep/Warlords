@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -116,20 +115,12 @@ public class WeaponOption implements Option {
         if (weaponSkin == null) {
             return;
         }
-        ItemBuilder itemBuilder = new ItemBuilder(weaponSkin.getItem())
+        ItemBuilder itemBuilder = new ItemBuilder(weapon.getItem(weaponSkin.getItem()))
                 .name(Component.text(weapon.getName(), NamedTextColor.GREEN)
                                .append(Component.text(" - ", NamedTextColor.GRAY))
                                .append(Component.text("Right-Click!", NamedTextColor.YELLOW)))
                 .unbreakable();
 
-        itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
-                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getEnergyCostValue()), NamedTextColor.YELLOW)));
-        itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
-                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getCritChance()) + "%", NamedTextColor.RED)));
-        itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
-                                     .append(Component.text(NumberFormat.formatOptionalHundredths(weapon.getCritMultiplier()) + "%", NamedTextColor.RED)));
-        itemBuilder.addLore(Component.empty());
-        itemBuilder.addLore(weapon.getDescription());
         itemBuilder.addLore(Component.empty());
         itemBuilder.addLore(Component.textOfChildren(
                         Component.text("LEFT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),

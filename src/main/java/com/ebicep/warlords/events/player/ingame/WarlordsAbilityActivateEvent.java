@@ -12,12 +12,14 @@ public abstract class WarlordsAbilityActivateEvent extends AbstractWarlordsEntit
 
     private final Player player;
     private final AbstractAbility ability;
+    private final int slot;
     private boolean cancelled;
 
-    public WarlordsAbilityActivateEvent(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability) {
+    public WarlordsAbilityActivateEvent(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability, int slot) {
         super(warlordsEntity);
         this.player = player;
         this.ability = ability;
+        this.slot = slot;
     }
 
     public Player getPlayer() {
@@ -26,6 +28,10 @@ public abstract class WarlordsAbilityActivateEvent extends AbstractWarlordsEntit
 
     public AbstractAbility getAbility() {
         return ability;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 
     @Override
@@ -42,8 +48,8 @@ public abstract class WarlordsAbilityActivateEvent extends AbstractWarlordsEntit
 
         private static final HandlerList handlers = new HandlerList();
 
-        public Pre(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability) {
-            super(warlordsEntity, player, ability);
+        public Pre(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability, int slot) {
+            super(warlordsEntity, player, ability, slot);
         }
 
         @Nonnull
@@ -62,8 +68,8 @@ public abstract class WarlordsAbilityActivateEvent extends AbstractWarlordsEntit
 
         private static final HandlerList handlers = new HandlerList();
 
-        public Post(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability) {
-            super(warlordsEntity, player, ability);
+        public Post(@Nonnull WarlordsEntity warlordsEntity, Player player, AbstractAbility ability, int slot) {
+            super(warlordsEntity, player, ability, slot);
         }
 
         @Nonnull

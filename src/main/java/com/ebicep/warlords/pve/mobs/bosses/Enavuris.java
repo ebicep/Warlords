@@ -1,34 +1,45 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
+import com.ebicep.warlords.pve.mobs.abilities.PvEAbility;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.RandomCollection;
+import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -92,6 +103,21 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     }
 
     @Override
+    public Mob getMobRegistry() {
+        return Mob.ENAVURIS;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("jowiudnajkksjbciu", NamedTextColor.DARK_PURPLE);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.LIGHT_PURPLE;
+    }
+
+    @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
@@ -120,22 +146,10 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         }
     }
 
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.LIGHT_PURPLE;
-    }
+    public static class EnderStones extends AbstractProjectile implements PvEAbility {
 
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.ENAVURIS;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("jowiudnajkksjbciu", NamedTextColor.DARK_PURPLE);
-    }
-
-    private static class EnderStones extends AbstractPveAbility {
+        private final int radius = 3;
+        private PveOption pveOption;
 
         public EnderStones() {
             super(
@@ -146,18 +160,192 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     50,
                     20,
                     180,
-                    0
+                    2,
+                    50,
+                    false
             );
         }
 
         @Override
-        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            // TODO convert to projectile
+        public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+            new GameRunnable(shooter.getGame()) {
+                int fired = 0;
+
+                @Override
+                public void run() {
+                    fire(shooter, shooter.getEyeLocation());
+                    if (++fired >= 3) {
+                        cancel();
+                    }
+                }
+            }.runTaskTimer(0, 10);
             return true;
+        }
+
+        @Override
+        public void updateDescription(Player player) {
+
+        }
+
+        @Override
+        public List<Pair<String, String>> getAbilityInfo() {
+            return null;
+        }
+
+        @Override
+        protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
+
+        }
+
+        @Override
+        protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
+            WarlordsEntity shooter = projectile.getShooter();
+            Location startingLocation = projectile.getStartingLocation();
+            Location currentLocation = projectile.getCurrentLocation();
+
+//            Utils.playGlobalSound(currentLocation, "mage.fireball.impact", 2, 1); TODO
+
+            int playersHit = 0;
+
+            for (WarlordsEntity nearEntity : PlayerFilter
+                    .entitiesAround(currentLocation, radius, radius, radius)
+                    .aliveEnemiesOf(shooter)
+                    .excluding(projectile.getHit())
+            ) {
+                getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
+                playersHit++;
+
+                nearEntity.addDamageInstance(
+                        shooter,
+                        name,
+                        minDamageHeal,
+                        maxDamageHeal,
+                        critChance,
+                        critMultiplier
+                );
+
+                if (Objects.equals(hit, nearEntity)) {
+                    new CooldownFilter<>(nearEntity, RegularCooldown.class)
+                            .filterCooldownName(name + " Silence")
+                            .findAny()
+                            .ifPresentOrElse(
+                                    cd -> cd.setTicksLeft(cd.getTicksLeft() + 30),
+                                    () -> nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            name + " Silence",
+                                            "SILENCE",
+                                            EnderStones.class,
+                                            null,
+                                            shooter,
+                                            CooldownTypes.DEBUFF,
+                                            cooldownManager -> {
+                                            },
+                                            30
+                                    ) {
+                                        @Override
+                                        protected Listener getListener() {
+                                            return new Listener() {
+                                                @EventHandler
+                                                public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
+                                                    if (!Objects.equals(event.getWarlordsEntity(), nearEntity) || event.getSlot() != 0) {
+                                                        return;
+                                                    }
+                                                    event.setCancelled(true);
+                                                    Player player = event.getPlayer();
+                                                    player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
+                                                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                                                }
+                                            };
+                                        }
+                                    })
+                            );
+                }
+                nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name + " Cripple",
+                        "CRIP",
+                        EnderStones.class,
+                        null,
+                        shooter,
+                        CooldownTypes.DEBUFF,
+                        cooldownManager -> {
+                        },
+                        3 * 20
+                ) {
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        return currentDamageValue * .75f;
+                    }
+                });
+            }
+
+
+            return playersHit;
+        }
+
+        @Override
+        protected void onSpawn(@Nonnull InternalProjectile projectile) {
+            super.onSpawn(projectile);
+            Location spawn = projectile.getCurrentLocation().clone().add(0, -.5, 0);
+            DragonFireball dragonFireball = projectile.getWorld().spawn(spawn, DragonFireball.class);
+            ArmorStand armorStand = Utils.spawnArmorStand(spawn.clone(), stand -> {
+                stand.setMarker(true);
+                stand.addPassenger(dragonFireball);
+            });
+            projectile.addTask(new InternalProjectileTask() {
+                @Override
+                public void run(InternalProjectile projectile) {
+                    armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
+                            PlayerTeleportEvent.TeleportCause.PLUGIN,
+                            TeleportFlag.EntityState.RETAIN_PASSENGERS
+                    );
+                }
+
+                @Override
+                public void onDestroy(InternalProjectile projectile) {
+                    armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
+                            PlayerTeleportEvent.TeleportCause.PLUGIN,
+                            TeleportFlag.EntityState.RETAIN_PASSENGERS
+                    );
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            armorStand.remove();
+                            dragonFireball.remove();
+                        }
+                    }.runTaskLater(Warlords.getInstance(), 3); // without delay, appears to remove before hitting player/ground
+
+                }
+            });
+        }
+
+        @Nullable
+        @Override
+        protected String getActivationSound() {
+            return Sound.ENTITY_ENDER_DRAGON_SHOOT.getKey().getKey();
+        }
+
+        @Override
+        protected float getSoundVolume() {
+            return 1;
+        }
+
+        @Override
+        protected float getSoundPitch() {
+            return 1;
+        }
+
+        @org.jetbrains.annotations.Nullable
+        @Override
+        public PveOption getPveOption() {
+            return pveOption;
+        }
+
+        @Override
+        public void setPveOption(PveOption pveOption) {
+            this.pveOption = pveOption;
         }
     }
 
-    private static class Imprisonment extends AbstractPveAbility {
+    public static class Imprisonment extends AbstractPveAbility {
 
         private static final int IMPRISONMENT_TICKS = 10 * 20;
 
@@ -185,7 +373,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             }
             LocationUtils.LocationXYZ randomCageLocation = CAGE_LOCATIONS[ThreadLocalRandom.current().nextInt(CAGE_LOCATIONS.length)];
             imprisonedPlayer.teleport(new Location(wp.getWorld(), randomCageLocation.x(), randomCageLocation.y(), randomCageLocation.z()));
-            imprisonedPlayer.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 10 * 20, 1, false, false, false))
+            imprisonedPlayer.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 10 * 20, 1, false, false, false));
             return true;
         }
 
@@ -202,7 +390,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         }
     }
 
-    private static class VowsOfTheEnd extends AbstractPveAbility {
+    public static class VowsOfTheEnd extends AbstractPveAbility {
 
         private int maxTargets = 1;
 
@@ -240,7 +428,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     15 * 20,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 100 == 0) {
-                            Debuff randomDebuff = Debuff.RANDOM_DEBUFF.next();
+                            Debuff randomDebuff = Debuff.getRandomDebuff();
                             currentDebuff.set(randomDebuff);
                             if (randomDebuff == null) {
                                 return;
@@ -280,7 +468,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     if (currentDebuff.get() != Debuff.LEECH) {
                         return;
                     }
-                    float healingMultiplier = .25f
+                    float healingMultiplier = .25f;
                     float healValue = currentDamageValue * healingMultiplier;
                     event.getAttacker().addHealingInstance(
                             wp,
@@ -312,13 +500,11 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
 
             ;
 
-            public static final RandomCollection<Debuff> RANDOM_DEBUFF = new RandomCollection<Debuff>()
-                    .add(25, SLOW)
-                    .add(25, WOUND)
-                    .add(25, CRIPPLE)
-                    .add(15, DARKNESS)
-                    .add(15, SILENCE)
-                    .add(15, LEECH);
+            public static final Debuff[] VALUES = values();
+
+            public static Debuff getRandomDebuff() {
+                return VALUES[ThreadLocalRandom.current().nextInt(VALUES.length)];
+            }
         }
 
     }
