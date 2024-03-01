@@ -211,17 +211,12 @@ public class MobCommand extends BaseCommand {
 
     @Subcommand("noai")
     public void noAi(@Conditions("requireGame:gamemode=PVE") Player player, Boolean ai) {
-        for (Option option : Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().getOptions()) {
-            if (option instanceof PveOption pveOption) {
-                pveOption.getMobs().forEach(mob -> mob.toggleStun(ai));
-                ChatChannels.sendDebugMessage(player,
-                        Component.text("Set All Mob NoAI to ", NamedTextColor.GREEN)
-                                 .append(Component.text(ai, NamedTextColor.YELLOW))
-                                 .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
-                );
-                return;
-            }
-        }
+        SPAWNED_MOBS.forEach(mob -> mob.getNpc().getNavigator().setPaused(ai));
+        ChatChannels.sendDebugMessage(player,
+                Component.text("Set All Mob NoAI to ", NamedTextColor.GREEN)
+                         .append(Component.text(ai, NamedTextColor.YELLOW))
+                         .append(Component.text(" for " + SPAWNED_MOBS.size() + " mobs"))
+        );
     }
 
     @Subcommand("fakeplay")

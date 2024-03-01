@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.customentities.nms.pve.CustomBat;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -29,9 +30,11 @@ import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Note;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -71,6 +74,9 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                            .findFirstOrNull();
     }
 
+    @Nullable
+    private CustomBat leashHolder = null;
+
     public Enavuris(Location spawnLocation) {
         super(spawnLocation,
                 "Enavuris",
@@ -98,6 +104,22 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage
+//                new EnderStones(),
+//                new Imprisonment(),
+//                new VowsOfTheEnd(),
+//                new SpawnMobAbility(12, Mob.ENAVURITE) {
+//                    @Override
+//                    public int getSpawnAmount() {
+//                        int playerCount = pveOption.playerCount();
+//                        if (playerCount <= 3) {
+//                            return 3;
+//                        }
+//                        if (playerCount <= 5) {
+//                            return 6;
+//                        }
+//                        return 8;
+//                    }
+//                }
         );
     }
 
@@ -120,11 +142,35 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
+        createLeashHolder();
+
+        int playerCount = pveOption.playerCount();
+        int spawnAmount = 7;
+        if (playerCount <= 3) {
+            spawnAmount = 3;
+        } else if (playerCount <= 5) {
+            spawnAmount = 5;
+        }
+        for (int i = 0; i < spawnAmount; i++) {
+            option.spawnNewMob(Mob.ENAVURITE.createMob(option.getRandomSpawnLocation(warlordsNPC)));
+        }
+
     }
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
+        if (leashHolder == null || !leashHolder.valid) {
+            createLeashHolder();
+        }
 
+        Location location = warlordsNPC.getLocation().add(0, 1, 0);
+        leashHolder.teleportTo(location.getX(), location.getY(), location.getZ());
+    }
+
+    private void createLeashHolder() {
+        leashHolder = new CustomBat(warlordsNPC.getLocation().add(0, 0, 0));
+        leashHolder.setResting(true);
+        ((CraftWorld) warlordsNPC.getWorld()).getHandle().addFreshEntity(leashHolder, CreatureSpawnEvent.SpawnReason.CUSTOM);
     }
 
     @Override
@@ -143,6 +189,10 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         if (!Objects.equals(getTarget(), target)) {
             Utils.playGlobalSound(target.getLocation(), Sound.ENTITY_ENDERMAN_AMBIENT, 2, .6f);
         }
+    }
+
+    public @Nullable CustomBat getLeashHolder() {
+        return leashHolder;
     }
 
     public static class EnderStones extends AbstractProjectile implements PvEAbility {
@@ -347,11 +397,10 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     public static class Imprisonment extends AbstractPveAbility {
 
         private static final int IMPRISONMENT_TICKS = 10 * 20;
-
+        private final List<AbstractMob> cursedPsions = new ArrayList<>();
         private WarlordsEntity caster;
         @Nullable
         private WarlordsEntity imprisonedPlayer;
-        private final List<AbstractMob> cursedPsions = new ArrayList<>();
         private int imprisonTicks = 0;
 
         public Imprisonment() {

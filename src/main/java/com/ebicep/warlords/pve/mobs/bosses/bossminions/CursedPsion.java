@@ -55,7 +55,7 @@ public class CursedPsion extends AbstractMob implements BossMinionMob, Unimmobil
                 minMeleeDamage,
                 maxMeleeDamage,
                 45,
-                145
+                245
         );
     }
 
