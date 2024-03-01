@@ -16,11 +16,25 @@ import java.util.function.Supplier;
 public abstract class MobHologram {
 
     protected final List<CustomHologramLine> customHologramLines = new ArrayList<>(); // lines to add on top of default health and name
+    protected boolean hidden = false;
 
     public abstract void update();
 
     @Nullable
     public abstract Entity getEntity();
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+        if (hidden) {
+            customHologramLines.forEach(customHologramLine -> {
+                if (customHologramLine.getEntity() != null) {
+                    customHologramLine.getEntity().remove();
+                }
+            });
+        } else {
+            update();
+        }
+    }
 
     public List<CustomHologramLine> getCustomHologramLines() {
         return customHologramLines;
@@ -30,6 +44,9 @@ public abstract class MobHologram {
 
         @Override
         public void update() {
+            if (hidden) {
+                return;
+            }
             Entity entity = getEntity();
             if (entity == null) {
                 return;
@@ -56,15 +73,16 @@ public abstract class MobHologram {
                     customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
                 }
             }
-
         }
-
     }
 
     public static abstract class TextDisplayHologram extends MobHologram {
 
         @Override
         public void update() {
+            if (hidden) {
+                return;
+            }
             Entity entity = getEntity();
             if (entity == null) {
                 return;
@@ -101,9 +119,7 @@ public abstract class MobHologram {
 //                    customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
 //                }
             }
-
         }
-
     }
 
     public static class CustomHologramLine {

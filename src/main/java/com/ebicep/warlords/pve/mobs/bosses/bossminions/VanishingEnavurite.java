@@ -90,9 +90,11 @@ public class VanishingEnavurite extends AbstractMob implements ChampionMob, Unst
 
     private void toggleInvis(boolean on) {
         if (on) {
+            warlordsNPC.getMobHologram().setHidden(true);
             warlordsNPC.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, -1, 0, false, false, false));
             warlordsNPC.addSpeedModifier(warlordsNPC, "Invis", 10, 999999999);
         } else {
+            warlordsNPC.getMobHologram().setHidden(false);
             warlordsNPC.removePotionEffect(PotionEffectType.INVISIBILITY);
             warlordsNPC.getSpeed().removeModifier("Invis");
         }
