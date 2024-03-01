@@ -14,9 +14,11 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.PvEAbility;
+import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -26,10 +28,10 @@ import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Instrument;
-import org.bukkit.Location;
-import org.bukkit.Note;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.MultipleFacing;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -57,23 +59,16 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             new LocationUtils.LocationXYZ(128, 16, 85),
     };
 
-    public static final LocationUtils.LocationXYZ[] CURSED_PSION_LOCATIONS = {
-            new LocationUtils.LocationXYZ(137, 11, 62),
-            new LocationUtils.LocationXYZ(114, 11, 45),
-            new LocationUtils.LocationXYZ(87, 12, 45),
-            new LocationUtils.LocationXYZ(103, 11, 69),
-            new LocationUtils.LocationXYZ(91, 12, 81),
-            new LocationUtils.LocationXYZ(128, 12, 85),
-    };
-
-    @Nullable
-    private static WarlordsEntity getPlayer(WarlordsEntity mob, Comparator<WarlordsEntity> comparator) {
-        return PlayerFilter.playingGame(mob.getGame())
-                           .aliveEnemiesOf(mob)
-                           .sorted(comparator)
-                           .findFirstOrNull();
+    private static void attachPrisonWalls(Block block, BlockFace... blockFace) {
+        if (block.getBlockData() instanceof MultipleFacing multipleFacing) {
+            for (BlockFace face : blockFace) {
+                multipleFacing.setFace(face, true);
+            }
+            block.setBlockData(multipleFacing);
+        }
     }
 
+    private final Map<LocationUtils.LocationBlockHolder, Material> cageBlocks = new HashMap<>();
     @Nullable
     private CustomBat leashHolder = null;
 
@@ -103,23 +98,35 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
-                maxMeleeDamage
-//                new EnderStones(),
-//                new Imprisonment(),
-//                new VowsOfTheEnd(),
-//                new SpawnMobAbility(12, Mob.ENAVURITE) {
-//                    @Override
-//                    public int getSpawnAmount() {
-//                        int playerCount = pveOption.playerCount();
-//                        if (playerCount <= 3) {
-//                            return 3;
-//                        }
-//                        if (playerCount <= 5) {
-//                            return 6;
-//                        }
-//                        return 8;
-//                    }
-//                }
+                maxMeleeDamage,
+                new EnderStones(),
+                new Imprisonment(),
+                new SpawnMobAbility(12, Mob.ENAVURITE) {
+                    @Override
+                    public int getSpawnAmount() {
+                        int playerCount = pveOption.playerCount();
+                        if (playerCount <= 3) {
+                            return 3;
+                        }
+                        if (playerCount <= 5) {
+                            return 6;
+                        }
+                        return 8;
+                    }
+                },
+                new SpawnMobAbility(18, Mob.VANISHING_ENAVURITE) {
+                    @Override
+                    public int getSpawnAmount() {
+                        int playerCount = pveOption.playerCount();
+                        if (playerCount <= 3) {
+                            return 3;
+                        }
+                        if (playerCount <= 5) {
+                            return 6;
+                        }
+                        return 8;
+                    }
+                }
         );
     }
 
@@ -142,6 +149,12 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
+        for (LocationUtils.LocationXYZ cageLocation : CAGE_LOCATIONS) {
+            createPrison(cageBlocks, new Location(warlordsNPC.getWorld(), cageLocation.x(), cageLocation.y(), cageLocation.z()));
+        }
+        Map<LocationUtils.LocationBlockHolder, Material> previousBlocks = option.getGame().getPreviousBlocks();
+        cageBlocks.forEach(previousBlocks::putIfAbsent);
+
         createLeashHolder();
 
         int playerCount = pveOption.playerCount();
@@ -153,8 +166,79 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         }
         for (int i = 0; i < spawnAmount; i++) {
             option.spawnNewMob(Mob.ENAVURITE.createMob(option.getRandomSpawnLocation(warlordsNPC)));
+            option.spawnNewMob(Mob.VANISHING_ENAVURITE.createMob(option.getRandomSpawnLocation(warlordsNPC)));
         }
 
+    }
+
+    public static void createPrison(Map<LocationUtils.LocationBlockHolder, Material> previousBlocks, Location location) {
+        LocationBuilder locationBuilder = new LocationBuilder(location)
+                .pitch(0)
+                .yaw(0)
+                .left(1)
+                .forward(1)
+                .addY(-1);
+        World world = location.getWorld();
+        // floor/roof
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                Block floorBlock = world.getBlockAt(locationBuilder);
+                Block roofBlock = world.getBlockAt(locationBuilder.clone().add(0, 3, 0));
+                previousBlocks.putIfAbsent(new LocationUtils.LocationBlockHolder(floorBlock.getLocation()), floorBlock.getType());
+                previousBlocks.putIfAbsent(new LocationUtils.LocationBlockHolder(roofBlock.getLocation()), roofBlock.getType());
+                floorBlock.setType(Material.OBSIDIAN);
+                roofBlock.setType(Material.OBSIDIAN);
+                locationBuilder.right(1);
+            }
+            locationBuilder.backward(1);
+            locationBuilder.left(3);
+        }
+        locationBuilder.forward(1);
+
+        // walls - start bottom left
+        locationBuilder.addY(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.SOUTH, BlockFace.WEST));
+
+        locationBuilder.forward(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.SOUTH, BlockFace.NORTH));
+
+        locationBuilder.forward(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.WEST, BlockFace.NORTH));
+
+        locationBuilder.right(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.WEST, BlockFace.EAST));
+
+        locationBuilder.right(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.NORTH, BlockFace.EAST));
+
+        locationBuilder.backward(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.NORTH, BlockFace.SOUTH));
+
+        locationBuilder.backward(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.EAST, BlockFace.SOUTH));
+
+        locationBuilder.left(1);
+        createPrisonWall(previousBlocks, locationBuilder).forEach(block -> attachPrisonWalls(block, BlockFace.EAST, BlockFace.WEST));
+    }
+
+    private void createLeashHolder() {
+        leashHolder = new CustomBat(warlordsNPC.getLocation().add(0, 0, 0));
+        leashHolder.setResting(true);
+        ((CraftWorld) warlordsNPC.getWorld()).getHandle().addFreshEntity(leashHolder, CreatureSpawnEvent.SpawnReason.CUSTOM);
+    }
+
+    private static List<Block> createPrisonWall(Map<LocationUtils.LocationBlockHolder, Material> previousBlocks, Location location) {
+        List<Block> blocks = new ArrayList<>();
+        World world = location.getWorld();
+        location = location.clone();
+        for (int i = 0; i < 2; i++) {
+            Block block = world.getBlockAt(location);
+            previousBlocks.putIfAbsent(new LocationUtils.LocationBlockHolder(block.getLocation()), block.getType());
+            block.setType(Material.IRON_BARS);
+            blocks.add(block);
+            location.add(0, 1, 0);
+        }
+        return blocks;
     }
 
     @Override
@@ -167,10 +251,9 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         leashHolder.teleportTo(location.getX(), location.getY(), location.getZ());
     }
 
-    private void createLeashHolder() {
-        leashHolder = new CustomBat(warlordsNPC.getLocation().add(0, 0, 0));
-        leashHolder.setResting(true);
-        ((CraftWorld) warlordsNPC.getWorld()).getHandle().addFreshEntity(leashHolder, CreatureSpawnEvent.SpawnReason.CUSTOM);
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+        super.onDeath(killer, deathLocation, option);
     }
 
     @Override
@@ -185,9 +268,18 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         onTargetSwap(target);
     }
 
+    @Override
+    public void cleanup(PveOption pveOption) {
+        super.cleanup(pveOption);
+        if (leashHolder != null) {
+            leashHolder.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+        }
+        cageBlocks.forEach((locationBlockHolder, material) -> locationBlockHolder.getBlock().setType(material));
+    }
+
     private void onTargetSwap(Entity target) {
-        if (!Objects.equals(getTarget(), target)) {
-            Utils.playGlobalSound(target.getLocation(), Sound.ENTITY_ENDERMAN_AMBIENT, 2, .6f);
+        if (!Objects.equals(getTarget(), target) && target instanceof Player player) {
+            player.playSound(target.getLocation(), Sound.ENTITY_ENDERMAN_AMBIENT, 2, .6f);
         }
     }
 
@@ -402,26 +494,25 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         @Nullable
         private WarlordsEntity imprisonedPlayer;
         private int imprisonTicks = 0;
+        private List<BlockDisplay> blockDisplays = new ArrayList<>();
 
         public Imprisonment() {
-            super(
-                    "Imprisonment",
-                    20,
-                    50,
-                    true
-            );
+            super("Imprisonment", 20, 50, true);
         }
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             caster = wp;
             imprisonTicks = 0;
-            imprisonedPlayer = getPlayer(wp, Comparator.comparing(w -> -w.getMaxEnergy()));
+            imprisonedPlayer = PlayerFilter.playingGame(wp.getGame())
+                                           .aliveEnemiesOf(wp)
+                                           .sorted(Comparator.comparing(w -> -w.getMaxEnergy()))
+                                           .findFirstOrNull();
             if (imprisonedPlayer == null) {
                 return false;
             }
             LocationUtils.LocationXYZ randomCageLocation = CAGE_LOCATIONS[ThreadLocalRandom.current().nextInt(CAGE_LOCATIONS.length)];
-            Location cageLocation = new Location(wp.getWorld(), randomCageLocation.x(), randomCageLocation.y(), randomCageLocation.z());
+            Location cageLocation = new Location(wp.getWorld(), randomCageLocation.x() + .5, randomCageLocation.y() + .1, randomCageLocation.z() + .5);
             Location floorLocation = LocationUtils.getGroundLocation(cageLocation.clone().add(0, -2, 0));
             int playerCount = pveOption.playerCount();
             int spawnAmount = 3;
@@ -437,6 +528,13 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             }
             imprisonedPlayer.teleport(cageLocation);
             imprisonedPlayer.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 10 * 20, 1, false, false, false));
+
+            BlockDisplay blockDisplay = wp.getWorld().spawn(new LocationBuilder(cageLocation).left(3).addY(2), BlockDisplay.class, display -> {
+                display.setBlock(Material.END_PORTAL.createBlockData());
+            });
+
+            blockDisplays.add(blockDisplay);
+
             return true;
         }
 
@@ -448,13 +546,13 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             }
             if (cursedPsions.stream().allMatch(mob -> mob.getWarlordsNPC().isDead())) {
                 Utils.playGlobalSound(imprisonedPlayer.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 2, .5f);
-                reset();
+                reset(false);
                 return;
             }
             if (imprisonTicks >= IMPRISONMENT_TICKS) {
                 Utils.playGlobalSound(imprisonedPlayer.getLocation(), Sound.BLOCK_ANVIL_PLACE, 2, .1f);
-                imprisonedPlayer.die(caster);
-                reset();
+                imprisonedPlayer.die(warlordsEntity);
+                reset(true);
             } else if (imprisonTicks > IMPRISONMENT_TICKS - 40 && imprisonTicks % 3 == 0) {
                 Utils.playGlobalSound(imprisonedPlayer.getLocation(), Instrument.PIANO, new Note(24));
             } else if (imprisonTicks % 20 == 0) {
@@ -463,44 +561,31 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             imprisonTicks++;
         }
 
-        private void reset() {
+        private void reset(boolean imprisonedDead) {
             imprisonedPlayer = null;
             cursedPsions.clear();
             imprisonTicks = 0;
-        }
-    }
 
-    public static class VowsOfTheEnd extends AbstractPveAbility {
-
-        private int maxTargets = 1;
-
-        public VowsOfTheEnd() {
-            super(
-                    "Vows of the End",
-                    10,
-                    50
-            );
-        }
-
-        @Override
-        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-            PlayerFilter.playingGame(wp.getGame())
-                        .enemiesOf(wp)
+            PlayerFilter.playingGame(caster.getGame())
+                        .aliveEnemiesOf(caster)
                         .sorted(Comparator.comparing(w -> ThreadLocalRandom.current().nextInt()))
-                        .limit(maxTargets)
-                        .forEach(swappedPlayer -> giveVows(wp, swappedPlayer));
-            return true;
+                        .limit(imprisonedDead ? 2 : 1)
+                        .forEach(swappedTarget -> giveVows(caster, swappedTarget));
         }
 
-        private void giveVows(@Nonnull WarlordsEntity wp, WarlordsEntity swappedPlayer) {
-            if (swappedPlayer == null) {
+        private void giveVows(@Nonnull WarlordsEntity wp, WarlordsEntity target) {
+            if (target == null) {
                 return;
             }
+            Location targetLocation = target.getEntity().getLocation();
+            target.teleport(wp.getEntity().getLocation());
+            wp.teleport(targetLocation);
+
             AtomicReference<Debuff> currentDebuff = new AtomicReference<>(null);
-            swappedPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+            target.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Vows of the End",
-                    "Vows",
-                    VowsOfTheEnd.class,
+                    "VOWS",
+                    Imprisonment.class,
                     null,
                     wp,
                     CooldownTypes.ABILITY,
@@ -515,14 +600,14 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                             }
                             cooldown.setName("Vows of the End - " + randomDebuff.name());
                             switch (randomDebuff) {
-                                case SLOW -> swappedPlayer.addSpeedModifier(wp, name, -50, 5 * 20);
-                                case DARKNESS -> swappedPlayer.addPotionEffect(new PotionEffect(
+                                case SLOW -> target.addSpeedModifier(wp, name, -25, 5 * 20);
+                                case DARKNESS -> target.addPotionEffect(new PotionEffect(
                                         PotionEffectType.DARKNESS,
                                         5 * 20,
                                         1, false,
                                         false,
                                         false
-                                )); // TODO SILENCE
+                                ));
                             }
                         }
                     })
@@ -530,7 +615,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 @Override
                 public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                     if (currentDebuff.get() == Debuff.WOUND) {
-                        return currentHealValue * .6f;
+                        return currentHealValue * .75f;
                     }
                     return currentHealValue;
                 }
@@ -538,7 +623,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     if (currentDebuff.get() == Debuff.CRIPPLE) {
-                        return currentDamageValue * .5f;
+                        return currentDamageValue * .75f;
                     }
                     return currentDamageValue;
                 }
@@ -548,7 +633,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     if (currentDebuff.get() != Debuff.LEECH) {
                         return;
                     }
-                    float healingMultiplier = .25f;
+                    float healingMultiplier = .15f;
                     float healValue = currentDamageValue * healingMultiplier;
                     event.getAttacker().addHealingInstance(
                             wp,
@@ -559,34 +644,34 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                             100
                     );
                 }
+
+                @Override
+                protected Listener getListener() {
+                    return new Listener() {
+                        @EventHandler
+                        public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
+                            if (!Objects.equals(event.getWarlordsEntity(), target) || event.getSlot() != 0 || currentDebuff.get() != Debuff.SILENCE) {
+                                return;
+                            }
+                            event.setCancelled(true);
+                            Player player = event.getPlayer();
+                            player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
+                            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                        }
+                    };
+                }
             });
         }
 
-        public int getMaxTargets() {
-            return maxTargets;
-        }
-
-        public void setMaxTargets(int maxTargets) {
-            this.maxTargets = maxTargets;
-        }
-
         private enum Debuff {
-            SLOW,
-            WOUND,
-            CRIPPLE,
-            DARKNESS,
-            SILENCE,
-            LEECH,
-
+            SLOW, WOUND, CRIPPLE, DARKNESS, SILENCE, LEECH,
             ;
-
             public static final Debuff[] VALUES = values();
 
             public static Debuff getRandomDebuff() {
                 return VALUES[ThreadLocalRandom.current().nextInt(VALUES.length)];
             }
         }
-
     }
 
 

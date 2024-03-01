@@ -483,6 +483,7 @@ public enum Mob {
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
     CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
     ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
+    VANISHING_ENAVURITE(EntityType.ENDERMITE, VanishingEnavurite.class, VanishingEnavurite::new, VanishingEnavurite::new, null),
 
 
     // Raid Boss

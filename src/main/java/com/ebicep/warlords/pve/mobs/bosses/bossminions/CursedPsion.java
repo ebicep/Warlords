@@ -22,6 +22,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class CursedPsion extends AbstractMob implements BossMinionMob, Unimmobilizable {
 
     private static final int STUN_TICKS = 2 * 20;
@@ -89,17 +93,32 @@ public class CursedPsion extends AbstractMob implements BossMinionMob, Unimmobil
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         if (ticksElapsed % 5 == 0) {
-            PlayerFilter.playingGame(warlordsNPC.getGame())
-                        .aliveEnemiesOf(warlordsNPC)
-                        .forEach(warlordsEntity -> {
-                            if (warlordsEntity.getLocation().distanceSquared(warlordsNPC.getLocation()) < 4 * 4) {
-                                if (!warlordsEntity.hasPotionEffect(PotionEffectType.DARKNESS)) {
-                                    warlordsEntity.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, -1, 0, false, false, false));
-                                }
-                            } else {
-                                warlordsEntity.removePotionEffect(PotionEffectType.DARKNESS);
-                            }
-                        });
+            List<Location> psionLocations = new ArrayList<>();
+            option.getMobs()
+                  .stream()
+                  .filter(mob -> {
+                      boolean isPsion = mob instanceof CursedPsion;
+                      if (isPsion) {
+                          psionLocations.add(mob.getWarlordsNPC().getLocation());
+                      }
+                      return isPsion;
+                  })
+                  .min(Comparator.comparingInt(o -> option.getMobsMap().get(o).getSpawnTick()))
+                  .ifPresent(mob -> {
+                      PlayerFilter.playingGame(warlordsNPC.getGame())
+                                  .aliveEnemiesOf(warlordsNPC)
+                                  .forEach(warlordsEntity -> {
+                                      boolean withinAnyPsion = psionLocations.stream().anyMatch(location -> location.distanceSquared(warlordsEntity.getLocation()) < 4 * 4);
+                                      if (withinAnyPsion) {
+                                          if (!warlordsEntity.hasPotionEffect(PotionEffectType.DARKNESS)) {
+                                              warlordsEntity.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, -1, 0, false, false, false));
+                                          }
+                                      } else {
+                                          warlordsEntity.removePotionEffect(PotionEffectType.DARKNESS);
+                                      }
+                                  });
+                  });
+
         }
     }
 
@@ -127,6 +146,16 @@ public class CursedPsion extends AbstractMob implements BossMinionMob, Unimmobil
             } else if (receiver instanceof WarlordsNPC wNPC) {
                 wNPC.setStunTicks(STUN_TICKS);
             }
+        }
+    }
+
+    @Override
+    public void cleanup(PveOption pveOption) {
+        super.cleanup(pveOption);
+        if (pveOption.getMobs().stream().anyMatch(mob -> mob.equals(this))) {
+            PlayerFilter.playingGame(warlordsNPC.getGame())
+                        .enemiesOf(warlordsNPC)
+                        .forEach(warlordsEntity -> warlordsEntity.removePotionEffect(PotionEffectType.DARKNESS));
         }
     }
 

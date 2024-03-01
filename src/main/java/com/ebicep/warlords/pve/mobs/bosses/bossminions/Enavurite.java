@@ -199,4 +199,12 @@ public class Enavurite extends AbstractMob implements ChampionMob {
         }.runTaskTimer(0, 0);
     }
 
+    @Override
+    public void cleanup(PveOption pveOption) {
+        super.cleanup(pveOption);
+        if (leashEntity != null) {
+            leashEntity.remove(net.minecraft.world.entity.Entity.RemovalReason.DISCARDED);
+        }
+    }
+
 }

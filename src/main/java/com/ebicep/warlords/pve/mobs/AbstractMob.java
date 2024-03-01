@@ -356,11 +356,9 @@ public abstract class AbstractMob implements Mob {
 
     }
 
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        cleanup(option);
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
-            return;
-        }
-        if (pveOption == null) {
             return;
         }
         dropWeapon(killer);
@@ -631,5 +629,12 @@ public abstract class AbstractMob implements Mob {
 
     public EnumSet<DynamicFlags> getDynamicFlags() {
         return dynamicFlags;
+    }
+
+
+    /**
+     * Method is guaranteed to be called after the mob has been killed/removed from game
+     */
+    public void cleanup(PveOption pveOption) {
     }
 }
