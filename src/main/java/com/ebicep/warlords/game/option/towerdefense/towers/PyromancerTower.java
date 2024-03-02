@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Damage;
@@ -9,8 +11,12 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.Range;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,9 +31,11 @@ import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
-public class PyromancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path1 {
+public class PyromancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
 
     private final List<FloatModifiable> damage = new ArrayList<>();
     private final List<FloatModifiable> range = new ArrayList<>();
@@ -43,9 +51,10 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
         damage.add(flameDamage);
         range.add(flameRange);
         attackSpeed.add(flameAttackSpeed);
-        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(10);
-        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(10);
-        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage3 = new TowerUpgradeInstance.DamageUpgradeInstance(10);
+        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
+        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
+        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage3 = new TowerUpgradeInstance.DamageUpgradeInstance(50);
+
         upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
             @Override
             public void onUpgrade() {
@@ -58,12 +67,13 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
                 flameDamage.addAdditiveModifier(name, upgradeDamage2.getValue());
             }
         });
-        upgrades.add(new TowerUpgrade("Upgrade 3", upgradeDamage3) {
+        upgrades.add(new TowerUpgrade("Future Damage + Minor AOE", upgradeDamage3) {
             @Override
             public void onUpgrade() {
                 flameDamage.addAdditiveModifier(name, upgradeDamage3.getValue());
             }
         });
+        upgrades.add(new TowerUpgrade("Burn", upgradeDamage3) {});
     }
 
     @Override
@@ -77,36 +87,74 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
         if (ticksElapsed % 5 == 0) {
             EffectUtils.displayParticle(Particle.CRIMSON_SPORE, centerLocation, 5, .5, .1, .5, 2);
         }
-        flameAttack(ticksElapsed);
-    }
-
-    private void flameAttack(int ticksElapsed) {
         int attackSpeed = (int) flameAttackSpeed.getCalculatedValue();
         if (ticksElapsed % attackSpeed == 0) {
-            float rangeValue = flameRange.getCalculatedValue();
-            float damageValue = flameDamage.getCalculatedValue();
-            getNearbyMobs(rangeValue, 1).forEach(warlordsNPC -> {
-                int teleportDuration = 5;
-                Location targetLocation = new LocationBuilder(warlordsNPC.getLocation())
-                        .addY(1);
-                LocationBuilder startLocation = new LocationBuilder(warlordsTower.getLocation())
-                        .addY(-.5)
-                        .faceTowards(targetLocation);
-//                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), startLocation.clone().addY(-1), Particle.FLAME);
-                playSpiralFacingEffect(startLocation, targetLocation, Particle.SMALL_FLAME);
-                playSpiralFacingEffect(startLocation.clone().forward(1.1f), targetLocation, Particle.DRAGON_BREATH);
-
-                ItemDisplay arrow = fireArrowTowards(teleportDuration, startLocation, targetLocation);
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        warlordsNPC.addDamageInstance(warlordsTower, "Flame", damageValue, damageValue, 0, 100);
-                        EffectUtils.displayParticle(Particle.LAVA, warlordsNPC.getLocation().clone().add(0, 1, 0), 15, 0.5F, 0, 0.5F, 500);
-                        arrow.remove();
-                    }
-                }.runTaskLater(Warlords.getInstance(), teleportDuration);
-            });
+            flameAttack();
         }
+    }
+
+    private void flameAttack() {
+        float rangeValue = flameRange.getCalculatedValue();
+        float damageValue = flameDamage.getCalculatedValue();
+        getMob(TargetPriority.FIRST, rangeValue, 1).forEach(warlordsNPC -> {
+            int teleportDuration = 5;
+            Location targetLocation = new LocationBuilder(warlordsNPC.getLocation())
+                    .addY(1);
+            LocationBuilder startLocation = new LocationBuilder(warlordsTower.getLocation())
+                    .addY(-.5)
+                    .faceTowards(targetLocation);
+//                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), startLocation.clone().addY(-1), Particle.FLAME);
+            playSpiralFacingEffect(startLocation, targetLocation, Particle.SMALL_FLAME);
+            playSpiralFacingEffect(startLocation.clone().forward(1.1f), targetLocation, Particle.DRAGON_BREATH);
+
+            ItemDisplay arrow = fireArrowTowards(teleportDuration, startLocation, targetLocation);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    warlordsNPC.addDamageInstance(warlordsTower, "Flame", damageValue, damageValue, 0, 100);
+                    if (upgrades.get(2).isUnlocked()) {
+                        PlayerFilter.entitiesAround(warlordsNPC, 2, 2, 2)
+                                    .aliveEnemiesOf(warlordsTower)
+                                    .excluding(warlordsNPC)
+                                    .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(warlordsTower, "Flame", damageValue, damageValue, 0, 100));
+                    } else if (upgrades.get(3).isUnlocked()) {
+                        warlordsNPC.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Pyromancer Tower Burn",
+                                "BRN",
+                                PyromancerTower.class,
+                                null,
+                                warlordsTower,
+                                CooldownTypes.DEBUFF,
+                                cooldownManager -> {
+                                },
+                                60,
+                                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksLeft % 20 == 0) {
+                                        float healthDamage = warlordsNPC.getMaxHealth() * 0.005f;
+                                        healthDamage = DamageCheck.clamp(healthDamage);
+                                        warlordsNPC.addDamageInstance(
+                                                warlordsTower,
+                                                "Burn",
+                                                healthDamage,
+                                                healthDamage,
+                                                0,
+                                                100,
+                                                EnumSet.of(InstanceFlags.RECURSIVE)
+                                        );
+                                    }
+                                })
+                        ) {
+                            @Override
+                            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                return currentDamageValue * 1.2f;
+                            }
+                        });
+                    }
+                    EffectUtils.displayParticle(Particle.LAVA, warlordsNPC.getLocation().clone().add(0, 1, 0), 15, 0.5F, 0, 0.5F, 500);
+                    arrow.remove();
+                }
+            }.runTaskLater(Warlords.getInstance(), teleportDuration);
+        });
     }
 
     private static void playSpiralFacingEffect(Location startLocation, Location targetLocation, Particle particle) {

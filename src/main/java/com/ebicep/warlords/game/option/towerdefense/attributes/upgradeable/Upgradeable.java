@@ -25,14 +25,19 @@ import java.util.function.BiConsumer;
 public interface Upgradeable {
 
     @Nonnull
-    private static BiConsumer<Menu, InventoryClickEvent> onUpgrade(Player player, AbstractTower tower, List<TowerUpgrade> upgrades, TowerUpgrade upgrade) {
+    private static <T extends AbstractTower & Upgradeable> BiConsumer<Menu, InventoryClickEvent> onUpgrade(
+            Player player,
+            T tower,
+            List<TowerUpgrade> upgrades,
+            TowerUpgrade upgrade
+    ) {
         return (m, e) -> {
             int index = upgrades.indexOf(upgrade);
             if (upgrade.getCost() > 0) { // TODO
                 UpgradeResult.INSUFFICIENT_FUNDS.onResult(player);
                 return;
             }
-            if (index != 0 && !upgrades.get(index - 1).isUnlocked()) {
+            if (index != 0 && !tower.previousUnlocked(upgrades, index)) {
                 UpgradeResult.MISSING_REQUIREMENTS.onResult(player);
                 return;
             }
@@ -55,7 +60,9 @@ public interface Upgradeable {
 
     List<TowerUpgrade> getUpgrades();
 
-    void addToMenu(Menu menu, Player player, AbstractTower tower);
+    <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, T tower);
+
+    boolean previousUnlocked(List<TowerUpgrade> upgrades, int index);
 
     enum UpgradeResult {
         SUCCESS,
@@ -79,7 +86,7 @@ public interface Upgradeable {
         int MAX_UPGRADES = 4;
 
         @Override
-        default void addToMenu(Menu menu, Player player, AbstractTower tower) {
+        default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, T tower) {
             List<TowerUpgrade> upgrades = getUpgrades();
             if (upgrades.size() > MAX_UPGRADES) {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception(tower + " has too many upgrades"));
@@ -105,61 +112,81 @@ public interface Upgradeable {
                 );
             }
         }
+
+        @Override
+        default boolean previousUnlocked(List<TowerUpgrade> upgrades, int index) {
+            if (index == 0) {
+                return true;
+            }
+            return upgrades.get(index - 1).isUnlocked();
+        }
+
     }
 
     /**
-     * <p>OOXX</p>
-     * <p>XXOO</p>
-     * <p>OOXX</p>
+     * <p>OOX</p>
+     * <p>XXO</p>
+     * <p>OOX</p>
      */
     interface Path2 extends Upgradeable {
 
-        int MAX_UPGRADES = 6;
+        int MAX_UPGRADES = 4;
 
         @Override
-        default void addToMenu(Menu menu, Player player, AbstractTower tower) {
+        default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, T tower) {
             List<TowerUpgrade> upgrades = getUpgrades();
             if (upgrades.size() > MAX_UPGRADES) {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception(tower + " has too many upgrades"));
                 upgrades = upgrades.subList(0, MAX_UPGRADES);
             }
-            addTwoUpgradesToMenu(player, menu, tower, upgrades, 0, 1, 2);
-            addTwoUpgradesToMenu(player, menu, tower, upgrades, 2, 3, 1);
-            addTwoUpgradesToMenu(player, menu, tower, upgrades, 4, 3, 3);
+            addUpgradeToMenu(player, menu, tower, upgrades, 0, 1, 2);
+            addUpgradeToMenu(player, menu, tower, upgrades, 1, 2, 2);
+            addUpgradeToMenu(player, menu, tower, upgrades, 2, 3, 1);
+            addUpgradeToMenu(player, menu, tower, upgrades, 3, 3, 3);
         }
 
-        private void addTwoUpgradesToMenu(
+        @Override
+        default boolean previousUnlocked(List<TowerUpgrade> upgrades, int index) {
+            if (index == 0) {
+                return true;
+            }
+            if (index == 3) {
+                return upgrades.get(1).isUnlocked();
+            }
+            return upgrades.get(index - 1).isUnlocked();
+        }
+
+        private <T extends AbstractTower & Upgradeable> void addUpgradeToMenu(
                 Player player,
                 Menu menu,
-                AbstractTower tower,
+                T tower,
                 List<TowerUpgrade> upgrades,
-                int startIndex,
+                int i,
                 int menuX,
                 int menuY
         ) {
-            if (upgrades.size() < startIndex) {
+            if (upgrades.size() < i) {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception("startIndex is over upgrades size"));
                 return;
             }
-            for (int i = startIndex; i < upgrades.size() && i < startIndex + 2; i++) {
-                TowerUpgrade upgrade = upgrades.get(i);
-                menu.setItem(i + menuX, menuY,
-                        new ItemBuilder(upgrade.isUnlocked() ? Material.GREEN_CONCRETE : Material.WHITE_CONCRETE)
-                                .lore(
-                                        Component.text("SOMETHING HERE"),
-                                        Component.empty()
-                                )
-                                .addLore(upgrade.getDescription())
-                                .addLore(Component.empty())
-                                .addLore(ComponentBuilder.create("Cost: ")
-                                                         .text(NumberFormat.addCommaAndRound(upgrade.getCost()),
-                                                                 NamedTextColor.GOLD
-                                                         )
-                                                         .build())
-                                .get(),
-                        Upgradeable.onUpgrade(player, tower, upgrades, upgrade)
-                );
-            }
+            TowerUpgrade upgrade = upgrades.get(i);
+            menu.setItem(menuX, menuY,
+                    new ItemBuilder(upgrade.isUnlocked() ? Material.GREEN_CONCRETE : Material.WHITE_CONCRETE)
+                            .lore(
+                                    Component.text("SOMETHING HERE"),
+                                    Component.empty()
+                            )
+                            .addLore(upgrade.getDescription())
+                            .addLore(Component.empty())
+                            .addLore(ComponentBuilder.create("Cost: ")
+                                                     .text(NumberFormat.addCommaAndRound(upgrade.getCost()),
+                                                             NamedTextColor.GOLD
+                                                     )
+                                                     .build())
+                            .get(),
+                    Upgradeable.onUpgrade(player, tower, upgrades, upgrade)
+            );
+
         }
 
     }

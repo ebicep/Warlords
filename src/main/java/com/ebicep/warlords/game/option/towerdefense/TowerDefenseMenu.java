@@ -52,7 +52,7 @@ public class TowerDefenseMenu {
             ownerHeadPos.setB(1);
             sellPos.setA(7);
             sellPos.setB(3);
-            upgradeable.addToMenu(menu, player, tower);
+            upgradeable.addToMenu(menu, player, (AbstractTower & Upgradeable) tower);
         }
 
         menu.setItem(ownerHeadPos.getA(), ownerHeadPos.getB(),
