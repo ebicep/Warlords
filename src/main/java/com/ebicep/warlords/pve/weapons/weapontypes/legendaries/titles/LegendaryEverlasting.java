@@ -181,7 +181,7 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
                 }
             });
         } else {
-            cooldown.setTicksLeft(5 * 20);
+            cooldown.setTicksLeft((DURATION + DURATION_PER_UPGRADE * getTitleLevel()) * 20);
             cooldown.setName(getTitleName() + " " + stacks);
             cooldown.setNameAbbreviation("EVER " + stacks);
         }
