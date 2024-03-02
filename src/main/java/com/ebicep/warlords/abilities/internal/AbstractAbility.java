@@ -121,9 +121,14 @@ public abstract class AbstractAbility implements AbilityIcon {
         this(name, 0, 0, cooldown, energyCost, 0, 0, startCooldown);
     }
 
-    public abstract void updateDescription(Player player);
+    public void updateDescription(Player player) {
 
-    public abstract List<Pair<String, String>> getAbilityInfo();
+    }
+
+    @Nullable
+    public List<Pair<String, String>> getAbilityInfo() {
+        return null;
+    }
 
     /**
      * @return whether the ability has to go on cooldown after activation.

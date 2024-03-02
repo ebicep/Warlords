@@ -1,8 +1,11 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import javax.annotation.Nonnull;
 
 public class FlyOption implements Option {
 
@@ -10,6 +13,14 @@ public class FlyOption implements Option {
 
     public void setFlyEnabled(boolean flyEnabled) {
         this.flyEnabled = flyEnabled;
+    }
+
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
+        if (player.getEntity() instanceof Player p) {
+            p.setAllowFlight(flyEnabled);
+            p.setFlying(flyEnabled);
+        }
     }
 
     @Override

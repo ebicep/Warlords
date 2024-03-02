@@ -65,7 +65,7 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
                         .aliveTeammatesOfExcludingSelf(wp)
                         .forEach(warlordsEntity -> {
                             warlordsEntity.getCooldownManager().addCooldown(getBonusCooldown(wp));
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.FALLING_HONEY, 1, 1);
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
                         });
         }
     }

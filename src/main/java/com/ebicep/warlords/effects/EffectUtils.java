@@ -301,22 +301,42 @@ public class EffectUtils {
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, Particle effect) {
-        playParticleLinkAnimation(to, from, effect, 1);
+        playParticleLinkAnimation(to, from, effect, 1, -1);
     }
 
-    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset) {
-        playParticleLinkAnimation(to, from, effect, yOffset, .5);
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset, int period) {
+        playParticleLinkAnimation(to, from, effect, yOffset, .5, period);
     }
 
-    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset, double forwardAmount) {
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset, double forwardAmount, int period) {
         to = to.clone().add(0, yOffset, 0);
         from = from.clone().add(0, yOffset, 0);
-        LocationBuilder lineLocation = new LocationBuilder(to)
-                .faceTowards(from);
-        for (int i = 0; i < Math.floor(to.distance(from)) / forwardAmount; i++) {
-            displayParticle(effect, lineLocation, 1);
-            lineLocation.forward(forwardAmount);
+        LocationBuilder lineLocation = new LocationBuilder(to).faceTowards(from);
+        double maxI = Math.floor(to.distance(from));
+        if (period == -1) {
+            for (int i = 0; i < maxI / forwardAmount; i++) {
+                displayParticle(effect, lineLocation, 1);
+                lineLocation.forward(forwardAmount);
+            }
+        } else {
+            new BukkitRunnable() {
+                int i = 0;
+
+                @Override
+                public void run() {
+                    if (i >= maxI / forwardAmount) {
+                        this.cancel();
+                    }
+                    displayParticle(effect, lineLocation, 1);
+                    lineLocation.forward(forwardAmount);
+                    i++;
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, period);
         }
+    }
+
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, int period) {
+        playParticleLinkAnimation(to, from, effect, 1, period);
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount) {

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable;
 
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseMenu;
+import com.ebicep.warlords.game.option.towerdefense.events.TowerUpgradeEvent;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.data.BlockData;
@@ -41,6 +43,8 @@ public interface Upgradeable {
             Utils.playGlobalSound(tower.getCenterLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
             // TODO particle effects?
             upgrade.upgrade();
+            tower.updateAttributes();
+            Bukkit.getPluginManager().callEvent(new TowerUpgradeEvent(tower));
             TowerDefenseMenu.openBuildMenu(player, tower);
         };
     }

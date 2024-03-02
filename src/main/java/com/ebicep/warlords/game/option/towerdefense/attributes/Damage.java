@@ -4,7 +4,7 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 import java.util.List;
 
-public interface Damages {
+public interface Damage {
 
     List<FloatModifiable> getDamages();
 

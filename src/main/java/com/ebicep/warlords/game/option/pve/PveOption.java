@@ -196,12 +196,6 @@ public interface PveOption extends Option {
             }
 
             @EventHandler
-            public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
-                WarlordsEntity player = event.getWarlordsEntity();
-                AbilityTree.handleAutoUpgrade(player);
-            }
-
-            @EventHandler
             public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
                 AbstractAbility ability = event.getAbility();
                 if (!(ability instanceof ProjectileAbility)) {

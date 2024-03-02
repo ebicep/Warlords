@@ -6,9 +6,13 @@ import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
+import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMobInfo;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
@@ -87,6 +91,28 @@ public class TowerDefenseCommand extends BaseCommand {
                                                                              .map(tower -> Component.text(tower.name(), NamedTextColor.YELLOW))
                                                                              .collect(Component.toComponent(Component.text(", ", NamedTextColor.GRAY))))
             );
+        }
+    }
+
+    @Subcommand("spawnmob")
+    public void spawnMob(
+            @Conditions("requireGame:gamemode=TOWER_DEFENSE") Player player,
+            TowerDefenseMobInfo mob,
+            @Default("1") @Conditions("limits:min=0,max=25") Integer amount,
+            @Optional Team team
+    ) {
+        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+        for (Option option : game.getOptions()) {
+            if (option instanceof TowerDefenseOption towerDefenseOption) {
+                for (Team t : TeamMarker.getTeams(game)) {
+                    if (t != team) {
+                        continue;
+                    }
+                    towerDefenseOption.spawnNewMob(mob.getMob().createMob(towerDefenseOption.getRandomSpawnLocation(t)), (WarlordsEntity) null);
+                    ChatChannels.sendDebugMessage(player, Component.text("Spawned " + amount + " Mobs", NamedTextColor.GREEN));
+                }
+                break;
+            }
         }
     }
 

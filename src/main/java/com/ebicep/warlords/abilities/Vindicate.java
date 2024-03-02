@@ -186,7 +186,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             }
         });
         if (vindPveMaster2) {
-            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1);
+            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
         }
     }
 

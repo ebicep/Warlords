@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable;
 
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 
@@ -37,7 +38,7 @@ public abstract class TowerUpgradeInstance {
 
         @Override
         public Component getDescription() {
-            return Component.text("+" + value.getCalculatedValue() + " Damage");
+            return Component.text("+" + NumberFormat.formatOptionalTenths(value.getCalculatedValue()) + " Damage");
         }
     }
 

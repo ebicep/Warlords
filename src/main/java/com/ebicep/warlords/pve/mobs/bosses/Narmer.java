@@ -165,7 +165,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 Location location = warlordsNPC.getLocation();
 
                 if (dead.isTeammate(warlordsNPC) && minionsCanHeal.contains(dead.getUuid())) {
-                    EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.VILLAGER_HAPPY, 1, 2);
+                    EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.VILLAGER_HAPPY, 1, 2, -1);
                     float healing = warlordsNPC.getCurrentHealth() * 1.1f;
                     warlordsNPC.addHealingInstance(
                             warlordsNPC,

@@ -1,8 +1,10 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -10,10 +12,17 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -114,7 +123,32 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
+            LocationBuilder location = new LocationBuilder(player.getLocation());
+            location.setYaw(location.getYaw() - 90);
+            location.setPitch(0);
+            final ItemDisplay arrow = player.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+                itemDisplay.setItemStack(new ItemStack(Material.ARROW));
+                itemDisplay.setTransformation(new Transformation(
+                                new Vector3f(),
+                                new AxisAngle4f((float) Math.toRadians(45 + player.getPitch()), 0, 0, 1),
+                                new Vector3f(1.5f),
+                                new AxisAngle4f()
+                        )
+                );
+                itemDisplay.setTeleportDuration(20);
+            });
+//            arrow.teleport(new LocationBuilder(player.getLocation()).forward(20));
+            new BukkitRunnable() {
+                int counter = 0;
 
+                @Override
+                public void run() {
+//                    arrow.teleport(location.forward(1));
+                    if (counter++ > 10 * 20) {
+                        arrow.remove();
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
 
 //            Guardian guard = player.getWorld().spawn(new LocationBuilder(player.getLocation()).forward(10), Guardian.class, guardian -> {

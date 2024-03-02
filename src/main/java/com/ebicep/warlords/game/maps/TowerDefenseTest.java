@@ -43,12 +43,11 @@ public class TowerDefenseTest extends GameMap {
     public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = category.initMap(this, loc, addons);
         options.add(TeamMarker.create(Team.GAME, Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 65, 0.5, 90, 0), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(0.5, 65, 0.5, 90, 0), Team.RED).asOption());
-
-
         LocationBuilder blueSpawn = loc.addXYZ(2.5, 65, 0.5, 90, 0);
         LocationBuilder redSpawn = loc.addXYZ(-52.5, 65, 8.5, -90, 0);
+
+        options.add(LobbyLocationMarker.create(blueSpawn, Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(redSpawn, Team.RED).asOption());
         options.add(SpawnpointOption.forTeam(blueSpawn, Team.BLUE));
         options.add(SpawnpointOption.forTeam(redSpawn, Team.RED));
 
@@ -107,6 +106,7 @@ public class TowerDefenseTest extends GameMap {
         for (Option option : options) {
             if (option instanceof TowerDefenseOption towerDefenseOption) {
                 options.add(new CurrencyOnEventOption()
+                        .startWith(10000)
                         .setCurrentCurrencyDisplay(warlordsEntity -> Component.text("Insignia: ", NamedTextColor.YELLOW)
                                                                               .append(Component.text("❂ " + NumberFormat.formatOptionalHundredths(warlordsEntity.getCurrency()),
                                                                                       NamedTextColor.GOLD

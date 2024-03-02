@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 
 public enum TowerRegistry {
 
-    PYRO_TOWER(PyroTower::new, Material.FIRE_CHARGE, "Pyromancer Tower", "Pyro things"),
+    PYRO_TOWER(PyromancerTower::new, Material.FIRE_CHARGE, "Pyromancer Tower", "Pyro things"),
     BIG_BOY(BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;

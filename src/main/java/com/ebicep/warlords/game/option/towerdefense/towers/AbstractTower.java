@@ -5,11 +5,15 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.towerdefense.TowerPlayerClass;
+import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
+import com.ebicep.warlords.game.option.towerdefense.attributes.Damage;
+import com.ebicep.warlords.game.option.towerdefense.attributes.Range;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Gravity;
@@ -133,11 +137,30 @@ public abstract class AbstractTower {
 
     }
 
-    public List<WarlordsNPC> getNearbyMobs(float range) {
+    public void updateAttributes() {
+        if (this instanceof AttackSpeed attackSpeed) {
+            updateFloatModifiables(attackSpeed.getAttackSpeeds());
+        }
+        if (this instanceof Damage damage) {
+            updateFloatModifiables(damage.getDamages());
+        }
+        if (this instanceof Range range) {
+            updateFloatModifiables(range.getRanges());
+        }
+    }
+
+    private void updateFloatModifiables(List<FloatModifiable> floatModifiables) {
+        for (FloatModifiable floatModifiable : floatModifiables) {
+            floatModifiable.tick();
+        }
+    }
+
+    public List<WarlordsNPC> getNearbyMobs(float range, int limit) {
         return PlayerFilterGeneric.entitiesAround(centerLocation, range, range, range)
                                   .warlordsNPCs()
                                   .filter(warlordsNPC -> warlordsNPC.getTeam() != team)
                                   .stream()
+                                  .limit(limit == -1 ? Long.MAX_VALUE : limit)
                                   .collect(Collectors.toList());
     }
 

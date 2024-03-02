@@ -120,7 +120,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                             }
                             float healing = 0.025f * wp.getMaxHealth();
                             warlordsEntity.addHealingInstance(wp, "Chains of Blessings", healing, healing, 0, 100);
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25);
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25, -1);
                             EffectUtils.displayParticle(
                                     Particle.VILLAGER_HAPPY,
                                     warlordsEntity.getLocation().add(0, 1.2, 0),
