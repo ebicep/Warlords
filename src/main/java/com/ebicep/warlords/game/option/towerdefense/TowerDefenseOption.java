@@ -23,15 +23,21 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -87,43 +93,32 @@ public class TowerDefenseOption implements PveOption, Listener {
         });
     }
 
-    @EventHandler
-    public void onInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-        if (!TowerDefenseUtils.validInteractGame(game, warlordsEntity)) {
-            return;
-        }
-        if (!TowerDefenseUtils.validInteract(event, "MARKET_ITEM")) {
-            return;
-        }
-        TowerDefenseMenu.openMarket(player, warlordsEntity, getPlayerInfo(warlordsEntity));
-    }
-
-    public TowerDefensePlayerInfo getPlayerInfo(WarlordsEntity player) {
-        playerInfo.putIfAbsent(player, new TowerDefensePlayerInfo());
-        TowerDefensePlayerInfo info = playerInfo.get(player);
-        if (info.getWaveTask() == null) {
-            info.setWaveTask(new GameRunnable(game) {
-                int ticksElapsed = 0;
-                @Override
-                public void run() {
-                    info.getPlayerWave().tick(TowerDefenseOption.this);
-                    if (ticksElapsed++ % 5 == 0 &&
-                            player.getEntity() instanceof Player p &&
-                            PlainTextComponentSerializer.plainText().serialize(p.getOpenInventory().title()).equals(TowerDefenseMenu.SUMMON_MENU_TITLE)
-                    ) {
-                        TowerDefenseMenu.openSummonTroopsMenu(p, player, towerDefenseSpawner, info);
-                    }
-                }
-            }.runTaskTimer(0, 0));
-        }
-        return info;
-    }
-
     @Override
     public void start(@Nonnull Game game) {
         castles.values().forEach(TowerDefenseCastle::displayInit);
+        towerDefenseSpawner.getPaths().forEach((location, towerDefensePaths) -> {
+            int yOffset = 1;
+            for (TowerDefensePath towerDefensePath : towerDefensePaths) {
+                List<TowerDefensePath.PathLocation> path = towerDefensePath.getPath();
+                for (int i = 0; i < path.size(); i++) {
+                    TowerDefensePath.PathLocation pathLocation = path.get(i);
+                    int finalI = i;
+                    pathLocation.location().getWorld().spawn(pathLocation.location().clone().add(0, yOffset, 0), TextDisplay.class, display -> {
+                        display.text(Component.text(finalI + " - " + pathLocation.pathDirection().name(),
+                                TextColor.color(towerDefensePath.getRed(), towerDefensePath.getGreen(), towerDefensePath.getBlue())
+                        ));
+                        display.setBillboard(Display.Billboard.CENTER);
+                        display.setTransformation(new Transformation(
+                                new Vector3f(),
+                                new AxisAngle4f(),
+                                new Vector3f(2),
+                                new AxisAngle4f()
+                        ));
+                    });
+                }
+                yOffset++;
+            }
+        });
         new GameRunnable(game) {
 
             @Override
@@ -218,6 +213,12 @@ public class TowerDefenseOption implements PveOption, Listener {
         }
         Location spawnLocation = mob.getSpawnLocation();
         Team attackingTeam = towerDefenseSpawner.getTeamSpawnLocations().get(spawnLocation);
+        if (spawner instanceof WarlordsNPC warlordsNPC) {
+            TowerDefenseMobData mobData = mobs.get(warlordsNPC.getMob());
+            if (mobData != null) {
+                attackingTeam = mobData.getAttackingTeam();
+            }
+        }
         if (attackingTeam == null) {
             ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No team with given spawn: " + spawnLocation);
             return;
@@ -259,6 +260,41 @@ public class TowerDefenseOption implements PveOption, Listener {
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         // override to remove talisman
         player.getInventory().setItem(4, MARKET_ITEM);
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+        if (!TowerDefenseUtils.validInteractGame(game, warlordsEntity)) {
+            return;
+        }
+        if (!TowerDefenseUtils.validInteract(event, "MARKET_ITEM")) {
+            return;
+        }
+        TowerDefenseMenu.openMarket(player, warlordsEntity, getPlayerInfo(warlordsEntity));
+    }
+
+    public TowerDefensePlayerInfo getPlayerInfo(WarlordsEntity player) {
+        playerInfo.putIfAbsent(player, new TowerDefensePlayerInfo());
+        TowerDefensePlayerInfo info = playerInfo.get(player);
+        if (info.getWaveTask() == null) {
+            info.setWaveTask(new GameRunnable(game) {
+                int ticksElapsed = 0;
+
+                @Override
+                public void run() {
+                    info.getPlayerWave().tick(TowerDefenseOption.this);
+                    if (ticksElapsed++ % 5 == 0 &&
+                            player.getEntity() instanceof Player p &&
+                            PlainTextComponentSerializer.plainText().serialize(p.getOpenInventory().title()).equals(TowerDefenseMenu.SUMMON_MENU_TITLE)
+                    ) {
+                        TowerDefenseMenu.openSummonTroopsMenu(p, player, towerDefenseSpawner, info);
+                    }
+                }
+            }.runTaskTimer(0, 0));
+        }
+        return info;
     }
 
     @EventHandler
@@ -316,14 +352,15 @@ public class TowerDefenseOption implements PveOption, Listener {
         private final Team attackingTeam; // side that mob is attacking
         private final Location spawnLocation; // original spawn location with no offset
         private final int pathIndex; // index of whatever path its using
-        private int lastWaypointIndex = 0;
+        private int lastWaypointIndex;
         private boolean attackingCastle = false;
 
-        public TowerDefenseMobData(int spawnTick, Team attackingTeam, Location spawnLocation, int pathIndex) {
+        public TowerDefenseMobData(int spawnTick, Team attackingTeam, Location spawnLocation, int pathIndex, int lastWaypointIndex) {
             super(spawnTick);
             this.attackingTeam = attackingTeam;
             this.spawnLocation = spawnLocation;
             this.pathIndex = pathIndex;
+            this.lastWaypointIndex = lastWaypointIndex;
         }
 
         @Override

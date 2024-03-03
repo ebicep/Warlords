@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.towerdefense;
 
-import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -8,18 +7,63 @@ import java.util.List;
 
 public class TowerDefensePath {
 
+    enum PathDirection {
+        X {
+            @Override
+            public Location getForwardLocation(Location current, Location target) {
+                Location location = target.clone();
+                location.setZ(current.getZ());
+                return location;
+            }
+        },
+        Z {
+            @Override
+            public Location getForwardLocation(Location current, Location target) {
+                Location location = target.clone();
+                location.setX(current.getX());
+                return location;
+            }
+        },
+        UNKNOWN {
+            @Override
+            public Location getForwardLocation(Location current, Location target) {
+                return target;
+            }
+        },
+        ;
+
+        public abstract Location getForwardLocation(Location current, Location target);
+    }
+
+    public record PathLocation(Location location, PathDirection pathDirection) {
+
+    }
+
     private final Location spawn;
-    private final List<Location> path;
-    private final List<Pair<Double, Double>> forwardPath = new ArrayList<>();
+    private final List<PathLocation> path = new ArrayList<>();
 
     public TowerDefensePath(Location spawn, List<Location> path) {
         this.spawn = spawn;
-        this.path = path;
-        Location current = spawn.clone();
-        for (Location location : path) {
-            forwardPath.add(new Pair<>(getXZDistance(current, location), getYDistance(current, location)));
-            current = location;
+        for (int i = 0; i < path.size(); i++) {
+            Location previous = i == 0 ? spawn : path.get(i - 1);
+            Location current = path.get(i);
+            PathDirection direction = getPathDirection(previous, current);
+            this.path.add(new PathLocation(current, direction));
         }
+    }
+
+    private static PathDirection getPathDirection(Location loc1, Location loc2) {
+        double x1 = loc1.getX();
+        double x2 = loc2.getX();
+        double z1 = loc1.getZ();
+        double z2 = loc2.getZ();
+        if (x1 == x2) {
+            return PathDirection.Z;
+        }
+        if (z1 == z2) {
+            return PathDirection.X;
+        }
+        return PathDirection.UNKNOWN;
     }
 
     private static double getXZDistance(Location loc1, Location loc2) {
@@ -48,11 +92,7 @@ public class TowerDefensePath {
         return spawn;
     }
 
-    public List<Pair<Double, Double>> getForwardPath() {
-        return forwardPath;
-    }
-
-    public List<Location> getPath() {
+    public List<PathLocation> getPath() {
         return path;
     }
 
