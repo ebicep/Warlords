@@ -13,9 +13,11 @@ import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
+import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.dag.Node;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -82,11 +84,11 @@ public class TowerDefenseTest extends GameMap {
                 loc.addXYZ(-23.5, 65, 18.5),
                 loc.addXYZ(-10.5, 65, 18.5)
         );
-        options.add(new TowerDefenseSpawner()
-                        .addPath(blueSpawn, bluePath1)
-                        .addPath(blueSpawn, bluePath2)
-                        .addPath(redSpawn, redPath1)
-                        .addPath(redSpawn, redPath2)
+//        options.add(new TowerDefenseSpawner()
+//                        .addPath(blueSpawn, bluePath1)
+//                        .addPath(blueSpawn, bluePath2)
+//                        .addPath(redSpawn, redPath1)
+//                        .addPath(redSpawn, redPath2)
 //                .add(new FixedWave()
 //                        .add(Mob.ZOMBIE_I, 1)
 //                        .delay(5 * SECOND)
@@ -97,7 +99,7 @@ public class TowerDefenseTest extends GameMap {
 //                .add(new FixedWave()
 //                        .add(Mob.ZOMBIE_I, 5)
 //                )
-        );
+//        );
         options.add(new TowerBuildOption()
                 .addBuildableArea(Team.BLUE, loc.addXYZ(-0.5, 60, 3.5), loc.addXYZ(-49.5, 80, -23.5))
                 .addBuildableArea(Team.RED, loc.addXYZ(-0.5, 60, 5.5), loc.addXYZ(-49.5, 80, 32.5))
@@ -128,6 +130,31 @@ public class TowerDefenseTest extends GameMap {
 
         options.add(new BasicScoreboardOption());
 
+        Node<Location> blueSpawnNode = new Node<>(blueSpawn);
+
+        Node<Location> node1 = new Node<>(loc.addXYZ(-12.5, 65, 0.5));
+        Node<Location> node2 = new Node<>(loc.addXYZ(-12.5, 65, -16.5));
+        Node<Location> node3 = new Node<>(loc.addXYZ(-22.5, 65, -16.5));
+        Node<Location> node4 = new Node<>(loc.addXYZ(-22.5, 65, -9.5));
+        Node<Location> node5 = new Node<>(loc.addXYZ(-39.5, 65, -9.5));
+
+        Node<Location> node6 = new Node<>(loc.addXYZ(-26.5, 65, 0.5));
+        Node<Location> node7 = new Node<>(loc.addXYZ(-26.5, 65, -9.5));
+
+        TowerDefenseDirectAcyclicGraph bluePath = new TowerDefenseDirectAcyclicGraph(blueSpawnNode)
+                .addNodes(node1, node2, node3, node4, node5, node6, node7)
+                .addEdge(blueSpawnNode, node1)
+                .addEdge(node1, node2)
+                .addEdge(node2, node3)
+                .addEdge(node3, node4)
+                .addEdge(node4, node5)
+                .addEdge(node1, node6)
+                .addEdge(node6, node7)
+                .addEdge(node7, node5);
+
+        options.add(new TowerDefenseSpawner()
+                .addPath(blueSpawn, bluePath)
+        );
         return options;
     }
 }

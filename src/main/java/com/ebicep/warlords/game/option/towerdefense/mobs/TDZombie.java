@@ -9,6 +9,8 @@ import org.bukkit.Location;
 
 public class TDZombie extends TowerDefenseMob implements BasicMob {
 
+    int spawns = 0;
+
     public TDZombie(
             Location spawnLocation,
             String name,
@@ -36,8 +38,10 @@ public class TDZombie extends TowerDefenseMob implements BasicMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        if (ticksElapsed % 100 == 0 && option instanceof TowerDefenseOption towerDefenseOption) {
-            towerDefenseOption.spawnNewMob(Mob.TD_ZOMBIE.createMob(warlordsNPC.getLocation()), warlordsNPC);
+        if (ticksElapsed % 100 == 0 && option instanceof TowerDefenseOption towerDefenseOption && spawns++ == 0) {
+            TDZombie tdZombie = new TDZombie(warlordsNPC.getLocation());
+            tdZombie.spawns = 1;
+            towerDefenseOption.spawnNewMob(tdZombie, warlordsNPC);
         }
     }
 

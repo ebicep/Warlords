@@ -9,6 +9,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
+import com.ebicep.warlords.game.option.towerdefense.path.PathDirection;
+import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
 import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseWave;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -18,6 +20,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.dag.Node;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -53,7 +56,7 @@ public class TowerDefenseSpawner implements Option, Listener {
             .setOnUseID("SUMMON_TROOPS_ITEM")
             .get();
     public static int MAX_PLAYER_SPAWN_AMOUNT = 5; // max numbers of mobs players can spawn at a time
-    private final Map<Location, List<TowerDefensePath>> paths = new HashMap<>(); // spawn location -> list of paths from that location
+    private final Map<Location, List<TowerDefenseDirectAcyclicGraph>> paths = new HashMap<>(); // spawn location -> list of paths from that location
     private final List<TowerDefenseWave> waves = new ArrayList<>();
     private final List<BukkitTask> activeWaves = new ArrayList<>();
     private final List<BukkitTask> activePlayerWaves = new ArrayList<>();
@@ -69,31 +72,23 @@ public class TowerDefenseSpawner implements Option, Listener {
         return this;
     }
 
-    public TowerDefenseSpawner addPath(Location spawn, List<Location> path) {
-        paths.computeIfAbsent(spawn, k -> new ArrayList<>()).add(new TowerDefensePath(spawn, path));
+    public TowerDefenseSpawner addPath(Location spawn, TowerDefenseDirectAcyclicGraph path) {
+        paths.computeIfAbsent(spawn, k -> new ArrayList<>()).add(path);
         return this;
     }
 
-    public void renderPaths() {
+
+    public void renderEdges() {
         paths.forEach((spawnLocation, towerDefensePaths) -> {
-            int yOffset = 0;
-            for (TowerDefensePath towerDefensePath : towerDefensePaths) {
-                int red = towerDefensePath.getRed();
-                int green = towerDefensePath.getGreen();
-                int blue = towerDefensePath.getBlue();
-                List<TowerDefensePath.PathLocation> path = towerDefensePath.getPath();
-                for (int i = 0; i < path.size() - 1; i++) {
-                    Location loc1 = path.get(i).location().clone().add(0, yOffset, 0);
-                    Location loc2 = path.get(i + 1).location().clone().add(0, yOffset, 0);
-                    if (i == 0) {
-                        Location spawnLoc = spawnLocation.clone().add(0, yOffset, 0);
-                        EffectUtils.playParticleLinkAnimation(spawnLoc, loc1, red, green, blue, 1, 1);
-//                        EffectUtils.displayParticle(Particle.REDSTONE, spawnLoc.add(0, 1, 0), 3, new Particle.DustOptions(org.bukkit.Color.fromRGB(red, green, blue), 5));
+            for (TowerDefenseDirectAcyclicGraph towerDefensePath : towerDefensePaths) {
+                Map<Node<Location>, List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge>> edges = towerDefensePath.getEdges();
+                edges.forEach((locationNode, towerDefenseEdges) -> {
+                    Location from = locationNode.getValue().clone().add(0, 1, 0);
+                    for (TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge : towerDefenseEdges) {
+                        Location to = edge.getTo().getValue().clone().add(0, 1, 0);
+                        EffectUtils.playParticleLinkAnimation(from, to, 255, 0, 0, 1, 1);
                     }
-                    EffectUtils.playParticleLinkAnimation(loc1, loc2, red, green, blue, 1, 1);
-//                    EffectUtils.displayParticle(Particle.REDSTONE, loc1.add(0, 1, 0), 1, new Particle.DustOptions(org.bukkit.Color.fromRGB(red, green, blue), 5));
-                }
-                yOffset++;
+                });
             }
         });
     }
@@ -141,17 +136,32 @@ public class TowerDefenseSpawner implements Option, Listener {
     public void pathFindToNextWaypoint(AbstractMob mob) {
         NPC npc = mob.getNpc();
         TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(mob);
-        TowerDefensePath path = getPathFromData(mobData);
-        TowerDefensePath.PathLocation nextPathLocation = path.getPath().get(mobData.getLastWaypointIndex());
-        Location lineTarget = nextPathLocation.pathDirection().getForwardLocation(npc.getStoredLocation(), nextPathLocation.location());
+        TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
+        Node<Location> currentNode = path.getNodeIndex().get(mobData.getCurrentNode());
+        Node<Location> targetNode = path.getNodeIndex().get(mobData.getTargetNode());
+
+        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(currentNode);
+        TowerDefenseDirectAcyclicGraph.TowerDefenseEdge randomEdge = outgoingEdges.get(mobData.getEdgeIndex());
+        PathDirection randomEdgePathDirection = randomEdge.getPathDirection();
+
+        Location nextTargetLocation = targetNode.getValue();
+        Location lineTarget = randomEdgePathDirection.getForwardLocation(npc.getStoredLocation(), nextTargetLocation);
         npc.getNavigator().setStraightLineTarget(lineTarget);
 
         TextDisplay d = lineTarget.getWorld().spawn(lineTarget.clone().add(0, 3, 0), TextDisplay.class, display -> {
-            display.text(Component.text("Next Target (" + nextPathLocation.pathDirection().name() + ")", NamedTextColor.LIGHT_PURPLE));
+            display.text(Component.text("Next Target (" + randomEdgePathDirection.name() + ")", NamedTextColor.LIGHT_PURPLE));
             display.setBillboard(Display.Billboard.CENTER);
         });
-        TextDisplay d2 = lineTarget.getWorld().spawn(nextPathLocation.location().clone().add(0, 4, 0), TextDisplay.class, display -> {
+        TextDisplay d2 = lineTarget.getWorld().spawn(nextTargetLocation.clone().add(0, 4, 0), TextDisplay.class, display -> {
             display.text(Component.text("Next Waypoint", NamedTextColor.DARK_PURPLE));
+            display.setBillboard(Display.Billboard.CENTER);
+        });
+        TextDisplay d3 = lineTarget.getWorld().spawn(currentNode.getValue().clone().add(0, 6, 0), TextDisplay.class, display -> {
+            display.text(Component.text("CURRENT NODE", NamedTextColor.RED));
+            display.setBillboard(Display.Billboard.CENTER);
+        });
+        TextDisplay d4 = lineTarget.getWorld().spawn(targetNode.getValue().clone().add(0, 6, 0), TextDisplay.class, display -> {
+            display.text(Component.text("TARGET NODE", NamedTextColor.DARK_RED));
             display.setBillboard(Display.Billboard.CENTER);
         });
         new BukkitRunnable() {
@@ -159,11 +169,13 @@ public class TowerDefenseSpawner implements Option, Listener {
             public void run() {
                 d.remove();
                 d2.remove();
+                d3.remove();
+                d4.remove();
             }
         }.runTaskLater(Warlords.getInstance(), 60);
     }
 
-    public TowerDefensePath getPathFromData(TowerDefenseOption.TowerDefenseMobData mobData) {
+    public TowerDefenseDirectAcyclicGraph getPathFromData(TowerDefenseOption.TowerDefenseMobData mobData) {
         return paths.get(mobData.getSpawnLocation()).get(mobData.getPathIndex());
     }
 
@@ -178,28 +190,34 @@ public class TowerDefenseSpawner implements Option, Listener {
                     AbstractMob mob2 = entry2.getKey();
                     TowerDefenseOption.TowerDefenseMobData data1 = entry1.getValue();
                     TowerDefenseOption.TowerDefenseMobData data2 = entry2.getValue();
-                    TowerDefensePath pathFromData2 = getPathFromData(data2);
-                    TowerDefensePath pathFromData1 = getPathFromData(data1);
+                    TowerDefenseDirectAcyclicGraph pathFromData1 = getPathFromData(data1);
+                    TowerDefenseDirectAcyclicGraph pathFromData2 = getPathFromData(data2);
                     // first check if either are attacking castle - auto first
                     if (data1.isAttackingCastle() || data2.isAttackingCastle()) {
                         return Boolean.compare(data2.isAttackingCastle(), data1.isAttackingCastle());
                     }
                     // then check equal path and waypoint index - if so, sort by distance to next waypoint
-                    List<TowerDefensePath.PathLocation> path1 = pathFromData1.getPath();
-                    List<TowerDefensePath.PathLocation> path2 = pathFromData2.getPath();
-                    if (pathFromData2.equals(pathFromData1) && data1.getLastWaypointIndex() == data2.getLastWaypointIndex() && data1.getLastWaypointIndex() < path1.size()) {
-                        TowerDefensePath.PathLocation nextPathLocation = path1.get(data1.getLastWaypointIndex());
-                        return nextPathLocation.pathDirection().compare(
+                    if (pathFromData1.equals(pathFromData2) &&
+                            data1.getCurrentNode() == data2.getCurrentNode() &&
+                            data1.getTargetNode() == data2.getTargetNode() &&
+                            data1.getEdgeIndex() == data2.getEdgeIndex()
+                    ) {
+                        Node<Location> currentNode = pathFromData1.getNodeIndex().get(data1.getCurrentNode());
+                        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = pathFromData1.getEdges(currentNode);
+                        TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge = outgoingEdges.get(data1.getEdgeIndex());
+                        Node<Location> targetNode = pathFromData1.getNodeIndex().get(data1.getTargetNode());
+                        return edge.getPathDirection().compare(
                                 mob1.getNpc().getStoredLocation(),
                                 mob2.getNpc().getStoredLocation(),
-                                nextPathLocation.location()
+                                targetNode.getValue()
                         );
                     }
+                    return -1; // TODO
                     // finally sort by relative distance on current path
-                    return Double.compare(
-                            path2.get(data2.getLastWaypointIndex()).distance() / pathFromData2.getTotalDistance(),
-                            path1.get(data1.getLastWaypointIndex()).distance() / pathFromData1.getTotalDistance()
-                    );
+//                    return Double.compare(
+//                            path2.get(data2.getLastNodeIdentifier()).distance() / pathFromData2.getTotalDistance(),
+//                            path1.get(data1.getLastNodeIdentifier()).distance() / pathFromData1.getTotalDistance()
+//                    );
                 })
                 .toList();
         for (int i = 0; i < sortedPositions.size(); i++) {
@@ -224,14 +242,20 @@ public class TowerDefenseSpawner implements Option, Listener {
         if (!(mob instanceof TowerDefenseMob towerDefenseMob) || mobData == null) {
             return;
         }
-        int lastWaypointIndex = mobData.getLastWaypointIndex();
-        TowerDefensePath path = getPathFromData(mobData);
-        List<TowerDefensePath.PathLocation> locations = path.getPath();
-        if (lastWaypointIndex == locations.size() - 1) {
+        int lastNodeIdentifier = mobData.getTargetNode();
+        TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
+        Node<Location> node = path.getNodeIndex().get(lastNodeIdentifier);
+        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
+        if (outgoingEdges == null || outgoingEdges.isEmpty()) {
             Bukkit.getPluginManager().callEvent(new TowerDefenseMobCompletePathEvent(game, towerDefenseMob));
             return;
         }
-        mobData.setLastWaypointIndex(lastWaypointIndex + 1);
+        // random edge
+        int randomEdgeIndex = ThreadLocalRandom.current().nextInt(outgoingEdges.size());
+        TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge = outgoingEdges.get(randomEdgeIndex);
+        mobData.setCurrentNode(lastNodeIdentifier);
+        mobData.setTargetNode(edge.getTo().hashCode());
+        mobData.setEdgeIndex(randomEdgeIndex);
         pathFindToNextWaypoint(mob);
     }
 
@@ -261,18 +285,26 @@ public class TowerDefenseSpawner implements Option, Listener {
         // copy data if spawner is a mob
         Location spawnLocation;
         Team attackingTeam;
-        int lastWaypointIndex;
+        int currentNodeID;
+        int targetNodeID;
+        int edgeIndex;
         int randomPathIndex;
         if (spawner instanceof WarlordsNPC warlordsNPC) {
             AbstractMob npcMob = warlordsNPC.getMob();
             TowerDefenseOption.TowerDefenseMobData spawnerMobData = mobs.get(npcMob);
             if (spawnerMobData != null) {
-                TowerDefensePath path = getPathFromData(spawnerMobData);
-                TowerDefensePath.PathLocation pathLocation = path.getPath().get(spawnerMobData.getLastWaypointIndex());
-                spawnLocation = pathLocation.pathDirection().getRandomSpawnLocation(pathLocation.location(), randomSpawn);
+                TowerDefenseDirectAcyclicGraph path = getPathFromData(spawnerMobData);
+                Map<Integer, Node<Location>> nodeIndex = path.getNodeIndex();
+                Node<Location> currentNode = nodeIndex.get(spawnerMobData.getCurrentNode());
+                Node<Location> targetNode = nodeIndex.get(spawnerMobData.getTargetNode());
+                TowerDefenseDirectAcyclicGraph.TowerDefenseEdge pathLocation = path.getEdges(currentNode).get(spawnerMobData.getEdgeIndex());
+
+                spawnLocation = pathLocation.getPathDirection().getRandomSpawnLocation(targetNode.getValue(), randomSpawn);
                 randomSpawn = spawnerMobData.getSpawnLocation();
                 attackingTeam = spawnerMobData.getAttackingTeam();
-                lastWaypointIndex = spawnerMobData.getLastWaypointIndex();
+                currentNodeID = spawnerMobData.getCurrentNode();
+                targetNodeID = spawnerMobData.getTargetNode();
+                edgeIndex = spawnerMobData.getEdgeIndex();
                 randomPathIndex = spawnerMobData.getPathIndex();
             } else {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("Spawner mob data is null");
@@ -285,14 +317,16 @@ public class TowerDefenseSpawner implements Option, Listener {
                     ThreadLocalRandom.current().nextDouble(4) - 2
             );
             attackingTeam = teamSpawnLocations.get(randomSpawn);
-            lastWaypointIndex = 0;
+            edgeIndex = 0;
             // get random path
-            List<TowerDefensePath> pathList = paths.get(randomSpawn);
+            List<TowerDefenseDirectAcyclicGraph> pathList = paths.get(randomSpawn);
             if (pathList == null) {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No path with given spawn: " + randomSpawn);
                 return;
             }
             randomPathIndex = ThreadLocalRandom.current().nextInt(pathList.size());
+            currentNodeID = pathList.get(randomPathIndex).getRoot().hashCode();
+            targetNodeID = pathList.get(randomPathIndex).getRoot().hashCode();
         }
         mob.setSpawnLocation(spawnLocation);
         mob.setSpawner(spawner);
@@ -303,7 +337,9 @@ public class TowerDefenseSpawner implements Option, Listener {
                 attackingTeam,
                 randomSpawn,
                 randomPathIndex,
-                lastWaypointIndex,
+                currentNodeID,
+                targetNodeID,
+                edgeIndex,
                 mobs.size() + 1
         ));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
@@ -350,7 +386,7 @@ public class TowerDefenseSpawner implements Option, Listener {
         return teamSpawnLocations;
     }
 
-    public Map<Location, List<TowerDefensePath>> getPaths() {
+    public Map<Location, List<TowerDefenseDirectAcyclicGraph>> getPaths() {
         return paths;
     }
 }

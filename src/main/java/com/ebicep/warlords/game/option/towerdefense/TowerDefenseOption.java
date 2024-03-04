@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseCastleDestroyEvent;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
+import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -19,11 +20,12 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.dag.Node;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -97,26 +99,21 @@ public class TowerDefenseOption implements PveOption, Listener {
     public void start(@Nonnull Game game) {
         castles.values().forEach(TowerDefenseCastle::displayInit);
         towerDefenseSpawner.getPaths().forEach((location, towerDefensePaths) -> {
-            int yOffset = 1;
-            for (TowerDefensePath towerDefensePath : towerDefensePaths) {
-                List<TowerDefensePath.PathLocation> path = towerDefensePath.getPath();
-                for (int i = 0; i < path.size(); i++) {
-                    TowerDefensePath.PathLocation pathLocation = path.get(i);
-                    int finalI = i;
-                    pathLocation.location().getWorld().spawn(pathLocation.location().clone().add(0, yOffset, 0), TextDisplay.class, display -> {
-                        display.text(Component.text(finalI + " - " + pathLocation.pathDirection().name() + " - " + pathLocation.distance(),
-                                TextColor.color(towerDefensePath.getRed(), towerDefensePath.getGreen(), towerDefensePath.getBlue())
-                        ));
-                        display.setBillboard(Display.Billboard.CENTER);
-                        display.setTransformation(new Transformation(
-                                new Vector3f(),
-                                new AxisAngle4f(),
-                                new Vector3f(2),
-                                new AxisAngle4f()
-                        ));
-                    });
+            for (TowerDefenseDirectAcyclicGraph towerDefensePath : towerDefensePaths) {
+                towerDefensePath.calculateEdgeData();
+                Node<Location> root = towerDefensePath.getRoot();
+                renderRoot(root);
+                for (Node<Location> locationNode : root.getChildren()) {
+                    List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> towerDefenseEdges = towerDefensePath.getEdges().get(locationNode);
+                    System.out.println("Location: " + locationNode.getValue());
+                    if (towerDefenseEdges != null) {
+                        towerDefenseEdges.forEach(edge -> renderEdge(locationNode, edge));
+                        towerDefenseEdges.forEach(edge -> System.out.println("Edge: " + edge));
+                    } else {
+                        System.out.println("No edges");
+                    }
+                    System.out.println("---------------------");
                 }
-                yOffset++;
             }
         });
         new GameRunnable(game) {
@@ -134,13 +131,43 @@ public class TowerDefenseOption implements PveOption, Listener {
 
                 mobTick();
                 if (ticksElapsed.get() % 5 == 0) {
-                    towerDefenseSpawner.renderPaths();
+                    towerDefenseSpawner.renderEdges();
                 }
                 if (ticksElapsed.get() % 20 == 0) {
                     towerDefenseSpawner.recalculateMobPositions();
                 }
             }
         }.runTaskTimer(0, 0);
+    }
+
+    private void renderRoot(Node<Location> root) {
+        Location location = root.getValue();
+        location.getWorld().spawn(location.clone().add(0, 2, 0), TextDisplay.class, display -> {
+            display.text(Component.text("NODE", NamedTextColor.DARK_AQUA));
+            display.setBillboard(Display.Billboard.CENTER);
+            display.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f(),
+                    new Vector3f(2),
+                    new AxisAngle4f()
+            ));
+        });
+        root.getChildren().forEach(this::renderRoot);
+    }
+
+    private void renderEdge(Node<Location> from, TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge) {
+        Location fromLocation = from.getValue();
+        Location toLocation = edge.getTo().getValue();
+        toLocation.getWorld().spawn(new LocationBuilder(fromLocation).faceTowards(toLocation).forward(edge.getDistance() / 2).addY(2), TextDisplay.class, display -> {
+            display.text(Component.text(edge.getPathDirection() + " (" + edge.getDistance() + ")", NamedTextColor.AQUA));
+            display.setBillboard(Display.Billboard.CENTER);
+            display.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f(),
+                    new Vector3f(2),
+                    new AxisAngle4f()
+            ));
+        });
     }
 
     @Override
@@ -355,16 +382,20 @@ public class TowerDefenseOption implements PveOption, Listener {
         private final Team attackingTeam; // side that mob is attacking
         private final Location spawnLocation; // original spawn location with no offset
         private final int pathIndex; // index of whatever path its using
-        private int lastWaypointIndex;
+        private int currentNode;
+        private int targetNode;
+        private int edgeIndex;
         private int position; // position in game, first = 1
         private boolean attackingCastle = false;
 
-        public TowerDefenseMobData(int spawnTick, Team attackingTeam, Location spawnLocation, int pathIndex, int lastWaypointIndex, int position) {
+        public TowerDefenseMobData(int spawnTick, Team attackingTeam, Location spawnLocation, int pathIndex, int currentNode, int targetNode, int edgeIndex, int position) {
             super(spawnTick);
             this.attackingTeam = attackingTeam;
             this.spawnLocation = spawnLocation;
             this.pathIndex = pathIndex;
-            this.lastWaypointIndex = lastWaypointIndex;
+            this.currentNode = currentNode;
+            this.targetNode = targetNode;
+            this.edgeIndex = edgeIndex;
             this.position = position;
         }
 
@@ -373,7 +404,7 @@ public class TowerDefenseOption implements PveOption, Listener {
             return "TowerDefenseMobData{" +
                     "spawnLocation=" + spawnLocation +
                     ", pathIndex=" + pathIndex +
-                    ", lastWaypointIndex=" + lastWaypointIndex +
+                    ", lastWaypointIndex=" + targetNode +
                     '}';
         }
 
@@ -389,12 +420,28 @@ public class TowerDefenseOption implements PveOption, Listener {
             return pathIndex;
         }
 
-        public int getLastWaypointIndex() {
-            return lastWaypointIndex;
+        public int getTargetNode() {
+            return targetNode;
         }
 
-        public void setLastWaypointIndex(int lastWaypointIndex) {
-            this.lastWaypointIndex = lastWaypointIndex;
+        public void setTargetNode(int targetNode) {
+            this.targetNode = targetNode;
+        }
+
+        public int getCurrentNode() {
+            return currentNode;
+        }
+
+        public void setCurrentNode(int currentNode) {
+            this.currentNode = currentNode;
+        }
+
+        public int getEdgeIndex() {
+            return edgeIndex;
+        }
+
+        public void setEdgeIndex(int edgeIndex) {
+            this.edgeIndex = edgeIndex;
         }
 
         public int getPosition() {
