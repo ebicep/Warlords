@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense;
 
+import com.ebicep.warlords.util.java.MathUtils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -81,12 +82,27 @@ public class TowerDefensePath {
 
             @Override
             public int compare(Location loc1, Location loc2, Location target) {
+                if (loc1 == null) {
+                    return 1;
+                }
+                if (loc2 == null) {
+                    return -1;
+                }
                 double targetX = target.getX();
                 // return x is closer - return int
                 if (Math.abs(loc1.getX() - targetX) < Math.abs(loc2.getX() - targetX)) {
                     return -1;
                 }
                 return 1;
+            }
+
+            @Override
+            public Location getRandomSpawnLocation(Location waypoint, Location current) {
+                // varying z by +-2 of waypoint z
+                double waypointZ = waypoint.getZ();
+                Location location = current.clone();
+                location.setZ(waypointZ + MathUtils.generateRandomValueBetweenInclusive(-2, 2));
+                return location;
             }
         },
         Z {
@@ -99,12 +115,27 @@ public class TowerDefensePath {
 
             @Override
             public int compare(Location loc1, Location loc2, Location target) {
+                if (loc1 == null) {
+                    return 1;
+                }
+                if (loc2 == null) {
+                    return -1;
+                }
                 double targetZ = target.getZ();
                 // return z is closer
                 if (Math.abs(loc1.getZ() - targetZ) < Math.abs(loc2.getZ() - targetZ)) {
                     return -1;
                 }
                 return 1;
+            }
+
+            @Override
+            public Location getRandomSpawnLocation(Location waypoint, Location current) {
+                // varying x by +-2 of waypoint x
+                double waypointX = waypoint.getX();
+                Location location = current.clone();
+                location.setX(waypointX + MathUtils.generateRandomValueBetweenInclusive(-2, 2));
+                return location;
             }
         },
         UNKNOWN {
@@ -117,12 +148,22 @@ public class TowerDefensePath {
             public int compare(Location loc1, Location loc2, Location target) {
                 return 0;
             }
+
+            @Override
+            public Location getRandomSpawnLocation(Location waypoint, Location current) {
+                Location location = current.clone();
+                location.setX(waypoint.getX() + MathUtils.generateRandomValueBetweenInclusive(-2, 2));
+                location.setZ(waypoint.getZ() + MathUtils.generateRandomValueBetweenInclusive(-2, 2));
+                return location;
+            }
         },
         ;
 
         public abstract Location getForwardLocation(Location current, Location target);
 
         public abstract int compare(Location loc1, Location loc2, Location target);
+
+        public abstract Location getRandomSpawnLocation(Location waypoint, Location current);
     }
 
     public record PathLocation(Location location, PathDirection pathDirection, double distance) {

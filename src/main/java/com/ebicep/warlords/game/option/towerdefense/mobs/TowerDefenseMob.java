@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -78,7 +79,7 @@ public abstract class TowerDefenseMob extends AbstractMob {
 
                 }
         );
-        if (spawner != null) {
+        if (spawner instanceof WarlordsPlayer) {
             warlordsNPC.getMobHologram().getCustomHologramLines().add(new MobHologram.CustomHologramLine(spawner.getColoredName()));
         }
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {

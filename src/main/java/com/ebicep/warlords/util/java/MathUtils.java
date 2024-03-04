@@ -20,6 +20,10 @@ public class MathUtils {
         return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
+    public static double generateRandomValueBetweenInclusive(double min, double max) {
+        return ThreadLocalRandom.current().nextDouble(min, max + 1);
+    }
+
     // Linear Interpolation
     // https://en.wikipedia.org/wiki/Linear_interpolation
 
