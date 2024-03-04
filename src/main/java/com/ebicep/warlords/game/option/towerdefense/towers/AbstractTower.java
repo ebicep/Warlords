@@ -172,7 +172,10 @@ public abstract class AbstractTower {
         return PlayerFilterGeneric.entitiesAround(centerLocation, range, range, range)
                                   .warlordsNPCs()
                                   .filter(warlordsNPC -> warlordsNPC.getTeam() != team)
-                                  .sorted((o1, o2) -> targetPriority.compare(this, o1, o2, mobData.get(o1.getMob()), mobData.get(o2.getMob())))
+                                  .sorted((o1, o2) -> targetPriority.compare(this,
+                                          new TargetPriority.TargetPriorityMob(o1, mobData.get(o1.getMob())),
+                                          new TargetPriority.TargetPriorityMob(o2, mobData.get(o2.getMob()))
+                                  ))
                                   .stream()
                                   .limit(limit == -1 ? Long.MAX_VALUE : limit)
                                   .collect(Collectors.toList());
@@ -233,51 +236,45 @@ public abstract class AbstractTower {
     public enum TargetPriority {
         FIRST {
             @Override
-            public int compare(AbstractTower tower, WarlordsNPC o1, WarlordsNPC o2, TowerDefenseOption.TowerDefenseMobData o1Data, TowerDefenseOption.TowerDefenseMobData o2Data) {
-                if (o1Data.getSpawnTick() == o2Data.getSpawnTick()) {
-                    return 0;
-                }
-                return o1Data.getSpawnTick() < o2Data.getSpawnTick() ? -1 : 1;
+            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+                return Integer.compare(o1.mobData().getPosition(), o2.mobData().getPosition());
             }
         },
         LAST {
             @Override
-            public int compare(AbstractTower tower, WarlordsNPC o1, WarlordsNPC o2, TowerDefenseOption.TowerDefenseMobData o1Data, TowerDefenseOption.TowerDefenseMobData o2Data) {
-                if (o1Data.getSpawnTick() == o2Data.getSpawnTick()) {
-                    return 0;
-                }
-                return o1Data.getSpawnTick() > o2Data.getSpawnTick() ? -1 : 1;
+            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+                return Integer.compare(o2.mobData().getPosition(), o1.mobData().getPosition());
             }
         },
         STRONGEST {
             @Override
-            public int compare(AbstractTower tower, WarlordsNPC o1, WarlordsNPC o2, TowerDefenseOption.TowerDefenseMobData o1Data, TowerDefenseOption.TowerDefenseMobData o2Data) {
-                return o1.getCurrentHealth() > o2.getCurrentHealth() ? -1 : 1;
+            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+                return o1.warlordsNPC().getCurrentHealth() > o2.warlordsNPC().getCurrentHealth() ? -1 : 1;
             }
         },
         WEAKEST {
             @Override
-            public int compare(AbstractTower tower, WarlordsNPC o1, WarlordsNPC o2, TowerDefenseOption.TowerDefenseMobData o1Data, TowerDefenseOption.TowerDefenseMobData o2Data) {
-                return o1.getCurrentHealth() < o2.getCurrentHealth() ? -1 : 1;
+            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+                return o1.warlordsNPC().getCurrentHealth() < o2.warlordsNPC().getCurrentHealth() ? -1 : 1;
             }
         },
         CLOSEST {
             @Override
-            public int compare(AbstractTower tower, WarlordsNPC o1, WarlordsNPC o2, TowerDefenseOption.TowerDefenseMobData o1Data, TowerDefenseOption.TowerDefenseMobData o2Data) {
+            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
                 Location location = tower.getCenterLocation();
-                return Double.compare(o1.getLocation().distanceSquared(location), o2.getLocation().distanceSquared(location));
+                return Double.compare(o1.warlordsNPC().getLocation().distanceSquared(location), o2.warlordsNPC().getLocation().distanceSquared(location));
             }
         },
         FURTHEST {
             @Override
-            public int compare(AbstractTower tower, WarlordsNPC o1, WarlordsNPC o2, TowerDefenseOption.TowerDefenseMobData o1Data, TowerDefenseOption.TowerDefenseMobData o2Data) {
+            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
                 Location location = tower.getCenterLocation();
-                return Double.compare(o2.getLocation().distanceSquared(location), o1.getLocation().distanceSquared(location));
+                return Double.compare(o2.warlordsNPC().getLocation().distanceSquared(location), o1.warlordsNPC().getLocation().distanceSquared(location));
             }
         },
         RANDOM {
             @Override
-            public int compare(AbstractTower tower, WarlordsNPC o1, WarlordsNPC o2, TowerDefenseOption.TowerDefenseMobData o1Data, TowerDefenseOption.TowerDefenseMobData o2Data) {
+            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
                 return ThreadLocalRandom.current().nextDouble() < .5 ? -1 : 1;
             }
         },
@@ -289,10 +286,11 @@ public abstract class AbstractTower {
 
         public abstract int compare(
                 AbstractTower tower,
-                WarlordsNPC o1,
-                WarlordsNPC o2,
-                TowerDefenseOption.TowerDefenseMobData o1Data,
-                TowerDefenseOption.TowerDefenseMobData o2Data
+                TargetPriorityMob o1,
+                TargetPriorityMob o2
         );
+
+        public record TargetPriorityMob(WarlordsNPC warlordsNPC, TowerDefenseOption.TowerDefenseMobData mobData) {
+        }
     }
 }

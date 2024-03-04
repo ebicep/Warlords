@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseWave;
+import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -129,6 +130,10 @@ public class TowerDefenseSpawner implements Option, Listener {
         npc.getDefaultGoalController().clear();
         npc.getNavigator().getDefaultParameters().distanceMargin(.75);
         pathFindToNextWaypoint(mob);
+        mob.getWarlordsNPC()
+           .getMobHologram()
+           .getCustomHologramLines()
+           .add(new MobHologram.CustomHologramLine(() -> Component.text(mobs.get(mob).getPosition(), NamedTextColor.GREEN)));
     }
 
     public void pathFindToNextWaypoint(AbstractMob mob) {
@@ -156,8 +161,49 @@ public class TowerDefenseSpawner implements Option, Listener {
         }.runTaskLater(Warlords.getInstance(), 60);
     }
 
-    private TowerDefensePath getPathFromData(TowerDefenseOption.TowerDefenseMobData mobData) {
+    public TowerDefensePath getPathFromData(TowerDefenseOption.TowerDefenseMobData mobData) {
         return paths.get(mobData.getSpawnLocation()).get(mobData.getPathIndex());
+    }
+
+    public void recalculateMobPositions() {
+        // get path
+        // get total path distance based on pathIndex
+        List<Map.Entry<AbstractMob, TowerDefenseOption.TowerDefenseMobData>> sortedPositions = mobs
+                .entrySet()
+                .stream()
+                .sorted((entry1, entry2) -> {
+                    AbstractMob mob1 = entry1.getKey();
+                    AbstractMob mob2 = entry2.getKey();
+                    TowerDefenseOption.TowerDefenseMobData data1 = entry1.getValue();
+                    TowerDefenseOption.TowerDefenseMobData data2 = entry2.getValue();
+                    TowerDefensePath pathFromData2 = getPathFromData(data2);
+                    TowerDefensePath pathFromData1 = getPathFromData(data1);
+                    // first check if either are attacking castle - auto first
+                    if (data1.isAttackingCastle() || data2.isAttackingCastle()) {
+                        return Boolean.compare(data2.isAttackingCastle(), data1.isAttackingCastle());
+                    }
+                    // then check equal path and waypoint index - if so, sort by distance to next waypoint
+                    List<TowerDefensePath.PathLocation> path1 = pathFromData1.getPath();
+                    List<TowerDefensePath.PathLocation> path2 = pathFromData2.getPath();
+                    if (pathFromData2.equals(pathFromData1) && data1.getLastWaypointIndex() == data2.getLastWaypointIndex() && data1.getLastWaypointIndex() < path1.size()) {
+                        TowerDefensePath.PathLocation nextPathLocation = path1.get(data1.getLastWaypointIndex());
+                        return nextPathLocation.pathDirection().compare(
+                                mob1.getNpc().getStoredLocation(),
+                                mob2.getNpc().getStoredLocation(),
+                                nextPathLocation.location()
+                        );
+                    }
+                    // finally sort by relative distance on current path
+                    return Double.compare(
+                            path2.get(data2.getLastWaypointIndex()).distance() / pathFromData2.getTotalDistance(),
+                            path1.get(data1.getLastWaypointIndex()).distance() / pathFromData1.getTotalDistance()
+                    );
+                })
+                .toList();
+        for (int i = 0; i < sortedPositions.size(); i++) {
+            Map.Entry<AbstractMob, TowerDefenseOption.TowerDefenseMobData> data = sortedPositions.get(i);
+            data.getValue().setPosition(i + 1);
+        }
     }
 
     @EventHandler
@@ -251,7 +297,8 @@ public class TowerDefenseSpawner implements Option, Listener {
                 attackingTeam,
                 randomSpawn,
                 randomPathIndex,
-                lastWaypointIndex
+                lastWaypointIndex,
+                mobs.size() + 1
         ));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }

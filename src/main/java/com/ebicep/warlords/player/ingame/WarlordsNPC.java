@@ -36,8 +36,8 @@ public class WarlordsNPC extends WarlordsEntity {
     private final MobHologram mobHologram;
     private float minMeleeDamage;
     private float maxMeleeDamage;
-    protected float meleeCritChance = 0;
-    protected float meleeCritMultiplier = 100;
+    protected float meleeCritChance;
+    protected float meleeCritMultiplier;
     protected NPC npc;
     protected AbstractMob mob;
     protected Component mobNamePrefix = Component.empty();

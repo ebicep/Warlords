@@ -104,7 +104,7 @@ public class TowerDefenseOption implements PveOption, Listener {
                     TowerDefensePath.PathLocation pathLocation = path.get(i);
                     int finalI = i;
                     pathLocation.location().getWorld().spawn(pathLocation.location().clone().add(0, yOffset, 0), TextDisplay.class, display -> {
-                        display.text(Component.text(finalI + " - " + pathLocation.pathDirection().name(),
+                        display.text(Component.text(finalI + " - " + pathLocation.pathDirection().name() + " - " + pathLocation.distance(),
                                 TextColor.color(towerDefensePath.getRed(), towerDefensePath.getGreen(), towerDefensePath.getBlue())
                         ));
                         display.setBillboard(Display.Billboard.CENTER);
@@ -135,6 +135,9 @@ public class TowerDefenseOption implements PveOption, Listener {
                 mobTick();
                 if (ticksElapsed.get() % 5 == 0) {
                     towerDefenseSpawner.renderPaths();
+                }
+                if (ticksElapsed.get() % 20 == 0) {
+                    towerDefenseSpawner.recalculateMobPositions();
                 }
             }
         }.runTaskTimer(0, 0);
@@ -353,14 +356,16 @@ public class TowerDefenseOption implements PveOption, Listener {
         private final Location spawnLocation; // original spawn location with no offset
         private final int pathIndex; // index of whatever path its using
         private int lastWaypointIndex;
+        private int position; // position in game, first = 1
         private boolean attackingCastle = false;
 
-        public TowerDefenseMobData(int spawnTick, Team attackingTeam, Location spawnLocation, int pathIndex, int lastWaypointIndex) {
+        public TowerDefenseMobData(int spawnTick, Team attackingTeam, Location spawnLocation, int pathIndex, int lastWaypointIndex, int position) {
             super(spawnTick);
             this.attackingTeam = attackingTeam;
             this.spawnLocation = spawnLocation;
             this.pathIndex = pathIndex;
             this.lastWaypointIndex = lastWaypointIndex;
+            this.position = position;
         }
 
         @Override
@@ -391,6 +396,15 @@ public class TowerDefenseOption implements PveOption, Listener {
         public void setLastWaypointIndex(int lastWaypointIndex) {
             this.lastWaypointIndex = lastWaypointIndex;
         }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
 
         public boolean isAttackingCastle() {
             return attackingCastle;

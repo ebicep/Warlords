@@ -18,8 +18,6 @@ public abstract class MobHologram {
     protected final List<CustomHologramLine> customHologramLines = new ArrayList<>(); // lines to add on top of default health and name
     protected boolean hidden = false;
 
-    public abstract void update();
-
     @Nullable
     public abstract Entity getEntity();
 
@@ -35,6 +33,8 @@ public abstract class MobHologram {
             update();
         }
     }
+
+    public abstract void update();
 
     public List<CustomHologramLine> getCustomHologramLines() {
         return customHologramLines;
@@ -112,12 +112,9 @@ public abstract class MobHologram {
                         entity.addPassenger(display);
                     });
                     customHologramLine.setEntity(textDisplay);
+                } else if (customHologramLine.getEntity() instanceof TextDisplay textDisplay) {
+                    textDisplay.text(customHologramLine.getText());
                 }
-
-//                else {
-//                    customHologramLine.getEntity().customName(customHologramLine.getText());
-//                    customHologramLine.getEntity().teleport(entity.getLocation().add(0, y + (i + 1) * 0.275, 0));
-//                }
             }
         }
     }
