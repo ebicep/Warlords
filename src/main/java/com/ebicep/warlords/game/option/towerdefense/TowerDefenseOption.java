@@ -22,6 +22,8 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.java.dag.DAGUtils;
 import com.ebicep.warlords.util.java.dag.Node;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -101,18 +103,16 @@ public class TowerDefenseOption implements PveOption, Listener {
         towerDefenseSpawner.getPaths().forEach((location, towerDefensePaths) -> {
             for (TowerDefenseDirectAcyclicGraph towerDefensePath : towerDefensePaths) {
                 towerDefensePath.calculateEdgeData();
+                towerDefensePath.calculateNodeDistances();
                 Node<Location> root = towerDefensePath.getRoot();
-                renderRoot(root);
+                HashSet<Node<Location>> nodes = new HashSet<>();
+                DAGUtils.depthFirstSearch(towerDefensePath, root, nodes);
+                nodes.forEach(locationNode -> renderNode(towerDefensePath, locationNode));
                 for (Node<Location> locationNode : root.getChildren()) {
                     List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> towerDefenseEdges = towerDefensePath.getEdges().get(locationNode);
-                    System.out.println("Location: " + locationNode.getValue());
                     if (towerDefenseEdges != null) {
                         towerDefenseEdges.forEach(edge -> renderEdge(locationNode, edge));
-                        towerDefenseEdges.forEach(edge -> System.out.println("Edge: " + edge));
-                    } else {
-                        System.out.println("No edges");
                     }
-                    System.out.println("---------------------");
                 }
             }
         });
@@ -140,10 +140,10 @@ public class TowerDefenseOption implements PveOption, Listener {
         }.runTaskTimer(0, 0);
     }
 
-    private void renderRoot(Node<Location> root) {
-        Location location = root.getValue();
+    private void renderNode(TowerDefenseDirectAcyclicGraph towerDefensePath, Node<Location> node) {
+        Location location = node.getValue();
         location.getWorld().spawn(location.clone().add(0, 2, 0), TextDisplay.class, display -> {
-            display.text(Component.text("NODE", NamedTextColor.DARK_AQUA));
+            display.text(Component.text("NODE (" + NumberFormat.formatOptionalTenths(towerDefensePath.getNodeDistanceToEnd().get(node)) + ")", NamedTextColor.DARK_AQUA));
             display.setBillboard(Display.Billboard.CENTER);
             display.setTransformation(new Transformation(
                     new Vector3f(),
@@ -152,14 +152,13 @@ public class TowerDefenseOption implements PveOption, Listener {
                     new AxisAngle4f()
             ));
         });
-        root.getChildren().forEach(this::renderRoot);
     }
 
     private void renderEdge(Node<Location> from, TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge) {
         Location fromLocation = from.getValue();
         Location toLocation = edge.getTo().getValue();
         toLocation.getWorld().spawn(new LocationBuilder(fromLocation).faceTowards(toLocation).forward(edge.getDistance() / 2).addY(2), TextDisplay.class, display -> {
-            display.text(Component.text(edge.getPathDirection() + " (" + edge.getDistance() + ")", NamedTextColor.AQUA));
+            display.text(Component.text(edge.getPathDirection() + " (" + NumberFormat.formatOptionalTenths(edge.getDistance()) + ")", NamedTextColor.AQUA));
             display.setBillboard(Display.Billboard.CENTER);
             display.setTransformation(new Transformation(
                     new Vector3f(),

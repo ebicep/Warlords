@@ -126,11 +126,22 @@ public class TowerDefenseSpawner implements Option, Listener {
         npc.data().set(NPC.Metadata.COLLIDABLE, false);
         npc.getDefaultGoalController().clear();
         npc.getNavigator().getDefaultParameters().distanceMargin(.75);
+
+        TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(mob);
+        int lastNodeIdentifier = mobData.getTargetNode();
+        TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
+        Node<Location> node = path.getNodeIndex().get(lastNodeIdentifier);
+        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
+        assignNextTargetNode(mobData, lastNodeIdentifier, outgoingEdges);
+
         pathFindToNextWaypoint(mob);
         mob.getWarlordsNPC()
            .getMobHologram()
            .getCustomHologramLines()
-           .add(new MobHologram.CustomHologramLine(() -> Component.text(mobs.get(mob).getPosition(), NamedTextColor.GREEN)));
+           .add(new MobHologram.CustomHologramLine(() -> Component.text(mobs.get(mob).getPosition() + " - " + path.getNodeDistanceToEnd()
+                                                                                                                  .get(path.getNodeIndex().get(mobData.getTargetNode())),
+                   NamedTextColor.GREEN
+           )));
     }
 
     public void pathFindToNextWaypoint(AbstractMob mob) {
@@ -197,27 +208,28 @@ public class TowerDefenseSpawner implements Option, Listener {
                         return Boolean.compare(data2.isAttackingCastle(), data1.isAttackingCastle());
                     }
                     // then check equal path and waypoint index - if so, sort by distance to next waypoint
+                    Map<Integer, Node<Location>> path1NodeIndex = pathFromData1.getNodeIndex();
                     if (pathFromData1.equals(pathFromData2) &&
                             data1.getCurrentNode() == data2.getCurrentNode() &&
                             data1.getTargetNode() == data2.getTargetNode() &&
                             data1.getEdgeIndex() == data2.getEdgeIndex()
                     ) {
-                        Node<Location> currentNode = pathFromData1.getNodeIndex().get(data1.getCurrentNode());
+                        Node<Location> currentNode = path1NodeIndex.get(data1.getCurrentNode());
                         List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = pathFromData1.getEdges(currentNode);
                         TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge = outgoingEdges.get(data1.getEdgeIndex());
-                        Node<Location> targetNode = pathFromData1.getNodeIndex().get(data1.getTargetNode());
+                        Node<Location> targetNode = path1NodeIndex.get(data1.getTargetNode());
                         return edge.getPathDirection().compare(
                                 mob1.getNpc().getStoredLocation(),
                                 mob2.getNpc().getStoredLocation(),
                                 targetNode.getValue()
                         );
                     }
-                    return -1; // TODO
                     // finally sort by relative distance on current path
-//                    return Double.compare(
-//                            path2.get(data2.getLastNodeIdentifier()).distance() / pathFromData2.getTotalDistance(),
-//                            path1.get(data1.getLastNodeIdentifier()).distance() / pathFromData1.getTotalDistance()
-//                    );
+                    Map<Integer, Node<Location>> path2NodeIndex = pathFromData2.getNodeIndex();
+                    return Double.compare(
+                            pathFromData1.getNodeDistanceToEnd().get(path1NodeIndex.get(data1.getTargetNode())),
+                            pathFromData2.getNodeDistanceToEnd().get(path2NodeIndex.get(data2.getTargetNode()))
+                    );
                 })
                 .toList();
         for (int i = 0; i < sortedPositions.size(); i++) {
@@ -251,12 +263,20 @@ public class TowerDefenseSpawner implements Option, Listener {
             return;
         }
         // random edge
+        assignNextTargetNode(mobData, lastNodeIdentifier, outgoingEdges);
+        pathFindToNextWaypoint(mob);
+    }
+
+    private static void assignNextTargetNode(
+            TowerDefenseOption.TowerDefenseMobData mobData,
+            int lastNodeIdentifier,
+            List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges
+    ) {
         int randomEdgeIndex = ThreadLocalRandom.current().nextInt(outgoingEdges.size());
         TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge = outgoingEdges.get(randomEdgeIndex);
         mobData.setCurrentNode(lastNodeIdentifier);
         mobData.setTargetNode(edge.getTo().hashCode());
         mobData.setEdgeIndex(randomEdgeIndex);
-        pathFindToNextWaypoint(mob);
     }
 
     @EventHandler
@@ -321,7 +341,7 @@ public class TowerDefenseSpawner implements Option, Listener {
             // get random path
             List<TowerDefenseDirectAcyclicGraph> pathList = paths.get(randomSpawn);
             if (pathList == null) {
-                ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No path with given spawn: " + randomSpawn);
+                ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No path with given spawn: " + randomSpawn + "\n" + paths);
                 return;
             }
             randomPathIndex = ThreadLocalRandom.current().nextInt(pathList.size());

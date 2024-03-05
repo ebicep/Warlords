@@ -1,15 +1,16 @@
 package com.ebicep.warlords.game.option.towerdefense.path;
 
+import com.ebicep.warlords.util.java.dag.DAGUtils;
 import com.ebicep.warlords.util.java.dag.DirectAcyclicGraph;
 import com.ebicep.warlords.util.java.dag.Node;
 import org.bukkit.Location;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TowerDefenseDirectAcyclicGraph extends DirectAcyclicGraph<Location, TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> {
 
     private final Map<Integer, Node<Location>> nodeIndex = new HashMap<>();
+    private final Map<Node<Location>, Double> nodeDistanceToEnd = new HashMap<>();
 
     public TowerDefenseDirectAcyclicGraph(Location spawn) {
         super(spawn);
@@ -28,6 +29,26 @@ public class TowerDefenseDirectAcyclicGraph extends DirectAcyclicGraph<Location,
                 edge.distance = from.distance(to);
                 edge.pathDirection = PathDirection.getPathDirection(from, to);
             }
+        }
+    }
+
+    public void calculateNodeDistances() {
+        Node<Location> endNode = null;
+        for (Node<Location> child : getRoot().getChildren()) {
+            List<TowerDefenseEdge> edges = getEdges(child);
+            if (edges == null || edges.isEmpty()) {
+                endNode = child;
+                break;
+            }
+        }
+        if (endNode == null) {
+            return;
+        }
+        Set<Node<Location>> allNodes = new HashSet<>();
+        DAGUtils.depthFirstSearch(this, getRoot(), allNodes);
+        for (Node<Location> node : allNodes) {
+            Double distance = DAGUtils.getDistance(this, node, endNode, TowerDefenseDirectAcyclicGraph.TowerDefenseEdge::getDistance);
+            nodeDistanceToEnd.put(node, distance != null ? distance : Double.MAX_VALUE);
         }
     }
 
@@ -50,6 +71,9 @@ public class TowerDefenseDirectAcyclicGraph extends DirectAcyclicGraph<Location,
         return nodeIndex;
     }
 
+    public Map<Node<Location>, Double> getNodeDistanceToEnd() {
+        return nodeDistanceToEnd;
+    }
 
     public static class TowerDefenseEdge extends Edge<Location> {
 
