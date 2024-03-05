@@ -28,6 +28,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
 import org.bukkit.metadata.FixedMetadataValue;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -167,18 +168,27 @@ public abstract class AbstractTower {
         }
     }
 
-    public List<WarlordsNPC> getMob(TargetPriority targetPriority, float range, int limit) {
-        ConcurrentHashMap<AbstractMob, TowerDefenseOption.TowerDefenseMobData> mobData = towerDefenseOption.getMobsMap();
-        return PlayerFilterGeneric.entitiesAround(centerLocation, range, range, range)
-                                  .warlordsNPCs()
-                                  .filter(warlordsNPC -> warlordsNPC.getTeam() != team)
-                                  .sorted((o1, o2) -> targetPriority.compare(this,
-                                          new TargetPriority.TargetPriorityMob(o1, mobData.get(o1.getMob())),
-                                          new TargetPriority.TargetPriorityMob(o2, mobData.get(o2.getMob()))
-                                  ))
-                                  .stream()
-                                  .limit(limit == -1 ? Long.MAX_VALUE : limit)
-                                  .collect(Collectors.toList());
+    public List<WarlordsNPC> getMob(@Nullable TargetPriority targetPriority, float range, int limit) {
+        if (targetPriority == null) {
+            return PlayerFilterGeneric.entitiesAround(centerLocation, range, range, range)
+                                      .warlordsNPCs()
+                                      .filter(warlordsNPC -> warlordsNPC.getTeam() != team)
+                                      .stream()
+                                      .limit(limit == -1 ? Long.MAX_VALUE : limit)
+                                      .collect(Collectors.toList());
+        } else {
+            ConcurrentHashMap<AbstractMob, TowerDefenseOption.TowerDefenseMobData> mobData = towerDefenseOption.getMobsMap();
+            return PlayerFilterGeneric.entitiesAround(centerLocation, range, range, range)
+                                      .warlordsNPCs()
+                                      .filter(warlordsNPC -> warlordsNPC.getTeam() != team)
+                                      .sorted((o1, o2) -> targetPriority.compare(this,
+                                              new TargetPriority.TargetPriorityMob(o1, mobData.get(o1.getMob())),
+                                              new TargetPriority.TargetPriorityMob(o2, mobData.get(o2.getMob()))
+                                      ))
+                                      .stream()
+                                      .limit(limit == -1 ? Long.MAX_VALUE : limit)
+                                      .collect(Collectors.toList());
+        }
     }
 
     public void remove() {
@@ -278,6 +288,7 @@ public abstract class AbstractTower {
                 return ThreadLocalRandom.current().nextDouble() < .5 ? -1 : 1;
             }
         },
+
 
         ;
 
