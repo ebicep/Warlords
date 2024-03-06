@@ -93,7 +93,7 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
     private void flameAttack() {
         float rangeValue = flameRange.getCalculatedValue();
         float damageValue = flameDamage.getCalculatedValue();
-        getMob(TargetPriority.FIRST, rangeValue, 1).forEach(warlordsNPC -> {
+        getEnemyMobs(EnemyTargetPriority.FIRST, rangeValue, 1).forEach(warlordsNPC -> {
             int teleportDuration = 5;
             Location targetLocation = new LocationBuilder(warlordsNPC.getLocation())
                     .addY(1);

@@ -210,6 +210,25 @@ public class EffectUtils {
     }
 
     /**
+     * Plays a circular effect around a location
+     *
+     * @param particle     particle effect
+     * @param location     center of circle
+     * @param circleRadius radius of the circle
+     */
+    public static void playCircularEffectAround(Particle particle, Location location, double circleRadius) {
+        Location loc = location.clone();
+        for (int i = 0; i < 10; i++) {
+            double angle = i / 10D * Math.PI * 2;
+            displayParticle(
+                    particle,
+                    loc.clone().add(Math.sin(angle) * circleRadius, 0, Math.cos(angle) * circleRadius),
+                    1
+            );
+        }
+    }
+
+    /**
      * @param loc        what location should the star be around.
      * @param starRadius is how big the star should be.
      * @param effect     which particle effect should be displayed.
