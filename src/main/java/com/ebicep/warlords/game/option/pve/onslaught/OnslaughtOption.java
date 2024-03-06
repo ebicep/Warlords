@@ -289,6 +289,16 @@ public class OnslaughtOption implements PveOption {
         }
     }
 
+    @Override
+    public void despawnMob(AbstractMob mob) {
+        integrityCounter += 1;
+        if (integrityCounter >= 100) {
+            integrityCounter = 100;
+        }
+        spawnCount--;
+        PveOption.super.despawnMob(mob);
+    }
+
     private void addRewardToPlayerPouch(
             UUID uuid,
             RandomCollection<Pair<Spendable, Long>> pouchLootPool,
