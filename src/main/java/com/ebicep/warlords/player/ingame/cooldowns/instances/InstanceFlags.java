@@ -24,4 +24,8 @@ public enum InstanceFlags {
     NO_MESSAGE, // doesnt send dmg/heal message to any player
     NO_HIT_SOUND,
 
+    // tower defense
+    TD_PHYSICAL,
+    TD_MAGIC,
+
 }

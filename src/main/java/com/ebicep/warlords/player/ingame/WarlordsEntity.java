@@ -281,9 +281,19 @@ public abstract class WarlordsEntity {
             float min,
             float max,
             float critChance,
-            float critMultiplier
+            float critMultiplier,
+            InstanceFlags... flags
     ) {
-        return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), null);
+        return addDamageInstance(
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                EnumSet.copyOf(Arrays.asList(flags)),
+                null
+        );
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(

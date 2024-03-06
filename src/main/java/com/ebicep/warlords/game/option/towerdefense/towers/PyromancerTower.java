@@ -113,7 +113,15 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
                         PlayerFilter.entitiesAround(warlordsNPC, 2, 2, 2)
                                     .aliveEnemiesOf(warlordsTower)
                                     .excluding(warlordsNPC)
-                                    .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(warlordsTower, "Flame", damageValue, damageValue, 0, 100));
+                                    .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(
+                                            warlordsTower,
+                                            "Flame",
+                                            damageValue,
+                                            damageValue,
+                                            0,
+                                            100,
+                                            InstanceFlags.TD_MAGIC
+                                    ));
                     } else if (upgrades.get(3).isUnlocked()) {
                         warlordsNPC.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Pyromancer Tower Burn",
