@@ -1,6 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
@@ -135,10 +135,18 @@ public class AvengerTower extends AbstractTower implements Damage, Range, Attack
                 float walkSpeed,
                 int damageResistance,
                 float minMeleeDamage,
-                float maxMeleeDamage,
-                AbstractAbility... abilities
+                float maxMeleeDamage
         ) {
-            super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
+            super(
+                    spawnLocation,
+                    name,
+                    maxHealth,
+                    walkSpeed,
+                    damageResistance,
+                    minMeleeDamage,
+                    maxMeleeDamage,
+                    new AvengersStrike()
+            );
         }
 
         @Override
