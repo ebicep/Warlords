@@ -228,6 +228,24 @@ public abstract class AbstractTower {
         return stream.collect(Collectors.toList());
     }
 
+    public List<AbstractTower> getTowers(float range) {
+        return getTowers(range, -1);
+    }
+
+    public List<AbstractTower> getTowers(float range, int limit) {
+        Stream<AbstractTower> stream = towerDefenseOption
+                .getTowerBuildOption()
+                .getBuiltTowers()
+                .keySet()
+                .stream()
+                .filter(tower -> tower.getTeam() == team)
+                .filter(tower -> tower.bottomCenterLocation.distanceSquared(bottomCenterLocation) <= range * range);
+        if (limit != -1) {
+            stream = stream.limit(limit);
+        }
+        return stream.collect(Collectors.toList());
+    }
+
     public void remove() {
         forEachBlock(block -> {
             block.setType(Material.AIR);
@@ -270,6 +288,10 @@ public abstract class AbstractTower {
 
     public Game getGame() {
         return game;
+    }
+
+    public Team getTeam() {
+        return team;
     }
 
     public Location getCornerLocation() {

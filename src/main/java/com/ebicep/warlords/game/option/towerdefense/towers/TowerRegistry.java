@@ -28,7 +28,8 @@ public enum TowerRegistry {
     PYRO_TOWER(PyromancerTower::new, Material.FIRE_CHARGE, "Pyromancer Tower", "Fire."),
     CRYO_TOWER(CryomancerTower::new, Material.SNOWBALL, "Cryomancer Tower", "Slow it down."),
     AQUA_TOWER(AquamancerTower::new, Material.WATER_BUCKET, "Aquamancer Tower", "Very wet."),
-    AVENGER_TOWER(AvengerTower::new, Material.YELLOW_CONCRETE_POWDER, "Avenger Tower", "Strike."),
+    AVENGER_TOWER(AvengerTower::new, Material.RED_CONCRETE_POWDER, "Avenger Tower", "Strike."),
+    CRUSADER_TOWER(CrusaderTower::new, Material.YELLOW_CONCRETE_POWDER, "Crusader Tower", "Buffer."),
     BIG_BOY(BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;
