@@ -21,10 +21,10 @@ import java.util.UUID;
 
 public class AquamancerTower extends AbstractTower implements Damage, Heal, Range, AttackSpeed, Upgradeable.Path2 {
 
-    private final List<FloatModifiable> damage = new ArrayList<>();
-    private final List<FloatModifiable> heal = new ArrayList<>();
-    private final List<FloatModifiable> range = new ArrayList<>();
-    private final List<FloatModifiable> attackSpeed = new ArrayList<>();
+    private final List<FloatModifiable> damages = new ArrayList<>();
+    private final List<FloatModifiable> heals = new ArrayList<>();
+    private final List<FloatModifiable> ranges = new ArrayList<>();
+    private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
 
     private final FloatModifiable boltDamage = new FloatModifiable(100);
@@ -34,10 +34,10 @@ public class AquamancerTower extends AbstractTower implements Damage, Heal, Rang
 
     public AquamancerTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        damage.add(boltDamage);
-        heal.add(boltHealing);
-        range.add(boltRange);
-        attackSpeed.add(boltAttackSpeed);
+        damages.add(boltDamage);
+        heals.add(boltHealing);
+        ranges.add(boltRange);
+        attackSpeeds.add(boltAttackSpeed);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //
@@ -122,21 +122,21 @@ public class AquamancerTower extends AbstractTower implements Damage, Heal, Rang
 
     @Override
     public List<FloatModifiable> getDamages() {
-        return damage;
+        return damages;
     }
 
     @Override
     public List<FloatModifiable> getHeals() {
-        return heal;
+        return heals;
     }
 
     @Override
     public List<FloatModifiable> getRanges() {
-        return range;
+        return ranges;
     }
 
     @Override
     public List<FloatModifiable> getAttackSpeeds() {
-        return attackSpeed;
+        return attackSpeeds;
     }
 }

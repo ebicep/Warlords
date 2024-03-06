@@ -21,9 +21,9 @@ import java.util.UUID;
 
 public class AvengerTower extends AbstractTower implements Damage, Range, AttackSpeed, Spawner, Upgradeable.Path2 {
 
-    private final List<FloatModifiable> damage = new ArrayList<>();
-    private final List<FloatModifiable> range = new ArrayList<>();
-    private final List<FloatModifiable> attackSpeed = new ArrayList<>();
+    private final List<FloatModifiable> damages = new ArrayList<>();
+    private final List<FloatModifiable> ranges = new ArrayList<>();
+    private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
 
     private final FloatModifiable slowDamage = new FloatModifiable(500);
@@ -35,8 +35,8 @@ public class AvengerTower extends AbstractTower implements Damage, Range, Attack
 
     public AvengerTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        range.add(slowRange);
-        attackSpeed.add(slowAttackSpeed);
+        ranges.add(slowRange);
+        attackSpeeds.add(slowAttackSpeed);
         mobSpawnLocations = Spawner.getBlockSpawnLocations(bottomCenterLocation.clone().add(0, -1, 0), slowRange.getCalculatedValue(), towerDefenseOption.getMobPathMaterial());
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
@@ -90,17 +90,17 @@ public class AvengerTower extends AbstractTower implements Damage, Range, Attack
 
     @Override
     public List<FloatModifiable> getDamages() {
-        return damage;
+        return damages;
     }
 
     @Override
     public List<FloatModifiable> getRanges() {
-        return range;
+        return ranges;
     }
 
     @Override
     public List<FloatModifiable> getAttackSpeeds() {
-        return attackSpeed;
+        return attackSpeeds;
     }
 
     @Override

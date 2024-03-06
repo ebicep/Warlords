@@ -17,9 +17,9 @@ import java.util.UUID;
 
 public class CryomancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
 
-    private final List<FloatModifiable> damage = new ArrayList<>();
-    private final List<FloatModifiable> range = new ArrayList<>();
-    private final List<FloatModifiable> attackSpeed = new ArrayList<>();
+    private final List<FloatModifiable> damages = new ArrayList<>();
+    private final List<FloatModifiable> ranges = new ArrayList<>();
+    private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
 
     private final FloatModifiable slowDamage = new FloatModifiable(500);
@@ -28,8 +28,8 @@ public class CryomancerTower extends AbstractTower implements Damage, Range, Att
 
     public CryomancerTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        range.add(slowRange);
-        attackSpeed.add(slowAttackSpeed);
+        ranges.add(slowRange);
+        attackSpeeds.add(slowAttackSpeed);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //
@@ -80,16 +80,16 @@ public class CryomancerTower extends AbstractTower implements Damage, Range, Att
 
     @Override
     public List<FloatModifiable> getDamages() {
-        return damage;
+        return damages;
     }
 
     @Override
     public List<FloatModifiable> getRanges() {
-        return range;
+        return ranges;
     }
 
     @Override
     public List<FloatModifiable> getAttackSpeeds() {
-        return attackSpeed;
+        return attackSpeeds;
     }
 }
