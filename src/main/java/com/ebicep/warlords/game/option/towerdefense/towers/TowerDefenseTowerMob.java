@@ -1,31 +1,35 @@
-package com.ebicep.warlords.game.option.towerdefense.mobs;
+package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.player.ingame.MobHologram;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.CustomAttackStrategy;
+import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.npc.NPC;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public abstract class TowerDefenseMob extends AbstractMob {
+public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
 
-    @Nullable
-    private WarlordsEntity spawner;
+    private WarlordsTower spawner;
 
-    public TowerDefenseMob(
+    public TowerDefenseTowerMob(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -86,15 +90,10 @@ public abstract class TowerDefenseMob extends AbstractMob {
                         }
                         return warlordsNPC.getEntity();
                     }
-
                 }
         );
 
         modifyStats.accept(warlordsNPC);
-
-        if (spawner instanceof WarlordsPlayer) {
-            warlordsNPC.getMobHologram().getCustomHologramLines().add(new MobHologram.CustomHologramLine(spawner.getColoredName()));
-        }
 
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCurrentCooldown() < ability.getCooldownValue()) {
@@ -107,9 +106,48 @@ public abstract class TowerDefenseMob extends AbstractMob {
 
     @Override
     public void giveGoals() {
+        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 3, warlordsEntity -> {
+            if (warlordsEntity instanceof WarlordsNPC wNPC && pveOption instanceof TowerDefenseOption towerDefenseOption) {
+                TowerDefenseOption.TowerDefenseMobData mobData = towerDefenseOption.getMobsMap().get(wNPC.getMob());
+                if (mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData) {
+                    return attackingMobData.getAttackingTeam() == spawner.getTeam();
+                }
+            }
+            return false;
+        }), 2);
     }
 
-    public void setSpawner(@Nullable WarlordsEntity spawner) {
+    public void setSpawner(@Nonnull WarlordsTower spawner) {
         this.spawner = spawner;
+    }
+
+    @Override
+    public double weaponDropRate() {
+        return 0;
+    }
+
+    @Override
+    public int commonWeaponDropChance() {
+        return 0;
+    }
+
+    @Override
+    public int rareWeaponDropChance() {
+        return 0;
+    }
+
+    @Override
+    public int epicWeaponDropChance() {
+        return 0;
+    }
+
+    @Override
+    public int getLevel() {
+        return 0;
+    }
+
+    @Override
+    public TextColor getTextColor() {
+        return NamedTextColor.WHITE;
     }
 }

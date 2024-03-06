@@ -30,10 +30,7 @@ import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 public class PyromancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
 
@@ -46,8 +43,8 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
     private final FloatModifiable flameRange = new FloatModifiable(30);
     private final FloatModifiable flameAttackSpeed = new FloatModifiable(5 * 20); // 5 seconds
 
-    public PyromancerTower(Game game, Location location) {
-        super(game, location);
+    public PyromancerTower(Game game, UUID owner, Location location) {
+        super(game, owner, location);
         damage.add(flameDamage);
         range.add(flameRange);
         attackSpeed.add(flameAttackSpeed);
@@ -85,7 +82,7 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
     public void whileActive(int ticksElapsed) {
         super.whileActive(ticksElapsed);
         if (ticksElapsed % 5 == 0) {
-            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, centerLocation, 5, .5, .1, .5, 2);
+            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, topCenterLocation, 5, .5, .1, .5, 2);
         }
         int attackSpeed = (int) flameAttackSpeed.getCalculatedValue();
         if (ticksElapsed % attackSpeed == 0) {

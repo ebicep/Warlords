@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDSkeleton;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDZombie;
+import com.ebicep.warlords.game.option.towerdefense.towers.AvengerTower;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
@@ -791,6 +792,11 @@ public enum Mob {
     // tower defense
     TD_ZOMBIE(EntityType.ZOMBIE, TDZombie.class, TDZombie::new, TDZombie::new, null),
     TD_SKELETON(EntityType.SKELETON, TDSkeleton.class, TDSkeleton::new, TDSkeleton::new, null),
+
+    // tower defense tower mobs
+
+    TD_TOWER_AVENGER(EntityType.ZOMBIE, AvengerTower.TDTowerAvenger.class, AvengerTower.TDTowerAvenger::new, AvengerTower.TDTowerAvenger::new, null),
+
 
     ;
 

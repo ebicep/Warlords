@@ -179,7 +179,7 @@ public class TowerBuildOption implements Option, Listener {
                     return BuildResult.INTERSECTS;
                 }
             }
-            builtTowers.put(tower.create.apply(game, alignedLocation.add(0, 1, 0)), towerDefenseOption.getTicksElapsed());
+            builtTowers.put(tower.create.apply(game, player.getUniqueId(), alignedLocation.add(0, 1, 0)), towerDefenseOption.getTicksElapsed());
             getPlayerBuildData(player).setLastBuilt(tower);
         }
         return buildResult;

@@ -8,14 +8,13 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
+import com.ebicep.warlords.game.option.towerdefense.mobs.NPCTowerDefensePathfindGoal;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.game.option.towerdefense.path.PathDirection;
 import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
+import com.ebicep.warlords.game.option.towerdefense.towers.TowerDefenseTowerMob;
 import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseWave;
-import com.ebicep.warlords.player.ingame.MobHologram;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.*;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -123,30 +122,43 @@ public class TowerDefenseSpawner implements Option, Listener {
     public void onMobSpawn(WarlordsMobSpawnEvent event) {
         AbstractMob mob = event.getMob();
         NPC npc = mob.getNpc();
-        npc.data().set(NPC.Metadata.COLLIDABLE, false);
-        npc.getDefaultGoalController().clear();
-        npc.getNavigator().getDefaultParameters().distanceMargin(.75);
-
         TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(mob);
-        int lastNodeIdentifier = mobData.getTargetNode();
-        TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
-        Node<Location> node = path.getNodeIndex().get(lastNodeIdentifier);
-        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
-        assignNextTargetNode(mobData, lastNodeIdentifier, outgoingEdges);
+        if (mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData) {
+            int lastNodeIdentifier = attackingMobData.getTargetNode();
+            TowerDefenseDirectAcyclicGraph path = getPathFromData(attackingMobData);
+            Node<Location> node = path.getNodeIndex().get(lastNodeIdentifier);
+            List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
+            assignNextTargetNode(attackingMobData, lastNodeIdentifier, outgoingEdges);
 
-        pathFindToNextWaypoint(mob);
-        mob.getWarlordsNPC()
-           .getMobHologram()
-           .getCustomHologramLines()
-           .add(new MobHologram.CustomHologramLine(() -> Component.text(mobs.get(mob).getPosition() + " - " + path.getNodeDistanceToEnd()
-                                                                                                                  .get(path.getNodeIndex().get(mobData.getTargetNode())),
-                   NamedTextColor.GREEN
-           )));
+            npc.getDefaultGoalController().addGoal(new NPCTowerDefensePathfindGoal(npc, this, mob, attackingMobData), 3);
+            mob.getWarlordsNPC()
+               .getMobHologram()
+               .getCustomHologramLines()
+               .add(new MobHologram.CustomHologramLine(() -> Component.text(attackingMobData.getPosition() + " - " +
+                               path.getNodeDistanceToEnd().get(path.getNodeIndex().get(attackingMobData.getTargetNode())),
+                       NamedTextColor.GREEN
+               )));
+        }
     }
 
-    public void pathFindToNextWaypoint(AbstractMob mob) {
+    public TowerDefenseDirectAcyclicGraph getPathFromData(TowerDefenseOption.TowerDefenseAttackingMobData mobData) {
+        return paths.get(mobData.getSpawnLocation()).get(mobData.getPathIndex());
+    }
+
+    private static void assignNextTargetNode(
+            TowerDefenseOption.TowerDefenseAttackingMobData mobData,
+            int lastNodeIdentifier,
+            List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges
+    ) {
+        int randomEdgeIndex = ThreadLocalRandom.current().nextInt(outgoingEdges.size());
+        TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge = outgoingEdges.get(randomEdgeIndex);
+        mobData.setCurrentNode(lastNodeIdentifier);
+        mobData.setTargetNode(edge.getTo().hashCode());
+        mobData.setEdgeIndex(randomEdgeIndex);
+    }
+
+    public void pathFindToNextWaypoint(AbstractMob mob, TowerDefenseOption.TowerDefenseAttackingMobData mobData) {
         NPC npc = mob.getNpc();
-        TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(mob);
         TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
         Node<Location> currentNode = path.getNodeIndex().get(mobData.getCurrentNode());
         Node<Location> targetNode = path.getNodeIndex().get(mobData.getTargetNode());
@@ -186,21 +198,18 @@ public class TowerDefenseSpawner implements Option, Listener {
         }.runTaskLater(Warlords.getInstance(), 60);
     }
 
-    public TowerDefenseDirectAcyclicGraph getPathFromData(TowerDefenseOption.TowerDefenseMobData mobData) {
-        return paths.get(mobData.getSpawnLocation()).get(mobData.getPathIndex());
-    }
-
     public void recalculateMobPositions() {
         // get path
         // get total path distance based on pathIndex
-        List<Map.Entry<AbstractMob, TowerDefenseOption.TowerDefenseMobData>> sortedPositions = mobs
+        List<TowerDefenseOption.TowerDefenseAttackingMobData> sortedPositions = mobs
                 .entrySet()
                 .stream()
+                .filter(entry -> entry.getValue() instanceof TowerDefenseOption.TowerDefenseAttackingMobData)
                 .sorted((entry1, entry2) -> {
                     AbstractMob mob1 = entry1.getKey();
                     AbstractMob mob2 = entry2.getKey();
-                    TowerDefenseOption.TowerDefenseMobData data1 = entry1.getValue();
-                    TowerDefenseOption.TowerDefenseMobData data2 = entry2.getValue();
+                    TowerDefenseOption.TowerDefenseAttackingMobData data1 = (TowerDefenseOption.TowerDefenseAttackingMobData) entry1.getValue();
+                    TowerDefenseOption.TowerDefenseAttackingMobData data2 = (TowerDefenseOption.TowerDefenseAttackingMobData) entry2.getValue();
                     TowerDefenseDirectAcyclicGraph pathFromData1 = getPathFromData(data1);
                     TowerDefenseDirectAcyclicGraph pathFromData2 = getPathFromData(data2);
                     // first check if either are attacking castle - auto first
@@ -231,10 +240,11 @@ public class TowerDefenseSpawner implements Option, Listener {
                             pathFromData2.getNodeDistanceToEnd().get(path2NodeIndex.get(data2.getTargetNode()))
                     );
                 })
+                .map(entry -> (TowerDefenseOption.TowerDefenseAttackingMobData) entry.getValue())
                 .toList();
         for (int i = 0; i < sortedPositions.size(); i++) {
-            Map.Entry<AbstractMob, TowerDefenseOption.TowerDefenseMobData> data = sortedPositions.get(i);
-            data.getValue().setPosition(i + 1);
+            TowerDefenseOption.TowerDefenseAttackingMobData data = sortedPositions.get(i);
+            data.setPosition(i + 1);
         }
     }
 
@@ -251,32 +261,19 @@ public class TowerDefenseSpawner implements Option, Listener {
         }
         AbstractMob mob = warlordsNPC.getMob();
         TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(mob);
-        if (!(mob instanceof TowerDefenseMob towerDefenseMob) || mobData == null) {
-            return;
+        if (mob instanceof TowerDefenseMob towerDefenseMob && mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData) {
+            int lastNodeIdentifier = attackingMobData.getTargetNode();
+            TowerDefenseDirectAcyclicGraph path = getPathFromData(attackingMobData);
+            Node<Location> node = path.getNodeIndex().get(lastNodeIdentifier);
+            List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
+            if (outgoingEdges == null || outgoingEdges.isEmpty()) {
+                Bukkit.getPluginManager().callEvent(new TowerDefenseMobCompletePathEvent(game, towerDefenseMob));
+                return;
+            }
+            // random edge
+            assignNextTargetNode(attackingMobData, lastNodeIdentifier, outgoingEdges);
+            pathFindToNextWaypoint(mob, attackingMobData);
         }
-        int lastNodeIdentifier = mobData.getTargetNode();
-        TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
-        Node<Location> node = path.getNodeIndex().get(lastNodeIdentifier);
-        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
-        if (outgoingEdges == null || outgoingEdges.isEmpty()) {
-            Bukkit.getPluginManager().callEvent(new TowerDefenseMobCompletePathEvent(game, towerDefenseMob));
-            return;
-        }
-        // random edge
-        assignNextTargetNode(mobData, lastNodeIdentifier, outgoingEdges);
-        pathFindToNextWaypoint(mob);
-    }
-
-    private static void assignNextTargetNode(
-            TowerDefenseOption.TowerDefenseMobData mobData,
-            int lastNodeIdentifier,
-            List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges
-    ) {
-        int randomEdgeIndex = ThreadLocalRandom.current().nextInt(outgoingEdges.size());
-        TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge = outgoingEdges.get(randomEdgeIndex);
-        mobData.setCurrentNode(lastNodeIdentifier);
-        mobData.setTargetNode(edge.getTo().hashCode());
-        mobData.setEdgeIndex(randomEdgeIndex);
     }
 
     @EventHandler
@@ -312,22 +309,22 @@ public class TowerDefenseSpawner implements Option, Listener {
         if (spawner instanceof WarlordsNPC warlordsNPC) {
             AbstractMob npcMob = warlordsNPC.getMob();
             TowerDefenseOption.TowerDefenseMobData spawnerMobData = mobs.get(npcMob);
-            if (spawnerMobData != null) {
-                TowerDefenseDirectAcyclicGraph path = getPathFromData(spawnerMobData);
+            if (spawnerMobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData spawnerAttackingMobData) {
+                TowerDefenseDirectAcyclicGraph path = getPathFromData(spawnerAttackingMobData);
                 Map<Integer, Node<Location>> nodeIndex = path.getNodeIndex();
-                Node<Location> currentNode = nodeIndex.get(spawnerMobData.getCurrentNode());
-                Node<Location> targetNode = nodeIndex.get(spawnerMobData.getTargetNode());
-                TowerDefenseDirectAcyclicGraph.TowerDefenseEdge pathLocation = path.getEdges(currentNode).get(spawnerMobData.getEdgeIndex());
+                Node<Location> currentNode = nodeIndex.get(spawnerAttackingMobData.getCurrentNode());
+                Node<Location> targetNode = nodeIndex.get(spawnerAttackingMobData.getTargetNode());
+                TowerDefenseDirectAcyclicGraph.TowerDefenseEdge pathLocation = path.getEdges(currentNode).get(spawnerAttackingMobData.getEdgeIndex());
 
                 spawnLocation = pathLocation.getPathDirection().getRandomSpawnLocation(targetNode.getValue(), randomSpawn);
-                randomSpawn = spawnerMobData.getSpawnLocation();
-                attackingTeam = spawnerMobData.getAttackingTeam();
-                currentNodeID = spawnerMobData.getCurrentNode();
-                targetNodeID = spawnerMobData.getTargetNode();
-                edgeIndex = spawnerMobData.getEdgeIndex();
-                randomPathIndex = spawnerMobData.getPathIndex();
+                randomSpawn = spawnerAttackingMobData.getSpawnLocation();
+                attackingTeam = spawnerAttackingMobData.getAttackingTeam();
+                currentNodeID = spawnerAttackingMobData.getCurrentNode();
+                targetNodeID = spawnerAttackingMobData.getTargetNode();
+                edgeIndex = spawnerAttackingMobData.getEdgeIndex();
+                randomPathIndex = spawnerAttackingMobData.getPathIndex();
             } else {
-                ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("Spawner mob data is null");
+                ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("Spawner mob data is null or not attacking mob data: " + spawnerMobData);
                 return;
             }
         } else {
@@ -352,8 +349,8 @@ public class TowerDefenseSpawner implements Option, Listener {
         mob.setSpawner(spawner);
         Team team = spawner == null ? Team.GAME : spawner.getTeam();
 
-        game.addNPC(mob.toNPC(game, team, warlordsNPC -> {}));
-        mobs.put(mob, new TowerDefenseOption.TowerDefenseMobData(towerDefenseOption.getTicksElapsed(),
+        game.addNPC(mob.toNPC(game, team, this::modifyStats));
+        mobs.put(mob, new TowerDefenseOption.TowerDefenseAttackingMobData(towerDefenseOption.getTicksElapsed(),
                 attackingTeam,
                 randomSpawn,
                 randomPathIndex,
@@ -363,6 +360,17 @@ public class TowerDefenseSpawner implements Option, Listener {
                 mobs.size() + 1
         ));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    public void spawnNewMob(TowerDefenseTowerMob mob, WarlordsTower spawner) {
+        mob.setSpawner(spawner);
+        game.addNPC(mob.toNPC(game, spawner.getTeam(), this::modifyStats));
+        mobs.put(mob, new TowerDefenseOption.TowerDefenseDefendingMobData(towerDefenseOption.getTicksElapsed()));
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
+        warlordsNPC.getMob().onSpawn(towerDefenseOption);
     }
 
     public TowerDefenseSpawner add(TowerDefenseWave wave) {

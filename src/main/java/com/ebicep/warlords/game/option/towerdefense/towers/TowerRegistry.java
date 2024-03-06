@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.java.TriFunction;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -19,17 +20,14 @@ import org.bukkit.block.sign.SignSide;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiFunction;
+import java.util.*;
 import java.util.function.Predicate;
 
 public enum TowerRegistry {
 
-    PYRO_TOWER(PyromancerTower::new, Material.FIRE_CHARGE, "Pyromancer Tower", "Pyro things"),
+    PYRO_TOWER(PyromancerTower::new, Material.FIRE_CHARGE, "Pyromancer Tower", "Fire."),
     CRYO_TOWER(CryomancerTower::new, Material.SNOWBALL, "Cryomancer Tower", "Slow it down."),
+    AVENGER_TOWER(AvengerTower::new, Material.YELLOW_CONCRETE_POWDER, "Avenger Tower", "Strike."),
     BIG_BOY(BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;
@@ -145,7 +143,7 @@ public enum TowerRegistry {
         return size;
     }
 
-    public final BiFunction<Game, Location, AbstractTower> create;
+    public final TriFunction<Game, UUID, Location, AbstractTower> create;
     public final Material material;
     public String name;
     public String description;
@@ -153,7 +151,7 @@ public enum TowerRegistry {
     public BlockData[][][] baseTowerData; // [x][z][y]
     public Map<Integer, BlockData[][][]> upgradeTowerData = new HashMap<>(); // data of tower at any upgrade level if applicable
 
-    TowerRegistry(BiFunction<Game, Location, AbstractTower> create, Material material, String name, String description) {
+    TowerRegistry(TriFunction<Game, UUID, Location, AbstractTower> create, Material material, String name, String description) {
         this.create = create;
         this.material = material;
         this.name = name;

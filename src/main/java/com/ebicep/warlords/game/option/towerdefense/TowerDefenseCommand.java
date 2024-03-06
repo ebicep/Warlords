@@ -31,7 +31,7 @@ public class TowerDefenseCommand extends BaseCommand {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         Location location = player.getLocation();
         location.setYaw(0);
-        tower.create.apply(game, location).build();
+        tower.create.apply(game, player.getUniqueId(), location).build();
     }
 
     @Subcommand("exp")
@@ -108,7 +108,9 @@ public class TowerDefenseCommand extends BaseCommand {
                     if (t != team) {
                         continue;
                     }
-                    towerDefenseOption.spawnNewMob(mob.getMob().createMob(towerDefenseOption.getRandomSpawnLocation(t)), (WarlordsEntity) null);
+                    for (int i = 0; i < amount; i++) {
+                        towerDefenseOption.spawnNewMob(mob.getMob().createMob(towerDefenseOption.getRandomSpawnLocation(t)), (WarlordsEntity) null);
+                    }
                     ChatChannels.sendDebugMessage(player, Component.text("Spawned " + amount + " Mobs", NamedTextColor.GREEN));
                 }
                 break;

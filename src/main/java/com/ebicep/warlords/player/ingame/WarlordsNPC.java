@@ -119,7 +119,7 @@ public class WarlordsNPC extends WarlordsEntity {
         return mobNamePrefix;
     }
 
-    public void setNameColor(TextColor nameColor) {
+    public void setNameColor(@Nonnull TextColor nameColor) {
         this.nameColor = nameColor;
     }
 

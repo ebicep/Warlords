@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TextDisplay;
-import org.bukkit.util.Transformation;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,32 +34,38 @@ public abstract class MobHologram {
         }
     }
 
-    public abstract void update();
+    public void update() {
+        if (hidden) {
+            return;
+        }
+        Entity entity = getEntity();
+        if (entity == null) {
+            return;
+        }
+        customHologramLines.removeIf(customHologramLine -> {
+            if (customHologramLine.isDelete()) {
+                customHologramLine.getEntity().remove();
+                return true;
+            }
+            return false;
+        });
+        update(entity);
+    }
+
+    protected void update(@Nonnull Entity entity) {
+    }
 
     public List<CustomHologramLine> getCustomHologramLines() {
         return customHologramLines;
     }
 
+    @Deprecated
     public static abstract class ArmorStandHologram extends MobHologram {
 
         @Override
-        public void update() {
-            if (hidden) {
-                return;
-            }
-            Entity entity = getEntity();
-            if (entity == null) {
-                return;
-            }
+        protected void update(@Nonnull Entity entity) {
             Location location = entity.getLocation();
             double y = entity.getHeight();
-            customHologramLines.removeIf(customHologramLine -> {
-                if (customHologramLine.isDelete()) {
-                    customHologramLine.getEntity().remove();
-                    return true;
-                }
-                return false;
-            });
             for (int i = 0; i < customHologramLines.size(); i++) {
                 CustomHologramLine customHologramLine = customHologramLines.get(i);
                 if (customHologramLine.getEntity() == null) {
@@ -74,49 +80,33 @@ public abstract class MobHologram {
                 }
             }
         }
+
     }
 
     public static abstract class TextDisplayHologram extends MobHologram {
 
         @Override
-        public void update() {
-            if (hidden) {
-                return;
-            }
-            Entity entity = getEntity();
-            if (entity == null) {
-                return;
-            }
-            Location location = entity.getLocation();
-            double y = entity.getHeight() + 0.275;
-            customHologramLines.removeIf(customHologramLine -> {
-                if (customHologramLine.isDelete()) {
-                    customHologramLine.getEntity().remove();
-                    return true;
-                }
-                return false;
-            });
-            for (int i = 0; i < customHologramLines.size(); i++) {
-                CustomHologramLine customHologramLine = customHologramLines.get(i);
+        protected void update(@Nonnull Entity entity) {
+            Location location = entity.getLocation().clone();
+            location.add(0, entity.getHeight() + 0.275, 0);
+            for (CustomHologramLine customHologramLine : customHologramLines) {
                 Entity lineEntity = customHologramLine.getEntity();
                 if (lineEntity == null || !lineEntity.isValid()) {
-                    float yTranslation = (i + 1.65f) * 0.325f;
-                    TextDisplay textDisplay = location.getWorld().spawn(location.add(0, y, 0), TextDisplay.class, display -> {
-                        display.setBillboard(Display.Billboard.VERTICAL);  // TODO find way to make billboard center without messing up rotation due to text rotating based on non translated location
+                    TextDisplay textDisplay = location.getWorld().spawn(location, TextDisplay.class, display -> {
+                        display.setBillboard(Display.Billboard.CENTER);
                         display.text(customHologramLine.getText());
                         display.setCustomNameVisible(true);
                         display.setSeeThrough(true);
-                        Transformation transformation = display.getTransformation();
-                        transformation.getTranslation().add(0, yTranslation, 0);
-                        display.setTransformation(transformation);
-                        entity.addPassenger(display);
+                        display.setTeleportDuration(3); // SMOOTH TELEPORTATION
                     });
                     customHologramLine.setEntity(textDisplay);
                 } else if (customHologramLine.getEntity() instanceof TextDisplay textDisplay) {
                     textDisplay.text(customHologramLine.getText());
+                    textDisplay.teleport(location.add(0, .325, 0));
                 }
             }
         }
+
     }
 
     public static class CustomHologramLine {

@@ -45,7 +45,7 @@ public interface Upgradeable {
             if (upgradeBlockData != null) {
                 AbstractTower.build(tower.getCornerLocation(), upgradeBlockData);
             }
-            Utils.playGlobalSound(tower.getCenterLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
+            Utils.playGlobalSound(tower.getTopCenterLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
             // TODO particle effects?
             upgrade.upgrade();
             tower.updateAttributes();
@@ -167,6 +167,9 @@ public interface Upgradeable {
         ) {
             if (upgrades.size() < i) {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception("startIndex is over upgrades size"));
+                return;
+            }
+            if (upgrades.size() <= i) {
                 return;
             }
             TowerUpgrade upgrade = upgrades.get(i);

@@ -13,10 +13,12 @@ import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseCastleDes
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
+import com.ebicep.warlords.game.option.towerdefense.towers.TowerDefenseTowerMob;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -56,6 +58,7 @@ public class TowerDefenseOption implements PveOption, Listener {
             .name(Component.text("Market", NamedTextColor.GREEN))
             .setOnUseID("MARKET_ITEM")
             .get();
+    private final Material mobPathMaterial = Material.TERRACOTTA;
     private final ConcurrentHashMap<AbstractMob, TowerDefenseMobData> mobs = new ConcurrentHashMap<>();
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final Map<WarlordsEntity, TowerDefensePlayerInfo> playerInfo = new HashMap<>();
@@ -179,11 +182,14 @@ public class TowerDefenseOption implements PveOption, Listener {
         Set<Team> destroyedCastleTeams = new HashSet<>();
         for (Map.Entry<AbstractMob, TowerDefenseMobData> entry : mobs.entrySet()) {
             AbstractMob mob = entry.getKey();
-            TowerDefenseMobData towerDefenseMobData = entry.getValue();
-            mob.whileAlive(ticksElapsed.get() - towerDefenseMobData.getSpawnTick(), this);
+            TowerDefenseMobData data = entry.getValue();
+            if (!(data instanceof TowerDefenseAttackingMobData mobData)) {
+                continue;
+            }
+            mob.whileAlive(ticksElapsed.get() - mobData.getSpawnTick(), this);
             mob.activateAbilities();
-            if (towerDefenseMobData.isAttackingCastle()) {
-                Team attackingTeam = towerDefenseMobData.getAttackingTeam();
+            if (mobData.isAttackingCastle()) {
+                Team attackingTeam = mobData.getAttackingTeam();
                 TowerDefenseCastle castle = castles.get(attackingTeam);
                 if (castle == null) {
                     ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("Castle for team " + attackingTeam + " is null");
@@ -205,7 +211,9 @@ public class TowerDefenseOption implements PveOption, Listener {
             mobs.entrySet()
                 .removeIf(entry -> {
                     AbstractMob mob = entry.getKey();
-                    boolean remove = entry.getValue().attackingTeam == destroyedCastleTeam;
+                    TowerDefenseMobData data = entry.getValue();
+                    boolean remove = data instanceof TowerDefenseAttackingMobData mobData && mobData.attackingTeam == destroyedCastleTeam ||
+                            data instanceof TowerDefenseDefendingMobData && mob.getWarlordsNPC().getTeam() == destroyedCastleTeam;
                     if (remove) {
                         mob.getWarlordsNPC().cleanup();
                         getGame().getPlayers().remove(mob.getWarlordsNPC().getUuid());
@@ -237,30 +245,28 @@ public class TowerDefenseOption implements PveOption, Listener {
     }
 
     public void spawnNewMob(AbstractMob mob, @Nullable WarlordsEntity spawner) {
-        if (!(mob instanceof TowerDefenseMob towerDefenseMob)) {
-            return;
-        }
-        Location spawnLocation = mob.getSpawnLocation();
-        Team attackingTeam = towerDefenseSpawner.getTeamSpawnLocations().get(spawnLocation);
-        if (spawner instanceof WarlordsNPC warlordsNPC) {
-            TowerDefenseMobData mobData = mobs.get(warlordsNPC.getMob());
-            if (mobData != null) {
+        if (mob instanceof TowerDefenseMob towerDefenseMob) {
+            Location spawnLocation = mob.getSpawnLocation();
+            Team attackingTeam = towerDefenseSpawner.getTeamSpawnLocations().get(spawnLocation);
+            if (spawner instanceof WarlordsNPC warlordsNPC && mobs.get(warlordsNPC.getMob()) instanceof TowerDefenseAttackingMobData mobData) {
                 attackingTeam = mobData.getAttackingTeam();
             }
+            if (attackingTeam == null) {
+                ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No team with given spawn: " + spawnLocation);
+                return;
+            }
+            TowerDefenseCastle castle = castles.get(attackingTeam);
+            if (castle == null) {
+                ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No castle for team: " + attackingTeam);
+                return;
+            }
+            if (castle.isDestroyed()) {
+                return;
+            }
+            towerDefenseSpawner.spawnNewMob(towerDefenseMob, spawner);
+        } else if (mob instanceof TowerDefenseTowerMob towerDefenseTowerMob && spawner instanceof WarlordsTower warlordsTower) {
+            towerDefenseSpawner.spawnNewMob(towerDefenseTowerMob, warlordsTower);
         }
-        if (attackingTeam == null) {
-            ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No team with given spawn: " + spawnLocation);
-            return;
-        }
-        TowerDefenseCastle castle = castles.get(attackingTeam);
-        if (castle == null) {
-            ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("No castle for team: " + attackingTeam);
-            return;
-        }
-        if (castle.isDestroyed()) {
-            return;
-        }
-        towerDefenseSpawner.spawnNewMob(towerDefenseMob, spawner);
     }
 
     @Override
@@ -289,6 +295,10 @@ public class TowerDefenseOption implements PveOption, Listener {
     public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
         // override to remove talisman
         player.getInventory().setItem(4, MARKET_ITEM);
+    }
+
+    public Material getMobPathMaterial() {
+        return mobPathMaterial;
     }
 
     @EventHandler
@@ -329,10 +339,9 @@ public class TowerDefenseOption implements PveOption, Listener {
     @EventHandler
     public void onMobCompletePath(TowerDefenseMobCompletePathEvent event) {
         TowerDefenseMobData mobData = mobs.get(event.getMob());
-        if (mobData == null) {
-            return;
+        if (mobData instanceof TowerDefenseAttackingMobData mobMobData) {
+            mobMobData.setAttackingCastle(true);
         }
-        mobData.setAttackingCastle(true);
     }
 
     @EventHandler
@@ -378,6 +387,20 @@ public class TowerDefenseOption implements PveOption, Listener {
 
     public static class TowerDefenseMobData extends MobData {
 
+        public TowerDefenseMobData(int spawnTick) {
+            super(spawnTick);
+        }
+    }
+
+    public static class TowerDefenseDefendingMobData extends TowerDefenseMobData {
+
+        public TowerDefenseDefendingMobData(int spawnTick) {
+            super(spawnTick);
+        }
+    }
+
+    public static class TowerDefenseAttackingMobData extends TowerDefenseMobData {
+
         private final Team attackingTeam; // side that mob is attacking
         private final Location spawnLocation; // original spawn location with no offset
         private final int pathIndex; // index of whatever path its using
@@ -387,7 +410,16 @@ public class TowerDefenseOption implements PveOption, Listener {
         private int position; // position in game, first = 1
         private boolean attackingCastle = false;
 
-        public TowerDefenseMobData(int spawnTick, Team attackingTeam, Location spawnLocation, int pathIndex, int currentNode, int targetNode, int edgeIndex, int position) {
+        public TowerDefenseAttackingMobData(
+                int spawnTick,
+                Team attackingTeam,
+                Location spawnLocation,
+                int pathIndex,
+                int currentNode,
+                int targetNode,
+                int edgeIndex,
+                int position
+        ) {
             super(spawnTick);
             this.attackingTeam = attackingTeam;
             this.spawnLocation = spawnLocation;
