@@ -385,6 +385,14 @@ public class TowerDefenseOption implements PveOption, Listener {
         return castles;
     }
 
+    public TowerBuildOption getTowerBuildOption() {
+        return towerBuildOption;
+    }
+
+    public TowerDefenseSpawner getTowerDefenseSpawner() {
+        return towerDefenseSpawner;
+    }
+
     public static class TowerDefenseMobData extends MobData {
 
         public TowerDefenseMobData(int spawnTick) {

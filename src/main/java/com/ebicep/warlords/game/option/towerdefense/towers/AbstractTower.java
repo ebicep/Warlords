@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class AbstractTower {
 
@@ -173,27 +174,76 @@ public abstract class AbstractTower {
         }
     }
 
-    public List<WarlordsNPC> getMob(@Nullable TargetPriority targetPriority, float range, int limit) {
+    public List<WarlordsNPC> getAllyMob(float range, int limit) {
+        return getAllyMob(null, range, limit);
+    }
+
+    public List<WarlordsNPC> getAllyMob(float range) {
+        return getAllyMob(null, range, -1);
+    }
+
+    public List<WarlordsNPC> getAllyMob(@Nullable AllyTargetPriority targetPriority, float range, int limit) {
         ConcurrentHashMap<AbstractMob, TowerDefenseOption.TowerDefenseMobData> mobData = towerDefenseOption.getMobsMap();
-        if (targetPriority == null) {
-            return PlayerFilterGeneric.entitiesAround(topCenterLocation, range, range, range)
-                                      .warlordsNPCs()
-                                      .filter(warlordsNPC -> mobData.get(warlordsNPC.getMob()) instanceof TowerDefenseOption.TowerDefenseAttackingMobData data && data.getAttackingTeam() == team)
-                                      .stream()
-                                      .limit(limit == -1 ? Long.MAX_VALUE : limit)
-                                      .collect(Collectors.toList());
-        } else {
-            return PlayerFilterGeneric.entitiesAround(topCenterLocation, range, range, range)
-                                      .warlordsNPCs()
-                                      .filter(warlordsNPC -> mobData.get(warlordsNPC.getMob()) instanceof TowerDefenseOption.TowerDefenseAttackingMobData data && data.getAttackingTeam() == team)
-                                      .sorted((o1, o2) -> targetPriority.compare(this,
-                                              new TargetPriority.TargetPriorityMob(o1, (TowerDefenseOption.TowerDefenseAttackingMobData) mobData.get(o1.getMob())),
-                                              new TargetPriority.TargetPriorityMob(o2, (TowerDefenseOption.TowerDefenseAttackingMobData) mobData.get(o2.getMob()))
-                                      ))
-                                      .stream()
-                                      .limit(limit == -1 ? Long.MAX_VALUE : limit)
-                                      .collect(Collectors.toList());
+        Stream<WarlordsNPC> stream = PlayerFilterGeneric
+                .entitiesAround(bottomCenterLocation, range, range, range)
+                .warlordsNPCs()
+                .filter(warlordsNPC -> mobData.get(warlordsNPC.getMob()) instanceof TowerDefenseOption.TowerDefenseDefendingMobData data && warlordsNPC.getTeam() == team)
+                .stream();
+        if (targetPriority != null) {
+            stream = stream.sorted((o1, o2) -> targetPriority.compare(this,
+                    new AllyTargetPriority.AllyTargetPriorityMob(o1, mobData.get(o1.getMob())),
+                    new AllyTargetPriority.AllyTargetPriorityMob(o2, mobData.get(o2.getMob()))
+            ));
         }
+        if (limit != -1) {
+            stream = stream.limit(limit);
+        }
+        return stream.collect(Collectors.toList());
+    }
+
+    public List<WarlordsNPC> getEnemyMobs(float range, int limit) {
+        return getEnemyMobs(null, range, limit);
+    }
+
+    public List<WarlordsNPC> getEnemyMobs(float range) {
+        return getEnemyMobs(null, range, -1);
+    }
+
+    public List<WarlordsNPC> getEnemyMobs(@Nullable EnemyTargetPriority targetPriority, float range, int limit) {
+        ConcurrentHashMap<AbstractMob, TowerDefenseOption.TowerDefenseMobData> mobData = towerDefenseOption.getMobsMap();
+        Stream<WarlordsNPC> stream = PlayerFilterGeneric
+                .entitiesAround(bottomCenterLocation, range, range, range)
+                .warlordsNPCs()
+                .filter(warlordsNPC -> mobData.get(warlordsNPC.getMob()) instanceof TowerDefenseOption.TowerDefenseAttackingMobData data && data.getAttackingTeam() == team)
+                .stream();
+        if (targetPriority != null) {
+            stream = stream.sorted((o1, o2) -> targetPriority.compare(this,
+                    new EnemyTargetPriority.EnemyTargetPriorityMob(o1, (TowerDefenseOption.TowerDefenseAttackingMobData) mobData.get(o1.getMob())),
+                    new EnemyTargetPriority.EnemyTargetPriorityMob(o2, (TowerDefenseOption.TowerDefenseAttackingMobData) mobData.get(o2.getMob()))
+            ));
+        }
+        if (limit != -1) {
+            stream = stream.limit(limit);
+        }
+        return stream.collect(Collectors.toList());
+    }
+
+    public List<AbstractTower> getTowers(float range) {
+        return getTowers(range, -1);
+    }
+
+    public List<AbstractTower> getTowers(float range, int limit) {
+        Stream<AbstractTower> stream = towerDefenseOption
+                .getTowerBuildOption()
+                .getBuiltTowers()
+                .keySet()
+                .stream()
+                .filter(tower -> tower.getTeam() == team)
+                .filter(tower -> tower.bottomCenterLocation.distanceSquared(bottomCenterLocation) <= range * range);
+        if (limit != -1) {
+            stream = stream.limit(limit);
+        }
+        return stream.collect(Collectors.toList());
     }
 
     public void remove() {
@@ -240,6 +290,10 @@ public abstract class AbstractTower {
         return game;
     }
 
+    public Team getTeam() {
+        return team;
+    }
+
     public Location getCornerLocation() {
         return cornerLocation;
     }
@@ -252,48 +306,48 @@ public abstract class AbstractTower {
         return bottomCenterLocation;
     }
 
-    public enum TargetPriority {
+    public enum EnemyTargetPriority {
         FIRST {
             @Override
-            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+            public int compare(AbstractTower tower, EnemyTargetPriorityMob o1, EnemyTargetPriorityMob o2) {
                 return Integer.compare(o1.mobData().getPosition(), o2.mobData().getPosition());
             }
         },
         LAST {
             @Override
-            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+            public int compare(AbstractTower tower, EnemyTargetPriorityMob o1, EnemyTargetPriorityMob o2) {
                 return Integer.compare(o2.mobData().getPosition(), o1.mobData().getPosition());
             }
         },
         STRONGEST {
             @Override
-            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+            public int compare(AbstractTower tower, EnemyTargetPriorityMob o1, EnemyTargetPriorityMob o2) {
                 return o1.warlordsNPC().getCurrentHealth() > o2.warlordsNPC().getCurrentHealth() ? -1 : 1;
             }
         },
         WEAKEST {
             @Override
-            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+            public int compare(AbstractTower tower, EnemyTargetPriorityMob o1, EnemyTargetPriorityMob o2) {
                 return o1.warlordsNPC().getCurrentHealth() < o2.warlordsNPC().getCurrentHealth() ? -1 : 1;
             }
         },
         CLOSEST {
             @Override
-            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+            public int compare(AbstractTower tower, EnemyTargetPriorityMob o1, EnemyTargetPriorityMob o2) {
                 Location location = tower.getTopCenterLocation();
                 return Double.compare(o1.warlordsNPC().getLocation().distanceSquared(location), o2.warlordsNPC().getLocation().distanceSquared(location));
             }
         },
         FURTHEST {
             @Override
-            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+            public int compare(AbstractTower tower, EnemyTargetPriorityMob o1, EnemyTargetPriorityMob o2) {
                 Location location = tower.getTopCenterLocation();
                 return Double.compare(o2.warlordsNPC().getLocation().distanceSquared(location), o1.warlordsNPC().getLocation().distanceSquared(location));
             }
         },
         RANDOM {
             @Override
-            public int compare(AbstractTower tower, TargetPriorityMob o1, TargetPriorityMob o2) {
+            public int compare(AbstractTower tower, EnemyTargetPriorityMob o1, EnemyTargetPriorityMob o2) {
                 return ThreadLocalRandom.current().nextDouble() < .5 ? -1 : 1;
             }
         },
@@ -301,16 +355,66 @@ public abstract class AbstractTower {
 
         ;
 
-        public static final TargetPriority[] VALUES = values();
+        public static final EnemyTargetPriority[] VALUES = values();
 
 
         public abstract int compare(
                 AbstractTower tower,
-                TargetPriorityMob o1,
-                TargetPriorityMob o2
+                EnemyTargetPriorityMob o1,
+                EnemyTargetPriorityMob o2
         );
 
-        public record TargetPriorityMob(WarlordsNPC warlordsNPC, TowerDefenseOption.TowerDefenseAttackingMobData mobData) {
+        public record EnemyTargetPriorityMob(WarlordsNPC warlordsNPC, TowerDefenseOption.TowerDefenseAttackingMobData mobData) {
+        }
+    }
+
+    public enum AllyTargetPriority {
+        STRONGEST {
+            @Override
+            public int compare(AbstractTower tower, AllyTargetPriorityMob o1, AllyTargetPriorityMob o2) {
+                return o1.warlordsNPC().getCurrentHealth() > o2.warlordsNPC().getCurrentHealth() ? -1 : 1;
+            }
+        },
+        WEAKEST {
+            @Override
+            public int compare(AbstractTower tower, AllyTargetPriorityMob o1, AllyTargetPriorityMob o2) {
+                return o1.warlordsNPC().getCurrentHealth() < o2.warlordsNPC().getCurrentHealth() ? -1 : 1;
+            }
+        },
+        CLOSEST {
+            @Override
+            public int compare(AbstractTower tower, AllyTargetPriorityMob o1, AllyTargetPriorityMob o2) {
+                Location location = tower.getTopCenterLocation();
+                return Double.compare(o1.warlordsNPC().getLocation().distanceSquared(location), o2.warlordsNPC().getLocation().distanceSquared(location));
+            }
+        },
+        FURTHEST {
+            @Override
+            public int compare(AbstractTower tower, AllyTargetPriorityMob o1, AllyTargetPriorityMob o2) {
+                Location location = tower.getTopCenterLocation();
+                return Double.compare(o2.warlordsNPC().getLocation().distanceSquared(location), o1.warlordsNPC().getLocation().distanceSquared(location));
+            }
+        },
+        RANDOM {
+            @Override
+            public int compare(AbstractTower tower, AllyTargetPriorityMob o1, AllyTargetPriorityMob o2) {
+                return ThreadLocalRandom.current().nextDouble() < .5 ? -1 : 1;
+            }
+        },
+
+
+        ;
+
+        public static final AllyTargetPriority[] VALUES = values();
+
+
+        public abstract int compare(
+                AbstractTower tower,
+                AllyTargetPriorityMob o1,
+                AllyTargetPriorityMob o2
+        );
+
+        public record AllyTargetPriorityMob(WarlordsNPC warlordsNPC, TowerDefenseOption.TowerDefenseMobData mobData) {
         }
     }
 }

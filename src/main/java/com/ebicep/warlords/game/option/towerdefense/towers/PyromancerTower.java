@@ -34,9 +34,9 @@ import java.util.*;
 
 public class PyromancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
 
-    private final List<FloatModifiable> damage = new ArrayList<>();
-    private final List<FloatModifiable> range = new ArrayList<>();
-    private final List<FloatModifiable> attackSpeed = new ArrayList<>();
+    private final List<FloatModifiable> damages = new ArrayList<>();
+    private final List<FloatModifiable> ranges = new ArrayList<>();
+    private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
 
     private final FloatModifiable flameDamage = new FloatModifiable(500);
@@ -45,9 +45,9 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
 
     public PyromancerTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        damage.add(flameDamage);
-        range.add(flameRange);
-        attackSpeed.add(flameAttackSpeed);
+        damages.add(flameDamage);
+        ranges.add(flameRange);
+        attackSpeeds.add(flameAttackSpeed);
         TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
         TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
         TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage3 = new TowerUpgradeInstance.DamageUpgradeInstance(50);
@@ -93,7 +93,7 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
     private void flameAttack() {
         float rangeValue = flameRange.getCalculatedValue();
         float damageValue = flameDamage.getCalculatedValue();
-        getMob(TargetPriority.FIRST, rangeValue, 1).forEach(warlordsNPC -> {
+        getEnemyMobs(EnemyTargetPriority.FIRST, rangeValue, 1).forEach(warlordsNPC -> {
             int teleportDuration = 5;
             Location targetLocation = new LocationBuilder(warlordsNPC.getLocation())
                     .addY(1);
@@ -113,7 +113,15 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
                         PlayerFilter.entitiesAround(warlordsNPC, 2, 2, 2)
                                     .aliveEnemiesOf(warlordsTower)
                                     .excluding(warlordsNPC)
-                                    .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(warlordsTower, "Flame", damageValue, damageValue, 0, 100));
+                                    .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(
+                                            warlordsTower,
+                                            "Flame",
+                                            damageValue,
+                                            damageValue,
+                                            0,
+                                            100,
+                                            InstanceFlags.TD_MAGIC
+                                    ));
                     } else if (upgrades.get(3).isUnlocked()) {
                         warlordsNPC.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Pyromancer Tower Burn",
@@ -211,16 +219,16 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
 
     @Override
     public List<FloatModifiable> getDamages() {
-        return damage;
+        return damages;
     }
 
     @Override
     public List<FloatModifiable> getRanges() {
-        return range;
+        return ranges;
     }
 
     @Override
     public List<FloatModifiable> getAttackSpeeds() {
-        return attackSpeed;
+        return attackSpeeds;
     }
 }

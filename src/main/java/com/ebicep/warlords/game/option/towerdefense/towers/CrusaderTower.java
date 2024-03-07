@@ -1,6 +1,6 @@
+
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Damage;
@@ -9,27 +9,33 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CryomancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
+public class CrusaderTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
 
     private final List<FloatModifiable> damages = new ArrayList<>();
     private final List<FloatModifiable> ranges = new ArrayList<>();
     private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
 
-    private final FloatModifiable slowDamage = new FloatModifiable(500);
-    private final FloatModifiable slowRange = new FloatModifiable(30);
-    private final FloatModifiable slowAttackSpeed = new FloatModifiable(3 * 20); // 5 seconds
+    private final FloatModifiable strikeDamage = new FloatModifiable(250);
+    private final FloatModifiable strikeRange = new FloatModifiable(10);
+    private final FloatModifiable strikeAttackSpeed = new FloatModifiable(2 * 20); // 5 seconds
 
-    public CryomancerTower(Game game, UUID owner, Location location) {
+    private final FloatModifiable buffValue = new FloatModifiable(-.3f); // 30% faster
+    private final FloatModifiable buffRange = new FloatModifiable(15);
+
+
+    public CrusaderTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        ranges.add(slowRange);
-        attackSpeeds.add(slowAttackSpeed);
+        damages.add(strikeDamage);
+        ranges.add(strikeRange);
+        attackSpeeds.add(strikeAttackSpeed);
+
+        ranges.add(buffRange);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //
@@ -53,7 +59,7 @@ public class CryomancerTower extends AbstractTower implements Damage, Range, Att
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.CRYO_TOWER;
+        return TowerRegistry.AVENGER_TOWER;
     }
 
     @Override
@@ -62,12 +68,18 @@ public class CryomancerTower extends AbstractTower implements Damage, Range, Att
         if (ticksElapsed % 5 == 0) {
 //            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, centerLocation, 5, .5, .1, .5, 2);
         }
-        int attackSpeed = (int) slowAttackSpeed.getCalculatedValue();
-        if (ticksElapsed % attackSpeed == 0) {
-            float rangeValue = slowRange.getCalculatedValue();
-            getEnemyMobs(rangeValue).forEach(warlordsNPC -> {
-                EffectUtils.displayParticle(Particle.SNOWFLAKE, warlordsNPC.getLocation(), 15, .15, 0, .15, 0);
-                warlordsNPC.addSpeedModifier(warlordsTower, "Cryomancer Tower Slow", -20, 20, "BASE");
+        if (ticksElapsed % 20 == 0) {
+            float buffRangeValue = buffRange.getCalculatedValue();
+            getTowers(buffRangeValue).forEach(tower -> {
+                if (tower instanceof AttackSpeed attackSpeed) {
+                    attackSpeed.getAttackSpeeds()
+                               .forEach(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd(
+                                               getTowerRegistry().name,
+                                               buffValue.getCalculatedValue(),
+                                               20
+                                       )
+                               );
+                }
             });
         }
     }
@@ -92,4 +104,5 @@ public class CryomancerTower extends AbstractTower implements Damage, Range, Att
     public List<FloatModifiable> getAttackSpeeds() {
         return attackSpeeds;
     }
+
 }
