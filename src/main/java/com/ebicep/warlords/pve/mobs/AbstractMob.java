@@ -212,7 +212,7 @@ public abstract class AbstractMob implements Mob {
                 meleeCritMutiplier,
                 this,
                 playerClass,
-                new MobHologram.TextDisplayHologram() {
+                new MobHologram.TextDisplayHologram(10) {
 
                     @Nullable
                     @Override

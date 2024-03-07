@@ -85,6 +85,12 @@ public abstract class MobHologram {
 
     public static abstract class TextDisplayHologram extends MobHologram {
 
+        protected float viewRange;
+
+        public TextDisplayHologram(float viewRange) {
+            this.viewRange = viewRange;
+        }
+
         @Override
         protected void update(@Nonnull Entity entity) {
             Location location = entity.getLocation().clone();
@@ -98,6 +104,7 @@ public abstract class MobHologram {
                         display.setCustomNameVisible(true);
                         display.setSeeThrough(true);
                         display.setTeleportDuration(3); // SMOOTH TELEPORTATION
+                        display.setViewRange(viewRange);
                     });
                     customHologramLine.setEntity(textDisplay);
                 } else if (customHologramLine.getEntity() instanceof TextDisplay textDisplay) {
