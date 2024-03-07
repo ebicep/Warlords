@@ -59,7 +59,7 @@ public class CrusaderTower extends AbstractTower implements Damage, Range, Attac
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.AVENGER_TOWER;
+        return TowerRegistry.CRUSADER_TOWER;
     }
 
     @Override

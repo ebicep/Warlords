@@ -42,6 +42,7 @@ public enum TowerRegistry {
 
     public static EnumSet<TowerRegistry> updateCaches() {
         EnumSet<TowerRegistry> updated = EnumSet.noneOf(TowerRegistry.class);
+        List<TowerRegistry> values = new ArrayList<>(List.of(TowerRegistry.VALUES));
         for (int i = 0; i < 1000; i++) {
             Block block = TOWER_WORLD.getBlockAt(i, 100, 0);
             if (block.getType() == Material.RED_WOOL) {
@@ -60,10 +61,12 @@ public enum TowerRegistry {
             } catch (NumberFormatException ignored) {
 
             }
-            for (TowerRegistry tower : TowerRegistry.VALUES) {
+            for (TowerRegistry tower : values) {
                 if (tower.name().equals(towerName.content())) {
                     updateTowerCache(sign.getLocation().add(1, 0, 1), tower, upgradeIndex);
                     updated.add(tower);
+                    values.remove(tower);
+                    break;
                 }
             }
         }
