@@ -121,8 +121,8 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
             hit.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                    (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                    (float) (minDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                    (float) (maxDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                     critChance,
                     critMultiplier
             );
@@ -271,8 +271,8 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         nearEntity.addDamageInstance(
                 shooter,
                 name,
-                (float) (minDamageHeal * damageModifier),
-                (float) (maxDamageHeal * damageModifier),
+                (float) (minDamageHeal.getCalculatedValue() * damageModifier),
+                (float) (maxDamageHeal.getCalculatedValue() * damageModifier),
                 critChance,
                 critMultiplier
         );

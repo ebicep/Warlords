@@ -5,12 +5,10 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
-    float minDamage;
-    float maxDamage;
-
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.3f);
+        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
         ability.setMaxEnemiesHit(2);
         ability.setMaxAlliesHit(3);
         ability.setDamageReduction(7);
@@ -19,20 +17,9 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 5f)
+                .addUpgradeDamage(ability, 5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {

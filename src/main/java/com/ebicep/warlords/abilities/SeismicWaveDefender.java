@@ -25,7 +25,14 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
         } else if (pveMasterUpgrade2) {
             multiplier = waveTarget.getCooldownManager().hasCooldownFromName("Wounding Strike") ? 1.3f : 1;
         }
-        waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID).ifPresent(event -> {
+        waveTarget.addDamageInstance(wp,
+                name,
+                minDamageHeal.getCalculatedValue() * multiplier,
+                maxDamageHeal.getCalculatedValue() * multiplier,
+                critChance,
+                critMultiplier,
+                abilityUUID
+        ).ifPresent(event -> {
             if (event.isDead() && pveMasterUpgrade2) {
                 wp.getAbilitiesMatching(LastStand.class).forEach(lastStand -> lastStand.subtractCurrentCooldown(1f));
             }

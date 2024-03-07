@@ -7,8 +7,7 @@ import javax.annotation.Nonnull;
 
 public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+
     double projectileSpeed = ability.getProjectileSpeed();
 
     public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
@@ -16,14 +15,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 12.5f)
+                .addUpgradeDamage(ability, 12.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Nonnull
                     @Override

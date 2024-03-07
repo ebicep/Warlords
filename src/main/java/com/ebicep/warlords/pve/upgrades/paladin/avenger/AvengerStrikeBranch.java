@@ -12,31 +12,21 @@ import java.util.Collections;
 
 public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
-    float minDamage;
-    float maxDamage;
     float energySteal = ability.getEnergySteal();
 
     @Override
     public void runOnce() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
         super(abilityTree, ability);
         WarlordsPlayer warlordsPlayer = abilityTree.getWarlordsPlayer();
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
+
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * value);
-                        ability.setMaxDamageHeal(maxDamage * value);
-                    }
-                }, 5f)
+                .addUpgradeDamage(ability, 5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {

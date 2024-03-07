@@ -93,7 +93,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
-        OrbsOfLife tempOrbsOfLight = new OrbsOfLife(minDamageHeal, maxDamageHeal);
+        OrbsOfLife tempOrbsOfLight = new OrbsOfLife(minDamageHeal.getCalculatedValue(), maxDamageHeal.getCalculatedValue());
         tempOrbsOfLight.setPveMasterUpgrade2(pveMasterUpgrade2);
         PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<>(
                 name,
@@ -129,7 +129,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             orb.remove();
                             itr.remove();
 
-                            float orbHeal = tempOrbsOfLight.getMinDamageHeal();
+                            float orbHeal = tempOrbsOfLight.getMinDamageHeal().getCalculatedValue();
                             // Increasing heal for low long orb lived for (up to +25%)
                             // 6.5 seconds = 130 ticks
                             // 6.5 seconds = 1 + (130/325) = 1.4

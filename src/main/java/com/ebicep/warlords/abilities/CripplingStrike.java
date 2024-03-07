@@ -162,7 +162,7 @@ public class CripplingStrike extends AbstractStrike {
             cripple(wp,
                     nearPlayer,
                     name,
-                    new CripplingStrike(minDamageHeal, maxDamageHeal, Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                    new CripplingStrike(minDamageHeal.getCalculatedValue(), maxDamageHeal.getCalculatedValue(), Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
                     crippleDuration * 20,
                     convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
             );

@@ -166,7 +166,13 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
                 numberOfDismounts++;
             }
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
-            bounceTarget.addDamageInstance(wp, name, minDamageHeal * bounceDamageReduction, maxDamageHeal * bounceDamageReduction, critChance, critMultiplier);
+            bounceTarget.addDamageInstance(wp,
+                    name,
+                    minDamageHeal.getCalculatedValue() * bounceDamageReduction,
+                    maxDamageHeal.getCalculatedValue() * bounceDamageReduction,
+                    critChance,
+                    critMultiplier
+            );
             hitCounter.add(bounceTarget);
 
             List<CooldownManager.LinkInformation> linkInformation = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);

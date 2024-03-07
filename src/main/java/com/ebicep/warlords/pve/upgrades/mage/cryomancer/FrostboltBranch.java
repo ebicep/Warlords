@@ -5,22 +5,13 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
 
     public FrostboltBranch(AbilityTree abilityTree, FrostBolt ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability, 7.f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {

@@ -115,8 +115,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                 teammatesHit++;
                 hit.addHealingInstance(shooter,
                         name,
-                        (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                        (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                        (float) (minDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                        (float) (maxDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                         cc,
                         critMultiplier,
                         EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS)
@@ -156,8 +156,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                 nearEntity.addHealingInstance(
                         shooter,
                         name,
-                        (float) (minDamageHeal * toReduceBy),
-                        (float) (maxDamageHeal * toReduceBy),
+                        (float) (minDamageHeal.getCalculatedValue() * toReduceBy),
+                        (float) (maxDamageHeal.getCalculatedValue() * toReduceBy),
                         critChance,
                         critMultiplier,
                         EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS)

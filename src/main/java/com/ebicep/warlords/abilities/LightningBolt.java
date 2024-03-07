@@ -217,8 +217,8 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
         return hit.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal * damageMultiplier,
-                maxDamageHeal * damageMultiplier,
+                minDamageHeal.getCalculatedValue() * damageMultiplier,
+                maxDamageHeal.getCalculatedValue() * damageMultiplier,
                 critChance,
                 critMultiplier
         );

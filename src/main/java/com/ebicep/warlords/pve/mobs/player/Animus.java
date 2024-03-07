@@ -10,6 +10,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Untargetable;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
 
@@ -94,8 +95,8 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
             for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {
                 playerClass.addAbility(new JudgementStrike() {{
                     getCooldown().setBaseValue(2);
-                    setMinDamageHeal(judgementStrike.getMinDamageHeal());
-                    setMaxDamageHeal(judgementStrike.getMaxDamageHeal());
+                    setMinDamageHeal(new FloatModifiable(judgementStrike.getMinDamageHeal()));
+                    setMaxDamageHeal(new FloatModifiable(judgementStrike.getMaxDamageHeal()));
                     setStrikeHeal(judgementStrike.getStrikeHeal());
                     setInPve(judgementStrike.isInPve());
                     setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());

@@ -117,8 +117,9 @@ public class ConsecrateCrusader extends AbstractConsecrate {
     @Nonnull
     @Override
     public AbstractConsecrate createConsecrate() {
-        return new ConsecrateCrusader(minDamageHeal,
-                maxDamageHeal,
+        return new ConsecrateCrusader(
+                minDamageHeal.getCalculatedValue(),
+                maxDamageHeal.getCalculatedValue(),
                 energyCost.getBaseValue(),
                 critChance,
                 critMultiplier,

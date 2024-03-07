@@ -1,26 +1,20 @@
 package com.ebicep.warlords.pve.upgrades.warrior;
 
 import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public abstract class AbstractSeismicWaveBranch extends AbstractUpgradeBranch<AbstractSeismicWave> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
 
     public AbstractSeismicWaveBranch(AbilityTree abilityTree, AbstractSeismicWave ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 5f)
+                .addUpgradeDamage(ability, 5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

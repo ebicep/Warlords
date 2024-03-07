@@ -100,8 +100,8 @@ public class AvengersStrike extends AbstractStrike {
         Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
                 wp,
                 name,
-                (minDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
-                (maxDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
+                (minDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
+                (maxDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
                 critChance,
                 critMultiplier
         );
@@ -117,8 +117,8 @@ public class AvengersStrike extends AbstractStrike {
                 we.addDamageInstance(
                         wp,
                         "Avenger's Slash",
-                        ((minDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
-                        ((maxDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((minDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
+                        ((maxDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
                         critChance,
                         critMultiplier
                 );

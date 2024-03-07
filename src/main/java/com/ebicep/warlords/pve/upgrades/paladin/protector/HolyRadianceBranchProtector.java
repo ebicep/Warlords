@@ -5,8 +5,6 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadianceProtector> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
     float markHealing = ability.getMarkHealing();
 
     public HolyRadianceBranchProtector(AbilityTree abilityTree, HolyRadianceProtector ability) {
@@ -14,14 +12,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * value);
-                        ability.setMaxDamageHeal(maxDamage * value);
-                    }
-                }, 10f)
+                .addUpgradeHealing(ability, 10f)
                 .addUpgradeEnergy(ability, 30f, 4)
                 .addTo(treeA);
 

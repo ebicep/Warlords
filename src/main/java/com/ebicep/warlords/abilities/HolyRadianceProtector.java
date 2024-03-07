@@ -123,8 +123,8 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
 
     private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
         HolyRadianceProtector tempMark = new HolyRadianceProtector(
-                minDamageHeal,
-                maxDamageHeal,
+                minDamageHeal.getCalculatedValue(),
+                maxDamageHeal.getCalculatedValue(),
                 cooldown.getBaseValue(),
                 energyCost.getBaseValue(),
                 critChance,
@@ -163,8 +163,8 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                                         waveTarget,
                                         giver,
                                         1.1,
-                                        minDamageHeal * (markHealing / 100f),
-                                        maxDamageHeal * (markHealing / 100f)
+                                        minDamageHeal.getCalculatedValue() * (markHealing / 100f),
+                                        maxDamageHeal.getCalculatedValue() * (markHealing / 100f)
                                 ).runTaskTimer(Warlords.getInstance(), 1, 1)
                         );
                     }

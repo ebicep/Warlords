@@ -5,30 +5,20 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike> {
 
-    float minDamage;
-    float maxDamage;
     int energyGiven = ability.getEnergyGiven();
 
     @Override
     public void runOnce() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
         super(abilityTree, ability);
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
+
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * value);
-                        ability.setMaxDamageHeal(maxDamage * value);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability, 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

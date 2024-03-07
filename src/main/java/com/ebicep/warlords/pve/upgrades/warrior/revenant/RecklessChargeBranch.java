@@ -5,8 +5,7 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+
     int stunDuration = ability.getStunTimeInTicks();
 
     public RecklessChargeBranch(AbilityTree abilityTree, RecklessCharge ability) {
@@ -14,14 +13,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 10f)
+                .addUpgradeDamage(ability, 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -52,9 +44,8 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 "+50% Additional damage\n\nReckless Charge stuns enemies for 3 seconds. Additionally, allies you charge through will receive 100% more healing for 8 seconds.",
                 50000,
                 () -> {
-                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.5f);
-                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.5f);
-
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
                     ability.setStunTimeInTicks(60);
                 }
         );

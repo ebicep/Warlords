@@ -45,12 +45,27 @@ public interface FloatModifiableFilter {
         return true;
     }
 
+    FloatModifiableFilter clone();
+
     abstract class AbstractFilter implements FloatModifiableFilter {
 
         private float cachedValue;
         private float cachedAdditiveModifier;
         private float cachedMultiplicativeModifierAdditive;
         private float cachedMultiplicativeModifierMultiplicative;
+
+        public AbstractFilter() {
+        }
+
+        public AbstractFilter(float cachedValue, float cachedAdditiveModifier, float cachedMultiplicativeModifierAdditive, float cachedMultiplicativeModifierMultiplicative) {
+            this.cachedValue = cachedValue;
+            this.cachedAdditiveModifier = cachedAdditiveModifier;
+            this.cachedMultiplicativeModifierAdditive = cachedMultiplicativeModifierAdditive;
+            this.cachedMultiplicativeModifierMultiplicative = cachedMultiplicativeModifierMultiplicative;
+        }
+
+        @Override
+        public abstract AbstractFilter clone();
 
         @Override
         public float getCachedValue() {
@@ -96,14 +111,37 @@ public interface FloatModifiableFilter {
 
     class BaseFilter extends AbstractFilter {
 
+        public BaseFilter() {
+        }
+
+        public BaseFilter(float cachedValue, float cachedAdditiveModifier, float cachedMultiplicativeModifierAdditive, float cachedMultiplicativeModifierMultiplicative) {
+            super(cachedValue, cachedAdditiveModifier, cachedMultiplicativeModifierAdditive, cachedMultiplicativeModifierMultiplicative);
+        }
+
+        @Override
+        public AbstractFilter clone() {
+            return new BaseFilter(getCachedValue(), getCachedAdditiveModifier(), getCachedMultiplicativeModifierAdditive(), getCachedMultiplicativeModifierMultiplicative());
+        }
+
         @Override
         public String getName() {
             return "Base";
         }
-
     }
 
     class HealthFilter extends AbstractFilter {
+
+        public HealthFilter() {
+        }
+
+        public HealthFilter(float cachedValue, float cachedAdditiveModifier, float cachedMultiplicativeModifierAdditive, float cachedMultiplicativeModifierMultiplicative) {
+            super(cachedValue, cachedAdditiveModifier, cachedMultiplicativeModifierAdditive, cachedMultiplicativeModifierMultiplicative);
+        }
+
+        @Override
+        public AbstractFilter clone() {
+            return new HealthFilter(getCachedValue(), getCachedAdditiveModifier(), getCachedMultiplicativeModifierAdditive(), getCachedMultiplicativeModifierMultiplicative());
+        }
 
         @Override
         public String getName() {

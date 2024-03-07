@@ -37,7 +37,14 @@ public class SeismicWaveBerserker extends AbstractSeismicWave {
                 }.runTaskTimer(5, 0);
             }
         }
-        waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID);
+        waveTarget.addDamageInstance(wp,
+                name,
+                minDamageHeal.getCalculatedValue() * multiplier,
+                maxDamageHeal.getCalculatedValue() * multiplier,
+                critChance,
+                critMultiplier,
+                abilityUUID
+        );
     }
 
     @Override

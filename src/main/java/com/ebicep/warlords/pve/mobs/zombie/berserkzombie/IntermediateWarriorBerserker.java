@@ -34,7 +34,8 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                 500,
                 new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.multiplyMinMax(1.25f);
+        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .25f);
+        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .25f);
     }
 
     public IntermediateWarriorBerserker(
@@ -63,7 +64,8 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                 maxMeleeDamage,
                 new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.multiplyMinMax(1.25f);
+        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .25f);
+        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .25f);
     }
 
     @Override

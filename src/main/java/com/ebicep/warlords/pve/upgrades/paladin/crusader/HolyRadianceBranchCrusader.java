@@ -1,26 +1,20 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
 import com.ebicep.warlords.abilities.HolyRadianceCrusader;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadianceCrusader> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
 
     public HolyRadianceBranchCrusader(AbilityTree abilityTree, HolyRadianceCrusader ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * value);
-                        ability.setMaxDamageHeal(maxDamage * value);
-                    }
-                }, 7.5f)
+                .addUpgradeHealing(ability, 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

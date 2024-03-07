@@ -61,8 +61,8 @@ public class SoulfireBeam extends AbstractBeam {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float minDamage = minDamageHeal;
-            float maxDamage = maxDamageHeal;
+            float minDamage = minDamageHeal.getCalculatedValue();
+            float maxDamage = maxDamageHeal.getCalculatedValue();
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()

@@ -76,8 +76,8 @@ public class WoundingStrikeBerserker extends AbstractStrike {
         nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal * lustDamageBoost,
-                maxDamageHeal * lustDamageBoost,
+                minDamageHeal.getCalculatedValue() * lustDamageBoost,
+                maxDamageHeal.getCalculatedValue() * lustDamageBoost,
                 critChance,
                 critMultiplier
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));

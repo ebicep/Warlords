@@ -165,8 +165,8 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             hit.addHealingInstance(
                     wp,
                     name,
-                    minDamageHeal * reduction,
-                    maxDamageHeal * reduction,
+                    minDamageHeal.getCalculatedValue() * reduction,
+                    maxDamageHeal.getCalculatedValue() * reduction,
                     critChance,
                     critMultiplier
             );

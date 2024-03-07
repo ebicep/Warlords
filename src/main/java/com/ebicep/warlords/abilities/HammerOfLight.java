@@ -196,8 +196,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 crownTarget.addHealingInstance(
                                         wp,
                                         "Crown of Light",
-                                        minDamageHeal * 1.5f,
-                                        maxDamageHeal * 1.5f,
+                                        minDamageHeal.getCalculatedValue() * 1.5f,
+                                        maxDamageHeal.getCalculatedValue() * 1.5f,
                                         critChance,
                                         critMultiplier
                                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
@@ -405,8 +405,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                     allyTarget.addHealingInstance(
                             wp,
                             "Hammer of Illusion",
-                            minDamageHeal * 5,
-                            maxDamageHeal * 5,
+                            minDamageHeal.getCalculatedValue() * 5,
+                            maxDamageHeal.getCalculatedValue() * 5,
                             20,
                             150
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {

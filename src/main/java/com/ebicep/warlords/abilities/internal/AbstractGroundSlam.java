@@ -146,8 +146,8 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                             slamTarget.addDamageInstance(
                                     wp,
                                     name,
-                                    minDamageHeal * damageMultiplier,
-                                    maxDamageHeal * damageMultiplier,
+                                    minDamageHeal.getCalculatedValue() * damageMultiplier,
+                                    maxDamageHeal.getCalculatedValue() * damageMultiplier,
                                     critChance,
                                     critMultiplier,
                                     trueDamage ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class),

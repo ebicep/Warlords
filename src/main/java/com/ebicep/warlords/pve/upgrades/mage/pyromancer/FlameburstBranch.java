@@ -5,8 +5,7 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+
     float critMultiplier = ability.getCritMultiplier();
 
     public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability) {
@@ -42,8 +41,8 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 () -> {
                     ability.setProjectileWidth(0.72D);
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 0.2);
-                    ability.setMinDamageHeal(minDamage * 2);
-                    ability.setMaxDamageHeal(maxDamage * 2);
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
                     ability.getSplashRadius().addAdditiveModifier("Master Upgrade Branch", 5);
 
                 }

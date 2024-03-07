@@ -1,12 +1,14 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
 import com.ebicep.warlords.abilities.Boulder;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+
     double hitbox = ability.getHitbox();
 
     public BoulderBranch(AbilityTree abilityTree, Boulder ability) {
@@ -14,14 +16,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 10f)
+                .addUpgradeDamage(ability, 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -38,8 +33,8 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
                     ability.getCooldown().addMultiplicativeModifierMult("Terrestrial Meteor", 2);
                     ability.getEnergyCost().addMultiplicativeModifierMult("Master Upgrade Branch", 1.5f);
-                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 4);
-                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 4);
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
                     ability.setHitbox(hitbox + 3);
                 }
         );
@@ -51,8 +46,8 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                         """,
                 50000,
                 () -> {
-                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 2);
-                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 2);
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
                 }
         );
     }

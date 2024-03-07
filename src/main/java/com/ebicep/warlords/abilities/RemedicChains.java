@@ -189,8 +189,8 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                             linked.addHealingInstance(
                                     wp,
                                     name,
-                                    minDamageHeal * totalHealingMultiplier,
-                                    maxDamageHeal * totalHealingMultiplier,
+                                    minDamageHeal.getCalculatedValue() * totalHealingMultiplier,
+                                    maxDamageHeal.getCalculatedValue() * totalHealingMultiplier,
                                     0,
                                     100
                             );

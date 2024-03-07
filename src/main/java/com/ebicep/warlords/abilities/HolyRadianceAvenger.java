@@ -100,8 +100,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
             EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
 
             HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
-                    minDamageHeal,
-                    maxDamageHeal,
+                    minDamageHeal.getCalculatedValue(),
+                    maxDamageHeal.getCalculatedValue(),
                     cooldown.getBaseValue(),
                     energyCost.getBaseValue(),
                     critChance,
@@ -161,8 +161,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
 
     private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
         HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
-                minDamageHeal,
-                maxDamageHeal,
+                minDamageHeal.getCalculatedValue(),
+                maxDamageHeal.getCalculatedValue(),
                 cooldown.getBaseValue(),
                 energyCost.getBaseValue(),
                 critChance,

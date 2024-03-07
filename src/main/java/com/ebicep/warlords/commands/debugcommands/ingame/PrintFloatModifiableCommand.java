@@ -40,6 +40,17 @@ public class PrintFloatModifiableCommand extends BaseCommand {
                 sendDebugInfo(issuer, player.getHealth().getDebugInfo());
             }
         },
+        DAMAGE_HEAL { // ability cooldowns
+
+            @Override
+            public void sendDebugInfo(CommandIssuer issuer, WarlordsPlayer player) {
+                for (AbstractAbility ability : player.getAbilities()) {
+                    ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text(ability.getName(), NamedTextColor.AQUA, TextDecoration.UNDERLINED).build());
+                    sendDebugInfo(issuer, ability.getMinDamageHeal().getDebugInfo());
+                    sendDebugInfo(issuer, ability.getMaxDamageHeal().getDebugInfo());
+                }
+            }
+        },
         COOLDOWN { // ability cooldowns
 
             @Override

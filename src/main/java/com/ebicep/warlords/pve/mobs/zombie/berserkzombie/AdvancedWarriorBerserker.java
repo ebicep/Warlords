@@ -37,7 +37,8 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 600,
                 new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.multiplyMinMax(1.5f);
+        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .5f);
+        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .5f);
     }
 
     public AdvancedWarriorBerserker(
@@ -66,7 +67,8 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 maxMeleeDamage,
                 new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.multiplyMinMax(1.5f);
+        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .5f);
+        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .5f);
     }
 
     @Override

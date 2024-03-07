@@ -1,25 +1,19 @@
 package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
 import com.ebicep.warlords.abilities.OrbsOfLife;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
 
     public OrbsOfLifeBranch(AbilityTree abilityTree, OrbsOfLife ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 12.5f)
+                .addUpgradeHealing(ability, 12.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

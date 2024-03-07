@@ -228,8 +228,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         hit.addDamageInstance(
                 wp,
                 name,
-                (float) (minDamageHeal * toReduceBy),
-                (float) (maxDamageHeal * toReduceBy),
+                (float) (minDamageHeal.getCalculatedValue() * toReduceBy),
+                (float) (maxDamageHeal.getCalculatedValue() * toReduceBy),
                 critChance,
                 critMultiplier
         );

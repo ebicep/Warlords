@@ -5,31 +5,20 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
-    float minDamage;
-    float maxDamage;
     double maxDistance = ability.getMaxDistance();
 
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.3f);
+        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 5f)
+                .addUpgradeDamage(ability, 5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

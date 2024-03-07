@@ -1,26 +1,19 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
 import com.ebicep.warlords.abilities.FallenSouls;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
-
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
 
     public FallenSoulsBranch(AbilityTree abilityTree, FallenSouls ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 15f)
+                .addUpgradeDamage(ability, 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

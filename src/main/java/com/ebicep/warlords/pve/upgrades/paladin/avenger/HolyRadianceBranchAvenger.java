@@ -1,12 +1,13 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.HolyRadianceAvenger;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianceAvenger> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
 
     public HolyRadianceBranchAvenger(AbilityTree abilityTree, HolyRadianceAvenger ability) {
         super(abilityTree, ability);
@@ -19,14 +20,7 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * value);
-                        ability.setMaxDamageHeal(maxDamage * value);
-                    }
-                }, 10f)
+                .addUpgradeHealing(ability, 10f)
                 .addUpgradeHitBox(ability, 1, 4)
                 .addTo(treeB);
 

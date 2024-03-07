@@ -131,8 +131,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                     nearPlayer.addHealingInstance(
                                             wp,
                                             name,
-                                            minDamageHeal * healMultiplier,
-                                            maxDamageHeal * healMultiplier,
+                                            minDamageHeal.getCalculatedValue() * healMultiplier,
+                                            maxDamageHeal.getCalculatedValue() * healMultiplier,
                                             critChance,
                                             critMultiplier
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
@@ -212,8 +212,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                         teammate.addHealingInstance(
                                                 wp,
                                                 name,
-                                                minDamageHeal * healMultiplier,
-                                                maxDamageHeal * healMultiplier,
+                                                minDamageHeal.getCalculatedValue() * healMultiplier,
+                                                maxDamageHeal.getCalculatedValue() * healMultiplier,
                                                 critChance,
                                                 critMultiplier
                                         ).ifPresent(warlordsDamageHealingFinalEvent -> {

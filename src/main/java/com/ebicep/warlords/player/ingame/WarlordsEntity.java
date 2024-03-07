@@ -299,6 +299,27 @@ public abstract class WarlordsEntity {
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
             WarlordsEntity attacker,
             String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier,
+            InstanceFlags... flags
+    ) {
+        return addDamageInstance(
+                attacker,
+                ability,
+                min.getCalculatedValue(),
+                max.getCalculatedValue(),
+                critChance,
+                critMultiplier,
+                flags.length == 0 ? EnumSet.noneOf(InstanceFlags.class) : EnumSet.copyOf(Arrays.asList(flags)),
+                null
+        );
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
             float min,
             float max,
             float critChance,
@@ -306,6 +327,18 @@ public abstract class WarlordsEntity {
             UUID uuid
     ) {
         return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), uuid);
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier,
+            UUID uuid
+    ) {
+        return addDamageInstance(attacker, ability, min.getCalculatedValue(), max.getCalculatedValue(), critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), uuid);
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -323,6 +356,18 @@ public abstract class WarlordsEntity {
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
             WarlordsEntity attacker,
             String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier,
+            EnumSet<InstanceFlags> flags
+    ) {
+        return addDamageInstance(attacker, ability, min.getCalculatedValue(), max.getCalculatedValue(), critChance, critMultiplier, flags, null);
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
             float min,
             float max,
             float critChance,
@@ -335,6 +380,29 @@ public abstract class WarlordsEntity {
                 ability,
                 min,
                 max,
+                critChance,
+                critMultiplier,
+                true,
+                flags,
+                uuid
+        ));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier,
+            EnumSet<InstanceFlags> flags,
+            UUID uuid
+    ) {
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this,
+                attacker,
+                ability,
+                min.getCalculatedValue(),
+                max.getCalculatedValue(),
                 critChance,
                 critMultiplier,
                 true,
@@ -993,6 +1061,17 @@ public abstract class WarlordsEntity {
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
             WarlordsEntity attacker,
             String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier
+    ) {
+        return this.addHealingInstance(attacker, ability, min.getCalculatedValue(), max.getCalculatedValue(), critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
+            WarlordsEntity attacker,
+            String ability,
             float min,
             float max,
             float critChance,
@@ -1005,6 +1084,29 @@ public abstract class WarlordsEntity {
                 ability,
                 min,
                 max,
+                critChance,
+                critMultiplier,
+                false,
+                flags,
+                null
+        ));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
+            WarlordsEntity attacker,
+            String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier,
+            EnumSet<InstanceFlags> flags
+    ) {
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(
+                this,
+                attacker,
+                ability,
+                min.getCalculatedValue(),
+                max.getCalculatedValue(),
                 critChance,
                 critMultiplier,
                 false,

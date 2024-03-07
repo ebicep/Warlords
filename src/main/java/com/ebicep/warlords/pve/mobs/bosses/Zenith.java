@@ -254,8 +254,8 @@ public class Zenith extends AbstractMob implements BossMob {
                         }
                         we.addDamageInstance(wp,
                                 "Armageddon",
-                                (minDamageHeal * playerCount) * damageMultiplier,
-                                (maxDamageHeal * playerCount) * damageMultiplier,
+                                (minDamageHeal.getCalculatedValue() * playerCount) * damageMultiplier,
+                                (maxDamageHeal.getCalculatedValue() * playerCount) * damageMultiplier,
                                 critChance,
                                 critMultiplier
                         );
@@ -302,8 +302,8 @@ public class Zenith extends AbstractMob implements BossMob {
                 we.addDamageInstance(
                         wp,
                         name,
-                        (minDamageHeal * playerCount) * multiplier,
-                        (maxDamageHeal * playerCount) * multiplier,
+                        (minDamageHeal.getCalculatedValue() * playerCount) * multiplier,
+                        (maxDamageHeal.getCalculatedValue() * playerCount) * multiplier,
                         critChance,
                         critMultiplier
                 );

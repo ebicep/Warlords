@@ -35,10 +35,14 @@ public class UpgradeTreeBuilder {
     }
 
     public UpgradeTreeBuilder addUpgrade(UpgradeTypes.UpgradeType upgradeType, int... levels) {
-        return addUpgrade(upgradeType, null, 0, levels);
+        return addUpgrade(upgradeType, (FloatModifiable.FloatModifier) null, 0, levels);
     }
 
     public UpgradeTreeBuilder addUpgrade(UpgradeTypes.UpgradeType upgradeType, FloatModifiable.FloatModifier modifier, float value, int... level) {
+        return addUpgrade(upgradeType, modifier == null ? null : List.of(modifier), value, level);
+    }
+
+    public UpgradeTreeBuilder addUpgrade(UpgradeTypes.UpgradeType upgradeType, List<FloatModifiable.FloatModifier> modifier, float value, int... level) {
         if (level.length == 0) {
             level = new int[]{1, 2, 3, 4};
         }
@@ -51,6 +55,38 @@ public class UpgradeTreeBuilder {
                         .add(new UpgradeTypeHolder(upgradeType, modifier, valueReference.get(), level[0])); // assuming level[0] is lowest level
         }
         return this;
+    }
+
+    public UpgradeTreeBuilder addUpgradeDamage(AbstractAbility ability, int... levels) {
+        return addUpgradeDamage(ability, .05f, levels);
+    }
+
+    public UpgradeTreeBuilder addUpgradeDamage(AbstractAbility ability, float value, int... levels) {
+        return addUpgrade(
+                UpgradeTypes.DAMAGE,
+                List.of(
+                        ability.getMinDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false),
+                        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false)
+                ),
+                value,
+                levels
+        );
+    }
+
+    public UpgradeTreeBuilder addUpgradeHealing(AbstractAbility ability, int... levels) {
+        return addUpgradeHealing(ability, .05f, levels);
+    }
+
+    public UpgradeTreeBuilder addUpgradeHealing(AbstractAbility ability, float value, int... levels) {
+        return addUpgrade(
+                UpgradeTypes.HEALING,
+                List.of(
+                        ability.getMinDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false),
+                        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false)
+                ),
+                value,
+                levels
+        );
     }
 
     public UpgradeTreeBuilder addUpgradeCooldown(AbstractAbility ability, int... levels) {
@@ -127,7 +163,7 @@ public class UpgradeTreeBuilder {
     }
 
     public UpgradeTreeBuilder addUpgrade(UpgradeTypes.UpgradeType upgradeType, float value, int... levels) {
-        return addUpgrade(upgradeType, null, value, levels);
+        return addUpgrade(upgradeType, (FloatModifiable.FloatModifier) null, value, levels);
     }
 
     public UpgradeTreeBuilder addUpgradeDuration(Duration duration, float value, boolean autoScaleDescription, int... levels) {
@@ -186,10 +222,10 @@ public class UpgradeTreeBuilder {
                     () -> {
                         upgradeTypeHolders.forEach(type -> {
                             UpgradeTypes.UpgradeType upgradeType = type.upgradeType;
-                            FloatModifiable.FloatModifier modifier = type.modifier;
+                            List<FloatModifiable.FloatModifier> modifier = type.modifier;
                             float value = type.value * (upgradeType.autoScaleEffect() ? integer - type.scalingStart + 1 : 1);
                             if (modifier != null) {
-                                upgradeType.modifyFloatModifiable(modifier, value);
+                                modifier.forEach(floatModifier -> upgradeType.modifyFloatModifiable(floatModifier, value));
                             }
                             upgradeType.run(value);
                         });
@@ -202,7 +238,9 @@ public class UpgradeTreeBuilder {
         return upgradeBranch;
     }
 
-    public record UpgradeTypeHolder(UpgradeTypes.UpgradeType upgradeType, @Nullable FloatModifiable.FloatModifier modifier, float value, int scalingStart) {
-
+    public record UpgradeTypeHolder(UpgradeTypes.UpgradeType upgradeType, @Nullable List<FloatModifiable.FloatModifier> modifier, float value, int scalingStart) {
+        public UpgradeTypeHolder(UpgradeTypes.UpgradeType upgradeType, @Nullable FloatModifiable.FloatModifier modifier, float value, int scalingStart) {
+            this(upgradeType, modifier == null ? null : List.of(modifier), value, scalingStart);
+        }
     }
 }

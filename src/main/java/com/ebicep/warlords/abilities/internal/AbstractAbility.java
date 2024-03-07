@@ -55,8 +55,8 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected int timesUsed = 0;
     protected String name;
-    protected float minDamageHeal;
-    protected float maxDamageHeal;
+    protected FloatModifiable minDamageHeal;
+    protected FloatModifiable maxDamageHeal;
     protected float currentCooldown;
     protected FloatModifiable cooldown;
     protected FloatModifiable energyCost;
@@ -90,8 +90,8 @@ public abstract class AbstractAbility implements AbilityIcon {
             float startCooldown
     ) {
         this.name = name;
-        this.minDamageHeal = minDamageHeal;
-        this.maxDamageHeal = maxDamageHeal;
+        this.minDamageHeal = new FloatModifiable(minDamageHeal);
+        this.maxDamageHeal = new FloatModifiable(maxDamageHeal);
         this.cooldown = new FloatModifiable(cooldown);
         this.currentCooldown = startCooldown;
         this.energyCost = new FloatModifiable(energyCost);
@@ -163,25 +163,20 @@ public abstract class AbstractAbility implements AbilityIcon {
         this.timesUsed = timesUsed;
     }
 
-    public float getMinDamageHeal() {
+    public FloatModifiable getMinDamageHeal() {
         return minDamageHeal;
     }
 
-    public void setMinDamageHeal(float minDamageHeal) {
-        this.minDamageHeal = minDamageHeal;
-    }
-
-    public float getMaxDamageHeal() {
-        return maxDamageHeal;
-    }
-
-    public void setMaxDamageHeal(float maxDamageHeal) {
+    public void setMaxDamageHeal(FloatModifiable maxDamageHeal) {
         this.maxDamageHeal = maxDamageHeal;
     }
 
-    public void multiplyMinMax(float amount) {
-        this.minDamageHeal *= amount;
-        this.maxDamageHeal *= amount;
+    public FloatModifiable getMaxDamageHeal() {
+        return maxDamageHeal;
+    }
+
+    public void setMinDamageHeal(FloatModifiable minDamageHeal) {
+        this.minDamageHeal = minDamageHeal;
     }
 
     public int getCurrentCooldownItem() {
@@ -356,6 +351,10 @@ public abstract class AbstractAbility implements AbilityIcon {
         return formatRange(min, max, NamedTextColor.RED);
     }
 
+    public Component formatRangeDamage(FloatModifiable min, FloatModifiable max) {
+        return formatRange(min.getCalculatedValue(), max.getCalculatedValue(), NamedTextColor.RED);
+    }
+
     public Component formatRange(float min, float max, NamedTextColor textColor) {
         return Component.text(" ", NamedTextColor.GRAY)
                         .append(Component.text(format(min), textColor))
@@ -368,12 +367,20 @@ public abstract class AbstractAbility implements AbilityIcon {
         return NumberFormat.formatOptionalTenths(input);
     }
 
+    public String format(FloatModifiable input) {
+        return NumberFormat.formatOptionalTenths(input.getCalculatedValue());
+    }
+
     public String formatHundredths(double input) {
         return NumberFormat.formatOptionalHundredths(input);
     }
 
     public Component formatRangeHealing(float min, float max) {
         return formatRange(min, max, NamedTextColor.GREEN);
+    }
+
+    public Component formatRangeHealing(FloatModifiable min, FloatModifiable max) {
+        return formatRange(min.getCalculatedValue(), max.getCalculatedValue(), NamedTextColor.GREEN);
     }
 
     /**
@@ -401,6 +408,8 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        minDamageHeal.tick();
+        maxDamageHeal.tick();
         cooldown.tick();
         energyCost.tick();
         if (getCooldownValue() > 0) {

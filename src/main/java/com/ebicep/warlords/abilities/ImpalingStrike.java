@@ -78,8 +78,8 @@ public class ImpalingStrike extends AbstractStrike {
         nearPlayer.addDamageInstance(
                 wp,
                 name,
-                minDamageHeal * multiplier,
-                maxDamageHeal * multiplier,
+                minDamageHeal.getCalculatedValue() * multiplier,
+                maxDamageHeal.getCalculatedValue() * multiplier,
                 critChance,
                 critMultiplier
         ).ifPresent(finalEvent -> {

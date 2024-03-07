@@ -134,7 +134,13 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                 if (otherPlayer.isEnemyAlive(wp)) {
                                     playersCharged++;
                                     float damageMultiplier = pveMasterUpgrade2 && otherPlayer.getCooldownManager().hasCooldown(CripplingStrike.class) ? 1.75f : 1;
-                                    otherPlayer.addDamageInstance(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier)
+                                    otherPlayer.addDamageInstance(wp,
+                                                       name,
+                                                       minDamageHeal.getCalculatedValue() * damageMultiplier,
+                                                       maxDamageHeal.getCalculatedValue() * damageMultiplier,
+                                                       critChance,
+                                                       critMultiplier
+                                               )
                                                .ifPresent(finalEvent -> {
                                                    if (pveMasterUpgrade2 && finalEvent.isDead() && timesArmyReduced < 5) {
                                                        timesArmyReduced++;

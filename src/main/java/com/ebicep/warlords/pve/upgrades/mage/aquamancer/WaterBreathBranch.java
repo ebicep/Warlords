@@ -6,8 +6,6 @@ import com.ebicep.warlords.pve.upgrades.*;
 public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
     double velocity = ability.getVelocity();
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
     int coneRange = ability.getMaxAnimationTime();
     float hitbox = ability.getHitbox();
 
@@ -16,14 +14,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 7.5f)
+                .addUpgradeHealing(ability, 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

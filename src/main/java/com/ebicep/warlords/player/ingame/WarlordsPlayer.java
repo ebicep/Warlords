@@ -245,7 +245,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public void updateInventory(boolean closeInventory) {
         if (entity instanceof Player player) {
-
             player.getInventory().clear();
 
             for (Option option : game.getOptions()) {

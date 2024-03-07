@@ -46,7 +46,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
         return Component.text("All allies within a ")
                         .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
                         .append(Component.text(" block radius restore "))
-                        .append(Component.text(minDamageHeal, NamedTextColor.GREEN))
+                        .append(Component.text(format(minDamageHeal), NamedTextColor.GREEN))
                         .append(Component.text("  health every 2 seconds."));
     }
 
@@ -82,8 +82,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                 allyTarget.addHealingInstance(
                         wp,
                         name,
-                        minDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
-                        maxDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
+                        minDamageHeal.getCalculatedValue() * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
+                        maxDamageHeal.getCalculatedValue() * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
                         critChance,
                         critMultiplier
                 );

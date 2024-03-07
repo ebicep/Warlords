@@ -106,8 +106,8 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
             nearEntity.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * damageIncrease),
-                    (float) (maxDamageHeal * damageIncrease),
+                    (float) (minDamageHeal.getCalculatedValue() * damageIncrease),
+                    (float) (maxDamageHeal.getCalculatedValue() * damageIncrease),
                     critChance,
                     critMultiplier
             );

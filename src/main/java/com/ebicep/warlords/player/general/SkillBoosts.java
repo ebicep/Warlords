@@ -22,7 +22,8 @@ public enum SkillBoosts {
             Fireball.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Fireball fireball) {
-                    abstractAbility.multiplyMinMax(1.1f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                     fireball.setDirectHitMultiplier(fireball.getDirectHitMultiplier() + 20);
                 }
             }
@@ -37,7 +38,8 @@ public enum SkillBoosts {
             FlameBurst.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FlameBurst) {
-                    abstractAbility.multiplyMinMax(1.25f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -40);
                 }
             }
@@ -92,7 +94,8 @@ public enum SkillBoosts {
             FrostBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FrostBolt frostBolt) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                     frostBolt.setSlowness(frostBolt.getSlowness() + 5);
                 }
             }
@@ -107,7 +110,8 @@ public enum SkillBoosts {
             FreezingBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FreezingBreath) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
@@ -159,7 +163,8 @@ public enum SkillBoosts {
             WaterBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBolt) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -173,7 +178,8 @@ public enum SkillBoosts {
             WaterBreath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WaterBreath) {
-                    abstractAbility.multiplyMinMax(1.15f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -30);
                 }
             }
@@ -228,7 +234,8 @@ public enum SkillBoosts {
             WoundingStrikeBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeBerserker) {
-                    abstractAbility.multiplyMinMax(1.1f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -10);
                 }
             }
@@ -243,7 +250,8 @@ public enum SkillBoosts {
             AbstractSeismicWave.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractSeismicWave) {
-                    abstractAbility.multiplyMinMax(1.15f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -258,7 +266,8 @@ public enum SkillBoosts {
             AbstractGroundSlam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam) {
-                    abstractAbility.multiplyMinMax(1.35f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
@@ -303,7 +312,8 @@ public enum SkillBoosts {
             WoundingStrikeDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WoundingStrikeDefender strike) {
-                    abstractAbility.multiplyMinMax(1.1f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                     strike.setWounding(strike.getWounding() + 25);
                 }
             }
@@ -421,7 +431,8 @@ public enum SkillBoosts {
             OrbsOfLife.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrbsOfLife) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -450,7 +461,8 @@ public enum SkillBoosts {
             AvengersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersStrike avengersStrike) {
-                    abstractAbility.multiplyMinMax(1.15f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
                     avengersStrike.setEnergySteal(avengersStrike.getEnergySteal() + 5);
                 }
             }
@@ -464,7 +476,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
-                    abstractAbility.multiplyMinMax(1.35f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
                 }
             }
     ),
@@ -521,7 +534,8 @@ public enum SkillBoosts {
             CrusadersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof CrusadersStrike) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -534,7 +548,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
-                    abstractAbility.multiplyMinMax(1.35f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
                 }
             }
     ),
@@ -642,7 +657,8 @@ public enum SkillBoosts {
             HolyRadianceProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceProtector) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -656,7 +672,8 @@ public enum SkillBoosts {
             HammerOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HammerOfLight) {
-                    abstractAbility.multiplyMinMax(1.25f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -668,7 +685,8 @@ public enum SkillBoosts {
             LightningBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightningBolt) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -682,7 +700,8 @@ public enum SkillBoosts {
             ChainLightning.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainLightning) {
-                    abstractAbility.multiplyMinMax(1.25f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
                 }
             }
@@ -726,7 +745,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof CapacitorTotem) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
-                    abstractAbility.multiplyMinMax(1.3f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
                 }
             }
     ),
@@ -738,7 +758,8 @@ public enum SkillBoosts {
             FallenSouls.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FallenSouls) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -752,7 +773,8 @@ public enum SkillBoosts {
             SpiritLink.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SpiritLink spiritLink) {
-                    abstractAbility.multiplyMinMax(1.25f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
                     spiritLink.setSpeedDuration(spiritLink.getSpeedDuration() + 0.5);
                 }
             }
@@ -810,7 +832,8 @@ public enum SkillBoosts {
             EarthenSpike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EarthenSpike earthenSpike) {
-                    abstractAbility.multiplyMinMax(1.15f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
                     earthenSpike.setSpeed(earthenSpike.getSpeed() * 1.3f);
                 }
             }
@@ -823,7 +846,8 @@ public enum SkillBoosts {
             Boulder.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Boulder) {
-                    abstractAbility.multiplyMinMax(1.25f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
                 }
             }
     ),
@@ -847,7 +871,8 @@ public enum SkillBoosts {
             ChainHeal.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ChainHeal) {
-                    abstractAbility.multiplyMinMax(1.3f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
                 }
             }
     ),
@@ -861,7 +886,8 @@ public enum SkillBoosts {
             HealingTotem.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingTotem) {
-                    abstractAbility.multiplyMinMax(1.25f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -874,7 +900,8 @@ public enum SkillBoosts {
             JudgementStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof JudgementStrike) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -944,7 +971,8 @@ public enum SkillBoosts {
             RighteousStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RighteousStrike) {
-                    abstractAbility.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                 }
             }
     ),
@@ -1016,7 +1044,8 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike impalingStrike) {
                     impalingStrike.setLeechDuration(10);
-                    abstractAbility.multiplyMinMax(1.1f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                 }
             }
     ),
@@ -1028,7 +1057,8 @@ public enum SkillBoosts {
             SoothingElixir.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoothingElixir) {
-                    abstractAbility.multiplyMinMax(1.25f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
                 }
             }
     ),
@@ -1042,7 +1072,8 @@ public enum SkillBoosts {
             VitalityLiquor.class,
             abstractAbility -> {
                 if (abstractAbility instanceof VitalityLiquor vitalityLiquor) {
-                    abstractAbility.multiplyMinMax(1.15f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
                     vitalityLiquor.setMinWaveHealing(vitalityLiquor.getMinWaveHealing() * 1.15f);
                     vitalityLiquor.setMaxWaveHealing(vitalityLiquor.getMaxWaveHealing() * 1.15f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
@@ -1059,7 +1090,8 @@ public enum SkillBoosts {
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains remedicChains) {
-                    abstractAbility.multiplyMinMax(1.1f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                     remedicChains.setLinkBreakRadius(25);
                 }
             }
@@ -1105,7 +1137,8 @@ public enum SkillBoosts {
             SoulfireBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulfireBeam soulfireBeam) {
-                    soulfireBeam.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
@@ -1159,7 +1192,8 @@ public enum SkillBoosts {
             FortifyingHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FortifyingHex fortifyingHex) {
-                    fortifyingHex.multiplyMinMax(1.15f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
                     fortifyingHex.setTickDuration(fortifyingHex.getTickDuration() + 40);
                 }
             }
@@ -1248,7 +1282,8 @@ public enum SkillBoosts {
             RayOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RayOfLight rayOfLight) {
-                    rayOfLight.multiplyMinMax(1.2f);
+                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }

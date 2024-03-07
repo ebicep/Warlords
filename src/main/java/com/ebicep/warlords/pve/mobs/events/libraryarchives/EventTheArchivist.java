@@ -49,8 +49,8 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 minMeleeDamage,
                 maxMeleeDamage,
                 new CripplingStrike() {{
-                    this.setMinDamageHeal(1560);
-                    this.setMaxDamageHeal(1960);
+                    this.getMinDamageHeal().setBaseValue(1560);
+                    this.getMaxDamageHeal().setBaseValue(1960);
                     this.getCooldown().setBaseValue(5);
                     this.pveMasterUpgrade = true;
                 }},

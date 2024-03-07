@@ -7,30 +7,19 @@ import org.jetbrains.annotations.Nullable;
 public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
 
     int bounceRange = ability.getBounceRange();
-    float minDamage;
-    float maxDamage;
 
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.2f);
+        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .2f);
+        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .2f);
     }
 
     public SpiritLinkBranch(AbilityTree abilityTree, SpiritLink ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 10f)
+                .addUpgradeDamage(ability, 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

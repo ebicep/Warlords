@@ -75,8 +75,8 @@ public class JudgementStrike extends AbstractStrike {
             nearPlayer.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal + extraDamage,
-                    maxDamageHeal + extraDamage,
+                    minDamageHeal.getCalculatedValue() + extraDamage,
+                    maxDamageHeal.getCalculatedValue() + extraDamage,
                     critChance,
                     critMultiplier
             ).ifPresent(finalEvent -> {

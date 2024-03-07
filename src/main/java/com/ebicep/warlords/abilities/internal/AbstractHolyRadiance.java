@@ -65,8 +65,8 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                             radianceTarget,
                             wp,
                             1.1,
-                            minDamageHeal,
-                            maxDamageHeal
+                            minDamageHeal.getCalculatedValue(),
+                            maxDamageHeal.getCalculatedValue()
                     ).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }

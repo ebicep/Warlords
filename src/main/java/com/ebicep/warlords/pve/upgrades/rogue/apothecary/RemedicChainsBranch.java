@@ -1,26 +1,20 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
 import com.ebicep.warlords.abilities.RemedicChains;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
 
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
 
     public RemedicChainsBranch(AbilityTree abilityTree, RemedicChains ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 7.5f)
+                .addUpgradeHealing(ability, 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

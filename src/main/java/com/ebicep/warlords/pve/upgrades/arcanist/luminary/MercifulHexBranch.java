@@ -5,8 +5,6 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
-    float minDamageHeal;
-    float maxDamageHeal;
     float minSelfHeal;
     float maxSelfHeal;
     float dotMinHeal;
@@ -16,7 +14,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.15f);
+        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .15f);
+        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .15f);
         ability.setMinSelfHeal(ability.getMinSelfHeal() * 1.15f);
         ability.setMaxSelfHeal(ability.getMaxSelfHeal() * 1.15f);
         ability.setDotMinHeal(ability.getDotMinHeal() * 1.15f);
@@ -28,8 +27,6 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
     public MercifulHexBranch(AbilityTree abilityTree, MercifulHex ability) {
         super(abilityTree, ability);
 
-        minDamageHeal = ability.getMinDamageHeal();
-        maxDamageHeal = ability.getMaxDamageHeal();
         minSelfHeal = ability.getMinSelfHeal();
         maxSelfHeal = ability.getMaxSelfHeal();
         dotMinHeal = ability.getDotMinHeal();
@@ -44,8 +41,8 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     @Override
                     public void run(float value) {
                         float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamageHeal * v);
-                        ability.setMaxDamageHeal(maxDamageHeal * v);
+                        ability.getMinDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", value / 100);
+                        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", value / 100);
                         ability.setMinSelfHeal(minSelfHeal * v);
                         ability.setMaxSelfHeal(maxSelfHeal * v);
                         ability.setDotMinHeal(dotMinHeal * v);

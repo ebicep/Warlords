@@ -5,31 +5,21 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
-    float minDamage;
-    float maxDamage;
+
 
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.3f);
+        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
         ability.setMaxEnemiesHit(4);
     }
 
     public PoisonousHexBranch(AbilityTree abilityTree, PoisonousHex ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability, 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -70,7 +60,8 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                         """,
                 50000,
                 () -> {
-                    ability.multiplyMinMax(1.35f);
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
                     ability.setTicksBetweenDot(20);
                 }
         );

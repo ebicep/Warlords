@@ -109,8 +109,8 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
             hit.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                    (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                    (float) (minDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
+                    (float) (maxDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
                     critChance,
                     critMultiplier
             );
@@ -137,8 +137,8 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
             nearEntity.addDamageInstance(
                     shooter,
                     name,
-                    (float) (minDamageHeal * toReduceBy),
-                    (float) (maxDamageHeal * toReduceBy),
+                    (float) (minDamageHeal.getCalculatedValue() * toReduceBy),
+                    (float) (maxDamageHeal.getCalculatedValue() * toReduceBy),
                     critChance,
                     critMultiplier
             );

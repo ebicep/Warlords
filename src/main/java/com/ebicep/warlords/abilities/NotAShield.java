@@ -118,8 +118,8 @@ public class NotAShield extends AbstractPiercingProjectile {
             hit.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal * reduction,
-                    maxDamageHeal * reduction,
+                    minDamageHeal.getCalculatedValue() * reduction,
+                    maxDamageHeal.getCalculatedValue() * reduction,
                     critChance,
                     critMultiplier
             );

@@ -5,8 +5,7 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
+
     int radius = ability.getRadius();
     int bounceRange = ability.getBounceRange();
 
@@ -15,14 +14,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability, 7.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {

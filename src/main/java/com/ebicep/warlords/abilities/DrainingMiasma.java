@@ -160,8 +160,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                             miasmaTarget.addDamageInstance(
                                     wp,
                                     name,
-                                    minDamageHeal + healthDamage,
-                                    maxDamageHeal + healthDamage,
+                                    minDamageHeal.getCalculatedValue() + healthDamage,
+                                    maxDamageHeal.getCalculatedValue() + healthDamage,
                                     0,
                                     100,
                                     EnumSet.of(InstanceFlags.DOT)
@@ -193,8 +193,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                     target.addDamageInstance(
                                             wp,
                                             name,
-                                            minDamageHeal + healthDamage,
-                                            maxDamageHeal + healthDamage,
+                                            minDamageHeal.getCalculatedValue() + healthDamage,
+                                            maxDamageHeal.getCalculatedValue() + healthDamage,
                                             0,
                                             100
                                     );

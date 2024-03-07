@@ -221,8 +221,8 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             hit.addDamageInstance(
                     wp,
                     name,
-                    minDamageHeal * damageMultiplier,
-                    maxDamageHeal * damageMultiplier,
+                    minDamageHeal.getCalculatedValue() * damageMultiplier,
+                    maxDamageHeal.getCalculatedValue() * damageMultiplier,
                     critChance,
                     critMultiplier
             );

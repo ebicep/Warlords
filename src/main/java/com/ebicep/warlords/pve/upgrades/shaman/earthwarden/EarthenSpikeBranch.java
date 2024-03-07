@@ -5,8 +5,6 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
     float speed = ability.getSpeed();
 
     public EarthenSpikeBranch(AbilityTree abilityTree, EarthenSpike ability) {
@@ -14,14 +12,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 10f)
+                .addUpgradeDamage(ability, 10f)
                 .addUpgradeHitBox(ability, 5f, 4)
                 .addTo(treeA);
 
@@ -62,7 +53,8 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                         """,
                 50000,
                 () -> {
-                    ability.multiplyMinMax(4);
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3f);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3f);
                 }
         );
     }

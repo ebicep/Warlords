@@ -119,8 +119,9 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     @Nonnull
     @Override
     public AbstractConsecrate createConsecrate() {
-        return new ConsecrateProtector(minDamageHeal,
-                maxDamageHeal,
+        return new ConsecrateProtector(
+                minDamageHeal.getCalculatedValue(),
+                maxDamageHeal.getCalculatedValue(),
                 energyCost.getBaseValue(),
                 critChance,
                 critMultiplier,

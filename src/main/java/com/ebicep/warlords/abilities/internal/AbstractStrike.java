@@ -87,8 +87,8 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
             onFinalEvent.accept(we.addDamageInstance(
                     giver,
                     name,
-                    minDamageHeal * damageModifier,
-                    maxDamageHeal * damageModifier,
+                    minDamageHeal.getCalculatedValue() * damageModifier,
+                    maxDamageHeal.getCalculatedValue() * damageModifier,
                     critChance,
                     critMultiplier,
                     flags

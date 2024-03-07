@@ -283,8 +283,8 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         hit.addDamageInstance(
                 wp,
                 name,
-                (float) (minDamageHeal * toReduceBy),
-                (float) (maxDamageHeal * toReduceBy),
+                (float) (minDamageHeal.getCalculatedValue() * toReduceBy),
+                (float) (maxDamageHeal.getCalculatedValue() * toReduceBy),
                 critChance,
                 critMultiplier
         );

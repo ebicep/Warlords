@@ -51,8 +51,8 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setRadius(ability.getRadius() * 4);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
-                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.25f);
-                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.25f);
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.75f);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.75f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -69,8 +69,8 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setRadius(ability.getRadius() * 4);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
-                    ability.setMinDamageHeal(ability.getMinDamageHeal() * 0.5f);
-                    ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 0.5f);
+                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.5f);
+                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.5f);
                 }
         );
     }

@@ -2,12 +2,11 @@ package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
 import com.ebicep.warlords.abilities.VitalityLiquor;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> {
 
     int energyPerSecond = ability.getEnergyPerSecond();
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
     float minWaveHealing = ability.getMinWaveHealing();
     float maxWaveHealing = ability.getMaxWaveHealing();
     int vitalityRange = ability.getVitalityRange();
@@ -23,8 +22,11 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
                         float v = 1 + value / 100;
                         ability.setMinWaveHealing(minWaveHealing * v);
                         ability.setMaxWaveHealing(maxWaveHealing * v);
-                        ability.setMinDamageHeal(minHealing * v);
-                        ability.setMaxDamageHeal(maxHealing * v);
+                    }
+
+                    @Override
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
                 }, 10f)
                 .addTo(treeA);

@@ -452,6 +452,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     public static class HeatAura extends AbstractPveAbility {
 
         private final int hitbox;
+        private float damageIncrese = 1;
 
         public HeatAura(float startDamage, int hitbox) {
             super("Heat Aura", startDamage, startDamage, 2, 50, 25, 175);
@@ -460,11 +461,11 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             // increase heat / damage on every use
             if (this.timesUsed <= 40) { // ~700 max at split 0
-                this.multiplyMinMax(1.05f);
+                damageIncrese += .05;
+                getMinDamageHeal().addMultiplicativeModifierAdd(name, damageIncrese);
+                getMaxDamageHeal().addMultiplicativeModifierAdd(name, damageIncrese);
             }
             PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                         .aliveEnemiesOf(wp)

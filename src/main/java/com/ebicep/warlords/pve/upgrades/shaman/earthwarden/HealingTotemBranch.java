@@ -1,12 +1,13 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
 import com.ebicep.warlords.abilities.HealingTotem;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
 
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
 
     public HealingTotemBranch(AbilityTree abilityTree, HealingTotem ability) {
         super(abilityTree, ability);
@@ -14,14 +15,7 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 2)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 20f, 4)
+                .addUpgradeHealing(ability, 20f, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

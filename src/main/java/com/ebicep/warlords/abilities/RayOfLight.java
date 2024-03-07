@@ -70,8 +70,8 @@ public class RayOfLight extends AbstractBeam {
         WarlordsEntity wp = projectile.getShooter();
         if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float minHeal = minDamageHeal;
-            float maxHeal = maxDamageHeal;
+            float minHeal = minDamageHeal.getCalculatedValue();
+            float maxHeal = maxDamageHeal.getCalculatedValue();
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(MercifulHex.class)
                     .stream()

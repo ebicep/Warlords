@@ -1,26 +1,20 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
 import com.ebicep.warlords.abilities.ChainHeal;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
 
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
 
     public ChainHealBranch(AbilityTree abilityTree, ChainHeal ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 10f)
+                .addUpgradeHealing(ability, 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

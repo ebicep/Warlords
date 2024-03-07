@@ -151,8 +151,8 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
             nearEntity.addDamageInstance(
                     shooter,
                     name,
-                    minDamageHeal + damageIncrease,
-                    maxDamageHeal + damageIncrease,
+                    minDamageHeal.getCalculatedValue() + damageIncrease,
+                    maxDamageHeal.getCalculatedValue() + damageIncrease,
                     critChance + damageIncrease,
                     critMultiplier + damageIncrease
             );
@@ -166,8 +166,8 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
             nearEntity.addDamageInstance(
                     shooter,
                     name,
-                    minDamageHeal + damageBoost,
-                    maxDamageHeal + damageBoost,
+                    minDamageHeal.getCalculatedValue() + damageBoost,
+                    maxDamageHeal.getCalculatedValue() + damageBoost,
                     critChance + blocksTravelled,
                     critMultiplier
             );

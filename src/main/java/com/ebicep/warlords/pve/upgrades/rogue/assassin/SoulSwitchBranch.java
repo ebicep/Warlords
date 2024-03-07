@@ -5,25 +5,18 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
-    float minHealing;
-    float maxHealing;
-
     @Override
     public void runOnce() {
         ability.getCooldown().setBaseValue(22);
         ability.getEnergyCost().setBaseValue(30);
-        ability.setMinDamageHeal(300);
-        ability.setMaxDamageHeal(500);
+        ability.getMinDamageHeal().setBaseValue(300);
+        ability.getMaxDamageHeal().setBaseValue(500);
         ability.setCritChance(15);
         ability.setCritMultiplier(175);
     }
 
     public SoulSwitchBranch(AbilityTree abilityTree, SoulSwitch ability) {
         super(abilityTree, ability);
-//        ability.getCooldown().addMultiplicativeModifierMult("Soul Switch Branch", 0.75f);
-
-        minHealing = ability.getMinDamageHeal();
-        maxHealing = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
@@ -43,14 +36,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 5f)
+                .addUpgradeHealing(ability, 5f)
                 .addUpgradeHitBox(ability, 7, 4)
                 .addTo(treeB);
 
