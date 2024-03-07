@@ -116,33 +116,25 @@ public enum PlayersCollections {
 
     public static final PlayersCollections[] VALUES = values();
     public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_8, WEEKLY, DAILY);
+    public static final List<PlayersCollections> ACTIVE_LEADERBOARD_COLLECTIONS = Arrays.asList(LIFETIME, WEEKLY, DAILY);
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
-        return switch (playersCollections) {
-            case LIFETIME -> MONTHLY;
-            case MONTHLY -> SEASON_8;
-            case SEASON_8 -> WEEKLY;
-//            case SEASON_5:
-//                return SEASON_4;
-//            case SEASON_4:
-//                return WEEKLY;
-            case WEEKLY -> DAILY;
-            case DAILY -> LIFETIME;
-        };
+        int index = ACTIVE_LEADERBOARD_COLLECTIONS.indexOf(playersCollections);
+        if (index == ACTIVE_LEADERBOARD_COLLECTIONS.size() - 1) {
+            return ACTIVE_LEADERBOARD_COLLECTIONS.get(0);
+        } else {
+            return ACTIVE_LEADERBOARD_COLLECTIONS.get(index + 1);
+        }
+
     }
 
     public static PlayersCollections getBeforeCollection(PlayersCollections playersCollections) {
-        return switch (playersCollections) {
-            case LIFETIME -> DAILY;
-            case MONTHLY -> LIFETIME;
-            case SEASON_8 -> MONTHLY;
-//            case SEASON_5:
-//                return SEASON_6;
-//            case SEASON_4:
-//                return SEASON_5;
-            case WEEKLY -> SEASON_8;
-            case DAILY -> WEEKLY;
-        };
+        int index = ACTIVE_LEADERBOARD_COLLECTIONS.indexOf(playersCollections);
+        if (index == 0) {
+            return ACTIVE_LEADERBOARD_COLLECTIONS.get(ACTIVE_LEADERBOARD_COLLECTIONS.size() - 1);
+        } else {
+            return ACTIVE_LEADERBOARD_COLLECTIONS.get(index - 1);
+        }
     }
 
     public final String name;

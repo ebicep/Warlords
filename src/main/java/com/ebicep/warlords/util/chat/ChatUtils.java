@@ -170,7 +170,7 @@ public class ChatUtils {
         GAME_DEBUG("GameDebug", NamedTextColor.LIGHT_PURPLE, true),
 
         DISCORD_BOT("DiscordBot", NamedTextColor.DARK_AQUA, true),
-        BOUNTIES("Bounties", NamedTextColor.AQUA, true),
+        BOUNTIES("Bounties", NamedTextColor.AQUA, false),
         GAME("Game", TextColor.color(173, 255, 47), true),
         TOWER_DEFENSE("Tower Defense", TextColor.color(250, 100, 100), true),
 

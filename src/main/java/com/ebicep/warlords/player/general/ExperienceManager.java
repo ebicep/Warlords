@@ -308,7 +308,7 @@ public class ExperienceManager {
 
     public static long getExperienceForClass(UUID uuid, Classes classes) {
         AtomicLong experience = new AtomicLong(0);
-        DatabaseManager.getPlayer(uuid, databasePlayer -> databasePlayer.getStat(classes, Stats::getExperience, Long::sum, 0L));
+        DatabaseManager.getPlayer(uuid, databasePlayer -> experience.set(databasePlayer.getStat(classes, Stats::getExperience, Long::sum, 0L)));
         return experience.get();
     }
 

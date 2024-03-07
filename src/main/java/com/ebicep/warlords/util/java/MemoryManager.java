@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.quests.Quests;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -56,7 +55,7 @@ public class MemoryManager implements Listener {
                     Currencies.CACHED_PLAYER_COIN_STATS.remove(uuid);
                     WeaponManagerMenu.PLAYER_MENU_SETTINGS.remove(uuid);
                     UnstuckCommand.STUCK_COOLDOWNS.remove(uuid);
-                    ChatUtils.MessageType.WARLORDS.sendMessage("Removed " + uuid + " from static maps");
+//                    ChatUtils.MessageType.WARLORDS.sendMessage("Removed " + uuid + " from static maps");
                 });
             }
         }.runTaskTimer(Warlords.getInstance(), 20 * 5, 20);

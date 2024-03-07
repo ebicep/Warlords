@@ -46,7 +46,7 @@ public class DatabaseTiming {
             "Flags Captured",
             "Flags Returned",
     };
-    public static final AtomicBoolean RESET_MONTHly = new AtomicBoolean(false);
+    public static final AtomicBoolean RESET_MONTHLY = new AtomicBoolean(false);
     public static final AtomicBoolean RESET_WEEKLY = new AtomicBoolean(false);
     public static final AtomicBoolean RESET_DAILY = new AtomicBoolean(false);
 
@@ -74,7 +74,7 @@ public class DatabaseTiming {
                 })
                 .syncLast((reset) -> {
                     if (reset) {
-
+                        RESET_MONTHLY.set(true);
                         //guilds
                         for (Guild guild : GuildManager.GUILDS) {
                             guild.setCoins(Timing.MONTHLY, 0);
@@ -113,7 +113,6 @@ public class DatabaseTiming {
                 .syncLast((reset) -> {
                     if (reset) {
                         RESET_WEEKLY.set(true);
-
                         //guilds
                         for (Guild guild : GuildManager.GUILDS) {
                             guild.setCoins(Timing.WEEKLY, 0);
@@ -154,7 +153,6 @@ public class DatabaseTiming {
                 .syncLast((reset) -> {
                     if (reset) {
                         RESET_DAILY.set(true);
-
                         //guilds
                         for (Guild guild : GuildManager.GUILDS) {
                             guild.setCoins(Timing.DAILY, 0);
@@ -186,8 +184,8 @@ public class DatabaseTiming {
     }
 
     public static void checkLeaderboardResets() {
-        if (RESET_MONTHly.get()) {
-            RESET_MONTHly.set(false);
+        if (RESET_MONTHLY.get()) {
+            RESET_MONTHLY.set(false);
             try {
                 //clearing weekly
                 Warlords.newChain()
@@ -212,7 +210,7 @@ public class DatabaseTiming {
             }
             Warlords.newChain()
                     .delay(10 * 20)
-                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.MONTHLY, false)).execute();
+                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.MONTHLY, null)).execute();
         }
         if (RESET_WEEKLY.get()) {
             RESET_WEEKLY.set(false);
@@ -250,7 +248,7 @@ public class DatabaseTiming {
             }
             Warlords.newChain()
                     .delay(20)
-                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.WEEKLY, false)).execute();
+                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.WEEKLY, null)).execute();
         }
         if (RESET_DAILY.get()) {
             RESET_DAILY.set(false);
@@ -279,7 +277,7 @@ public class DatabaseTiming {
             }
             Warlords.newChain()
                     .delay(20)
-                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.DAILY, false)).execute();
+                    .sync(() -> StatsLeaderboardManager.resetLeaderboards(PlayersCollections.DAILY, null)).execute();
         }
     }
 
