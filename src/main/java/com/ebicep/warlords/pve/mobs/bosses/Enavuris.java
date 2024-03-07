@@ -88,7 +88,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

@@ -14,7 +14,7 @@ public class MobPlayerClass extends AbstractPlayerClass {
     public MobPlayerClass(
             String name,
             int maxHealth,
-            int damageResistance,
+            float damageResistance,
             AbstractAbility... abilities
     ) {
         this(name,
@@ -31,7 +31,7 @@ public class MobPlayerClass extends AbstractPlayerClass {
             String name,
             int maxHealth,
             int maxEnergy,
-            int damageResistance,
+            float damageResistance,
             AbstractAbility... abilities
     ) {
         super(name,

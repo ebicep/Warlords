@@ -35,7 +35,7 @@ public class BasicWarriorBerserker extends AbstractBerserkZombie implements Basi
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

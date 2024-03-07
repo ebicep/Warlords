@@ -35,7 +35,7 @@ public class VanishingEnavurite extends AbstractMob implements ChampionMob, Unst
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

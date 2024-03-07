@@ -45,7 +45,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

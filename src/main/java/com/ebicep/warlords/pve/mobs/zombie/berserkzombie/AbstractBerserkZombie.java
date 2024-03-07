@@ -24,7 +24,7 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
             EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             BerserkerZombieWoundingStrike woundingStrike

@@ -43,7 +43,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

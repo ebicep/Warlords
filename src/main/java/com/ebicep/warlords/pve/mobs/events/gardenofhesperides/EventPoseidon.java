@@ -44,7 +44,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

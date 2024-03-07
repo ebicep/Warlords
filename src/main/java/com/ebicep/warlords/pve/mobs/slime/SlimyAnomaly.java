@@ -47,7 +47,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

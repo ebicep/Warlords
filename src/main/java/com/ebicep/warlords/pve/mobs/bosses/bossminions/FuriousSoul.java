@@ -29,7 +29,7 @@ public class FuriousSoul extends AbstractMob implements BossMinionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

@@ -48,7 +48,7 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

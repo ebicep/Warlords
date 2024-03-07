@@ -90,7 +90,7 @@ public abstract class AbstractMob implements Mob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             AbstractAbility... abilities
@@ -114,7 +114,7 @@ public abstract class AbstractMob implements Mob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             float meleeCritChance,

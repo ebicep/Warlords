@@ -20,7 +20,7 @@ public class EventTerasMinotaur extends AbstractMob implements BossMinionMob, Te
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

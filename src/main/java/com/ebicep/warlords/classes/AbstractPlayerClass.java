@@ -43,7 +43,7 @@ public abstract class AbstractPlayerClass {
             int maxEnergy,
             int energyPerSec,
             int energyPerHit,
-            int damageResistance,
+            float damageResistance,
             AbstractAbility... abilities
     ) {
         this.maxHealth = maxHealth;

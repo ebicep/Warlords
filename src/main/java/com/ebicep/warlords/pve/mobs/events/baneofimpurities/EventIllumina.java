@@ -69,7 +69,7 @@ public class EventIllumina extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
