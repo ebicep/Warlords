@@ -84,7 +84,6 @@ public class WarlordsShopMenu {
         menu.openForPlayer(player);
     }
 
-
     public static void openClassMenu(Player player, Classes selectedGroup) {
         Specializations selectedSpec = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec();
         Menu menu = new Menu(selectedGroup.name, 9 * 4);
@@ -144,7 +143,6 @@ public class WarlordsShopMenu {
 
         menu.openForPlayer(player);
     }
-
 
     public static void openSkillBoostMenu(Player player, Specializations selectedSpec, Consumer<Menu> menuSupplier) {
         SkillBoosts selectedBoost = PlayerSettings.getPlayerSettings(player.getUniqueId()).getSkillBoostForSpec(selectedSpec);
@@ -221,7 +219,6 @@ public class WarlordsShopMenu {
     public static void openSkillBoostMenu(Player player, Specializations selectedSpec) {
         openSkillBoostMenu(player, selectedSpec, menu -> menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player)));
     }
-
 
     public static void openWeaponMenu(Player player, int pageNumber) {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
@@ -308,7 +305,6 @@ public class WarlordsShopMenu {
         menu.setItem(4, 5, MENU_BACK_PREGAME, (m, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
-
 
     public static void openArmorMenu(Player player, int pageNumber) {
         boolean onBlueTeam = Warlords.getGameManager()
@@ -424,7 +420,6 @@ public class WarlordsShopMenu {
         menu.openForPlayer(player);
     }
 
-
     public static void openSettingsMenu(Player player) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
             Menu menu = new Menu("Settings", 9 * 4);
@@ -457,7 +452,6 @@ public class WarlordsShopMenu {
             menu.openForPlayer(player);
         });
     }
-
 
     public static void openParticleQualityMenu(Player player) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
@@ -547,7 +541,6 @@ public class WarlordsShopMenu {
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
-
 
     public static void openLobbyAbilityMenu(Player player) {
         Menu menu = new Menu("Class Information", 9);

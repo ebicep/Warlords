@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.commands.AbilityTreeCommand;
@@ -20,6 +21,7 @@ import com.ebicep.warlords.pve.items.menu.ItemEquipMenu;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
 import com.ebicep.warlords.pve.rewards.types.LevelUpReward;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.menu.WeaponManagerMenu;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
@@ -35,10 +37,12 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -73,6 +77,65 @@ public class WarlordsNewHotbarMenu {
                                             Component.text(prestigeCheck, NamedTextColor.GOLD)
                                     ))));
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+    }
+
+    public static void openLobbyAbilityMenu(Player player, boolean pve, ItemStack backItem, BiConsumer<Menu, InventoryClickEvent> backAction) {
+        Menu menu = new Menu("Class Information", 9);
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
+        Specializations selectedSpec = playerSettings.getSelectedSpec();
+        WarlordsPlayer warlordsPlayer = new WarlordsPlayer(player, selectedSpec);
+        AbstractPlayerClass apc = warlordsPlayer.getSpec();
+
+        ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
+                .name(Component.text(selectedSpec.name, NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(selectedSpec.getDescription(), 200));
+        icon.addLore(
+                Component.empty(),
+                Component.text("Specialization Stats:", NamedTextColor.GOLD),
+                Component.empty(),
+                Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
+                Component.empty(),
+                Component.text("Energy: ", NamedTextColor.GRAY)
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                         .append(Component.text(" / "))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                         .append(Component.text(" per sec / "))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                         .append(Component.text(" per hit"))
+        );
+        if (selectedSpec == APOTHECARY) {
+            icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY).append(Component.text("10%", NamedTextColor.YELLOW)));
+        }
+        boolean noDamageResistance = apc.getDamageResistance() == 0;
+        icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
+                              .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                                      noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
+                              ))
+        );
+
+
+        // not including skill boost - these display base stats
+        List<AbstractAbility> abilities = apc.getAbilities();
+        abilities.forEach(ability -> {
+            ability.setInPve(pve);
+            if (pve) {
+                ability.getUpgradeBranch(new AbilityTree(warlordsPlayer)).runOnce();
+            }
+            ability.runEveryTick(warlordsPlayer);
+            ability.updateDescription(player);
+        });
+
+        menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
+        ItemStack weaponSkin = playerSettings.getWeaponSkins()
+                                             .getOrDefault(selectedSpec, Weapons.STEEL_SWORD)
+                                             .getItem();
+        for (int i = 0; i < abilities.size() && i < 5; i++) {
+            AbstractAbility ability = abilities.get(i);
+            menu.setItem(i + 2, ability.getItem(i == 0 ? weaponSkin : ability.getAbilityIcon()), ACTION_DO_NOTHING);
+        }
+        menu.setItem(8, backItem, backAction);
+
+        menu.openForPlayer(player);
     }
 
     public static class SelectionMenu {
@@ -540,7 +603,7 @@ public class WarlordsNewHotbarMenu {
                 .get();
         public static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
                 .name(Component.text("Class Information", NamedTextColor.GREEN))
-                .lore(WordWrap.wrap(Component.text("Preview of your ability descriptions and specialization stats.", NamedTextColor.GRAY), 160))
+                .lore(WordWrap.wrap(Component.text("Preview of your ability descriptions and specialization stats for PvP.", NamedTextColor.GRAY), 160))
                 .addLore(
                         Component.empty(),
                         Component.text("Click to preview!", NamedTextColor.YELLOW)
@@ -550,7 +613,7 @@ public class WarlordsNewHotbarMenu {
         public static void openPvPMenu(Player player) {
             Menu menu = new Menu("PvP Menu", 9 * 4);
 
-            menu.setItem(1, 1, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));
+            menu.setItem(1, 1, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player, false, MENU_BACK_PVP, (m1, e1) -> openPvPMenu(player)));
             menu.setItem(2, 1, MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
             menu.setItem(3, 1, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
             menu.setItem(4, 1, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec()));
@@ -640,58 +703,6 @@ public class WarlordsNewHotbarMenu {
 
 
             menu.setItem(4, 5, MENU_BACK_PVP, (m, e) -> openPvPMenu(player));
-            menu.openForPlayer(player);
-        }
-
-        public static void openLobbyAbilityMenu(Player player) {
-            Menu menu = new Menu("Class Information", 9);
-            PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            Specializations selectedSpec = playerSettings.getSelectedSpec();
-            AbstractPlayerClass apc = selectedSpec.create.get();
-
-            ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack)
-                    .name(Component.text(selectedSpec.name, NamedTextColor.GREEN))
-                    .lore(WordWrap.wrap(selectedSpec.getDescription(), 200));
-            icon.addLore(
-                    Component.empty(),
-                    Component.text("Specialization Stats:", NamedTextColor.GOLD),
-                    Component.empty(),
-                    Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
-                    Component.empty(),
-                    Component.text("Energy: ", NamedTextColor.GRAY)
-                             .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
-                             .append(Component.text(" / "))
-                             .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
-                             .append(Component.text(" per sec / "))
-                             .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
-                             .append(Component.text(" per hit"))
-            );
-            if (selectedSpec == APOTHECARY) {
-                icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY).append(Component.text("10%", NamedTextColor.YELLOW)));
-            }
-            boolean noDamageResistance = apc.getDamageResistance() == 0;
-            icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                                  .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
-                                          noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
-                                  ))
-            );
-
-
-            // not including skill boost - these display base stats
-            List<AbstractAbility> abilities = apc.getAbilities();
-
-            abilities.forEach(ability -> ability.updateDescription(player));
-
-            menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
-            ItemStack weaponSkin = playerSettings.getWeaponSkins()
-                                                 .getOrDefault(selectedSpec, Weapons.STEEL_SWORD)
-                                                 .getItem();
-            for (int i = 0; i < abilities.size() && i < 5; i++) {
-                AbstractAbility ability = abilities.get(i);
-                menu.setItem(i + 2, ability.getItem(i == 0 ? weaponSkin : ability.getAbilityIcon()), ACTION_DO_NOTHING);
-            }
-            menu.setItem(8, MENU_BACK_PVP, (m, e) -> openPvPMenu(player));
-
             menu.openForPlayer(player);
         }
 
@@ -894,6 +905,14 @@ public class WarlordsNewHotbarMenu {
                 .name(Component.text("Back", NamedTextColor.GREEN))
                 .lore(Component.text("To PvE Menu", NamedTextColor.GRAY))
                 .get();
+        public static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
+                .name(Component.text("Class Information", NamedTextColor.GREEN))
+                .lore(WordWrap.wrap(Component.text("Preview of your ability descriptions and specialization stats for PvE.", NamedTextColor.GRAY), 160))
+                .addLore(
+                        Component.empty(),
+                        Component.text("Click to preview!", NamedTextColor.YELLOW)
+                )
+                .get();
         public static final ItemStack WEAPONS_MENU = new ItemBuilder(Material.DIAMOND_SWORD)
                 .name(Component.text("Weapons", NamedTextColor.GREEN))
                 .lore(WordWrap.wrap(Component.text("View and modify all your weapons, also accessible through The Weaponsmith.", NamedTextColor.GRAY), 160))
@@ -942,14 +961,15 @@ public class WarlordsNewHotbarMenu {
                     itemStack = optionalWeapon.get().generateItemStack(false);
                 }
 
-                menu.setItem(1, 1, itemStack, (m, e) -> {
+                menu.setItem(1, 1, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player, true, MENU_BACK_PVE, (m1, e1) -> openPvEMenu(player)));
+                menu.setItem(2, 1, itemStack, (m, e) -> {
                     if (e.isRightClick() && optionalWeapon.isPresent()) {
                         WeaponManagerMenu.openWeaponEditor(player, databasePlayer, optionalWeapon.get());
                     } else {
                         WeaponManagerMenu.openWeaponInventoryFromExternal(player, false);
                     }
                 });
-                menu.setItem(2, 1,
+                menu.setItem(3, 1,
                         new ItemBuilder(Material.ZOMBIE_HEAD)
                                 .name(Component.text("Mob Drops", NamedTextColor.GREEN))
                                 .lore(Arrays.stream(MobDrop.VALUES)
@@ -960,9 +980,9 @@ public class WarlordsNewHotbarMenu {
                                 .get(),
                         (m, e) -> {}
                 );
-                menu.setItem(3, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
-                menu.setItem(4, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
-                menu.setItem(5, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
+                menu.setItem(4, 1, ITEMS_MENU, (m, e) -> ItemEquipMenu.openItemEquipMenuExternal(player, databasePlayer));
+                menu.setItem(5, 1, REWARD_INVENTORY_MENU, (m, e) -> RewardInventory.openRewardInventory(player, 1));
+                menu.setItem(6, 1, ABILITY_TREE_MENU, (m, e) -> AbilityTreeCommand.open(player));
 
                 menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
                 menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
