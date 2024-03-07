@@ -80,9 +80,10 @@ public class AquamancerTower extends AbstractTower implements Damage, Heal, Rang
                 Location effectLocation = warlordsNPC.getLocation().add(0, npcEntity.getHeight(), 0);
                 Utils.playGlobalSound(effectLocation, "mage.waterbolt.impact", 2, 1);
                 EffectUtils.playCircularEffectAround(
-                        Particle.DRIP_WATER,
+                        Particle.FALLING_WATER,
                         effectLocation,
-                        npcEntity.getBoundingBox().getWidthX()
+                        npcEntity.getBoundingBox().getWidthX(),
+                        15
                 );
                 warlordsNPC.addDamageInstance(
                         warlordsTower,

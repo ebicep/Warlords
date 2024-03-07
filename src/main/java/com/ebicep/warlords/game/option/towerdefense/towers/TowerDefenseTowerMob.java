@@ -56,7 +56,7 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
                          .speedModifier(.9f)
                          .range(100);
 
-        npc.data().set(NPC.Metadata.COLLIDABLE, true);
+        npc.data().set(NPC.Metadata.COLLIDABLE, false);
 
         giveGoals();
         onNPCCreate();

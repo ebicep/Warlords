@@ -122,6 +122,10 @@ public class TowerDefenseSpawner implements Option, Listener {
     public void onMobSpawn(WarlordsMobSpawnEvent event) {
         AbstractMob mob = event.getMob();
         NPC npc = mob.getNpc();
+//        use this code if collisions are on
+//        if (npc.getEntity() instanceof LivingEntity livingEntity) {
+//            livingEntity.getCollidableExemptions().addAll(game.warlordsPlayers().map(WarlordsEntity::getUuid).collect(Collectors.toSet()));
+//        }
         TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(mob);
         if (mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData) {
             int lastNodeIdentifier = attackingMobData.getTargetNode();

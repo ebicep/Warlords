@@ -212,20 +212,47 @@ public class EffectUtils {
     /**
      * Plays a circular effect around a location
      *
-     * @param particle     particle effect
-     * @param location     center of circle
-     * @param circleRadius radius of the circle
+     * @param particle          particle effect
+     * @param location          center of circle
+     * @param circleRadius      radius of the circle
+     * @param amountOfParticles amount of particles
+     * @param xOffset           x offset
+     * @param yOffset           y offset
+     * @param zOffset           z offset
+     * @param speed             speed of the particles
      */
-    public static void playCircularEffectAround(Particle particle, Location location, double circleRadius) {
+    public static void playCircularEffectAround(
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles,
+            double xOffset,
+            double yOffset,
+            double zOffset,
+            double speed
+    ) {
         Location loc = location.clone();
-        for (int i = 0; i < 10; i++) {
-            double angle = i / 10D * Math.PI * 2;
+        for (int i = 0; i < amountOfParticles; i++) {
+            double angle = (double) i / amountOfParticles * Math.PI * 2;
             displayParticle(
                     particle,
                     loc.clone().add(Math.sin(angle) * circleRadius, 0, Math.cos(angle) * circleRadius),
-                    1
+                    1,
+                    xOffset,
+                    yOffset,
+                    zOffset,
+                    speed
             );
         }
+    }
+
+    public static void playCircularEffectAround(
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles
+    ) {
+        playCircularEffectAround(particle, location, circleRadius, amountOfParticles, 0, 0, 0, 0);
     }
 
     /**

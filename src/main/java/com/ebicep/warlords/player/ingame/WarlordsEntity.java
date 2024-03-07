@@ -291,7 +291,7 @@ public abstract class WarlordsEntity {
                 max,
                 critChance,
                 critMultiplier,
-                EnumSet.copyOf(Arrays.asList(flags)),
+                flags.length == 0 ? EnumSet.noneOf(InstanceFlags.class) : EnumSet.copyOf(Arrays.asList(flags)),
                 null
         );
     }
