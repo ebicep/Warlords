@@ -14,7 +14,6 @@ import java.util.Map;
 public class TowerDefensePlayerInfo {
 
     // in game
-    private float currentIncome;
     private float incomeRate = 20; // per second
     private final FixedPlayerWave playerWave = new FixedPlayerWave(); // list of sent waves
     private BukkitTask waveTask;
@@ -23,18 +22,6 @@ public class TowerDefensePlayerInfo {
     private float totalIncomeSpent;
     private final Map<TowerRegistry, TowerStats> towerStats = new HashMap<>();
     private final Map<Mob, MobStats> mobStats = new HashMap<>();
-
-    public float getCurrentIncome() {
-        return currentIncome;
-    }
-
-    public void addIncome(float exp) {
-        this.currentIncome += exp;
-    }
-
-    public void setCurrentIncome(float currentIncome) {
-        this.currentIncome = currentIncome;
-    }
 
     public float getIncomeRate() {
         return incomeRate;

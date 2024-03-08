@@ -137,9 +137,6 @@ public abstract class AbstractTower {
 
         npc.getOrAddTrait(Gravity.class).gravitate(true);
         npc.getOrAddTrait(HologramTrait.class).setUseDisplayEntities(true);
-//        ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
-//        armorStandTrait.setVisible(false);
-//        armorStandTrait.setMarker(true);
 
         npc.spawn(topCenterLocation);
 

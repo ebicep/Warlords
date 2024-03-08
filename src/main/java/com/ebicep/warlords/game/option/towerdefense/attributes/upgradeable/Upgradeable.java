@@ -4,6 +4,7 @@ import com.ebicep.warlords.game.option.towerdefense.TowerDefenseMenu;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerUpgradeEvent;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,14 +21,61 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 public interface Upgradeable {
 
+    private static <T extends AbstractTower & Upgradeable> void addUpgradeToMenu(
+            Player player,
+            @Nullable WarlordsEntity warlordsEntity,
+            Menu menu,
+            T tower,
+            List<TowerUpgrade> upgrades,
+            int i,
+            int menuX,
+            int menuY
+    ) {
+        if (upgrades.size() < i) {
+            ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception("startIndex is over upgrades size"));
+            return;
+        }
+        if (upgrades.size() <= i) {
+            return;
+        }
+        TowerUpgrade upgrade = upgrades.get(i);
+        float cost = upgrade.getCost();
+        Material material = Material.RED_STAINED_GLASS_PANE;
+        if (upgrade.isUnlocked()) {
+            material = Material.LIME_STAINED_GLASS_PANE;
+        } else if (tower.isPreviousUnlocked(upgrades, i) && warlordsEntity != null && warlordsEntity.getCurrency() > cost) {
+            material = Material.ORANGE_STAINED_GLASS_PANE;
+        }
+        ItemBuilder itemBuilder = new ItemBuilder(material)
+                .name(Component.text(upgrade.getName(), NamedTextColor.GOLD))
+                .lore(Component.empty())
+                .addLore(upgrade.getDescription())
+                .addLore(Component.empty());
+        if (upgrade.isUnlocked()) {
+            itemBuilder.addLore(ComponentBuilder.create("UNLOCKED", NamedTextColor.GREEN, TextDecoration.BOLD).build());
+        } else {
+            itemBuilder.addLore(ComponentBuilder.create("Cost: ")
+                                                .text("❂ " + NumberFormat.addCommaAndRound(cost) + " Insignia", NamedTextColor.GOLD)
+                                                .build());
+        }
+        menu.setItem(menuX, menuY,
+                itemBuilder.get(),
+                Upgradeable.onUpgrade(player, warlordsEntity, tower, upgrades, upgrade)
+        );
+    }
+
+    boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index);
+
     @Nonnull
     private static <T extends AbstractTower & Upgradeable> BiConsumer<Menu, InventoryClickEvent> onUpgrade(
             Player player,
+            WarlordsEntity warlordsEntity,
             T tower,
             List<TowerUpgrade> upgrades,
             TowerUpgrade upgrade
@@ -37,7 +86,7 @@ public interface Upgradeable {
                 UpgradeResult.INSUFFICIENT_FUNDS.onResult(player);
                 return;
             }
-            if (index != 0 && !tower.previousUnlocked(upgrades, index)) {
+            if (index != 0 && !tower.isPreviousUnlocked(upgrades, index)) {
                 UpgradeResult.MISSING_REQUIREMENTS.onResult(player);
                 return;
             }
@@ -49,7 +98,7 @@ public interface Upgradeable {
             // TODO particle effects?
             upgrade.upgrade();
             Bukkit.getPluginManager().callEvent(new TowerUpgradeEvent(tower));
-            TowerDefenseMenu.openBuildMenu(player, tower);
+            TowerDefenseMenu.openTowerMenu(player, warlordsEntity, tower);
         };
     }
 
@@ -59,9 +108,7 @@ public interface Upgradeable {
 
     List<TowerUpgrade> getUpgrades();
 
-    <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, T tower);
-
-    boolean previousUnlocked(List<TowerUpgrade> upgrades, int index);
+    <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, WarlordsEntity warlordsEntity, T tower);
 
     enum UpgradeResult {
         SUCCESS,
@@ -82,38 +129,22 @@ public interface Upgradeable {
      */
     interface Path1 extends Upgradeable {
 
-        int MAX_UPGRADES = 4;
+        int MAX_UPGRADES = 3;
 
         @Override
-        default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, T tower) {
+        default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, WarlordsEntity warlordsEntity, T tower) {
             List<TowerUpgrade> upgrades = getUpgrades();
             if (upgrades.size() > MAX_UPGRADES) {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception(tower + " has too many upgrades"));
                 upgrades = upgrades.subList(0, MAX_UPGRADES);
             }
             for (int i = 0; i < upgrades.size(); i++) {
-                TowerUpgrade upgrade = upgrades.get(i);
-                menu.setItem(i + 1, 2,
-                        new ItemBuilder(upgrade.isUnlocked() ? Material.GREEN_CONCRETE : Material.WHITE_CONCRETE)
-                                .lore(
-                                        Component.text("SOMETHING HERE"),
-                                        Component.empty()
-                                )
-                                .addLore(upgrade.getDescription())
-                                .addLore(Component.empty())
-                                .addLore(ComponentBuilder.create("Cost: ")
-                                                         .text(NumberFormat.addCommaAndRound(upgrade.getCost()),
-                                                                 NamedTextColor.GOLD
-                                                         )
-                                                         .build())
-                                .get(),
-                        Upgradeable.onUpgrade(player, tower, upgrades, upgrade)
-                );
+                Upgradeable.addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, i, 5 + i, 2);
             }
         }
 
         @Override
-        default boolean previousUnlocked(List<TowerUpgrade> upgrades, int index) {
+        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
             if (index == 0) {
                 return true;
             }
@@ -132,20 +163,20 @@ public interface Upgradeable {
         int MAX_UPGRADES = 4;
 
         @Override
-        default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, T tower) {
+        default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, WarlordsEntity warlordsEntity, T tower) {
             List<TowerUpgrade> upgrades = getUpgrades();
             if (upgrades.size() > MAX_UPGRADES) {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception(tower + " has too many upgrades"));
                 upgrades = upgrades.subList(0, MAX_UPGRADES);
             }
-            addUpgradeToMenu(player, menu, tower, upgrades, 0, 1, 2);
-            addUpgradeToMenu(player, menu, tower, upgrades, 1, 2, 2);
-            addUpgradeToMenu(player, menu, tower, upgrades, 2, 3, 1);
-            addUpgradeToMenu(player, menu, tower, upgrades, 3, 3, 3);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 0, 5, 2);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 1, 6, 2);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 2, 7, 1);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 3, 7, 3);
         }
 
         @Override
-        default boolean previousUnlocked(List<TowerUpgrade> upgrades, int index) {
+        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
             if (index == 0) {
                 return true;
             }
@@ -153,42 +184,6 @@ public interface Upgradeable {
                 return upgrades.get(1).isUnlocked();
             }
             return upgrades.get(index - 1).isUnlocked();
-        }
-
-        private <T extends AbstractTower & Upgradeable> void addUpgradeToMenu(
-                Player player,
-                Menu menu,
-                T tower,
-                List<TowerUpgrade> upgrades,
-                int i,
-                int menuX,
-                int menuY
-        ) {
-            if (upgrades.size() < i) {
-                ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception("startIndex is over upgrades size"));
-                return;
-            }
-            if (upgrades.size() <= i) {
-                return;
-            }
-            TowerUpgrade upgrade = upgrades.get(i);
-            menu.setItem(menuX, menuY,
-                    new ItemBuilder(upgrade.isUnlocked() ? Material.GREEN_CONCRETE : Material.WHITE_CONCRETE)
-                            .lore(
-                                    Component.text("SOMETHING HERE"),
-                                    Component.empty()
-                            )
-                            .addLore(upgrade.getDescription())
-                            .addLore(Component.empty())
-                            .addLore(ComponentBuilder.create("Cost: ")
-                                                     .text(NumberFormat.addCommaAndRound(upgrade.getCost()),
-                                                             NamedTextColor.GOLD
-                                                     )
-                                                     .build())
-                            .get(),
-                    Upgradeable.onUpgrade(player, tower, upgrades, upgrade)
-            );
-
         }
 
     }

@@ -13,7 +13,6 @@ import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMobInfo;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,16 +31,6 @@ public class TowerDefenseCommand extends BaseCommand {
         Location location = player.getLocation();
         location.setYaw(0);
         tower.create.apply(game, player.getUniqueId(), location).build();
-    }
-
-    @Subcommand("exp")
-    public void exp(@Conditions("requireGame:gamemode=TOWER_DEFENSE") Player player, Integer amount, @Optional WarlordsPlayer target) {
-        Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
-        for (Option option : game.getOptions()) {
-            if (option instanceof TowerDefenseOption towerDefenseOption) {
-                towerDefenseOption.getPlayerInfo(target).setCurrentIncome(amount);
-            }
-        }
     }
 
     @Subcommand("debug")

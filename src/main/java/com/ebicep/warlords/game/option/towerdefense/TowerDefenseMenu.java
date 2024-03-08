@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerSellEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMobInfo;
@@ -8,12 +10,14 @@ import com.ebicep.warlords.game.option.towerdefense.waves.FixedPlayerWave;
 import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseSpawnWaveAction;
 import com.ebicep.warlords.game.option.towerdefense.waves.WaveAction;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -22,7 +26,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class TowerDefenseMenu {
 
@@ -41,36 +47,73 @@ public class TowerDefenseMenu {
             ),
     };
 
-    public static void openBuildMenu(Player player, AbstractTower tower) {
-        Pair<Integer, Integer> ownerHeadPos = new Pair<>(2, 2);
-        Pair<Integer, Integer> sellPos = new Pair<>(6, 3);
-
+    public static void openTowerMenu(Player player, WarlordsEntity warlordsEntity, AbstractTower tower) {
         Menu menu = new Menu(tower.getName(), 9 * 6);
 
-        if (tower instanceof Upgradeable upgradeable) {
-            ownerHeadPos.setA(7);
-            ownerHeadPos.setB(1);
-            sellPos.setA(7);
-            sellPos.setB(3);
-            upgradeable.addToMenu(menu, player, (AbstractTower & Upgradeable) tower);
+        UUID owner = tower.getOwner();
+        WarlordsTower warlordsTower = tower.getWarlordsTower();
+
+        WarlordsEntity warlordsPlayerOwner = Warlords.getPlayer(owner);
+        Component name = warlordsPlayerOwner == null ? Component.text("Unknown", NamedTextColor.BLACK, TextDecoration.ITALIC) : warlordsPlayerOwner.getColoredName();
+        PlayerStatisticsMinute.Entry stats = warlordsTower.getMinuteStats().total();
+        ItemBuilder itemBuilder = new ItemBuilder(HeadUtils.getHead(owner))
+                .name(ComponentBuilder.create("Owner: ", NamedTextColor.GRAY).append(name).build());
+        long kills = stats.getKills();
+        long damage = stats.getDamage();
+        long healing = stats.getHealing();
+        if (kills != 0) {
+            itemBuilder.addLore(
+                    ComponentBuilder.create("Kills: ", NamedTextColor.GRAY).text(NumberFormat.addCommaAndRound(kills), NamedTextColor.GOLD).build()
+            );
+            if (damage != 0 || healing != 0) {
+                itemBuilder.addLore(Component.empty());
+            }
+        }
+        if (damage != 0) {
+            itemBuilder.addLore(ComponentBuilder.create("Damage: ", NamedTextColor.GRAY).text(NumberFormat.addCommaAndRound(damage), NamedTextColor.RED).build());
+        }
+        if (healing != 0) {
+            itemBuilder.addLore(ComponentBuilder.create("Healing: ", NamedTextColor.GRAY).text(NumberFormat.addCommaAndRound(healing), NamedTextColor.GREEN).build());
         }
 
-        menu.setItem(ownerHeadPos.getA(), ownerHeadPos.getB(),
-                new ItemBuilder(Material.PLAYER_HEAD) //HeadUtils.getHead(tower.getOwner()) TODO
-                                                      .get(),
-                (m, e) -> {
+        menu.setItem(4, 0, itemBuilder.get(), (m, e) -> {});
 
-                }
-        );
-        menu.setItem(sellPos.getA(), sellPos.getB(),
+        List<AbstractAbility> abilities = warlordsTower.getAbilities();
+        for (int i = 0; i < abilities.size(); i++) {
+            AbstractAbility ability = abilities.get(i);
+            menu.setItem(i + 1, 2,
+                    new ItemBuilder(ability.getItem())
+                            .get(),
+                    (m, e) -> {
+                    }
+            );
+        }
+
+        if (tower instanceof Upgradeable upgradeable) {
+            upgradeable.addToMenu(menu, player, warlordsEntity, (AbstractTower & Upgradeable) tower);
+        }
+
+        menu.setItem(5, 5,
                 new ItemBuilder(Material.RED_CONCRETE)
                         .name(Component.text("Sell", NamedTextColor.RED))
                         .get(),
                 (m, e) -> {
-                    Bukkit.getPluginManager().callEvent(new TowerSellEvent(tower));
-                    player.closeInventory();
+                    Menu.openConfirmationMenu(player,
+                            "Confirm Sell",
+                            3,
+                            Collections.singletonList(Component.text("Sell", NamedTextColor.GRAY)),
+                            Menu.GO_BACK,
+                            (m2, e2) -> {
+                                Bukkit.getPluginManager().callEvent(new TowerSellEvent(tower));
+                                player.closeInventory();
+                            },
+                            (m2, e2) -> openTowerMenu(player, warlordsEntity, tower),
+                            (m2) -> {
+                            }
+                    );
                 }
         );
+
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }

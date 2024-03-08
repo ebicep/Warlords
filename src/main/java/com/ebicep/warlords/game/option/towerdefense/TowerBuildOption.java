@@ -93,7 +93,7 @@ public class TowerBuildOption implements Option, Listener {
         if (clickedBlock == null) {
             return;
         }
-        boolean clickedTower = handleTowerClick(player, clickedBlock);
+        boolean clickedTower = handleTowerClick(player, warlordsEntity, clickedBlock);
         if (clickedTower) {
             return;
         }
@@ -140,10 +140,10 @@ public class TowerBuildOption implements Option, Listener {
         tower.remove();
     }
 
-    private boolean handleTowerClick(Player player, Block clickedBlock) {
+    private boolean handleTowerClick(Player player, WarlordsEntity warlordsEntity, Block clickedBlock) {
         for (MetadataValue metadataValue : clickedBlock.getMetadata("TOWER")) {
             if (metadataValue.value() instanceof AbstractTower tower) {
-                TowerDefenseMenu.openBuildMenu(player, tower);
+                TowerDefenseMenu.openTowerMenu(player, warlordsEntity, tower);
                 return true;
             }
         }
