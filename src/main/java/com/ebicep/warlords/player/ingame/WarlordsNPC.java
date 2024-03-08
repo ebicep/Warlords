@@ -63,8 +63,6 @@ public class WarlordsNPC extends WarlordsEntity {
     ) {
         super(npc.getUniqueId(), name, npc.getEntity(), game, team, playerClass);
         this.npc = npc;
-//        this.hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-//        this.hologramTrait.setUseDisplayEntities(false); //TODO
         this.mob = warlordsMob;
         this.mobHologram = mobHologram;
         if (warlordsMob != null && warlordsMob.getLevel() > 0) {
@@ -257,7 +255,6 @@ public class WarlordsNPC extends WarlordsEntity {
     public void setDamageResistance(float damageResistance) {
         getSpec().setDamageResistance(Math.max(0, damageResistance));
         updateHealth();
-//        nameDisplay.customName(getNameComponent());
     }
 
     @Override
@@ -307,10 +304,6 @@ public class WarlordsNPC extends WarlordsEntity {
     public void setStunTicks(int stunTicks) {
         setStunTicks(stunTicks, false);
     }
-
-//    public HologramTrait getHologramTrait() {
-//        return hologramTrait;
-//    }
 
     public void setStunTicks(int stunTicks, boolean decrement) {
         AtomicReference<Boolean> noAI = new AtomicReference<>();

@@ -16,15 +16,17 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Gravity;
+import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import javax.annotation.Nullable;
@@ -126,7 +128,7 @@ public abstract class AbstractTower {
     }
 
     protected NPC createNPC() {
-        NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.ARMOR_STAND, getName());
+        NPC npc = NPCManager.NPC_REGISTRY.createNPC(EntityType.TEXT_DISPLAY, getName());
         npc.data().set(NPC.Metadata.COLLIDABLE, false);
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, true);
 
@@ -134,11 +136,17 @@ public abstract class AbstractTower {
         npc.getNavigator().setPaused(true);
 
         npc.getOrAddTrait(Gravity.class).gravitate(true);
-        ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
-        armorStandTrait.setVisible(false);
-        armorStandTrait.setMarker(true);
+        npc.getOrAddTrait(HologramTrait.class).setUseDisplayEntities(true);
+//        ArmorStandTrait armorStandTrait = npc.getOrAddTrait(ArmorStandTrait.class);
+//        armorStandTrait.setVisible(false);
+//        armorStandTrait.setMarker(true);
 
         npc.spawn(topCenterLocation);
+
+        if (npc.getEntity() instanceof TextDisplay textDisplay) {
+            textDisplay.setBillboard(Display.Billboard.CENTER);
+        }
+        npc.getEntity().setInvulnerable(true);
 
         return npc;
     }

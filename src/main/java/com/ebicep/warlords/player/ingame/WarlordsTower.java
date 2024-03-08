@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class WarlordsTower extends WarlordsEntity {
 
@@ -92,5 +93,10 @@ public class WarlordsTower extends WarlordsEntity {
     @Override
     public ItemStack getWeaponItem() {
         return null;
+    }
+
+    @Override
+    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
+        // override to do nothing
     }
 }
