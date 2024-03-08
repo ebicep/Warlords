@@ -3,17 +3,22 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
+import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -32,25 +37,41 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
 
         warlordsTower.getAbilities().add(spawnTroops = new SpawnTroops(this));
 
-//        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
-//        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
-//
-//        upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
-//            @Override
-//            public void onUpgrade() {
-//            }
-//        });
-//        upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
-//            @Override
-//            public void onUpgrade() {
-//            }
-//        });
-//        upgrades.add(new TowerUpgrade("Single Target Attack", upgradeDamage3) {
-//            @Override
-//            public void onUpgrade() {
-//            }
-//        });
-//        upgrades.add(new TowerUpgrade("AOE Attack", upgradeDamage3) {});
+        TowerUpgradeInstance.Damage upgradeDamage1 = new TowerUpgradeInstance.Damage(25);
+        TowerUpgradeInstance.Damage upgradeDamage2 = new TowerUpgradeInstance.Damage(25);
+
+        upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
+            @Override
+            public void onUpgrade() {
+            }
+        });
+        upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
+            @Override
+            public void onUpgrade() {
+            }
+        });
+        upgrades.add(new TowerUpgrade("Strike Multiple Enemies", new TowerUpgradeInstance() {
+            @Override
+            public Component getDescription() {
+                return ComponentBuilder.create("+1 Enemy Struck").build();
+            }
+        }) {
+            @Override
+            public void onUpgrade() {
+                spawnTroops.setPveMasterUpgrade(true);
+            }
+        });
+        upgrades.add(new TowerUpgrade("True Damage", new TowerUpgradeInstance() {
+            @Override
+            public Component getDescription() {
+                return ComponentBuilder.create("Strikes now deal true damage").build();
+            }
+        }) {
+            @Override
+            protected void onUpgrade() {
+                spawnTroops.setPveMasterUpgrade2(true);
+            }
+        });
     }
 
     @Override
@@ -98,6 +119,11 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
                 AbstractTower tower = warlordsTower.getTower();
                 AbstractMob mob = Mob.TD_TOWER_AVENGER.createMob(getSpawnLocation(tower));
                 spawnedMobs.add((TowerDefenseTowerMob) mob);
+                if (pveMasterUpgrade) {
+                    ((TDTowerAvenger) mob).strikeAmount++;
+                } else if (pveMasterUpgrade2) {
+                    ((TDTowerAvenger) mob).trueDamage = true;
+                }
                 tower.getTowerDefenseOption().spawnNewMob(mob, warlordsTower);
             }
             return true;
@@ -122,6 +148,8 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
 
     public static class TDTowerAvenger extends TowerDefenseTowerMob {
 
+        private int strikeAmount = 1;
+        private boolean trueDamage = false;
 
         public TDTowerAvenger(Location spawnLocation) {
             this(
@@ -162,10 +190,19 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public void whileAlive(int ticksElapsed, PveOption option) {
-
+        public void onSpawn(PveOption option) {
+            super.onSpawn(option);
+            warlordsNPC.getAbilitiesMatching(AvengersStrike.class).forEach(avengersStrike -> {
+                // TODO
+            });
         }
 
+        @Override
+        public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
+            if (trueDamage) {
+                event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
+            }
+        }
     }
 
 }

@@ -30,6 +30,7 @@ public enum TowerRegistry {
     AQUA_TOWER(AquamancerTower::new, Material.WATER_BUCKET, "Aquamancer Tower", "Very wet."),
     AVENGER_TOWER(AvengerTower::new, Material.RED_CONCRETE_POWDER, "Avenger Tower", "Strike."),
     CRUSADER_TOWER(CrusaderTower::new, Material.YELLOW_CONCRETE_POWDER, "Crusader Tower", "Buffer."),
+    BERSERKER_TOWER(BerserkerTower::new, Material.RED_CONCRETE_POWDER, "Berserker Tower", "Grr."),
     BIG_BOY(BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;

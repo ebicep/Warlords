@@ -274,13 +274,14 @@ public abstract class AbstractTower {
     }
 
     public List<AbstractTower> getTowers(float range, int limit) {
+        float rangeSquared = range * range;
         Stream<AbstractTower> stream = towerDefenseOption
                 .getTowerBuildOption()
                 .getBuiltTowers()
                 .keySet()
                 .stream()
                 .filter(tower -> tower.getTeam() == team)
-                .filter(tower -> tower.bottomCenterLocation.distanceSquared(bottomCenterLocation) <= range * range);
+                .filter(tower -> tower.bottomCenterLocation.distanceSquared(bottomCenterLocation) <= rangeSquared);
         if (limit != -1) {
             stream = stream.limit(limit);
         }

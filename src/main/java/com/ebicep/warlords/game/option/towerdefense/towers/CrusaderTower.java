@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
+import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
@@ -27,25 +28,38 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         warlordsTower.getAbilities().add(buffTowers);
         warlordsTower.getAbilities().add(strikeAttack);
 
-//        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
-//        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
-//
-//        upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
-//            @Override
-//            public void onUpgrade() {
-//            }
-//        });
-//        upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
-//            @Override
-//            public void onUpgrade() {
-//            }
-//        });
-//        upgrades.add(new TowerUpgrade("Single Target Attack", upgradeDamage3) {
-//            @Override
-//            public void onUpgrade() {
-//            }
-//        });
-//        upgrades.add(new TowerUpgrade("AOE Attack", upgradeDamage3) {});
+        TowerUpgradeInstance.Damage upgradeDamage1 = new TowerUpgradeInstance.Damage(25);
+        TowerUpgradeInstance.Damage upgradeDamage2 = new TowerUpgradeInstance.Damage(25);
+        TowerUpgradeInstance.Range upgradeRange3 = new TowerUpgradeInstance.Range(5);
+        TowerUpgradeInstance.Valued upgradeBuff4 = new TowerUpgradeInstance.Valued(10) {
+            @Override
+            public String getName() {
+                return "Buff";
+            }
+        };
+        upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
+            @Override
+            public void onUpgrade() {
+            }
+        });
+        upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
+            @Override
+            public void onUpgrade() {
+            }
+        });
+        upgrades.add(new TowerUpgrade("More Range", upgradeRange3) {
+            @Override
+            public void onUpgrade() {
+                strikeAttack.getHitBoxRadius().addAdditiveModifier("Upgrade 3", upgradeRange3.getValue());
+                buffTowers.getHitBoxRadius().addAdditiveModifier("Upgrade 3", upgradeRange3.getValue());
+            }
+        });
+        upgrades.add(new TowerUpgrade("More Buff", upgradeBuff4) {
+            @Override
+            protected void onUpgrade() {
+                buffTowers.getBuffValue().addAdditiveModifier("Upgrade 4", upgradeBuff4.getValue());
+            }
+        });
     }
 
     @Override
@@ -70,10 +84,10 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
     private static class BuffTowers extends AbstractAbility implements HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
-        private final FloatModifiable buffValue = new FloatModifiable(-.3f); // 30% faster
+        private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 0, 0, 5, 0);
+            super("Buff Towers", 0, 0, 20, 0);
         }
 
         @Override
@@ -85,8 +99,8 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
                                                     .getAbilities()
                                                     .forEach(ability -> ability.getCooldown().addMultiplicativeModifierAdd(
                                                             abstractTower.getTowerRegistry().name,
-                                                            buffValue.getCalculatedValue(),
-                                                            20
+                                                            -buffValue.getCalculatedValue() / 100,
+                                                            (int) (getCooldownValue() * 20) + 1
                                                     ))
                              );
             }
@@ -98,6 +112,9 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        public FloatModifiable getBuffValue() {
+            return buffValue;
+        }
     }
 
     private static class StrikeAttack extends AbstractAbility implements HitBox {
@@ -111,7 +128,10 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
+                AbstractTower tower = warlordsTower.getTower();
+                tower.getEnemyMobs(range).forEach(warlordsNPC -> {
 
+                });
             }
             return true;
         }

@@ -10,35 +10,57 @@ import net.kyori.adventure.text.Component;
  */
 public abstract class TowerUpgradeInstance {
 
-    protected FloatModifiable value;
-
-    public TowerUpgradeInstance(float value) {
-        this.value = new FloatModifiable(value);
-    }
-
     public abstract Component getDescription();
 
     public void tick() {
-        value.tick();
     }
 
-    public FloatModifiable getFloatModifiableValue() {
-        return value;
+    public static abstract class Valued extends TowerUpgradeInstance {
+
+        protected FloatModifiable value;
+
+        public Valued(float value) {
+            super();
+            this.value = new FloatModifiable(value);
+        }
+
+        public FloatModifiable getFloatModifiableValue() {
+            return value;
+        }
+
+        public float getValue() {
+            return value.getCalculatedValue();
+        }
+
+        public abstract String getName();
+
+        @Override
+        public Component getDescription() {
+            return Component.text("+" + NumberFormat.formatOptionalTenths(value.getCalculatedValue()) + " " + getName());
+        }
     }
 
-    public float getValue() {
-        return value.getCalculatedValue();
-    }
+    public static class Damage extends Valued {
 
-    public static class DamageUpgradeInstance extends TowerUpgradeInstance {
-
-        public DamageUpgradeInstance(float value) {
+        public Damage(float value) {
             super(value);
         }
 
         @Override
-        public Component getDescription() {
-            return Component.text("+" + NumberFormat.formatOptionalTenths(value.getCalculatedValue()) + " Damage");
+        public String getName() {
+            return "Damage";
+        }
+    }
+
+    public static class Range extends Valued {
+
+        public Range(float value) {
+            super(value);
+        }
+
+        @Override
+        public String getName() {
+            return "Range";
         }
     }
 

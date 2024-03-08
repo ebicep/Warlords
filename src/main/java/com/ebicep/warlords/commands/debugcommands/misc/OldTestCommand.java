@@ -1,10 +1,12 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -12,7 +14,6 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -117,9 +119,18 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-            LocationUtils.getCircle(player.getLocation(), 5, 10).forEach(location -> {
-                EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, location, 1);
-            });
+            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+            int range = 30;
+            for (Option option : warlordsEntity.getGame().getOptions()) {
+                if (option instanceof TowerBuildOption towerBuildOption) {
+                    System.out.println(towerBuildOption
+                            .getBuiltTowers()
+                            .keySet()
+                            .stream()
+                            .filter(tower -> tower.getBottomCenterLocation().distanceSquared(player.getLocation()) <= range * range)
+                            .collect(Collectors.toList()));
+                }
+            }
 
 //            LocationBuilder location = new LocationBuilder(player.getLocation());
 //            location.setYaw(location.getYaw() - 90);

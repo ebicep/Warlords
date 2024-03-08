@@ -45,9 +45,9 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
 
         warlordsTower.getAbilities().add(flameAttack);
 
-        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
-        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
-        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage3 = new TowerUpgradeInstance.DamageUpgradeInstance(50);
+        TowerUpgradeInstance.Damage upgradeDamage1 = new TowerUpgradeInstance.Damage(25);
+        TowerUpgradeInstance.Damage upgradeDamage2 = new TowerUpgradeInstance.Damage(25);
+        TowerUpgradeInstance.Damage upgradeDamage3 = new TowerUpgradeInstance.Damage(50);
 
         upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
             @Override
@@ -125,7 +125,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
                                     .excluding(target)
                                     .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(
                                             warlordsTower,
-                                            "Flame",
+                                            name,
                                             minDamageHeal,
                                             maxDamageHeal,
                                             critChance,
