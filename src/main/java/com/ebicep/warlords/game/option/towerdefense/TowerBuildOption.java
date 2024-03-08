@@ -70,7 +70,6 @@ public class TowerBuildOption implements Option, Listener {
 
     @Override
     public void start(@Nonnull Game game) {
-
     }
 
     @Override

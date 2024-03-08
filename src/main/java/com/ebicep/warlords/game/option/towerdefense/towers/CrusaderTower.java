@@ -1,41 +1,32 @@
-
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Damage;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Range;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CrusaderTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
+public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
 
-    private final List<FloatModifiable> damages = new ArrayList<>();
-    private final List<FloatModifiable> ranges = new ArrayList<>();
-    private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
-
-    private final FloatModifiable strikeDamage = new FloatModifiable(250);
-    private final FloatModifiable strikeRange = new FloatModifiable(10);
-    private final FloatModifiable strikeAttackSpeed = new FloatModifiable(2 * 20); // 5 seconds
-
-    private final FloatModifiable buffValue = new FloatModifiable(-.3f); // 30% faster
-    private final FloatModifiable buffRange = new FloatModifiable(15);
-
+    private final BuffTowers buffTowers = new BuffTowers();
+    private final StrikeAttack strikeAttack = new StrikeAttack();
 
     public CrusaderTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        damages.add(strikeDamage);
-        ranges.add(strikeRange);
-        attackSpeeds.add(strikeAttackSpeed);
 
-        ranges.add(buffRange);
+        warlordsTower.getAbilities().add(buffTowers);
+        warlordsTower.getAbilities().add(strikeAttack);
+
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //
@@ -68,20 +59,6 @@ public class CrusaderTower extends AbstractTower implements Damage, Range, Attac
         if (ticksElapsed % 5 == 0) {
 //            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, centerLocation, 5, .5, .1, .5, 2);
         }
-        if (ticksElapsed % 20 == 0) {
-            float buffRangeValue = buffRange.getCalculatedValue();
-            getTowers(buffRangeValue).forEach(tower -> {
-                if (tower instanceof AttackSpeed attackSpeed) {
-                    attackSpeed.getAttackSpeeds()
-                               .forEach(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd(
-                                               getTowerRegistry().name,
-                                               buffValue.getCalculatedValue(),
-                                               20
-                                       )
-                               );
-                }
-            });
-        }
     }
 
 
@@ -90,19 +67,61 @@ public class CrusaderTower extends AbstractTower implements Damage, Range, Attac
         return upgrades;
     }
 
-    @Override
-    public List<FloatModifiable> getDamages() {
-        return damages;
+    private static class BuffTowers extends AbstractAbility implements HitBox {
+
+        private final FloatModifiable range = new FloatModifiable(30);
+        private final FloatModifiable buffValue = new FloatModifiable(-.3f); // 30% faster
+
+        public BuffTowers() {
+            super("Buff Towers", 0, 0, 5);
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            if (wp instanceof WarlordsTower warlordsTower) {
+                AbstractTower abstractTower = warlordsTower.getTower();
+                abstractTower.getTowers(range)
+                             .forEach(tower -> tower.getWarlordsTower()
+                                                    .getAbilities()
+                                                    .forEach(ability -> ability.getCooldown().addMultiplicativeModifierAdd(
+                                                            abstractTower.getTowerRegistry().name,
+                                                            buffValue.getCalculatedValue(),
+                                                            20
+                                                    ))
+                             );
+            }
+            return true;
+        }
+
+        @Override
+        public FloatModifiable getHitBoxRadius() {
+            return range;
+        }
+
     }
 
-    @Override
-    public List<FloatModifiable> getRanges() {
-        return ranges;
+    private static class StrikeAttack extends AbstractAbility implements HitBox {
+
+        private final FloatModifiable range = new FloatModifiable(30);
+
+        public StrikeAttack() {
+            super("Strike Attack", 250, 250, 2);
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            if (wp instanceof WarlordsTower warlordsTower) {
+
+            }
+            return true;
+        }
+
+        @Override
+        public FloatModifiable getHitBoxRadius() {
+            return range;
+        }
+
     }
 
-    @Override
-    public List<FloatModifiable> getAttackSpeeds() {
-        return attackSpeeds;
-    }
 
 }

@@ -322,14 +322,14 @@ public abstract class AbstractMob implements Mob {
             if (warlordsNPC.getEnergy() < ability.getEnergyCostValue() * warlordsNPC.getEnergyModifier()) {
                 return;
             }
-            WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsNPC, null, ability, maxHealth);
+            WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsNPC, null, ability, -1);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return;
             }
             boolean shouldApplyCooldown = ability.onActivate(warlordsNPC);
             if (shouldApplyCooldown) {
-                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsNPC, null, ability, maxHealth);
+                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsNPC, null, ability, -1);
                 Bukkit.getPluginManager().callEvent(post);
 
                 ability.addTimesUsed();

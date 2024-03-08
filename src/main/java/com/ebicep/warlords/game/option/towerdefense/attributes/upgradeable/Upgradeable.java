@@ -48,7 +48,6 @@ public interface Upgradeable {
             Utils.playGlobalSound(tower.getTopCenterLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
             // TODO particle effects?
             upgrade.upgrade();
-            tower.updateAttributes();
             Bukkit.getPluginManager().callEvent(new TowerUpgradeEvent(tower));
             TowerDefenseMenu.openBuildMenu(player, tower);
         };

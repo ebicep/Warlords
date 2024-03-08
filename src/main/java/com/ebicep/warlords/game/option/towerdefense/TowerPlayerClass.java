@@ -4,8 +4,8 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 
 public class TowerPlayerClass extends AbstractPlayerClass {
 
-    public TowerPlayerClass() {
-        super("TODO", 0, 0, 0, 0, 0);
+    public TowerPlayerClass(String name) {
+        super(name, 0, 0, 0, 0, 0);
     }
 
 }

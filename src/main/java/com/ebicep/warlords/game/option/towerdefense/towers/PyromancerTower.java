@@ -1,16 +1,18 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Damage;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Range;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -30,24 +32,19 @@ import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
-public class PyromancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
+public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 {
 
-    private final List<FloatModifiable> damages = new ArrayList<>();
-    private final List<FloatModifiable> ranges = new ArrayList<>();
-    private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
-
-    private final FloatModifiable flameDamage = new FloatModifiable(500);
-    private final FloatModifiable flameRange = new FloatModifiable(30);
-    private final FloatModifiable flameAttackSpeed = new FloatModifiable(5 * 20); // 5 seconds
+    private final FlameAttack flameAttack = new FlameAttack();
 
     public PyromancerTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        damages.add(flameDamage);
-        ranges.add(flameRange);
-        attackSpeeds.add(flameAttackSpeed);
+
+        warlordsTower.getAbilities().add(flameAttack);
+
         TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
         TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
         TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage3 = new TowerUpgradeInstance.DamageUpgradeInstance(50);
@@ -55,19 +52,19 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
         upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
             @Override
             public void onUpgrade() {
-                flameDamage.addAdditiveModifier(name, upgradeDamage1.getValue());
+//                flameDamage.addAdditiveModifier(name, upgradeDamage1.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
             @Override
             public void onUpgrade() {
-                flameDamage.addAdditiveModifier(name, upgradeDamage2.getValue());
+//                flameDamage.addAdditiveModifier(name, upgradeDamage2.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Future Damage + Minor AOE", upgradeDamage3) {
             @Override
             public void onUpgrade() {
-                flameDamage.addAdditiveModifier(name, upgradeDamage3.getValue());
+//                flameDamage.addAdditiveModifier(name, upgradeDamage3.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Burn", upgradeDamage3) {});
@@ -84,46 +81,59 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
         if (ticksElapsed % 5 == 0) {
             EffectUtils.displayParticle(Particle.CRIMSON_SPORE, topCenterLocation, 5, .5, .1, .5, 2);
         }
-        int attackSpeed = (int) flameAttackSpeed.getCalculatedValue();
-        if (ticksElapsed % attackSpeed == 0) {
-            flameAttack();
-        }
     }
 
-    private void flameAttack() {
-        float rangeValue = flameRange.getCalculatedValue();
-        float damageValue = flameDamage.getCalculatedValue();
-        getEnemyMobs(EnemyTargetPriority.FIRST, rangeValue, 1).forEach(warlordsNPC -> {
-            int teleportDuration = 5;
-            Location targetLocation = new LocationBuilder(warlordsNPC.getLocation())
+    @Override
+    public List<TowerUpgrade> getUpgrades() {
+        return upgrades;
+    }
+
+    private static class FlameAttack extends AbstractAbility implements HitBox {
+
+        private static final int TELEPORT_DURATION = 5; // arrow teleport duration
+        private final FloatModifiable range = new FloatModifiable(30);
+
+        public FlameAttack() {
+            super("Flame Attack", 500, 500, 10, 0);
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            if (wp instanceof WarlordsTower warlordsTower) {
+                warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 1).forEach(target -> attack(warlordsTower, target));
+            }
+            return true;
+        }
+
+        private void attack(WarlordsTower warlordsTower, WarlordsNPC target) {
+            Location targetLocation = new LocationBuilder(target.getLocation())
                     .addY(1);
             LocationBuilder startLocation = new LocationBuilder(warlordsTower.getLocation())
                     .addY(-.5)
                     .faceTowards(targetLocation);
-//                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), startLocation.clone().addY(-1), Particle.FLAME);
             playSpiralFacingEffect(startLocation, targetLocation, Particle.SMALL_FLAME);
             playSpiralFacingEffect(startLocation.clone().forward(1.1f), targetLocation, Particle.DRAGON_BREATH);
 
-            ItemDisplay arrow = fireArrowTowards(teleportDuration, startLocation, targetLocation);
+            ItemDisplay arrow = fireArrowTowards(startLocation, targetLocation);
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    warlordsNPC.addDamageInstance(warlordsTower, "Flame", damageValue, damageValue, 0, 100);
-                    if (upgrades.get(2).isUnlocked()) {
-                        PlayerFilter.entitiesAround(warlordsNPC, 2, 2, 2)
+                    target.addDamageInstance(warlordsTower, "Flame", minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    if (pveMasterUpgrade) {
+                        PlayerFilter.entitiesAround(target, 2, 2, 2)
                                     .aliveEnemiesOf(warlordsTower)
-                                    .excluding(warlordsNPC)
+                                    .excluding(target)
                                     .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(
                                             warlordsTower,
                                             "Flame",
-                                            damageValue,
-                                            damageValue,
-                                            0,
-                                            100,
+                                            minDamageHeal,
+                                            maxDamageHeal,
+                                            critChance,
+                                            critMultiplier,
                                             InstanceFlags.TD_MAGIC
                                     ));
-                    } else if (upgrades.get(3).isUnlocked()) {
-                        warlordsNPC.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    } else if (pveMasterUpgrade2) {
+                        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Pyromancer Tower Burn",
                                 "BRN",
                                 PyromancerTower.class,
@@ -135,9 +145,9 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
                                 60,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                     if (ticksLeft % 20 == 0) {
-                                        float healthDamage = warlordsNPC.getMaxHealth() * 0.005f;
+                                        float healthDamage = target.getMaxHealth() * 0.005f;
                                         healthDamage = DamageCheck.clamp(healthDamage);
-                                        warlordsNPC.addDamageInstance(
+                                        target.addDamageInstance(
                                                 warlordsTower,
                                                 "Burn",
                                                 healthDamage,
@@ -155,80 +165,66 @@ public class PyromancerTower extends AbstractTower implements Damage, Range, Att
                             }
                         });
                     }
-                    EffectUtils.displayParticle(Particle.LAVA, warlordsNPC.getLocation().clone().add(0, 1, 0), 15, 0.5F, 0, 0.5F, 500);
+                    EffectUtils.displayParticle(Particle.LAVA, target.getLocation().clone().add(0, 1, 0), 15, 0.5F, 0, 0.5F, 500);
                     arrow.remove();
                 }
-            }.runTaskLater(Warlords.getInstance(), teleportDuration);
-        });
-    }
+            }.runTaskLater(Warlords.getInstance(), TELEPORT_DURATION);
+        }
 
-    private static void playSpiralFacingEffect(Location startLocation, Location targetLocation, Particle particle) {
-        double width = .6;
+        private static void playSpiralFacingEffect(Location startLocation, Location targetLocation, Particle particle) {
+            double width = .6;
 
-        LocationBuilder builder = new LocationBuilder(startLocation);
-        for (int ticksLived = 0; ticksLived < 200; ticksLived++) {
-            Matrix4d center = new Matrix4d(builder);
-            for (float i = 0; i < 4; i++) {
-                double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
-                EffectUtils.displayParticle(
-                        particle,
-                        center.translateVector(builder.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                        3
-                );
-            }
-            builder.forward(.4);
-            if (builder.distanceSquared(targetLocation) < 2) {
-                break;
+            LocationBuilder builder = new LocationBuilder(startLocation);
+            for (int ticksLived = 0; ticksLived < 200; ticksLived++) {
+                Matrix4d center = new Matrix4d(builder);
+                for (float i = 0; i < 4; i++) {
+                    double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
+                    EffectUtils.displayParticle(
+                            particle,
+                            center.translateVector(builder.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
+                            3
+                    );
+                }
+                builder.forward(.4);
+                if (builder.distanceSquared(targetLocation) < 2) {
+                    break;
+                }
             }
         }
-    }
 
-    private static ItemDisplay fireArrowTowards(int teleportDuration, Location startLocation, Location endLocation) {
-        LocationBuilder start = new LocationBuilder(startLocation);
-        float pitchTowards = start.getPitch();
-        start.pitch(0); // make arrow straight
-        start.yaw(start.getYaw() - 90); // rotate arrow to face the right direction
-        LocationBuilder end = new LocationBuilder(endLocation).direction(start.getDirection());
-        ItemStack item = new ItemStack(Material.TIPPED_ARROW);
-        PotionMeta itemMeta = (PotionMeta) item.getItemMeta();
-        itemMeta.setBasePotionType(PotionType.INSTANT_HEAL);
-        item.setItemMeta(itemMeta);
-        ItemDisplay arrow = startLocation.getWorld().spawn(
-                start,
-                ItemDisplay.class,
-                itemDisplay -> {
-                    itemDisplay.setItemStack(item);
-                    itemDisplay.setTransformation(new Transformation(
-                                    new Vector3f(),
-                                    new AxisAngle4f((float) Math.toRadians(45 + pitchTowards), 0, 0, 1),
-                                    new Vector3f(2f),
-                                    new AxisAngle4f()
-                            )
-                    );
-                    itemDisplay.setTeleportDuration(teleportDuration);
-                }
-        );
-        arrow.teleport(end);
-        return arrow;
-    }
+        private static ItemDisplay fireArrowTowards(Location startLocation, Location endLocation) {
+            LocationBuilder start = new LocationBuilder(startLocation);
+            float pitchTowards = start.getPitch();
+            start.pitch(0); // make arrow straight
+            start.yaw(start.getYaw() - 90); // rotate arrow to face the right direction
+            LocationBuilder end = new LocationBuilder(endLocation).direction(start.getDirection());
+            ItemStack item = new ItemStack(Material.TIPPED_ARROW);
+            PotionMeta itemMeta = (PotionMeta) item.getItemMeta();
+            itemMeta.setBasePotionType(PotionType.INSTANT_HEAL);
+            item.setItemMeta(itemMeta);
+            ItemDisplay arrow = startLocation.getWorld().spawn(
+                    start,
+                    ItemDisplay.class,
+                    itemDisplay -> {
+                        itemDisplay.setItemStack(item);
+                        itemDisplay.setTransformation(new Transformation(
+                                        new Vector3f(),
+                                        new AxisAngle4f((float) Math.toRadians(45 + pitchTowards), 0, 0, 1),
+                                        new Vector3f(2f),
+                                        new AxisAngle4f()
+                                )
+                        );
+                        itemDisplay.setTeleportDuration(FlameAttack.TELEPORT_DURATION);
+                    }
+            );
+            arrow.teleport(end);
+            return arrow;
+        }
 
-    @Override
-    public List<TowerUpgrade> getUpgrades() {
-        return upgrades;
-    }
+        @Override
+        public FloatModifiable getHitBoxRadius() {
+            return range;
+        }
 
-    @Override
-    public List<FloatModifiable> getDamages() {
-        return damages;
-    }
-
-    @Override
-    public List<FloatModifiable> getRanges() {
-        return ranges;
-    }
-
-    @Override
-    public List<FloatModifiable> getAttackSpeeds() {
-        return attackSpeeds;
     }
 }

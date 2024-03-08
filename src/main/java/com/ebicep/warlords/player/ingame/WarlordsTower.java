@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.ingame;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -12,8 +13,11 @@ import java.util.UUID;
 
 public class WarlordsTower extends WarlordsEntity {
 
+    @Nonnull
+    private final AbstractTower tower;
+
     public WarlordsTower(
-            @Nonnull UUID uuid,
+            @Nonnull AbstractTower tower, @Nonnull UUID uuid,
             @Nonnull String name,
             @Nonnull Entity entity,
             @Nonnull Game game,
@@ -21,6 +25,18 @@ public class WarlordsTower extends WarlordsEntity {
             @Nonnull AbstractPlayerClass playerClass
     ) {
         super(uuid, name, entity, game, team, playerClass);
+        this.tower = tower;
+    }
+
+    @Nonnull
+    public AbstractTower getTower() {
+        return tower;
+    }
+
+    @Override
+    public void runEveryTick() {
+        this.spec.runEveryTick(this);
+        getCooldownManager().reduceCooldowns();
     }
 
     @Override

@@ -128,7 +128,10 @@ public class TowerDefenseOption implements PveOption, Listener {
                     return;
                 }
 
-                towerBuildOption.getBuiltTowers().forEach((tower, spawnTick) -> tower.whileActive(ticksElapsed.get() - spawnTick));
+                towerBuildOption.getBuiltTowers().forEach((tower, spawnTick) -> {
+                    tower.getWarlordsTower().runEveryTick();
+                    tower.whileActive(ticksElapsed.get() - spawnTick);
+                });
 
                 ticksElapsed.incrementAndGet();
 

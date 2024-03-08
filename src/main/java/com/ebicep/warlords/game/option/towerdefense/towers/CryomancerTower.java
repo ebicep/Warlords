@@ -1,35 +1,32 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Damage;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Range;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CryomancerTower extends AbstractTower implements Damage, Range, AttackSpeed, Upgradeable.Path2 {
+public class CryomancerTower extends AbstractTower implements Upgradeable.Path2 {
 
-    private final List<FloatModifiable> damages = new ArrayList<>();
-    private final List<FloatModifiable> ranges = new ArrayList<>();
-    private final List<FloatModifiable> attackSpeeds = new ArrayList<>();
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
-
-    private final FloatModifiable slowDamage = new FloatModifiable(500);
-    private final FloatModifiable slowRange = new FloatModifiable(30);
-    private final FloatModifiable slowAttackSpeed = new FloatModifiable(3 * 20); // 5 seconds
+    private final SlowAttack slowAttack = new SlowAttack();
 
     public CryomancerTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
-        ranges.add(slowRange);
-        attackSpeeds.add(slowAttackSpeed);
+
+        warlordsTower.getAbilities().add(slowAttack);
+
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage1 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //        TowerUpgradeInstance.DamageUpgradeInstance upgradeDamage2 = new TowerUpgradeInstance.DamageUpgradeInstance(25);
 //
@@ -62,34 +59,37 @@ public class CryomancerTower extends AbstractTower implements Damage, Range, Att
         if (ticksElapsed % 5 == 0) {
 //            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, centerLocation, 5, .5, .1, .5, 2);
         }
-        int attackSpeed = (int) slowAttackSpeed.getCalculatedValue();
-        if (ticksElapsed % attackSpeed == 0) {
-            float rangeValue = slowRange.getCalculatedValue();
-            getEnemyMobs(rangeValue).forEach(warlordsNPC -> {
-                EffectUtils.displayParticle(Particle.SNOWFLAKE, warlordsNPC.getLocation(), 15, .15, 0, .15, 0);
-                warlordsNPC.addSpeedModifier(warlordsTower, "Cryomancer Tower Slow", -20, 20, "BASE");
-            });
-        }
     }
-
 
     @Override
     public List<TowerUpgrade> getUpgrades() {
         return upgrades;
     }
 
-    @Override
-    public List<FloatModifiable> getDamages() {
-        return damages;
+    private static class SlowAttack extends AbstractAbility implements HitBox {
+
+        private final FloatModifiable range = new FloatModifiable(30);
+
+        public SlowAttack() {
+            super("Slow", 0, 0, 5);
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            if (wp instanceof WarlordsTower warlordsTower) {
+                warlordsTower.getTower().getEnemyMobs(range).forEach(warlordsNPC -> {
+                    EffectUtils.displayParticle(Particle.SNOWFLAKE, warlordsNPC.getLocation(), 15, .15, 0, .15, 0);
+                    warlordsNPC.addSpeedModifier(warlordsTower, "Cryomancer Tower Slow", -20, 20, "BASE");
+                });
+            }
+            return true;
+        }
+
+        @Override
+        public FloatModifiable getHitBoxRadius() {
+            return range;
+        }
+
     }
 
-    @Override
-    public List<FloatModifiable> getRanges() {
-        return ranges;
-    }
-
-    @Override
-    public List<FloatModifiable> getAttackSpeeds() {
-        return attackSpeeds;
-    }
 }

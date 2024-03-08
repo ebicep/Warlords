@@ -2,14 +2,12 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerPlayerClass;
-import com.ebicep.warlords.game.option.towerdefense.attributes.AttackSpeed;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Damage;
-import com.ebicep.warlords.game.option.towerdefense.attributes.Range;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -20,6 +18,7 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.ArmorStandTrait;
 import net.citizensnpcs.trait.Gravity;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -88,8 +87,7 @@ public abstract class AbstractTower {
     protected WarlordsTower warlordsTower;
     protected NPC npc;
     protected Block[][][] blocks;
-    protected Team team; //TODO
-
+    protected Team team;
 
     protected AbstractTower(Game game, UUID owner, Location cornerLocation) {
         this.game = game;
@@ -106,7 +104,15 @@ public abstract class AbstractTower {
         this.topCenterLocation = cornerLocation.clone().add(xzOffset, getHeight() + .25, xzOffset);
         this.bottomCenterLocation = cornerLocation.clone().add(xzOffset, 0, xzOffset);
         this.npc = createNPC();
-        this.warlordsTower = new WarlordsTower(UUID.randomUUID(), getName(), npc.getEntity(), game, team, new TowerPlayerClass());
+        this.warlordsTower = new WarlordsTower(
+                this,
+                UUID.randomUUID(),
+                getName(),
+                npc.getEntity(),
+                game,
+                team,
+                new TowerPlayerClass(getTowerRegistry().name)
+        );
 
         build();
     }
@@ -151,27 +157,41 @@ public abstract class AbstractTower {
 
     public abstract TowerRegistry getTowerRegistry();
 
-
     public void whileActive(int ticksElapsed) {
-
+        activateAbilities();
     }
 
-    public void updateAttributes() {
-        if (this instanceof AttackSpeed attackSpeed) {
-            updateFloatModifiables(attackSpeed.getAttackSpeeds());
+    public void activateAbilities() {
+        if (!(warlordsTower.getSpec() instanceof TowerPlayerClass)) {
+            return;
         }
-        if (this instanceof Damage damage) {
-            updateFloatModifiables(damage.getDamages());
-        }
-        if (this instanceof Range range) {
-            updateFloatModifiables(range.getRanges());
-        }
+        warlordsTower.getAbilities().forEach(ability -> {
+            if (ability.getCooldownValue() != 0 && ability.getCurrentCooldown() != 0) {
+                return;
+            }
+            if (warlordsTower.getEnergy() < ability.getEnergyCostValue() * warlordsTower.getEnergyModifier()) {
+                return;
+            }
+            WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsTower, null, ability, -1);
+            Bukkit.getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
+            boolean shouldApplyCooldown = ability.onActivate(warlordsTower);
+            if (shouldApplyCooldown) {
+                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsTower, null, ability, -1);
+                Bukkit.getPluginManager().callEvent(post);
+
+                ability.addTimesUsed();
+                if (!warlordsTower.isDisableCooldowns()) {
+                    ability.setCurrentCooldown(ability.getCooldownValue());
+                }
+            }
+        });
     }
 
-    private void updateFloatModifiables(List<FloatModifiable> floatModifiables) {
-        for (FloatModifiable floatModifiable : floatModifiables) {
-            floatModifiable.tick();
-        }
+    public WarlordsTower getWarlordsTower() {
+        return warlordsTower;
     }
 
     public List<WarlordsNPC> getAllyMob(float range, int limit) {
@@ -205,8 +225,20 @@ public abstract class AbstractTower {
         return getEnemyMobs(null, range, limit);
     }
 
+    public List<WarlordsNPC> getEnemyMobs(FloatModifiable range, int limit) {
+        return getEnemyMobs(null, range, limit);
+    }
+
     public List<WarlordsNPC> getEnemyMobs(float range) {
         return getEnemyMobs(null, range, -1);
+    }
+
+    public List<WarlordsNPC> getEnemyMobs(FloatModifiable range) {
+        return getEnemyMobs(null, range, -1);
+    }
+
+    public List<WarlordsNPC> getEnemyMobs(@Nullable EnemyTargetPriority targetPriority, FloatModifiable range, int limit) {
+        return getEnemyMobs(targetPriority, range.getCalculatedValue(), limit);
     }
 
     public List<WarlordsNPC> getEnemyMobs(@Nullable EnemyTargetPriority targetPriority, float range, int limit) {
@@ -232,6 +264,10 @@ public abstract class AbstractTower {
         return getTowers(range, -1);
     }
 
+    public List<AbstractTower> getTowers(FloatModifiable range) {
+        return getTowers(range, -1);
+    }
+
     public List<AbstractTower> getTowers(float range, int limit) {
         Stream<AbstractTower> stream = towerDefenseOption
                 .getTowerBuildOption()
@@ -244,6 +280,10 @@ public abstract class AbstractTower {
             stream = stream.limit(limit);
         }
         return stream.collect(Collectors.toList());
+    }
+
+    public List<AbstractTower> getTowers(FloatModifiable range, int limit) {
+        return getTowers(range.getCalculatedValue(), limit);
     }
 
     public void remove() {
@@ -304,6 +344,10 @@ public abstract class AbstractTower {
 
     public Location getBottomCenterLocation() {
         return bottomCenterLocation;
+    }
+
+    public TowerDefenseOption getTowerDefenseOption() {
+        return towerDefenseOption;
     }
 
     public enum EnemyTargetPriority {
