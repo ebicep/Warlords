@@ -73,7 +73,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(-.3f); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 0, 0, 5);
+            super("Buff Towers", 0, 0, 5, 0);
         }
 
         @Override
@@ -105,7 +105,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
-            super("Strike Attack", 250, 250, 2);
+            super("Strike Attack", 250, 250, 2, 0);
         }
 
         @Override
