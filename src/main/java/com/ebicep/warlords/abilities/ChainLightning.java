@@ -32,6 +32,7 @@ import java.util.*;
 
 public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration {
 
+    public static final ItemStack CHAIN_LIGHTNING_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Aftershock",
@@ -163,7 +164,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
     @Override
     protected ItemStack getChainItem() {
-        return new ItemStack(Material.GRAY_STAINED_GLASS);
+        return CHAIN_LIGHTNING_ITEM;
     }
 
     private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {

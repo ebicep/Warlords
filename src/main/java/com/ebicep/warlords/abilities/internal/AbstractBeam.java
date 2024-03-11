@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -56,7 +57,7 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
         List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
         for (Location locationsToFireShot : locationsToFireShots) {
             Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
-            AbstractChain.spawnChain(shooter.getLocation(), location, getBeamItem());
+            EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
         }
         return super.onActivate(shooter);
     }
