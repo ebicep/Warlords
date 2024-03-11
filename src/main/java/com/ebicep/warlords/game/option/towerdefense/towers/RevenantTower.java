@@ -3,8 +3,11 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
@@ -18,22 +21,25 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-public class RevenantTower extends AbstractTower implements Upgradeable.Path2 {
+public class RevenantTower extends AbstractTower implements Upgradeable.Path2, Listener {
 
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
     private final SpawnTroops spawnTroops;
+    private final Set<WarlordsEntity> spawnedNearby = new HashSet<>();
 
 
     public RevenantTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
 
         warlordsTower.getAbilities().add(spawnTroops = new SpawnTroops(this));
+
+        game.registerEvents(this);
 
         TowerUpgradeInstance.Damage upgradeDamage1 = new TowerUpgradeInstance.Damage(25);
         TowerUpgradeInstance.Damage upgradeDamage2 = new TowerUpgradeInstance.Damage(25);
@@ -74,9 +80,29 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2 {
         });
     }
 
+    @EventHandler
+    public void onMobSpawn(WarlordsMobSpawnEvent event) {
+        AbstractMob mob = event.getMob();
+        if (mob instanceof TDTowerRevenant) {
+            return;
+        }
+        TowerDefenseOption.TowerDefenseMobData data = towerDefenseOption.getMobsMap().get(mob);
+        if (data instanceof TowerDefenseOption.TowerDefenseDefendingMobData && mob.getWarlordsNPC().getTeam() == team) {
+            spawnedNearby.add(mob.getWarlordsNPC());
+        }
+    }
+
+    @EventHandler
+    public void onMobKill(WarlordsDeathEvent event) {
+        WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+        if (spawnedNearby.remove(warlordsEntity)) {
+            spawnTroops.setCurrentCooldown(0);
+        }
+    }
+
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.AVENGER_TOWER;
+        return TowerRegistry.REVENANT_TOWER;
     }
 
     @Override
@@ -102,7 +128,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2 {
         private int maxSpawnCount = 2;
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", 0, 0, 5, 0);
+            super("Spawn Troops", 0, 0, Float.MAX_VALUE, 0, false);
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(
                     tower.getBottomCenterLocation().clone().add(0, -1, 0),
                     range.getCalculatedValue(),
@@ -159,12 +185,12 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2 {
         public TDTowerRevenant(Location spawnLocation) {
             this(
                     spawnLocation,
-                    "Avenger",
-                    1000,
+                    "Revenant",
+                    250,
                     .3f,
                     0,
-                    100,
-                    100
+                    25,
+                    25
             );
         }
 

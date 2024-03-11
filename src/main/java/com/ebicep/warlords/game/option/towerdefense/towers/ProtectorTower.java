@@ -158,11 +158,11 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
             this(
                     spawnLocation,
                     "Protector",
-                    1000,
+                    1500,
                     .3f,
                     0,
-                    100,
-                    100
+                    50,
+                    50
             );
         }
 

@@ -27,6 +27,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import javax.annotation.Nullable;
@@ -300,6 +302,9 @@ public abstract class AbstractTower {
         npc.destroy();
         game.getPlayers().remove(warlordsTower.getUuid());
         Warlords.removePlayer(warlordsTower.getUuid());
+        if (this instanceof Listener listener) {
+            HandlerList.unregisterAll(listener);
+        }
     }
 
     /**

@@ -100,6 +100,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
+                // TODO spread priority
                 warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 1).forEach(target -> attack(warlordsTower, target));
             }
             return true;
