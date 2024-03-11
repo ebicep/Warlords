@@ -33,6 +33,7 @@ public enum TowerRegistry {
     PROTECTOR_TOWER(ProtectorTower::new, Material.GREEN_CONCRETE_POWDER, "Protector Tower", "Protects."),
     BERSERKER_TOWER(BerserkerTower::new, Material.RED_CONCRETE, "Berserker Tower", "Grr."),
     DEFENDER_TOWER(DefenderTower::new, Material.YELLOW_CONCRETE, "Defender Tower", "Stand."),
+    REVENANT_TOWER(RevenantTower::new, Material.GREEN_CONCRETE, "Revenant Tower", "Raise the undead."),
     BIG_BOY(BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;
