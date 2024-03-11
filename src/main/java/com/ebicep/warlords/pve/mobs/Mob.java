@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDSkeleton;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDZombie;
 import com.ebicep.warlords.game.option.towerdefense.towers.AvengerTower;
+import com.ebicep.warlords.game.option.towerdefense.towers.DefenderTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.ProtectorTower;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
@@ -811,6 +812,7 @@ public enum Mob {
 
     TD_TOWER_AVENGER(EntityType.ZOMBIE, AvengerTower.TDTowerAvenger.class, AvengerTower.TDTowerAvenger::new, AvengerTower.TDTowerAvenger::new, null),
     TD_TOWER_PROTECTOR(EntityType.ZOMBIE, ProtectorTower.TDTowerProtector.class, ProtectorTower.TDTowerProtector::new, ProtectorTower.TDTowerProtector::new, null),
+    TD_TOWER_DEFENDER(EntityType.ZOMBIE, DefenderTower.TDTowerDefender.class, DefenderTower.TDTowerDefender::new, DefenderTower.TDTowerDefender::new, null),
 
 
     ;

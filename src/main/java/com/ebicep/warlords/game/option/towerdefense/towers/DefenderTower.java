@@ -1,6 +1,7 @@
+
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.ProtectorsStrike;
+import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.game.Game;
@@ -24,13 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
+public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
 
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
     private final SpawnTroops spawnTroops;
 
 
-    public ProtectorTower(Game game, UUID owner, Location location) {
+    public DefenderTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
 
         warlordsTower.getAbilities().add(spawnTroops = new SpawnTroops(this));
@@ -48,21 +49,21 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
             public void onUpgrade() {
             }
         });
-        upgrades.add(new TowerUpgrade("Gain a Troop", new TowerUpgradeInstance() {
+        upgrades.add(new TowerUpgrade("Increased Defense", new TowerUpgradeInstance() {
             @Override
             public Component getDescription() {
-                return ComponentBuilder.create("+1 Troop").build();
+                return ComponentBuilder.create("+10% Damage Resistance").build();
             }
         }) {
             @Override
             public void onUpgrade() {
-                spawnTroops.setMaxSpawnCount(spawnTroops.getMaxSpawnCount() + 1);
+                spawnTroops.setPveMasterUpgrade(true);
             }
         });
-        upgrades.add(new TowerUpgrade("Magic Resistance", new TowerUpgradeInstance() {
+        upgrades.add(new TowerUpgrade("Increased Health", new TowerUpgradeInstance() {
             @Override
             public Component getDescription() {
-                return ComponentBuilder.create("Troops spawned gain magic resistance").build();
+                return ComponentBuilder.create("+10% More Health").build();
             }
         }) {
             @Override
@@ -74,7 +75,7 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.PROTECTOR_TOWER;
+        return TowerRegistry.DEFENDER_TOWER;
     }
 
     @Override
@@ -97,7 +98,6 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
         private final List<LocationUtils.LocationXYZ> mobSpawnLocations;
         private final List<TowerDefenseTowerMob> spawnedMobs = new ArrayList<>();
         private final FloatModifiable range = new FloatModifiable(30);
-        private int maxSpawnCount = 1;
 
         public SpawnTroops(AbstractTower tower) {
             super("Spawn Troops", 0, 0, 5, 0);
@@ -112,14 +112,16 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 spawnedMobs.removeIf(mob -> mob.getWarlordsNPC() != null && mob.getWarlordsNPC().isDead());
-                if (spawnedMobs.size() >= maxSpawnCount) {
+                if (spawnedMobs.size() > 0) {
                     return true;
                 }
                 AbstractTower tower = warlordsTower.getTower();
-                AbstractMob mob = Mob.TD_TOWER_PROTECTOR.createMob(getSpawnLocation(tower));
+                AbstractMob mob = Mob.TD_TOWER_DEFENDER.createMob(getSpawnLocation(tower));
                 spawnedMobs.add((TowerDefenseTowerMob) mob);
-                if (pveMasterUpgrade2) {
-                    ((TDTowerProtector) mob).magicResistance = true;
+                if (pveMasterUpgrade) {
+                    ((TDTowerDefender) mob).increasedResistance = true;
+                } else if (pveMasterUpgrade2) {
+                    ((TDTowerDefender) mob).increasedHealth = true;
                 }
                 tower.getTowerDefenseOption().spawnNewMob(mob, warlordsTower);
             }
@@ -141,23 +143,17 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
-        public int getMaxSpawnCount() {
-            return maxSpawnCount;
-        }
-
-        public void setMaxSpawnCount(int maxSpawnCount) {
-            this.maxSpawnCount = maxSpawnCount;
-        }
     }
 
-    public static class TDTowerProtector extends TowerDefenseTowerMob {
+    public static class TDTowerDefender extends TowerDefenseTowerMob {
 
-        private boolean magicResistance;
+        private boolean increasedResistance;
+        private boolean increasedHealth;
 
-        public TDTowerProtector(Location spawnLocation) {
+        public TDTowerDefender(Location spawnLocation) {
             this(
                     spawnLocation,
-                    "Protector",
+                    "Defender",
                     1000,
                     .3f,
                     0,
@@ -166,7 +162,7 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
             );
         }
 
-        public TDTowerProtector(
+        public TDTowerDefender(
                 Location spawnLocation,
                 String name,
                 int maxHealth,
@@ -183,19 +179,24 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
                     damageResistance,
                     minMeleeDamage,
                     maxMeleeDamage,
-                    new ProtectorsStrike()
+                    new AvengersStrike()
             );
         }
 
         @Override
         public Mob getMobRegistry() {
-            return Mob.TD_TOWER_PROTECTOR;
+            return Mob.TD_TOWER_DEFENDER;
         }
 
         @Override
         public void onSpawn(PveOption option) {
             super.onSpawn(option);
-            //TODO
+            if (increasedResistance) {
+                warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
+            }
+            if (increasedHealth) {
+                warlordsNPC.getHealth().addMultiplicativeModifierAdd("Increased Health", .1f);
+            }
         }
 
     }

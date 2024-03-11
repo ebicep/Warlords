@@ -31,7 +31,8 @@ public enum TowerRegistry {
     AVENGER_TOWER(AvengerTower::new, Material.RED_CONCRETE_POWDER, "Avenger Tower", "Strike."),
     CRUSADER_TOWER(CrusaderTower::new, Material.YELLOW_CONCRETE_POWDER, "Crusader Tower", "Buffer."),
     PROTECTOR_TOWER(ProtectorTower::new, Material.GREEN_CONCRETE_POWDER, "Protector Tower", "Protects."),
-    BERSERKER_TOWER(BerserkerTower::new, Material.RED_CONCRETE_POWDER, "Berserker Tower", "Grr."),
+    BERSERKER_TOWER(BerserkerTower::new, Material.RED_CONCRETE, "Berserker Tower", "Grr."),
+    DEFENDER_TOWER(DefenderTower::new, Material.YELLOW_CONCRETE, "Defender Tower", "Stand."),
     BIG_BOY(BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;
