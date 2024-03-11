@@ -1,9 +1,8 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.AvengersStrike;
+import com.ebicep.warlords.abilities.ProtectorsStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
@@ -12,7 +11,6 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -26,13 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
+public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
 
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
     private final SpawnTroops spawnTroops;
 
 
-    public AvengerTower(Game game, UUID owner, Location location) {
+    public ProtectorTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
 
         warlordsTower.getAbilities().add(spawnTroops = new SpawnTroops(this));
@@ -50,21 +48,21 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
             public void onUpgrade() {
             }
         });
-        upgrades.add(new TowerUpgrade("Strike Multiple Enemies", new TowerUpgradeInstance() {
+        upgrades.add(new TowerUpgrade("Gain a Troop", new TowerUpgradeInstance() {
             @Override
             public Component getDescription() {
-                return ComponentBuilder.create("+1 Enemy Struck").build();
+                return ComponentBuilder.create("+1 Troop").build();
             }
         }) {
             @Override
             public void onUpgrade() {
-                spawnTroops.setPveMasterUpgrade(true);
+                spawnTroops.setMaxSpawnCount(spawnTroops.getMaxSpawnCount() + 1);
             }
         });
-        upgrades.add(new TowerUpgrade("True Damage", new TowerUpgradeInstance() {
+        upgrades.add(new TowerUpgrade("Magic Resistance", new TowerUpgradeInstance() {
             @Override
             public Component getDescription() {
-                return ComponentBuilder.create("Strikes now deal true damage").build();
+                return ComponentBuilder.create("Troops spawned gain magic resistance").build();
             }
         }) {
             @Override
@@ -76,7 +74,7 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.AVENGER_TOWER;
+        return TowerRegistry.PROTECTOR_TOWER;
     }
 
     @Override
@@ -99,6 +97,7 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
         private final List<LocationUtils.LocationXYZ> mobSpawnLocations;
         private final List<TowerDefenseTowerMob> spawnedMobs = new ArrayList<>();
         private final FloatModifiable range = new FloatModifiable(30);
+        private int maxSpawnCount = 1;
 
         public SpawnTroops(AbstractTower tower) {
             super("Spawn Troops", 0, 0, 5, 0);
@@ -113,16 +112,14 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 spawnedMobs.removeIf(mob -> mob.getWarlordsNPC() != null && mob.getWarlordsNPC().isDead());
-                if (spawnedMobs.size() > 0) {
+                if (spawnedMobs.size() >= maxSpawnCount) {
                     return true;
                 }
                 AbstractTower tower = warlordsTower.getTower();
                 AbstractMob mob = Mob.TD_TOWER_AVENGER.createMob(getSpawnLocation(tower));
                 spawnedMobs.add((TowerDefenseTowerMob) mob);
-                if (pveMasterUpgrade) {
-                    ((TDTowerAvenger) mob).strikeAmount++;
-                } else if (pveMasterUpgrade2) {
-                    ((TDTowerAvenger) mob).trueDamage = true;
+                if (pveMasterUpgrade2) {
+                    ((TDTowerProtector) mob).magicResistance = true;
                 }
                 tower.getTowerDefenseOption().spawnNewMob(mob, warlordsTower);
             }
@@ -144,17 +141,23 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        public int getMaxSpawnCount() {
+            return maxSpawnCount;
+        }
+
+        public void setMaxSpawnCount(int maxSpawnCount) {
+            this.maxSpawnCount = maxSpawnCount;
+        }
     }
 
-    public static class TDTowerAvenger extends TowerDefenseTowerMob {
+    public static class TDTowerProtector extends TowerDefenseTowerMob {
 
-        private int strikeAmount = 1;
-        private boolean trueDamage = false;
+        private boolean magicResistance;
 
-        public TDTowerAvenger(Location spawnLocation) {
+        public TDTowerProtector(Location spawnLocation) {
             this(
                     spawnLocation,
-                    "Avenger",
+                    "Protector",
                     1000,
                     .3f,
                     0,
@@ -163,7 +166,7 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
             );
         }
 
-        public TDTowerAvenger(
+        public TDTowerProtector(
                 Location spawnLocation,
                 String name,
                 int maxHealth,
@@ -180,29 +183,21 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
                     damageResistance,
                     minMeleeDamage,
                     maxMeleeDamage,
-                    new AvengersStrike()
+                    new ProtectorsStrike()
             );
         }
 
         @Override
         public Mob getMobRegistry() {
-            return Mob.TD_TOWER_AVENGER;
+            return Mob.TD_TOWER_PROTECTOR;
         }
 
         @Override
         public void onSpawn(PveOption option) {
             super.onSpawn(option);
-            warlordsNPC.getAbilitiesMatching(AvengersStrike.class).forEach(avengersStrike -> {
-                // TODO
-            });
+            //TODO
         }
 
-        @Override
-        public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-            if (trueDamage) {
-                event.getFlags().add(InstanceFlags.TRUE_DAMAGE);
-            }
-        }
     }
 
 }
