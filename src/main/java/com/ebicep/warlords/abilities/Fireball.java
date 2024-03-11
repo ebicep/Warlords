@@ -233,12 +233,6 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         return 1;
     }
 
-    @Override
-    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
-        splashRadius.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
     public int getMaxFullDistance() {
         return maxFullDistance;
     }

@@ -208,12 +208,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         return 1;
     }
 
-    @Override
-    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
-        splashRadius.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
     private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removeCooldown(WaterBolt.class, false);
         hit.getCooldownManager().addCooldown(new RegularCooldown<>(

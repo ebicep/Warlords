@@ -25,7 +25,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -231,12 +230,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
     public void setSpeedBuff(int speedBuff) {
         this.speedBuff = speedBuff;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     @Override

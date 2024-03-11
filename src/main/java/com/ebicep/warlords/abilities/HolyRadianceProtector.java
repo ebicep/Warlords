@@ -21,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -209,12 +208,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                     }
                 })
         );
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        super.runEveryTick(warlordsEntity);
-        markRadius.tick();
     }
 
     public FloatModifiable getMarkRadius() {

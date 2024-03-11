@@ -20,7 +20,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -152,12 +151,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
     @Nonnull
     public abstract String getStrikeName();
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitBox.tick();
-        super.runEveryTick(warlordsEntity);
-    }
 
     public void addStrikesBoosted() {
         strikesBoosted++;

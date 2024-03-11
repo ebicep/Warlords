@@ -18,7 +18,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -104,12 +103,6 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     }
 
     public abstract boolean chain(WarlordsEntity wp);
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
-    }
 
     @Override
     public FloatModifiable getHitBoxRadius() {

@@ -279,12 +279,6 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         return playersHit;
     }
 
-    @Override
-    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
-        splash.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
     public int getMaxFullDistance() {
         return maxFullDistance;
     }

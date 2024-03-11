@@ -412,6 +412,12 @@ public abstract class AbstractAbility implements AbilityIcon {
         maxDamageHeal.tick();
         cooldown.tick();
         energyCost.tick();
+        if (this instanceof HitBox hitBox) {
+            hitBox.getHitBoxRadius().tick();
+        }
+        if (this instanceof Splash splash) {
+            splash.getSplashRadius().tick();
+        }
         if (getCooldownValue() > 0) {
             subtractCurrentCooldownForce(.05f);
         }

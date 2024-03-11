@@ -15,7 +15,6 @@ import org.bukkit.Particle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,12 +54,6 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     protected abstract void playSoundAndEffect(Location location);
 
     protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer);
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitbox.tick();
-        super.runEveryTick(warlordsEntity);
-    }
 
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
         final Location loc = kbTarget.getLocation();
