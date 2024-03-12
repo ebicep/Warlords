@@ -504,9 +504,8 @@ public class WarlordsEvents implements Listener {
         List<AbstractAbility> abilities = wp.getAbilities();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
             if (databasePlayer.getHotkeyMode() == Settings.HotkeyMode.NEW_MODE) {
-                if (1 <= slot && slot <= 4 && slot <= abilities.size()) {
+                if (1 <= slot && slot <= 4 && slot < abilities.size()) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
-                    e.setCancelled(true);
                 } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                     AbstractWeapon weapon = warlordsPlayer.getWeapon();
                     if (weapon instanceof AbstractLegendaryWeapon) {
