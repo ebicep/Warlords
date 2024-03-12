@@ -3,10 +3,8 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.game.option.Option;
-import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -14,15 +12,22 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -119,18 +124,40 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            int range = 30;
-            for (Option option : warlordsEntity.getGame().getOptions()) {
-                if (option instanceof TowerBuildOption towerBuildOption) {
-                    System.out.println(towerBuildOption
-                            .getBuiltTowers()
-                            .keySet()
-                            .stream()
-                            .filter(tower -> tower.getBottomCenterLocation().distanceSquared(player.getLocation()) <= range * range)
-                            .collect(Collectors.toList()));
+
+            BlockDisplay display = player.getWorld().spawn(player.getLocation(), BlockDisplay.class, d -> {
+                d.setBlock(Material.ICE.createBlockData());
+                BoundingBox boundingBox = player.getBoundingBox();
+                double x = boundingBox.getMaxX() - boundingBox.getMinX();
+                double y = boundingBox.getMaxY() - boundingBox.getMinY();
+                double z = boundingBox.getMaxZ() - boundingBox.getMinZ();
+                double height = player.getHeight();
+                System.out.println(height);
+                d.setTransformation(new Transformation(
+                                new Vector3f(),
+                                new AxisAngle4f(),
+                                new Vector3f((float) x, (float) y, (float) z),
+                                new AxisAngle4f()
+                        )
+                );
+                d.setTeleportDuration(0);
+            });
+            new BukkitRunnable() {
+                int counter = 0;
+
+                @Override
+                public void run() {
+                    Location location = new LocationBuilder(player.getLocation())
+                            .yaw(0)
+                            .pitch(0)
+                            .right(.5f)
+                            .backward(.5f);
+                    display.teleport(location);
+                    if (counter++ > 5 * 20) {
+                        display.remove();
+                    }
                 }
-            }
+            }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
 //            LocationBuilder location = new LocationBuilder(player.getLocation());
 //            location.setYaw(location.getYaw() - 90);
