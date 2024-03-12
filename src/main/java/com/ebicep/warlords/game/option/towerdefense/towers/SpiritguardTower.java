@@ -111,7 +111,7 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
         }
 
         private void attack(WarlordsTower warlordsTower, WarlordsEntity target) {
-            EffectUtils.playChainAnimation(warlordsTower, target, SpiritLink.CHAIN_ITEM, 9);
+            EffectUtils.playChainAnimation(warlordsTower, target, SpiritLink.CHAIN_ITEM, 3);
             target.addDamageInstance(
                     warlordsTower,
                     name,
