@@ -47,7 +47,9 @@ public interface Upgradeable {
         TowerUpgrade upgrade = upgrades.get(i);
         float cost = upgrade.getCost();
         Material material = Material.RED_STAINED_GLASS_PANE;
-        if (upgrade.isUnlocked()) {
+        if (tower.isUpgradeLocked(upgrades, i)) {
+            material = Material.GRAY_STAINED_GLASS_PANE;
+        } else if (upgrade.isUnlocked()) {
             material = Material.LIME_STAINED_GLASS_PANE;
         } else if (tower.isPreviousUnlocked(upgrades, i) && warlordsEntity != null && warlordsEntity.getCurrency() > cost) {
             material = Material.ORANGE_STAINED_GLASS_PANE;
@@ -72,6 +74,8 @@ public interface Upgradeable {
 
     boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index);
 
+    boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index);
+
     @Nonnull
     private static <T extends AbstractTower & Upgradeable> BiConsumer<Menu, InventoryClickEvent> onUpgrade(
             Player player,
@@ -82,6 +86,14 @@ public interface Upgradeable {
     ) {
         return (m, e) -> {
             int index = upgrades.indexOf(upgrade);
+            if (upgrade.isUnlocked()) {
+                UpgradeResult.ALREADY_UNLOCKED.onResult(player);
+                return;
+            }
+            if (tower.isUpgradeLocked(upgrades, index)) {
+                UpgradeResult.LOCKED.onResult(player);
+                return;
+            }
             if (upgrade.getCost() > 0) { // TODO
                 UpgradeResult.INSUFFICIENT_FUNDS.onResult(player);
                 return;
@@ -99,6 +111,7 @@ public interface Upgradeable {
             upgrade.upgrade();
             Bukkit.getPluginManager().callEvent(new TowerUpgradeEvent(tower));
             TowerDefenseMenu.openTowerMenu(player, warlordsEntity, tower);
+            UpgradeResult.SUCCESS.onResult(player);
         };
     }
 
@@ -114,11 +127,13 @@ public interface Upgradeable {
         SUCCESS,
         INSUFFICIENT_FUNDS,
         MISSING_REQUIREMENTS,
+        ALREADY_UNLOCKED,
+        LOCKED,
+
         ;
 
         public void onResult(Player player) {
-            player.sendMessage("Upgrade result: " + this);
-            player.closeInventory();
+            player.sendMessage(Component.text("Upgrade Result: " + this, NamedTextColor.GOLD));
         }
     }
 
@@ -132,6 +147,19 @@ public interface Upgradeable {
         int MAX_UPGRADES = 3;
 
         @Override
+        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
+            if (index == 0) {
+                return true;
+            }
+            return upgrades.get(index - 1).isUnlocked();
+        }
+
+        @Override
+        default boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index) {
+            return false;
+        }
+
+        @Override
         default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, WarlordsEntity warlordsEntity, T tower) {
             List<TowerUpgrade> upgrades = getUpgrades();
             if (upgrades.size() > MAX_UPGRADES) {
@@ -141,14 +169,6 @@ public interface Upgradeable {
             for (int i = 0; i < upgrades.size(); i++) {
                 Upgradeable.addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, i, 5 + i, 2);
             }
-        }
-
-        @Override
-        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
-            if (index == 0) {
-                return true;
-            }
-            return upgrades.get(index - 1).isUnlocked();
         }
 
     }
@@ -163,6 +183,28 @@ public interface Upgradeable {
         int MAX_UPGRADES = 4;
 
         @Override
+        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
+            if (index == 0) {
+                return true;
+            }
+            if (index == 3) {
+                return upgrades.get(1).isUnlocked();
+            }
+            return upgrades.get(index - 1).isUnlocked();
+        }
+
+        @Override
+        default boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index) {
+            if (index == 2) {
+                return upgrades.get(3).isUnlocked();
+            }
+            if (index == 3) {
+                return upgrades.get(2).isUnlocked();
+            }
+            return false;
+        }
+
+        @Override
         default <T extends AbstractTower & Upgradeable> void addToMenu(Menu menu, Player player, WarlordsEntity warlordsEntity, T tower) {
             List<TowerUpgrade> upgrades = getUpgrades();
             if (upgrades.size() > MAX_UPGRADES) {
@@ -173,17 +215,6 @@ public interface Upgradeable {
             addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 1, 6, 2);
             addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 2, 7, 1);
             addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 3, 7, 3);
-        }
-
-        @Override
-        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
-            if (index == 0) {
-                return true;
-            }
-            if (index == 3) {
-                return upgrades.get(1).isUnlocked();
-            }
-            return upgrades.get(index - 1).isUnlocked();
         }
 
     }

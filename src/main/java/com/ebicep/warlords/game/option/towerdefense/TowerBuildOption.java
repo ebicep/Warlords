@@ -354,6 +354,9 @@ public class TowerBuildOption implements Option, Listener {
         TowerRegistry[] values = TowerRegistry.values();
         for (int i = 0; i < values.length; i++) {
             TowerRegistry tower = values[i];
+            if (tower.baseTowerData == null) {
+                continue;
+            }
             int size = tower.getSize();
             menu.setItem(i + 1, 1,
                     new ItemBuilder(tower.material)

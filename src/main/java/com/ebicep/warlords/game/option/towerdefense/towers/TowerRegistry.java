@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
@@ -57,20 +58,35 @@ public enum TowerRegistry {
                 continue;
             }
             SignSide side = sign.getSide(Side.FRONT);
-            if (!(side.line(0) instanceof TextComponent towerName) || !(side.line(1) instanceof TextComponent upgradeIndexText)) {
+            if (!(side.line(0) instanceof TextComponent towerName)) {
                 continue;
-            }
-            Integer upgradeIndex = null;
-            try {
-                upgradeIndex = Integer.parseInt(upgradeIndexText.content());
-            } catch (NumberFormatException ignored) {
-
             }
             for (TowerRegistry tower : values) {
                 if (tower.name().equals(towerName.content())) {
-                    updateTowerCache(sign.getLocation().add(1, 0, 1), tower, upgradeIndex);
+                    updateTowerCache(sign.getLocation().add(1, 0, 1), tower, null);
                     updated.add(tower);
                     values.remove(tower);
+
+                    int size = tower.getSize();
+                    for (int j = 0; j < 6; j++) {
+                        block = block.getRelative(BlockFace.SOUTH, size + 2);
+                        if (!(block.getState() instanceof Sign forwardSign)) {
+                            continue;
+                        }
+                        SignSide forwardSide = forwardSign.getSide(Side.FRONT);
+                        if (!(forwardSide.line(1) instanceof TextComponent upgradeIndexText)) {
+                            continue;
+                        }
+                        Integer upgradeIndex = null;
+                        try {
+                            upgradeIndex = Integer.parseInt(upgradeIndexText.content());
+                        } catch (NumberFormatException ignored) {
+                        }
+                        if (upgradeIndex == null) {
+                            continue;
+                        }
+                        updateTowerCache(forwardSign.getLocation().add(1, 0, 1), tower, upgradeIndex);
+                    }
                     break;
                 }
             }
