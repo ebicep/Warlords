@@ -813,6 +813,7 @@ public enum Mob {
     TD_TOWER_DEFENDER(EntityType.ZOMBIE, DefenderTower.TDTowerDefender.class, DefenderTower.TDTowerDefender::new, DefenderTower.TDTowerDefender::new, null),
     TD_TOWER_REVENANT(EntityType.ZOMBIE, RevenantTower.TDTowerRevenant.class, RevenantTower.TDTowerRevenant::new, RevenantTower.TDTowerRevenant::new, null),
     TD_TOWER_SPIRITGUARD(EntityType.ALLAY, SpiritguardTower.TDTowerSpiritguard.class, SpiritguardTower.TDTowerSpiritguard::new, SpiritguardTower.TDTowerSpiritguard::new, null),
+    TD_TOWER_EARTHWARDEN(EntityType.ZOMBIE, EarthwardenTower.TDTowerEarthwarden.class, EarthwardenTower.TDTowerEarthwarden::new, EarthwardenTower.TDTowerEarthwarden::new, null),
 
 
     ;

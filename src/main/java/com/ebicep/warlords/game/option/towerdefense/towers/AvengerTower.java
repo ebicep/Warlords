@@ -175,8 +175,7 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
                     walkSpeed,
                     damageResistance,
                     minMeleeDamage,
-                    maxMeleeDamage,
-                    new AvengersStrike()
+                    maxMeleeDamage
             );
         }
 

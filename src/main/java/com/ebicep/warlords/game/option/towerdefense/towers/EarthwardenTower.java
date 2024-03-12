@@ -1,16 +1,17 @@
-
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -24,16 +25,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
+public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2 {
 
     private final List<TowerUpgrade> upgrades = new ArrayList<>();
-    private final SpawnTroops spawnTroops;
+    private final SpikeAttack spikeAttack = new SpikeAttack();
+    private SpawnTroops spawnTroops;
 
-
-    public DefenderTower(Game game, UUID owner, Location location) {
+    public EarthwardenTower(Game game, UUID owner, Location location) {
         super(game, owner, location);
 
-        warlordsTower.getAbilities().add(spawnTroops = new SpawnTroops(this));
+        warlordsTower.getAbilities().add(spikeAttack);
 
         TowerUpgradeInstance.Damage upgradeDamage1 = new TowerUpgradeInstance.Damage(25);
         TowerUpgradeInstance.Damage upgradeDamage2 = new TowerUpgradeInstance.Damage(25);
@@ -41,25 +42,16 @@ public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
         upgrades.add(new TowerUpgrade("Upgrade 1", upgradeDamage1) {
             @Override
             public void onUpgrade() {
+//                flameDamage.addAdditiveModifier(name, upgradeDamage1.getValue());
             }
         });
         upgrades.add(new TowerUpgrade("Upgrade 2", upgradeDamage2) {
             @Override
             public void onUpgrade() {
+//                flameDamage.addAdditiveModifier(name, upgradeDamage2.getValue());
             }
         });
-        upgrades.add(new TowerUpgrade("Increased Defense", new TowerUpgradeInstance() {
-            @Override
-            public Component getDescription() {
-                return ComponentBuilder.create("+10% Damage Resistance").build();
-            }
-        }) {
-            @Override
-            public void onUpgrade() {
-                spawnTroops.setPveMasterUpgrade(true);
-            }
-        });
-        upgrades.add(new TowerUpgrade("Increased Health", new TowerUpgradeInstance() {
+        upgrades.add(new TowerUpgrade("Attacks Slow Enemies", new TowerUpgradeInstance() {
             @Override
             public Component getDescription() {
                 return ComponentBuilder.create("+10% More Health").build();
@@ -67,30 +59,79 @@ public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
         }) {
             @Override
             protected void onUpgrade() {
-                spawnTroops.setPveMasterUpgrade2(true);
+                spikeAttack.setPveMasterUpgrade2(true);
+            }
+        });
+        upgrades.add(new TowerUpgrade("Powerful Mob", new TowerUpgradeInstance() {
+            @Override
+            public Component getDescription() {
+                return ComponentBuilder.create("?!?!!?").build();
+            }
+        }) {
+            @Override
+            protected void onUpgrade() {
+                warlordsTower.getAbilities().add(spawnTroops = new SpawnTroops(EarthwardenTower.this));
             }
         });
     }
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.DEFENDER_TOWER;
+        return TowerRegistry.EARTHWARDEN_TOWER;
     }
 
     @Override
     public void whileActive(int ticksElapsed) {
         super.whileActive(ticksElapsed);
         if (ticksElapsed % 5 == 0) {
-//            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, centerLocation, 5, .5, .1, .5, 2);
         }
     }
-
 
     @Override
     public List<TowerUpgrade> getUpgrades() {
         return upgrades;
     }
 
+    private static class SpikeAttack extends AbstractAbility implements HitBox {
+
+        private static final int SLOW_TICKS = 20;
+        private final FloatModifiable range = new FloatModifiable(30);
+
+        public SpikeAttack() {
+            super("Spike Attack", 350, 350, 6, 0);
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            if (wp instanceof WarlordsTower warlordsTower) {
+                warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 3)
+                             .forEach(target -> attack(warlordsTower, target));
+            }
+            return true;
+        }
+
+        private void attack(WarlordsTower warlordsTower, WarlordsEntity target) {
+            EffectUtils.playChainAnimation(warlordsTower, target, ChainLightning.CHAIN_ITEM, 3);
+            target.addDamageInstance(
+                    warlordsTower,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier,
+                    InstanceFlags.TD_PHYSICAL
+            );
+            if (pveMasterUpgrade) {
+                target.addSpeedModifier(warlordsTower, name, -20, SLOW_TICKS);
+            }
+        }
+
+        @Override
+        public FloatModifiable getHitBoxRadius() {
+            return range;
+        }
+
+    }
 
     private static class SpawnTroops extends AbstractAbility implements Spawner, HitBox {
 
@@ -111,13 +152,8 @@ public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
                     return true;
                 }
                 AbstractTower tower = warlordsTower.getTower();
-                AbstractMob mob = Mob.TD_TOWER_DEFENDER.createMob(getSpawnLocation(tower));
+                AbstractMob mob = Mob.TD_TOWER_EARTHWARDEN.createMob(getSpawnLocation(tower));
                 spawnedMobs.add((TowerDefenseTowerMob) mob);
-                if (pveMasterUpgrade) {
-                    ((TDTowerDefender) mob).increasedResistance = true;
-                } else if (pveMasterUpgrade2) {
-                    ((TDTowerDefender) mob).increasedHealth = true;
-                }
                 tower.getTowerDefenseOption().spawnNewMob(mob, warlordsTower);
             }
             return true;
@@ -140,24 +176,21 @@ public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
 
     }
 
-    public static class TDTowerDefender extends TowerDefenseTowerMob {
+    public static class TDTowerEarthwarden extends TowerDefenseTowerMob {
 
-        private boolean increasedResistance;
-        private boolean increasedHealth;
-
-        public TDTowerDefender(Location spawnLocation) {
+        public TDTowerEarthwarden(Location spawnLocation) {
             this(
                     spawnLocation,
-                    "Defender",
+                    "Earthwarden",
                     2000,
                     .3f,
                     0,
-                    25,
-                    25
+                    250,
+                    250
             );
         }
 
-        public TDTowerDefender(
+        public TDTowerEarthwarden(
                 Location spawnLocation,
                 String name,
                 int maxHealth,
@@ -179,20 +212,7 @@ public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
 
         @Override
         public Mob getMobRegistry() {
-            return Mob.TD_TOWER_DEFENDER;
+            return Mob.TD_TOWER_EARTHWARDEN;
         }
-
-        @Override
-        public void onSpawn(PveOption option) {
-            super.onSpawn(option);
-            if (increasedResistance) {
-                warlordsNPC.setDamageResistance(warlordsNPC.getSpec().getDamageResistance() + 10);
-            }
-            if (increasedHealth) {
-                warlordsNPC.getHealth().addMultiplicativeModifierAdd("Increased Health", .1f);
-            }
-        }
-
     }
-
 }

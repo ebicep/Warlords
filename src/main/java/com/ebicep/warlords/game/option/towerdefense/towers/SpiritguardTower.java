@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.SpiritLink;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
@@ -205,8 +204,7 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
                     walkSpeed,
                     damageResistance,
                     minMeleeDamage,
-                    maxMeleeDamage,
-                    new AvengersStrike()
+                    maxMeleeDamage
             );
         }
 

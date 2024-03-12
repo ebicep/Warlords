@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
@@ -206,8 +205,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
                     walkSpeed,
                     damageResistance,
                     minMeleeDamage,
-                    maxMeleeDamage,
-                    new AvengersStrike()
+                    maxMeleeDamage
             );
         }
 
