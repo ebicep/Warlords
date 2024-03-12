@@ -72,7 +72,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.PYRO_TOWER;
+        return TowerRegistry.PYROMANCER_TOWER;
     }
 
     @Override

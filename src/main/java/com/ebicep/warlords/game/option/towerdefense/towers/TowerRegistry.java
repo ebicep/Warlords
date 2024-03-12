@@ -26,17 +26,17 @@ import java.util.function.Predicate;
 
 public enum TowerRegistry {
 
-    PYRO_TOWER(PyromancerTower::new, Material.FIRE_CHARGE, "Pyromancer Tower", "Fire."),
-    CRYO_TOWER(CryomancerTower::new, Material.SNOWBALL, "Cryomancer Tower", "Slow it down."),
-    AQUA_TOWER(AquamancerTower::new, Material.WATER_BUCKET, "Aquamancer Tower", "Very wet."),
-    AVENGER_TOWER(AvengerTower::new, Material.RED_CONCRETE_POWDER, "Avenger Tower", "Strike."),
-    CRUSADER_TOWER(CrusaderTower::new, Material.YELLOW_CONCRETE_POWDER, "Crusader Tower", "Buffer."),
-    PROTECTOR_TOWER(ProtectorTower::new, Material.GREEN_CONCRETE_POWDER, "Protector Tower", "Protects."),
-    BERSERKER_TOWER(BerserkerTower::new, Material.RED_CONCRETE, "Berserker Tower", "Grr."),
-    DEFENDER_TOWER(DefenderTower::new, Material.YELLOW_CONCRETE, "Defender Tower", "Stand."),
-    REVENANT_TOWER(RevenantTower::new, Material.GREEN_CONCRETE, "Revenant Tower", "Raise the undead."),
-    THUNDERLORD_TOWER(ThunderlordTower::new, Material.RED_GLAZED_TERRACOTTA, "Thunderlord Tower", "Zip Zap."),
-    BIG_BOY(BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
+    PYROMANCER_TOWER("PYRO_TOWER", PyromancerTower::new, Material.FIRE_CHARGE, "Pyromancer Tower", "Fire."),
+    CRYOMANCER_TOWER("CRYO_TOWER", CryomancerTower::new, Material.SNOWBALL, "Cryomancer Tower", "Slow it down."),
+    AQUAMANCER_TOWER("AQUA_TOWER", AquamancerTower::new, Material.WATER_BUCKET, "Aquamancer Tower", "Very wet."),
+    AVENGER_TOWER("AVEN_TOWER", AvengerTower::new, Material.RED_CONCRETE_POWDER, "Avenger Tower", "Strike."),
+    CRUSADER_TOWER("CRUS_TOWER", CrusaderTower::new, Material.YELLOW_CONCRETE_POWDER, "Crusader Tower", "Buffer."),
+    PROTECTOR_TOWER("PROT_TOWER", ProtectorTower::new, Material.GREEN_CONCRETE_POWDER, "Protector Tower", "Protects."),
+    BERSERKER_TOWER("BERS_TOWER", BerserkerTower::new, Material.RED_CONCRETE, "Berserker Tower", "Grr."),
+    DEFENDER_TOWER("DEF_TOWER", DefenderTower::new, Material.YELLOW_CONCRETE, "Defender Tower", "Stand."),
+    REVENANT_TOWER("REV_TOWER", RevenantTower::new, Material.GREEN_CONCRETE, "Revenant Tower", "Raise the undead."),
+    THUNDERLORD_TOWER("TL_TOWER", ThunderlordTower::new, Material.RED_GLAZED_TERRACOTTA, "Thunderlord Tower", "Zip Zap."),
+    BIG_BOY("BIG_BOY", BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;
 
@@ -62,7 +62,7 @@ public enum TowerRegistry {
                 continue;
             }
             for (TowerRegistry tower : values) {
-                if (tower.name().equals(towerName.content())) {
+                if (tower.signName.equals(towerName.content())) {
                     updateTowerCache(sign.getLocation().add(1, 0, 1), tower, null);
                     updated.add(tower);
                     values.remove(tower);
@@ -169,6 +169,7 @@ public enum TowerRegistry {
         return size;
     }
 
+    public final String signName;
     public final TriFunction<Game, UUID, Location, AbstractTower> create;
     public final Material material;
     public String name;
@@ -177,7 +178,8 @@ public enum TowerRegistry {
     public BlockData[][][] baseTowerData; // [x][z][y]
     public Map<Integer, BlockData[][][]> upgradeTowerData = new HashMap<>(); // data of tower at any upgrade level if applicable
 
-    TowerRegistry(TriFunction<Game, UUID, Location, AbstractTower> create, Material material, String name, String description) {
+    TowerRegistry(String signName, TriFunction<Game, UUID, Location, AbstractTower> create, Material material, String name, String description) {
+        this.signName = signName;
         this.create = create;
         this.material = material;
         this.name = name;

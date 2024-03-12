@@ -50,7 +50,7 @@ public class CryomancerTower extends AbstractTower implements Upgradeable.Path2 
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.CRYO_TOWER;
+        return TowerRegistry.CRYOMANCER_TOWER;
     }
 
     @Override

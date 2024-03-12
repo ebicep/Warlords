@@ -53,7 +53,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
 
     @Override
     public TowerRegistry getTowerRegistry() {
-        return TowerRegistry.AQUA_TOWER;
+        return TowerRegistry.AQUAMANCER_TOWER;
     }
 
     @Override
