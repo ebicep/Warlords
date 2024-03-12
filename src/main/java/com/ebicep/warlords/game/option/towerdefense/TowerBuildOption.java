@@ -350,15 +350,17 @@ public class TowerBuildOption implements Option, Listener {
     }
 
     private void openBuildMenu(Player player, WarlordsEntity warlordsEntity, Location clickedLocation) {
-        Menu menu = new Menu("Build Tower", 9 * 4);
+        Menu menu = new Menu("Build Tower", 9 * 6);
         TowerRegistry[] values = TowerRegistry.values();
-        for (int i = 0; i < values.length; i++) {
-            TowerRegistry tower = values[i];
+
+        int x = 1;
+        int y = 1;
+        for (TowerRegistry tower : values) {
             if (tower.baseTowerData == null) {
                 continue;
             }
             int size = tower.getSize();
-            menu.setItem(i + 1, 1,
+            menu.setItem(x, y,
                     new ItemBuilder(tower.material)
                             .name(Component.text(tower.name, NamedTextColor.GREEN))
                             .lore(
@@ -376,8 +378,16 @@ public class TowerBuildOption implements Option, Listener {
                         player.closeInventory();
                     }
             );
+            y++;
+            if (y > 3) {
+                y = 1;
+                x++;
+                if (x > 7) {
+                    break;
+                }
+            }
         }
-        menu.setItem(4, 3, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
+        menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
