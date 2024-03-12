@@ -23,15 +23,6 @@ import java.util.stream.Collectors;
 
 public class TowerDefenseUtils {
 
-    public static final List<RateInfo> INSIGNIA_RATE_EXP_COST = List.of(
-            new RateInfo(10, 0, null),
-            new RateInfo(20, 125, Material.GOLD_NUGGET), // gold nugget
-            new RateInfo(30, 350, Material.GOLD_INGOT), // gold ingot
-            new RateInfo(50, 1000, Material.GOLD_BLOCK), // gold block
-            new RateInfo(100, 2500, Material.DIAMOND), // diamond
-            new RateInfo(200, 6000, Material.DIAMOND_BLOCK) // diamond block
-    );
-
     static int getFastYaw(Location from, Location to) {
         return getFastYaw(from.getX(), from.getZ(), to.getX(), to.getZ());
     }
@@ -121,7 +112,7 @@ public class TowerDefenseUtils {
 
     }
 
-    static boolean insideArea(Location point, Location location1, Location location2) {
+    public static boolean insideArea(Location point, Location location1, Location location2) {
         return point.getX() >= Math.min(location1.getX(), location2.getX()) &&
                 point.getX() <= Math.max(location1.getX(), location2.getX()) &&
                 point.getY() >= Math.min(location1.getY(), location2.getY()) &&

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -9,10 +10,12 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseCastleDestroyEvent;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
+import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerDefenseTowerMob;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -141,6 +144,15 @@ public class TowerDefenseOption implements PveOption, Listener {
                 }
                 if (ticksElapsed.get() % 20 == 0) {
                     towerDefenseSpawner.recalculateMobPositions();
+                }
+                if (ticksElapsed.get() % 40 == 0) {
+                    for (AbstractTower abstractTower : towerBuildOption.getBuiltTowers().keySet()) {
+                        for (AbstractAbility ability : abstractTower.getWarlordsTower().getAbilities()) {
+                            if (ability instanceof Spawner spawner) {
+                                spawner.renderSpawnLocations(abstractTower.getBottomCenterLocation().getWorld());
+                            }
+                        }
+                    }
                 }
             }
         }.runTaskTimer(0, 0);

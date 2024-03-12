@@ -109,10 +109,7 @@ public class TowerBuildOption implements Option, Listener {
             return;
         }
         Location clickedLocation = clickedBlock.getLocation();
-        if (teamBuildableAreas.getOrDefault(warlordsEntity.getTeam(), new ArrayList<>())
-                              .stream()
-                              .noneMatch(pair -> TowerDefenseUtils.insideArea(clickedLocation, pair.getA(), pair.getB()))
-        ) {
+        if (getBuildableArea(warlordsEntity.getTeam()).stream().noneMatch(pair -> TowerDefenseUtils.insideArea(clickedLocation, pair.getA(), pair.getB()))) {
             player.sendMessage(Component.text("You can only build on your teams side!", NamedTextColor.RED));
             return;
         }
@@ -131,6 +128,10 @@ public class TowerBuildOption implements Option, Listener {
         } else {
             openBuildMenu(player, warlordsEntity, clickedLocation);
         }
+    }
+
+    public List<Pair<Location, Location>> getBuildableArea(Team team) {
+        return teamBuildableAreas.getOrDefault(team, new ArrayList<>());
     }
 
     @EventHandler

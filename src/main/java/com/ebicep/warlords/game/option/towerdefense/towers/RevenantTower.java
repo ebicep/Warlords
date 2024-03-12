@@ -129,11 +129,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
 
         public SpawnTroops(AbstractTower tower) {
             super("Spawn Troops", 0, 0, Float.MAX_VALUE, 0, false);
-            this.mobSpawnLocations = Spawner.getBlockSpawnLocations(
-                    tower.getBottomCenterLocation().clone().add(0, -1, 0),
-                    range.getCalculatedValue(),
-                    tower.getTowerDefenseOption().getMobPathMaterial()
-            );
+            this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 
         @Override
@@ -144,7 +140,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
                     return true;
                 }
                 AbstractTower tower = warlordsTower.getTower();
-                AbstractMob mob = Mob.TD_TOWER_AVENGER.createMob(getSpawnLocation(tower));
+                AbstractMob mob = Mob.TD_TOWER_REVENANT.createMob(getSpawnLocation(tower));
                 spawnedMobs.add((TowerDefenseTowerMob) mob);
                 if (pveMasterUpgrade) {
                     ((TDTowerRevenant) mob).increasedEHP = true;
