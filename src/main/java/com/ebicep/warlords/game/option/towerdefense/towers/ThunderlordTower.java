@@ -82,7 +82,7 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public BoltAttack() {
-            super("Flame Attack", 200, 200, 3, 0);
+            super("Bolt Attack", 200, 200, 3, 0);
         }
 
         @Override
@@ -95,10 +95,10 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
         }
 
         private void attack(WarlordsTower warlordsTower, WarlordsEntity target) {
-            EffectUtils.playChainAnimation(warlordsTower, target, ChainLightning.CHAIN_LIGHTNING_ITEM, 9);
+            EffectUtils.playChainAnimation(warlordsTower, target, ChainLightning.CHAIN_ITEM, 3);
             target.addDamageInstance(
                     warlordsTower,
-                    "Bolt",
+                    name,
                     minDamageHeal,
                     maxDamageHeal,
                     critChance,

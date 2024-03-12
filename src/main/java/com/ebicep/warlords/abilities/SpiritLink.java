@@ -29,6 +29,7 @@ import java.util.*;
 
 public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 
+    public static final ItemStack CHAIN_ITEM = new ItemStack(Material.SPRUCE_FENCE_GATE);
     public int numberOfDismounts = 0;
     private double speedDuration = 1.5;
     private double damageReductionDuration = 4.5;
@@ -147,7 +148,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 
     @Override
     protected ItemStack getChainItem() {
-        return new ItemStack(Material.SPRUCE_FENCE_GATE);
+        return CHAIN_ITEM;
     }
 
     private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {

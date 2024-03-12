@@ -3,10 +3,7 @@ package com.ebicep.warlords.pve.mobs;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDSkeleton;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDZombie;
-import com.ebicep.warlords.game.option.towerdefense.towers.AvengerTower;
-import com.ebicep.warlords.game.option.towerdefense.towers.DefenderTower;
-import com.ebicep.warlords.game.option.towerdefense.towers.ProtectorTower;
-import com.ebicep.warlords.game.option.towerdefense.towers.RevenantTower;
+import com.ebicep.warlords.game.option.towerdefense.towers.*;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
@@ -815,6 +812,7 @@ public enum Mob {
     TD_TOWER_PROTECTOR(EntityType.ZOMBIE, ProtectorTower.TDTowerProtector.class, ProtectorTower.TDTowerProtector::new, ProtectorTower.TDTowerProtector::new, null),
     TD_TOWER_DEFENDER(EntityType.ZOMBIE, DefenderTower.TDTowerDefender.class, DefenderTower.TDTowerDefender::new, DefenderTower.TDTowerDefender::new, null),
     TD_TOWER_REVENANT(EntityType.ZOMBIE, RevenantTower.TDTowerRevenant.class, RevenantTower.TDTowerRevenant::new, RevenantTower.TDTowerRevenant::new, null),
+    TD_TOWER_SPIRITGUARD(EntityType.ALLAY, SpiritguardTower.TDTowerSpiritguard.class, SpiritguardTower.TDTowerSpiritguard::new, SpiritguardTower.TDTowerSpiritguard::new, null),
 
 
     ;
