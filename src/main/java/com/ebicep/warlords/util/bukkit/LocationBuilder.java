@@ -110,6 +110,11 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    public LocationBuilder left(double amount) {
+        this.add(LocationUtils.getLeftDirection(this).multiply(amount));
+        return this;
+    }
+
     public LocationBuilder right(float amount) {
         this.add(LocationUtils.getRightDirection(this).multiply(amount));
         return this;

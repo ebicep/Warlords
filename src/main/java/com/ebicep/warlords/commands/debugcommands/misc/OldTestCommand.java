@@ -6,18 +6,19 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
@@ -28,6 +29,7 @@ import org.joml.Vector3f;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class OldTestCommand implements CommandExecutor {
 
@@ -124,40 +126,100 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-
-            BlockDisplay display = player.getWorld().spawn(player.getLocation(), BlockDisplay.class, d -> {
-                d.setBlock(Material.ICE.createBlockData());
-                BoundingBox boundingBox = player.getBoundingBox();
-                double x = boundingBox.getMaxX() - boundingBox.getMinX();
-                double y = boundingBox.getMaxY() - boundingBox.getMinY();
-                double z = boundingBox.getMaxZ() - boundingBox.getMinZ();
-                double height = player.getHeight();
-                System.out.println(height);
-                d.setTransformation(new Transformation(
-                                new Vector3f(),
-                                new AxisAngle4f(),
-                                new Vector3f((float) x, (float) y, (float) z),
-                                new AxisAngle4f()
-                        )
-                );
-                d.setTeleportDuration(0);
-            });
-            new BukkitRunnable() {
-                int counter = 0;
-
-                @Override
-                public void run() {
-                    Location location = new LocationBuilder(player.getLocation())
-                            .yaw(0)
-                            .pitch(0)
-                            .right(.5f)
-                            .backward(.5f);
-                    display.teleport(location);
-                    if (counter++ > 5 * 20) {
-                        display.remove();
-                    }
+            LocationBuilder locationBuilder = new LocationBuilder(player.getEyeLocation()).right(.1f);
+            List<Display> displays = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                double random = .1;
+                // generate value between -random and random
+                float offset = (float) MathUtils.generateRandomValueBetweenInclusive(-random, random);
+                System.out.println(offset);
+                double yOffset = MathUtils.generateRandomValueBetweenInclusive(-random, random);
+                System.out.println(yOffset);
+                LocationBuilder current = locationBuilder
+                        .clone()
+                        .forward(MathUtils.generateRandomValueBetweenInclusive(-.5, .5))
+                        .left(offset)
+                        .addY(yOffset);
+                BlockDisplay display = player.getWorld().spawn(current, BlockDisplay.class, d -> {
+                    Material material = ThreadLocalRandom.current().nextBoolean() ? Material.LIGHT_BLUE_WOOL : Material.BLUE_GLAZED_TERRACOTTA;
+                    d.setBlock(material.createBlockData());
+//                d.setItemStack(new ItemStack(Material.ECHO_SHARD));
+                    BoundingBox boundingBox = player.getBoundingBox();
+                    double x = boundingBox.getMaxX() - boundingBox.getMinX();
+                    double y = boundingBox.getMaxY() - boundingBox.getMinY();
+                    double z = boundingBox.getMaxZ() - boundingBox.getMinZ();
+                    double height = player.getHeight();
+                    System.out.println(height);
+                    float scale = .3f;
+                    d.setTransformation(new Transformation(
+                            new Vector3f(),
+                            new AxisAngle4f(),
+                            new Vector3f(scale, scale, scale),
+                            new AxisAngle4f(
+                                    (float) 1,
+                                    ThreadLocalRandom.current().nextFloat(),
+                                    ThreadLocalRandom.current().nextFloat(),
+                                    ThreadLocalRandom.current().nextFloat()
+                            )
+                    ));
+                    d.setTeleportDuration(3);
+                });
+                displays.add(display);
+                if (i >= 6) {
+                    locationBuilder.backward((float) MathUtils.generateRandomValueBetweenInclusive(.8, 1));
                 }
-            }.runTaskTimer(Warlords.getInstance(), 0, 0);
+
+                new BukkitRunnable() {
+                    int counter = 0;
+
+                    @Override
+                    public void run() {
+//                        current.forward(2);
+//                        display.teleport(current);
+                        if (counter++ > 3 * 20) {
+                            display.remove();
+                            cancel();
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                //   double distance = targetLocation.distance(current) + 1;
+                //                new GameRunnable(warlordsNPC.getGame()) {
+                //                    final double increment = 1.5;
+                //                    int counter = 0;
+                //                    double travelled = 0;
+                //
+                //                    @Override
+                //                    public void run() {
+                ////                        current.forward(increment);
+                ////                        display.teleport(current);
+                ////                        travelled += increment;
+                ////                        if (counter++ > 3 * 20 || travelled > distance) {
+                ////                            display.remove();
+                ////                            cancel();
+                ////                        }
+                //                        display.remove();
+                //                    }
+                //                }.runTaskLater(teleportDuration);
+            }
+
+//            Display display = player.getWorld().spawn(player.getLocation(), BlockDisplay.class, d -> {
+//                d.setBlock(Material.BLUE_GLAZED_TERRACOTTA.createBlockData());
+////                d.setItemStack(new ItemStack(Material.ECHO_SHARD));
+//                BoundingBox boundingBox = player.getBoundingBox();
+//                double x = boundingBox.getMaxX() - boundingBox.getMinX();
+//                double y = boundingBox.getMaxY() - boundingBox.getMinY();
+//                double z = boundingBox.getMaxZ() - boundingBox.getMinZ();
+//                double height = player.getHeight();
+//                System.out.println(height);
+//                d.setTransformation(new Transformation(
+//                        new Vector3f(),
+//                        new AxisAngle4f(),
+//                        new Vector3f(6, .5f, .5f),
+//                        new AxisAngle4f()
+//                ));
+//                d.setTeleportDuration(0);
+//            });
+
 
 //            LocationBuilder location = new LocationBuilder(player.getLocation());
 //            location.setYaw(location.getYaw() - 90);

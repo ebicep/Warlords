@@ -21,7 +21,7 @@ public class MathUtils {
     }
 
     public static double generateRandomValueBetweenInclusive(double min, double max) {
-        return ThreadLocalRandom.current().nextDouble(min, max + 1);
+        return ThreadLocalRandom.current().nextDouble(min, max + .000001);
     }
 
     // Linear Interpolation
