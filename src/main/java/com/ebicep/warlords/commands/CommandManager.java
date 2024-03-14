@@ -53,6 +53,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.sr.BalancerCommand;
+import com.ebicep.warlords.sr.hypixel.HypixelBalancerCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
@@ -658,6 +659,7 @@ public class CommandManager {
         manager.registerCommand(new BountyCommand());
 
         manager.registerCommand(new BalancerCommand());
+        manager.registerCommand(new HypixelBalancerCommand());
 
         manager.registerCommand(new TowerDefenseCommand());
     }
