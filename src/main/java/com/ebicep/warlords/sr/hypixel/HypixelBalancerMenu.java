@@ -20,7 +20,7 @@ import java.util.function.Function;
 public class HypixelBalancerMenu {
 
     private static final Map<UUID, PlayerMenuData> PLAYER_MENU_DATA = new HashMap<>();
-    private static final HypixelBalancer.Color MINECRAFT_COLOR = new HypixelBalancer.Color() {
+    private static final Color MINECRAFT_COLOR = new Color() {
 
         @Override
         public String black() {
@@ -104,49 +104,41 @@ public class HypixelBalancerMenu {
     };
 
 
-    private static Material getBalanceMethodMaterial(HypixelBalancer.BalanceMethod balanceMethod) {
-        switch (balanceMethod) {
-            case V1 -> {
-                return Material.DIRT;
-            }
-            case V2 -> {
-                return Material.COBBLESTONE;
-            }
+    private static Material getBalanceMethodMaterial(BalanceMethod balanceMethod) {
+        if (balanceMethod == BalanceMethod.V1) {
+            return Material.DIRT;
+        }
+        if (balanceMethod == BalanceMethod.V2) {
+            return Material.COBBLESTONE;
         }
         return Material.BARRIER;
     }
 
-    private static Material getRandomWeightMethodMaterial(HypixelBalancer.RandomWeightMethod randomWeightMethod) {
-        switch (randomWeightMethod) {
-            case RANDOM -> {
-                return Material.ENCHANTING_TABLE;
-            }
-            case NORMAL_DISTRIBUTION -> {
-                return Material.BOOKSHELF;
-            }
+    private static Material getRandomWeightMethodMaterial(WeightGenerationMethod randomWeightMethod) {
+        if (randomWeightMethod == WeightGenerationMethod.DEFAULT_RANDOM) {
+            return Material.ENCHANTING_TABLE;
+        }
+        if (randomWeightMethod == WeightGenerationMethod.DEFAULT_NORMAL_DISTRIBUTION) {
+            return Material.BOOKSHELF;
         }
         return Material.BARRIER;
     }
 
-    private static List<Component> getEnumSelectedLore(Enum<?> selected, Enum<?>[] values) {
+    private static <T> List<Component> getSettingSelectedLore(T selected, T[] values) {
         List<Component> lore = new ArrayList<>();
-        for (Enum<?> value : values) {
+        for (T value : values) {
             if (value == selected) {
-                lore.add(Component.text(" - " + value, NamedTextColor.GREEN));
+                lore.add(Component.text(" - " + value.getClass().getSimpleName(), NamedTextColor.GREEN));
             } else {
-                lore.add(Component.text(" - " + value, NamedTextColor.GRAY));
+                lore.add(Component.text(" - " + value.getClass().getSimpleName(), NamedTextColor.GRAY));
             }
         }
         return lore;
     }
 
-    private static <T extends Enum<T>> T getNextEnum(T value, T[] values) {
-        int ordinal = value.ordinal();
-        ordinal++;
-        if (ordinal >= values.length) {
-            ordinal = 0;
-        }
-        return values[ordinal];
+    private static <T> T getNext(T value, T[] values) {
+        int index = Arrays.asList(values).indexOf(value);
+        return values[(index + 1) % values.length];
     }
 
     public static void openMenu(Player player) {
@@ -186,21 +178,21 @@ public class HypixelBalancerMenu {
                 HypixelBalancerMenu::getBalanceMethodMaterial,
                 "Balance Method",
                 menuData.getBalanceMethod(),
-                HypixelBalancer.BalanceMethod.values(),
+                BalanceMethod.VALUES,
                 menuData::setBalanceMethod
         );
         addSettingToMenu(3, 1, player, menu,
                 HypixelBalancerMenu::getRandomWeightMethodMaterial,
                 "Random Weight Method",
-                menuData.getRandomWeightMethod(),
-                HypixelBalancer.RandomWeightMethod.values(),
-                menuData::setRandomWeightMethod
+                menuData.getWeightGenerationMethod(),
+                WeightGenerationMethod.VALUES,
+                menuData::setWeightGenerationMethod
         );
-        HypixelBalancer.ExtraBalanceFeature[] values = HypixelBalancer.ExtraBalanceFeature.values();
+        ExtraBalanceFeature[] values = ExtraBalanceFeature.VALUES;
         for (int i = 0; i < values.length; i++) {
-            HypixelBalancer.ExtraBalanceFeature balanceFeature = values[i];
+            ExtraBalanceFeature balanceFeature = values[i];
             ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i))
-                    .name(Component.text(balanceFeature.name(), NamedTextColor.AQUA));
+                    .name(Component.text(balanceFeature.getClass().getSimpleName(), NamedTextColor.AQUA));
             if (menuData.getExtraBalanceFeatures().contains(balanceFeature)) {
                 itemBuilder.enchant(Enchantment.OXYGEN, 1);
             }
@@ -219,8 +211,9 @@ public class HypixelBalancerMenu {
                         .name(Component.text("Balance", NamedTextColor.AQUA))
                         .lore(
                                 Component.text("Player Count: ").append(Component.text(menuData.getPlayerCount(), NamedTextColor.GREEN)),
-                                Component.text("Balance Method: ").append(Component.text(menuData.getBalanceMethod().name(), NamedTextColor.GREEN)),
-                                Component.text("Random Weight Method: ").append(Component.text(menuData.getRandomWeightMethod().name(), NamedTextColor.GREEN)),
+                                Component.text("Balance Method: ").append(Component.text(menuData.getBalanceMethod().getClass().getSimpleName(), NamedTextColor.GREEN)),
+                                Component.text("Random Weight Method: ")
+                                         .append(Component.text(menuData.getWeightGenerationMethod().getClass().getSimpleName(), NamedTextColor.GREEN)),
                                 Component.text("Extra Balance Features: ").append(Component.text(menuData.getExtraBalanceFeatures().toString(), NamedTextColor.GREEN))
                         ).get(),
                 (m, e) -> {
@@ -229,7 +222,7 @@ public class HypixelBalancerMenu {
                             1,
                             menuData.getPlayerCount(),
                             menuData.getBalanceMethod(),
-                            menuData.getRandomWeightMethod(),
+                            menuData.getWeightGenerationMethod(),
                             menuData.getExtraBalanceFeatures()
                     );
                     player.closeInventory();
@@ -240,7 +233,7 @@ public class HypixelBalancerMenu {
         menu.openForPlayer(player);
     }
 
-    private static <T extends Enum<T>> void addSettingToMenu(
+    private static <T> void addSettingToMenu(
             int x,
             int y,
             Player player,
@@ -254,10 +247,10 @@ public class HypixelBalancerMenu {
         menu.setItem(x, y,
                 new ItemBuilder(itemMaterial.apply(selected))
                         .name(Component.text(itemName, NamedTextColor.AQUA))
-                        .lore(getEnumSelectedLore(selected, values))
+                        .lore(getSettingSelectedLore(selected, values))
                         .get(),
                 (m, e) -> {
-                    setter.accept(getNextEnum(selected, values));
+                    setter.accept(getNext(selected, values));
                     openMenu(player);
                 }
         );
@@ -265,9 +258,9 @@ public class HypixelBalancerMenu {
 
     static class PlayerMenuData {
         private int playerCount = 22;
-        private HypixelBalancer.BalanceMethod balanceMethod = HypixelBalancer.BalanceMethod.V1;
-        private HypixelBalancer.RandomWeightMethod randomWeightMethod = HypixelBalancer.RandomWeightMethod.RANDOM;
-        private EnumSet<HypixelBalancer.ExtraBalanceFeature> extraBalanceFeatures = EnumSet.noneOf(HypixelBalancer.ExtraBalanceFeature.class);
+        private BalanceMethod balanceMethod = BalanceMethod.V1;
+        private WeightGenerationMethod weightGenerationMethod = WeightGenerationMethod.DEFAULT_RANDOM;
+        private List<ExtraBalanceFeature> extraBalanceFeatures = new ArrayList<>();
 
         public int getPlayerCount() {
             return playerCount;
@@ -277,23 +270,23 @@ public class HypixelBalancerMenu {
             this.playerCount = playerCount;
         }
 
-        public HypixelBalancer.BalanceMethod getBalanceMethod() {
+        public BalanceMethod getBalanceMethod() {
             return balanceMethod;
         }
 
-        public void setBalanceMethod(HypixelBalancer.BalanceMethod balanceMethod) {
+        public void setBalanceMethod(BalanceMethod balanceMethod) {
             this.balanceMethod = balanceMethod;
         }
 
-        public HypixelBalancer.RandomWeightMethod getRandomWeightMethod() {
-            return randomWeightMethod;
+        public WeightGenerationMethod getWeightGenerationMethod() {
+            return weightGenerationMethod;
         }
 
-        public void setRandomWeightMethod(HypixelBalancer.RandomWeightMethod randomWeightMethod) {
-            this.randomWeightMethod = randomWeightMethod;
+        public void setWeightGenerationMethod(WeightGenerationMethod weightGenerationMethod) {
+            this.weightGenerationMethod = weightGenerationMethod;
         }
 
-        public EnumSet<HypixelBalancer.ExtraBalanceFeature> getExtraBalanceFeatures() {
+        public List<ExtraBalanceFeature> getExtraBalanceFeatures() {
             return extraBalanceFeatures;
         }
     }

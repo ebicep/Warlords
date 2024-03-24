@@ -1,378 +1,400 @@
 package com.ebicep.warlords.sr.hypixel;
 
+
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class HypixelBalancer {
 
-    private static final DecimalFormat WEIGHT_FORMAT = new DecimalFormat("#.##");
-    private static final double MAX_WEIGHT = 4;
-    private static final double MIN_WEIGHT = .43;
-    private static final List<Predicate<Player>> FILTERS = List.of(
-            player -> player.spec == Specialization.DEFENDER,
-            player -> player.spec == Specialization.CRYOMANCER,
-            player -> player.spec.specType == SpecType.TANK,
-            player -> player.spec.specType == SpecType.DAMAGE,
-            player -> player.spec.specType == SpecType.HEALER
+    public static final DecimalFormat WEIGHT_FORMAT = new DecimalFormat("#.##");
+    private static final List<Filter> FILTERS = List.of(
+            (Filter.SpecificationFilter) () -> Specialization.DEFENDER,
+            (Filter.SpecificationFilter) () -> Specialization.CRYOMANCER,
+            (Filter.SpecTypeFilter) () -> SpecType.TANK,
+            (Filter.SpecTypeFilter) () -> SpecType.DAMAGE,
+            (Filter.SpecTypeFilter) () -> SpecType.HEALER
     );
+
+    public static String format(double weight) {
+        return WEIGHT_FORMAT.format(weight);
+    }
+
+    public static void balance(
+            BalanceMethod balanceMethod,
+            WeightGenerationMethod weightGenerationMethod,
+            ExtraBalanceFeature... extraBalanceFeatures
+    ) {
+        List<ExtraBalanceFeature> features = List.of(extraBalanceFeatures);
+        balance(new Printer(System.out::println, new Color() {}),
+                50_000,
+                24,
+                balanceMethod,
+                weightGenerationMethod,
+                features.isEmpty() ? Collections.emptyList() : new ArrayList<>(features)
+        );
+    }
 
     public static void balance(
             Printer printer,
             int iterations,
             int playerCount,
             BalanceMethod balanceMethod,
-            RandomWeightMethod randomWeightMethod,
-            EnumSet<ExtraBalanceFeature> extraBalanceFeatures
+            WeightGenerationMethod weightGenerationMethod,
+            List<ExtraBalanceFeature> extraBalanceFeatures
     ) {
-        Consumer<String> sendMessage = printer.sendMessage;
         Color colors = printer.colors;
-        sendMessage.accept(colors.white() + "-------------------------------------------------");
-        sendMessage.accept(colors.white() + "-------------------------------------------------");
-        sendMessage.accept(colors.gray() + "Balance Method: " + colors.green() + balanceMethod);
-        sendMessage.accept(colors.gray() + "Random Weight Method: " + colors.green() + randomWeightMethod);
-        sendMessage.accept(colors.gray() + "Extra Balance Features: " + colors.green() + extraBalanceFeatures);
+        printer.sendMessage(colors.white() + "-------------------------------------------------");
+        printer.sendMessage(colors.white() + "-------------------------------------------------");
+        printer.sendMessage(colors.gray() + "Iterations: " + colors.green() + iterations);
+        printer.sendMessage(colors.gray() + "Player Count: " + colors.green() + playerCount);
+        printer.sendMessage(colors.gray() + "Balance Method: " + colors.green() + balanceMethod.getClass().getSimpleName());
+        printer.sendMessage(colors.gray() + "Random Weight Method: " + colors.green() + weightGenerationMethod.getClass().getSimpleName());
+        printer.sendMessage(colors.gray() + "Extra Balance Features: " + colors.green() + extraBalanceFeatures.stream()
+                                                                                                              .map(extraBalanceFeature -> extraBalanceFeature.getClass()
+                                                                                                                                                             .getSimpleName())
+                                                                                                              .collect(Collectors.joining(", ")));
+        double totalWeightDiff = 0;
         double maxWeightDiff = 0;
+        Map<Integer, Integer> weightDiffCount = new HashMap<>();
         Map<Team, TeamBalanceInfo> mostUnbalancedTeam = new HashMap<>();
         for (int i = 0; i < iterations; i++) {
             Set<Player> players = new HashSet<>();
             for (int j = 0; j < playerCount; j++) {
-                players.add(new Player(Specialization.getRandomSpec(), randomWeightMethod.generateRandomWeight()));
+                players.add(new Player(Specialization.getRandomSpec(), weightGenerationMethod.generateRandomWeight()));//, j < 10 ? Team.BLUE : null));
+            }
+            if (iterations == 1) {
+                // printing list of players to be balanced in order
+                players.stream()
+                       .sorted(Comparator.<Player>comparingInt(player -> {
+                           int index = 0;
+                           for (Filter filter : FILTERS) {
+                               if (filter.test(player)) {
+                                   return index;
+                               }
+                               index++;
+                           }
+                           return index;
+                       }).thenComparingDouble(player -> -player.weight))
+                       .forEachOrdered(player -> printer.sendMessage("  " + player.getInfo(colors)));
+                printer.sendMessage(colors.white() + "-------------------------------------------------");
             }
             Map<Team, TeamBalanceInfo> teams = getBalancedTeams(players, balanceMethod);
-            double weightDiff = Math.abs(teams.get(Team.BLUE).totalWeight - teams.get(Team.RED).totalWeight);
+            if (iterations == 1) {
+                printBalanceInfo(printer, teams);
+            }
+            printer.setEnabled(iterations == 1);
+            printer.sendMessage(colors.white() + "-------------------------------------------------");
+            double weightDiff = getMaxWeightDiff(teams);
+            printer.sendMessage(colors.gray() + "Weight Diff: " + colors.darkPurple() + WEIGHT_FORMAT.format(weightDiff));
+            printer.sendMessage(colors.white() + "-------------------------------------------------");
+            for (ExtraBalanceFeature extraBalanceFeature : extraBalanceFeatures) {
+                printer.sendMessage(colors.yellow() + "Extra Balance Feature: " + extraBalanceFeature.getClass().getSimpleName());
+                boolean applied = extraBalanceFeature.apply(printer, teams);
+                if (!applied) {
+                    weightDiff = getMaxWeightDiff(teams);
+                    printer.sendMessage(colors.yellow() + "No changes applied");
+                    printer.sendMessage(colors.gray() + "--------------------------------");
+                    continue;
+                }
+                weightDiff = getMaxWeightDiff(teams);
+                printer.sendMessage(colors.gray() + "Max Weight Diff: " + colors.darkPurple() + WEIGHT_FORMAT.format(weightDiff));
+                printBalanceInfo(printer, teams);
+                printer.sendMessage(colors.gray() + "--------------------------------");
+            }
+            totalWeightDiff += weightDiff;
+//            if (teams.get(Team.BLUE).players.size() != teams.get(Team.RED).players.size()) {
+//                printer.setEnabled(true);
+//                printer.sendMessage(colors.red() + "!!!!!!!! Teams are not even !!!!!!!!");
+//                maxWeightDiff = weightDiff;
+//                mostUnbalancedTeam = teams;
+//                break;
+//            }
+            weightDiffCount.merge((int) weightDiff, 1, Integer::sum);
             if (weightDiff > maxWeightDiff) {
                 maxWeightDiff = weightDiff;
                 mostUnbalancedTeam = teams;
             }
         }
-        sendMessage.accept(colors.gray() + "Max Weight Diff: " + colors.darkPurple() + WEIGHT_FORMAT.format(maxWeightDiff));
+        printer.setEnabled(true);
+        printer.sendMessage(colors.gray() + "Average Weight Diff: " + colors.darkPurple() + WEIGHT_FORMAT.format(totalWeightDiff / iterations));
+        printer.sendMessage(colors.gray() + "Max Weight Diff: " + colors.darkPurple() + WEIGHT_FORMAT.format(maxWeightDiff));
         printBalanceInfo(printer, mostUnbalancedTeam);
 
-        if (!extraBalanceFeatures.isEmpty()) {
-            sendMessage.accept(colors.white() + "-------------------------------------------------");
-        }
-        for (ExtraBalanceFeature extraBalanceFeature : extraBalanceFeatures) {
-            sendMessage.accept(colors.yellow() + "Extra Balance Feature: " + extraBalanceFeature);
-            extraBalanceFeature.apply(printer, mostUnbalancedTeam);
-            TeamBalanceInfo blueBalanceInfo = mostUnbalancedTeam.get(Team.BLUE);
-            TeamBalanceInfo redBalanceInfo = mostUnbalancedTeam.get(Team.RED);
-            blueBalanceInfo.recalculateTotalWeight();
-            redBalanceInfo.recalculateTotalWeight();
-            maxWeightDiff = Math.abs(blueBalanceInfo.totalWeight - redBalanceInfo.totalWeight);
-            sendMessage.accept(colors.gray() + "Max Weight Diff: " + colors.darkPurple() + WEIGHT_FORMAT.format(maxWeightDiff));
-            printBalanceInfo(printer, mostUnbalancedTeam);
-            sendMessage.accept(colors.gray() + "--------------------------------");
-        }
-        sendMessage.accept(colors.white() + "-------------------------------------------------");
-        sendMessage.accept(colors.white() + "-------------------------------------------------");
+        printer.sendMessage(colors.white() + "-------------------------------------------------");
+        printer.sendMessage(colors.white() + "-------------------------------------------------");
+
+        mostUnbalancedTeam.forEach((key, value) -> {
+            for (DebuggedPlayer player : value.players) {
+                printer.sendMessage("new Player(Specialization." + player.player.spec + ", " + WEIGHT_FORMAT.format(player.player.weight) + ")");
+            }
+        });
+
+        weightDiffCount.forEach((weightDiff, count) -> {
+            printer.sendMessage(weightDiff + " - " + count + " (" + WEIGHT_FORMAT.format(count / (double) iterations * 100) + "%)");
+        });
     }
 
     private static Map<Team, TeamBalanceInfo> getBalancedTeams(Set<Player> players, BalanceMethod balanceMethod) {
-        int amountOfPlayers = players.size();
-
-        Map<Team, TeamBalanceInfo> teams = new HashMap<>();
+        Map<Team, TeamBalanceInfo> teams = new LinkedHashMap<>();
         for (Team team : Team.VALUES) {
             teams.put(team, new TeamBalanceInfo());
         }
 
-        for (Predicate<Player> filter : FILTERS) {
-            players.stream()
-                   .filter(filter)
-                   .sorted(Comparator.comparingDouble(player -> -player.weight))
-                   .forEachOrdered(player -> {
-                       players.remove(player);
-                       Team team = balanceMethod.getTeam(amountOfPlayers, teams);
-                       TeamBalanceInfo teamBalanceInfo = teams.get(team);
-                       teamBalanceInfo.players.add(player);
-                       teamBalanceInfo.totalWeight += player.weight;
-                       teamBalanceInfo.specTypeCount.merge(player.spec.specType, 1, Integer::sum);
-                   });
-        }
+        balanceMethod.balance(players, FILTERS, teams);
 
         return teams;
     }
 
-    private static void printBalanceInfo(Printer printer, Map<Team, TeamBalanceInfo> teams) {
-        Consumer<String> sendMessage = printer.sendMessage;
+    public static void printBalanceInfo(Printer printer, Map<Team, TeamBalanceInfo> teams) {
         Color colors = printer.colors;
         teams.forEach((team, teamBalanceInfo) -> {
-            sendMessage.accept(colors.gray() + "-----------------------");
-            sendMessage.accept(team.getColor.apply(colors) + team + colors.gray() + " - " + colors.darkPurple() + WEIGHT_FORMAT.format(teamBalanceInfo.totalWeight));
-            teamBalanceInfo.specTypeCount
+            printer.sendMessage(colors.gray() + "-----------------------");
+            printer.sendMessage(team.getColor.apply(colors) + team + colors.gray() + " - " + colors.darkPurple() + WEIGHT_FORMAT.format(teamBalanceInfo.totalWeight));
+            teamBalanceInfo.cachedSpecTypeData
                     .entrySet()
                     .stream()
                     .sorted(Comparator.comparingInt(o -> o.getKey().ordinal()))
                     .map(entry -> {
                         SpecType specType = entry.getKey();
-                        double totalSpecTypeWeight = teamBalanceInfo.players.stream()
-                                                                            .filter(player -> player.spec.specType == specType)
-                                                                            .mapToDouble(player -> player.weight)
-                                                                            .sum();
+                        double totalSpecTypeWeight = teamBalanceInfo.getSpecTypeWeight(specType);
                         return specType.getColor.apply(colors) + specType +
                                 colors.gray() + ": " +
-                                colors.green() + entry.getValue() +
+                                colors.green() + entry.getValue().getCount() +
                                 colors.gray() + " (" + colors.lightPurple() + WEIGHT_FORMAT.format(totalSpecTypeWeight) + colors.gray() + ")" +
                                 colors.gray() + " (" + colors.darkPurple() + WEIGHT_FORMAT.format(totalSpecTypeWeight / teamBalanceInfo.totalWeight * 100) + "%" + colors.gray() + ")";
                     })
-                    .forEachOrdered(s -> sendMessage.accept("  " + s));
-            for (Player teamPlayer : teamBalanceInfo.players) {
-                sendMessage.accept("  " + teamPlayer.getInfo(colors));
+                    .forEachOrdered(s -> printer.sendMessage("  " + s));
+            printer.sendMessage(colors.gray() + "  -----------------------");
+            List<DebuggedPlayer> players = teamBalanceInfo.players;
+            for (DebuggedPlayer debuggedPlayer : players) {
+                printer.sendMessage("  " + debuggedPlayer.getInfo(colors));
             }
         });
     }
 
-
-    enum ExtraBalanceFeature {
-        SWAP {
-            @Override
-            public void apply(Printer printer, Map<Team, TeamBalanceInfo> teamBalanceInfos) {
-                Consumer<String> sendMessage = printer.sendMessage;
-                Color colors = printer.colors;
-                if (teamBalanceInfos.keySet().size() != 2) {
-                    sendMessage.accept(colors.darkRed() + "Can only swap between 2 teams (not gonna try to swap more)");
-                    return;
-                }
-                TeamBalanceInfo blueBalanceInfo = teamBalanceInfos.get(Team.BLUE);
-                TeamBalanceInfo redBalanceInfo = teamBalanceInfos.get(Team.RED);
-                Map<SpecType, Double> specTypeWeightDiffs = new HashMap<>();
-                List<SpecType> specTypes = new ArrayList<>(List.of(SpecType.VALUES));
-                double previousTeamWeightDiff = Double.MAX_VALUE;
-                for (int i = 0; i < 10; i++) {
-                    specTypeWeightDiffs.clear();
-                    for (SpecType specType : specTypes) {
-                        specTypeWeightDiffs.put(specType, Math.abs(blueBalanceInfo.getSpecTypeWeight(specType) - redBalanceInfo.getSpecTypeWeight(specType)));
-                    }
-                    // try to swap spec type with highest diff
-                    SpecType specTypeToSwap = specTypeWeightDiffs
-                            .entrySet()
-                            .stream()
-                            .max(Comparator.comparingDouble(Map.Entry::getValue))
-                            .map(Map.Entry::getKey)
-                            .orElseThrow();
-                    // find player on blue/red to swap that has the spec type and would even out the weights the most
-                    Player bluePlayerToSwap = null;
-                    Player redPlayerToSwap = null;
-                    List<Player> bluePlayers = blueBalanceInfo.players;
-                    List<Player> redPlayers = redBalanceInfo.players;
-                    List<Player> swappableBluePlayers = bluePlayers
-                            .stream()
-                            .filter(player -> player.spec.specType == specTypeToSwap)
-                            .toList();
-                    List<Player> swappableRedPlayers = redPlayers
-                            .stream()
-                            .filter(player -> player.spec.specType == specTypeToSwap)
-                            .toList();
-                    double weightDiff = blueBalanceInfo.totalWeight - redBalanceInfo.totalWeight;
-                    double newTotalBlueWeight = 0;
-                    double newTotalRedWeight = 0;
-                    for (Player swappableBluePlayer : swappableBluePlayers) {
-                        for (Player swappableRedPlayer : swappableRedPlayers) {
-                            newTotalBlueWeight = blueBalanceInfo.totalWeight - swappableBluePlayer.weight + swappableRedPlayer.weight;
-                            newTotalRedWeight = redBalanceInfo.totalWeight - swappableRedPlayer.weight + swappableBluePlayer.weight;
-                            if (Math.abs(newTotalBlueWeight - newTotalRedWeight) < weightDiff) {
-                                weightDiff = Math.abs(newTotalBlueWeight - newTotalRedWeight);
-                                bluePlayerToSwap = swappableBluePlayer;
-                                redPlayerToSwap = swappableRedPlayer;
-                            }
-                        }
-                    }
-                    if (bluePlayerToSwap == null) {
-                        specTypes.remove(specTypeToSwap);
-                        if (specTypes.isEmpty()) {
-                            break;
-                        }
-                        continue;
-                    }
-                    double newTotalWeightDiff = Math.abs(newTotalBlueWeight - newTotalRedWeight);
-                    if (newTotalWeightDiff >= previousTeamWeightDiff) {
-                        break;
-                    }
-                    previousTeamWeightDiff = newTotalWeightDiff;
-                    sendMessage.accept(colors.yellow() + "Swapping " +
-                            colors.blue() + "BLUE" +
-                            colors.gray() + "(" + bluePlayerToSwap.getInfo(colors) +
-                            colors.gray() + ") " +
-                            colors.red() + "RED" +
-                            colors.gray() + "(" + redPlayerToSwap.getInfo(colors) +
-                            colors.gray() + ") = (" +
-                            colors.lightPurple() + WEIGHT_FORMAT.format(Math.abs(bluePlayerToSwap.weight - redPlayerToSwap.weight)) +
-                            colors.gray() + ")");
-                    bluePlayers.add(bluePlayers.indexOf(bluePlayerToSwap), redPlayerToSwap);
-                    bluePlayers.remove(bluePlayerToSwap);
-                    blueBalanceInfo.totalWeight = newTotalBlueWeight;
-                    redPlayers.add(redPlayers.indexOf(redPlayerToSwap), bluePlayerToSwap);
-                    redPlayers.remove(redPlayerToSwap);
-                    redBalanceInfo.totalWeight = newTotalRedWeight;
-                }
-            }
-        };
-
-        public abstract void apply(Printer printer, Map<Team, TeamBalanceInfo> teamBalanceInfos);
+    public static double getMaxWeightDiff(Map<Team, TeamBalanceInfo> teams) {
+        double maxWeight = 0;
+        double minWeight = Double.MAX_VALUE;
+        for (TeamBalanceInfo teamBalanceInfo : teams.values()) {
+            maxWeight = Math.max(maxWeight, teamBalanceInfo.totalWeight);
+            minWeight = Math.min(minWeight, teamBalanceInfo.totalWeight);
+        }
+        return maxWeight - minWeight;
     }
 
-    enum BalanceMethod {
-        V1 {
-            @Override
-            public Team getTeam(int amountOfPlayers, Map<Team, TeamBalanceInfo> teams) {
-                int maxPerTeam = amountOfPlayers / 2 + (amountOfPlayers % 2);
-                if (teams.values().stream().anyMatch(teamBalanceInfo -> teamBalanceInfo.players.size() == maxPerTeam)) {
-                    return teams.entrySet()
-                                .stream()
-                                .filter(entry -> entry.getValue().players.size() < maxPerTeam)
-                                .map(Map.Entry::getKey)
-                                .findAny()
-                                .get();
-                } else { //put on team with lowest weight
-                    return teams.entrySet().stream()
-                                .min(Comparator.comparingDouble(entry -> entry.getValue().totalWeight))
-                                .map(Map.Entry::getKey)
-                                .orElse(Team.RED);
-                }
-            }
-        },
-        V2 {
-            @Override
-            public Team getTeam(int amountOfPlayers, Map<Team, TeamBalanceInfo> teams) {
-                return teams.entrySet()
-                            .stream()
-                            .min(Comparator.comparingInt(entry -> entry.getValue().players.size()))
-                            .map(Map.Entry::getKey)
-                            .orElse(Team.RED);
-            }
-        };
 
-        public abstract Team getTeam(int amountOfPlayers, Map<Team, TeamBalanceInfo> teams);
+    /**
+     * Debug message supplier
+     */
+    interface DebuggedMessage {
+        String getMessage(Color colors);
     }
 
-    enum RandomWeightMethod {
-        RANDOM {
+    /**
+     * Balance filters
+     */
+    interface Filter {
+        boolean test(Player player);
+
+        interface SpecTypeFilter extends Filter {
             @Override
-            public double generateRandomWeight() {
-                return ThreadLocalRandom.current().nextDouble(MIN_WEIGHT, MAX_WEIGHT);
+            default boolean test(Player player) {
+                return player.spec().specType == specType();
             }
-        },
-        NORMAL_DISTRIBUTION {
-            @Override
-            public double generateRandomWeight() {
-                return clamp(ThreadLocalRandom.current().nextGaussian() * STANDARD_DEVIATION + MEAN);
-            }
-        },
 
-        ;
-
-        private static final double MEAN = (MAX_WEIGHT + MIN_WEIGHT) / 2;
-        private static final double STANDARD_DEVIATION = 1.2;
-
-        private static double clamp(double value) {
-            return Math.max(MIN_WEIGHT, Math.min(MAX_WEIGHT, value));
+            SpecType specType();
         }
 
-        public abstract double generateRandomWeight();
-    }
+        interface SpecificationFilter extends Filter {
+            @Override
+            default boolean test(Player player) {
+                return player.spec() == spec();
+            }
 
-    enum Team {
-        RED(Color::red), BLUE(Color::blue);
-        public static final Team[] VALUES = values();
-        public final Function<Color, String> getColor;
-
-        Team(Function<Color, String> getColor) {
-            this.getColor = getColor;
-        }
-    }
-
-    enum Specialization {
-        PYROMANCER(SpecType.DAMAGE), CRYOMANCER(SpecType.TANK), AQUAMANCER(SpecType.HEALER),
-        BERSERKER(SpecType.DAMAGE), DEFENDER(SpecType.TANK), REVENANT(SpecType.HEALER),
-        AVENGER(SpecType.DAMAGE), CRUSADER(SpecType.TANK), PROTECTOR(SpecType.HEALER),
-        THUNDERLORD(SpecType.DAMAGE), SPIRITGUARD(SpecType.TANK), EARTHWARDEN(SpecType.HEALER);
-        public static final Specialization[] VALUES = values();
-
-        public static Specialization getRandomSpec() {
-            return VALUES[ThreadLocalRandom.current().nextInt(VALUES.length)];
+            Specialization spec();
         }
 
-        public final SpecType specType;
-
-        Specialization(SpecType specType) {
-            this.specType = specType;
-        }
     }
 
-    enum SpecType {
-        DAMAGE(Color::darkRed), TANK(Color::gold), HEALER(Color::darkGreen);
-        public static final SpecType[] VALUES = values();
-        public final Function<Color, String> getColor;
-
-        SpecType(Function<Color, String> getColor) {
-            this.getColor = getColor;
-        }
-    }
-
-    interface Color {
-        String black();
-
-        String darkBlue();
-
-        String darkGreen();
-
-        String darkAqua();
-
-        String darkRed();
-
-        String darkPurple();
-
-        String gold();
-
-        String gray();
-
-        String darkGray();
-
-        String blue();
-
-        String green();
-
-        String aqua();
-
-        String red();
-
-        String lightPurple();
-
-        String yellow();
-
-        String white();
-    }
-
+    /**
+     * Balance information for an entire team
+     */
     static class TeamBalanceInfo {
-        private final List<Player> players = new ArrayList<>();
-        private final Map<SpecType, Integer> specTypeCount = new HashMap<>();
+        private final List<DebuggedPlayer> players = new ArrayList<>();
+        private final Map<SpecType, SpecTypeData> cachedSpecTypeData = new HashMap<>();
         private double totalWeight = 0;
 
-        public double getSpecTypeWeight(SpecType specType) {
-            return players.stream()
-                          .filter(player -> player.spec.specType == specType)
-                          .mapToDouble(player -> player.weight)
-                          .sum();
+        public void addPlayer(DebuggedPlayer debuggedPlayer) {
+            players.add(debuggedPlayer);
+            cachedSpecTypeData.computeIfAbsent(debuggedPlayer.player.spec.specType, k -> new SpecTypeData()).addPlayer(debuggedPlayer);
+            totalWeight += debuggedPlayer.player.weight;
         }
 
-        private void recalculateTotalWeight() {
-            totalWeight = players.stream().mapToDouble(player -> player.weight).sum();
+        public void removePlayer(DebuggedPlayer debuggedPlayer) {
+            boolean removed = players.remove(debuggedPlayer);
+            if (!removed) {
+                throw new IllegalStateException("Tried to remove a player that wasn't in the list");
+            }
+            cachedSpecTypeData.computeIfAbsent(debuggedPlayer.player.spec.specType, k -> new SpecTypeData()).removePlayer(debuggedPlayer);
+            totalWeight -= debuggedPlayer.player.weight;
+        }
+
+        public double getSpecTypeWeight(SpecType specType) {
+            return cachedSpecTypeData.computeIfAbsent(specType, k -> new SpecTypeData()).getWeight();
+        }
+
+        public int getSpecTypeCount(SpecType specType) {
+            return cachedSpecTypeData.computeIfAbsent(specType, k -> new SpecTypeData()).getCount();
+        }
+
+        public List<DebuggedPlayer> getPlayersMatching(SpecType specType) {
+            return cachedSpecTypeData.computeIfAbsent(specType, k -> new SpecTypeData()).getNonPreAssignedPlayers();
+        }
+
+        public List<DebuggedPlayer> getPlayersMatching(Predicate<Player> filter) {
+            return players.stream()
+                          .filter(debuggedPlayer -> debuggedPlayer.player.preassignedTeam == null)
+                          .filter(debuggedPlayer -> filter.test(debuggedPlayer.player))
+                          .toList();
+        }
+
+        public List<DebuggedPlayer> getPlayers() {
+            return players;
+        }
+
+        public double getTotalWeight() {
+            return totalWeight;
+        }
+
+        static class SpecTypeData {
+            private final List<DebuggedPlayer> allPlayers = new ArrayList<>();
+            private final List<DebuggedPlayer> nonPreAssignedPlayers = new ArrayList<>();
+            private double weight = 0;
+
+            public int getCount() {
+                return allPlayers.size();
+            }
+
+            public void addPlayer(DebuggedPlayer debuggedPlayer) {
+                allPlayers.add(debuggedPlayer);
+                if (debuggedPlayer.player.preassignedTeam == null) {
+                    nonPreAssignedPlayers.add(debuggedPlayer);
+                }
+                weight += debuggedPlayer.player.weight;
+            }
+
+            public void removePlayer(DebuggedPlayer debuggedPlayer) {
+                boolean removed = allPlayers.remove(debuggedPlayer);
+                if (!removed) {
+                    throw new IllegalStateException("Tried to remove a player that wasn't in the list");
+                }
+                if (debuggedPlayer.player.preassignedTeam == null) {
+                    nonPreAssignedPlayers.remove(debuggedPlayer);
+                }
+                weight -= debuggedPlayer.player.weight;
+            }
+
+            public List<DebuggedPlayer> getAllPlayers() {
+                return allPlayers;
+            }
+
+            public List<DebuggedPlayer> getNonPreAssignedPlayers() {
+                return nonPreAssignedPlayers;
+            }
+
+            public double getWeight() {
+                return weight;
+            }
         }
     }
 
-    record Player(Specialization spec, double weight) {
+    /**
+     * Player wrapper class with debug messages
+     *
+     * @param player           the player
+     * @param debuggedMessages debug messages
+     */
+    record DebuggedPlayer(Player player, List<DebuggedMessage> debuggedMessages) {
+        public DebuggedPlayer(Player player, DebuggedMessage... messages) {
+            this(player, new ArrayList<>(List.of(messages)));
+            if (player.preassignedTeam() != null) {
+                debuggedMessages.add(colors -> colors.gold() + "PREASSIGNED");
+            }
+        }
+
+        public String getInfo(Color colors) {
+            StringBuilder info = new StringBuilder(player.getInfo(colors));
+            for (DebuggedMessage debuggedMessage : debuggedMessages) {
+                info.append(colors.gray()).append(" (");
+                info.append(debuggedMessage.getMessage(colors));
+                info.append(colors.gray()).append(")");
+            }
+            return info.toString();
+        }
+    }
+
+    /**
+     * @param uuid   the uuid of the player - needed for equals and hashcode
+     * @param spec   the specialization of the player
+     * @param weight the weight of the player
+     */
+    record Player(UUID uuid, Specialization spec, double weight, Team preassignedTeam) {
+
+        public Player(Specialization spec, double weight, Team preassignedTeam) {
+            this(UUID.randomUUID(), spec, weight, preassignedTeam);
+        }
+
+        public Player(Specialization spec, double weight) {
+            this(UUID.randomUUID(), spec, weight, null);
+        }
+
         public String getInfo(Color colors) {
             return spec.specType.getColor.apply(colors) + spec + colors.gray() + " - " + colors.lightPurple() + WEIGHT_FORMAT.format(weight);
         }
+
+        @Override
+        public String toString() {
+            return "Player{" +
+                    "" + spec +
+                    ", " + WEIGHT_FORMAT.format(weight) +
+                    '}';
+        }
     }
 
-    record Printer(Consumer<String> sendMessage, Color colors) {
+    /**
+     * Class used as an interface to print debug messages
+     */
+    static final class Printer {
+        private final Consumer<String> sendMessage;
+        private final Color colors;
+        private boolean enabled = true;
+
+        /**
+         * @param sendMessage the consumer to send messages to
+         * @param colors      color interface to use for coloring messages
+         */
+        Printer(Consumer<String> sendMessage, Color colors) {
+            this.sendMessage = sendMessage;
+            this.colors = colors;
+        }
+
+        public void sendMessage(String message) {
+            if (enabled) {
+                sendMessage.accept(message);
+            }
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public Color colors() {
+            return colors;
+        }
 
     }
-
-    ;
 
 }
