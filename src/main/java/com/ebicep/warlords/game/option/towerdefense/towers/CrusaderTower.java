@@ -3,13 +3,17 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -119,6 +123,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
 
     private static class StrikeAttack extends AbstractAbility implements HitBox {
 
+        private static final ItemStack SWORD_ITEM = new ItemStack(Material.IRON_SWORD);
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
@@ -130,7 +135,16 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower tower = warlordsTower.getTower();
                 tower.getEnemyMobs(range).forEach(warlordsNPC -> {
-
+                    TowerDefenseUtils.playSwordStrikeAnimation(warlordsTower, warlordsNPC, SWORD_ITEM);
+                    warlordsNPC.addDamageInstance(
+                            warlordsTower,
+                            name,
+                            minDamageHeal,
+                            maxDamageHeal,
+                            critChance,
+                            critMultiplier,
+                            InstanceFlags.TD_PHYSICAL
+                    );
                 });
             }
             return true;

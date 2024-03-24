@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
@@ -17,6 +18,8 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -89,6 +92,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
 
     private static class StrikeAttack extends AbstractAbility implements HitBox {
 
+        private static final ItemStack SWORD_ITEM = new ItemStack(Material.DIAMOND_SWORD);
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
@@ -99,6 +103,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 1).forEach(warlordsNPC -> {
+                    TowerDefenseUtils.playSwordStrikeAnimation(warlordsTower, warlordsNPC, SWORD_ITEM);
                     warlordsNPC.addDamageInstance(
                             warlordsTower,
                             name,

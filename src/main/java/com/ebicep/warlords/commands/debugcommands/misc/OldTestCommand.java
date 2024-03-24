@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -14,6 +15,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -125,60 +127,96 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
+//            TowerDefenseUtils.playSwordStrikeAnimation(player.getLocation(), Material.IRON_SWORD, 8);
+
             Location location = player.getEyeLocation();
             LocationBuilder locationBuilder = new LocationBuilder(location)
+                    .forward(5)
                     .pitch(0)
-                    .yaw(location.getYaw() - 90)
+                    .yaw(location.getYaw() - 180)
                     .right(.1f);
-            Display display = player.getWorld().spawn(locationBuilder, ItemDisplay.class, d -> {
+
+            int maxTicks = 8;
+            List<Location> quarterCircle = new ArrayList<>();
+            LocationBuilder startLocation = locationBuilder.clone().addY(0).yaw(location.getYaw() - 90).pitch(-90);
+            float rot = 90f / maxTicks * 2;
+            for (int i = 0; i < maxTicks / 2 + 1; i++) {
+                float pitch = -90 + (i * rot);
+                System.out.println(pitch);
+                LocationBuilder loc = startLocation
+                        .clone()
+                        .pitch(pitch)
+                        .forward(3.5)
+                        .yaw(locationBuilder.getYaw())
+                        .pitch(locationBuilder.getPitch());
+                quarterCircle.add(loc);
+            }
+
+            Display display = player.getWorld().spawn(quarterCircle.get(0), ItemDisplay.class, d -> {
                 d.setItemStack(new ItemStack(Material.WOODEN_SWORD));
                 d.setTransformation(new Transformation(
-                        new Vector3f(0, 3.5f, 0),
+                        new Vector3f(0, 0, 0),
                         new Quaternionf().rotationZ((float) Math.toRadians(-45)),
-                        new Vector3f(5f),
+                        new Vector3f(10f, 10f, 100f),
                         new Quaternionf()
                 ));
 
-                d.setInterpolationDuration(50);
+                d.setInterpolationDuration(maxTicks - 1);
                 d.setInterpolationDelay(-1);
-                d.setTeleportDuration(10);
+                d.setTeleportDuration(maxTicks - 2);
             });
 
-            Display display2 = player.getWorld().spawn(locationBuilder, ItemDisplay.class, d -> {
-                d.setItemStack(new ItemStack(Material.WOODEN_SWORD));
-                d.setTransformation(new Transformation(
-                        new Vector3f(-2.5f, -2.5f, 0),
-                        new Quaternionf().rotationZ((float) Math.toRadians(90)),
-                        new Vector3f(5f),
-                        new Quaternionf()
-                ));
+            EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, locationBuilder, 20);
 
-                d.setInterpolationDuration(50);
-                d.setInterpolationDelay(-1);
-                d.setTeleportDuration(10);
-            });
+//            Display display2 = player.getWorld().spawn(locationBuilder, ItemDisplay.class, d -> {
+//                d.setItemStack(new ItemStack(Material.WOODEN_SWORD));
+//                d.setTransformation(new Transformation(
+//                        new Vector3f(-2.5f, -2.5f, 0),
+//                        new Quaternionf().rotationZ((float) Math.toRadians(90)),
+//                        new Vector3f(5f),
+//                        new Quaternionf()
+//                ));
+//
+//                d.setInterpolationDuration(50);
+//                d.setInterpolationDelay(-1);
+//                d.setTeleportDuration(10);
+//            });
 
 
-            Transformation transformation = display.getTransformation();
-//            transformation.getTranslation().set(-2.5f, -2.5f, 0);
-            transformation.getTranslation().set(0, -3.5f, 0);
-            transformation.getLeftRotation().rotationZ((float) Math.toRadians(135));
-            display.setTransformation(transformation);
-//            display.teleport(locationBuilder.forward(10));
+//            Transformation transformation = display.getTransformation();
+////            transformation.getTranslation().set(-2.5f, -2.5f, 0);
+////            transformation.getTranslation().set(0, -3.5f, 0);
+//            transformation.getLeftRotation().rotateLocalZ((float) Math.toRadians(90));
+//            display.setTransformation(transformation);
+//            display.teleport(quarterCircle.get(quarterCircle.size() - 1));
+
             new BukkitRunnable() {
                 int counter = 0;
+                int tpCounter = 0;
 
                 @Override
                 public void run() {
-//                        current.forward(2);
-//                        display.teleport(current);
-                    if (counter++ > 5 * 20) {
+//                    Transformation transformation = display.getTransformation();
+//                    double angdeg = -45 + counter * 1.8;
+//                    System.out.println(angdeg);
+//                    transformation.getLeftRotation().rotateZ((float) Math.toRadians(1.35));
+//                    display.setTransformation(transformation);
+
+                    if (tpCounter < quarterCircle.size()) {
+                        Location loc = quarterCircle.get(tpCounter++);
+                        EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, loc, 1);
+//                        display.teleport(loc);
+                    }
+
+
+                    if (++counter >= maxTicks) {
                         display.remove();
-                        display2.remove();
+//                        display2.remove();
                         cancel();
                     }
                 }
             }.runTaskTimer(Warlords.getInstance(), 0, 0);
+
 
 //            Display display = player.getWorld().spawn(player.getLocation(), BlockDisplay.class, d -> {
 //                d.setBlock(Material.BLUE_GLAZED_TERRACOTTA.createBlockData());

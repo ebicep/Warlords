@@ -1,21 +1,30 @@
 package com.ebicep.warlords.game.option.towerdefense;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LocationMarker;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Objects;
@@ -143,6 +152,57 @@ public class TowerDefenseUtils {
             return false;
         }
         return warlordsEntity.getGame().equals(game);
+    }
+
+    public static void playSwordStrikeAnimation(WarlordsTower warlordsTower, WarlordsNPC target, ItemStack itemStack) {
+        playSwordStrikeAnimation(
+                new LocationBuilder(warlordsTower.getTower().getBottomCenterLocation())
+                        .faceTowards(target.getLocation()),
+                itemStack,
+                8
+        );
+    }
+
+    public static void playSwordStrikeAnimation(Location location, ItemStack itemStack, int ticksLived) {
+        LocationBuilder startLocation = new LocationBuilder(location)
+                .pitch(-90)
+                .forward(3.5)
+                .pitch(0)
+                .yaw(location.getYaw() - 90);
+        LocationBuilder endLocation = new LocationBuilder(location)
+                .pitch(0)
+                .forward(3.5)
+                .pitch(startLocation.getPitch())
+                .yaw(startLocation.getYaw());
+        Display display = startLocation.getWorld().spawn(startLocation, ItemDisplay.class, d -> {
+            d.setItemStack(itemStack);
+            d.setBrightness(new Display.Brightness(15, 15));
+            d.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new Quaternionf().rotationZ((float) Math.toRadians(-45)),
+                    new Vector3f(5f, 5f, 5f),
+                    new Quaternionf()
+            ));
+            d.setInterpolationDuration(ticksLived - 1);
+            d.setInterpolationDelay(-1);
+            d.setTeleportDuration(ticksLived - 2);
+        });
+
+        Transformation transformation = display.getTransformation();
+        transformation.getLeftRotation().rotateZ((float) Math.toRadians(90));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                display.setTransformation(transformation);
+                display.teleport(endLocation);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                display.remove();
+            }
+        }.runTaskLater(Warlords.getInstance(), ticksLived);
     }
 
     record RateInfo(int rate, int expCost, Material material) {
