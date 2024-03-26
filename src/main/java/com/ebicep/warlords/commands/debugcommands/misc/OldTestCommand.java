@@ -1,9 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -13,20 +12,10 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Transformation;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -127,8 +116,24 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-//            TowerDefenseUtils.playSwordStrikeAnimation(player.getLocation(), Material.IRON_SWORD, 8);
+            LocationBuilder locationBuilder = new LocationBuilder(player.getLocation())
+                    .pitch(0)
+                    .forward(15);
+            new ChasingBlockEffect.Builder()
+                    .setSpeed(3)
+                    .setDestination(() -> locationBuilder)
+                    .setOnTick(ticksElapsed -> {
 
+                    })
+                    .setOnDestinationReached(() -> {
+
+                    })
+                    .setMaxTicks(30)
+                    .create()
+                    .start(player.getLocation());
+
+//            TowerDefenseUtils.playSwordStrikeAnimation(player.getLocation(), Material.IRON_SWORD, 8);
+/*
             Location location = player.getEyeLocation();
             LocationBuilder locationBuilder = new LocationBuilder(location)
                     .forward(5)
@@ -167,6 +172,8 @@ public class OldTestCommand implements CommandExecutor {
             });
 
             EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, locationBuilder, 20);
+
+
 
 //            Display display2 = player.getWorld().spawn(locationBuilder, ItemDisplay.class, d -> {
 //                d.setItemStack(new ItemStack(Material.WOODEN_SWORD));
@@ -216,7 +223,7 @@ public class OldTestCommand implements CommandExecutor {
                     }
                 }
             }.runTaskTimer(Warlords.getInstance(), 0, 0);
-
+ */
 
 //            Display display = player.getWorld().spawn(player.getLocation(), BlockDisplay.class, d -> {
 //                d.setBlock(Material.BLUE_GLAZED_TERRACOTTA.createBlockData());

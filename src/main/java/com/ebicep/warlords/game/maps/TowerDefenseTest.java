@@ -44,18 +44,18 @@ public class TowerDefenseTest extends GameMap {
     @Override
     public List<Option> initMap(GameMode category, LocationFactory loc, EnumSet<GameAddon> addons) {
         List<Option> options = category.initMap(this, loc, addons);
-        options.add(TeamMarker.create(Team.GAME, Team.BLUE, Team.RED).asOption());
+        options.add(TeamMarker.create(Team.GAME, Team.BLUE).asOption());
         LocationBuilder blueSpawn = loc.addXYZ(2.5, 65, 0.5, 90, 0);
         LocationBuilder redSpawn = loc.addXYZ(-52.5, 65, 8.5, -90, 0);
 
         options.add(LobbyLocationMarker.create(blueSpawn, Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(redSpawn, Team.RED).asOption());
+//        options.add(LobbyLocationMarker.create(redSpawn, Team.RED).asOption());
         options.add(SpawnpointOption.forTeam(blueSpawn, Team.BLUE));
-        options.add(SpawnpointOption.forTeam(redSpawn, Team.RED));
+//        options.add(SpawnpointOption.forTeam(redSpawn, Team.RED));
 
         options.add(new TowerDefenseOption()
                 .addCastle(Team.BLUE, loc.addXYZ(-39.5, 70, -9.5), 100_000)
-                .addCastle(Team.RED, loc.addXYZ(-10.5, 70, 18.5), 100_000)
+//                .addCastle(Team.RED, loc.addXYZ(-10.5, 70, 18.5), 100_000)
         );
 
         List<Location> bluePath1 = List.of(
@@ -102,7 +102,7 @@ public class TowerDefenseTest extends GameMap {
 //        );
         options.add(new TowerBuildOption()
                 .addBuildableArea(Team.BLUE, loc.addXYZ(-0.5, 60, 3.5), loc.addXYZ(-49.5, 80, -23.5))
-                .addBuildableArea(Team.RED, loc.addXYZ(-0.5, 60, 5.5), loc.addXYZ(-49.5, 80, 32.5))
+//                .addBuildableArea(Team.RED, loc.addXYZ(-0.5, 60, 5.5), loc.addXYZ(-49.5, 80, 32.5))
         );
 
         for (Option option : options) {

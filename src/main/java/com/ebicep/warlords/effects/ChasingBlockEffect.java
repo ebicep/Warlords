@@ -3,6 +3,7 @@ package com.ebicep.warlords.effects;
 import com.ebicep.customentities.nms.SelfRemovingFallingBlock;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -52,7 +53,7 @@ public class ChasingBlockEffect {
     }
 
     public void start(Location startingLocation) {
-        this.currentLocation = startingLocation;
+        this.currentLocation = startingLocation.clone();
         if (game != null) {
             new GameRunnable(game) {
                 @Override
@@ -91,31 +92,37 @@ public class ChasingBlockEffect {
         // moving
         if (length > speedSquared) {
             change.multiply(1 / (Math.sqrt(length) / speed));
+            LocationBuilder oldLocation = new LocationBuilder(currentLocation);
             currentLocation.add(change);
-
-            //moving vertically
-            if (destinationLocation.getY() < currentLocation.getY()) {
+            oldLocation.faceTowards(currentLocation);
+            // loop through the distance in case where the distance is greater than 1, dont want block skipping
+            // does look slightly weird since chunks of blocks will be placed/spawned at once with the same velocity (not a smooth transition)
+            for (int i = 0; i < speed; i++) {
+                //moving vertically
+                if (destinationLocation.getY() < oldLocation.getY()) {
+                    for (int j = 0; j < 10; j++) {
+                        if (oldLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                            oldLocation.add(0, -1, 0);
+                        } else {
+                            break;
+                        }
+                    }
+                }
                 for (int j = 0; j < 10; j++) {
-                    if (currentLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                        currentLocation.add(0, -1, 0);
+                    if (oldLocation.getBlock().getType() != Material.AIR) {
+                        oldLocation.add(0, 1, 0);
                     } else {
                         break;
                     }
                 }
+                new SelfRemovingFallingBlock(
+                        oldLocation.clone(),
+                        Objects.requireNonNullElseGet(blockState, () -> oldLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
+                        .2,
+                        block -> block.setVelocity(new Vector(0, .25, 0))
+                );
+                oldLocation.forward(1);
             }
-            for (int i = 0; i < 10; i++) {
-                if (currentLocation.getBlock().getType() != Material.AIR) {
-                    currentLocation.add(0, 1, 0);
-                } else {
-                    break;
-                }
-            }
-            new SelfRemovingFallingBlock(
-                    currentLocation,
-                    Objects.requireNonNullElseGet(blockState, () -> currentLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
-                    .2,
-                    block -> block.setVelocity(new Vector(0, .25, 0))
-            );
         } else {
             //reached destination
             onDestinationReached.run();

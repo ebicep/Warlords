@@ -1,9 +1,8 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -111,19 +110,30 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         }
 
         private void attack(WarlordsTower warlordsTower, WarlordsEntity target) {
-            EffectUtils.playChainAnimation(warlordsTower, target, ChainLightning.CHAIN_ITEM, 3);
-            target.addDamageInstance(
-                    warlordsTower,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier,
-                    InstanceFlags.TD_PHYSICAL
-            );
-            if (pveMasterUpgrade) {
-                target.addSpeedModifier(warlordsTower, name, -20, SLOW_TICKS);
-            }
+            new ChasingBlockEffect.Builder()
+                    .setGame(target.getGame())
+                    .setSpeed(1.5f)
+                    .setDestination(() -> target.isDead() ? null : target.getLocation())
+                    .setOnTick(ticksElapsed -> {
+
+                    })
+                    .setOnDestinationReached(() -> {
+                        target.addDamageInstance(
+                                warlordsTower,
+                                name,
+                                minDamageHeal,
+                                maxDamageHeal,
+                                critChance,
+                                critMultiplier,
+                                InstanceFlags.TD_PHYSICAL
+                        );
+                        if (pveMasterUpgrade) {
+                            target.addSpeedModifier(warlordsTower, name, -20, SLOW_TICKS);
+                        }
+                    })
+                    .setMaxTicks(30)
+                    .create()
+                    .start(warlordsTower.getTower().getBottomCenterLocation());
         }
 
         @Override
