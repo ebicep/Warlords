@@ -38,7 +38,8 @@ public enum TowerRegistry {
     THUNDERLORD_TOWER("TL_TOWER", ThunderlordTower::new, Material.RED_GLAZED_TERRACOTTA, "Thunderlord Tower", "Zip Zap."),
     SPIRITGUARD_TOWER("SG_TOWER", SpiritguardTower::new, Material.YELLOW_GLAZED_TERRACOTTA, "Spiriguard Tower", "Spooky oobs."),
     EARTHWARDEN_TOWER("WARDEN_TOWER", EarthwardenTower::new, Material.GREEN_GLAZED_TERRACOTTA, "Earthwarden Tower", "Spiky."),
-    ASSASSIN_TOWER("ASS_TOWER", AssassinTower::new, Material.RED_STAINED_GLASS_PANE, "Assassin Tower", "From the shadows but not really."),
+    ASSASSIN_TOWER("ASS_TOWER", AssassinTower::new, Material.RED_STAINED_GLASS, "Assassin Tower", "From the shadows but not really."),
+    VINDICATOR_TOWER("VIND_TOWER", VindicatorTower::new, Material.YELLOW_STAINED_GLASS, "Vindicator Tower", "VIN-DI-CA-TIONNNNN."),
     BIG_BOY("BIG_BOY", BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;

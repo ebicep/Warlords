@@ -2,14 +2,19 @@ package com.ebicep.warlords.game.option.towerdefense.mobs;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.CustomAttackStrategy;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.api.ai.NavigatorParameters;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -18,12 +23,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
 import java.util.function.Consumer;
 
 public abstract class TowerDefenseMob extends AbstractMob {
 
     @Nullable
     private WarlordsEntity spawner;
+    private final FloatModifiable physicalResistance = new FloatModifiable(0);
+    private final FloatModifiable magicResistance = new FloatModifiable(0);
 
     public TowerDefenseMob(
             Location spawnLocation,
@@ -102,6 +110,32 @@ public abstract class TowerDefenseMob extends AbstractMob {
             }
         }
 
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Resistances",
+                null,
+                TowerDefenseMob.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {},
+                false,
+                (cooldown, ticksElapsed) -> {
+                    physicalResistance.tick();
+                    magicResistance.tick();
+                }
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                EnumSet<InstanceFlags> flags = event.getFlags();
+                if (flags.contains(InstanceFlags.TD_PHYSICAL)) {
+                    return currentDamageValue * (1 - physicalResistance.getCalculatedValue());
+                } else if (flags.contains(InstanceFlags.TD_MAGIC)) {
+                    return currentDamageValue * (1 - magicResistance.getCalculatedValue());
+                }
+                return currentDamageValue;
+            }
+        });
+
         return warlordsNPC;
     }
 
@@ -111,5 +145,13 @@ public abstract class TowerDefenseMob extends AbstractMob {
 
     public void setSpawner(@Nullable WarlordsEntity spawner) {
         this.spawner = spawner;
+    }
+
+    public FloatModifiable getPhysicalResistance() {
+        return physicalResistance;
+    }
+
+    public FloatModifiable getMagicResistance() {
+        return magicResistance;
     }
 }
