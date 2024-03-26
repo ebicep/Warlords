@@ -185,7 +185,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
 
         @Override
         public Mob getMobRegistry() {
-            return Mob.TD_TOWER_AVENGER;
+            return Mob.TD_TOWER_ASSASSIN;
         }
 
         @Override
