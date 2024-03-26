@@ -1,8 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.customentities.nms.CustomFallingBlock;
+import com.ebicep.customentities.nms.SelfRemovingFallingBlock;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
-import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -12,8 +11,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -60,16 +57,16 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
-        List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
+        List<SelfRemovingFallingBlock> selfRemovingFallingBlocks = new ArrayList<>();
 
         Location location = wp.getLocation();
         for (int i = 0; i < waveLength; i++) {
-            fallingBlockLocations.add(getWave(location, i));
+            fallingBlockLocations.add(getWaveSideLocations(location, i));
         }
 
         UUID abilityUUID = UUID.randomUUID();
         List<WarlordsEntity> playersHit = new ArrayList<>();
-        for (int i = 0, fallingBlockLocationsSize = fallingBlockLocations.size(); i < fallingBlockLocationsSize; i++) {
+        for (int i = 0; i < fallingBlockLocations.size(); i++) {
             List<Location> fallingBlockLocation = fallingBlockLocations.get(i);
             for (Location loc : fallingBlockLocation) {
                 for (WarlordsEntity waveTarget : PlayerFilter
@@ -100,37 +97,20 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
-                        if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                            FallingBlock fallingBlock = addFallingBlock(location);
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, AbstractSeismicWave.this));
-                            GeneralEvents.addEntityUUID(fallingBlock);
-                        }
+                        Utils.addFallingBlock(location);
                     }
                     fallingBlockLocations.remove(fallingBlockLocation);
                     break;
                 }
-
-                for (int i = 0; i < customFallingBlocks.size(); i++) {
-                    CustomFallingBlock cfb = customFallingBlocks.get(i);
-                    cfb.setTicksLived(cfb.getTicksLived() + 1);
-                    if (LocationUtils.getDistance(cfb.getFallingBlock().getLocation(), .05) <= .25 || cfb.getTicksLived() > 10) {
-                        cfb.getFallingBlock().remove();
-                        customFallingBlocks.remove(i);
-                        i--;
-                    }
-                }
-
-                if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
+                if (fallingBlockLocations.isEmpty() && selfRemovingFallingBlocks.isEmpty()) {
                     this.cancel();
                 }
             }
-
         }.runTaskTimer(0, 0);
-
         return true;
     }
 
-    private List<Location> getWave(Location center, int distance) {
+    private List<Location> getWaveSideLocations(Location center, int distance) {
         List<Location> locations = new ArrayList<>();
         Location location = new Location(center.getWorld(), center.getX(), center.getY(), center.getZ());
         location.setDirection(center.getDirection());
@@ -144,29 +124,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     }
 
     protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, List<WarlordsEntity> playersHit, int i, WarlordsEntity waveTarget) {
-    }
-
-    private FallingBlock addFallingBlock(Location location) {
-        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
-            location.add(0, 1, 0);
-        }
-        Location blockToGet = location.clone().add(0, -1, 0);
-        if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
-            blockToGet.add(0, -1, 0);
-            if (location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR) {
-                blockToGet.add(0, -1, 0);
-            }
-        }
-        Material type = location.getWorld().getBlockAt(blockToGet).getType();
-        if (type == Material.GRASS) {
-            if ((int) (Math.random() * 3) == 2) {
-                type = Material.DIRT;
-            }
-        }
-        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
-        fallingBlock.setVelocity(new Vector(0, .14, 0));
-        fallingBlock.setDropItem(false);
-        return fallingBlock;
     }
 
     public float getVelocity() {

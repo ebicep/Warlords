@@ -1,8 +1,10 @@
 package com.ebicep.warlords.util.warlords;
 
+import com.ebicep.customentities.nms.SelfRemovingFallingBlock;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -336,37 +338,23 @@ public class Utils {
         target.setVelocity(from, v, ignoreModifiers);
     }
 
-    public static FallingBlock addFallingBlock(Location location) {
-        return addFallingBlock(location, new Vector(0, .14, 0));
+    public static void addFallingBlock(Location location) {
+        addFallingBlock(location, new Vector(0, .14, 0));
     }
 
-    public static FallingBlock addFallingBlock(Location location, Vector vector) {
-        FallingBlock fallingBlock = spawnTexturedFallingBlockAt(location);
-        fallingBlock.setVelocity(vector);
-        fallingBlock.setDropItem(false);
-        GeneralEvents.addEntityUUID(fallingBlock);
-        return fallingBlock;
-    }
-
-    @Nonnull
-    private static FallingBlock spawnTexturedFallingBlockAt(Location location) {
-        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
-            location.add(0, 1, 0);
-        }
-        Location blockToGet = location.clone().add(0, -1, 0);
-        if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
-            blockToGet.add(0, -1, 0);
-            if (location.getWorld().getBlockAt(blockToGet).getType() == Material.AIR) {
-                blockToGet.add(0, -1, 0);
-            }
-        }
-        Material type = location.getWorld().getBlockAt(blockToGet).getType();
+    public static void addFallingBlock(Location location, Vector vector) {
+        Material type = location.getWorld().getBlockAt(LocationUtils.getGroundLocation(location).add(0, -1, 0)).getType();
         if (type == Material.GRASS) {
             if ((int) (Math.random() * 3) == 2) {
                 type = Material.DIRT;
             }
         }
-        return location.getWorld().spawnFallingBlock(location.add(0, .6, 0), type.createBlockData());
+        new SelfRemovingFallingBlock(
+                location.add(0, .6, 0),
+                type.createBlockData(),
+                .4,
+                block -> block.setVelocity(vector)
+        );
     }
 
     public static void spawnThrowableProjectile(
