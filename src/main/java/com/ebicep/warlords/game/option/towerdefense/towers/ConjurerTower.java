@@ -91,7 +91,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
                             maxDamageHeal,
                             critChance,
                             critMultiplier,
-                            InstanceFlags.TD_PHYSICAL
+                            InstanceFlags.TD_MAGIC
                     );
                 });
             }

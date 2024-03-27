@@ -52,6 +52,18 @@ public abstract class TowerUpgradeInstance {
         }
     }
 
+    public static class Healing extends Valued {
+
+        public Healing(float value) {
+            super(value);
+        }
+
+        @Override
+        public String getName() {
+            return "Healing";
+        }
+    }
+
     public static class Range extends Valued {
 
         public Range(float value) {
