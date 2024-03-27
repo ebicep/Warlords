@@ -77,11 +77,11 @@ public class CryomancerTower extends AbstractTower implements Upgradeable.Path2 
 
     private static class SlowAttack extends AbstractAbility implements HitBox {
 
-        private static final int SLOW_TICKS = 20;
+        private static final int SLOW_TICKS = 40;
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SlowAttack() {
-            super("Slow", 0, 0, 5, 0);
+            super("Slow", 0, 0, 2, 0);
         }
 
         @Override
