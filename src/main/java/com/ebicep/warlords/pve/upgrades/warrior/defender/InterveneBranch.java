@@ -1,9 +1,10 @@
 package com.ebicep.warlords.pve.upgrades.warrior.defender;
 
 import com.ebicep.warlords.abilities.Intervene;
-import com.ebicep.warlords.pve.upgrades.*;
-
-import javax.annotation.Nonnull;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
 
@@ -24,18 +25,7 @@ public class InterveneBranch extends AbstractUpgradeBranch<Intervene> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.ShieldUpgradeType() {
-                    @Nonnull
-                    @Override
-                    public String getDescription0(String value) {
-                        return "+" + value + " Max Damage Prevented";
-                    }
-
-                    @Override
-                    public void run(float value) {
-                        ability.setMaxDamagePrevented(maxDamagePrevented + value);
-                    }
-                }, 250f)
+                .addUpgradeDuration(ability, 10f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
