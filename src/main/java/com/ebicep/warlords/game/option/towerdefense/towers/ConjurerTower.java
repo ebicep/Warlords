@@ -2,7 +2,6 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
@@ -12,7 +11,6 @@ import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -65,7 +63,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
     public void whileActive(int ticksElapsed) {
         super.whileActive(ticksElapsed);
         if (ticksElapsed % 5 == 0) {
-            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, topCenterLocation, 5, .5, .1, .5, 2);
+//            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, topCenterLocation, 5, .5, .1, .5, 2);
         }
     }
 
@@ -79,7 +77,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public HexAttack() {
-            super("Flame Attack", 300, 300, 3, 0);
+            super("Hex Attack", 300, 300, 3, 0);
         }
 
         @Override

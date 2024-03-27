@@ -42,6 +42,7 @@ public enum TowerRegistry {
     VINDICATOR_TOWER("VIND_TOWER", VindicatorTower::new, Material.YELLOW_STAINED_GLASS, "Vindicator Tower", "VIN-DI-CA-TIONNNNN."),
     APOTHECARY_TOWER("APOTH_TOWER", ApothecaryTower::new, Material.GREEN_STAINED_GLASS, "Apothecary Tower", "Splish splash."),
     CONJURER_TOWER("CONJ_TOWER", ConjurerTower::new, Material.RED_TERRACOTTA, "Conjurer Tower", "Conjurering things."),
+    SENTINEL_TOWER("SENT_TOWER", SentinelTower::new, Material.YELLOW_TERRACOTTA, "Sentinel Tower", "Watch out."),
     BIG_BOY("BIG_BOY", BigBoy::new, Material.SLIME_BLOCK, "Big Boy Tower", "Big"),
 
     ;
