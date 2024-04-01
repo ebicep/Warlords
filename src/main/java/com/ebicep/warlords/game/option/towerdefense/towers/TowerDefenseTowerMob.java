@@ -19,6 +19,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -106,15 +107,22 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
 
     @Override
     public void giveGoals() {
-        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(npc, 3, warlordsEntity -> {
-            if (warlordsEntity instanceof WarlordsNPC wNPC && pveOption instanceof TowerDefenseOption towerDefenseOption) {
-                TowerDefenseOption.TowerDefenseMobData mobData = towerDefenseOption.getMobsMap().get(wNPC.getMob());
-                if (mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData) {
-                    return attackingMobData.getAttackingTeam() == spawner.getTeam();
-                }
-            }
-            return false;
-        }), 2);
+        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(
+                npc,
+                3,
+                warlordsEntity -> {
+                    if (warlordsEntity instanceof WarlordsNPC wNPC && pveOption instanceof TowerDefenseOption towerDefenseOption) {
+                        TowerDefenseOption.TowerDefenseMobData mobData = towerDefenseOption.getMobsMap().get(wNPC.getMob());
+                        if (mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData) {
+                            return attackingMobData.getAttackingTeam() == spawner.getTeam();
+                        }
+                    }
+                    return false;
+                },
+                warlordsEntity -> npc.isSpawned() &&
+                        warlordsEntity.getEntity() instanceof LivingEntity livingEntity &&
+                        livingEntity.hasLineOfSight(npc.getEntity()) // TODO test
+        ), 2);
     }
 
     public void setSpawner(@Nonnull WarlordsTower spawner) {

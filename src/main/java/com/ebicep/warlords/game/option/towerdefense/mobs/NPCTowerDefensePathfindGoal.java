@@ -10,6 +10,7 @@ import net.citizensnpcs.api.ai.tree.BehaviorGoalAdapter;
 import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,11 @@ public class NPCTowerDefensePathfindGoal extends BehaviorGoalAdapter {
             }
             return false;
         });
+        // prevent mob from going backwards to attack defending mob TODO test
+        this.extraFilters.add(warlordsEntity -> npc.isSpawned() &&
+                npc.getEntity() instanceof LivingEntity livingEntity &&
+                livingEntity.hasLineOfSight(warlordsEntity.getEntity())
+        );
     }
 
 
