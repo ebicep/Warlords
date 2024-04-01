@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.towerdefense.waves.FixedPlayerWave;
 import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.scheduler.BukkitTask;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ public class TowerDefensePlayerInfo {
     private float incomeRate = 20; // per second
     private final FixedPlayerWave playerWave = new FixedPlayerWave(); // list of sent waves
     private BukkitTask waveTask;
+    @Nullable
+    private BukkitTask renderTask; // whatever the player is currently rendering (tower radius, etc)
     // stats
     private float totalIncomeGained;
     private float totalIncomeSpent;
@@ -43,6 +46,14 @@ public class TowerDefensePlayerInfo {
         return waveTask;
     }
 
+    public void setRenderTask(@Nullable BukkitTask renderTask) {
+        this.renderTask = renderTask;
+    }
+
+    public @Nullable BukkitTask getRenderTask() {
+        return renderTask;
+    }
+
     public void setWaveTask(BukkitTask waveTask) {
         this.waveTask = waveTask;
     }
@@ -63,13 +74,13 @@ public class TowerDefensePlayerInfo {
         return mobStats;
     }
 
-    static class TowerStats {
+    public static class TowerStats {
         private final Map<Integer, Integer> upgradesBought = new HashMap<>();
         private int timesBuilt;
         private int timesSold;
     }
 
-    static class MobStats {
+    public static class MobStats {
         private boolean unlocked = false;
         private int timesSent;
         private int timesKilled;

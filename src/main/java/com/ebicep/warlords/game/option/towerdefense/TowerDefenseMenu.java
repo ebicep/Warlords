@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerSellEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMobInfo;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -25,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +57,8 @@ public class TowerDefenseMenu {
         WarlordsTower warlordsTower = tower.getWarlordsTower();
 
         WarlordsEntity warlordsPlayerOwner = Warlords.getPlayer(owner);
+        TowerDefensePlayerInfo playerInfo = tower.getTowerDefenseOption().getPlayerInfo(warlordsPlayerOwner);
+
         Component name = warlordsPlayerOwner == null ? Component.text("Unknown", NamedTextColor.BLACK, TextDecoration.ITALIC) : warlordsPlayerOwner.getColoredName();
         PlayerStatisticsMinute.Entry stats = warlordsTower.getMinuteStats().total();
         ItemBuilder itemBuilder = new ItemBuilder(HeadUtils.getHead(owner))
@@ -81,10 +86,36 @@ public class TowerDefenseMenu {
         List<AbstractAbility> abilities = warlordsTower.getAbilities();
         for (int i = 0; i < abilities.size(); i++) {
             AbstractAbility ability = abilities.get(i);
+            ItemBuilder builder = new ItemBuilder(ability.getItem());
+            if (ability instanceof HitBox) {
+                builder.addLore(
+                        Component.empty(),
+                        Component.textOfChildren(
+                                Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                Component.text("to view range", NamedTextColor.YELLOW)
+                        )
+                );
+            }
             menu.setItem(i + 1, 2,
-                    new ItemBuilder(ability.getItem())
-                            .get(),
+                    builder.get(),
                     (m, e) -> {
+                        if (e.isRightClick() && ability instanceof HitBox hitBox) {
+                            BukkitTask renderTask = playerInfo.getRenderTask();
+                            if (renderTask != null) {
+                                renderTask.cancel();
+                            }
+                            playerInfo.setRenderTask(new GameRunnable(tower.getGame()) {
+                                int ticksElapsed = 0;
+
+                                @Override
+                                public void run() {
+                                    hitBox.renderHitBox(tower.getBottomCenterLocation());
+                                    if (ticksElapsed++ > 20 * 5) {
+                                        this.cancel();
+                                    }
+                                }
+                            }.runTaskTimer(0, 10));
+                        }
                     }
             );
         }
