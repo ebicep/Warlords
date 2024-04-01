@@ -204,19 +204,23 @@ public class TowerDefenseOption implements PveOption, Listener {
             mob.whileAlive(ticksElapsed.get() - mobData.getSpawnTick(), this);
             mob.activateAbilities();
             if (mobData.isAttackingCastle()) {
-                Team attackingTeam = mobData.getAttackingTeam();
-                TowerDefenseCastle castle = castles.get(attackingTeam);
-                if (castle == null) {
-                    ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("Castle for team " + attackingTeam + " is null");
-                    continue;
+                int attackingCastleTime = mobData.getAttackingCastleTime();
+                if (attackingCastleTime % 20 == 0) {
+                    Team attackingTeam = mobData.getAttackingTeam();
+                    TowerDefenseCastle castle = castles.get(attackingTeam);
+                    if (castle == null) {
+                        ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage("Castle for team " + attackingTeam + " is null");
+                        continue;
+                    }
+                    if (castle.isDestroyed()) {
+                        continue;
+                    }
+                    if (castle.takeDamage(mob)) {
+                        destroyedCastleTeams.add(attackingTeam);
+                        Bukkit.getPluginManager().callEvent(new TowerDefenseCastleDestroyEvent(game, castle));
+                    }
                 }
-                if (castle.isDestroyed()) {
-                    continue;
-                }
-                if (castle.takeDamage(mob)) {
-                    destroyedCastleTeams.add(attackingTeam);
-                    Bukkit.getPluginManager().callEvent(new TowerDefenseCastleDestroyEvent(game, castle));
-                }
+                mobData.setAttackingCastleTime(attackingCastleTime + 1);
             }
         }
         if (destroyedCastleTeams.isEmpty()) {
@@ -355,7 +359,7 @@ public class TowerDefenseOption implements PveOption, Listener {
     public void onMobCompletePath(TowerDefenseMobCompletePathEvent event) {
         TowerDefenseMobData mobData = mobs.get(event.getMob());
         if (mobData instanceof TowerDefenseAttackingMobData mobMobData) {
-            mobMobData.setAttackingCastle(true);
+            mobMobData.setAttackingCastleTime(true);
         }
     }
 
@@ -431,7 +435,7 @@ public class TowerDefenseOption implements PveOption, Listener {
         private int targetNode;
         private int edgeIndex;
         private int position; // position in game, first = 1
-        private boolean attackingCastle = false;
+        private int attackingCastleTime = -1; // -1 = not attacking castle
 
         public TowerDefenseAttackingMobData(
                 int spawnTick,
@@ -507,12 +511,20 @@ public class TowerDefenseOption implements PveOption, Listener {
         }
 
 
-        public boolean isAttackingCastle() {
-            return attackingCastle;
+        public int getAttackingCastleTime() {
+            return attackingCastleTime;
         }
 
-        public void setAttackingCastle(boolean attackingCastle) {
-            this.attackingCastle = attackingCastle;
+        public void setAttackingCastleTime(int attackingCastleTime) {
+            this.attackingCastleTime = attackingCastleTime;
+        }
+
+        public void setAttackingCastleTime(boolean attacking) {
+            this.attackingCastleTime = attacking ? 0 : -1;
+        }
+
+        public boolean isAttackingCastle() {
+            return attackingCastleTime > -1;
         }
     }
 
