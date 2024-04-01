@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgra
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -75,6 +76,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
         }) {
             @Override
             protected void onUpgrade() {
+                spawnTroops.setPveMasterUpgrade2(true);
             }
         });
     }
@@ -249,7 +251,8 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
                                         minDamageHeal,
                                         maxDamageHeal,
                                         critChance,
-                                        critMultiplier
+                                        critMultiplier,
+                                        InstanceFlags.TD_PHYSICAL
                                 );
                             }
                         }

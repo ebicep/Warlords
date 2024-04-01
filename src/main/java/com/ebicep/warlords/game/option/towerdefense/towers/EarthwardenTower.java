@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -130,6 +131,23 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
                         if (pveMasterUpgrade) {
                             target.addSpeedModifier(warlordsTower, name, -20, SLOW_TICKS);
                         }
+                        PlayerFilter.entitiesAround(target, 3, 3, 3)
+                                    .aliveTeammatesOf(target)
+                                    .excluding(target)
+                                    .forEach(warlordsEntity -> {
+                                        warlordsEntity.addDamageInstance(
+                                                warlordsTower,
+                                                name,
+                                                minDamageHeal,
+                                                maxDamageHeal,
+                                                critChance,
+                                                critMultiplier,
+                                                InstanceFlags.TD_PHYSICAL
+                                        );
+                                        if (pveMasterUpgrade) {
+                                            warlordsEntity.addSpeedModifier(warlordsTower, name, -20, SLOW_TICKS);
+                                        }
+                                    });
                     })
                     .setMaxTicks(30)
                     .create()

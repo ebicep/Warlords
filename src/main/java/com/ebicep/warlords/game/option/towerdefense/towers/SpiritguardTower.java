@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -103,7 +104,7 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
-                warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 3)
+                warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 1)
                              .forEach(target -> attack(warlordsTower, target));
             }
             return true;
@@ -120,6 +121,20 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
                     critMultiplier,
                     InstanceFlags.TD_MAGIC
             );
+            PlayerFilter.entitiesAround(target, 3, 3, 3)
+                        .aliveTeammatesOf(target)
+                        .excluding(target)
+                        .forEach(warlordsEntity -> {
+                            warlordsEntity.addDamageInstance(
+                                    warlordsTower,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    InstanceFlags.TD_MAGIC
+                            );
+                        });
         }
 
         @Override

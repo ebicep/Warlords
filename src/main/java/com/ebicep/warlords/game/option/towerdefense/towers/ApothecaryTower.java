@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -93,6 +94,8 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
     private static class StrikeAttack extends AbstractAbility implements HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
+        private final int minHeal = 100;
+        private final int maxHeal = 100;
 
         public StrikeAttack() {
             super("Strike Attack", 100, 100, 3, 0);
@@ -105,13 +108,39 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
                 tower.getEnemyMobs(range, 1).forEach(warlordsNPC -> {
                     warlordsNPC.addDamageInstance(
                             warlordsTower,
-                            "Water",
+                            name,
                             minDamageHeal,
                             maxDamageHeal,
                             critChance,
                             critMultiplier,
                             InstanceFlags.TD_MAGIC
                     );
+                    PlayerFilter.entitiesAround(warlordsNPC, 3, 3, 3)
+                                .isAlive()
+                                .excluding(warlordsNPC)
+                                .forEach(warlordsEntity -> {
+                                    if (warlordsEntity.isEnemy(warlordsTower)) {
+                                        warlordsEntity.addDamageInstance(
+                                                warlordsTower,
+                                                name,
+                                                minDamageHeal,
+                                                maxDamageHeal,
+                                                critChance,
+                                                critMultiplier,
+                                                InstanceFlags.TD_MAGIC
+                                        );
+                                    } else if (pveMasterUpgrade) {
+                                        warlordsNPC.addDamageInstance(
+                                                warlordsTower,
+                                                name,
+                                                minHeal,
+                                                maxHeal,
+                                                critChance,
+                                                critMultiplier,
+                                                InstanceFlags.TD_MAGIC
+                                        );
+                                    }
+                                });
                 });
             }
             return true;
