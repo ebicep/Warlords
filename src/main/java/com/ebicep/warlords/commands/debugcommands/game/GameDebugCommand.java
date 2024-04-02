@@ -200,6 +200,19 @@ public class GameDebugCommand extends BaseCommand {
         });
     }
 
+    @CommandAlias("gamedebugmole|gdm")
+    @Description("Auto starts whack a mole game")
+    public void gameDebugMole(@Conditions("outsideGame") Player player) {
+        GameStartCommand.startGame(player, false, queueEntryBuilder -> {
+            queueEntryBuilder.setRequestedGameAddons(GameAddon.PRIVATE_GAME);
+            queueEntryBuilder.setGameMode(GameMode.WHACK_A_MOLE);
+            queueEntryBuilder.setMap(GameMap.MAIN_LOBBY_WHACK_A_MOLE);
+            queueEntryBuilder.setOnResult((queueResult, game) -> {
+                game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
+            });
+        });
+    }
+
     @CommandAlias("endtimer")
     @Description("Sets timer of game to 00:01")
     public void endTimer(@Conditions("requireGame") Player player) {

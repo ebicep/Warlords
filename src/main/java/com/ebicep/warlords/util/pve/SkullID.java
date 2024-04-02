@@ -3,7 +3,7 @@ package com.ebicep.warlords.util.pve;
 import javax.annotation.Nonnull;
 
 // https://minecraft-heads.com/
-public enum SkullID {
+public enum SkullID implements Skull {
     // https://minecraft-heads.com/custom-heads/humanoid/50492-ethereal-wither-skull
     ETHEREAL_WITHER_SKULL("YjExNzc3OTE2ZTc1NjQ0M2UzMGEwNDNmMmJjOWNjZTBkMGZlNjI0YmQ2MTkyZDdiYTIzZjk2YTFkNzFiOWYzZiJ9fX0="),
     // https://minecraft-heads.com/custom-heads/humanoid/59545-endless-destination-helmet
@@ -189,7 +189,9 @@ public enum SkullID {
     //https://minecraft-heads.com/custom-heads/head/56786-question-mark-19
     QUESTION_MARK_BLACK_WHITE("MjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0="),
     //https://minecraft-heads.com/custom-heads/head/56785-wrong-mark
-    WRONG_MARK("Mjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0=");
+    WRONG_MARK("Mjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0="),
+
+    ;
 
     private final String textureId;
 
@@ -200,7 +202,7 @@ public enum SkullID {
         this.textureId = textureId;
     }
 
-    public String getTextureId() {
+    public String getTextureID() {
         return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv" + textureId;
     }
 
