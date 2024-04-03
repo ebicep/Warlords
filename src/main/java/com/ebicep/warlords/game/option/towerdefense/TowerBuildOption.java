@@ -85,6 +85,7 @@ public class TowerBuildOption implements Option, Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
+        boolean sneaking = player.isSneaking();
         WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
         if (!TowerDefenseUtils.validInteractGame(game, warlordsEntity)) {
             return;
@@ -93,7 +94,8 @@ public class TowerBuildOption implements Option, Listener {
         if (clickedBlock == null) {
             return;
         }
-        boolean clickedTower = handleTowerClick(player, warlordsEntity, clickedBlock);
+        PlayerBuildData buildData = getPlayerBuildData(player);
+        boolean clickedTower = handleTowerClick(player, warlordsEntity, clickedBlock, buildData, sneaking);
         if (clickedTower) {
             return;
         }
@@ -105,7 +107,7 @@ public class TowerBuildOption implements Option, Listener {
         if (!BUILDABLE.contains(clickedBlock.getType())) {
             return;
         }
-        if (getPlayerBuildData(player).getCooldown() > System.currentTimeMillis()) {
+        if (buildData.getCooldown() > System.currentTimeMillis()) {
             return;
         }
         Location clickedLocation = clickedBlock.getLocation();
@@ -113,17 +115,12 @@ public class TowerBuildOption implements Option, Listener {
             player.sendMessage(Component.text("You can only build on your teams side!", NamedTextColor.RED));
             return;
         }
-        if (player.isSneaking()) {
-            // TODO check if tower is already there and auto upgrade etc
-            if (false) {
-
+        if (sneaking) {
+            TowerRegistry lastBuilt = buildData.getLastBuilt();
+            if (lastBuilt != null) {
+                tryBuildTower(player, warlordsEntity, clickedLocation, lastBuilt);
             } else {
-                TowerRegistry lastBuilt = getPlayerBuildData(player).getLastBuilt();
-                if (lastBuilt != null) {
-                    tryBuildTower(player, warlordsEntity, clickedLocation, lastBuilt);
-                } else {
-                    openBuildMenu(player, warlordsEntity, clickedLocation);
-                }
+                openBuildMenu(player, warlordsEntity, clickedLocation);
             }
         } else {
             openBuildMenu(player, warlordsEntity, clickedLocation);
@@ -141,10 +138,14 @@ public class TowerBuildOption implements Option, Listener {
         tower.remove();
     }
 
-    private boolean handleTowerClick(Player player, WarlordsEntity warlordsEntity, Block clickedBlock) {
+    private boolean handleTowerClick(Player player, WarlordsEntity warlordsEntity, Block clickedBlock, PlayerBuildData buildData, boolean sneaking) {
         for (MetadataValue metadataValue : clickedBlock.getMetadata("TOWER")) {
             if (metadataValue.value() instanceof AbstractTower tower) {
-                TowerDefenseMenu.openTowerMenu(player, warlordsEntity, tower);
+                if (sneaking) {
+
+                } else {
+                    TowerDefenseMenu.openTowerMenu(player, warlordsEntity, tower);
+                }
                 return true;
             }
         }
@@ -417,6 +418,7 @@ public class TowerBuildOption implements Option, Listener {
         private long cooldown;
         @Nullable
         private TowerRegistry lastBuilt;
+        private final Map<TowerRegistry, Integer> lastTowerUpgrades = new HashMap<>();
 
         public PlayerBuildData() {
             this(0, null);
@@ -443,6 +445,14 @@ public class TowerBuildOption implements Option, Listener {
         public void setLastBuilt(@Nullable TowerRegistry lastBuilt) {
             this.lastBuilt = lastBuilt;
         }
+
+        @Nullable
+        public Integer getLastTowerUpgrade(TowerRegistry towerRegistry) {
+            return lastTowerUpgrades.getOrDefault(towerRegistry, null);
+        }
+
+//        public void setLastTowerUpgrade(TowerRegistry towerRegistry, int)
+
     }
 
 }
