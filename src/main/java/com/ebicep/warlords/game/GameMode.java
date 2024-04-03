@@ -678,6 +678,25 @@ public enum GameMode {
             return options;
         }
     },
+    WHACK_A_MOLE(
+            "Wackamole",
+            "Wackamole",
+            null,
+            null,
+            null,
+            1,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+
+            options.add(new WinAfterTimeoutOption(60, Team.RED));
+            options.add(new WeaponOption());
+
+            return options;
+        }
+    },
 
     ;
 
@@ -688,7 +707,7 @@ public enum GameMode {
     }
 
     public static boolean isPvE(GameMode mode) {
-        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE;
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE;
     }
 
     public final String name;

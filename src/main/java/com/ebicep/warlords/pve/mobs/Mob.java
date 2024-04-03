@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDSkeleton;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDZombie;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
+import com.ebicep.warlords.game.option.wackamole.moles.MoleArmorStand;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
@@ -816,6 +817,14 @@ public enum Mob {
     TD_TOWER_EARTHWARDEN(EntityType.ZOMBIE, EarthwardenTower.TDTowerEarthwarden.class, EarthwardenTower.TDTowerEarthwarden::new, EarthwardenTower.TDTowerEarthwarden::new, null),
     TD_TOWER_ASSASSIN(EntityType.ZOMBIE, AssassinTower.TDTowerAssassin.class, AssassinTower.TDTowerAssassin::new, AssassinTower.TDTowerAssassin::new, null),
 
+    // whack a mole
+    WHACK_A_MOLE_ARMOR_STAND(EntityType.ARMOR_STAND, MoleArmorStand.class, MoleArmorStand::new, MoleArmorStand::new, new Utils.SimpleEntityEquipment(
+            null,
+            null,
+            null,
+            null,
+            null
+    )),
 
     ;
 

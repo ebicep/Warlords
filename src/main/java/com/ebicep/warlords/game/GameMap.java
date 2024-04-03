@@ -42,6 +42,7 @@ public abstract class GameMap {
     public static final GameMap ILLUSION_VALLEY = new IllusionValleyHard();
     public static final GameMap ILLUSION_VALLEY2 = new IllusionValleyExtreme();
     public static final GameMap MAIN_LOBBY = new MainLobby();
+    public static final GameMap MAIN_LOBBY_WHACK_A_MOLE = new MainLobby2();
     public static final GameMap NEOLITHIC = new Neolithic();
     public static final GameMap PAYLOAD = new Payload();
     public static final GameMap PAYLOAD2 = new Payload2();
@@ -88,6 +89,7 @@ public abstract class GameMap {
             ILLUSION_VALLEY,
             ILLUSION_VALLEY2,
             MAIN_LOBBY,
+            MAIN_LOBBY_WHACK_A_MOLE,
             NEOLITHIC,
             PAYLOAD,
             PAYLOAD2,
@@ -127,7 +129,7 @@ public abstract class GameMap {
     public static void addGameHolders(GameManager gameManager) {
         Set<String> addedMaps = new HashSet<>();
         for (GameMap map : VALUES) {
-            if (map == MAIN_LOBBY) {
+            if (map == MAIN_LOBBY || map == MAIN_LOBBY_WHACK_A_MOLE) {
                 gameManager.addGameHolder(map.fileName, map);
                 continue;
             }
