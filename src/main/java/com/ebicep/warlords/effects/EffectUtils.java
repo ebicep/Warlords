@@ -17,6 +17,7 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -222,6 +223,7 @@ public class EffectUtils {
      * @param speed             speed of the particles
      */
     public static void playCircularEffectAround(
+            @Nullable Player player,
             Particle particle,
             Location location,
             double circleRadius,
@@ -235,6 +237,7 @@ public class EffectUtils {
         for (int i = 0; i < amountOfParticles; i++) {
             double angle = (double) i / amountOfParticles * Math.PI * 2;
             displayParticle(
+                    player,
                     particle,
                     loc.clone().add(Math.sin(angle) * circleRadius, 0, Math.cos(angle) * circleRadius),
                     1,
@@ -252,7 +255,17 @@ public class EffectUtils {
             double circleRadius,
             int amountOfParticles
     ) {
-        playCircularEffectAround(particle, location, circleRadius, amountOfParticles, 0, 0, 0, 0);
+        playCircularEffectAround(null, particle, location, circleRadius, amountOfParticles);
+    }
+
+    public static void playCircularEffectAround(
+            @Nullable Player player,
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles
+    ) {
+        playCircularEffectAround(player, particle, location, circleRadius, amountOfParticles, 0, 0, 0, 0);
     }
 
     /**
@@ -494,6 +507,21 @@ public class EffectUtils {
             int delayBetweenParticles,
             int amountOfSwirls
     ) {
+        playCircularEffectAround(null, game, location, effect, particleCount, radius, yAxisElevation, interval, delayBetweenParticles, amountOfSwirls);
+    }
+
+    public static void playCircularEffectAround(
+            @Nullable Player player,
+            Game game,
+            Location location,
+            Particle effect,
+            int particleCount,
+            double radius,
+            double yAxisElevation,
+            int interval,
+            int delayBetweenParticles,
+            int amountOfSwirls
+    ) {
         Location loc = location.clone();
         new GameRunnable(game) {
             double t = 0;
@@ -506,7 +534,7 @@ public class EffectUtils {
                 double y = yAxisElevation * t;
                 double z = radius * sin(t);
                 loc.add(x, y, z);
-                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                displayParticle(player, effect, loc, particleCount, 0, 0, 0, 0);
                 loc.subtract(x, y, z);
 
                 if (t > Math.PI * amountOfSwirls) {
@@ -663,7 +691,24 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+        displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
+    }
+
+    public static void displayParticle(
+            @Nullable Player player,
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed
+    ) {
+        if (player == null) {
+            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+        } else {
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        }
     }
 
     /**

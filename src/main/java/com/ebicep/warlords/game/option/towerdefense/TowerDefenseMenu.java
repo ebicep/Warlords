@@ -18,6 +18,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -25,9 +26,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.util.Collections;
 import java.util.List;
@@ -104,17 +110,35 @@ public class TowerDefenseMenu {
                             if (renderTask != null) {
                                 renderTask.cancel();
                             }
+                            // TODO resource pack annoucement + toggle showing particle/shadow/both
+                            Display display = tower.getBottomCenterLocation().getWorld().spawn(
+                                    new LocationBuilder(tower.getBottomCenterLocation())
+                                            .addY(1)
+                                    ,
+                                    TextDisplay.class,
+                                    d -> {
+                                        d.setShadowRadius(hitBox.getHitBoxRadius().getCalculatedValue() + 1.5f);
+                                        d.setShadowStrength(2);
+                                        d.setTransformation(new Transformation(
+                                                new Vector3f(),
+                                                new AxisAngle4f(),
+                                                new Vector3f(5),
+                                                new AxisAngle4f()
+                                        ));
+                                    }
+                            );
                             playerInfo.setRenderTask(new GameRunnable(tower.getGame()) {
-                                int ticksElapsed = 0;
+                                int secondsElapsed = 0;
 
                                 @Override
                                 public void run() {
-                                    hitBox.renderHitBox(tower.getBottomCenterLocation());
-                                    if (ticksElapsed++ > 20 * 5) {
+                                    hitBox.renderHitBox(tower.getBottomCenterLocation(), player);
+                                    if (secondsElapsed++ > 5) {
+                                        display.remove();
                                         this.cancel();
                                     }
                                 }
-                            }.runTaskTimer(0, 10));
+                            }.runTaskTimer(0, 20));
                         }
                     }
             );

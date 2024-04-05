@@ -1,8 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
-import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -12,10 +12,19 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -115,22 +124,49 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
+            Location location = player.getLocation();
+            Display display = location.getWorld().spawn(
+                    new LocationBuilder(location)
+                            .pitch(-90)
+                            .addY(10)
+                    ,
+                    ItemDisplay.class,
+                    d -> {
+                        d.setShadowRadius(10);
+                        d.setShadowStrength(3);
+                        d.setBillboard(Display.Billboard.FIXED);
+                        d.setBrightness(new Display.Brightness(15, 15));
+                        d.setTransformation(new Transformation(
+                                new Vector3f(),
+                                new AxisAngle4f(),
+                                new Vector3f(1, 1, 1),
+                                new AxisAngle4f()
+                        ));
+                        d.setItemStack(new ItemStack(Material.FIRE_CHARGE));
+                    }
+            );
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    display.remove();
+                }
+            }.runTaskLater(Warlords.getInstance(), 10 * 20);
 
-            LocationBuilder locationBuilder = new LocationBuilder(player.getLocation())
-                    .pitch(0)
-                    .forward(15);
-            new ChasingBlockEffect.Builder()
-                    .setSpeed(3)
-                    .setDestination(() -> locationBuilder)
-                    .setOnTick(ticksElapsed -> {
-
-                    })
-                    .setOnDestinationReached(() -> {
-
-                    })
-                    .setMaxTicks(30)
-                    .create()
-                    .start(player.getLocation());
+//            LocationBuilder locationBuilder = new LocationBuilder(player.getLocation())
+//                    .pitch(0)
+//                    .forward(15);
+//            new ChasingBlockEffect.Builder()
+//                    .setSpeed(3)
+//                    .setDestination(() -> locationBuilder)
+//                    .setOnTick(ticksElapsed -> {
+//
+//                    })
+//                    .setOnDestinationReached(() -> {
+//
+//                    })
+//                    .setMaxTicks(30)
+//                    .create()
+//                    .start(player.getLocation());
 
 //            TowerDefenseUtils.playSwordStrikeAnimation(player.getLocation(), Material.IRON_SWORD, 8);
 /*
