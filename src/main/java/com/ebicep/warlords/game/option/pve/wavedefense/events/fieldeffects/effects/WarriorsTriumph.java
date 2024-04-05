@@ -21,7 +21,7 @@ public class WarriorsTriumph implements FieldEffect {
 
     @Override
     public String getDescription() {
-        return "All warriors gain 10% damage and 10% lifesteal.";
+        return "Ability durations are reduced by 30% on ability activation for non-Warrior specializations. Warrior strikes deal 200% more damage.";
     }
 
     @Override

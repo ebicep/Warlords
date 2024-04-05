@@ -218,7 +218,7 @@ public class CombatantsCavernMode1 extends GameMap {
                 .playerExpPer(80)
                 .guildExpPer(10)
         );
-        options.add(new FieldEffectOption(options));
+        options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffect.WARRIORS_TRIUMPH));
 
         return options;
     }

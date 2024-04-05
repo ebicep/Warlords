@@ -126,7 +126,7 @@ public class CombatantsCavernMode2 extends GameMap {
                 .playerExpPerXSec(15, 10)
                 .guildExpPerXSec(4, 10)
         );
-        options.add(new FieldEffectOption(options));
+        options.add(new FieldEffectOption(options, FieldEffectOption.FieldEffect.WARRIORS_TRIUMPH));
 
         return options;
     }
