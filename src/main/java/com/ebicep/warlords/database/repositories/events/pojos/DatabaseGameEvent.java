@@ -16,6 +16,8 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -33,6 +35,7 @@ public class DatabaseGameEvent {
     public static final HashMap<GameEvents, DatabaseGameEvent> PREVIOUS_GAME_EVENTS = new HashMap<>();
     public static final HashMap<GameEvents, List<Long>> ALL_GAME_EVENT_TIMES = new HashMap<>();
     public static DatabaseGameEvent currentGameEvent = null;
+    private static BukkitTask eventChecker = null;
 
     public static boolean eventIsActive() {
         return currentGameEvent != null && currentGameEvent.isActive();
@@ -77,6 +80,10 @@ public class DatabaseGameEvent {
                                         .async(() -> DatabaseManager.gameEventsService.update(gameEvent)).execute();
                             }
                             gameEvent.start();
+                            if (eventChecker != null) {
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("Cancelling event checker...");
+                                eventChecker.cancel();
+                            }
                             break;
                         }
                     }
@@ -86,13 +93,25 @@ public class DatabaseGameEvent {
                                 .stream()
                                 .min((o1, o2) -> o2.getEndDate().compareTo(o1.getEndDate()))
                                 .get();
-                        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Days from last game event: " + gameEvent.getEndDate()
-                                                                                                               .until(Instant.now(), ChronoUnit.DAYS));
+                        ChatUtils.MessageType.GAME_EVENTS.sendMessage("Days from last game event: " + gameEvent.getEndDate().until(Instant.now(), ChronoUnit.DAYS));
                         if (gameEvent.getEndDate().isAfter(Instant.now().minus(7, ChronoUnit.DAYS))) {
                             currentGameEvent = gameEvent;
                             currentGameEvent.start();
+                            if (eventChecker != null) {
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("Cancelling event checker... but this shouldnt happen");
+                                eventChecker.cancel();
+                            }
                         } else {
                             ChatUtils.MessageType.GAME_EVENTS.sendMessage("Last game event was over 7 days ago, not starting");
+                            if (eventChecker == null) {
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("Starting event checker...");
+                                eventChecker = new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        startGameEvent();
+                                    }
+                                }.runTaskTimer(Warlords.getInstance(), 20 * 60 * 5, 20 * 60 * 5);
+                            }
                         }
                     }
                     EventsLeaderboardManager.create();
@@ -251,6 +270,7 @@ public class DatabaseGameEvent {
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", started=" + started +
+                ", startDateSecond=" + getStartDateSecond() +
                 '}';
     }
 }

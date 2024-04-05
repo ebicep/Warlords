@@ -60,6 +60,9 @@ public class BountyMenu {
             boolean claimAll,
             String bountyInfoName
     ) {
+        if (BountyUtils.BOUNTY_COLLECTION_INFO.get(bountyInfoName) == null) {
+            return;
+        }
         DatabaseManager.getPlayer(player.getUniqueId(), collection, databasePlayer -> {
             menu.setItem(1, y,
                     new ItemBuilder(Material.WRITABLE_BOOK)
