@@ -201,23 +201,23 @@ public abstract class AbstractTower {
         return warlordsTower;
     }
 
-    public List<WarlordsNPC> getAllyMob(float range, int limit) {
-        return getAllyMob(null, range, limit);
+    public List<WarlordsNPC> getAllyMobs(float range, int limit) {
+        return getAllyMobs(null, range, limit);
     }
 
-    public List<WarlordsNPC> getAllyMob(FloatModifiable range, int limit) {
-        return getAllyMob(null, range.getCalculatedValue(), limit);
+    public List<WarlordsNPC> getAllyMobs(FloatModifiable range, int limit) {
+        return getAllyMobs(null, range.getCalculatedValue(), limit);
     }
 
-    public List<WarlordsNPC> getAllyMob(float range) {
-        return getAllyMob(null, range, -1);
+    public List<WarlordsNPC> getAllyMobs(float range) {
+        return getAllyMobs(null, range, -1);
     }
 
-    public List<WarlordsNPC> getAllyMob(FloatModifiable range) {
-        return getAllyMob(null, range.getCalculatedValue(), -1);
+    public List<WarlordsNPC> getAllyMobs(FloatModifiable range) {
+        return getAllyMobs(null, range.getCalculatedValue(), -1);
     }
 
-    public List<WarlordsNPC> getAllyMob(@Nullable AllyTargetPriority targetPriority, float range, int limit) {
+    public List<WarlordsNPC> getAllyMobs(@Nullable AllyTargetPriority targetPriority, float range, int limit) {
         ConcurrentHashMap<AbstractMob, TowerDefenseOption.TowerDefenseMobData> mobData = towerDefenseOption.getMobsMap();
         Stream<WarlordsNPC> stream = PlayerFilterGeneric
                 .entitiesAround(bottomCenterLocation, range, range, range)

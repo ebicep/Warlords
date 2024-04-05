@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.warlords.abilities.SoulfireBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
@@ -74,6 +76,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
 
     private static class HexAttack extends AbstractAbility implements HitBox {
 
+
         private final FloatModifiable range = new FloatModifiable(30);
 
         public HexAttack() {
@@ -84,6 +87,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 2).forEach(target -> {
+                    EffectUtils.playChainAnimation(warlordsTower, target, SoulfireBeam.BEAM_ITEM, 3);
                     target.addDamageInstance(
                             warlordsTower,
                             name,

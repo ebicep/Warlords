@@ -127,22 +127,17 @@ public class OldTestCommand implements CommandExecutor {
             Location location = player.getLocation();
             Display display = location.getWorld().spawn(
                     new LocationBuilder(location)
-                            .pitch(-90)
-                            .addY(10)
+                            .pitch(0)
                     ,
                     ItemDisplay.class,
                     d -> {
-                        d.setShadowRadius(10);
-                        d.setShadowStrength(3);
-                        d.setBillboard(Display.Billboard.FIXED);
-                        d.setBrightness(new Display.Brightness(15, 15));
                         d.setTransformation(new Transformation(
-                                new Vector3f(),
+                                new Vector3f(0, 2, 0),
                                 new AxisAngle4f(),
-                                new Vector3f(1, 1, 1),
+                                new Vector3f(1.5f),
                                 new AxisAngle4f()
                         ));
-                        d.setItemStack(new ItemStack(Material.FIRE_CHARGE));
+                        d.setItemStack(new ItemStack(Material.BROWN_MUSHROOM));
                     }
             );
             new BukkitRunnable() {

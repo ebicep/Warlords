@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
@@ -14,11 +15,20 @@ import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -119,6 +129,27 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
 
                     })
                     .setOnDestinationReached(() -> {
+                        Display display = target.getWorld().spawn(
+                                new LocationBuilder(target.getLocation())
+                                        .pitch(0)
+                                ,
+                                ItemDisplay.class,
+                                d -> {
+                                    d.setTransformation(new Transformation(
+                                            new Vector3f(0, 2, 0),
+                                            new AxisAngle4f(),
+                                            new Vector3f(1.5f),
+                                            new AxisAngle4f()
+                                    ));
+                                    d.setItemStack(new ItemStack(Material.BROWN_MUSHROOM));
+                                }
+                        );
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                display.remove();
+                            }
+                        }.runTaskLater(Warlords.getInstance(), 8);
                         target.addDamageInstance(
                                 warlordsTower,
                                 name,

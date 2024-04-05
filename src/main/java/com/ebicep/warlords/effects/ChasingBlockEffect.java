@@ -124,6 +124,12 @@ public class ChasingBlockEffect {
                 oldLocation.forward(1);
             }
         } else {
+            new SelfRemovingFallingBlock(
+                    new LocationBuilder(currentLocation).faceTowards(destinationLocation).forward(1),
+                    Objects.requireNonNullElseGet(blockState, () -> destinationLocation.getBlock().getRelative(BlockFace.DOWN, 1).getBlockData()),
+                    .2,
+                    block -> block.setVelocity(new Vector(0, .25, 0))
+            );
             //reached destination
             onDestinationReached.run();
             cancel();

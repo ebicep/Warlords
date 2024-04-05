@@ -203,6 +203,7 @@ public class TowerDefenseUtils {
                 display.remove();
             }
         }.runTaskLater(Warlords.getInstance(), ticksLived);
+        //TODO forward animation?
     }
 
     record RateInfo(int rate, int expCost, Material material) {

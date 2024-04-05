@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
@@ -90,6 +92,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 1).forEach(target -> {
+                    EffectUtils.playChainAnimation(warlordsTower, target, GuardianBeam.BEAM_ITEM, 3);
                     target.addDamageInstance(
                             warlordsTower,
                             name,

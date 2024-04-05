@@ -29,6 +29,8 @@ import java.util.List;
 
 public class GuardianBeam extends AbstractBeam implements Duration {
 
+    public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
+
     private float runeTimerIncrease = 1.5f;
     private int shieldPercentSelf = 20;
     private int shieldPercentAlly = 30;
@@ -151,7 +153,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     public ItemStack getBeamItem() {
-        return new ItemStack(Material.WARPED_SLAB);
+        return BEAM_ITEM;
     }
 
     @Override
