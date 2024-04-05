@@ -104,7 +104,7 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
-                warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 3)
+                warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 1)
                              .forEach(target -> attack(warlordsTower, target));
             }
             return true;
