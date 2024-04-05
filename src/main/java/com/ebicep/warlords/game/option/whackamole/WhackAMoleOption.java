@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wackamole;
+package com.ebicep.warlords.game.option.whackamole;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;

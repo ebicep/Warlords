@@ -1,4 +1,4 @@
-package com.ebicep.warlords.game.option.wackamole.moles;
+package com.ebicep.warlords.game.option.whackamole.moles;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;

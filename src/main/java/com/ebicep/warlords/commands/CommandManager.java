@@ -22,7 +22,7 @@ import com.ebicep.warlords.game.option.pve.tutorial.TutorialCommand;
 import com.ebicep.warlords.game.option.pve.wavedefense.commands.EditCurrencyCommand;
 import com.ebicep.warlords.game.option.pve.wavedefense.commands.WaveCommand;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseCommand;
-import com.ebicep.warlords.game.option.wackamole.WhackAMoleCommand;
+import com.ebicep.warlords.game.option.whackamole.WhackAMoleCommand;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;

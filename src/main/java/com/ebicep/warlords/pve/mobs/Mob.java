@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDSkeleton;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TDZombie;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
-import com.ebicep.warlords.game.option.wackamole.moles.MoleArmorStand;
+import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;

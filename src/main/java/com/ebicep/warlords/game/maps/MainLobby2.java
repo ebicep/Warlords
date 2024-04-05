@@ -8,8 +8,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.SpawnpointOption;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.option.wackamole.Hole;
-import com.ebicep.warlords.game.option.wackamole.WhackAMoleOption;
+import com.ebicep.warlords.game.option.whackamole.Hole;
+import com.ebicep.warlords.game.option.whackamole.WhackAMoleOption;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 
 import java.util.EnumSet;
