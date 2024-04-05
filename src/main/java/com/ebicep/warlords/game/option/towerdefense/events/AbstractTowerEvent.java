@@ -6,18 +6,18 @@ import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractTowerEvent extends AbstractWarlordsGameEvent {
+public abstract class AbstractTowerEvent<T extends AbstractTower> extends AbstractWarlordsGameEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final AbstractTower tower;
+    private final T tower;
 
-    public AbstractTowerEvent(AbstractTower tower) {
+    public AbstractTowerEvent(T tower) {
         super(tower.getGame());
         this.tower = tower;
     }
 
-    public AbstractTower getTower() {
+    public T getTower() {
         return tower;
     }
 

@@ -5,7 +5,10 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
+import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerSellEvent;
+import com.ebicep.warlords.game.option.towerdefense.events.TowerUpgradeEvent;
 import com.ebicep.warlords.game.option.towerdefense.towers.AbstractTower;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.menu.Menu;
@@ -138,11 +141,40 @@ public class TowerBuildOption implements Option, Listener {
         tower.remove();
     }
 
+    @EventHandler
+    public void onTowerUpgrade(TowerUpgradeEvent<?> event) {
+        if (event.isSneakUpgraded()) {
+            return;
+        }
+        PlayerBuildData data = getPlayerBuildData(event.getWarlordsEntity().getUuid());
+        List<Integer> lastTowerUpgrades = data.getLastTowerUpgrades(event.getTower().getTowerRegistry());
+        List<TowerUpgrade> upgrades = event.getTower().getUpgrades();
+        lastTowerUpgrades.clear();
+        for (int i = 0; i < upgrades.size(); i++) {
+            if (upgrades.get(i).isUnlocked()) {
+                lastTowerUpgrades.add(i);
+            }
+        }
+    }
+
     private boolean handleTowerClick(Player player, WarlordsEntity warlordsEntity, Block clickedBlock, PlayerBuildData buildData, boolean sneaking) {
         for (MetadataValue metadataValue : clickedBlock.getMetadata("TOWER")) {
             if (metadataValue.value() instanceof AbstractTower tower) {
-                if (sneaking) {
-
+                List<Integer> lastTowerUpgrades = buildData.getLastTowerUpgrades(tower.getTowerRegistry());
+                if (sneaking && !lastTowerUpgrades.isEmpty() && tower instanceof Upgradeable upgradeable) {
+                    List<TowerUpgrade> upgrades = upgradeable.getUpgrades();
+                    for (int upgradeIndex : lastTowerUpgrades) {
+                        TowerUpgrade upgrade = upgrades.get(upgradeIndex);
+                        if (upgrade.isUnlocked()) {
+                            continue;
+                        }
+                        Upgradeable.UpgradeResult result = Upgradeable.canUpgrade((AbstractTower & Upgradeable) tower, upgrades, upgrade, upgradeIndex);
+                        if (result == Upgradeable.UpgradeResult.SUCCESS) {
+                            result.onResult(player);
+                            Upgradeable.onUpgrade(player, warlordsEntity, (AbstractTower & Upgradeable) tower, upgrades, upgrades.get(upgradeIndex), true);
+                            return true;
+                        }
+                    }
                 } else {
                     TowerDefenseMenu.openTowerMenu(player, warlordsEntity, tower);
                 }
@@ -415,10 +447,10 @@ public class TowerBuildOption implements Option, Listener {
     }
 
     static final class PlayerBuildData {
+        private final Map<TowerRegistry, List<Integer>> lastTowerUpgrades = new HashMap<>();
         private long cooldown;
         @Nullable
         private TowerRegistry lastBuilt;
-        private final Map<TowerRegistry, Integer> lastTowerUpgrades = new HashMap<>();
 
         public PlayerBuildData() {
             this(0, null);
@@ -446,12 +478,9 @@ public class TowerBuildOption implements Option, Listener {
             this.lastBuilt = lastBuilt;
         }
 
-        @Nullable
-        public Integer getLastTowerUpgrade(TowerRegistry towerRegistry) {
-            return lastTowerUpgrades.getOrDefault(towerRegistry, null);
+        public List<Integer> getLastTowerUpgrades(TowerRegistry towerRegistry) {
+            return lastTowerUpgrades.computeIfAbsent(towerRegistry, k -> new ArrayList<>());
         }
-
-//        public void setLastTowerUpgrade(TowerRegistry towerRegistry, int)
 
     }
 

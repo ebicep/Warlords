@@ -18,12 +18,10 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public interface Upgradeable {
 
@@ -68,51 +66,59 @@ public interface Upgradeable {
         }
         menu.setItem(menuX, menuY,
                 itemBuilder.get(),
-                Upgradeable.onUpgrade(player, warlordsEntity, tower, upgrades, upgrade)
+                (m, e) -> {
+                    UpgradeResult result = Upgradeable.onUpgrade(player, warlordsEntity, tower, upgrades, upgrade, false);
+                    result.onResult(player);
+                }
         );
     }
 
-    boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index);
-
     boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index);
 
+    boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index);
+
     @Nonnull
-    private static <T extends AbstractTower & Upgradeable> BiConsumer<Menu, InventoryClickEvent> onUpgrade(
+    static <T extends AbstractTower & Upgradeable> UpgradeResult onUpgrade(
             Player player,
             WarlordsEntity warlordsEntity,
             T tower,
             List<TowerUpgrade> upgrades,
-            TowerUpgrade upgrade
+            TowerUpgrade upgrade,
+            boolean sneakUpgraded
     ) {
-        return (m, e) -> {
-            int index = upgrades.indexOf(upgrade);
-            if (upgrade.isUnlocked()) {
-                UpgradeResult.ALREADY_UNLOCKED.onResult(player);
-                return;
-            }
-            if (tower.isUpgradeLocked(upgrades, index)) {
-                UpgradeResult.LOCKED.onResult(player);
-                return;
-            }
-            if (upgrade.getCost() > 0) { // TODO
-                UpgradeResult.INSUFFICIENT_FUNDS.onResult(player);
-                return;
-            }
-            if (index != 0 && !tower.isPreviousUnlocked(upgrades, index)) {
-                UpgradeResult.MISSING_REQUIREMENTS.onResult(player);
-                return;
-            }
-            BlockData[][][] upgradeBlockData = tower.getTowerRegistry().upgradeTowerData.get(index);
-            if (upgradeBlockData != null) {
-                AbstractTower.build(tower.getCornerLocation(), upgradeBlockData);
-            }
-            Utils.playGlobalSound(tower.getTopCenterLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
-            // TODO particle effects?
-            upgrade.upgrade();
-            Bukkit.getPluginManager().callEvent(new TowerUpgradeEvent(tower));
+        int index = upgrades.indexOf(upgrade);
+        UpgradeResult result = canUpgrade(tower, upgrades, upgrade, index);
+        if (result != UpgradeResult.SUCCESS) {
+            return result;
+        }
+        BlockData[][][] upgradeBlockData = tower.getTowerRegistry().upgradeTowerData.get(index);
+        if (upgradeBlockData != null) {
+            AbstractTower.build(tower.getCornerLocation(), upgradeBlockData);
+        }
+        Utils.playGlobalSound(tower.getTopCenterLocation(), Sound.BLOCK_ANVIL_USE, 2, 1);
+        // TODO particle effects?
+        upgrade.upgrade();
+        Bukkit.getPluginManager().callEvent(new TowerUpgradeEvent<>(tower, warlordsEntity, upgrade, sneakUpgraded));
+        if (!sneakUpgraded) {
             TowerDefenseMenu.openTowerMenu(player, warlordsEntity, tower);
-            UpgradeResult.SUCCESS.onResult(player);
-        };
+        }
+        return UpgradeResult.SUCCESS;
+    }
+
+    static <T extends AbstractTower & Upgradeable> UpgradeResult canUpgrade(T tower, List<TowerUpgrade> upgrades, TowerUpgrade upgrade, int index) {
+        if (upgrade.isUnlocked()) {
+            return UpgradeResult.ALREADY_UNLOCKED;
+        }
+        if (tower.isUpgradeLocked(upgrades, index)) {
+            return UpgradeResult.LOCKED;
+        }
+        if (upgrade.getCost() > 0) { // TODO
+            return UpgradeResult.INSUFFICIENT_FUNDS;
+        }
+        if (index != 0 && !tower.isPreviousUnlocked(upgrades, index)) {
+            return UpgradeResult.MISSING_REQUIREMENTS;
+        }
+        return UpgradeResult.SUCCESS;
     }
 
     default void tick() {
@@ -147,16 +153,16 @@ public interface Upgradeable {
         int MAX_UPGRADES = 3;
 
         @Override
+        default boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index) {
+            return false;
+        }
+
+        @Override
         default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
             if (index == 0) {
                 return true;
             }
             return upgrades.get(index - 1).isUnlocked();
-        }
-
-        @Override
-        default boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index) {
-            return false;
         }
 
         @Override
@@ -183,17 +189,6 @@ public interface Upgradeable {
         int MAX_UPGRADES = 4;
 
         @Override
-        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
-            if (index == 0) {
-                return true;
-            }
-            if (index == 3) {
-                return upgrades.get(1).isUnlocked();
-            }
-            return upgrades.get(index - 1).isUnlocked();
-        }
-
-        @Override
         default boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index) {
             if (index == 2) {
                 return upgrades.get(3).isUnlocked();
@@ -202,6 +197,17 @@ public interface Upgradeable {
                 return upgrades.get(2).isUnlocked();
             }
             return false;
+        }
+
+        @Override
+        default boolean isPreviousUnlocked(List<TowerUpgrade> upgrades, int index) {
+            if (index == 0) {
+                return true;
+            }
+            if (index == 3) {
+                return upgrades.get(1).isUnlocked();
+            }
+            return upgrades.get(index - 1).isUnlocked();
         }
 
         @Override
