@@ -306,7 +306,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         long epochSecond = gameEvent.getStartDateSecond();
         EventMode eventMode = eventsStats.get(epochSecond);
         if (eventMode == null) {
-            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Unable to add currency: " + currency.name + ". No event mode found for " + event.name + "(" + epochSecond + ")");
+            // if here then event just started and currency is being cleared
             return;
         }
         //event mode
