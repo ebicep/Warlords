@@ -99,7 +99,7 @@ public enum GameEvents {
                 return null;
             },
             new ArrayList<>() {{
-                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 1, 500_000));
+                add(new SpendableBuyShop(1, Currencies.TITLE_TOKEN_JUGGERNAUT, 3, 500_000));
                 add(new SpendableBuyShop(10, Currencies.SUPPLY_DROP_TOKEN, 20, 20_000));
                 add(new SpendableBuyShop(100_000, Currencies.COIN, 5, 100_000));
                 add(new SpendableBuyShop(500, Currencies.LEGEND_FRAGMENTS, 5, 100_000));
@@ -107,6 +107,10 @@ public enum GameEvents {
                 add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 50_000));
                 add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
                 add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 10_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 2_500));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 3_000));
+                add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
+                add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
     ) {
         @Override
@@ -118,6 +122,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 5_000L);
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 3L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
                     put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
                 }};
             }
@@ -128,6 +133,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 3_000L);
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 2L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
                     put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
                 }};
             }
@@ -138,6 +144,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 2_000L);
                     put(Currencies.FAIRY_ESSENCE, 1_000L);
                     put(Currencies.EPIC_STAR_PIECE, 1L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
                     put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
                 }};
             }
