@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.boltarobonanza;
 
+import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -53,7 +55,8 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage * (1 + split * .025f),
-                maxMeleeDamage * (1 + split * .025f)
+                maxMeleeDamage * (1 + split * .025f),
+                new Fireball(100, 200, MathUtils.generateRandomValueBetweenInclusive(4, 8))
         );
         this.split = split;
     }
@@ -88,7 +91,7 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        Utils.addKnockback(name, attacker.getLocation(), receiver, -1.1, 0.3);
+        Utils.addKnockback(name, attacker.getLocation(), receiver, -1.1, 0.26);
     }
 
     @Override
