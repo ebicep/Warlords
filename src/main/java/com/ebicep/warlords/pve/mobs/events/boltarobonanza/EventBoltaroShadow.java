@@ -116,4 +116,8 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
         return split;
     }
 
+    @Override
+    public double weaponDropRate() {
+        return 2;
+    }
 }
