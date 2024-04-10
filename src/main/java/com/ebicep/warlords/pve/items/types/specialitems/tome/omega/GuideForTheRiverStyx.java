@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToWarlordsPlayer {
     public GuideForTheRiverStyx() {
@@ -52,9 +51,7 @@ public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToW
                 if (!Utils.isPrimaryProjectile(event.getAbility())) {
                     return;
                 }
-                if (ThreadLocalRandom.current().nextDouble() < 0.05) {
-                    event.setCancelled(true);
-                }
+                event.setCancelled(true);
             }
         });
     }
