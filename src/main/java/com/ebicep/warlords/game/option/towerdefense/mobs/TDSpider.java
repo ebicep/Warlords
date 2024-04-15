@@ -5,13 +5,13 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
 import org.bukkit.Location;
 
-public class TDZombie extends TowerDefenseMob implements BasicMob {
+public class TDSpider extends TowerDefenseMob implements BasicMob {
 
-    public TDZombie(Location spawnLocation) {
+    public TDSpider(Location spawnLocation) {
         this(
                 spawnLocation,
-                "Zombie",
-                35,
+                "Spider",
+                80,
                 .5f,
                 0,
                 100,
@@ -19,7 +19,7 @@ public class TDZombie extends TowerDefenseMob implements BasicMob {
         );
     }
 
-    public TDZombie(
+    public TDSpider(
             Location spawnLocation,
             String name,
             int maxHealth,
@@ -34,7 +34,7 @@ public class TDZombie extends TowerDefenseMob implements BasicMob {
 
     @Override
     public Mob getMobRegistry() {
-        return Mob.TD_ZOMBIE;
+        return Mob.TD_SPIDER;
     }
 
 }

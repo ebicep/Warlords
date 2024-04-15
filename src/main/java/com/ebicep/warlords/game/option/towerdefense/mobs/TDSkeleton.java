@@ -7,6 +7,18 @@ import org.bukkit.Location;
 
 public class TDSkeleton extends TowerDefenseMob implements BasicMob {
 
+    public TDSkeleton(Location spawnLocation) {
+        this(
+                spawnLocation,
+                "Skeleton",
+                500,
+                .25f,
+                10,
+                200,
+                200
+        );
+    }
+
     public TDSkeleton(
             Location spawnLocation,
             String name,
@@ -18,18 +30,6 @@ public class TDSkeleton extends TowerDefenseMob implements BasicMob {
             AbstractAbility... abilities
     ) {
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
-    }
-
-    public TDSkeleton(Location spawnLocation) {
-        this(
-                spawnLocation,
-                "Skeleton",
-                500,
-                .25f,
-                10,
-                200,
-                200
-        );
     }
 
     @Override

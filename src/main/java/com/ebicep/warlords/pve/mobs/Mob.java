@@ -1,8 +1,7 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.towerdefense.mobs.TDSkeleton;
-import com.ebicep.warlords.game.option.towerdefense.mobs.TDZombie;
+import com.ebicep.warlords.game.option.towerdefense.mobs.*;
 import com.ebicep.warlords.game.option.towerdefense.towers.*;
 import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -805,8 +804,43 @@ public enum Mob {
 
     // tower defense
     TD_ZOMBIE(EntityType.ZOMBIE, TDZombie.class, TDZombie::new, TDZombie::new, null),
+    TD_ZOMBIE_BABY(EntityType.ZOMBIE, TDZombieBaby.class, TDZombieBaby::new, TDZombieBaby::new, null),
+    TD_ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, TDZombieVillager.class, TDZombieVillager::new, TDZombieVillager::new, null),
+    TD_HUSK(EntityType.HUSK, TDHusk.class, TDHusk::new, TDHusk::new, null),
     TD_SKELETON(EntityType.SKELETON, TDSkeleton.class, TDSkeleton::new, TDSkeleton::new, null),
-
+    TD_STRAY(EntityType.STRAY, TDStray.class, TDStray::new, TDStray::new, null),
+    TD_SPIDER(EntityType.SPIDER, TDSpider.class, TDSpider::new, TDSpider::new, null),
+    TD_CAVE_SPIDER(EntityType.CAVE_SPIDER, TDCaveSpider.class, TDCaveSpider::new, TDCaveSpider::new, null),
+    TD_SILVERFISH(EntityType.SILVERFISH, TDSilverfish.class, TDSilverfish::new, TDSilverfish::new, null),
+    TD_ENDERMITE(EntityType.ENDERMITE, TDEndermite.class, TDEndermite::new, TDEndermite::new, null),
+    TD_WITCH(EntityType.WITCH, TDWitch.class, TDWitch::new, TDWitch::new, null),
+    TD_ENDERMAN(EntityType.ENDERMAN, TDEnderman.class, TDEnderman::new, TDEnderman::new, null),
+    TD_WITHER_SKELETON(EntityType.WITHER_SKELETON, TDWitherSkeleton.class, TDWitherSkeleton::new, TDWitherSkeleton::new, null),
+    TD_GHAST(EntityType.GHAST, TDGhast.class, TDGhast::new, TDGhast::new, null),
+    TD_BLAZE(EntityType.BLAZE, TDBlaze.class, TDBlaze::new, TDBlaze::new, null),
+    TD_PIGLIN(EntityType.PIGLIN, TDPiglin.class, TDPiglin::new, TDPiglin::new, null),
+    TD_ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN, TDZombifiedPiglin.class, TDZombifiedPiglin::new, TDZombifiedPiglin::new, null),
+    TD_PIGLIN_BRUTE(EntityType.PIGLIN_BRUTE, TDPiglinBrute.class, TDPiglinBrute::new, TDPiglinBrute::new, null),
+    TD_HOGLIN(EntityType.HOGLIN, TDHoglin.class, TDHoglin::new, TDHoglin::new, null),
+    TD_ZOGLIN(EntityType.ZOGLIN, TDZoglin.class, TDZoglin::new, TDZoglin::new, null),
+    TD_EVOKER(EntityType.EVOKER, TDEvoker.class, TDEvoker::new, TDEvoker::new, null),
+    TD_VINDICATOR(EntityType.VINDICATOR, TDVindicator.class, TDVindicator::new, TDVindicator::new, null),
+    TD_PILLAGER(EntityType.PILLAGER, TDPillager.class, TDPillager::new, TDPillager::new, null),
+    TD_RAVAGER(EntityType.RAVAGER, TDRavager.class, TDRavager::new, TDRavager::new, null),
+    TD_ILLUSIONER(EntityType.ILLUSIONER, TDIllusioner.class, TDIllusioner::new, TDIllusioner::new, null),
+    TD_VEX(EntityType.VEX, TDVex.class, TDVex::new, TDVex::new, null),
+    TD_CREEPER(EntityType.CREEPER, TDCreeper.class, TDCreeper::new, TDCreeper::new, null),
+    TD_CREEPER_CHARGED(EntityType.CREEPER, TDCreeperCharged.class, TDCreeperCharged::new, TDCreeperCharged::new, null),
+    TD_SLIME(EntityType.SLIME, TDSlime.class, TDSlime::new, TDSlime::new, null),
+    TD_MAGMA_CUBE(EntityType.MAGMA_CUBE, TDMagmaCube.class, TDMagmaCube::new, TDMagmaCube::new, null),
+    TD_PHANTOM(EntityType.PHANTOM, TDPhantom.class, TDPhantom::new, TDPhantom::new, null),
+    TD_DROWNED(EntityType.DROWNED, TDDrowned.class, TDDrowned::new, TDDrowned::new, null),
+    TD_GUARDIAN(EntityType.GUARDIAN, TDGuardian.class, TDGuardian::new, TDGuardian::new, null),
+    TD_ELDER_GUARDIAN(EntityType.ELDER_GUARDIAN, TDElderGuardian.class, TDElderGuardian::new, TDElderGuardian::new, null),
+    TD_WARDEN(EntityType.WARDEN, TDWarden.class, TDWarden::new, TDWarden::new, null),
+    TD_ENDER_DRAGON(EntityType.ENDER_DRAGON, TDEnderDragon.class, TDEnderDragon::new, TDEnderDragon::new, null),
+    TD_WITHER(EntityType.WITHER, TDWither.class, TDWither::new, TDWither::new, null),
+    TD_GIANT(EntityType.GIANT, TDGiant.class, TDGiant::new, TDGiant::new, null),
     // tower defense tower mobs
 
     TD_TOWER_AVENGER(EntityType.ZOMBIE, AvengerTower.TDTowerAvenger.class, AvengerTower.TDTowerAvenger::new, AvengerTower.TDTowerAvenger::new, null),

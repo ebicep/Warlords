@@ -28,10 +28,10 @@ import java.util.function.Consumer;
 
 public abstract class TowerDefenseMob extends AbstractMob {
 
-    @Nullable
-    private WarlordsEntity spawner;
     private final FloatModifiable physicalResistance = new FloatModifiable(0);
     private final FloatModifiable magicResistance = new FloatModifiable(0);
+    @Nullable
+    private WarlordsEntity spawner;
 
     public TowerDefenseMob(
             Location spawnLocation,
