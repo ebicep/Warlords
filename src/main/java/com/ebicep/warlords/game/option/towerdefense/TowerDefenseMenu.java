@@ -212,9 +212,7 @@ public class TowerDefenseMenu {
                                                     .text(NumberFormat.formatOptionalTenths(mob.maxHealth), NamedTextColor.GREEN)
                                                     .build(),
                                     ComponentBuilder.create("Damage: ")
-                                                    .text(NumberFormat.formatOptionalTenths(mob.minMeleeDamage) + " - " + NumberFormat.formatOptionalTenths(mob.maxMeleeDamage),
-                                                            NamedTextColor.RED
-                                                    )
+                                                    .text(NumberFormat.formatOptionalTenths(mob.minMeleeDamage), NamedTextColor.RED)
                                                     .build(),
                                     ComponentBuilder.create("Speed: ")
                                                     .text(NumberFormat.formatOptionalHundredths(mob.walkSpeed), NamedTextColor.WHITE)
