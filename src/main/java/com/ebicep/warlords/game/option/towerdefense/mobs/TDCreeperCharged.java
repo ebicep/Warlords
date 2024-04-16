@@ -10,7 +10,7 @@ public class TDCreeperCharged extends TowerDefenseMob implements BasicMob {
     public TDCreeperCharged(Location spawnLocation) {
         this(
                 spawnLocation,
-                "Creeper",
+                "Charged Creeper",
                 1000,
                 .3f,
                 0,

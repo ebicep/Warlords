@@ -290,7 +290,9 @@ public class TowerDefenseSpawner implements Option, Listener {
         if (!TowerDefenseUtils.validInteract(event, "SUMMON_TROOPS_ITEM")) {
             return;
         }
-        TowerDefenseMenu.openSummonTroopsMenu(player, warlordsEntity, this, towerDefenseOption.getPlayerInfo(warlordsEntity));
+        TowerDefensePlayerInfo playerInfo = towerDefenseOption.getPlayerInfo(warlordsEntity);
+        playerInfo.setCurrentMobMenuPage(1);
+        TowerDefenseMenu.openSummonTroopsMenu(player, warlordsEntity, this, playerInfo);
     }
 
     private Location getForwardLocation(NPC npc, double xyAmount, double yAmount) {

@@ -10,7 +10,7 @@ public class TDZombieBaby extends TowerDefenseMob implements BasicMob {
     public TDZombieBaby(Location spawnLocation) {
         this(
                 spawnLocation,
-                "Zombie",
+                "Baby Zombie",
                 35,
                 .5f,
                 0,

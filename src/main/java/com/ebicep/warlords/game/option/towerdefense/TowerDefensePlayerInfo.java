@@ -20,6 +20,7 @@ public class TowerDefensePlayerInfo {
     private BukkitTask waveTask;
     @Nullable
     private BukkitTask renderTask; // whatever the player is currently rendering (tower radius, etc)
+    private int currentMobMenuPage = 1;
     // stats
     private float totalIncomeGained;
     private float totalIncomeSpent;
@@ -52,6 +53,14 @@ public class TowerDefensePlayerInfo {
 
     public @Nullable BukkitTask getRenderTask() {
         return renderTask;
+    }
+
+    public int getCurrentMobMenuPage() {
+        return currentMobMenuPage;
+    }
+
+    public void setCurrentMobMenuPage(int currentMobMenuPage) {
+        this.currentMobMenuPage = currentMobMenuPage;
     }
 
     public void setWaveTask(BukkitTask waveTask) {

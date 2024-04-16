@@ -29,7 +29,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Transformation;
 import org.joml.AxisAngle4f;
@@ -42,19 +41,6 @@ import java.util.UUID;
 public class TowerDefenseMenu {
 
     public static final String SUMMON_MENU_TITLE = "Summon Troops";
-
-    public static final MobGroup[] TOWER_DEFENSE_MOB_GROUPS = {
-            new MobGroup(new ItemBuilder(Material.ZOMBIE_HEAD)
-                    .name(Component.text("Zombie", NamedTextColor.GREEN))
-                    .get(),
-                    TowerDefenseMobInfo.ZOMBIE
-            ),
-            new MobGroup(new ItemBuilder(Material.SKELETON_SKULL)
-                    .name(Component.text("Skeleton", NamedTextColor.GREEN))
-                    .get(),
-                    TowerDefenseMobInfo.SKELETON
-            ),
-    };
 
     public static void openTowerMenu(Player player, WarlordsEntity warlordsEntity, AbstractTower tower) {
         Menu menu = new Menu(tower.getName(), 9 * 6);
@@ -191,8 +177,15 @@ public class TowerDefenseMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openSummonTroopsMenu(Player player, WarlordsEntity warlordsEntity, TowerDefenseSpawner spawner, TowerDefensePlayerInfo playerInfo) {
+    public static void openSummonTroopsMenu(
+            Player player,
+            WarlordsEntity warlordsEntity,
+            TowerDefenseSpawner spawner,
+            TowerDefensePlayerInfo playerInfo
+    ) {
         Menu menu = new Menu(SUMMON_MENU_TITLE, 9 * 6);
+
+        int page = playerInfo.getCurrentMobMenuPage();
 
         FixedPlayerWave playerWave = playerInfo.getPlayerWave();
         List<WaveAction<TowerDefenseOption>> actions = playerWave.getActions();
@@ -200,15 +193,15 @@ public class TowerDefenseMenu {
 
         int x = 1;
         int y = 2;
-        for (int i = 0; i < TOWER_DEFENSE_MOB_GROUPS.length; i++) {
-            MobGroup mobGroup = TOWER_DEFENSE_MOB_GROUPS[i];
-            TowerDefenseMobInfo mobInfos = mobGroup.mobsWithCost;
-            Mob mob = mobInfos.getMob();
-            int cost = mobInfos.getCost();
-            int expReward = mobInfos.getIncomeModifier();
-            int spawnDelay = mobInfos.getSpawnDelay();
+        for (int i = ((page - 1) * 27); i < TowerDefenseMobInfo.VALUES.length; i++) {
+            TowerDefenseMobInfo mobInfo = TowerDefenseMobInfo.VALUES[i];
+            Mob mob = mobInfo.getMob();
+            int cost = mobInfo.getCost();
+            int expReward = mobInfo.getIncomeModifier();
+            int spawnDelay = mobInfo.getSpawnDelay();
             menu.setItem(x, y,
-                    new ItemBuilder(mobGroup.head)
+                    new ItemBuilder(mobInfo.getMob().getHead())
+                            .name(Component.text(mob.name, NamedTextColor.GREEN))
                             .lore(
                                     Component.text("MOB DESCRIPTION"),
                                     Component.empty(),
@@ -242,7 +235,7 @@ public class TowerDefenseMenu {
                             .get(),
                     (m, e) -> {
                         if (e.isLeftClick()) {
-                            if (TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT + 1 == actions.size() / 2 - lastSpawnIndex / 2) {
+                            if (TowerDefenseSpawner.MAX_PLAYER_SPAWN_AMOUNT == actions.size() / 2 - lastSpawnIndex / 2) {
                                 player.sendMessage(Component.text("You have reached the maximum amount of mobs you can spawn at a time!", NamedTextColor.RED));
                                 return;
                             }
@@ -261,11 +254,15 @@ public class TowerDefenseMenu {
                         }
                     }
             );
-            if (i == 4) {
+            if (x == 7 && y == 4) {
+                break;
+            }
+            if (x % 7 == 0) {
                 x = 1;
                 y++;
+            } else {
+                x++;
             }
-            x++;
         }
 
         x = 2;
@@ -286,11 +283,34 @@ public class TowerDefenseMenu {
             x++;
         }
 
+        if (page - 1 > 0) {
+            menu.setItem(0, 3,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Previous Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page - 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> {
+                        playerInfo.setCurrentMobMenuPage(page - 1);
+                        openSummonTroopsMenu(player, warlordsEntity, spawner, playerInfo);
+                    }
+            );
+        }
+        if (TowerDefenseMobInfo.VALUES.length > (page * 27)) {
+            menu.setItem(8, 3,
+                    new ItemBuilder(Material.ARROW)
+                            .name(Component.text("Next Page", NamedTextColor.GREEN))
+                            .lore(Component.text("Page " + (page + 1), NamedTextColor.YELLOW))
+                            .get(),
+                    (m, e) -> {
+                        playerInfo.setCurrentMobMenuPage(page + 1);
+                        openSummonTroopsMenu(player, warlordsEntity, spawner, playerInfo);
+                    }
+            );
+        }
+
+
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
-    }
-
-    record MobGroup(ItemStack head, TowerDefenseMobInfo mobsWithCost) {
     }
 
 }

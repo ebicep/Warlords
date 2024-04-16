@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class SkullUtils {
 
-    public static ItemStack getSkullFrom(Skull skullID) {
-        return getSkullFrom(skullID.getTextureID());
+    public static ItemStack getSkullFrom(Skull skull) {
+        return getSkullFrom(skull.getTextureID());
     }
 
     public static ItemStack getSkullFrom(String base64) {
