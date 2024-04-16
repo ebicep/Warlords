@@ -24,13 +24,13 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     private int split;
 
     public EventBoltaroShadow(Location spawnLocation, int split) {
-        super(spawnLocation,
+        this(spawnLocation,
                 "Shadow Boltaro",
-                (int) (6000 * (1 + split * .025)),
+                6000,
                 0.42f,
                 10,
-                200 * (1 + split * .025f),
-                400 * (1 + split * .025f)
+                200,
+                400
         );
         this.split = split;
     }
