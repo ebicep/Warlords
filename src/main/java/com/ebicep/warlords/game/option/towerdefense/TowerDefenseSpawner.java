@@ -161,47 +161,6 @@ public class TowerDefenseSpawner implements Option, Listener {
         mobData.setEdgeIndex(randomEdgeIndex);
     }
 
-    public void pathFindToNextWaypoint(AbstractMob mob, TowerDefenseOption.TowerDefenseAttackingMobData mobData) {
-        NPC npc = mob.getNpc();
-        TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
-        Node<Location> currentNode = path.getNodeIndex().get(mobData.getCurrentNode());
-        Node<Location> targetNode = path.getNodeIndex().get(mobData.getTargetNode());
-
-        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(currentNode);
-        TowerDefenseDirectAcyclicGraph.TowerDefenseEdge randomEdge = outgoingEdges.get(mobData.getEdgeIndex());
-        PathDirection randomEdgePathDirection = randomEdge.getPathDirection();
-
-        Location nextTargetLocation = targetNode.getValue();
-        Location lineTarget = randomEdgePathDirection.getForwardLocation(npc.getStoredLocation(), nextTargetLocation);
-        npc.getNavigator().setStraightLineTarget(lineTarget);
-
-        TextDisplay d = lineTarget.getWorld().spawn(lineTarget.clone().add(0, 3, 0), TextDisplay.class, display -> {
-            display.text(Component.text("Next Target (" + randomEdgePathDirection.name() + ")", NamedTextColor.LIGHT_PURPLE));
-            display.setBillboard(Display.Billboard.CENTER);
-        });
-        TextDisplay d2 = lineTarget.getWorld().spawn(nextTargetLocation.clone().add(0, 4, 0), TextDisplay.class, display -> {
-            display.text(Component.text("Next Waypoint", NamedTextColor.DARK_PURPLE));
-            display.setBillboard(Display.Billboard.CENTER);
-        });
-        TextDisplay d3 = lineTarget.getWorld().spawn(currentNode.getValue().clone().add(0, 6, 0), TextDisplay.class, display -> {
-            display.text(Component.text("CURRENT NODE", NamedTextColor.RED));
-            display.setBillboard(Display.Billboard.CENTER);
-        });
-        TextDisplay d4 = lineTarget.getWorld().spawn(targetNode.getValue().clone().add(0, 6, 0), TextDisplay.class, display -> {
-            display.text(Component.text("TARGET NODE", NamedTextColor.DARK_RED));
-            display.setBillboard(Display.Billboard.CENTER);
-        });
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                d.remove();
-                d2.remove();
-                d3.remove();
-                d4.remove();
-            }
-        }.runTaskLater(Warlords.getInstance(), 60);
-    }
-
     public void recalculateMobPositions() {
         // get path
         // get total path distance based on pathIndex
@@ -278,6 +237,50 @@ public class TowerDefenseSpawner implements Option, Listener {
             assignNextTargetNode(attackingMobData, lastNodeIdentifier, outgoingEdges);
             pathFindToNextWaypoint(mob, attackingMobData);
         }
+    }
+
+    public void pathFindToNextWaypoint(AbstractMob mob, TowerDefenseOption.TowerDefenseAttackingMobData mobData) {
+        if (mobData.isAttackingCastle()) {
+            return;
+        }
+        NPC npc = mob.getNpc();
+        TowerDefenseDirectAcyclicGraph path = getPathFromData(mobData);
+        Node<Location> currentNode = path.getNodeIndex().get(mobData.getCurrentNode());
+        Node<Location> targetNode = path.getNodeIndex().get(mobData.getTargetNode());
+
+        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(currentNode);
+        TowerDefenseDirectAcyclicGraph.TowerDefenseEdge randomEdge = outgoingEdges.get(mobData.getEdgeIndex());
+        PathDirection randomEdgePathDirection = randomEdge.getPathDirection();
+
+        Location nextTargetLocation = targetNode.getValue();
+        Location lineTarget = randomEdgePathDirection.getForwardLocation(npc.getStoredLocation(), nextTargetLocation);
+        npc.getNavigator().setStraightLineTarget(lineTarget);
+
+        TextDisplay d = lineTarget.getWorld().spawn(lineTarget.clone().add(0, 3, 0), TextDisplay.class, display -> {
+            display.text(Component.text("Next Target (" + randomEdgePathDirection.name() + ")", NamedTextColor.LIGHT_PURPLE));
+            display.setBillboard(Display.Billboard.CENTER);
+        });
+        TextDisplay d2 = lineTarget.getWorld().spawn(nextTargetLocation.clone().add(0, 4, 0), TextDisplay.class, display -> {
+            display.text(Component.text("Next Waypoint", NamedTextColor.DARK_PURPLE));
+            display.setBillboard(Display.Billboard.CENTER);
+        });
+        TextDisplay d3 = lineTarget.getWorld().spawn(currentNode.getValue().clone().add(0, 6, 0), TextDisplay.class, display -> {
+            display.text(Component.text("CURRENT NODE", NamedTextColor.RED));
+            display.setBillboard(Display.Billboard.CENTER);
+        });
+        TextDisplay d4 = lineTarget.getWorld().spawn(targetNode.getValue().clone().add(0, 6, 0), TextDisplay.class, display -> {
+            display.text(Component.text("TARGET NODE", NamedTextColor.DARK_RED));
+            display.setBillboard(Display.Billboard.CENTER);
+        });
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                d.remove();
+                d2.remove();
+                d3.remove();
+                d4.remove();
+            }
+        }.runTaskLater(Warlords.getInstance(), 60);
     }
 
     @EventHandler
@@ -368,15 +371,15 @@ public class TowerDefenseSpawner implements Option, Listener {
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 
+    protected void modifyStats(WarlordsNPC warlordsNPC) {
+        warlordsNPC.getMob().onSpawn(towerDefenseOption);
+    }
+
     public void spawnNewMob(TowerDefenseTowerMob mob, WarlordsTower spawner) {
         mob.setSpawner(spawner);
         game.addNPC(mob.toNPC(game, spawner.getTeam(), this::modifyStats));
         mobs.put(mob, new TowerDefenseOption.TowerDefenseDefendingMobData(towerDefenseOption.getTicksElapsed()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-    }
-
-    protected void modifyStats(WarlordsNPC warlordsNPC) {
-        warlordsNPC.getMob().onSpawn(towerDefenseOption);
     }
 
     public TowerDefenseSpawner add(TowerDefenseWave wave) {
