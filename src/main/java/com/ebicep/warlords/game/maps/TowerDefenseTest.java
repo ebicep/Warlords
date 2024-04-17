@@ -160,6 +160,7 @@ public class TowerDefenseTest extends GameMap {
         options.add(new TowerDefenseSpawner()
                 .addPath(blueSpawn, bluePath)
                 .add(new FixedWave()
+                        .delay(20 * SECOND)
                         .add(Mob.TD_ZOMBIE, 20, 10)
                 )
                 .add(new FixedWave()
