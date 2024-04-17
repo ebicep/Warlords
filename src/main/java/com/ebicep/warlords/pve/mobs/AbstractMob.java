@@ -291,6 +291,10 @@ public abstract class AbstractMob implements Mob {
                     20, 30, 20
             );
         }
+        handleAspects(option);
+    }
+
+    protected void handleAspects(PveOption option) {
         // null checks to handle manual spawns with aspects
         if (this.aspect == null &&
                 ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) &&

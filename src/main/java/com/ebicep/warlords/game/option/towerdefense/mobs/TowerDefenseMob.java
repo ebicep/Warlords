@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -137,6 +138,11 @@ public abstract class TowerDefenseMob extends AbstractMob {
         });
 
         return warlordsNPC;
+    }
+
+    @Override
+    protected void handleAspects(PveOption option) {
+        // disable aspects
     }
 
     @Override
