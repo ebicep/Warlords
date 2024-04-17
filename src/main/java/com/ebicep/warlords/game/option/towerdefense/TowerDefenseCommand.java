@@ -37,9 +37,9 @@ public class TowerDefenseCommand extends BaseCommand {
     public void debug(@Conditions("requireGame:gamemode=TOWER_DEFENSE") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
         for (Option option : game.getOptions()) {
-            if (option instanceof TowerBuildOption towerBuildOption) {
-                towerBuildOption.toggleDebug();
-                ChatChannels.sendDebugMessage(player, Component.text("Debug: " + towerBuildOption.isDebug(), NamedTextColor.GREEN));
+            if (option instanceof TowerDefenseOption towerDefenseOption) {
+                towerDefenseOption.toggleDebug();
+                ChatChannels.sendDebugMessage(player, Component.text("Debug: " + towerDefenseOption.isDebug(), NamedTextColor.GREEN));
             }
         }
     }

@@ -257,6 +257,9 @@ public class TowerDefenseSpawner implements Option, Listener {
         Location lineTarget = randomEdgePathDirection.getForwardLocation(npc.getStoredLocation(), nextTargetLocation);
         npc.getNavigator().setStraightLineTarget(lineTarget);
 
+        if (!towerDefenseOption.isDebug()) {
+            return;
+        }
         TextDisplay d = lineTarget.getWorld().spawn(lineTarget.clone().add(0, 3, 0), TextDisplay.class, display -> {
             display.text(Component.text("Next Target (" + randomEdgePathDirection.name() + ")", NamedTextColor.LIGHT_PURPLE));
             display.setBillboard(Display.Billboard.CENTER);

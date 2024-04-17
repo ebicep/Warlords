@@ -52,7 +52,6 @@ public class TowerBuildOption implements Option, Listener {
     private final Map<UUID, PlayerBuildData> playerBuildData = new HashMap<>();
     private Game game;
     private TowerDefenseOption towerDefenseOption;
-    private boolean debug = false;
 
     public TowerBuildOption addBuildableArea(Team team, Location firstCorner, Location secondCorner) {
         teamBuildableAreas.computeIfAbsent(team, k -> new ArrayList<>()).add(new Pair<>(firstCorner, secondCorner));
@@ -272,7 +271,7 @@ public class TowerBuildOption implements Option, Listener {
     }
 
     private void debugParticle(Location location, Particle particle) {
-        if (debug) {
+        if (towerDefenseOption.isDebug()) {
             EffectUtils.displayParticle(particle, location, 2);
         }
     }
@@ -427,14 +426,6 @@ public class TowerBuildOption implements Option, Listener {
 
     public Map<AbstractTower, Integer> getBuiltTowers() {
         return builtTowers;
-    }
-
-    public void toggleDebug() {
-        debug = !debug;
-    }
-
-    public boolean isDebug() {
-        return debug;
     }
 
     enum BuildResult {

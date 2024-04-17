@@ -38,6 +38,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
 import org.bukkit.event.EventHandler;
@@ -69,6 +70,35 @@ public class TowerDefenseOption implements PveOption, Listener {
     private Game game;
     private TowerBuildOption towerBuildOption;
     private TowerDefenseSpawner towerDefenseSpawner;
+    private boolean debug = false;
+    private final List<Entity> debugEntities = new ArrayList<>();
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void toggleDebug() {
+        debug = !debug;
+        if (debug) {
+            towerDefenseSpawner.getPaths().forEach((location, towerDefensePaths) -> {
+                for (TowerDefenseDirectAcyclicGraph towerDefensePath : towerDefensePaths) {
+                    Node<Location> root = towerDefensePath.getRoot();
+                    HashSet<Node<Location>> nodes = new HashSet<>();
+                    DAGUtils.depthFirstSearch(towerDefensePath, root, nodes);
+                    nodes.forEach(locationNode -> renderNode(towerDefensePath, locationNode));
+                    for (Node<Location> locationNode : root.getChildren()) {
+                        List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> towerDefenseEdges = towerDefensePath.getEdges().get(locationNode);
+                        if (towerDefenseEdges != null) {
+                            towerDefenseEdges.forEach(edge -> renderEdge(locationNode, edge));
+                        }
+                    }
+                }
+            });
+        } else {
+            debugEntities.forEach(Entity::remove);
+            debugEntities.clear();
+        }
+    }
 
     public TowerDefenseOption addCastle(Team team, Location location, float maxHealth) {
         castles.put(team, new TowerDefenseCastle(team, location, maxHealth));
@@ -110,16 +140,6 @@ public class TowerDefenseOption implements PveOption, Listener {
             for (TowerDefenseDirectAcyclicGraph towerDefensePath : towerDefensePaths) {
                 towerDefensePath.calculateEdgeData();
                 towerDefensePath.calculateNodeDistances();
-                Node<Location> root = towerDefensePath.getRoot();
-                HashSet<Node<Location>> nodes = new HashSet<>();
-                DAGUtils.depthFirstSearch(towerDefensePath, root, nodes);
-                nodes.forEach(locationNode -> renderNode(towerDefensePath, locationNode));
-                for (Node<Location> locationNode : root.getChildren()) {
-                    List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> towerDefenseEdges = towerDefensePath.getEdges().get(locationNode);
-                    if (towerDefenseEdges != null) {
-                        towerDefenseEdges.forEach(edge -> renderEdge(locationNode, edge));
-                    }
-                }
             }
         });
         new GameRunnable(game) {
@@ -139,7 +159,7 @@ public class TowerDefenseOption implements PveOption, Listener {
                 ticksElapsed.incrementAndGet();
 
                 mobTick();
-                if (ticksElapsed.get() % 5 == 0) {
+                if (debug && ticksElapsed.get() % 5 == 0) {
                     towerDefenseSpawner.renderEdges();
                 }
                 if (ticksElapsed.get() % 20 == 0) {
@@ -160,7 +180,7 @@ public class TowerDefenseOption implements PveOption, Listener {
 
     private void renderNode(TowerDefenseDirectAcyclicGraph towerDefensePath, Node<Location> node) {
         Location location = node.getValue();
-        location.getWorld().spawn(location.clone().add(0, 2, 0), TextDisplay.class, display -> {
+        debugEntities.add(location.getWorld().spawn(location.clone().add(0, 2, 0), TextDisplay.class, display -> {
             display.text(Component.text("NODE (" + NumberFormat.formatOptionalTenths(towerDefensePath.getNodeDistanceToEnd().get(node)) + ")", NamedTextColor.DARK_AQUA));
             display.setBillboard(Display.Billboard.CENTER);
             display.setTransformation(new Transformation(
@@ -169,22 +189,25 @@ public class TowerDefenseOption implements PveOption, Listener {
                     new Vector3f(2),
                     new AxisAngle4f()
             ));
-        });
+        }));
     }
 
     private void renderEdge(Node<Location> from, TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge) {
         Location fromLocation = from.getValue();
         Location toLocation = edge.getTo().getValue();
-        toLocation.getWorld().spawn(new LocationBuilder(fromLocation).faceTowards(toLocation).forward(edge.getDistance() / 2).addY(2), TextDisplay.class, display -> {
-            display.text(Component.text(edge.getPathDirection() + " (" + NumberFormat.formatOptionalTenths(edge.getDistance()) + ")", NamedTextColor.AQUA));
-            display.setBillboard(Display.Billboard.CENTER);
-            display.setTransformation(new Transformation(
-                    new Vector3f(),
-                    new AxisAngle4f(),
-                    new Vector3f(2),
-                    new AxisAngle4f()
-            ));
-        });
+        debugEntities.add(toLocation.getWorld()
+                                    .spawn(new LocationBuilder(fromLocation).faceTowards(toLocation).forward(edge.getDistance() / 2).addY(2), TextDisplay.class, display -> {
+                                        display.text(Component.text(edge.getPathDirection() + " (" + NumberFormat.formatOptionalTenths(edge.getDistance()) + ")",
+                                                NamedTextColor.AQUA
+                                        ));
+                                        display.setBillboard(Display.Billboard.CENTER);
+                                        display.setTransformation(new Transformation(
+                                                new Vector3f(),
+                                                new AxisAngle4f(),
+                                                new Vector3f(2),
+                                                new AxisAngle4f()
+                                        ));
+                                    }));
     }
 
     @Override
