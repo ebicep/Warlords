@@ -65,7 +65,9 @@ import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class WaveDefenseOption implements PveOption {
+
     protected static final int SCOREBOARD_PRIORITY = 5;
+
     private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final Team team;
     private final WaveList waves;

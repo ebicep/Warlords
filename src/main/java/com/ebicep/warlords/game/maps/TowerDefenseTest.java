@@ -14,16 +14,17 @@ import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
-import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
-import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseDelayWaveAction;
-import com.ebicep.warlords.game.option.towerdefense.waves.WaveEndCondition;
+import com.ebicep.warlords.game.option.towerdefense.waves.*;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.dag.Node;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 
 import java.util.EnumSet;
@@ -231,10 +232,23 @@ public class TowerDefenseTest extends GameMap {
                         .add(Mob.TD_SPIDER, 5, 10)
                         .add(Mob.TD_ZOMBIE_BABY, 5, 10)
                 )
-                .applyToAllWaves(wave -> wave.forEach(w -> {
-                            w.getActions().add(0, new TowerDefenseDelayWaveAction(20));
-                            w.getEndConditions().add(WaveEndCondition.allMobsDeadAnySide());
-                        })
+                .applyToAllWaves(wave -> {
+                            for (int i = 0; i < wave.size(); i++) {
+                                TowerDefenseWave w = wave.get(i);
+                                w.getActions().add(0, new TowerDefenseDelayWaveAction(40));
+                                TextComponent waveText = Component.text("Wave " + (i + 1), NamedTextColor.YELLOW);
+                                w.getActions().add(0, new AnnounceWaveWaveAction()
+                                        .addTitle(Title.title(
+                                                        waveText,
+                                                        Component.empty(),
+                                                        Title.Times.times(Ticks.duration(10), Ticks.duration(30), Ticks.duration(10))
+                                                )
+                                        )
+                                        .addChatMessage(waveText)
+                                );
+                                w.getEndConditions().add(WaveEndCondition.allMobsDeadAnySide());
+                            }
+                        }
                 )
         );
         return options;
