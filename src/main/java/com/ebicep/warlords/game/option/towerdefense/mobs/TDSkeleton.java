@@ -36,4 +36,10 @@ public class TDSkeleton extends TowerDefenseMob implements BasicMob {
     public Mob getMobRegistry() {
         return Mob.TD_SKELETON;
     }
+
+    @Override
+    public double getDefaultAttackRange() {
+        return 5;
+    }
+
 }

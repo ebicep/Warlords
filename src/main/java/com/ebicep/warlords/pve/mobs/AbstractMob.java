@@ -144,7 +144,7 @@ public abstract class AbstractMob implements Mob {
 
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
-        defaultParameters.attackRange(1)
+        defaultParameters.attackRange(getDefaultAttackRange())
                          .stuckAction(null) // disable tping to player if too far away
                          .updatePathRate(5)
                          .distanceMargin(.5)
@@ -641,4 +641,9 @@ public abstract class AbstractMob implements Mob {
      */
     public void cleanup(PveOption pveOption) {
     }
+
+    public double getDefaultAttackRange() {
+        return 1;
+    }
+
 }
