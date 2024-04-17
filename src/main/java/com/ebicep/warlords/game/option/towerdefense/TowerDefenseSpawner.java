@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 public class TowerDefenseSpawner implements Option, Listener {
 
@@ -384,6 +385,11 @@ public class TowerDefenseSpawner implements Option, Listener {
 
     public TowerDefenseSpawner add(TowerDefenseWave wave) {
         waves.add(wave);
+        return this;
+    }
+
+    public TowerDefenseSpawner applyToAllWaves(Consumer<List<TowerDefenseWave>> waveConsumer) {
+        waveConsumer.accept(waves);
         return this;
     }
 

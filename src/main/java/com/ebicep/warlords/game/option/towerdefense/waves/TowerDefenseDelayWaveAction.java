@@ -12,7 +12,7 @@ public class TowerDefenseDelayWaveAction implements WaveAction<TowerDefenseOptio
     }
 
     @Override
-    public boolean run(TowerDefenseOption pveOption) {
+    public boolean tick(TowerDefenseOption pveOption) {
         if (initialTicksElapsed == -1) {
             initialTicksElapsed = pveOption.getTicksElapsed();
         }

@@ -14,6 +14,10 @@ import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
+import com.ebicep.warlords.game.option.towerdefense.waves.FixedWave;
+import com.ebicep.warlords.game.option.towerdefense.waves.TowerDefenseDelayWaveAction;
+import com.ebicep.warlords.game.option.towerdefense.waves.WaveEndCondition;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -54,7 +58,7 @@ public class TowerDefenseTest extends GameMap {
 //        options.add(SpawnpointOption.forTeam(redSpawn, Team.RED));
 
         options.add(new TowerDefenseOption()
-                .addCastle(Team.BLUE, loc.addXYZ(-39.5, 70, -9.5), 100_000)
+                        .addCastle(Team.BLUE, loc.addXYZ(-39.5, 70, -9.5), 100_000)
 //                .addCastle(Team.RED, loc.addXYZ(-10.5, 70, 18.5), 100_000)
         );
 
@@ -101,7 +105,7 @@ public class TowerDefenseTest extends GameMap {
 //                )
 //        );
         options.add(new TowerBuildOption()
-                .addBuildableArea(Team.BLUE, loc.addXYZ(-0.5, 60, 3.5), loc.addXYZ(-49.5, 80, -23.5))
+                        .addBuildableArea(Team.BLUE, loc.addXYZ(-0.5, 60, 3.5), loc.addXYZ(-49.5, 80, -23.5))
 //                .addBuildableArea(Team.RED, loc.addXYZ(-0.5, 60, 5.5), loc.addXYZ(-49.5, 80, 32.5))
         );
 
@@ -154,6 +158,84 @@ public class TowerDefenseTest extends GameMap {
 
         options.add(new TowerDefenseSpawner()
                 .addPath(blueSpawn, bluePath)
+                .add(new FixedWave()
+                        .add(Mob.TD_ZOMBIE, 20, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_ZOMBIE, 35, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_ZOMBIE, 25, 10)
+                        .add(Mob.TD_SKELETON, 5, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_ZOMBIE, 35, 10)
+                        .add(Mob.TD_SKELETON, 10, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_ZOMBIE, 5, 10)
+                        .add(Mob.TD_SKELETON, 15, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 10, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_ZOMBIE, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_SKELETON, 15, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 10, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_ZOMBIE, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_SKELETON, 15, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_HUSK, 5, 10)
+                        .add(Mob.TD_ZOMBIE, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_SKELETON, 15, 10)
+                        .add(Mob.TD_HUSK, 2, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 7, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_HUSK, 10, 10)
+                        .add(Mob.TD_SPIDER, 5, 10)
+                        .add(Mob.TD_ZOMBIE, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_SPIDER, 5, 10)
+                        .add(Mob.TD_SKELETON, 20, 10)
+                        .add(Mob.TD_HUSK, 7, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_SPIDER, 7, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                )
+                .add(new FixedWave()
+                        .add(Mob.TD_HUSK, 10, 10)
+                        .add(Mob.TD_STRAY, 5, 10)
+                        .add(Mob.TD_SPIDER, 5, 10)
+                        .add(Mob.TD_ZOMBIE, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_STRAY, 5, 10)
+                        .add(Mob.TD_SPIDER, 10, 10)
+                        .add(Mob.TD_SKELETON, 15, 10)
+                        .add(Mob.TD_HUSK, 5, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+                        .add(Mob.TD_STRAY, 10, 10)
+                        .add(Mob.TD_SPIDER, 5, 10)
+                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+                )
+                .applyToAllWaves(wave -> wave.forEach(w -> {
+                            w.getActions().add(0, new TowerDefenseDelayWaveAction(20));
+                            w.getEndConditions().add(WaveEndCondition.allMobsDeadAnySide());
+                        })
+                )
         );
         return options;
     }

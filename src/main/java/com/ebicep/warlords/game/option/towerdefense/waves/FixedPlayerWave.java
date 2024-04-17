@@ -11,6 +11,7 @@ import java.util.List;
 public class FixedPlayerWave implements TowerDefenseWave {
 
     private final List<WaveAction<TowerDefenseOption>> actions = new ArrayList<>();
+    private final List<WaveEndCondition> endConditions = new ArrayList<>();
     private int waveActionIndex = 0;
     private boolean sent = false;
 
@@ -67,6 +68,11 @@ public class FixedPlayerWave implements TowerDefenseWave {
     @Override
     public List<WaveAction<TowerDefenseOption>> getActions() {
         return actions;
+    }
+
+    @Override
+    public List<WaveEndCondition> getEndConditions() {
+        return endConditions;
     }
 
     @Override

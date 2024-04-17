@@ -14,6 +14,7 @@ import java.util.List;
 public class FixedWave implements TowerDefenseWave {
 
     private final List<WaveAction<TowerDefenseOption>> actions = new ArrayList<>();
+    private final List<WaveEndCondition> endConditions = new ArrayList<>();
     private int waveActionIndex = 0;
 
     public FixedWave add(Mob mob) {
@@ -21,11 +22,20 @@ public class FixedWave implements TowerDefenseWave {
     }
 
     public FixedWave add(Mob mob, int amount) {
-        return add(mob, amount, null);
+        return add(mob, amount, 0, null);
     }
 
     public FixedWave add(Mob mob, int amount, @Nullable WarlordsEntity spawner) {
+        return add(mob, amount, 0, spawner);
+    }
+
+    public FixedWave add(Mob mob, int amount, int delay) {
+        return add(mob, amount, delay, null);
+    }
+
+    public FixedWave add(Mob mob, int amount, int delay, @Nullable WarlordsEntity spawner) {
         for (int i = 0; i < amount; i++) {
+            actions.add(new TowerDefenseDelayWaveAction(delay));
             actions.add(new TowerDefenseSpawnWaveAction(mob, spawner));
         }
         return this;
@@ -36,9 +46,19 @@ public class FixedWave implements TowerDefenseWave {
         return this;
     }
 
+    public FixedWave addEndCondition(WaveEndCondition waveEndCondition) {
+        endConditions.add(waveEndCondition);
+        return this;
+    }
+
     @Override
     public List<WaveAction<TowerDefenseOption>> getActions() {
         return actions;
+    }
+
+    @Override
+    public List<WaveEndCondition> getEndConditions() {
+        return endConditions;
     }
 
     @Override

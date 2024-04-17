@@ -13,6 +13,7 @@ import java.util.List;
 public class RandomWave implements TowerDefenseWave {
 
     private final List<WaveAction<TowerDefenseOption>> actions = new ArrayList<>();
+    private final List<WaveEndCondition> endConditions = new ArrayList<>();
     private int waveActionIndex = 0;
     private final RandomCollection<Mob> mobWeights = new RandomCollection<>();
 
@@ -37,6 +38,11 @@ public class RandomWave implements TowerDefenseWave {
     @Override
     public List<WaveAction<TowerDefenseOption>> getActions() {
         return actions;
+    }
+
+    @Override
+    public List<WaveEndCondition> getEndConditions() {
+        return endConditions;
     }
 
     @Override
