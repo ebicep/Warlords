@@ -8,6 +8,11 @@ Project built upon the frameworks of Paper.
 
 You may use our work for your own purposes as long as we are credited.
 
+# Links
+
+- Discord: https://discord.gg/tkGFQvzwAd
+- Server IP: compwl.apexmc.co
+
 # Requirements
 
 - A world named `MainLobby`. `autoLoad` should be set to true inside its MultiVerse config.
