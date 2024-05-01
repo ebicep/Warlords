@@ -197,7 +197,7 @@ public class TowerDefenseMenu {
             TowerDefenseMobInfo mobInfo = TowerDefenseMobInfo.VALUES[i];
             Mob mob = mobInfo.getMob();
             int cost = mobInfo.getCost();
-            int expReward = mobInfo.getIncomeModifier();
+            float expReward = mobInfo.getIncomeModifier();
             int spawnDelay = mobInfo.getSpawnDelay();
             menu.setItem(x, y,
                     new ItemBuilder(mobInfo.getMob().getHead())

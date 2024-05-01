@@ -4,16 +4,16 @@ import com.ebicep.warlords.pve.mobs.Mob;
 
 public enum TowerDefenseMobInfo {
 
-    ZOMBIE(Mob.TD_ZOMBIE, 0, 0, 10),
-    ZOMBIE_BABY(Mob.TD_ZOMBIE_BABY, 0, 0, 10),
-    ZOMBIE_VILLAGER(Mob.TD_ZOMBIE_VILLAGER, 0, 0, 10),
+    ZOMBIE(Mob.TD_ZOMBIE, 15, 1, 10),
+    ZOMBIE_BABY(Mob.TD_ZOMBIE_BABY, 20, 1, 10),
+    ZOMBIE_VILLAGER(Mob.TD_ZOMBIE_VILLAGER, 30, 1.3f, 10),
     HUSK(Mob.TD_HUSK, 0, 0, 10),
-    SKELETON(Mob.TD_SKELETON, 0, 0, 10),
+    SKELETON(Mob.TD_SKELETON, 50, 1.6f, 10),
     STRAY(Mob.TD_STRAY, 0, 0, 10),
-    SPIDER(Mob.TD_SPIDER, 0, 0, 10),
-    CAVE_SPIDER(Mob.TD_CAVE_SPIDER, 0, 0, 10),
-    SILVERFISH(Mob.TD_SILVERFISH, 0, 0, 10),
-    ENDERMITE(Mob.TD_ENDERMITE, 0, 0, 10),
+    SPIDER(Mob.TD_SPIDER, 45, 1.6f, 10),
+    CAVE_SPIDER(Mob.TD_CAVE_SPIDER, 55, 1.6f, 10),
+    SILVERFISH(Mob.TD_SILVERFISH, 25, 1.3f, 10),
+    ENDERMITE(Mob.TD_ENDERMITE, 0, 1.9f, 10),
     WITCH(Mob.TD_WITCH, 0, 0, 10),
     ENDERMAN(Mob.TD_ENDERMAN, 0, 0, 10),
     WITHER_SKELETON(Mob.TD_WITHER_SKELETON, 0, 0, 10),
@@ -49,10 +49,10 @@ public enum TowerDefenseMobInfo {
 
     private final Mob mob;
     private final int cost; // how much it costs to spawn
-    private final int incomeModifier; // how it affects the income rate
+    private final float incomeModifier; // how it affects the income rate
     private final int spawnDelay; // ticks
 
-    TowerDefenseMobInfo(Mob mob, int cost, int incomeModifier, int spawnDelay) {
+    TowerDefenseMobInfo(Mob mob, int cost, float incomeModifier, int spawnDelay) {
         this.mob = mob;
         this.cost = cost;
         this.incomeModifier = incomeModifier;
@@ -67,7 +67,7 @@ public enum TowerDefenseMobInfo {
         return cost;
     }
 
-    public int getIncomeModifier() {
+    public float getIncomeModifier() {
         return incomeModifier;
     }
 
