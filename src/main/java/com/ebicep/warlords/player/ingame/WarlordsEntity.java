@@ -26,6 +26,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
@@ -320,6 +321,29 @@ public abstract class WarlordsEntity {
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
             WarlordsEntity attacker,
             String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier,
+            EnumSet<InstanceFlags> flags,
+            List<CustomInstanceFlags> customInstanceFlags
+    ) {
+        return addDamageInstance(
+                attacker,
+                ability,
+                min.getCalculatedValue(),
+                max.getCalculatedValue(),
+                critChance,
+                critMultiplier,
+                flags,
+                customInstanceFlags,
+                null
+        );
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
             float min,
             float max,
             float critChance,
@@ -384,6 +408,32 @@ public abstract class WarlordsEntity {
                 critMultiplier,
                 true,
                 flags,
+                new ArrayList<>(),
+                uuid
+        ));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            EnumSet<InstanceFlags> flags,
+            List<CustomInstanceFlags> customInstanceFlags,
+            UUID uuid
+    ) {
+        return this.addDamageHealingInstance(new WarlordsDamageHealingEvent(this,
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                true,
+                flags,
+                customInstanceFlags,
                 uuid
         ));
     }
@@ -407,6 +457,7 @@ public abstract class WarlordsEntity {
                 critMultiplier,
                 true,
                 flags,
+                new ArrayList<>(),
                 uuid
         ));
     }
@@ -428,6 +479,7 @@ public abstract class WarlordsEntity {
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
+        List<CustomInstanceFlags> customFlags = event.getCustomFlags();
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
         boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
         boolean ignoreDamageReduction = pierceDamage || flags.contains(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY);
@@ -756,7 +808,8 @@ public abstract class WarlordsEntity {
                             isCrit ? 100 : 0,
                             100,
                             true,
-                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES)
+                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES),
+                            customFlags
                     ));
 
                     addAbsorbed(-(shield.getShieldHealth()));
@@ -1088,6 +1141,7 @@ public abstract class WarlordsEntity {
                 critMultiplier,
                 false,
                 flags,
+                new ArrayList<>(),
                 null
         ));
     }
@@ -1111,6 +1165,7 @@ public abstract class WarlordsEntity {
                 critMultiplier,
                 false,
                 flags,
+                new ArrayList<>(),
                 null
         ));
     }

@@ -2,6 +2,7 @@
 package com.ebicep.warlords.events.player.ingame;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -9,6 +10,7 @@ import org.bukkit.event.HandlerList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -26,6 +28,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     private boolean isDamageInstance;
 
     private final EnumSet<InstanceFlags> flags;
+    private final List<CustomInstanceFlags> customFlags;
     @Nullable
     private final UUID uuid;
     private boolean cancelled;
@@ -40,6 +43,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float critMultiplier,
             boolean isDamageInstance,
             EnumSet<InstanceFlags> flags,
+            List<CustomInstanceFlags> customFlags,
             @Nullable UUID uuid
     ) {
         super(player);
@@ -51,6 +55,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.critMultiplier = critMultiplier;
         this.isDamageInstance = isDamageInstance;
         this.flags = flags;
+        this.customFlags = customFlags;
         this.uuid = uuid;
     }
 
@@ -63,9 +68,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float critChance,
             float critMultiplier,
             boolean isDamageInstance,
-            EnumSet<InstanceFlags> flags
+            EnumSet<InstanceFlags> flags,
+            List<CustomInstanceFlags> customFlags
     ) {
-        this(player, attacker, ability, min, max, critChance, critMultiplier, isDamageInstance, flags, null);
+        this(player, attacker, ability, min, max, critChance, critMultiplier, isDamageInstance, flags, customFlags, null);
     }
 
     public WarlordsEntity getAttacker() {
@@ -148,6 +154,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
 
     public EnumSet<InstanceFlags> getFlags() {
         return flags;
+    }
+
+    public List<CustomInstanceFlags> getCustomFlags() {
+        return customFlags;
     }
 
     @Nullable

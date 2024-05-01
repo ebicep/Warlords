@@ -10,12 +10,15 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,7 +79,6 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
 
     private static class HexAttack extends AbstractAbility implements HitBox {
 
-
         private final FloatModifiable range = new FloatModifiable(30);
 
         public HexAttack() {
@@ -95,7 +97,11 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
                             maxDamageHeal,
                             critChance,
                             critMultiplier,
-                            InstanceFlags.TD_MAGIC
+                            EnumSet.of(InstanceFlags.TD_MAGIC),
+                            pveMasterUpgrade ? JavaUtils.newArrayListOf(new CustomInstanceFlags.Valued(
+                                    floatModifiable -> floatModifiable.addMultiplicativeModifierMult(name + " Upgrade", .5f, 0),
+                                    CustomInstanceFlags.Valued.Flag.TD_MAGIC_RES_REDUCTION
+                            )) : new ArrayList<>()
                     );
                 });
             }
