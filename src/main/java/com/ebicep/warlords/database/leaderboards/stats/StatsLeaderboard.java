@@ -29,7 +29,7 @@ import java.util.function.Predicate;
 
 public class StatsLeaderboard {
 
-    public static final int MAX_PAGES = 5;
+    public static final int MAX_PAGES = 3;
     public static final int PLAYERS_PER_PAGE = 10;
     private final String title;
     private final Location location;
