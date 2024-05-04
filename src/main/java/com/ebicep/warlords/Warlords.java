@@ -12,6 +12,7 @@ import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
@@ -349,6 +350,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Shield(), this);
         getServer().getPluginManager().registerEvents(new HorseOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
+        getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 

@@ -6,6 +6,8 @@ import com.ebicep.warlords.database.leaderboards.events.EventsLeaderboardManager
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.FutureMessage;
+import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
+import com.ebicep.warlords.events.player.DatabasePlayerFirstLoadEvent;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
@@ -16,6 +18,8 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.springframework.data.annotation.Id;
@@ -30,7 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 @Document(collection = "Game_Events")
-public class DatabaseGameEvent {
+public class DatabaseGameEvent implements Listener {
 
     public static final HashMap<GameEvents, DatabaseGameEvent> PREVIOUS_GAME_EVENTS = new HashMap<>();
     public static final HashMap<GameEvents, List<Long>> ALL_GAME_EVENT_TIMES = new HashMap<>();
@@ -66,18 +70,9 @@ public class DatabaseGameEvent {
                             ChatUtils.MessageType.GAME_EVENTS.sendMessage("End: " + gameEvent.getEndDate());
                             currentGameEvent = gameEvent;
                             if (!gameEvent.getStarted()) {
-                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("New Event Detected, clearing player currencies...");
-                                Currencies currency = gameEvent.getEvent().currency;
-                                for (DatabasePlayer databasePlayer : DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).values()) {
-                                    Long currencyValue = databasePlayer.getPveStats().getCurrencyValue(currency);
-                                    if (currencyValue > 0) {
-                                        databasePlayer.getPveStats().subtractCurrency(currency, currencyValue);
-                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                    }
-                                }
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("New Event Detected! Starting...");
                                 gameEvent.setStarted(true);
-                                Warlords.newChain()
-                                        .async(() -> DatabaseManager.gameEventsService.update(gameEvent)).execute();
+                                Warlords.newChain().async(() -> DatabaseManager.gameEventsService.update(gameEvent)).execute();
                             }
                             gameEvent.start();
                             if (eventChecker != null) {
@@ -117,6 +112,27 @@ public class DatabaseGameEvent {
                     EventsLeaderboardManager.create();
                 })
                 .execute();
+    }
+
+    @EventHandler
+    public void onDatabasePlayerLoad(DatabasePlayerFirstLoadEvent event) {
+        if (!eventIsActive()) {
+            return;
+        }
+        DatabasePlayer databasePlayer = event.getDatabasePlayer();
+        GameEvents gameEvent = currentGameEvent.getEvent();
+        EventMode eventMode = gameEvent.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
+        if (eventMode != null && eventMode.getEventPlays() != 0) {
+            return;
+        }
+        Currencies currency = gameEvent.currency;
+        Long currencyValue = databasePlayer.getPveStats().getCurrencyValue(currency);
+        if (currencyValue <= 0) {
+            return;
+        }
+        databasePlayer.getPveStats().subtractCurrency(currency, currencyValue);
+        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("New event, cleared " + event.getPlayer().getName() + " " + currency.name + " currency.");
     }
 
     public GameEvents getEvent() {
