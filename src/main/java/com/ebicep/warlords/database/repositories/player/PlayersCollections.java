@@ -116,7 +116,7 @@ public enum PlayersCollections {
 
     public static final PlayersCollections[] VALUES = values();
     public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_8, WEEKLY, DAILY);
-    public static final List<PlayersCollections> ACTIVE_LEADERBOARD_COLLECTIONS = Arrays.asList(LIFETIME, WEEKLY, DAILY);
+    public static final List<PlayersCollections> ACTIVE_LEADERBOARD_COLLECTIONS = Arrays.asList(LIFETIME, WEEKLY);
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
         int index = ACTIVE_LEADERBOARD_COLLECTIONS.indexOf(playersCollections);
@@ -125,7 +125,6 @@ public enum PlayersCollections {
         } else {
             return ACTIVE_LEADERBOARD_COLLECTIONS.get(index + 1);
         }
-
     }
 
     public static PlayersCollections getBeforeCollection(PlayersCollections playersCollections) {

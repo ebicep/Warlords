@@ -519,28 +519,28 @@ public class StatsLeaderboardManager {
 
         ;
 
+        public static final List<GameType> ACTIVE_LEADERBOARDS = Arrays.asList(ALL, CTF, PVE);
+
         public static boolean isPve(GameType gameType) {
             return gameType == PVE || gameType == WAVE_DEFENSE || gameType == ONSLAUGHT;
         }
 
         public static GameType getAfter(GameType gameType) {
-            return switch (gameType) {
-                case ALL -> CTF;
-                case CTF -> PVE;
-                case PVE -> WAVE_DEFENSE;
-                case WAVE_DEFENSE -> ONSLAUGHT;
-                case ONSLAUGHT -> ALL;
-            };
+            int index = ACTIVE_LEADERBOARDS.indexOf(gameType);
+            if (index == ACTIVE_LEADERBOARDS.size() - 1) {
+                return ACTIVE_LEADERBOARDS.get(0);
+            } else {
+                return ACTIVE_LEADERBOARDS.get(index + 1);
+            }
         }
 
         public static GameType getBefore(GameType gameType) {
-            return switch (gameType) {
-                case ALL -> ONSLAUGHT;
-                case CTF -> ALL;
-                case PVE -> CTF;
-                case WAVE_DEFENSE -> PVE;
-                case ONSLAUGHT -> WAVE_DEFENSE;
-            };
+            int index = ACTIVE_LEADERBOARDS.indexOf(gameType);
+            if (index == 0) {
+                return ACTIVE_LEADERBOARDS.get(ACTIVE_LEADERBOARDS.size() - 1);
+            } else {
+                return ACTIVE_LEADERBOARDS.get(index - 1);
+            }
         }
 
         public final String name;
