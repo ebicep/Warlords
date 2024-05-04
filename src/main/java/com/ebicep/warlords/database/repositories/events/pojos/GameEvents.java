@@ -342,8 +342,8 @@ public enum GameEvents {
                 add(new SpendableBuyShop(1_000, Currencies.SYNTHETIC_SHARD, 5, 100_000));
                 add(new SpendableBuyShop(1, Currencies.EPIC_STAR_PIECE, 1, 500_000));
                 add(new SpendableBuyShop(1_000, Currencies.COIN, -1, 8_000));
-                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 10_000));
-                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 10_000));
+                add(new SpendableBuyShop(10, Currencies.SYNTHETIC_SHARD, -1, 2_500));
+                add(new SpendableBuyShop(3, Currencies.LEGEND_FRAGMENTS, -1, 3_000));
                 add(new SpendableBuyShop(3, Currencies.SKILL_BOOST_MODIFIER, 3, 75_000));
                 add(new SpendableBuyShop(1, Currencies.LIMIT_BREAKER, 1, 500_000));
             }}
