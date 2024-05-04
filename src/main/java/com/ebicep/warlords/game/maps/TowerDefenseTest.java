@@ -113,7 +113,7 @@ public class TowerDefenseTest extends GameMap {
         for (Option option : options) {
             if (option instanceof TowerDefenseOption towerDefenseOption) {
                 options.add(new CurrencyOnEventOption()
-                        .startWith(10000)
+                        .startWith(5000)
                         .setCurrentCurrencyDisplay(warlordsEntity -> Component.text("Insignia: ", NamedTextColor.YELLOW)
                                                                               .append(Component.text("❂ " + NumberFormat.formatOptionalHundredths(warlordsEntity.getCurrency()),
                                                                                       NamedTextColor.GOLD
