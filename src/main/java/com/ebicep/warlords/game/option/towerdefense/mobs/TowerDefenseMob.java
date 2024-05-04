@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.CustomAttackStrategy;
@@ -25,10 +26,12 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class TowerDefenseMob extends AbstractMob {
 
+    // resistances in decimal, .1 = 10% res
     private final FloatModifiable physicalResistance = new FloatModifiable(0);
     private final FloatModifiable magicResistance = new FloatModifiable(0);
     @Nullable
@@ -54,7 +57,7 @@ public abstract class TowerDefenseMob extends AbstractMob {
 
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
-        defaultParameters.attackRange(1)
+        defaultParameters.attackRange(getDefaultAttackRange())
                          .stuckAction(null) // disable tping to player if too far away
                          .updatePathRate(5)
                          .distanceMargin(.75)
@@ -128,11 +131,22 @@ public abstract class TowerDefenseMob extends AbstractMob {
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 EnumSet<InstanceFlags> flags = event.getFlags();
+                List<CustomInstanceFlags> customFlags = event.getCustomFlags();
+                for (CustomInstanceFlags customFlag : customFlags) {
+                    if (customFlag instanceof CustomInstanceFlags.Valued valued) {
+                        switch (valued.flag()) {
+                            case TD_PHYSICAL_RES_REDUCTION -> valued.floatModifiableConsumer().accept(physicalResistance);
+                            case TD_MAGIC_RES_REDUCTION -> valued.floatModifiableConsumer().accept(magicResistance);
+                        }
+                    }
+                }
                 if (flags.contains(InstanceFlags.TD_PHYSICAL)) {
                     return currentDamageValue * (1 - physicalResistance.getCalculatedValue());
                 } else if (flags.contains(InstanceFlags.TD_MAGIC)) {
                     return currentDamageValue * (1 - magicResistance.getCalculatedValue());
                 }
+                physicalResistance.tick();
+                magicResistance.tick();
                 return currentDamageValue;
             }
         });

@@ -136,13 +136,15 @@ public class TowerDefenseSpawner implements Option, Listener {
             assignNextTargetNode(attackingMobData, lastNodeIdentifier, outgoingEdges);
 
             npc.getDefaultGoalController().addGoal(new NPCTowerDefensePathfindGoal(npc, this, mob, attackingMobData), 3);
-            mob.getWarlordsNPC()
-               .getMobHologram()
-               .getCustomHologramLines()
-               .add(new MobHologram.CustomHologramLine(() -> Component.text(attackingMobData.getPosition() + " - " +
-                               path.getNodeDistanceToEnd().get(path.getNodeIndex().get(attackingMobData.getTargetNode())),
-                       NamedTextColor.GREEN
-               )));
+            if (towerDefenseOption.isDebug()) {
+                mob.getWarlordsNPC()
+                   .getMobHologram()
+                   .getCustomHologramLines()
+                   .add(new MobHologram.CustomHologramLine(() -> Component.text(attackingMobData.getPosition() + " - " +
+                                   path.getNodeDistanceToEnd().get(path.getNodeIndex().get(attackingMobData.getTargetNode())),
+                           NamedTextColor.GREEN
+                   )));
+            }
         }
     }
 

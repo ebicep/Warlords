@@ -67,7 +67,11 @@ public class NPCTowerDefensePathfindGoal extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        warlordsEntityTarget = NPCTargetAggroWarlordsEntityGoal.getTarget(npc, 5, extraFilters);
+        warlordsEntityTarget = NPCTargetAggroWarlordsEntityGoal.getTarget(
+                npc,
+                npc.getNavigator().getDefaultParameters().attackRange() + 2,
+                extraFilters
+        );
         if (warlordsEntityTarget == null) {
             if (!npc.getNavigator().isNavigating()) {
                 towerDefenseSpawner.pathFindToNextWaypoint(mob, mobData);

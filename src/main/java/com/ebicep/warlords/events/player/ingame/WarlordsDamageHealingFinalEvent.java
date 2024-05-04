@@ -42,7 +42,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
 
     public WarlordsDamageHealingFinalEvent(
             WarlordsDamageHealingEvent warlordsDamageHealingEvent,
-            EnumSet<InstanceFlags> instanceFlags, WarlordsEntity player,
+            EnumSet<InstanceFlags> instanceFlags,
+            WarlordsEntity player,
             WarlordsEntity attacker,
             String ability,
             float initialHealth,
