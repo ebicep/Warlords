@@ -4,44 +4,44 @@ import com.ebicep.warlords.pve.mobs.Mob;
 
 public enum TowerDefenseMobInfo {
 
-    ZOMBIE(Mob.TD_ZOMBIE, 15, 1, 10),
-    ZOMBIE_BABY(Mob.TD_ZOMBIE_BABY, 20, 1, 10),
-    ZOMBIE_VILLAGER(Mob.TD_ZOMBIE_VILLAGER, 30, 1.3f, 10),
-    HUSK(Mob.TD_HUSK, 0, 0, 10),
-    SKELETON(Mob.TD_SKELETON, 50, 1.6f, 10),
-    STRAY(Mob.TD_STRAY, 0, 0, 10),
-    SPIDER(Mob.TD_SPIDER, 45, 1.6f, 10),
-    CAVE_SPIDER(Mob.TD_CAVE_SPIDER, 55, 1.6f, 10),
-    SILVERFISH(Mob.TD_SILVERFISH, 25, 1.3f, 10),
-    ENDERMITE(Mob.TD_ENDERMITE, 0, 1.9f, 10),
-    WITCH(Mob.TD_WITCH, 0, 0, 10),
-    ENDERMAN(Mob.TD_ENDERMAN, 0, 0, 10),
-    WITHER_SKELETON(Mob.TD_WITHER_SKELETON, 0, 0, 10),
-    GHAST(Mob.TD_GHAST, 0, 0, 10),
-    BLAZE(Mob.TD_BLAZE, 0, 0, 10),
-    PIGLIN(Mob.TD_PIGLIN, 0, 0, 10),
-    ZOMBIFIED_PIGLIN(Mob.TD_ZOMBIFIED_PIGLIN, 0, 0, 10),
-    PIGLIN_BRUTE(Mob.TD_PIGLIN_BRUTE, 0, 0, 10),
-    HOGLIN(Mob.TD_HOGLIN, 0, 0, 10),
-    ZOGLIN(Mob.TD_ZOGLIN, 0, 0, 10),
-    EVOKER(Mob.TD_EVOKER, 0, 0, 10),
-    VINDICATOR(Mob.TD_VINDICATOR, 0, 0, 10),
-    PILLAGER(Mob.TD_PILLAGER, 0, 0, 10),
-    RAVAGER(Mob.TD_RAVAGER, 0, 0, 10),
-    ILLUSIONER(Mob.TD_ILLUSIONER, 0, 0, 10),
-    VEX(Mob.TD_VEX, 0, 0, 10),
-    CREEPER(Mob.TD_CREEPER, 0, 0, 10),
-    CREEPER_CHARGED(Mob.TD_CREEPER_CHARGED, 0, 0, 10),
-    SLIME(Mob.TD_SLIME, 0, 0, 10),
-    MAGMA_CUBE(Mob.TD_MAGMA_CUBE, 0, 0, 10),
-    PHANTOM(Mob.TD_PHANTOM, 0, 0, 10),
-    DROWNED(Mob.TD_DROWNED, 0, 0, 10),
-    GUARDIAN(Mob.TD_GUARDIAN, 0, 0, 10),
-    ELDER_GUARDIAN(Mob.TD_ELDER_GUARDIAN, 0, 0, 10),
-    WARDEN(Mob.TD_WARDEN, 0, 0, 10),
-    ENDER_DRAGON(Mob.TD_ENDER_DRAGON, 0, 0, 10),
-    WITHER(Mob.TD_WITHER, 0, 0, 10),
-    GIANT(Mob.TD_GIANT, 0, 0, 10),
+    ZOMBIE(Mob.TD_ZOMBIE, 12, 1, 40, 1),
+    ZOMBIE_BABY(Mob.TD_ZOMBIE_BABY, 12, 1, 40, 1),
+    ZOMBIE_VILLAGER(Mob.TD_ZOMBIE_VILLAGER, 16, 1.3f, 40, 3),
+    SILVERFISH(Mob.TD_SILVERFISH, 18, 1.3f, 20, 4),
+    SKELETON(Mob.TD_SKELETON, 30, 1.6f, 40, 4),
+    SPIDER(Mob.TD_SPIDER, 24, 1.6f, 40, 5),
+    CAVE_SPIDER(Mob.TD_CAVE_SPIDER, 27, 1.8f, 40, 6),
+    ENDERMITE(Mob.TD_ENDERMITE, 34, 2.1f, 20, 7),
+    HUSK(Mob.TD_HUSK, 40, 2.4f, 50, 7),
+    PIGLIN(Mob.TD_PIGLIN, 48, 2.7f, 30, 9),
+    ZOMBIFIED_PIGLIN(Mob.TD_ZOMBIFIED_PIGLIN, 48, 2.7f, 30, 9),
+    STRAY(Mob.TD_STRAY, 60, 2.7f, 50, 9),
+    WITCH(Mob.TD_WITCH, 120, 3.6f, 60, 11),
+    PILLAGER(Mob.TD_PILLAGER, 65, 3.6f, 30, 11),
+    PHANTOM(Mob.TD_PHANTOM, 60, 3, 20, 11),
+    CREEPER(Mob.TD_CREEPER, 120, 3.6f, 50, 12),
+    ENDERMAN(Mob.TD_ENDERMAN, 130, 4, 40, 13),
+    HOGLIN(Mob.TD_HOGLIN, 130, 4, 40, 13),
+    ZOGLIN(Mob.TD_ZOGLIN, 130, 4, 40, 13),
+    BLAZE(Mob.TD_BLAZE, 120, 3.8f, 40, 14),
+    GUARDIAN(Mob.TD_GUARDIAN, 160, 3.8f, 40, 14),
+    WITHER_SKELETON(Mob.TD_WITHER_SKELETON, 175, 2.5f, 60, 16),
+    VINDICATOR(Mob.TD_VINDICATOR, 175, 2.5f, 60, 16),
+    PIGLIN_BRUTE(Mob.TD_PIGLIN_BRUTE, 175, 2.5f, 60, 17),
+    CREEPER_CHARGED(Mob.TD_CREEPER_CHARGED, 220, 2, 50, 17),
+    ILLUSIONER(Mob.TD_ILLUSIONER, 300, 1, 60, 18),
+    GHAST(Mob.TD_GHAST, 260, 1, 70, 18),
+    RAVAGER(Mob.TD_RAVAGER, 280, 0, 60, 19),
+    DROWNED(Mob.TD_DROWNED, 340, 0, 60, 20),
+    EVOKER(Mob.TD_EVOKER, 450, 0, 70, 21),
+    VEX(Mob.TD_VEX, 0, 0, 0, 0),
+    SLIME(Mob.TD_SLIME, 600, -20, 80, 23),
+    MAGMA_CUBE(Mob.TD_MAGMA_CUBE, 1200, -50, 90, 26),
+    ELDER_GUARDIAN(Mob.TD_ELDER_GUARDIAN, 3000, -450, 120, 30),
+    WARDEN(Mob.TD_WARDEN, 3500, -450, 120, 30),
+    GIANT(Mob.TD_GIANT, 4500, -600, 140, 33),
+    ENDER_DRAGON(Mob.TD_ENDER_DRAGON, 6000, -800, 140, 35),
+    WITHER(Mob.TD_WITHER, 6000, -800, 140, 35),
 
     ;
 
@@ -51,12 +51,14 @@ public enum TowerDefenseMobInfo {
     private final int cost; // how much it costs to spawn
     private final float incomeModifier; // how it affects the income rate
     private final int spawnDelay; // ticks
+    private final int waveUnlocked;
 
-    TowerDefenseMobInfo(Mob mob, int cost, float incomeModifier, int spawnDelay) {
+    TowerDefenseMobInfo(Mob mob, int cost, float incomeModifier, int spawnDelay, int waveUnlocked) {
         this.mob = mob;
         this.cost = cost;
         this.incomeModifier = incomeModifier;
         this.spawnDelay = spawnDelay;
+        this.waveUnlocked = waveUnlocked;
     }
 
     public Mob getMob() {
@@ -74,4 +76,9 @@ public enum TowerDefenseMobInfo {
     public int getSpawnDelay() {
         return spawnDelay;
     }
+
+    public int getWaveUnlocked() {
+        return waveUnlocked;
+    }
+
 }
