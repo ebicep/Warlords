@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.towerdefense.events.TowerDefenseMobCompletePathEvent;
 import com.ebicep.warlords.game.option.towerdefense.mobs.NPCTowerDefensePathfindGoal;
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
+import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMobInfo;
 import com.ebicep.warlords.game.option.towerdefense.path.PathDirection;
 import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerDefenseTowerMob;
@@ -41,10 +42,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
@@ -436,5 +434,11 @@ public class TowerDefenseSpawner implements Option, Listener {
 
     public Map<Location, List<TowerDefenseDirectAcyclicGraph>> getPaths() {
         return paths;
+    }
+
+    public TowerDefenseMobInfo[] getCurrentUnlockedMobs() {
+        return Arrays.stream(TowerDefenseMobInfo.VALUES)
+                     .filter(towerDefenseMobInfo -> towerDefenseMobInfo.getWaveUnlocked() <= currentWave + 1)
+                     .toArray(TowerDefenseMobInfo[]::new);
     }
 }

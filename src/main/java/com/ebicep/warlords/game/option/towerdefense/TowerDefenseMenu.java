@@ -193,8 +193,9 @@ public class TowerDefenseMenu {
 
         int x = 1;
         int y = 2;
-        for (int i = ((page - 1) * 27); i < TowerDefenseMobInfo.VALUES.length; i++) {
-            TowerDefenseMobInfo mobInfo = TowerDefenseMobInfo.VALUES[i];
+        TowerDefenseMobInfo[] mobInfos = spawner.getCurrentUnlockedMobs();
+        for (int i = ((page - 1) * 27); i < mobInfos.length; i++) {
+            TowerDefenseMobInfo mobInfo = mobInfos[i];
             Mob mob = mobInfo.getMob();
             int cost = mobInfo.getCost();
             float expReward = mobInfo.getIncomeModifier();
@@ -293,7 +294,7 @@ public class TowerDefenseMenu {
                     }
             );
         }
-        if (TowerDefenseMobInfo.VALUES.length > (page * 27)) {
+        if (mobInfos.length > (page * 27)) {
             menu.setItem(8, 3,
                     new ItemBuilder(Material.ARROW)
                             .name(Component.text("Next Page", NamedTextColor.GREEN))
