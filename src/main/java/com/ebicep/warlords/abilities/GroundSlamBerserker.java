@@ -22,7 +22,7 @@ public class GroundSlamBerserker extends AbstractGroundSlam {
     }
 
     public GroundSlamBerserker(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
-        super(minDamageHeal, maxDamageHeal, cooldown, 60, 15, 200, startCooldown);
+        super(minDamageHeal, maxDamageHeal, cooldown, 60, 20, 175, startCooldown);
     }
 
     @Override
