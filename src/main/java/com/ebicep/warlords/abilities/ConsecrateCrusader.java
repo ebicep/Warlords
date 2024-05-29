@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConsecrateCrusader extends AbstractConsecrate {
 
     public ConsecrateCrusader() {
-        super(144, 194.4f, 50, 15, 200, 15, 4, 5);
+        super(144, 194.4f, 50, 20, 175, 15, 4, 5);
     }
 
     public ConsecrateCrusader(
