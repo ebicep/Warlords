@@ -48,7 +48,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     public HealingRain(float cooldown, float startCooldown) {
-        super("Healing Rain", 100, 125, cooldown, 50, 25, 200, startCooldown);
+        super("Healing Rain", 100, 125, cooldown, 50, 20, 200, startCooldown);
     }
 
     @Override
