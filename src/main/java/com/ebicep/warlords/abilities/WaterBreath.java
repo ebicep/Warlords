@@ -48,7 +48,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     private double velocity = 1.1;
 
     public WaterBreath() {
-        super("Water Breath", 528, 723, 6.3f, 60, 25, 175);
+        super("Water Breath", 511, 706, 10.62f, 60, 25, 175);
     }
 
     @Override
