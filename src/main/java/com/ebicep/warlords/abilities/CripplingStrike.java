@@ -75,11 +75,11 @@ public class CripplingStrike extends AbstractStrike {
     private int cripplePerStrike = 5;
 
     public CripplingStrike() {
-        super("Crippling Strike", 362.25f, 498, 0, 100, 15, 200);
+        super("Crippling Strike", 362.25f, 498, 0, 100, 20, 175);
     }
 
     public CripplingStrike(float minDamageHeal, float maxDamageHeal, int consecutiveStrikeCounter) {
-        super("Crippling Strike", minDamageHeal, maxDamageHeal, 0, 100, 15, 200);
+        super("Crippling Strike", minDamageHeal, maxDamageHeal, 0, 100, 20, 175);
         this.consecutiveStrikeCounter = consecutiveStrikeCounter;
     }
 
