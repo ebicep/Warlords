@@ -23,12 +23,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.ebicep.warlords.util.java.MathUtils.lerp;
-
 public class ProtectorsStrike extends AbstractStrike {
 
-    private int minConvert = 75; // %
-    private int maxConvert = 100; // %
+    private int allyHealing = 90; // %
+    private int selfHealing = 60; // %
     private int maxAllies = 2;
     private double strikeRadius = 10;
 
@@ -43,9 +41,9 @@ public class ProtectorsStrike extends AbstractStrike {
                                .append(Component.text(" damage and healing "))
                                .append(Component.text(maxAllies, NamedTextColor.GREEN))
                                .append(Component.text(" nearby allies for "))
-                               .append(Component.text(minConvert + "-" + maxConvert + "%", NamedTextColor.GREEN))
+                               .append(Component.text(allyHealing + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the damage done. Also heals yourself by "))
-                               .append(Component.text("50-75%", NamedTextColor.GREEN))
+                               .append(Component.text(selfHealing + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the damage done. Based on your current health."));
     }
 
@@ -95,25 +93,15 @@ public class ProtectorsStrike extends AbstractStrike {
             float currentDamageValue = warlordsDamageHealingFinalEvent.getValue();
             boolean isCrit = warlordsDamageHealingFinalEvent.isCrit();
 
-            float healthFraction = lerp(0, 1, wp.getCurrentHealth() / wp.getMaxHealth());
-
-            if (healthFraction > 1) {
-                healthFraction = 1; // in the case of overheal
-            }
-
-            if (healthFraction < 0) {
-                healthFraction = 0;
-            }
-
-            float allyHealing = (minConvert / 100f) + healthFraction * 0.25f;
-            float ownHealing = ((maxConvert / 100f) / 2f) + (1 - healthFraction) * 0.25f;
+            float allyHealing = currentDamageValue * this.allyHealing / 100f;
+            float selfHealing = currentDamageValue * this.selfHealing / 100f;
 
             // Self Heal
             wp.addHealingInstance(
                     wp,
                     name,
-                    currentDamageValue * ownHealing,
-                    currentDamageValue * ownHealing,
+                    currentDamageValue * selfHealing,
+                    currentDamageValue * selfHealing,
                     isCrit ? 100 : 0,
                     100
             ).ifPresent(event -> {
@@ -173,22 +161,21 @@ public class ProtectorsStrike extends AbstractStrike {
         return true;
     }
 
-    public int getMinConvert() {
-        return minConvert;
+    public int getAllyHealing() {
+        return allyHealing;
     }
 
-    public void setMinConvert(int convertPercent) {
-        this.minConvert = convertPercent;
+    public void setAllyHealing(int convertPercent) {
+        this.allyHealing = convertPercent;
     }
 
-    public int getMaxConvert() {
-        return maxConvert;
+    public int getSelfHealing() {
+        return selfHealing;
     }
 
-    public void setMaxConvert(int selfConvertPercent) {
-        this.maxConvert = selfConvertPercent;
+    public void setSelfHealing(int selfConvertPercent) {
+        this.selfHealing = selfConvertPercent;
     }
-
 
     public int getMaxAllies() {
         return maxAllies;

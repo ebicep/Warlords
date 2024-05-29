@@ -598,8 +598,7 @@ public enum SkillBoosts {
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike protectorsStrike) {
-                    protectorsStrike.setMinConvert(protectorsStrike.getMinConvert() + 10);
-                    protectorsStrike.setMaxConvert(protectorsStrike.getMaxConvert() + 10);
+                    protectorsStrike.setAllyHealing(protectorsStrike.getAllyHealing() + 10);
                     protectorsStrike.setMaxAllies(protectorsStrike.getMaxAllies() + 1);
                 }
             }
