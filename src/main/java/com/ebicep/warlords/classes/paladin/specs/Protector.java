@@ -8,7 +8,7 @@ public class Protector extends AbstractPaladin {
     public Protector() {
         super(
                 "Protector",
-                6000,
+                5200,
                 385,
                 0,
                 new ProtectorsStrike(),
