@@ -25,7 +25,7 @@ import java.util.HashSet;
 public class ConsecrateAvenger extends AbstractConsecrate {
 
     public ConsecrateAvenger() {
-        super(158.4f, 213.6f, 50, 20, 175, 20, 5);
+        super(198, 267, 50, 20, 175, 20, 5, 4);
     }
 
     public ConsecrateAvenger(
@@ -38,7 +38,7 @@ public class ConsecrateAvenger extends AbstractConsecrate {
             float radius,
             Location location
     ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location);
+        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, 4, location);
     }
 
     @Override

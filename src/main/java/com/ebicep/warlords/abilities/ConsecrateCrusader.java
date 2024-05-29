@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConsecrateCrusader extends AbstractConsecrate {
 
     public ConsecrateCrusader() {
-        super(144, 194.4f, 50, 15, 200, 15, 4);
+        super(144, 194.4f, 50, 15, 200, 15, 4, 5);
     }
 
     public ConsecrateCrusader(
@@ -38,7 +38,7 @@ public class ConsecrateCrusader extends AbstractConsecrate {
             float radius,
             Location location
     ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location);
+        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, 5, location);
     }
 
     @Override
