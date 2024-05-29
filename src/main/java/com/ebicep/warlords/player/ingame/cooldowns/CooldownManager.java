@@ -535,7 +535,7 @@ public class CooldownManager {
         ) {
             if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
                 this.warlordsEntity.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
-                linkInformation.add(new LinkInformation(soulbinding.getRadius(), soulbinding.getMaxAlliesHit()));
+                linkInformation.add(new LinkInformation(soulbinding.getRadius(), soulbinding.getMaxAlliesHit(), soulbinding.getSelfHealing(), soulbinding.getAllyHealing()));
             }
         }
         int counter = linkInformation.size();
@@ -561,7 +561,7 @@ public class CooldownManager {
         return linkInformation;
     }
 
-    public record LinkInformation(float radius, int limit) {
+    public record LinkInformation(float radius, int limit, int selfHealing, int allyHealing) {
     }
 
     @SuppressWarnings("unchecked")
