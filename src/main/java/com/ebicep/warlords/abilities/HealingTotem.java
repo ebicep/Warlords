@@ -49,10 +49,10 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
     private FloatModifiable radius = new FloatModifiable(7);
     private int tickDuration = 120;
     private int crippleDuration = 6;
-    private int healingIncrement = 35;
+    private int healingIncrement = 25;
 
     public HealingTotem() {
-        super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
+        super("Healing Totem", 191, 224, 78, 60, 25, 175);
     }
 
     public HealingTotem(ArmorStand totem, WarlordsEntity owner) {
@@ -65,11 +65,10 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" block radius for "))
                                .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" health every second. The healing will gradually increase by "))
-                               .append(Component.text("35%", NamedTextColor.GREEN))
-                               .append(Component.text(" (up to "))
-                               .append(Component.text(Math.round(healingIncrement * tickDuration / 20f)))
-                               .append(Component.text("%) every second. Lasts "))
+                               .append(Component.text(" health every second. The healing will gradually decrease by "))
+                               .append(Component.text(healingIncrement + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" until the final proc which heals for the normal amount once again. "))
+                               .append(Component.text("Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(
                                        " seconds.\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for "))
@@ -93,6 +92,12 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new HealingTotemBranch(abilityTree, this);
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        radius.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override
@@ -123,7 +128,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
 
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SPRUCE_SAPLING).play();
 
-                    float healMultiplier = Math.min(1 + (convertToPercent(healingIncrement) * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, rad, rad, rad)
                                 .aliveTeammatesOf(wp)
                                 .forEach((nearPlayer) -> {
@@ -131,8 +135,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                     nearPlayer.addHealingInstance(
                                             wp,
                                             name,
-                                            minDamageHeal * healMultiplier,
-                                            maxDamageHeal * healMultiplier,
+                                            minDamageHeal,
+                                            maxDamageHeal,
                                             critChance,
                                             critMultiplier
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
@@ -204,7 +208,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                         circle.playEffects();
 
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
-                        float healMultiplier = 1 + (convertToPercent(healingIncrement) * (ticksElapsed / 20f));
+                        float healMultiplier = (float) Math.pow((1 - healingIncrement / 100f), ticksElapsed / 20f);
                         PlayerFilter.entitiesAround(totemStand, rad, rad, rad)
                                     .aliveTeammatesOf(wp)
                                     .forEach(teammate -> {
@@ -439,11 +443,5 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
     }
 }
