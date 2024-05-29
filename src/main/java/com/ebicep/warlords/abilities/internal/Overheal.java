@@ -18,7 +18,7 @@ public interface Overheal {
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                Overheal.OVERHEAL_DURATION * 20
+                Overheal.OVERHEAL_DURATION * 15
         );
     }
 }
