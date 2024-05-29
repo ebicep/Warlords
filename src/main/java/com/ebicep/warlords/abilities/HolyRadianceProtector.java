@@ -3,8 +3,10 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HolyRadianceBranchProtector;
@@ -31,7 +33,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
 
     private final FloatModifiable markRadius = new FloatModifiable(15);
 
-    private int markDuration = 6;
+    private int markDuration = 8;
     private float markHealing = 50;
 
     public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
@@ -44,17 +46,29 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" health."))
-                               .append(Component.text("\n\nYou may look at an ally to mark them for "))
-                               .append(Component.text(markDuration, NamedTextColor.GOLD))
-                               .append(Component.text("seconds. Your marked ally will emit a second Holy Radiance for "))
-                               .append(Component.text(markHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the original healing amount after the mark ends."))
-                               .append(Component.text("\n\nMark has an optimal range of "))
-                               .append(Component.text(format(markRadius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        if (inPve) {
+            description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
+                                   .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                                   .append(Component.text(" health."))
+                                   .append(Component.text("\n\nYou may look at an ally to mark them for "))
+                                   .append(Component.text(markDuration, NamedTextColor.GOLD))
+                                   .append(Component.text("seconds. Your marked ally will emit a second Holy Radiance for "))
+                                   .append(Component.text(markHealing + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(" of the original healing amount after the mark ends."))
+                                   .append(Component.text("\n\nMark has an optimal range of "))
+                                   .append(Component.text(format(markRadius.getCalculatedValue()), NamedTextColor.YELLOW))
+                                   .append(Component.text(" blocks."));
+        } else {
+            description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
+                                   .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                                   .append(Component.text(" health."))
+                                   .append(Component.text("\n\nYou may look at an ally to mark them for "))
+                                   .append(Component.text(markDuration, NamedTextColor.GOLD))
+                                   .append(Component.text("seconds."))
+                                   .append(Component.text("\n\nMark has an optimal range of "))
+                                   .append(Component.text(format(markRadius.getCalculatedValue()), NamedTextColor.YELLOW))
+                                   .append(Component.text(" blocks."));
+        }
     }
 
     @Override
@@ -130,7 +144,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                 critChance,
                 critMultiplier
         );
-        target.getCooldownManager().addRegularCooldown(
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "PROT MARK",
                 HolyRadianceProtector.class,
@@ -138,6 +152,9 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                 giver,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
+                    if (!inPve) {
+                        return;
+                    }
                     if (target.isDead()) {
                         return;
                     }
@@ -208,7 +225,12 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                         }
                     }
                 })
-        );
+        ) {
+            @Override
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * 1.1f;
+            }
+        });
     }
 
     @Override
