@@ -2,7 +2,10 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HealingPowerup;
+import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -2494,7 +2497,7 @@ public abstract class WarlordsEntity {
         } else if (newHealth > 40) {
             newHealth = 40;
         }
-        if (checkUndyingArmy(newHealth)) {
+        if (UndyingArmy.checkUndyingArmy(this, newHealth)) {
             newHealth = 40;
         }
 
@@ -2540,113 +2543,6 @@ public abstract class WarlordsEntity {
         if (getHitCooldown() > 0) {
             setHitCooldown(getHitCooldown() - 1);
         }
-    }
-
-    private boolean checkUndyingArmy(float newHealth) {
-        // Checks whether the player has any remaining active Undying Army instances active.
-        if (!getCooldownManager().checkUndyingArmy(false) || newHealth > 0) {
-            return false;
-        }
-        for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClass(UndyingArmy.class)
-                .stream()
-                .toList()
-        ) {
-            UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
-            if (undyingArmy.isArmyDead(this)) {
-                continue;
-            }
-            undyingArmy.pop(this);
-
-            // Drops the flag when popped.
-            FlagHolder.dropFlagForPlayer(this);
-
-            // Sending the message + check if getFrom is self
-            int armyDamage = Math.round(getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));
-            if (undyingArmyCooldown.getFrom() == this) {
-                sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                     .append(Component.text(
-                                             "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                             NamedTextColor.LIGHT_PURPLE
-                                     ))
-                                     .append(Component.text(armyDamage, NamedTextColor.RED))
-                                     .append(Component.text(" every second.", NamedTextColor.GRAY))
-                );
-            } else {
-                sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                     .append(Component.text(undyingArmyCooldown.getFrom()
-                                                                               .getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                             NamedTextColor.LIGHT_PURPLE
-                                     ))
-                                     .append(Component.text(armyDamage, NamedTextColor.RED))
-                                     .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE))
-                );
-            }
-
-            EffectUtils.playFirework(getLocation(), FireworkEffect.builder()
-                                                                  .withColor(Color.LIME)
-                                                                  .with(FireworkEffect.Type.BALL)
-                                                                  .build());
-
-            heal();
-
-            if (getEntity() instanceof Player player) {
-                player.getWorld().spigot().strikeLightningEffect(getLocation(), false);
-                player.getInventory().setItem(5, UndyingArmy.BONE);
-            }
-
-            //gives 50% of max energy if player is less than half
-            if (getEnergy() < getMaxEnergy() / 2) {
-                setEnergy(getMaxEnergy() / 2);
-            }
-
-            if (undyingArmy.isPveMasterUpgrade()) {
-                addSpeedModifier(this, "ARMY", 40, 16 * 20, "BASE");
-            }
-
-            undyingArmyCooldown.setNameAbbreviation("POPPED");
-            undyingArmyCooldown.setTicksLeft(16 * 20);
-            undyingArmyCooldown.setOnRemove(cooldownManager -> {
-                if (getEntity() instanceof Player) {
-                    if (cooldownManager.checkUndyingArmy(true)) {
-                        ((Player) getEntity()).getInventory().remove(UndyingArmy.BONE);
-                    }
-                }
-            });
-            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
-                if (ticksElapsed % 20 == 0) {
-                    addDamageInstance(
-                            this,
-                            "",
-                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                            0,
-                            100
-                    );
-
-                    if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
-                        PlayerFilter.entitiesAround(this, 6, 6, 6)
-                                    .aliveEnemiesOf(this)
-                                    .forEach(enemy -> {
-                                        float healthDamage = enemy.getMaxHealth() * .02f;
-                                        healthDamage = DamageCheck.clamp(healthDamage);
-                                        enemy.addDamageInstance(
-                                                this,
-                                                "Undying Army",
-                                                458 + healthDamage,
-                                                612 + healthDamage,
-                                                0,
-                                                100
-                                        );
-                                    });
-
-                    }
-                }
-            });
-            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(this, undyingArmy));
-            return true;
-        }
-        return false;
     }
 
     private void decrementRespawnTimer() {
