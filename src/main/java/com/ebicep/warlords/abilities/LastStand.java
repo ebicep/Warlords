@@ -43,8 +43,8 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     private int radius = 7;
     private int selfTickDuration = 240;
     private int allyTickDuration = 120;
-    private int selfDamageReductionPercent = 50;
-    private int teammateDamageReductionPercent = 30;
+    private int selfDamageReductionPercent = 35;
+    private int teammateDamageReductionPercent = 35;
 
     public LastStand() {
         super("Last Stand", 0, 0, 56.38f, 40);
