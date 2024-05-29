@@ -48,7 +48,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     private int respiteRadius = 10;
     private int debtRadius = 8;
     private float damagePercent = 15;
-    private float selfDamageInPercentPerSecond = .1667f;
+    private float selfDamageInPercentPerSecond = .15f;
     private boolean inDebt = false;
     private boolean playerInRadius = true;
 
