@@ -38,7 +38,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     }
 
     public LightningBolt(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
-        super("Lightning Bolt", minDamageHeal, maxDamageHeal, cooldown, 60, 20, 200, 2.5, 60, false, startCooldown);
+        super("Lightning Bolt", minDamageHeal, maxDamageHeal, cooldown, 60, 25, 180, 2.5, 60, false, startCooldown);
     }
 
     @Override
