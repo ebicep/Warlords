@@ -14,7 +14,7 @@ import java.util.Set;
 public class GroundSlamDefender extends AbstractGroundSlam {
 
     public GroundSlamDefender() {
-        super(326, 441, 9.54f, 0, 20, 175);
+        super(326, 441, 8.3f, 0, 20, 175);
     }
 
     @Override
