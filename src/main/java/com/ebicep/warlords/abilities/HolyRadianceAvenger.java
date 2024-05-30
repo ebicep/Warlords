@@ -36,7 +36,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
     }
 
     public HolyRadianceAvenger() {
-        super("Holy Radiance", 582, 760, 19, 20, 15, 175, 6);
+        super("Holy Radiance", 582, 760, 16.53f, 20, 15, 175, 6);
     }
 
     @Override
