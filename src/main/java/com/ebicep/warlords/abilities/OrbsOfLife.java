@@ -37,7 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     public static final double SPAWN_RADIUS = 1.15;
-    public static final float ORB_HEALING = 200;
+    public static final float ORB_HEALING = 210;
     public static final double ORB_HITBOX = 1.35;
     public static final double ORB_HITBOX_SQUARED = ORB_HITBOX * ORB_HITBOX;
     public static final int MAX_ALLIES = 3;
