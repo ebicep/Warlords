@@ -57,11 +57,11 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     private float crownBonusHealing = 35;
 
     public HammerOfLight() {
-        super("Hammer of Light", 178, 244, 60 + 15, 50, 20, 175);
+        super("Hammer of Light", 178, 244, 65.25f, 50, 20, 175);
     }
 
     public HammerOfLight(Location location) {
-        super("Hammer of Light", 178, 244, 60 + 15, 50, 20, 175);
+        super("Hammer of Light", 178, 244, 65.25f, 50, 20, 175);
         this.location = location;
     }
 
