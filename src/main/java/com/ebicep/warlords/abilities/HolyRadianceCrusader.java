@@ -39,7 +39,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
     }
 
     public HolyRadianceCrusader() {
-        super("Holy Radiance", 582, 760, 19f, 20, 15, 175, 6);
+        super("Holy Radiance", 582, 760, 16.53f, 20, 15, 175, 6);
     }
 
     @Override
