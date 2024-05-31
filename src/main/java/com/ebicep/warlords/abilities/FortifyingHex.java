@@ -44,12 +44,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     private int maxAlliesHit = 1;
     private int maxFullDistance = 40;
     private int tickDuration = 120;
-    private float damageReduction = 5;
+    private float damageReduction = 7;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
     public FortifyingHex() {
-        super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 40, true);
+        super("Fortifying Hex", 243, 333, 0, 70, 20, 175, 2.5, 40, true);
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
