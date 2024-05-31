@@ -40,7 +40,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     public static final float ORB_HEALING = 210;
     public static final double ORB_HITBOX = 1.35;
     public static final double ORB_HITBOX_SQUARED = ORB_HITBOX * ORB_HITBOX;
-    public static final int MAX_ALLIES = 3;
+    public static final int MAX_ALLIES = 2;
 
     public int orbsProduced = 0;
 
