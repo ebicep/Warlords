@@ -93,15 +93,15 @@ public class ProtectorsStrike extends AbstractStrike {
             float currentDamageValue = warlordsDamageHealingFinalEvent.getValue();
             boolean isCrit = warlordsDamageHealingFinalEvent.isCrit();
 
-            float allyHealing = currentDamageValue * this.allyHealing / 100f;
-            float selfHealing = currentDamageValue * this.selfHealing / 100f;
+            float allyHealingMultiplier = allyHealing / 100f;
+            float selfHealingMultiplier = selfHealing / 100f;
 
             // Self Heal
             wp.addHealingInstance(
                     wp,
                     name,
-                    currentDamageValue * selfHealing,
-                    currentDamageValue * selfHealing,
+                    currentDamageValue * selfHealingMultiplier,
+                    currentDamageValue * selfHealingMultiplier,
                     isCrit ? 100 : 0,
                     100
             ).ifPresent(event -> {
@@ -119,7 +119,7 @@ public class ProtectorsStrike extends AbstractStrike {
                         .leastAliveFirst()
                 ) {
                     boolean isLeastAlive = ally.getCurrentHealth() < ally.getMaxHealth();
-                    float healing = (currentDamageValue * allyHealing) * (isLeastAlive ? 1.5f : 1);
+                    float healing = currentDamageValue * (allyHealingMultiplier + (isLeastAlive ? .5f : 0));
                     ally.addHealingInstance(
                             wp,
                             name,
@@ -145,8 +145,8 @@ public class ProtectorsStrike extends AbstractStrike {
                     ally.addHealingInstance(
                             wp,
                             name,
-                            currentDamageValue * allyHealing,
-                            currentDamageValue * allyHealing,
+                            currentDamageValue * allyHealingMultiplier,
+                            currentDamageValue * allyHealingMultiplier,
                             isCrit ? 100 : 0,
                             100
                     ).ifPresent(event -> {
