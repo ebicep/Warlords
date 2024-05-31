@@ -661,7 +661,7 @@ public class DebugMenuPlayerOptions {
                                 .name(Component.text("Remove", NamedTextColor.AQUA))
                                 .get(),
                         (m, e) -> {
-                            target.getCooldownManager().getCooldowns().remove(abstractCooldown);
+                            target.getCooldownManager().removeCooldown(abstractCooldown);
                             openCooldownManagerMenu(player, target);
                             new BukkitRunnable() {
                                 @Override

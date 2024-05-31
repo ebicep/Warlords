@@ -129,11 +129,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget, damageReduction);
             venes.add(tempIntervene);
             // Removing all other intervenes
-            wp.getCooldownManager().getCooldowns().removeIf(cd ->
+            wp.getCooldownManager().removeIf(cd ->
                     cd.getCooldownClass() == Intervene.class &&
                             veneTarget.getCooldownManager().hasCooldown(cd.getCooldownObject()));
 
-            veneTarget.getCooldownManager().getCooldowns().removeIf(cd -> {
+            veneTarget.getCooldownManager().removeIf(cd -> {
                 if (cd.getCooldownClass() == Intervene.class) {
                     cd.getFrom().sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
                             .append(Component.text(" " + cd.getFrom().getName() + "'s ", NamedTextColor.GRAY))
