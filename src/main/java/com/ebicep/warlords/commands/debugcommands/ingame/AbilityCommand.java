@@ -51,11 +51,15 @@ public class AbilityCommand extends BaseCommand {
     }
 
     @Subcommand("cooldown")
-    public static class CooldownCommand extends BaseCommand {
+    public class CooldownCommand extends BaseCommand {
 
         @Subcommand("printlisteners")
         public void printListeners(Player player) {
             List<AbstractCooldown<?>> listeners = AbstractCooldown.COOLDOWNS_WITH_LISTENERS;
+            if (listeners.isEmpty()) {
+                sendDebugMessage(player, Component.text("No listeners found", NamedTextColor.RED));
+                return;
+            }
             for (AbstractCooldown<?> listener : listeners) {
                 sendDebugMessage(player, Component.text("Cooldown: " + listener.getName() + " - " + listener + " - " + listener.getCooldownObject(), NamedTextColor.GREEN));
             }
