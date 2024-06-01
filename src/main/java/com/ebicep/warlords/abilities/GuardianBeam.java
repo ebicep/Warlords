@@ -30,8 +30,8 @@ import java.util.List;
 public class GuardianBeam extends AbstractBeam implements Duration {
 
     private float runeTimerIncrease = 1.5f;
-    private int shieldPercentSelf = 25;
-    private int shieldPercentAlly = 35;
+    private int shieldPercentSelf = 30;
+    private int shieldPercentAlly = 45;
     private int tickDuration = 120;
 
     public GuardianBeam() {
