@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -35,22 +36,29 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
 
+    protected FloatModifiable damageReduction = new FloatModifiable(8);
+
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
     private int maxFullDistance = 40;
     private int tickDuration = 120;
-    private float damageReduction = 8;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
     public FortifyingHex() {
         super("Fortifying Hex", 287, 387, 0, 70, 20, 175, 2.5, 40, true);
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
+    }
+
+    public FortifyingHex(float damageReduction) {
+        this();
+        this.damageReduction = new FloatModifiable(damageReduction);
     }
 
     @Override
@@ -68,7 +76,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex.\n\nEach stack of Fortifying Hex lasts  "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds and grants"))
-                               .append(Component.text(format(damageReduction) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(format(damageReduction.getCalculatedValue()) + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction. Stacks up to"))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times.\n\nHas a maximum range of "))
@@ -251,24 +259,27 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {
         FortifyingHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
-        float damageReduction = fromHex.getDamageReduction();
         int maxStacks = fromHex.getMaxStacks();
         int duration = fromHex.getTickDuration();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHex.class, maxStacks);
+        FortifyingHex tempFortifyingHex = new FortifyingHex(fromHex.getDamageReduction().getCalculatedValue());
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 hexName,
                 "FHEX",
                 FortifyingHex.class,
-                new FortifyingHex(),
+                tempFortifyingHex,
                 from,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                duration
+                duration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    tempFortifyingHex.getDamageReduction().tick();
+                })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - damageReduction / 100f);
+                return currentDamageValue * (1 - tempFortifyingHex.getDamageReduction().getCalculatedValue() / 100f);
             }
 
             @Override
@@ -318,6 +329,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         }
     }
 
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        super.runEveryTick(warlordsEntity);
+        damageReduction.tick();
+    }
+
     @Nonnull
     public static FortifyingHex getFromHex(WarlordsEntity from) {
         return from.getSpec().getAbilities().stream()
@@ -327,7 +344,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                    .orElse(new FortifyingHex());
     }
 
-    public float getDamageReduction() {
+    public FloatModifiable getDamageReduction() {
         return damageReduction;
     }
 
@@ -343,10 +360,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public void setDamageReduction(float damageReduction) {
-        this.damageReduction = damageReduction;
     }
 
     public int getMaxEnemiesHit() {
