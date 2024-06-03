@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -21,8 +22,32 @@ import org.bukkit.util.Vector;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CooldownManager {
+
+    public static List<AbstractCooldown<?>> getPrioritizedCooldowns(List<AbstractCooldown<?>> cooldowns, String method, Class<?>... parameterTypes) {
+        return cooldowns
+                .stream()
+                .sorted((o1, o2) -> {
+                    try {
+                        Priority o1Priority = o1.getClass()
+                                                .getMethod(method, parameterTypes)
+                                                .getAnnotation(Priority.class);
+                        Priority o2Priority = o2.getClass()
+                                                .getMethod(method, parameterTypes)
+                                                .getAnnotation(Priority.class);
+                        return Integer.compare(
+                                o1Priority == null ? 0 : o1Priority.value(),
+                                o2Priority == null ? 0 : o2Priority.value()
+                        );
+                    } catch (Exception e) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                        return 0;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
 
     private final WarlordsEntity warlordsEntity;
     private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();

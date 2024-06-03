@@ -17,7 +17,6 @@ import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.guilds.GuildListener;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -37,6 +36,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
+import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -109,12 +109,12 @@ public class Warlords extends JavaPlugin {
                 .stream()
                 .sorted((o1, o2) -> {
                     try {
-                        Option.Priority o1Priority = o1.getClass()
-                                                       .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
-                                                       .getAnnotation(Option.Priority.class);
-                        Option.Priority o2Priority = o2.getClass()
-                                                       .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
-                                                       .getAnnotation(Option.Priority.class);
+                        Priority o1Priority = o1.getClass()
+                                                .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
+                                                .getAnnotation(Priority.class);
+                        Priority o2Priority = o2.getClass()
+                                                .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
+                                                .getAnnotation(Priority.class);
                         return Integer.compare(
                                 o1Priority == null ? 3 : o1Priority.value(),
                                 o2Priority == null ? 3 : o2Priority.value()

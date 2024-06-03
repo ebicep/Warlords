@@ -618,7 +618,11 @@ public abstract class WarlordsEntity {
                 // Example: .8 = 20% reduction.
                 debugMessage.append(Component.newline()).append(Component.text("After Intervene:", NamedTextColor.AQUA));
                 appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
-                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                for (AbstractCooldown<?> abstractCooldown : CooldownManager.getPrioritizedCooldowns(selfCooldownsDistinct,
+                        "modifyDamageAfterInterveneFromSelf",
+                        WarlordsDamageHealingEvent.class,
+                        float.class
+                )) {
                     float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
                     if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                         continue;
