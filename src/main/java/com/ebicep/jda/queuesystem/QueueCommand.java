@@ -23,12 +23,12 @@ public class QueueCommand extends BaseCommand {
     @Subcommand("join")
     @Description("Joins the queue")
     public void join(@Conditions("party:false") Player player) {//, @Optional String time) {
-        if (QueueManager.queue.contains(player.getUniqueId())) {
+        if (QueueManager.QUEUE.contains(player.getUniqueId())) {
             player.sendMessage(Component.text("You are already in the queue!", NamedTextColor.RED));
         } else {
             QueueManager.addPlayerToQueue(player.getName(), false);
             QueueManager.removePlayerFromFutureQueue(player.getName());
-            player.sendMessage(Component.text("You are now #" + QueueManager.queue.size() + " in queue!", NamedTextColor.GREEN));
+            player.sendMessage(Component.text("You are now #" + QueueManager.QUEUE.size() + " in queue!", NamedTextColor.GREEN));
             QueueManager.sendQueue();
         }
     }
@@ -54,12 +54,12 @@ public class QueueCommand extends BaseCommand {
     @CommandPermission("warlords.queue.clear")
     @Description("Removes a player from the queue")
     public void remove(Player player, Integer queuePosition) {
-        if (queuePosition > QueueManager.queue.size() || queuePosition < 1) {
+        if (queuePosition > QueueManager.QUEUE.size() || queuePosition < 1) {
             player.sendMessage(Component.text("Invalid queue number!", NamedTextColor.RED));
             return;
         }
 
-        QueueManager.queue.remove(queuePosition - 1);
+        QueueManager.QUEUE.remove(queuePosition - 1);
         player.sendMessage(QueueManager.getQueue());
         QueueManager.sendQueue();
     }
@@ -68,8 +68,8 @@ public class QueueCommand extends BaseCommand {
     @CommandPermission("warlords.queue.clear")
     @Description("Clears the queue")
     public void clear(Player player) {
-        QueueManager.queue.clear();
-        QueueManager.futureQueue.clear();
+        QueueManager.QUEUE.clear();
+        QueueManager.FUTURE_QUEUE.clear();
         QueueManager.sendQueue();
         player.sendMessage(Component.text("Queue cleared", NamedTextColor.GREEN));
     }
