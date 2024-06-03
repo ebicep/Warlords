@@ -155,13 +155,11 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                     @EventHandler(priority = EventPriority.LOWEST)
                                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                                        if (!Objects.equals(cooldown.getFrom(), wp) ||
-                                                !(cooldown instanceof RegularCooldown<?> regularCooldown)
-                                        ) {
+                                        if (!Objects.equals(cooldown.getFrom(), wp) || !(cooldown instanceof RegularCooldown<?> regularCooldown)) {
                                             return;
                                         }
                                         Object cdObject = cooldown.getCooldownObject();
-                                        if (!(cdObject instanceof FortifyingHex)) {
+                                        if (cdObject instanceof FortifyingHex) {
                                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
                                         }
                                         if (pveMasterUpgrade2 &&
