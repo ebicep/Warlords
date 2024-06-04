@@ -199,9 +199,6 @@ public abstract class WarlordsEntity {
         this.speed = isInPve() ?
                      new CalculateSpeed(this, this::setWalkSpeed, 13, true) :
                      new CalculateSpeed(this, this::setWalkSpeed, 13);
-        if (specClass == Specializations.APOTHECARY) {
-            this.speed.addBaseModifier(10);
-        }
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
     }
