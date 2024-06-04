@@ -40,7 +40,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     public int playersHealed = 0;
 
-    private int tickDuration = 240;
+    private int tickDuration = 200;
     private FloatModifiable radius = new FloatModifiable(8);
 
     public HealingRain() {
@@ -48,7 +48,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     public HealingRain(float cooldown, float startCooldown) {
-        super("Healing Rain", 100, 125, cooldown, 50, 25, 200, startCooldown);
+        super("Healing Rain", 100, 125, cooldown, 50, 25, 180, startCooldown);
     }
 
     @Override
