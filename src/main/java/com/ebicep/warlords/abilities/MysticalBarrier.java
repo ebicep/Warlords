@@ -32,6 +32,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private float runeTimerIncrease = 0.25f;
     private int tickDuration = 100;
     private float meleeDamageReduction = 50;
+    private int radius = 10;
     private int shieldBase = 400;
     private int shieldIncrease = 80;
     private int shieldMaxHealth = 1200;
@@ -43,24 +44,23 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Surround yourself with magical spirits that reduce all melee damage you take by")
-                               .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text("and increase the attacker’s cooldowns by "))
-                               .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds for every instance of damage they deal to you for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nReactivate the ability to grant the nearest ally a shield equal to"))
-                               .append(Component.text(shieldBase, NamedTextColor.YELLOW))
-                               .append(Component.text(" + "))
-                               .append(Component.text(shieldIncrease, NamedTextColor.YELLOW))
-                               .append(Component.text(" for each instance of damage you took, up to a maximum of "))
-                               .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
-                               .append(Component.text(" health, that lasts "))
-                               .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, as well as "))
-                               .append(Component.text("3", NamedTextColor.BLUE)
-                                                .append(Component.text(" stacks of Fortifying Hex."))
-                                                .append(Component.text("\n\nNot reactivating the ability will instead grant you the shield for the same duration.")));
+        description = Component.text("Grant the target ally ")
+                               .append(Component.text("3", NamedTextColor.BLUE))
+                               .append(Component.text(" stacks of Fortifying Hex and the protection of magical spirits that reduce all melee damage taken by")
+                                                .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
+                                                .append(Component.text("and increase the attacker’s cooldowns by "))
+                                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
+                                                .append(Component.text(" seconds for every instance of damage they deal to the target.\n\nAfter "))
+                                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                                .append(Component.text(" seconds the spirits transform into a shield equal to"))
+                                                .append(Component.text(shieldBase, NamedTextColor.YELLOW))
+                                                .append(Component.text(" + "))
+                                                .append(Component.text(shieldIncrease, NamedTextColor.YELLOW))
+                                                .append(Component.text(" for each instance of damage taken, up to a maximum of "))
+                                                .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
+                                                .append(Component.text(" health, that lasts "))
+                                                .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
+                                                .append(Component.text(" seconds.\n\nIf no ally is targeted, receive all the effects yourself.")));
     }
 
     @Override
@@ -72,10 +72,38 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        if (pveMasterUpgrade2) {
+            giveBarrier(wp, wp);
+            List<WarlordsEntity> targets = PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .limit(1)
+                    .toList();
+            if (targets.isEmpty()) {
+                subtractCurrentCooldown(cooldown.getBaseValue() * .35f);
+            } else {
+                giveBarrier(wp, targets.get(0));
+            }
+        } else {
+            List<WarlordsEntity> targets = PlayerFilter
+                    .entitiesAround(wp, radius, radius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .requireLineOfSightIntervene(wp)
+                    .lookingAtFirst(wp)
+                    .limit(1)
+                    .toList();
+            WarlordsEntity target = targets.isEmpty() ? wp : targets.get(0);
+            giveBarrier(wp, target);
+        }
+
+        return true;
+    }
+
+    private void giveBarrier(@Nonnull WarlordsEntity wp, WarlordsEntity target) {
         AtomicInteger damageInstances = new AtomicInteger();
-        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
-        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
-        RegularCooldown<MysticalBarrier> mysticalBarrierCooldown = new RegularCooldown<>(
+        Utils.playGlobalSound(target.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
+        Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "MYSTIC",
                 MysticalBarrier.class,
@@ -83,17 +111,14 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (!wp.isAlive()) {
+                    if (!target.isAlive()) {
                         return;
                     }
-                    Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
+                    Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-                    giveShield(wp, wp, shieldHealth);
+                    giveShieldAlly(wp, target, shieldHealth);
                     for (int i = 0; i < 3; i++) {
-                        FortifyingHex.giveFortifyingHex(wp, wp);
-                    }
-                    if (pveMasterUpgrade2) {
-                        subtractCurrentCooldown(cooldown.getBaseValue() * .35f);
+                        FortifyingHex.giveFortifyingHex(wp, target);
                     }
                 },
                 tickDuration,
@@ -123,34 +148,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 event.getAttacker().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 damageInstances.getAndIncrement();
             }
-        };
-        wp.getCooldownManager().addCooldown(mysticalBarrierCooldown);
-
-        addSecondaryAbility(
-                5,
-                () -> {
-                    wp.getCooldownManager().removeCooldown(mysticalBarrierCooldown);
-                    int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-                    if (pveMasterUpgrade2) {
-                        PlayerFilter.entitiesAround(wp, 10, 10, 10)
-                                    .aliveTeammatesOf(wp)
-                                    .forEach(ally -> {
-                                        giveShieldAlly(wp, ally, damageInstances.get());
-                                    });
-                    } else {
-                        PlayerFilter.playingGame(wp.getGame())
-                                    .aliveTeammatesOfExcludingSelf(wp)
-                                    .closestFirst(wp)
-                                    .limit(1)
-                                    .forEach(ally -> {
-                                        giveShieldAlly(wp, ally, shieldHealth);
-                                    });
-                    }
-                },
-                false,
-                secondaryAbility -> !wp.getCooldownManager().hasCooldown(mysticalBarrierCooldown)
-        );
-        return true;
+        });
     }
 
     private void giveShield(WarlordsEntity from, @Nonnull WarlordsEntity to, int shieldHealth) {
