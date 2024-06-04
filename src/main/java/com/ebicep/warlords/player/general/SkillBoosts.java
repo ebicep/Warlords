@@ -1268,14 +1268,14 @@ public enum SkillBoosts {
             }
     ),
     SANCTIFIED_BEACON("Sanctified Beacon",
-            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 10%.", NamedTextColor.GRAY),
             Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by ", NamedTextColor.GREEN)
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             SanctifiedBeacon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
-                    sanctifiedBeacon.setCritMultiplierReducedTo(sanctifiedBeacon.getCritMultiplierReducedTo() - 30);
+                    sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() - 10);
                 }
             }
     ),
