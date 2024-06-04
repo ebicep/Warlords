@@ -151,7 +151,7 @@ public class HorseOption implements Option, Listener {
     public static class CustomHorse {
 
         private final int cooldown = 15;
-        private final float speed = .318f;
+        private final float speed = .32f;
 
         public void spawn(Player player) {
             Horse h = player.getWorld().spawn(player.getLocation(), Horse.class, false, horse -> {
