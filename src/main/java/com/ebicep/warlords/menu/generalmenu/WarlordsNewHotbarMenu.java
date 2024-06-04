@@ -49,7 +49,6 @@ import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.ARMOR_DESCRIPTION;
 import static com.ebicep.warlords.player.general.ArmorManager.HELMET_DESCRIPTION;
 import static com.ebicep.warlords.player.general.ExperienceManager.getLevelString;
-import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
 
 public class WarlordsNewHotbarMenu {
 
@@ -103,9 +102,6 @@ public class WarlordsNewHotbarMenu {
                          .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
                          .append(Component.text(" per hit"))
         );
-        if (selectedSpec == APOTHECARY) {
-            icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY).append(Component.text("10%", NamedTextColor.YELLOW)));
-        }
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
                               .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
