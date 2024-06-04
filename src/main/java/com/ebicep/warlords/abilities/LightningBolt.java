@@ -34,7 +34,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     private double hitbox = 3;
 
     public LightningBolt() {
-        super("Lightning Bolt", 245, 347, 0, 60, 25, 180, 2.5, 60, false);
+        super("Lightning Bolt", 252, 340, 0, 60, 25, 180, 2.5, 60, false);
     }
 
     public LightningBolt(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
