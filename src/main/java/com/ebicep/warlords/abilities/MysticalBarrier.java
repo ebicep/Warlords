@@ -103,6 +103,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         AtomicInteger damageInstances = new AtomicInteger();
         Utils.playGlobalSound(target.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
         Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
+        for (int i = 0; i < 3; i++) {
+            FortifyingHex.giveFortifyingHex(wp, target);
+        }
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "MYSTIC",
@@ -117,9 +120,6 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
                     giveShieldAlly(wp, target, shieldHealth);
-                    for (int i = 0; i < 3; i++) {
-                        FortifyingHex.giveFortifyingHex(wp, target);
-                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
