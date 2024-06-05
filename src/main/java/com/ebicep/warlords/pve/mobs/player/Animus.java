@@ -112,8 +112,8 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
             double speed = attacker.getSpeed()
                                    .getModifiers()
                                    .stream()
-                                   .filter(modifier -> modifier.modifier > 0)
-                                   .mapToDouble(value -> value.modifier)
+                                   .filter(modifier -> modifier.getModifier() > 0)
+                                   .mapToDouble(value -> value.getModifier())
                                    .sum();
             float damageBoost = (float) (1 + speed / 100);
             event.setMin(event.getMin() * damageBoost);

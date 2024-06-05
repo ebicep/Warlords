@@ -38,6 +38,7 @@ public abstract class AbstractPlayerClass {
     protected String name;
     protected String className;
     protected String classNameShort;
+
     public AbstractPlayerClass(
             String name,
             int maxHealth,

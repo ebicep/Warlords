@@ -1031,19 +1031,14 @@ public enum SkillBoosts {
                 }
             }
     ),
-    VITALITY_LIQUOR("Vitality Liquor",
-            Component.text("Increase the healing of Vitality Liquor by 15% and reduce the cooldown by 30%.", NamedTextColor.GRAY),
-            Component.text("Increase the healing of Vitality Liquor by ", NamedTextColor.GREEN)
-                     .append(Component.text("15% ", NamedTextColor.RED))
-                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+    VITALITY_CONCOCTION("Vitality Concoction",
+            Component.text("Reduce the cooldown of Vitality Concoction by 30%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Vitality Concoction by ", NamedTextColor.GREEN)
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            VitalityLiquor.class,
+            VitalityConcoction.class,
             abstractAbility -> {
-                if (abstractAbility instanceof VitalityLiquor vitalityLiquor) {
-                    abstractAbility.multiplyMinMax(1.15f);
-                    vitalityLiquor.setMinWaveHealing(vitalityLiquor.getMinWaveHealing() * 1.15f);
-                    vitalityLiquor.setMaxWaveHealing(vitalityLiquor.getMaxWaveHealing() * 1.15f);
+                if (abstractAbility instanceof VitalityConcoction vitalityConcoction) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }

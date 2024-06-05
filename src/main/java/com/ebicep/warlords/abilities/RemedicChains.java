@@ -47,7 +47,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     public void updateDescription(Player player) {
         description = Component.text("Bind yourself to ")
                                .append(Component.text(alliesAffected, NamedTextColor.YELLOW))
-                               .append(Component.text(" allies near you, increasing the damage they deal by "))
+                               .append(Component.text(" allies near you, increasing the damage they deal to leeched targets by "))
                                .append(Component.text(format(allyDamageIncrease) + "%", NamedTextColor.RED))
                                .append(Component.text(" as long as the link is active. Lasts "))
                                .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
@@ -214,7 +214,11 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 + allyDamageIncrease / 100f);
+                WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                if (warlordsEntity.getCooldownManager().hasCooldownFromName("Leech Debuff")) {
+                    return currentDamageValue * (1 + allyDamageIncrease / 100f);
+                }
+                return currentDamageValue;
             }
 
             @Override

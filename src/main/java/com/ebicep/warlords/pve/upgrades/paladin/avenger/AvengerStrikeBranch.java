@@ -109,7 +109,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                                                                      .aliveEnemiesOf(warlordsPlayer)
                                                                      .stream()
                                                                      .count();
-                                    float oldModifier = modifier.modifier;
+                                    float oldModifier = modifier.getModifier();
                                     if (enemiesNearBy >= 2 && oldModifier != 20) {
                                         modifier.setModifier(20);
                                         calculateSpeed.setChanged(true);

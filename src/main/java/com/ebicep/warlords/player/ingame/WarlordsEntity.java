@@ -2135,26 +2135,19 @@ public abstract class WarlordsEntity {
     }
 
     public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
-        if (modifier < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
-            return () -> {
-            };
-        }
-        AtomicReference<String> nameRef = new AtomicReference<>(name);
-        AtomicReference<Float> modifierRef = new AtomicReference<>(modifier);
-        AtomicInteger durationRef = new AtomicInteger(duration);
-        AtomicReference<String[]> toDisableRef = new AtomicReference<>(toDisable);
+        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), false));
+    }
 
-        Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, from, nameRef, modifierRef, durationRef, toDisableRef));
-
-        return this.speed.addSpeedModifier(from, nameRef.get(), modifierRef.get(), durationRef.get(), toDisableRef.get());
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, String... toDisable) {
+        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), afterLimit));
     }
 
     public Runnable addSpeedModifier(CalculateSpeed.Modifier modifier) {
-        if (modifier.modifier < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
+        if (modifier.getModifier() < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
             return () -> {
             };
         }
-        // TODO event stuff?
+        Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, modifier));
         return this.speed.addSpeedModifier(modifier);
     }
 
