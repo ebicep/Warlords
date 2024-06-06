@@ -212,7 +212,7 @@ public class PowerupOption implements Option {
                         getTickDuration()
                 );
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
-                                        .append(Component.text("SPEED", NamedTextColor.AQUA, TextDecoration.BOLD))
+                                        .append(Component.text("SPEED", NamedTextColor.YELLOW, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+40% ", NamedTextColor.GREEN))
                                         .append(Component.text("Speed for "))
