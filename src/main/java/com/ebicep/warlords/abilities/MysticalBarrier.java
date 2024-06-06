@@ -72,6 +72,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
+        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
+
         if (pveMasterUpgrade2) {
             giveBarrier(wp, wp);
             List<WarlordsEntity> targets = PlayerFilter
@@ -101,8 +104,25 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     private void giveBarrier(@Nonnull WarlordsEntity wp, WarlordsEntity target) {
         AtomicInteger damageInstances = new AtomicInteger();
-        Utils.playGlobalSound(target.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
-        Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
+
+        boolean isSelf = wp.equals(target);
+        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
+                .append(Component.text(isSelf ? "yourself" : target.getName(), NamedTextColor.YELLOW))
+                .append(Component.text("!", NamedTextColor.GRAY))
+        );
+        if (!isSelf) {
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), target.getLocation(), 0, 180, 180, 2);
+
+            target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
+                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
+            );
+        }
+
         for (int i = 0; i < 3; i++) {
             FortifyingHex.giveFortifyingHex(wp, target);
         }
@@ -119,13 +139,13 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     }
                     Utils.playGlobalSound(target.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
                     int shieldHealth = Math.min(shieldMaxHealth, shieldBase + shieldIncrease * damageInstances.get());
-                    giveShieldAlly(wp, target, shieldHealth);
+                    giveShield(wp, target, shieldHealth);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     EffectUtils.playCircularEffectAround(
-                            wp.getGame(),
-                            wp.getLocation(),
+                            target.getGame(),
+                            target.getLocation(),
                             Particle.TOTEM,
                             3,
                             1,
@@ -168,41 +188,14 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     EffectUtils.displayParticle(
                             Particle.FIREWORKS_SPARK,
                             to.getLocation().add(0, 1.5, 0),
-                            1,
-                            0.1,
-                            0.05,
-                            0.1,
+                            2,
+                            0.3,
+                            0.2,
+                            0.3,
                             0
                     );
                 })
         ));
-    }
-
-    private void giveShieldAlly(@Nonnull WarlordsEntity wp, WarlordsEntity ally, int shieldHealth) {
-        EffectUtils.playParticleLinkAnimation(wp.getLocation(), ally.getLocation(), 0, 180, 180, 2);
-        Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.giveshield", 2, 1.75f);
-
-        giveShield(wp, ally, shieldHealth);
-
-        boolean isSelf = wp.equals(ally);
-        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
-                .append(Component.text(isSelf ? "yourself" : ally.getName(), NamedTextColor.YELLOW))
-                .append(Component.text("!", NamedTextColor.GRAY))
-        );
-        if (!isSelf) {
-            ally.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                    .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
-                    .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
-                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
-            );
-        }
-
-        for (int i = 0; i < 3; i++) {
-            FortifyingHex.giveFortifyingHex(wp, ally);
-        }
     }
 
     @Override
