@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -78,7 +79,7 @@ public class QueueManager {
                                                    .toBuilder();
         for (int i = 0; i < QUEUE.size(); i++) {
             UUID uuid = QUEUE.get(i);
-            queueList.append(Component.text("    " + (i + 1) + ". ", NamedTextColor.YELLOW))
+            queueList.append(Component.text((i + 1) + ". ", NamedTextColor.YELLOW))
                      .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName()), NamedTextColor.AQUA))
                      .append(Component.newline());
         }
@@ -104,7 +105,14 @@ public class QueueManager {
     }
 
     public static void addPlayerToQueue(String name, boolean atBeginning) {
-        addPlayerToQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId(), atBeginning);
+        if (name == null) {
+            return;
+        }
+        OfflinePlayer player = Bukkit.getOfflinePlayerIfCached(name);
+        if (player == null) {
+            return;
+        }
+        addPlayerToQueue(player.getUniqueId(), atBeginning);
     }
 
     public static void addPlayerToQueue(UUID uuid, boolean atBeginning) {
@@ -117,7 +125,14 @@ public class QueueManager {
     }
 
     public static void removePlayerFromQueue(String name) {
-        removePlayerFromQueue(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(name)).getUniqueId());
+        if (name == null) {
+            return;
+        }
+        OfflinePlayer player = Bukkit.getOfflinePlayerIfCached(name);
+        if (player == null) {
+            return;
+        }
+        removePlayerFromQueue(player.getUniqueId());
     }
 
     public static void removePlayerFromQueue(UUID uuid) {

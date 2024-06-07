@@ -8,6 +8,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FutureMessage {
 
@@ -24,6 +25,7 @@ public class FutureMessage {
     }
 
     public void sendToPlayer(Player player) {
+        messages.removeIf(Objects::isNull);
         if (centered) {
             messages.forEach(message -> {
                 if (message.contains("§")) {

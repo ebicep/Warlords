@@ -39,7 +39,7 @@ public enum PlayersCollections {
             ));
         }
     },
-    SEASON_8("Season 8", "Players_Information_Season_8") {
+    SEASON_9("Season 9", "Players_Information_Season_9") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
             return ACTIVE_COLLECTIONS.contains(this);
@@ -53,6 +53,20 @@ public enum PlayersCollections {
             ));
         }
     },
+//    SEASON_8("Season 8", "Players_Information_Season_8") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return ACTIVE_COLLECTIONS.contains(this);
+//        }
+//
+//        @Override
+//        public Query getQuery() {
+//            return new Query(new Criteria().orOperator(
+//                    Criteria.where("plays").gt(30),
+//                    Criteria.where("pve_stats.plays").gt(30)
+//            ));
+//        }
+//    },
 //    SEASON_7("Season 7", "Players_Information_Season_7") {
 //        @Override
 //        public boolean shouldUpdate(Instant dateOfGame) {
@@ -115,7 +129,7 @@ public enum PlayersCollections {
     ;
 
     public static final PlayersCollections[] VALUES = values();
-    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_8, WEEKLY, DAILY);
+    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_9, WEEKLY, DAILY);
     public static final List<PlayersCollections> ACTIVE_LEADERBOARD_COLLECTIONS = Arrays.asList(LIFETIME, WEEKLY);
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {

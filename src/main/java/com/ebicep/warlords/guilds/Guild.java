@@ -555,7 +555,11 @@ public class Guild {
     }
 
     public void sendMOTD(Player player) {
-        if (motd == null || motd.isEmpty()) {
+        if (motd == null) {
+            return;
+        }
+        motd.removeIf(Objects::isNull);
+        if (motd.isEmpty()) {
             return;
         }
         player.sendMessage(Component.text("---------- Guild Message of the Day ----------", NamedTextColor.GREEN, TextDecoration.BOLD));
