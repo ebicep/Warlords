@@ -79,8 +79,9 @@ public class QueueManager {
                                                    .toBuilder();
         for (int i = 0; i < QUEUE.size(); i++) {
             UUID uuid = QUEUE.get(i);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
             queueList.append(Component.text((i + 1) + ". ", NamedTextColor.YELLOW))
-                     .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(uuid).getName()), NamedTextColor.AQUA))
+                     .append(Component.text("" + (offlinePlayer.getName() == null ? uuid : offlinePlayer.getName()), NamedTextColor.AQUA))
                      .append(Component.newline());
         }
         if (!FUTURE_QUEUE.isEmpty()) {
@@ -89,8 +90,9 @@ public class QueueManager {
                                       .append(Component.newline()));
             for (int i = 0; i < FUTURE_QUEUE.size(); i++) {
                 FutureQueuePlayer futureQueuePlayer = FUTURE_QUEUE.get(i);
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(futureQueuePlayer.uuid());
                 queueList.append(Component.text("    - ", NamedTextColor.YELLOW))
-                         .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(futureQueuePlayer.uuid()).getName()), NamedTextColor.AQUA))
+                         .append(Component.text("" + (offlinePlayer.getName() == null ? futureQueuePlayer.uuid() : offlinePlayer.getName()), NamedTextColor.AQUA))
                          .append(Component.text(" (" + futureQueuePlayer.timeString() + ")", NamedTextColor.GRAY));
                 if (i != FUTURE_QUEUE.size() - 1) {
                     queueList.append(Component.newline());
