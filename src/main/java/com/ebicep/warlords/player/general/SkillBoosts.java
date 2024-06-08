@@ -365,8 +365,8 @@ public enum SkillBoosts {
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand lastStand) {
-                    lastStand.setSelfDamageReductionPercent(55);
-                    lastStand.setTeammateDamageReductionPercent(45);
+                    lastStand.setSelfDamageReductionPercent((int) (lastStand.getSelfDamageReduction() + 5));
+                    lastStand.setTeammateDamageReductionPercent((int) (lastStand.getTeammateDamageReduction() + 5));
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
