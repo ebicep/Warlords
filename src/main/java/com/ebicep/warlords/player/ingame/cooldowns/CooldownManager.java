@@ -61,34 +61,40 @@ public class CooldownManager {
         return warlordsEntity;
     }
 
-    public synchronized boolean hasCooldown(AbstractCooldown<?> abstractCooldown) {
+    public boolean hasCooldown(AbstractCooldown<?> abstractCooldown) {
         return abstractCooldowns.contains(abstractCooldown);
     }
 
-    public synchronized boolean hasCooldown(Class<?> cooldownClass) {
+    public boolean hasCooldown(Class<?> cooldownClass) {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldown.getCooldownClass().equals(cooldownClass));
     }
 
-    public synchronized boolean hasCooldownExtends(Class<?> cooldownClass) {
+    public boolean hasCooldownExtends(Class<?> cooldownClass) {
         return abstractCooldowns.stream()
                                 .anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldownClass.isAssignableFrom(cooldown.getCooldownClass()));
     }
 
-    public synchronized boolean hasCooldown(Object cooldownObject) {
+    public boolean hasCooldown(Object cooldownObject) {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() != null && cooldown.getCooldownObject() == cooldownObject);
     }
 
-    public synchronized void reduceCooldowns() {
-        for (int i = 0; i < abstractCooldowns.size(); i++) {
-            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-            abstractCooldown.onTick(warlordsEntity);
+    public void reduceCooldowns() {
+        //List<AbstractCooldown<?>> cooldowns = Collections.synchronizedList(abstractCooldowns);
+        synchronized (abstractCooldowns) {
+            for (int i = 0; i < abstractCooldowns.size(); i++) {
+                AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
+                abstractCooldown.onTick(warlordsEntity);
 
-            if (abstractCooldown.removeCheck()) {
-                abstractCooldown.getOnRemove().accept(this);
-                abstractCooldown.getOnRemoveForce().accept(this);
-                abstractCooldowns.remove(i);
-                i--;
-                updatePlayerNames(abstractCooldown);
+                if (abstractCooldown.removeCheck()) {
+                    abstractCooldown.getOnRemove().accept(this);
+                    abstractCooldown.getOnRemoveForce().accept(this);
+                    if (abstractCooldowns.contains(abstractCooldown)) {
+                        abstractCooldowns.remove(i);
+                        i--;
+
+                        updatePlayerNames(abstractCooldown);
+                    }
+                }
             }
         }
     }
@@ -113,15 +119,15 @@ public class CooldownManager {
             });
     }
 
-    public synchronized int getTotalCooldowns() {
+    public int getTotalCooldowns() {
         return totalCooldowns;
     }
 
-    public synchronized void subtractTicksOnRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
+    public void subtractTicksOnRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
         addTicksToRegularCooldowns(-ticks, cooldownTypes);
     }
 
-    public synchronized void addTicksToRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
+    public void addTicksToRegularCooldowns(int ticks, CooldownTypes... cooldownTypes) {
         List<CooldownTypes> types = Arrays.asList(cooldownTypes);
         abstractCooldowns.stream()
                          .filter(abstractCooldown -> types.contains(abstractCooldown.getCooldownType()))
@@ -130,27 +136,25 @@ public class CooldownManager {
                          .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
     }
 
-    public synchronized List<AbstractCooldown<?>> getBuffCooldowns() {
+    public List<AbstractCooldown<?>> getBuffCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF)
                                 .toList();
     }
 
-    public synchronized void removeBuffCooldowns() {
-        for (int i = 0; i < abstractCooldowns.size(); i++) {
-            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-            if (abstractCooldown.getCooldownType() == CooldownTypes.BUFF) {
-                removeCooldown(abstractCooldown);
-                i--;
+    public void removeBuffCooldowns() {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && cd.getCooldownType() == CooldownTypes.BUFF) {
+                removeCooldown(cd);
             }
-        }
+        });
     }
 
-    public synchronized void removeCooldown(AbstractCooldown<?> abstractCooldown) {
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown) {
         removeCooldown(abstractCooldown, false);
     }
 
-    public synchronized void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
+    public void removeCooldown(AbstractCooldown<?> abstractCooldown, boolean noForce) {
         if (!noForce) {
             abstractCooldown.getOnRemoveForce().accept(this);
             Listener activeListener = abstractCooldown.getActiveListener();
@@ -163,7 +167,7 @@ public class CooldownManager {
         updatePlayerNames(abstractCooldown);
     }
 
-    public synchronized List<AbstractCooldown<?>> getDebuffCooldowns(boolean distinct) {
+    public List<AbstractCooldown<?>> getDebuffCooldowns(boolean distinct) {
         if (distinct) {
             return getCooldownsSingular().stream()
                                          .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
@@ -175,7 +179,7 @@ public class CooldownManager {
         }
     }
 
-    public synchronized List<AbstractCooldown<?>> getCooldownsSingular() {
+    public List<AbstractCooldown<?>> getCooldownsSingular() {
         List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
         List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
         for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
@@ -192,7 +196,7 @@ public class CooldownManager {
         return cooldowns;
     }
 
-    public synchronized List<AbstractCooldown<?>> getCooldownsDistinct() {
+    public List<AbstractCooldown<?>> getCooldownsDistinct() {
         List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
         List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
         for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
@@ -210,13 +214,13 @@ public class CooldownManager {
         return cooldowns;
     }
 
-    public synchronized List<AbstractCooldown<?>> getAbilityCooldowns() {
+    public List<AbstractCooldown<?>> getAbilityCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY)
                                 .toList();
     }
 
-    public synchronized void removeAbilityCooldowns() {
+    public void removeAbilityCooldowns() {
         List<AbstractCooldown<?>> removed = new ArrayList<>();
         abstractCooldowns.removeIf(cd -> {
             if (cd != null && cd.getCooldownType() == CooldownTypes.ABILITY) {
@@ -229,7 +233,7 @@ public class CooldownManager {
         removed.forEach(this::updatePlayerNames);
     }
 
-    public synchronized <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, Class<?> filterCooldownClass, int limit) {
+    public <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, Class<?> filterCooldownClass, int limit) {
         List<T> matchingCooldowns = new CooldownFilter<>(this, cooldownClass)
                 .filterCooldownClass(filterCooldownClass)
                 .stream()
@@ -239,7 +243,7 @@ public class CooldownManager {
         }
     }
 
-    public synchronized <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, String name, int limit) {
+    public <T extends AbstractCooldown<T>> void limitCooldowns(Class<T> cooldownClass, String name, int limit) {
         List<T> matchingCooldowns = new CooldownFilter<>(this, cooldownClass)
                 .filterCooldownName(name)
                 .stream()
@@ -249,7 +253,7 @@ public class CooldownManager {
         }
     }
 
-    public synchronized final <T> void addRegularCooldown(
+    public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
             Class<T> cooldownClass,
@@ -275,7 +279,7 @@ public class CooldownManager {
      * @param timeLeft       how long should the cooldown last.
      * @param triConsumers
      */
-    public synchronized final <T> void addRegularCooldown(
+    public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
             Class<T> cooldownClass,
@@ -303,7 +307,7 @@ public class CooldownManager {
         );
     }
 
-    public synchronized final <T> void addRegularCooldown(
+    public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
             Class<T> cooldownClass,
@@ -331,7 +335,7 @@ public class CooldownManager {
         ));
     }
 
-    public synchronized void addCooldown(AbstractCooldown<?> abstractCooldown) {
+    public void addCooldown(AbstractCooldown<?> abstractCooldown) {
         if (Objects.equals(abstractCooldown.getName(), "Debuff Immunity")) {
             warlordsEntity.getSpeed().removeSlownessModifiers();
             warlordsEntity.getCooldownManager().removeDebuffCooldowns();
@@ -355,7 +359,7 @@ public class CooldownManager {
         }
     }
 
-    public synchronized int removeDebuffCooldowns() {
+    public int removeDebuffCooldowns() {
         List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream()
                                                               .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
                                                               .toList();
@@ -365,15 +369,15 @@ public class CooldownManager {
         return toRemove.size();
     }
 
-    public synchronized boolean hasCooldownFromName(String name) {
+    public boolean hasCooldownFromName(String name) {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName() != null && cooldown.getName().equalsIgnoreCase(name));
     }
 
-    public synchronized boolean hasCooldownFromActionBarName(String name) {
+    public boolean hasCooldownFromActionBarName(String name) {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getActionBarName() != null && cooldown.getActionBarName().equalsIgnoreCase(name));
     }
 
-    public synchronized final <T> void addRegularCooldown(
+    public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
             Class<T> cooldownClass,
@@ -388,7 +392,7 @@ public class CooldownManager {
         addRegularCooldown(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true, timeLeft, triConsumers);
     }
 
-    public synchronized final <T> void addRegularCooldown(
+    public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
             Class<T> cooldownClass,
@@ -401,7 +405,7 @@ public class CooldownManager {
         addRegularCooldown(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, true, timeLeft, new ArrayList<>());
     }
 
-    public synchronized final <T> void addRegularCooldown(
+    public final <T> void addRegularCooldown(
             String name,
             String actionBarName,
             Class<T> cooldownClass,
@@ -415,59 +419,54 @@ public class CooldownManager {
         addRegularCooldown(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true, timeLeft, new ArrayList<>());
     }
 
-    public synchronized void removeCooldownNoForce(AbstractCooldown<?> abstractCooldown) {
+    public void removeCooldownNoForce(AbstractCooldown<?> abstractCooldown) {
         abstractCooldowns.remove(abstractCooldown);
     }
 
-    public synchronized void removeCooldownByObject(Object cooldownObject) {
-        for (int i = 0; i < abstractCooldowns.size(); i++) {
-            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-            if (Objects.equals(abstractCooldown.getCooldownObject(), cooldownObject)) {
-                abstractCooldown.getOnRemoveForce().accept(this);
-                abstractCooldowns.remove(abstractCooldown);
-                i--;
+    public void removeCooldownByObject(Object cooldownObject) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && Objects.equals(cd.getCooldownObject(), cooldownObject)) {
+                cd.getOnRemoveForce().accept(this);
+                abstractCooldowns.remove(cd);
             }
-        }
+        });
     }
 
-    public synchronized void removeCooldownByName(String cooldownName) {
+    public void removeCooldownByName(String cooldownName) {
         removeCooldownByName(cooldownName, false);
     }
 
-    public synchronized void removeCooldownByName(String cooldownName, boolean noForce) {
-        for (int i = 0; i < abstractCooldowns.size(); i++) {
-            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-            if (abstractCooldown.getName().equals(cooldownName)) {
-                removeCooldown(abstractCooldown, noForce);
-                i--;
+    public void removeCooldownByName(String cooldownName, boolean noForce) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && Objects.equals(cd.getName(), cooldownName)) {
+                removeCooldown(cd, noForce);
             }
-        }
+        });
     }
 
-    public synchronized void removeIf(Predicate<AbstractCooldown<?>> predicate) {
-        for (int i = 0; i < abstractCooldowns.size(); i++) {
-            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-            if (predicate.test(abstractCooldown)) {
-                removeCooldown(abstractCooldown);
-                i--;
+    public void removeIf(Predicate<AbstractCooldown<?>> predicate) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && predicate.test(cd)) {
+                removeCooldown(cd);
             }
-        }
+        });
     }
 
-    public synchronized void clearAllCooldowns() {
+    public void clearAllCooldowns() {
         try {
-            for (int i = 0; i < abstractCooldowns.size(); i++) {
-                AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-                removeCooldown(abstractCooldown);
-                i--;
-            }
+            new ArrayList<>(abstractCooldowns).forEach(cd -> {
+                if (abstractCooldowns.contains(cd)) {
+                    removeCooldown(cd);
+                }
+            });
+
             abstractCooldowns.clear();
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
     }
 
-    public synchronized void clearCooldowns() {
+    public void clearCooldowns() {
         List<AbstractCooldown<?>> cooldownsToRemove = abstractCooldowns.stream()
                                                                        .filter(AbstractCooldown::isRemoveOnDeath)
                                                                        .toList();
@@ -480,28 +479,26 @@ public class CooldownManager {
         cooldownsToRemove.forEach(this::updatePlayerNames);
     }
 
-    public synchronized List<AbstractCooldown<?>> getCooldowns() {
-        return new ArrayList<>(abstractCooldowns);
+    public List<AbstractCooldown<?>> getCooldowns() {
+        return abstractCooldowns;
     }
 
-    public synchronized void removePreviousWounding() {
+    public void removePreviousWounding() {
         removeCooldownByName("Wounding Strike", true);
     }
 
-    public synchronized void removeCooldown(Class<?> cooldownClass, boolean noForce) {
-        for (int i = 0; i < abstractCooldowns.size(); i++) {
-            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
-            if (abstractCooldown.getCooldownClass() == null) {
-                continue;
+    public void removeCooldown(Class<?> cooldownClass, boolean noForce) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (cd.getCooldownClass() == null) {
+                return;
             }
-            if (Objects.equals(abstractCooldown.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(abstractCooldown.getCooldownClass())) {
-                removeCooldown(abstractCooldown, noForce);
-                i--;
+            if (abstractCooldowns.contains(cd) && (Objects.equals(cd.getCooldownClass(), cooldownClass) || cooldownClass.isAssignableFrom(cd.getCooldownClass()))) {
+                removeCooldown(cd, noForce);
             }
-        }
+        });
     }
 
-    public synchronized boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
+    public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
         for (Soulbinding soulbinding : new CooldownFilter<>(this, PersistentCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                 .toList()
@@ -513,7 +510,7 @@ public class CooldownManager {
         return false;
     }
 
-    public synchronized List<LinkInformation> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
+    public List<LinkInformation> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
         List<LinkInformation> linkInformation = new ArrayList<>();
         for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
@@ -547,8 +544,11 @@ public class CooldownManager {
         return linkInformation;
     }
 
+    public record LinkInformation(float radius, int limit, int selfHealing, int allyHealing) {
+    }
+
     @SuppressWarnings("unchecked")
-    public synchronized <T> void incrementCooldown(RegularCooldown<T> regularCooldown, int ticksToAdd, int tickCap) {
+    public <T> void incrementCooldown(RegularCooldown<T> regularCooldown, int ticksToAdd, int tickCap) {
         Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClass(regularCooldown.cooldownClass)
                 .filterName(regularCooldown.name)
@@ -565,11 +565,11 @@ public class CooldownManager {
         }
     }
 
-    public synchronized boolean checkUndyingArmy(boolean popped) {
+    public boolean checkUndyingArmy(boolean popped) {
         return checkUndyingArmy(popped, null);
     }
 
-    public synchronized boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
+    public boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
         for (UndyingArmy undyingArmy : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
                 .toList()
@@ -592,9 +592,6 @@ public class CooldownManager {
         //if popped returns false - all undying armies are not popped (there is no popped armies)
         //if !popped return false - all undying armies are popped (there is no unpopped armies)
         return false;
-    }
-
-    public record LinkInformation(float radius, int limit, int selfHealing, int allyHealing) {
     }
 
 }
