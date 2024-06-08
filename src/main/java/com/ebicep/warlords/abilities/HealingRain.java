@@ -131,10 +131,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    List<WarlordsEntity> teammatesInRain = PlayerFilter
-                            .entitiesAround(location, rad, rad, rad)
-                            .aliveTeammatesOf(wp)
-                            .toList();
                     List<Pair<WarlordsEntity, CircleEffect>> personalCloudList = personalCloud.get();
                     if (pveMasterUpgrade2) {
                         personalCloudList.forEach(warlordsEntityCircleEffectPair -> {
@@ -149,6 +145,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                     circleEffect.playEffects();
 
                     if (ticksElapsed % 10 == 0) {
+                        List<WarlordsEntity> teammatesInRain = PlayerFilter
+                                .entitiesAround(location, rad, rad, rad)
+                                .aliveTeammatesOf(wp)
+                                .toList();
                         if (pveMasterUpgrade2) {
                             // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
                             personalCloudList.removeIf(teammate ->
