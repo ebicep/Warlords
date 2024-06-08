@@ -55,7 +55,7 @@ public class SpidersBurrow extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TextOption.Type.CHAT_CENTERED.create(
-                Component.text("ARACHNO_VENARIs Dwelling", NamedTextColor.WHITE, TextDecoration.BOLD),
+                Component.text("Spiders Dwelling", NamedTextColor.WHITE, TextDecoration.BOLD),
                 Component.empty(),
                 Component.text("Kill mobs to gain event points!", NamedTextColor.YELLOW, TextDecoration.BOLD),
                 Component.empty()
