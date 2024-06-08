@@ -75,21 +75,22 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
-
-        boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
-        if (hit.isEnemy(wp)) {
-            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-            if (pveMasterUpgrade2) {
-                hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+        if (!projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
+            if (hit.isEnemy(wp)) {
+                hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                if (pveMasterUpgrade2) {
+                    hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+                }
+            } else {
+                giveShield(wp, hit, hasSanctuary, shieldPercentAlly);
+                hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
             }
-        } else {
-            giveShield(wp, hit, hasSanctuary, shieldPercentAlly);
-            hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+            if (projectile.getHit().isEmpty()) {
+                giveShield(wp, wp, hasSanctuary, shieldPercentSelf);
+            }
         }
-        if (projectile.getHit().isEmpty()) {
-            giveShield(wp, wp, hasSanctuary, shieldPercentSelf);
-        }
-        projectile.getHit().add(hit);
     }
 
     private void giveShield(WarlordsEntity from, WarlordsEntity to, boolean hasSanctuary, int percent) {
