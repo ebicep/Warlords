@@ -2467,7 +2467,9 @@ public abstract class WarlordsEntity {
         this.health.tick();
         updateHealth();
         getSpeed().updateSpeed();
-        updateItems();
+        if (Warlords.LOOP_TICK_COUNTER.get() % 5 == 0) {
+            updateItems();
+        }
         getCooldownManager().reduceCooldowns();
 
         setWasSneaking(isSneaking());
