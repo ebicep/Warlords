@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -22,6 +23,8 @@ import java.util.List;
 public class OldTestCommand implements CommandExecutor {
 
     public static List<DatabaseGameBase> GAMES = new ArrayList<>();
+    static List<DatabasePlayer> updated;
+    static List<DatabasePlayer> old;
 
     private static double getWeight(float itemScore, ItemTier tier) {
         ItemTier.WeightRange weightRange = tier.weightRange;
@@ -100,7 +103,6 @@ public class OldTestCommand implements CommandExecutor {
         return Color.getHSBColor(hue, saturation, brightness);
     }
 
-
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
@@ -113,15 +115,110 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
-
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                System.out.println("Kills: " + databasePlayer.getPveStats().getKills());
-                System.out.println("Deaths: " + databasePlayer.getPveStats().getDeaths());
-                System.out.println("Wins: " + databasePlayer.getPveStats().getWins());
-                System.out.println("Losses: " + databasePlayer.getPveStats().getLosses());
-                System.out.println("Damage: " + databasePlayer.getPveStats().getDamage());
-                System.out.println("Healing: " + databasePlayer.getPveStats().getHealing());
-            });
+//            UUID uuid = UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7");
+//            DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).remove(uuid);
+//            DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.SEASON_9).remove(uuid);
+////            DatabaseManager.getPlayer(uuid, databasePlayer -> {
+////                System.out.println("NAME: " + databasePlayer.getName());
+////            });
+////
+////            DatabaseManager.getPlayer(uuid, databasePlayer -> {
+////                databasePlayer.setName("TEST");
+////                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+////            });
+////
+//
+//            Warlords.newChain()
+//                    .async(() -> {
+//
+////                        DatabaseManager.getPlayer(UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7"), databasePlayer -> {
+////                            databasePlayer.setName("sumSmash");
+////                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+////                        });
+//
+////                        DatabasePlayer databasePlayer = new DatabasePlayer(UUID.randomUUID(), "TEST");
+////                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//
+//
+//                        ChatChannels.sendDebugMessage(player, "Updating loadout names");
+//
+//                        updated = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+//                        old = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_9);
+////                        List<DatabasePlayer> updated = new ArrayList<>();
+////                        List<DatabasePlayer> old = new ArrayList<>();
+////                        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+////                            updated.add(databasePlayer);
+////                        });
+////                        DatabaseManager.getPlayer(uuid, PlayersCollections.SEASON_9, databasePlayer -> {
+////                            old.add(databasePlayer);
+////                        });
+//
+//                        ChatChannels.sendDebugMessage(player, "Found " + updated.size() + " updated players");
+//                        ChatChannels.sendDebugMessage(player, "Found " + old.size() + " old players");
+//
+//                        Map<UUID, DatabasePlayer> updatedByUUID = new HashMap<>();
+//                        Map<UUID, DatabasePlayer> oldByUUID = new HashMap<>();
+//
+//                        for (DatabasePlayer databasePlayer : updated) {
+//                            updatedByUUID.put(databasePlayer.getUuid(), databasePlayer);
+//                        }
+//                        for (DatabasePlayer databasePlayer : old) {
+//                            oldByUUID.put(databasePlayer.getUuid(), databasePlayer);
+//                        }
+//
+//                        Set<DatabasePlayer> toUpdate = new HashSet<>();
+//
+//                        for (DatabasePlayer databasePlayer : updated) {
+//                            DatabasePlayer oldPlayer = oldByUUID.get(databasePlayer.getUuid());
+//                            if (oldPlayer == null) {
+//                                continue;
+//                            }
+////                            databasePlayer.setName(oldPlayer.getName());
+////                            ChatChannels.sendDebugMessage(player, databasePlayer.getName() + " - " + oldPlayer.getName());
+////                            toUpdate.add(databasePlayer);
+////                            for (ItemLoadout loadout : databasePlayer.getPveStats().getItemsManager().getLoadouts()) {
+////                                Instant creationDate = loadout.getCreationDate();
+////                                for (ItemLoadout oldLoadout : oldPlayer.getPveStats().getItemsManager().getLoadouts()) {
+////                                    if (oldLoadout.getCreationDate().equals(creationDate)) {
+////                                        ChatChannels.sendDebugMessage(player, databasePlayer.getName() + " - " + loadout.getName() + " - " + oldLoadout.getName());
+////                                        loadout.setName(oldLoadout.getName());
+////                                        toUpdate.add(databasePlayer);
+////                                        break;
+////                                    }
+////                                }
+////                            }
+//                            Map<Specializations, List<AutoUpgradeProfile>> oldProfiles = oldPlayer.getPveStats().getAutoUpgradeProfiles();
+//                            databasePlayer.getPveStats().getAutoUpgradeProfiles().forEach((specializations, autoUpgradeProfiles) -> {
+//                                List<AutoUpgradeProfile> oldProfile = oldProfiles.get(specializations);
+//                                if (oldProfile == null) {
+//                                    return;
+//                                }
+//                                for (int i = 0; i < autoUpgradeProfiles.size(); i++) {
+//                                    AutoUpgradeProfile profile = autoUpgradeProfiles.get(i);
+//                                    if (oldProfile.size() <= i) {
+//                                        continue;
+//                                    }
+//                                    AutoUpgradeProfile oldProf = oldProfile.get(i);
+//                                    if (!profile.getName().equals(oldProf.getName())) {
+//                                        ChatChannels.sendDebugMessage(player,
+//                                                databasePlayer.getName() + " - " + specializations.name() + " - " + profile.getName() + " - " + oldProf.getName()
+//                                        );
+//                                        profile.setName(oldProf.getName());
+//                                        toUpdate.add(databasePlayer);
+//                                    }
+//                                }
+//                            });
+//                        }
+//
+//                        ChatChannels.sendDebugMessage(player, "Updating " + toUpdate.size() + " players");
+//
+//                        for (DatabasePlayer databasePlayer : toUpdate) {
+//                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//                        }
+//
+//                        ChatChannels.sendDebugMessage(player, "Done updating loadout names");
+//
+//                    }).execute();
 
 
 //            Guardian guard = player.getWorld().spawn(new LocationBuilder(player.getLocation()).forward(10), Guardian.class, guardian -> {
