@@ -461,20 +461,24 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 // Every 1 tick - 0.05 seconds.
                 for (WarlordsEntity we : PLAYERS.values()) {
-                    Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
-                    if (player != null) {
-                        //ACTION BAR
-                        if (player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
-                            we.displayCompassActionBar(player);
-                        } else {
-                            we.displayActionBar();
-                        }
-                    }
                     // Checks whether the game is paused.
                     if (we.getGame().isFrozen()) {
                         continue;
                     }
                     we.runEveryTick();
+                }
+                if (LOOP_TICK_COUNTER.get() % 5 == 0) {
+                    for (WarlordsEntity we : PLAYERS.values()) {
+                        Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
+                        if (player != null) {
+                            //ACTION BAR
+                            if (player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
+                                we.displayCompassActionBar(player);
+                            } else {
+                                we.displayActionBar();
+                            }
+                        }
+                    }
                 }
                 // Every 20 ticks - 1 second.
                 if (LOOP_TICK_COUNTER.get() % 20 == 0) {
