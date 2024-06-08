@@ -7,6 +7,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.annotation.Nonnull;
+
 public class GuildTag {
 
     public static final Colors[] COLORS = new Colors[]{
@@ -18,20 +20,23 @@ public class GuildTag {
             Colors.WHITE, Colors.GRAY, Colors.DARK_GRAY, Colors.BLACK
     };
 
+    @Nonnull
     private String name = "";
     @Field("name_color")
+    @Nonnull
     private String nameColor = NamedTextColor.GRAY.toString();
     @Field("bracket_color")
+    @Nonnull
     private String bracketColor = NamedTextColor.GRAY.toString();
 
     public GuildTag() {
     }
 
-    public GuildTag(String name) {
+    public GuildTag(@Nonnull String name) {
         this.name = name;
     }
 
-    public GuildTag(String name, String nameColor, String bracketColor) {
+    public GuildTag(@Nonnull String name, @Nonnull String nameColor, @Nonnull String bracketColor) {
         this.name = name;
         this.nameColor = nameColor;
         this.bracketColor = bracketColor;
@@ -63,6 +68,7 @@ public class GuildTag {
         return Component.text(name, getNameTextColor());
     }
 
+    @Nonnull
     public String getName() {
         return name;
     }
@@ -72,6 +78,7 @@ public class GuildTag {
         CustomScoreboard.updateLobbyPlayerNames();
     }
 
+    @Nonnull
     public String getNameColor() {
         return nameColor;
     }
@@ -81,6 +88,7 @@ public class GuildTag {
         CustomScoreboard.updateLobbyPlayerNames();
     }
 
+    @Nonnull
     public String getBracketColor() {
         return bracketColor;
     }
