@@ -10,7 +10,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -69,8 +68,6 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected boolean pveMasterUpgrade = false;
     protected boolean pveMasterUpgrade2 = false;
 
-    private float rawEnergyCost; // for testing TODO remove
-
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
     }
@@ -95,7 +92,6 @@ public abstract class AbstractAbility implements AbilityIcon {
         this.cooldown = new FloatModifiable(cooldown);
         this.currentCooldown = startCooldown;
         this.energyCost = new FloatModifiable(energyCost);
-        this.rawEnergyCost = energyCost;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         boosted = false;
@@ -275,43 +271,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public float getEnergyCostValue() {
-        float calculatedValue = energyCost.getCalculatedValue();
-        if (calculatedValue < 0) {
-            if (calculatedValue < -50) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage("NEGATIVE ENERGY COST - " + getName() + " - " + calculatedValue);
-                for (FloatModifiable.FloatModifier modifier : energyCost.getOverridingModifier()) {
-                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Override: " + modifier.getLog() + " - " + modifier.getModifier());
-                }
-                for (FloatModifiable.FloatModifier modifier : energyCost.getAdditiveModifier()) {
-                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Additive: " + modifier.getLog() + " - " + modifier.getModifier());
-                }
-                for (FloatModifiable.FloatModifier modifier : energyCost.getMultiplicativeModifierAdditive()) {
-                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Multi Additive: " + modifier.getLog() + " - " + modifier.getModifier());
-                }
-                for (FloatModifiable.FloatModifier modifier : energyCost.getMultiplicativeModifierMultiplicative()) {
-                    ChatUtils.MessageType.WARLORDS.sendErrorMessage("Multi Multi: " + modifier.getLog() + " - " + modifier.getModifier());
-                }
-            }
-            return 0;
-        }
-        if (calculatedValue > 300) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage("HIGH ENERGY COST - " + getName() + " - " + calculatedValue);
-            for (FloatModifiable.FloatModifier modifier : energyCost.getOverridingModifier()) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Override: " + modifier.getLog() + " - " + modifier.getModifier());
-            }
-            for (FloatModifiable.FloatModifier modifier : energyCost.getAdditiveModifier()) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Additive: " + modifier.getLog() + " - " + modifier.getModifier());
-            }
-            for (FloatModifiable.FloatModifier modifier : energyCost.getMultiplicativeModifierAdditive()) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Multi Additive: " + modifier.getLog() + " - " + modifier.getModifier());
-            }
-            for (FloatModifiable.FloatModifier modifier : energyCost.getMultiplicativeModifierMultiplicative()) {
-                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Multi Multi: " + modifier.getLog() + " - " + modifier.getModifier());
-            }
-            energyCost = new FloatModifiable(rawEnergyCost);
-            calculatedValue = energyCost.getCalculatedValue();
-        }
-        return calculatedValue;
+        return energyCost.getCalculatedValue();
     }
 
     public float getCritChance() {
