@@ -171,7 +171,7 @@ public class PowerupOption implements Option {
             ));
             textDisplay.setBillboard(Display.Billboard.CENTER);
             textDisplay.setAlignment(TextDisplay.TextAlignment.CENTER);
-            textDisplay.setViewRange(.25f);
+            textDisplay.setViewRange(.15f);
             textDisplay.setSeeThrough(true);
             textDisplay.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
         });
