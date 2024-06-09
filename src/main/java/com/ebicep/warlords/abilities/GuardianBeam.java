@@ -99,6 +99,11 @@ public class GuardianBeam extends AbstractBeam implements Duration {
             }
             if (projectile.getHit().isEmpty()) {
                 giveShield(wp, wp, hasSanctuary, shieldPercentSelf);
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                        .append(Component.text(name, NamedTextColor.YELLOW))
+                        .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
+                );
             }
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         }

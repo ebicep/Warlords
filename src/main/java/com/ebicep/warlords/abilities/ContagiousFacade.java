@@ -133,6 +133,11 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                             );
                         }
                     });
+                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your ", NamedTextColor.GRAY))
+                            .append(Component.text(name, NamedTextColor.YELLOW))
+                            .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
+                    );
                     if (pveMasterUpgrade) {
                         PlayerFilter.entitiesAround(wp, 4, 4, 4)
                                     .aliveEnemiesOf(wp)
