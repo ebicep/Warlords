@@ -115,6 +115,12 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
+
+//            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+//            partyPlayerPair.getA().getRegularGamesMenu().addPlayer(Team.BLUE, player.getUniqueId(), Specializations.PYROMANCER);
+//            partyPlayerPair.getA().getRegularGamesMenu().openMenuForPlayer(player);
+
+
 //            UUID uuid = UUID.fromString("9f2b2230-3b2c-4b0f-a141-d7b598e236c7");
 //            DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.LIFETIME).remove(uuid);
 //            DatabaseManager.CACHED_PLAYERS.get(PlayersCollections.SEASON_9).remove(uuid);
