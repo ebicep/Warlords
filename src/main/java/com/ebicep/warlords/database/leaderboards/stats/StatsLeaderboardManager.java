@@ -16,6 +16,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -193,6 +194,9 @@ public class StatsLeaderboardManager {
             return;
         }
         LAST_BOARD_RESETS.put(playersCollections, System.currentTimeMillis());
+        if (Warlords.getGameManager().getGames().stream().anyMatch(gameHolder -> gameHolder.getGame() != null && gameHolder.getMap() != GameMap.MAIN_LOBBY)) {
+            return;
+        }
         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Resetting leaderboards for " + playersCollections.name + " (" + gameMode + ")");
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> {
             if (gameMode == null || gameType.shouldUpdateLeaderboard(gameMode)) {
