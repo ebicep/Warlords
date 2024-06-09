@@ -163,7 +163,10 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                 type = Material.DIRT;
             }
         }
-        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location, type.createBlockData());
+        Material finalType = type;
+        FallingBlock fallingBlock = location.getWorld().spawn(location.clone().add(0, .5, 0), FallingBlock.class, falling -> {
+            falling.setBlockData(finalType.createBlockData());
+        });
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         return fallingBlock;
