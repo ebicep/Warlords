@@ -87,6 +87,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Nullable
     protected AbstractWeapon weapon;
 
+    private boolean updateTabName = true;
+
     public WarlordsPlayer() {
         super();
     }
@@ -488,5 +490,13 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public SkillBoosts getSkillBoost() {
         return skillBoost;
+    }
+
+    public boolean isUpdateTabName() {
+        return updateTabName;
+    }
+
+    public void queueUpdateTabName() {
+        this.updateTabName = true;
     }
 }

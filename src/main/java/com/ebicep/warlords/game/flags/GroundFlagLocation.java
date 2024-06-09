@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -86,6 +87,9 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
 
         if (event.getOld() instanceof PlayerFlagLocation pfl) {
             pfl.getPlayer().updateArmor();
+            if (pfl.getPlayer() instanceof WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.queueUpdateTabName();
+            }
             game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                 Component coloredName = pfl.getPlayer().getColoredName();
                 Component flagMessage = Component.text("", NamedTextColor.YELLOW)

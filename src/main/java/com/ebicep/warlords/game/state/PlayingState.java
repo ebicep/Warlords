@@ -149,6 +149,27 @@ public class PlayingState implements State, TimerDebugAble {
                 game.forEachOnlinePlayer((player, team) -> {
                     updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), (WarlordsPlayer) Warlords.getPlayer(player));
                 });
+                this.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> {
+                    if (!warlordsPlayer.isUpdateTabName()) {
+                        return;
+                    }
+                    UUID uuid = warlordsPlayer.getUuid();
+                    String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass()));
+                    TextComponent.Builder playerTabName = Component.text()
+                                                                   .append(Component.text("[", NamedTextColor.DARK_GRAY))
+                                                                   .append(Component.text(warlordsPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                                                   .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().teamColor))
+                                                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
+                                                                   .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
+                                                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                    if (warlordsPlayer.getCarriedFlag() != null) {
+                        playerTabName.append(Component.text("⚑", NamedTextColor.WHITE));
+                    }
+                    if (warlordsPlayer.getEntity() instanceof Player player) {
+                        player.playerListName(playerTabName.build());
+                    }
+                });
             }
         }.runTaskTimer(0, 10);
 
@@ -328,24 +349,6 @@ public class PlayingState implements State, TimerDebugAble {
     private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
         this.updateHealth(customScoreboard);
         this.updateNames(customScoreboard, warlordsPlayer);
-        this.getGame().forEachOnlineWarlordsPlayer(warlordsEntity -> {
-            UUID uuid = warlordsEntity.getUuid();
-            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsEntity.getSpecClass()));
-            TextComponent.Builder playerTabName = Component.text()
-                                                           .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                           .append(Component.text(warlordsEntity.getSpec().getClassNameShort(), NamedTextColor.GOLD))
-                                                           .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                                                           .append(Component.text(warlordsEntity.getName(), warlordsEntity.getTeam().teamColor))
-                                                           .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                                           .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
-                                                           .append(Component.text("] ", NamedTextColor.DARK_GRAY));
-            if (warlordsEntity.getCarriedFlag() != null) {
-                playerTabName.append(Component.text("⚑", NamedTextColor.WHITE));
-            }
-            if (warlordsEntity.getEntity() instanceof Player player) {
-                player.playerListName(playerTabName.build());
-            }
-        });
         this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
     }
 

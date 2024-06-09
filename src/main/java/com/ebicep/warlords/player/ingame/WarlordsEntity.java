@@ -1693,6 +1693,9 @@ public abstract class WarlordsEntity {
         this.currentHealth = getMaxHealth();
         heal();
         this.energy = this.spec.getMaxEnergy();
+        if (this instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.queueUpdateTabName();
+        }
     }
 
     public float getCurrentHealth() {
@@ -2403,6 +2406,9 @@ public abstract class WarlordsEntity {
 
     public void setCarriedFlag(@Nullable FlagInfo carriedFlag) {
         this.carriedFlag = carriedFlag;
+        if (this instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.queueUpdateTabName();
+        }
     }
 
     public List<Achievement.AbstractAchievementRecord<?>> getAchievementsUnlocked() {

@@ -46,7 +46,6 @@ public class ConsecrateAvenger extends AbstractConsecrate {
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-        
 
         Location location = wp.getLocation().clone();
 
