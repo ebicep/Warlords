@@ -31,7 +31,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     private float runeTimerIncrease = 1.5f;
     private int shieldPercentSelf = 30;
-    private int shieldPercentAlly = 45;
+    private int shieldPercentAlly = 30;
     private int tickDuration = 120;
 
     public GuardianBeam() {
@@ -83,7 +83,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
                 }
             } else {
-                giveShield(wp, hit, hasSanctuary, shieldPercentAlly);
+                giveShield(wp, hit, hasSanctuary, shieldPercentAlly + (hit.hasFlag() ? 15 : 0));
                 hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
             }
             if (projectile.getHit().isEmpty()) {
