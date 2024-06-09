@@ -241,6 +241,9 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     }
 
     public static void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+        if (to.isDead()) {
+            return;
+        }
         PoisonousHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
         int tickDuration = fromHex.getTickDuration();
