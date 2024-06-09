@@ -76,7 +76,6 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
             if (hit.isEnemy(wp)) {
                 hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -90,6 +89,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
             if (projectile.getHit().isEmpty()) {
                 giveShield(wp, wp, hasSanctuary, shieldPercentSelf);
             }
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         }
     }
 
