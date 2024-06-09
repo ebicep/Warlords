@@ -240,7 +240,7 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractSeismicWave.class,
+            SeismicWaveBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractSeismicWave) {
                     abstractAbility.multiplyMinMax(1.15f);
@@ -255,7 +255,7 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractGroundSlam.class,
+            GroundSlamBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam) {
                     abstractAbility.multiplyMinMax(1.35f);
@@ -316,7 +316,7 @@ public enum SkillBoosts {
                      .append(Component.text("", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractSeismicWave.class,
+            SeismicWaveDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractSeismicWave seismicWave) {
                     seismicWave.setVelocity(1.8f);
@@ -331,7 +331,7 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractGroundSlam.class,
+            GroundSlamDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
@@ -406,7 +406,7 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Ground Slam by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractGroundSlam.class,
+            GroundSlamRevenant.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
@@ -460,7 +460,7 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
                      .append(Component.text("35%", NamedTextColor.RED))
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
-            AbstractConsecrate.class,
+            ConsecrateAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
@@ -530,7 +530,7 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
                      .append(Component.text("35%", NamedTextColor.RED))
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
-            AbstractConsecrate.class,
+            ConsecrateCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
@@ -610,7 +610,7 @@ public enum SkillBoosts {
                      .append(Component.text("blocks and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractConsecrate.class,
+            ConsecrateProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate consecrate) {
                     consecrate.getHitBoxRadius().addAdditiveModifier("Skill Boost", 2);
@@ -690,8 +690,7 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Windfury Weapon by 30% and increase the proc chance by 10%.", NamedTextColor.GRAY),
             Component.text("Increase the damage of Windfury Weapon by ", NamedTextColor.GREEN)
                      .append(Component.text("30% ", NamedTextColor.RED))
-                     .append(Component.text("and increase the proc ", NamedTextColor.RED))
-                     .append(Component.text("chance by ", NamedTextColor.GREEN))
+                     .append(Component.text("and increase the proc chance by ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             WindfuryWeapon.class,
@@ -816,7 +815,7 @@ public enum SkillBoosts {
     ),
     BOULDER("Boulder",
             Component.text("Increase the damage of Boulder by 25%.", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Boulder by ", NamedTextColor.RED)
+            Component.text("Increase the damage you deal with Boulder by ", NamedTextColor.GREEN)
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             Boulder.class,
