@@ -1270,7 +1270,7 @@ public enum SkillBoosts {
             SanctifiedBeacon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
-                    sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() - 10);
+                    sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() + 10);
                 }
             }
     ),

@@ -29,7 +29,7 @@ import java.util.List;
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
 
     private final int maxAllies = 2;
-    private int critMultiplierReducedBy = 75;
+    private int critMultiplierReducedBy = 25;
     private ArmorStand crystal;
     private int hexIntervalTicks = 80;
     private float damageReductionPve = 30;
