@@ -85,6 +85,16 @@ public class GuardianBeam extends AbstractBeam implements Duration {
             } else {
                 giveShield(wp, hit, hasSanctuary, shieldPercentAlly + (hit.hasFlag() ? 15 : 0));
                 hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                        .append(Component.text(name, NamedTextColor.YELLOW))
+                        .append(Component.text(" is now shielding " + hit.getName() + "!", NamedTextColor.GRAY))
+                );
+                hit.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                        .append(Component.text(" " + wp.getName() + " is shielding you with their ", NamedTextColor.GRAY))
+                        .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
+                );
             }
             if (projectile.getHit().isEmpty()) {
                 giveShield(wp, wp, hasSanctuary, shieldPercentSelf);

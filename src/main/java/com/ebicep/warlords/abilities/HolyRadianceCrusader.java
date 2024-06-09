@@ -160,12 +160,12 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
             });
 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                    .append(Component.text(markTarget.getName(), NamedTextColor.YELLOW))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
+                    .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY))
             );
 
-            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
                     .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
                     .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
                     .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))

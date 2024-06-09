@@ -399,13 +399,13 @@ public class PlayingState implements State, TimerDebugAble {
                 cooldowns.forEach(cd -> {
                     PlayerNameInstance.PlayerNameData prefixFromSelf = cd.addPrefixFromSelf();
                     if (prefixFromSelf != null && prefixFromSelf.displayPredicate().test(otherPlayer)) {
-                        prefix.append(Component.space().append(prefixFromSelf.text()));
+                        prefix.append(prefixFromSelf.text().append(Component.space()));
                     }
                 });
                 otherPlayerCooldowns.forEach(cd -> {
                     PlayerNameInstance.PlayerNameData prefixFromEnemy = cd.addPrefixFromOther();
                     if (prefixFromEnemy != null && prefixFromEnemy.displayPredicate().test(warlordsPlayer)) {
-                        prefix.append(Component.space().append(prefixFromEnemy.text()));
+                        prefix.append(prefixFromEnemy.text().append(Component.space()));
                     }
                 });
             }
@@ -425,9 +425,9 @@ public class PlayingState implements State, TimerDebugAble {
                 TextComponent.Builder baseSuffix = Component.text()
                                                             .append(Component.text("[", NamedTextColor.DARK_GRAY))
                                                             .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
-                                                            .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                                                            .append(Component.text("]", NamedTextColor.DARK_GRAY));
                 if (otherPlayer.getCarriedFlag() != null) {
-                    baseSuffix.append(Component.text("⚑", NamedTextColor.WHITE));
+                    baseSuffix.append(Component.text(" ⚑", NamedTextColor.WHITE));
                 }
                 suffix.append(baseSuffix);
             }

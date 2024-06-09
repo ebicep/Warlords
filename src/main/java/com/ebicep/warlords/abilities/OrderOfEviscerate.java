@@ -146,9 +146,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 if (victim != wp) {
                     if (!Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), victim)) {
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                                .append(Component.text(victim.getName(), NamedTextColor.YELLOW))
-                                .append(Component.text("!", NamedTextColor.GRAY))
+                                .append(Component.text(" You have ", NamedTextColor.GRAY))
+                                .append(Component.text("marked ", NamedTextColor.YELLOW))
+                                .append(Component.text(victim.getName() + "!", NamedTextColor.GRAY))
                         );
                     }
                     tempOrderOfEviscerate.setMarkedPlayer(victim);
