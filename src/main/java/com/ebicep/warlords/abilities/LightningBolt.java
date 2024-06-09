@@ -108,7 +108,6 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
                 for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
                     chainLightning.subtractCurrentCooldown(2);
-                    wp.updateItem(chainLightning);
                 }
             }
         }
@@ -143,7 +142,6 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
                 for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
                     chainLightning.subtractCurrentCooldown(2);
-                    wp.updateItem(chainLightning);
                 }
             }
         }

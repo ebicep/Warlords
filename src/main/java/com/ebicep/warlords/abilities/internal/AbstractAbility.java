@@ -17,7 +17,9 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -67,6 +69,8 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected boolean inPve = false;
     protected boolean pveMasterUpgrade = false;
     protected boolean pveMasterUpgrade2 = false;
+
+    private boolean updateItem = true;
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
         this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
@@ -168,37 +172,24 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void setMaxDamageHeal(float maxDamageHeal) {
         this.maxDamageHeal = maxDamageHeal;
+        queueUpdateItem();
+    }
+
+    public void queueUpdateItem() {
+        this.updateItem = true;
     }
 
     public void multiplyMinMax(float amount) {
         this.minDamageHeal *= amount;
         this.maxDamageHeal *= amount;
-    }
-
-    public int getCurrentCooldownItem() {
-        return (int) Math.round(currentCooldown + .5);
-    }
-
-    public float getCurrentCooldown() {
-        return currentCooldown;
-    }
-
-    public void setCurrentCooldown(float currentCooldown) {
-        if (currentCooldown < 0) {
-            this.currentCooldown = 0;
-        } else {
-            this.currentCooldown = currentCooldown;
-        }
+        queueUpdateItem();
     }
 
     public void addCurrentCooldown(float cooldown) {
         if (currentCooldown != 0) {
             currentCooldown += cooldown;
+            queueUpdateItem();
         }
-    }
-
-    public List<SecondaryAbility> getSecondaryAbilities() {
-        return secondaryAbilities;
     }
 
     /**
@@ -229,69 +220,9 @@ public abstract class AbstractAbility implements AbilityIcon {
             if (!secondaryAbility.hasInfiniteUses()) {
                 secondaryAbilities.remove(i);
                 i--;
+                queueUpdateItem();
             }
         }
-    }
-
-    public ItemStack getItem() {
-        return getItem(getAbilityIcon());
-    }
-
-    public ItemStack getItem(ItemStack item) {
-        ItemBuilder itemBuilder = new ItemBuilder(item)
-                .name(Component.text(getName(), NamedTextColor.GOLD))
-                .unbreakable();
-
-        if (getCooldownValue() != 0) {
-            itemBuilder.addLore(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.AQUA)));
-        }
-        if (getEnergyCostValue() != 0) {
-            itemBuilder.addLore(Component.text("Energy Cost: ", NamedTextColor.GRAY)
-                                         .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
-        }
-        if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
-            itemBuilder.addLore(Component.text("Crit Chance: ", NamedTextColor.GRAY)
-                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)));
-            itemBuilder.addLore(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
-                                         .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)));
-        }
-        itemBuilder.addLore(Component.empty());
-        itemBuilder.addLore(getDescription());
-
-        return itemBuilder.get();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public float getCooldownValue() {
-        return cooldown.getCalculatedValue();
-    }
-
-    public float getEnergyCostValue() {
-        return energyCost.getCalculatedValue();
-    }
-
-    public float getCritChance() {
-        return critChance;
-    }
-
-    public void setCritChance(float critChance) {
-        this.critChance = critChance;
-    }
-
-    public float getCritMultiplier() {
-        return critMultiplier;
-    }
-
-    public void setCritMultiplier(float critMultiplier) {
-        this.critMultiplier = critMultiplier;
-    }
-
-    public List<Component> getDescription() {
-        return WordWrap.wrap(Component.empty().color(NamedTextColor.GRAY).append(description), DESCRIPTION_WIDTH);
     }
 
     public FloatModifiable getCooldown() {
@@ -300,11 +231,6 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public FloatModifiable getEnergyCost() {
         return energyCost;
-    }
-
-    @Deprecated
-    public void setEnergyCost(float energyCost) {
-        this.energyCost.setBaseValue(energyCost);
     }
 
     public Component formatRangeDamage(float min, float max) {
@@ -362,20 +288,134 @@ public abstract class AbstractAbility implements AbilityIcon {
             subtractCurrentCooldownForce(.05f);
         }
         checkSecondaryAbilities();
+        if (updateItem && warlordsEntity != null && warlordsEntity.getEntity() instanceof Player player) {
+            updateItem = false;
+            Integer inventoryIndex = warlordsEntity.getSpec().getInventoryAbilityIndex(this);
+            if (inventoryIndex == null) { // exclude weapon
+                return;
+            }
+            if (getCurrentCooldown() > 0) {
+                ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, getCurrentCooldownItem());
+                if (!getSecondaryAbilities().isEmpty()) {
+                    cooldown.enchant(Enchantment.OXYGEN, 1);
+                }
+                player.getInventory().setItem(inventoryIndex, cooldown.get());
+            } else {
+                player.getInventory().setItem(inventoryIndex, getItem());
+            }
+        }
+    }
+
+    public float getCurrentCooldown() {
+        return currentCooldown;
+    }
+
+    public int getCurrentCooldownItem() {
+        return (int) Math.round(currentCooldown + .5);
+    }
+
+    public List<SecondaryAbility> getSecondaryAbilities() {
+        return secondaryAbilities;
+    }
+
+    public ItemStack getItem() {
+        return getItem(getAbilityIcon());
+    }
+
+    public float getCooldownValue() {
+        return cooldown.getCalculatedValue();
     }
 
     public void subtractCurrentCooldownForce(float cooldown) {
         if (currentCooldown != 0) {
             if (currentCooldown - cooldown < 0) {
                 currentCooldown = 0;
+                queueUpdateItem();
             } else {
+                int previousCooldown = (int) currentCooldown;
                 currentCooldown -= cooldown;
+                if (previousCooldown != (int) currentCooldown) { // only update if second changed
+                    queueUpdateItem();
+                }
             }
         }
     }
 
     public void checkSecondaryAbilities() {
-        secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility));
+        if (secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility))) {
+            queueUpdateItem();
+        }
+    }
+
+    public ItemStack getItem(ItemStack item) {
+        ItemBuilder itemBuilder = new ItemBuilder(item)
+                .name(Component.text(getName(), NamedTextColor.GOLD))
+                .unbreakable();
+
+        List<Component> lore = new ArrayList<>();
+        if (getCooldownValue() != 0) {
+            lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
+                              .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.AQUA)));
+        }
+        if (getEnergyCostValue() != 0) {
+            lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)
+                              .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
+        }
+        if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
+            lore.add(Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                              .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)));
+            lore.add(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                              .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)));
+        }
+        lore.add(Component.empty());
+        lore.addAll(getDescription());
+
+        return itemBuilder.lore(lore).get();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getEnergyCostValue() {
+        return energyCost.getCalculatedValue();
+    }
+
+    public float getCritChance() {
+        return critChance;
+    }
+
+    public void setCritChance(float critChance) {
+        this.critChance = critChance;
+        queueUpdateItem();
+    }
+
+    public float getCritMultiplier() {
+        return critMultiplier;
+    }
+
+    public void setCritMultiplier(float critMultiplier) {
+        this.critMultiplier = critMultiplier;
+        queueUpdateItem();
+    }
+
+    public List<Component> getDescription() {
+        return WordWrap.wrap(Component.empty().color(NamedTextColor.GRAY).append(description), DESCRIPTION_WIDTH);
+    }
+
+    public void setCurrentCooldown(float currentCooldown) {
+        float previousCooldown = this.currentCooldown;
+        if (currentCooldown < 0) {
+            this.currentCooldown = 0;
+            if (previousCooldown > 0) { // only update if it was on cooldown
+                queueUpdateItem();
+            }
+        } else {
+            this.currentCooldown = currentCooldown;
+            if ((int) previousCooldown != (int) currentCooldown) { // only update if second changed
+                queueUpdateItem();
+            }
+        }
     }
 
     public void subtractCurrentCooldown(float cooldown) {
@@ -391,6 +431,7 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void setInPve(boolean inPve) {
         this.inPve = inPve;
+        queueUpdateItem();
     }
 
     public boolean isPveMasterUpgrade() {
@@ -407,6 +448,10 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void setPveMasterUpgrade2(boolean pveMasterUpgrade2) {
         this.pveMasterUpgrade2 = pveMasterUpgrade2;
+    }
+
+    public boolean isUpdateItem() {
+        return updateItem;
     }
 
     public record SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {

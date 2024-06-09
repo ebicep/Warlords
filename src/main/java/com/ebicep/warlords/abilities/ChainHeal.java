@@ -155,7 +155,6 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
             } else {
                 boulder.subtractCurrentCooldown((hitCounter + 1) * 2.5f);
             }
-            wp.updateItem(boulder);
         }
     }
 

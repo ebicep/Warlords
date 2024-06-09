@@ -186,7 +186,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             }
             ability.subtractCurrentCooldown(15);
         }
-        we.updateItems();
     }
 
     @Override

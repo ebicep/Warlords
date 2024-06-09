@@ -67,7 +67,6 @@ public class LightInfusionProtector extends AbstractLightInfusion {
         if (pveMasterUpgrade) {
             for (HolyRadianceProtector holyRadiance : wp.getAbilitiesMatching(HolyRadianceProtector.class)) {
                 holyRadiance.setCurrentCooldown(0);
-                wp.updateItem(holyRadiance);
             }
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,

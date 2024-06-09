@@ -245,7 +245,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public void updateInventory(boolean closeInventory) {
         if (entity instanceof Player player) {
-
             player.getInventory().clear();
 
             for (Option option : game.getOptions()) {
@@ -452,7 +451,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             if (ability.getClass() == skillBoost.ability) {
                 ability.boostSkill(skillBoost, spec);
                 ability.updateDescription(player);
-                updateItems();
+                updateItem(ability);
                 break;
             }
         }

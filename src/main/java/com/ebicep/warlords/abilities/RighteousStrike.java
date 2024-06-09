@@ -83,7 +83,6 @@ public class RighteousStrike extends AbstractStrike {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns((int) (abilityReductionInTicks * 1.6f), CooldownTypes.ABILITY);
             for (PrismGuard prismGuard : wp.getAbilitiesMatching(PrismGuard.class)) {
                 prismGuard.subtractCurrentCooldown(0.8f);
-                wp.updateItem(prismGuard);
             }
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);

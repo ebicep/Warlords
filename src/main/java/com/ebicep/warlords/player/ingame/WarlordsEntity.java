@@ -1631,28 +1631,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateItem(AbstractAbility ability) {
-        if (entity instanceof Player player) {
-            updateItem(player, ability);
-        }
-    }
-
-    public void updateItem(Player player, AbstractAbility ability) {
-        Integer inventoryIndex = spec.getInventoryAbilityIndex(ability);
-        if (inventoryIndex == null || inventoryIndex == 0) { // exclude weapon
-            return;
-        }
-        if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
-            if (!ability.getSecondaryAbilities().isEmpty()) {
-                cooldown.enchant(Enchantment.OXYGEN, 1);
-            }
-            player.getInventory().setItem(inventoryIndex, cooldown.get());
-        } else {
-            player.getInventory().setItem(
-                    inventoryIndex,
-                    ability.getItem()
-            );
-        }
+        ability.queueUpdateItem();
     }
 
     /**
@@ -2467,9 +2446,6 @@ public abstract class WarlordsEntity {
         this.health.tick();
         updateHealth();
         getSpeed().updateSpeed();
-        if (Warlords.LOOP_TICK_COUNTER.get() % 5 == 0) {
-            updateItems();
-        }
         getCooldownManager().reduceCooldowns();
 
         setWasSneaking(isSneaking());
@@ -2621,9 +2597,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateItems() {
-        if (entity instanceof Player player) {
-            spec.getAbilities().forEach(ability -> updateItem(player, ability));
-        }
+        spec.getAbilities().forEach(this::updateItem);
     }
 
     public boolean isSneaking() {

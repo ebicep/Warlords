@@ -136,7 +136,6 @@ public class CodexCollector implements FieldEffect {
                     if (ThreadLocalRandom.current().nextDouble() < 0.25) {
                         AbstractAbility ability = abilityMap.get(event.getAbility());
                         ability.setCurrentCooldown(0);
-                        warlordsPlayer.updateItem(ability);
                     }
                 }
             }

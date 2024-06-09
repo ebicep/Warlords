@@ -116,7 +116,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                         }
                     } else if (pveMasterUpgrade2) {
                         List<AbstractAbility> abilities = wp.getAbilities();
-                        if (abilities.size() == 0) {
+                        if (abilities.isEmpty()) {
                             return;
                         }
                         AbstractAbility rightClick = abilities.get(0);

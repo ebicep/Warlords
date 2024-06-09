@@ -138,7 +138,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                         subtractCurrentCooldown(0.5f);
                         setTicksLeft(getTicksLeft() + 5);
                         finalMaxHits--;
-                        wp.updateItem(Inferno.this);
                     }
                 }
             }

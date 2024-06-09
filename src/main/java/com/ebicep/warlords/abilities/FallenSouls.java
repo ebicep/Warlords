@@ -111,7 +111,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(2);
-                wp.updateItem(spiritLink);
             }
         }
 
@@ -171,7 +170,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(2);
-                wp.updateItem(spiritLink);
             }
 
             reduceCooldowns(wp, hit);
@@ -251,7 +249,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                     for (AbstractAbility ability : wp.getAbilities()) {
                         ability.subtractCurrentCooldownForce(pveMasterUpgrade ? 1.75f : 1.5f);
                     }
-                    wp.updateItems();
 
                     int radius = soulbinding.getRadius();
                     for (WarlordsEntity teammate : PlayerFilter
@@ -270,7 +267,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                         for (AbstractAbility ability : teammate.getAbilities()) {
                             ability.subtractCurrentCooldown(pveCheck);
                         }
-                        teammate.updateItems();
                     }
 
                     if (masterUpgrade) {

@@ -180,7 +180,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         );
         if (!hasPreviousCooldown) {
             hit.getSpec().decreaseAllCooldownTimersBy(1.5f);
-            hit.updateItems();
         }
     }
 
