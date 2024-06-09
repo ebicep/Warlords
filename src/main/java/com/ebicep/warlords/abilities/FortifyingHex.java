@@ -283,7 +283,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
             }
 
             @Override
-            public PlayerNameData addSuffixFromOther() {
+            public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL);
             }
         });

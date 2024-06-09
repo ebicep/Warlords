@@ -232,7 +232,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 })
         ) {
             @Override
-            public PlayerNameData addSuffixFromOther() {
+            public PlayerNameData addPrefixFromOther() {
                 return new PlayerNameData(Component.text("MHEX",
                         NamedTextColor.GREEN),
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
