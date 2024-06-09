@@ -2643,8 +2643,11 @@ public abstract class WarlordsEntity {
     }
 
     public void onRespawn(Location respawnPoint) {
-        if (entity instanceof Player) {
+        if (entity instanceof Player player) {
             entity.clearTitle();
+            player.setFlying(false);
+            player.setFlySpeed(0);
+            player.setGameMode(GameMode.ADVENTURE);
         }
         setRespawnTimerSeconds(-1);
         setEnergy(getMaxEnergy() / 2);
