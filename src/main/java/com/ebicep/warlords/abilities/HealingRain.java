@@ -142,7 +142,9 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                             effect.playEffects();
                         });
                     }
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
 
                     if (ticksElapsed % 10 == 0) {
                         List<WarlordsEntity> teammatesInRain = PlayerFilter
