@@ -201,6 +201,16 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                     0.25
                             );
                         }
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                .append(Component.text(" has infected " + hexTarget.getName() + "!", NamedTextColor.GRAY))
+                        );
+                        hexTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                                .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                .append(Component.text(" has infected you!", NamedTextColor.GRAY))
+                        );
                     }
                 },
                 false,

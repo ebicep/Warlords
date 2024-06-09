@@ -107,9 +107,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
         boolean isSelf = wp.equals(target);
         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                .append(Component.text(" Your Mystical Barrier is now protecting ", NamedTextColor.GRAY))
-                .append(Component.text(isSelf ? "yourself" : target.getName(), NamedTextColor.YELLOW))
-                .append(Component.text("!", NamedTextColor.GRAY))
+                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                .append(Component.text(name, NamedTextColor.YELLOW))
+                .append(Component.text(" is now protecting " + (isSelf ? "yourself" : target.getName()) + "!", NamedTextColor.GRAY))
         );
         if (!isSelf) {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), target.getLocation(), 0, 180, 180, 2);
