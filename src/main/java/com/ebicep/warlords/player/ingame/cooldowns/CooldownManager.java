@@ -52,6 +52,7 @@ public class CooldownManager {
     private final WarlordsEntity warlordsEntity;
     private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
     private int totalCooldowns = 0;
+    private boolean updatePlayerNames = false;
 
     public CooldownManager(WarlordsEntity warlordsEntity) {
         this.warlordsEntity = warlordsEntity;
@@ -78,6 +79,14 @@ public class CooldownManager {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() != null && cooldown.getCooldownObject() == cooldownObject);
     }
 
+    public void tick() {
+        reduceCooldowns();
+        if (updatePlayerNames) {
+            updatePlayerNames = false;
+            updatePlayerNames();
+        }
+    }
+
     public void reduceCooldowns() {
         //List<AbstractCooldown<?>> cooldowns = Collections.synchronizedList(abstractCooldowns);
         synchronized (abstractCooldowns) {
@@ -99,13 +108,17 @@ public class CooldownManager {
         }
     }
 
+    public void queueUpdatePlayerNames() {
+        updatePlayerNames = true;
+    }
+
     public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
         if (abstractCooldown.changesPlayerName()) {
-            updatePlayerNames();
+            queueUpdatePlayerNames();
         }
     }
 
-    public void updatePlayerNames() {
+    private void updatePlayerNames() {
         Game game = warlordsEntity.getGame();
         game.getState(PlayingState.class)
             .ifPresent(playingState -> {
@@ -355,7 +368,7 @@ public class CooldownManager {
         this.totalCooldowns++;
         abstractCooldowns.add(abstractCooldown);
         if (abstractCooldown.changesPlayerName()) {
-            updatePlayerNames();
+            queueUpdatePlayerNames();
         }
     }
 

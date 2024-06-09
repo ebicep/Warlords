@@ -45,7 +45,8 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     private int respiteRadius = 10;
     private int debtRadius = 8;
     private float damagePercent = 15;
-    private float selfDamageInPercentPerSecond = .15f;
+    private float delayedDamageTaken = 90;
+    private int debtTickDuration = 120;
     private boolean inDebt = false;
     private boolean playerInRadius = true;
 
@@ -72,7 +73,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                .append(Component.text(" block radius."))
                                .append(Component.text("\n\nDeath’s Debt", NamedTextColor.LIGHT_PURPLE))
                                .append(Component.text(": Take "))
-                               .append(Component.text(Math.round((selfDamageInPercentPerSecond * 6) * 100) + "%", NamedTextColor.RED))
+                               .append(Component.text(format(delayedDamageTaken) + "%", NamedTextColor.RED))
                                .append(Component.text(" of the damage delayed by "))
                                .append(Component.text("Spirits’ Respite ", NamedTextColor.DARK_GREEN))
                                .append(Component.text("over "))
@@ -245,7 +246,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                             cooldownManager -> {
                                 totemStand.remove();
                             },
-                            6 * 20,
+                            debtTickDuration,
                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                 if (ticksElapsed % 5 == 0) {
                                     circleEffect.playEffects();
@@ -340,7 +341,8 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         Utils.playGlobalSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
 
         // 100% of damage over 6 seconds
-        float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
+        float selfDamageInPercentPerSecond = convertToPercent(tempDeathsDebt.getDelayedDamageTaken() / tempDeathsDebt.getDebtTickDuration() / 20);
+        float damage = (tempDeathsDebt.getDelayedDamage() * selfDamageInPercentPerSecond);
         float debtTrueDamage = (float) (damage * Math.pow(.8,
                 (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()
         ));
@@ -384,14 +386,6 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         this.delayedDamage += delayedDamage;
     }
 
-    public float getSelfDamageInPercentPerSecond() {
-        return selfDamageInPercentPerSecond;
-    }
-
-    public void setSelfDamageInPercentPerSecond(float selfDamageInPercentPerSecond) {
-        this.selfDamageInPercentPerSecond = selfDamageInPercentPerSecond;
-    }
-
     public void setInDebt(boolean inDebt) {
         this.inDebt = inDebt;
     }
@@ -432,5 +426,17 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public float getDelayedDamageTaken() {
+        return delayedDamageTaken;
+    }
+
+    public void setDelayedDamageTaken(float delayedDamageTaken) {
+        this.delayedDamageTaken = delayedDamageTaken;
+    }
+
+    public int getDebtTickDuration() {
+        return debtTickDuration;
     }
 }

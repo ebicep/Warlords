@@ -52,7 +52,7 @@ public enum SkillBoosts {
             TimeWarpPyromancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpPyromancer timeWarp) {
-                    timeWarp.setWarpHealPercentage(40);
+                    timeWarp.setWarpHealPercentage(timeWarp.getWarpHealPercentage() + 10);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
@@ -146,7 +146,7 @@ public enum SkillBoosts {
             IceBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier iceBarrier) {
-                    iceBarrier.setDamageReductionPercent(55);
+                    iceBarrier.setDamageReductionPercent(iceBarrier.getDamageReductionPercent() + 5);
                     iceBarrier.setTickDuration(iceBarrier.getTickDuration() + 40);
                 }
             }
@@ -273,7 +273,7 @@ public enum SkillBoosts {
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust bloodLust) {
-                    bloodLust.setDamageConvertPercent(70);
+                    bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() + 5);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -349,9 +349,9 @@ public enum SkillBoosts {
             Intervene.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Intervene intervene) {
-                    intervene.setMaxDamagePrevented(4000);
-                    intervene.setRadius(15);
-                    intervene.setBreakRadius(20);
+                    intervene.setMaxDamagePrevented(intervene.getMaxDamagePrevented() + 400);
+                    intervene.setRadius(intervene.getRadius() + 5);
+                    intervene.setBreakRadius(intervene.getBreakRadius() + 5);
                 }
             }
     ),
@@ -396,7 +396,7 @@ public enum SkillBoosts {
             RecklessCharge.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge recklessCharge) {
-                    recklessCharge.setStunTimeInTicks(16);
+                    recklessCharge.setStunTimeInTicks(recklessCharge.getStunTimeInTicks() + 6);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -568,7 +568,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader holyRadiance) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
-                    holyRadiance.setMarkDuration(12);
+                    holyRadiance.setMarkDuration(holyRadiance.getMarkDuration() + 4);
                     holyRadiance.setMarkSpeed(holyRadiance.getMarkSpeed() + 15);
                 }
             }
@@ -696,7 +696,7 @@ public enum SkillBoosts {
             WindfuryWeapon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WindfuryWeapon windfuryWeapon) {
-                    windfuryWeapon.setProcChance(45);
+                    windfuryWeapon.setProcChance(windfuryWeapon.getProcChance() + 10);
                     windfuryWeapon.setWeaponDamage(windfuryWeapon.getWeaponDamage() + 30);
                 }
             }
@@ -777,7 +777,7 @@ public enum SkillBoosts {
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance repentance) {
-                    repentance.setDamageConvertPercent(15);
+                    repentance.setDamageConvertPercent(repentance.getDamageConvertPercent() + 5);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
@@ -792,9 +792,9 @@ public enum SkillBoosts {
             DeathsDebt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DeathsDebt deathsDebt) {
-                    deathsDebt.setRespiteRadius(15);
-                    deathsDebt.setDebtRadius(13);
-                    deathsDebt.setSelfDamageInPercentPerSecond(.1f);
+                    deathsDebt.setRespiteRadius(deathsDebt.getRespiteRadius() + 5);
+                    deathsDebt.setDebtRadius(deathsDebt.getDebtRadius() + 5);
+                    deathsDebt.setDelayedDamageTaken(deathsDebt.getDelayedDamageTaken() - 40);
                 }
             }
     ),
@@ -833,7 +833,7 @@ public enum SkillBoosts {
             EarthlivingWeapon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EarthlivingWeapon earthlivingWeapon) {
-                    earthlivingWeapon.setProcChance(60);
+                    earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() + 20);
                 }
             }
     ),
@@ -886,7 +886,7 @@ public enum SkillBoosts {
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse incendiaryCurse) {
-                    incendiaryCurse.setBlindDurationInTicks(50);
+                    incendiaryCurse.setBlindDurationInTicks(incendiaryCurse.getBlindDurationInTicks() + 10);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
                 }
             }
@@ -983,7 +983,7 @@ public enum SkillBoosts {
             PrismGuard.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard prismGuard) {
-                    prismGuard.setProjectileDamageReduction(75);
+                    prismGuard.setProjectileDamageReduction(prismGuard.getProjectileDamageReduction() + 15);
                     prismGuard.setBubbleHealing(prismGuard.getBubbleHealing() + 300);
                 }
             }
@@ -998,7 +998,7 @@ public enum SkillBoosts {
             Vindicate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate vindicate) {
-                    vindicate.setVindicateDamageReduction(40);
+                    vindicate.setVindicateDamageReduction(vindicate.getVindicateDamageReduction() + 10);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -1013,7 +1013,7 @@ public enum SkillBoosts {
             ImpalingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike impalingStrike) {
-                    impalingStrike.setLeechDuration(10);
+                    impalingStrike.setLeechDuration(impalingStrike.getLeechDuration() + 5);
                     abstractAbility.multiplyMinMax(1.1f);
                 }
             }
@@ -1053,7 +1053,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains remedicChains) {
                     abstractAbility.multiplyMinMax(1.1f);
-                    remedicChains.setLinkBreakRadius(25);
+                    remedicChains.setLinkBreakRadius(remedicChains.getLinkBreakRadius() + 10);
                 }
             }
     ),
@@ -1067,7 +1067,7 @@ public enum SkillBoosts {
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma drainingMiasma) {
-                    drainingMiasma.setLeechDuration(10);
+                    drainingMiasma.setLeechDuration(drainingMiasma.getLeechDuration() + 5);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }

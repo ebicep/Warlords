@@ -172,11 +172,12 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     }
 
     private void giveShield(WarlordsEntity from, @Nonnull WarlordsEntity to, int shieldHealth) {
+        Shield shield = new Shield(name, shieldHealth);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name + " Shield",
                 "SHIELD",
                 Shield.class,
-                new Shield(name, shieldHealth),
+                shield,
                 from,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -195,7 +196,20 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                             0
                     );
                 })
-        ));
+        ) {
+            @Override
+            public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+            }
+
+            @Override
+            public PlayerNameData addPrefixFromOther() {
+                return new PlayerNameData(
+                        Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                        we -> we.isTeammate(from)
+                );
+            }
+        });
     }
 
     @Override

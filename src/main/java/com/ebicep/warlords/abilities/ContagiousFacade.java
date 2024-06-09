@@ -97,11 +97,12 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
-                    wp.getCooldownManager().addRegularCooldown(
+                    Shield shield = new Shield(name, shieldHealth);
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name + " Shield",
                             "SHIELD",
                             Shield.class,
-                            new Shield(name, shieldHealth),
+                            shield,
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager1 -> {
@@ -118,7 +119,20 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                     EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3, 0.3, 0.3, 0);
                                 }
                             })
-                    );
+                    ) {
+                        @Override
+                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                        }
+
+                        @Override
+                        public PlayerNameData addPrefixFromOther() {
+                            return new PlayerNameData(
+                                    Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                                    we -> we.isTeammate(wp)
+                            );
+                        }
+                    });
                     if (pveMasterUpgrade) {
                         PlayerFilter.entitiesAround(wp, 4, 4, 4)
                                     .aliveEnemiesOf(wp)

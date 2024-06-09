@@ -81,14 +81,14 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
                 HandlerList.unregisterAll(activeListener);
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
-                    cooldownManager.updatePlayerNames();
+                    cooldownManager.queueUpdatePlayerNames();
                 }
             };
         } else {
             this.onRemoveForce = cooldownManager -> {
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {
-                    cooldownManager.updatePlayerNames();
+                    cooldownManager.queueUpdatePlayerNames();
                 }
             };
         }

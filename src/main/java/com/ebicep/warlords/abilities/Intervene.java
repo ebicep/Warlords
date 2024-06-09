@@ -222,8 +222,21 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     veneTarget
             ) {
                 @Override
+                public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                }
+
+                @Override
                 public void multiplyKB(Vector currentVector) {
                     currentVector.zero();
+                }
+
+                @Override
+                public PlayerNameData addPrefixFromOther() {
+                    return new PlayerNameData(
+                            Component.text((int) (tempIntervene.getMaxDamagePrevented() - tempIntervene.getDamagePrevented() * 2), NamedTextColor.GOLD),
+                            we -> we.isTeammate(wp)
+                    );
                 }
             };
 
@@ -261,8 +274,16 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         return new InterveneBranch(abilityTree, this);
     }
 
+    public float getMaxDamagePrevented() {
+        return maxDamagePrevented;
+    }
+
     public float getDamagePrevented() {
         return damagePrevented;
+    }
+
+    public void setMaxDamagePrevented(float maxDamagePrevented) {
+        this.maxDamagePrevented = maxDamagePrevented;
     }
 
     public void addDamagePrevented(float amount) {
@@ -283,14 +304,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public void setRadius(int radius) {
         this.radius = radius;
-    }
-
-    public float getMaxDamagePrevented() {
-        return maxDamagePrevented;
-    }
-
-    public void setMaxDamagePrevented(float maxDamagePrevented) {
-        this.maxDamagePrevented = maxDamagePrevented;
     }
 
     public WarlordsEntity getCaster() {

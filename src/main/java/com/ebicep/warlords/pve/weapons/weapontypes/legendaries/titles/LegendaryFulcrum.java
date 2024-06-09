@@ -76,11 +76,12 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                 }
                 secondCounter = COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel();
                 float shieldHealth = player.getMaxBaseHealth() * SHIELD_PERCENT / 100;
+                Shield shield = new Shield(getTitleName(), shieldHealth);
                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getTitleName(),
                         null,
                         Shield.class,
-                        new Shield(getTitleName(), shieldHealth),
+                        shield,
                         player,
                         CooldownTypes.WEAPON,
                         cooldownManager -> {
@@ -90,6 +91,19 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                     @Override
                     public float addEnergyGainPerTick(float energyGainPerTick) {
                         return energyGainPerTick + epsBoost;
+                    }
+
+                    @Override
+                    public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                        event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                    }
+
+                    @Override
+                    public PlayerNameData addPrefixFromOther() {
+                        return new PlayerNameData(
+                                Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                                we -> we.isTeammate(player)
+                        );
                     }
                 });
             }

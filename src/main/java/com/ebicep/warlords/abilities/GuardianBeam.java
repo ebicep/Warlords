@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractBeam;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -113,11 +114,12 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                 to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
             }
             Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
+            GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
             to.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name + " Shield",
                     "SHIELD",
                     Shield.class,
-                    new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent),
+                    shield,
                     from,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -134,7 +136,20 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                             EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
                         }
                     })
-            ));
+            ) {
+                @Override
+                public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                }
+
+                @Override
+                public PlayerNameData addPrefixFromOther() {
+                    return new PlayerNameData(
+                            Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                            we -> we.isTeammate(from)
+                    );
+                }
+            });
         }
     }
 
