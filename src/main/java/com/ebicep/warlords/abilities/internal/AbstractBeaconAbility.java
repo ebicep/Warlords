@@ -127,7 +127,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 tickDuration + 1,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     //particle effects
-                    if (ticksElapsed % 5 == 0) {
+                    if (ticksElapsed % 3 == 0) {
                         teamCircleEffect.playEffects();
                     }
                     whileActive(wp, cooldown, ticksLeft, ticksElapsed);

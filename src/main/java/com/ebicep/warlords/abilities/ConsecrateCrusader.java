@@ -78,7 +78,9 @@ public class ConsecrateCrusader extends AbstractConsecrate {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Location updatedLocation = wp.getLocation();
                     circleEffect.setCenter(updatedLocation);
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 30 == 0) {
                         AtomicInteger energyGiven = new AtomicInteger();
                         PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)

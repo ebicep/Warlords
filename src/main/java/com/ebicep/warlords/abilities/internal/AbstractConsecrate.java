@@ -121,7 +121,9 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 2 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                     .aliveEnemiesOf(wp)

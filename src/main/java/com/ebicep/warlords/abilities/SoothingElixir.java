@@ -127,7 +127,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                             new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
                             new AreaEffect(1, Particle.DRIP_WATER).particlesPerSurface(0.025)
                     );
-                    BukkitTask particleTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
+                    BukkitTask particleTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 2);
                     wp.getGame().registerGameTask(particleTask);
 
                     EffectUtils.playFirework(newLoc, FireworkEffect.builder()
