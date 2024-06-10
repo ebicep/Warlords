@@ -2382,7 +2382,7 @@ public abstract class WarlordsEntity {
         this.walkSpeed = walkspeed;
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
-            player.setWalkSpeed(this.walkSpeed);
+            player.setWalkSpeed(MathUtils.clamp(this.walkSpeed, -1f, 1f));
         } else if (entity instanceof LivingEntity livingEntity) {
             livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
         }

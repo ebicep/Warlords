@@ -814,7 +814,7 @@ public enum SkillBoosts {
             }
     ),
     BOULDER("Boulder",
-            Component.text("Increase the damage of Boulder by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Boulder by 25%.", NamedTextColor.GRAY),
             Component.text("Increase the damage you deal with Boulder by ", NamedTextColor.GREEN)
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
