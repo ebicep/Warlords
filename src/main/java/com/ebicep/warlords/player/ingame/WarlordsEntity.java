@@ -383,7 +383,7 @@ public abstract class WarlordsEntity {
 
         debugMessage.append(Component.newline()).append(Component.text("Crit Modifiers:", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
-        if (critChance > 0) {
+        if (critChance > 0 && !flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
             float previousCC = critChance;
             float previousCM = critMultiplier;
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
@@ -558,7 +558,7 @@ public abstract class WarlordsEntity {
                         remainingVeneDamage,
                         isCrit ? 100 : 0,
                         100,
-                        EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                        EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
@@ -570,7 +570,8 @@ public abstract class WarlordsEntity {
                         damageValue,
                         damageValue,
                         isCrit ? 100 : 0,
-                        100
+                        100,
+                        EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -682,7 +683,7 @@ public abstract class WarlordsEntity {
                             isCrit ? 100 : 0,
                             100,
                             true,
-                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES)
+                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     ));
 
                     addAbsorbed(-(shield.getShieldHealth()));

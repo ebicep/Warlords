@@ -182,7 +182,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                             currentDamageValue,
                             isCrit ? 100 : 0,
                             100,
-                            EnumSet.of(InstanceFlags.LAST_STAND_FROM_SHIELD)
+                            EnumSet.of(InstanceFlags.LAST_STAND_FROM_SHIELD, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );
                 }
 
@@ -196,7 +196,8 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                             currentDamageValue,
                             currentDamageValue,
                             isCrit ? 100 : 0,
-                            100
+                            100,
+                            EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );
                 }
             });

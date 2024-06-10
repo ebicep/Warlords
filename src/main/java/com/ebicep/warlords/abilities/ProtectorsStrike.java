@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.ProtectorStrikeBranch;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 
 public class ProtectorsStrike extends AbstractStrike {
@@ -103,7 +105,8 @@ public class ProtectorsStrike extends AbstractStrike {
                     currentDamageValue * selfHealingMultiplier,
                     currentDamageValue * selfHealingMultiplier,
                     isCrit ? 100 : 0,
-                    100
+                    100,
+                    EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
             ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class)
                         .filterCooldownFrom(wp)
@@ -126,7 +129,8 @@ public class ProtectorsStrike extends AbstractStrike {
                             healing,
                             healing,
                             isCrit ? 100 : 0,
-                            100
+                            100,
+                            EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
@@ -148,7 +152,8 @@ public class ProtectorsStrike extends AbstractStrike {
                             currentDamageValue * allyHealingMultiplier,
                             currentDamageValue * allyHealingMultiplier,
                             isCrit ? 100 : 0,
-                            100
+                            100,
+                            EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
