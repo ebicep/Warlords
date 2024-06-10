@@ -2647,7 +2647,6 @@ public abstract class WarlordsEntity {
         if (entity instanceof Player player) {
             entity.clearTitle();
             player.setFlying(false);
-            player.setFlySpeed(.5f);
             player.setGameMode(GameMode.ADVENTURE);
         }
         setRespawnTimerSeconds(-1);
