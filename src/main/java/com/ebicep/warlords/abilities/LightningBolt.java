@@ -18,11 +18,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     private double hitbox = 3;
 
     public LightningBolt() {
-        super("Lightning Bolt", 252, 340, 0, 60, 25, 180, 2.5, 60, false);
+        this(252, 340, 0, 0);
     }
 
     public LightningBolt(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
@@ -155,27 +157,35 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand bolt = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
-            armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.JUNGLE_SAPLING));
-            armorStand.setHeadPose(new EulerAngle(-Math.atan2(
-                    projectile.getSpeed().getY(),
-                    Math.sqrt(
-                            Math.pow(projectile.getSpeed().getX(), 2) +
-                                    Math.pow(projectile.getSpeed().getZ(), 2)
-                    )
-            ), 0, 0));
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation)
+                .pitch(0)
+                .yaw(startingLocation.getYaw() - 90);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+            itemDisplay.setItemStack(new ItemStack(Material.JUNGLE_SAPLING));
+            itemDisplay.setTeleportDuration(1);
+            itemDisplay.setBrightness(new Display.Brightness(15, 15));
+            itemDisplay.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 0, 0, 1),
+                    new Vector3f(2f),
+                    new AxisAngle4f()
+            ));
         });
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {
-                bolt.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation)
+                        .pitch(0)
+                        .yaw(currentLocation.getYaw() - 90);
+                display.teleport(location);
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
-                bolt.remove();
+                display.remove();
             }
         });
     }

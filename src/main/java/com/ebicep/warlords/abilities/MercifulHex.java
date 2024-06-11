@@ -12,7 +12,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.MercifulHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -22,12 +21,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -243,7 +244,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(-.5f);
+        return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(-.5f);
     }
 
     @Override
@@ -263,38 +264,46 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
-            armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.WARPED_FENCE));
-            armorStand.setHeadPose(new EulerAngle(-Math.atan2(
-                    projectile.getSpeed().getY(),
-                    Math.sqrt(
-                            Math.pow(projectile.getSpeed().getX(), 2) +
-                                    Math.pow(projectile.getSpeed().getZ(), 2)
-                    )
-            ), 0, 0));
+
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation)
+                .pitch(0);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+            itemDisplay.setItemStack(new ItemStack(Material.WARPED_FENCE));
+            itemDisplay.setTeleportDuration(1);
+            itemDisplay.setBrightness(new Display.Brightness(15, 15));
+            itemDisplay.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                    new Vector3f(1f),
+                    new AxisAngle4f()
+            ));
         });
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {
-                fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-
-                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
-                for (float i = 0; i < 2; i++) {
-                    double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
-                    double width = 0.35D;
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation)
+                        .pitch(0);
+                display.teleport(location);
+                if (projectile.getTicksLived() % 3 == 0) {
                     EffectUtils.displayParticle(
                             Particle.SPELL,
-                            center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                            2
+                            new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).left(1f),
+                            1
+                    );
+                    EffectUtils.displayParticle(
+                            Particle.SPELL,
+                            new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).right(1f),
+                            1
                     );
                 }
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
-                fallenSoul.remove();
+                display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
                 EffectUtils.displayParticle(
                         Particle.EXPLOSION_LARGE,

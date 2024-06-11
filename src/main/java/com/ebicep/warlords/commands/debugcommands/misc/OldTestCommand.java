@@ -1,9 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -11,10 +13,18 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -115,6 +125,30 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
+
+            LocationBuilder location = new LocationBuilder(player.getLocation())
+                    .pitch(0)
+//                    .yaw(player.getLocation().getYaw() - 90)
+                    .addY(2);
+            ItemDisplay display = player.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+                itemDisplay.setItemStack(new ItemStack(Material.WARPED_FENCE));
+                itemDisplay.setTeleportDuration(1);
+                itemDisplay.setBrightness(new Display.Brightness(15, 15));
+                itemDisplay.setTransformation(new Transformation(
+                        new Vector3f(),
+                        new AxisAngle4f((float) Math.toRadians(player.getPitch()), 1, 0, 0),
+                        new Vector3f(1f),
+                        new AxisAngle4f()
+                ));
+            });
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    display.remove();
+                }
+            }.runTaskLater(Warlords.getInstance(), 20 * 10);
+
 
 //            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
 //            partyPlayerPair.getA().getRegularGamesMenu().addPlayer(Team.BLUE, player.getUniqueId(), Specializations.PYROMANCER);
