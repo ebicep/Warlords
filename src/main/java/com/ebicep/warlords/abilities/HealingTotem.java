@@ -49,7 +49,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
     private FloatModifiable radius = new FloatModifiable(7);
     private int tickDuration = 120;
     private int crippleDuration = 6;
-    private int healingIncrement = 25;
+    private float healingIncrement = 25;
 
     public HealingTotem() {
         this(null, null);
@@ -67,7 +67,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                    .append(Component.text(" block radius for "))
                                    .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                                    .append(Component.text(" health every second. The healing will gradually decrease by "))
-                                   .append(Component.text(healingIncrement + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(format(healingIncrement) + "%", NamedTextColor.GREEN))
                                    .append(Component.text(" until the final proc which heals for the normal amount once again. "))
                                    .append(Component.text("Lasts "))
                                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
@@ -83,7 +83,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                    .append(Component.text(" block radius for "))
                                    .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
                                    .append(Component.text(" health every second. The healing will gradually decrease by "))
-                                   .append(Component.text(healingIncrement + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(format(healingIncrement) + "%", NamedTextColor.GREEN))
                                    .append(Component.text(" until the final proc which heals for the normal amount once again. "))
                                    .append(Component.text("Lasts "))
                                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
@@ -448,11 +448,11 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
         this.crippleDuration = crippleDuration;
     }
 
-    public int getHealingIncrement() {
+    public float getHealingIncrement() {
         return healingIncrement;
     }
 
-    public void setHealingIncrement(int healingIncrement) {
+    public void setHealingIncrement(float healingIncrement) {
         this.healingIncrement = healingIncrement;
     }
 
