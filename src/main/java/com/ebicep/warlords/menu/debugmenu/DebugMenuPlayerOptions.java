@@ -28,6 +28,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -224,9 +225,31 @@ public class DebugMenuPlayerOptions {
                 (m, e) -> PlayerOptionMenus.openCooldownsMenu(player, target)
         );
         secondRow.add(new ItemBuilder(Material.ENDER_EYE)
-                        .name(Component.text("Teleport To", NamedTextColor.GREEN))
+                        .name(Component.text("Teleport", NamedTextColor.GREEN))
+                        .lore(
+                                Component.textOfChildren(
+                                        Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text("Teleport to", NamedTextColor.YELLOW)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text("Teleport here", NamedTextColor.YELLOW)
+                                )
+                        )
                         .get(),
-                (m, e) -> PlayerOptionMenus.openTeleportLocations(player, target)
+                (m, e) -> {
+                    if (e.isLeftClick()) {
+                        PlayerOptionMenus.openTeleportLocations(player, target);
+                    } else {
+                        target.teleport(player.getLocation());
+                        sendDebugMessage(player, Component.text("Teleported ", NamedTextColor.GREEN)
+                                                          .append(coloredName)
+                                                          .append(Component.text(" to you"))
+                        );
+                    }
+                }
         );
         secondRow.add(new ItemBuilder(Material.BLACK_BANNER)
                         .name(Component.text("Flag Options", NamedTextColor.GREEN))
