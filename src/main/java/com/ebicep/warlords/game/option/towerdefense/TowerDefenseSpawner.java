@@ -22,6 +22,8 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.dag.Node;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.citizensnpcs.api.ai.EntityTarget;
+import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
 import net.citizensnpcs.api.ai.event.NavigationCompleteEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
@@ -146,11 +148,34 @@ public class TowerDefenseSpawner implements Option, Listener {
         }
     }
 
+    @EventHandler
+    public void onMobStartNavigating(NavigationBeginEvent event) {
+        NPC npc = event.getNPC();
+        // handle setting targetedBy/targeting
+        EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
+        if (entityTarget == null) {
+            return;
+        }
+        if (!(npc.data().get(WarlordsEntity.WARLORDS_ENTITY_METADATA) instanceof WarlordsNPC warlordsNPC)) {
+            return;
+        }
+        if (!(Warlords.getPlayer(entityTarget.getTarget()) instanceof WarlordsNPC target)) {
+            return;
+        }
+        TowerDefenseOption.TowerDefenseMobData mobData = mobs.get(warlordsNPC.getMob());
+        TowerDefenseOption.TowerDefenseMobData targetedMobData = mobs.get(target.getMob());
+        if (mobData == null || targetedMobData == null) {
+            return;
+        }
+        mobData.setTargeting(target);
+        targetedMobData.getTargetedBy().add(warlordsNPC);
+    }
+
     public TowerDefenseDirectAcyclicGraph getPathFromData(TowerDefenseOption.TowerDefenseAttackingMobData mobData) {
         return paths.get(mobData.getSpawnLocation()).get(mobData.getPathIndex());
     }
 
-    private static void assignNextTargetNode(
+    public static void assignNextTargetNode(
             TowerDefenseOption.TowerDefenseAttackingMobData mobData,
             int lastNodeIdentifier,
             List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges
@@ -426,6 +451,14 @@ public class TowerDefenseSpawner implements Option, Listener {
                 wave.tick(towerDefenseOption);
             }
         }.runTaskTimer(0, 0));
+    }
+
+    public TowerDefenseOption getTowerDefenseOption() {
+        return towerDefenseOption;
+    }
+
+    public ConcurrentHashMap<AbstractMob, TowerDefenseOption.TowerDefenseMobData> getMobs() {
+        return mobs;
     }
 
     public Map<Location, Team> getTeamSpawnLocations() {

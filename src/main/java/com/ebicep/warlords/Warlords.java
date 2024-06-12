@@ -143,7 +143,7 @@ public class Warlords extends JavaPlugin {
     @Nullable
     public static WarlordsEntity getPlayer(@Nullable Entity entity) {
         if (entity != null) {
-            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER")
+            Optional<MetadataValue> metadata = entity.getMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA)
                                                      .stream()
                                                      .filter(e -> e.value() instanceof WarlordsEntity)
                                                      .findAny();
@@ -177,7 +177,7 @@ public class Warlords extends JavaPlugin {
         Location loc = SPAWN_POINTS.remove(player);
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            p.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
+            p.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
             if (loc != null) {
                 p.teleport(getRejoinPoint(player));
             }
@@ -205,7 +205,7 @@ public class Warlords extends JavaPlugin {
         }
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            p.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
+            p.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
         }
     }
 
@@ -270,7 +270,7 @@ public class Warlords extends JavaPlugin {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.removePotionEffect(PotionEffectType.BLINDNESS);
                 player.getActivePotionEffects().clear();
-                player.removeMetadata("WARLORDS_PLAYER", this);
+                player.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, this);
                 player.clearTitle();
             }
         } catch (Exception e) {

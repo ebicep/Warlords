@@ -635,6 +635,9 @@ public abstract class AbstractMob implements Mob {
         return dynamicFlags;
     }
 
+    public PveOption getPveOption() {
+        return pveOption;
+    }
 
     /**
      * Method is guaranteed to be called after the mob has been killed/removed from game
@@ -643,7 +646,7 @@ public abstract class AbstractMob implements Mob {
     }
 
     public double getDefaultAttackRange() {
-        return 1;
+        return 2;
     }
 
 }

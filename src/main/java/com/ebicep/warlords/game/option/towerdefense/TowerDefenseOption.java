@@ -67,11 +67,12 @@ public class TowerDefenseOption implements PveOption, Listener {
     private final AtomicInteger ticksElapsed = new AtomicInteger(0);
     private final Map<WarlordsEntity, TowerDefensePlayerInfo> playerInfo = new HashMap<>();
     private final Map<Team, TowerDefenseCastle> castles = new LinkedHashMap<>();
+    private final List<Entity> debugEntities = new ArrayList<>();
     private Game game;
     private TowerBuildOption towerBuildOption;
     private TowerDefenseSpawner towerDefenseSpawner;
     private boolean debug = false;
-    private final List<Entity> debugEntities = new ArrayList<>();
+    private boolean movement = true; // if attacking mobs should move (debug)
 
     public boolean isDebug() {
         return debug;
@@ -98,6 +99,46 @@ public class TowerDefenseOption implements PveOption, Listener {
             debugEntities.forEach(Entity::remove);
             debugEntities.clear();
         }
+    }
+
+    public boolean isMovement() {
+        return movement;
+    }
+
+    public void toggleMovement() {
+        movement = !movement;
+    }
+
+    private void renderNode(TowerDefenseDirectAcyclicGraph towerDefensePath, Node<Location> node) {
+        Location location = node.getValue();
+        debugEntities.add(location.getWorld().spawn(location.clone().add(0, 2, 0), TextDisplay.class, display -> {
+            display.text(Component.text("NODE (" + NumberFormat.formatOptionalTenths(towerDefensePath.getNodeDistanceToEnd().get(node)) + ")", NamedTextColor.DARK_AQUA));
+            display.setBillboard(Display.Billboard.CENTER);
+            display.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f(),
+                    new Vector3f(2),
+                    new AxisAngle4f()
+            ));
+        }));
+    }
+
+    private void renderEdge(Node<Location> from, TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge) {
+        Location fromLocation = from.getValue();
+        Location toLocation = edge.getTo().getValue();
+        debugEntities.add(toLocation.getWorld()
+                                    .spawn(new LocationBuilder(fromLocation).faceTowards(toLocation).forward(edge.getDistance() / 2).addY(2), TextDisplay.class, display -> {
+                                        display.text(Component.text(edge.getPathDirection() + " (" + NumberFormat.formatOptionalTenths(edge.getDistance()) + ")",
+                                                NamedTextColor.AQUA
+                                        ));
+                                        display.setBillboard(Display.Billboard.CENTER);
+                                        display.setTransformation(new Transformation(
+                                                new Vector3f(),
+                                                new AxisAngle4f(),
+                                                new Vector3f(2),
+                                                new AxisAngle4f()
+                                        ));
+                                    }));
     }
 
     public TowerDefenseOption addCastle(Team team, Location location, float maxHealth) {
@@ -176,38 +217,6 @@ public class TowerDefenseOption implements PveOption, Listener {
                 }
             }
         }.runTaskTimer(0, 0);
-    }
-
-    private void renderNode(TowerDefenseDirectAcyclicGraph towerDefensePath, Node<Location> node) {
-        Location location = node.getValue();
-        debugEntities.add(location.getWorld().spawn(location.clone().add(0, 2, 0), TextDisplay.class, display -> {
-            display.text(Component.text("NODE (" + NumberFormat.formatOptionalTenths(towerDefensePath.getNodeDistanceToEnd().get(node)) + ")", NamedTextColor.DARK_AQUA));
-            display.setBillboard(Display.Billboard.CENTER);
-            display.setTransformation(new Transformation(
-                    new Vector3f(),
-                    new AxisAngle4f(),
-                    new Vector3f(2),
-                    new AxisAngle4f()
-            ));
-        }));
-    }
-
-    private void renderEdge(Node<Location> from, TowerDefenseDirectAcyclicGraph.TowerDefenseEdge edge) {
-        Location fromLocation = from.getValue();
-        Location toLocation = edge.getTo().getValue();
-        debugEntities.add(toLocation.getWorld()
-                                    .spawn(new LocationBuilder(fromLocation).faceTowards(toLocation).forward(edge.getDistance() / 2).addY(2), TextDisplay.class, display -> {
-                                        display.text(Component.text(edge.getPathDirection() + " (" + NumberFormat.formatOptionalTenths(edge.getDistance()) + ")",
-                                                NamedTextColor.AQUA
-                                        ));
-                                        display.setBillboard(Display.Billboard.CENTER);
-                                        display.setTransformation(new Transformation(
-                                                new Vector3f(),
-                                                new AxisAngle4f(),
-                                                new Vector3f(2),
-                                                new AxisAngle4f()
-                                        ));
-                                    }));
     }
 
     @Override
@@ -437,8 +446,26 @@ public class TowerDefenseOption implements PveOption, Listener {
 
     public static class TowerDefenseMobData extends MobData {
 
+        private final Set<WarlordsEntity> targetedBy = new HashSet<>();
+        @Nullable
+        private WarlordsEntity targeting = null;
+
         public TowerDefenseMobData(int spawnTick) {
             super(spawnTick);
+        }
+
+        @Nullable
+        public WarlordsEntity getTargeting() {
+            return targeting;
+        }
+
+        public void setTargeting(@Nullable WarlordsEntity targeting) {
+            this.targeting = targeting;
+        }
+
+        public Set<WarlordsEntity> getTargetedBy() {
+            targetedBy.removeIf(WarlordsEntity::isDead);
+            return targetedBy;
         }
     }
 
@@ -533,7 +560,6 @@ public class TowerDefenseOption implements PveOption, Listener {
             this.position = position;
         }
 
-
         public int getAttackingCastleTime() {
             return attackingCastleTime;
         }
@@ -549,6 +575,7 @@ public class TowerDefenseOption implements PveOption, Listener {
         public boolean isAttackingCastle() {
             return attackingCastleTime > -1;
         }
+
     }
 
 }

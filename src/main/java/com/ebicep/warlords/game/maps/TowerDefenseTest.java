@@ -14,17 +14,12 @@ import com.ebicep.warlords.game.option.towerdefense.TowerBuildOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
 import com.ebicep.warlords.game.option.towerdefense.path.TowerDefenseDirectAcyclicGraph;
-import com.ebicep.warlords.game.option.towerdefense.waves.*;
-import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.dag.Node;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.title.Title;
-import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 
 import java.util.EnumSet;
@@ -159,98 +154,98 @@ public class TowerDefenseTest extends GameMap {
 
         options.add(new TowerDefenseSpawner()
                 .addPath(blueSpawn, bluePath)
-                .add(new FixedWave()
-                        .delay(20 * SECOND)
-                        .add(Mob.TD_ZOMBIE, 20, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_ZOMBIE, 35, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_ZOMBIE, 25, 10)
-                        .add(Mob.TD_SKELETON, 5, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_ZOMBIE, 35, 10)
-                        .add(Mob.TD_SKELETON, 10, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_ZOMBIE, 5, 10)
-                        .add(Mob.TD_SKELETON, 15, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 10, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_ZOMBIE, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_SKELETON, 15, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 10, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_ZOMBIE, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_SKELETON, 15, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_HUSK, 5, 10)
-                        .add(Mob.TD_ZOMBIE, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_SKELETON, 15, 10)
-                        .add(Mob.TD_HUSK, 2, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 7, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_HUSK, 10, 10)
-                        .add(Mob.TD_SPIDER, 5, 10)
-                        .add(Mob.TD_ZOMBIE, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_SPIDER, 5, 10)
-                        .add(Mob.TD_SKELETON, 20, 10)
-                        .add(Mob.TD_HUSK, 7, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_SPIDER, 7, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                )
-                .add(new FixedWave()
-                        .add(Mob.TD_HUSK, 10, 10)
-                        .add(Mob.TD_STRAY, 5, 10)
-                        .add(Mob.TD_SPIDER, 5, 10)
-                        .add(Mob.TD_ZOMBIE, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_STRAY, 5, 10)
-                        .add(Mob.TD_SPIDER, 10, 10)
-                        .add(Mob.TD_SKELETON, 15, 10)
-                        .add(Mob.TD_HUSK, 5, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
-                        .add(Mob.TD_STRAY, 10, 10)
-                        .add(Mob.TD_SPIDER, 5, 10)
-                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
-                )
-                .applyToAllWaves(wave -> {
-                            for (int i = 0; i < wave.size(); i++) {
-                                TowerDefenseWave w = wave.get(i);
-                                w.getActions().add(0, new TowerDefenseDelayWaveAction(40));
-                                TextComponent waveText = Component.text("Wave " + (i + 1), NamedTextColor.YELLOW);
-                                w.getActions().add(0, new AnnounceWaveWaveAction()
-                                        .addTitle(Title.title(
-                                                        waveText,
-                                                        Component.empty(),
-                                                        Title.Times.times(Ticks.duration(10), Ticks.duration(30), Ticks.duration(10))
-                                                )
-                                        )
-                                        .addChatMessage(waveText)
-                                );
-                                w.getEndConditions().add(WaveEndCondition.allMobsDeadAnySide());
-                            }
-                        }
-                )
+//                .add(new FixedWave()
+//                        .delay(20 * SECOND)
+//                        .add(Mob.TD_ZOMBIE, 20, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_ZOMBIE, 35, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_ZOMBIE, 25, 10)
+//                        .add(Mob.TD_SKELETON, 5, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_ZOMBIE, 35, 10)
+//                        .add(Mob.TD_SKELETON, 10, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_ZOMBIE, 5, 10)
+//                        .add(Mob.TD_SKELETON, 15, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 10, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_ZOMBIE, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_SKELETON, 15, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 10, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_ZOMBIE, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_SKELETON, 15, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_HUSK, 5, 10)
+//                        .add(Mob.TD_ZOMBIE, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_SKELETON, 15, 10)
+//                        .add(Mob.TD_HUSK, 2, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 7, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_HUSK, 10, 10)
+//                        .add(Mob.TD_SPIDER, 5, 10)
+//                        .add(Mob.TD_ZOMBIE, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_SPIDER, 5, 10)
+//                        .add(Mob.TD_SKELETON, 20, 10)
+//                        .add(Mob.TD_HUSK, 7, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_SPIDER, 7, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                )
+//                .add(new FixedWave()
+//                        .add(Mob.TD_HUSK, 10, 10)
+//                        .add(Mob.TD_STRAY, 5, 10)
+//                        .add(Mob.TD_SPIDER, 5, 10)
+//                        .add(Mob.TD_ZOMBIE, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_STRAY, 5, 10)
+//                        .add(Mob.TD_SPIDER, 10, 10)
+//                        .add(Mob.TD_SKELETON, 15, 10)
+//                        .add(Mob.TD_HUSK, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_VILLAGER, 5, 10)
+//                        .add(Mob.TD_STRAY, 10, 10)
+//                        .add(Mob.TD_SPIDER, 5, 10)
+//                        .add(Mob.TD_ZOMBIE_BABY, 5, 10)
+//                )
+//                .applyToAllWaves(wave -> {
+//                            for (int i = 0; i < wave.size(); i++) {
+//                                TowerDefenseWave w = wave.get(i);
+//                                w.getActions().add(0, new TowerDefenseDelayWaveAction(40));
+//                                TextComponent waveText = Component.text("Wave " + (i + 1), NamedTextColor.YELLOW);
+//                                w.getActions().add(0, new AnnounceWaveWaveAction()
+//                                        .addTitle(Title.title(
+//                                                        waveText,
+//                                                        Component.empty(),
+//                                                        Title.Times.times(Ticks.duration(10), Ticks.duration(30), Ticks.duration(10))
+//                                                )
+//                                        )
+//                                        .addChatMessage(waveText)
+//                                );
+//                                w.getEndConditions().add(WaveEndCondition.allMobsDeadAnySide());
+//                            }
+//                        }
+//                )
         );
         return options;
     }

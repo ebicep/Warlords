@@ -73,7 +73,7 @@ public class LocationUtils {
         return lookingAt(player2, eye, 0.925);
     }
 
-    private static boolean lookingAt(LivingEntity player2, Location eye, double dot) {
+    public static boolean lookingAt(LivingEntity player2, Location eye, double dot) {
         return getDotToLocation(eye, player2.getEyeLocation()) > dot;
     }
 

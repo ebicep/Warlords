@@ -63,6 +63,7 @@ public class WarlordsNPC extends WarlordsEntity {
     ) {
         super(npc.getUniqueId(), name, npc.getEntity(), game, team, playerClass);
         this.npc = npc;
+        this.npc.data().set(WARLORDS_ENTITY_METADATA, this);
         this.mob = warlordsMob;
         this.mobHologram = mobHologram;
         if (warlordsMob != null && warlordsMob.getLevel() > 0) {
@@ -79,7 +80,7 @@ public class WarlordsNPC extends WarlordsEntity {
         this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
         this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
         updateEntity();
-        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        entity.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
         setMaxHealthAndHeal(maxHealth);
 
@@ -248,7 +249,7 @@ public class WarlordsNPC extends WarlordsEntity {
         }
         updateHealth();
         entity.setCustomNameVisible(true);
-        entity.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        entity.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
     }
 
     @Override

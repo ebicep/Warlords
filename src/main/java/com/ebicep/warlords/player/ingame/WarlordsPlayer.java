@@ -198,7 +198,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                                   .append(Component.text(" " + Math.round(this.getCurrentHealth()) + "❤",
                                           NamedTextColor.RED
                                   ))); // TODO add level and class into the name of this jimmy
-        jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        jimmy.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
         AttributeInstance attribute = jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(0);
@@ -373,8 +373,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public void updateEntity() {
         if (entity instanceof Player player) {
-            player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
-            player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+            player.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
+            player.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
             player.setWalkSpeed(walkSpeed);
             player.setMaxHealth(40);
             player.setLevel((int) this.getMaxEnergy());

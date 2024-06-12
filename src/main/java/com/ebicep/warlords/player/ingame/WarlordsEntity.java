@@ -79,6 +79,7 @@ import java.util.stream.Collectors;
 
 public abstract class WarlordsEntity {
 
+    public static final String WARLORDS_ENTITY_METADATA = "WARLORDS_ENTITY";
     //RED << (Receiving from enemy / Negative from team?)
     public static final Component RECEIVE_ARROW_RED = Component.text("«", NamedTextColor.RED);
     //GREEN << (Receiving from team / Positive from enemy?)
@@ -3021,7 +3022,7 @@ public abstract class WarlordsEntity {
         if (!(getEntity() instanceof Player)) {
             getEntity().remove();
         }
-        getEntity().removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
+        getEntity().removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
         FlagHolder.dropFlagForPlayer(this);
         getMinuteStats().getEntries().clear();
         getSecondStats().getEntries().forEach(entry -> {

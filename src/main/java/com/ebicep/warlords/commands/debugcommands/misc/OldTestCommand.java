@@ -3,8 +3,13 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -13,18 +18,11 @@ import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Transformation;
-import org.joml.AxisAngle4f;
-import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -124,28 +122,66 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
-            Location location = player.getLocation();
-            Display display = location.getWorld().spawn(
-                    new LocationBuilder(location)
-                            .pitch(0)
-                    ,
-                    ItemDisplay.class,
-                    d -> {
-                        d.setTransformation(new Transformation(
-                                new Vector3f(0, 2, 0),
-                                new AxisAngle4f(),
-                                new Vector3f(1.5f),
-                                new AxisAngle4f()
-                        ));
-                        d.setItemStack(new ItemStack(Material.BROWN_MUSHROOM));
-                    }
-            );
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    display.remove();
+
+            Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
+            for (Option option : game.getOptions()) {
+                if (option instanceof TowerDefenseOption towerDefenseOption) {
+                    towerDefenseOption.getMobsMap().forEach((abstractMob, towerDefenseMobData) -> {
+                        if (towerDefenseMobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData) {
+                            Location storedLocation = abstractMob.getNpc().getStoredLocation();
+                            LocationBuilder locationBuilder = new LocationBuilder(storedLocation)
+                                    .addY(1.75);
+                            for (int i = 0; i < 10; i++) {
+                                EffectUtils.displayParticle(
+                                        Particle.FLAME,
+                                        locationBuilder,
+                                        1
+                                );
+                                locationBuilder.forward(1);
+                            }
+                            for (Location location : LocationUtils.getCircle(storedLocation, 5, 30)) {
+                                location.add(0, .7, 0);
+                                EffectUtils.displayParticle(
+                                        Particle.FLAME,
+                                        location,
+                                        1
+                                );
+                                //if (LocationUtils.lookingAt((LivingEntity) abstractMob.getNpc().getEntity(), location, 0.6)) {
+                                if (LocationUtils.getDotToLocation(storedLocation, location) > .5) {
+                                    EffectUtils.playParticleLinkAnimation(
+                                            storedLocation,
+                                            location,
+                                            Particle.VILLAGER_HAPPY
+                                    );
+                                }
+                            }
+                        }
+                    });
                 }
-            }.runTaskLater(Warlords.getInstance(), 10 * 20);
+            }
+
+//            Location location = player.getLocation();
+//            Display display = location.getWorld().spawn(
+//                    new LocationBuilder(location)
+//                            .pitch(0)
+//                    ,
+//                    ItemDisplay.class,
+//                    d -> {
+//                        d.setTransformation(new Transformation(
+//                                new Vector3f(0, 2, 0),
+//                                new AxisAngle4f(),
+//                                new Vector3f(1.5f),
+//                                new AxisAngle4f()
+//                        ));
+//                        d.setItemStack(new ItemStack(Material.BROWN_MUSHROOM));
+//                    }
+//            );
+//            new BukkitRunnable() {
+//                @Override
+//                public void run() {
+//                    display.remove();
+//                }
+//            }.runTaskLater(Warlords.getInstance(), 10 * 20);
 
 //            LocationBuilder locationBuilder = new LocationBuilder(player.getLocation())
 //                    .pitch(0)

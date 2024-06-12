@@ -2,12 +2,14 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerPlayerClass;
+import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -312,6 +314,11 @@ public abstract class AbstractTower {
         Warlords.removePlayer(warlordsTower.getUuid());
         if (this instanceof Listener listener) {
             HandlerList.unregisterAll(listener);
+        }
+        for (AbstractAbility ability : warlordsTower.getAbilities()) {
+            if (ability instanceof Spawner spawner) {
+                spawner.getSpawnedMobs().forEach(mob -> towerDefenseOption.despawnMob(mob));
+            }
         }
     }
 

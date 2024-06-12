@@ -1,11 +1,9 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
@@ -19,7 +17,6 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -50,7 +47,7 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
 
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
-        defaultParameters.attackRange(1)
+        defaultParameters.attackRange(2)
                          .stuckAction(null) // disable tping to player if too far away
                          .updatePathRate(5)
                          .distanceMargin(.75)
@@ -107,26 +104,15 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
 
     @Override
     public void giveGoals() {
-        npc.getDefaultGoalController().addGoal(new NPCTargetAggroWarlordsEntityGoal(
-                npc,
-                3,
-                warlordsEntity -> {
-                    if (warlordsEntity instanceof WarlordsNPC wNPC && pveOption instanceof TowerDefenseOption towerDefenseOption) {
-                        TowerDefenseOption.TowerDefenseMobData mobData = towerDefenseOption.getMobsMap().get(wNPC.getMob());
-                        if (mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData) {
-                            return attackingMobData.getAttackingTeam() == spawner.getTeam();
-                        }
-                    }
-                    return false;
-                },
-                warlordsEntity -> npc.isSpawned() &&
-                        warlordsEntity.getEntity() instanceof LivingEntity livingEntity &&
-                        livingEntity.hasLineOfSight(npc.getEntity()) // TODO test
-        ), 2);
+        npc.getDefaultGoalController().addGoal(new NPCTowerDefenseDefenderGoal(this, 3), 2);
     }
 
     public void setSpawner(@Nonnull WarlordsTower spawner) {
         this.spawner = spawner;
+    }
+
+    public WarlordsTower getSpawner() {
+        return spawner;
     }
 
     @Override
