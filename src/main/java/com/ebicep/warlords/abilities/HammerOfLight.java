@@ -53,13 +53,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     private int tickDuration = 200;
     private float minDamage = 178;
     private float maxDamage = 244;
+    private float crownBonusHealing = 35;
 
     public HammerOfLight() {
-        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
+        super("Hammer of Light", 178, 244, 65.25f, 50, 20, 175);
     }
 
     public HammerOfLight(Location location) {
-        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
+        super("Hammer of Light", 178, 244, 65.25f, 50, 20, 175);
         this.location = location;
     }
 
@@ -85,7 +86,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                .append(Component.newline())
                                .append(Component.newline())
                                .append(Component.text("Recast to turn your hammer into Crown of Light. Removing the damage and piercing BUT increasing the healing by "))
-                               .append(Component.text("50%", NamedTextColor.GREEN))
+                               .append(Component.text(crownBonusHealing + "%", NamedTextColor.GREEN))
                                .append(Component.text(" and reducing the energy cost of your Protector's Strike by "))
                                .append(Component.text("10", NamedTextColor.YELLOW))
                                .append(Component.text(" energy. You cannot put the Hammer of Light back down after you converted it."));
@@ -195,8 +196,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 crownTarget.addHealingInstance(
                                         wp,
                                         "Crown of Light",
-                                        minDamageHeal.getCalculatedValue() * 1.5f,
-                                        maxDamageHeal.getCalculatedValue() * 1.5f,
+                                        minDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(crownBonusHealing),
+                                        maxDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(crownBonusHealing),
                                         critChance,
                                         critMultiplier
                                 ).ifPresent(warlordsDamageHealingFinalEvent -> {

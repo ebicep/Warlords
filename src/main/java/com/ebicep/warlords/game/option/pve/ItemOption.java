@@ -19,6 +19,7 @@ import com.ebicep.warlords.pve.items.types.AbstractSpecialItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.util.bukkit.ComponentUtils;
+import com.ebicep.warlords.util.java.Priority;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -35,7 +36,7 @@ import java.util.Map;
 public class ItemOption implements Option {
 
     @Override
-    @Priority(0)
+    @Priority(-10)
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (!(player instanceof WarlordsPlayer warlordsPlayer)) {
             return;

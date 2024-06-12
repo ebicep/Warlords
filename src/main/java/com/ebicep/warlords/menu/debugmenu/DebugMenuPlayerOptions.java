@@ -542,7 +542,7 @@ public class DebugMenuPlayerOptions {
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
-                                holder.getInfo().setFlag(GroundFlagLocation.of(holder.getFlag()));
+                                FlagHolder.dropFlagForPlayer(target);
                                 sendDebugMessage(player, Component.text("Dropped the flag for ", NamedTextColor.GREEN)
                                                                   .append(targetColoredName));
 
@@ -715,7 +715,7 @@ public class DebugMenuPlayerOptions {
                                 .name(Component.text("Remove", NamedTextColor.AQUA))
                                 .get(),
                         (m, e) -> {
-                            target.getCooldownManager().getCooldowns().remove(abstractCooldown);
+                            target.getCooldownManager().removeCooldown(abstractCooldown);
                             openCooldownManagerMenu(player, target);
                             new BukkitRunnable() {
                                 @Override

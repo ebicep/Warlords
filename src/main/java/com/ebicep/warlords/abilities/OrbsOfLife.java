@@ -37,9 +37,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
 
     public static final double SPAWN_RADIUS = 1.15;
-    public static final float ORB_HEALING = 225;
+    public static final float ORB_HEALING = 210;
     public static final double ORB_HITBOX = 1.35;
     public static final double ORB_HITBOX_SQUARED = ORB_HITBOX * ORB_HITBOX;
+    public static final int MAX_ALLIES = 2;
 
     public int orbsProduced = 0;
 
@@ -112,6 +113,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 tickDuration,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty(),
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 5 != 0) {
+                        return;
+                    }
                     OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
                     Iterator<OrbOfLife> itr = new ArrayList<>(orbsOfLife.getSpawnedOrbs()).iterator();
                     while (itr.hasNext()) {
@@ -145,7 +149,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                     .entitiesAround(teammateToHeal, 6, 6, 6)
                                     .aliveTeammatesOfExcludingSelf(teammateToHeal)
                                     .leastAliveFirst()
-                                    .limit(2)
+                                    .limit(MAX_ALLIES)
                             ) {
                                 healPlayer(nearPlayer, wp, orbHeal);
                                 Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);

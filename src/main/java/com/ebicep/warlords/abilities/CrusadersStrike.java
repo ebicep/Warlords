@@ -29,7 +29,7 @@ public class CrusadersStrike extends AbstractStrike {
 
     public int energyGivenToPlayers = 0;
 
-    private int energyGiven = 24;
+    private int energyGiven = 21;
     private int energyRadius = 10;
     private int energyMaxAllies = 2;
 

@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.PoisonousHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -21,12 +20,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -129,41 +130,42 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
+        return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(0f);
     }
 
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
-            armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.GREEN_STAINED_GLASS));
-            armorStand.setHeadPose(new EulerAngle(-Math.atan2(
-                    projectile.getSpeed().getY(),
-                    Math.sqrt(
-                            Math.pow(projectile.getSpeed().getX(), 2) +
-                                    Math.pow(projectile.getSpeed().getZ(), 2)
-                    )
-            ), 0, 0));
+
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation)
+                .pitch(0)
+                .yaw(startingLocation.getYaw() - 180);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+            itemDisplay.setItemStack(new ItemStack(Material.GREEN_STAINED_GLASS));
+            itemDisplay.setTeleportDuration(1);
+            itemDisplay.setBrightness(new Display.Brightness(15, 15));
+            itemDisplay.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                    new Vector3f(1f),
+                    new AxisAngle4f()
+            ));
         });
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {
-                fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
-
-                for (float i = 0; i < 2; i++) {
-                    double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
-                    double width = 0.2D;
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation)
+                        .pitch(0)
+                        .yaw(currentLocation.getYaw() - 180);
+                display.teleport(location);
+                if (projectile.getTicksLived() % 3 == 0) {
                     EffectUtils.displayParticle(
                             Particle.REDSTONE,
-                            center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                            2,
-                            0,
-                            0,
-                            0,
-                            0,
+                            projectile.getCurrentLocation(),
+                            1,
                             new Particle.DustOptions(Color.fromRGB(90, 90, 190), 1)
                     );
                 }
@@ -171,7 +173,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
-                fallenSoul.remove();
+                display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 0.2f, 2);
                 EffectUtils.displayParticle(
                         Particle.EXPLOSION_LARGE,
@@ -241,6 +243,9 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     }
 
     public static void givePoisonousHex(WarlordsEntity from, WarlordsEntity to) {
+        if (to.isDead()) {
+            return;
+        }
         PoisonousHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
         int tickDuration = fromHex.getTickDuration();

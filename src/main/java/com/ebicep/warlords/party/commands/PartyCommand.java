@@ -166,8 +166,8 @@ public class PartyCommand extends BaseCommand {
             return;
         }
         party.join(player.getUniqueId());
-        if (QueueManager.queue.contains(player.getUniqueId())) {
-            QueueManager.queue.remove(player.getUniqueId());
+        if (QueueManager.QUEUE.contains(player.getUniqueId())) {
+            QueueManager.QUEUE.remove(player.getUniqueId());
             QueueManager.sendQueue();
         }
     }
@@ -336,7 +336,7 @@ public class PartyCommand extends BaseCommand {
         int partySize = partyPlayerWrapper.getParty().getPartyPlayers().size();
         if (partySize != 24) {
             int availableSpots = 24 - partySize;
-            int onlineQueueSize = (int) QueueManager.queue.stream().filter(uuid -> Bukkit.getPlayer(uuid) != null).count();
+            int onlineQueueSize = (int) QueueManager.QUEUE.stream().filter(uuid -> Bukkit.getPlayer(uuid) != null).count();
             List<UUID> toInvite = new ArrayList<>();
             int inviteNumber;
             if (availableSpots % 2 == 0) { //even spots
@@ -346,7 +346,7 @@ public class PartyCommand extends BaseCommand {
             }
             int counter = 0;
             if (inviteNumber != 0) {
-                for (UUID uuid : QueueManager.queue) {
+                for (UUID uuid : QueueManager.QUEUE) {
                     Player invitePlayer = Bukkit.getPlayer(uuid);
                     if (invitePlayer != null) {
                         toInvite.add(uuid);
@@ -357,7 +357,7 @@ public class PartyCommand extends BaseCommand {
                     }
                 }
                 toInvite.forEach(uuid -> player.performCommand("p invite " + Bukkit.getPlayer(uuid).getName()));
-                QueueManager.queue.removeIf(uuid -> Bukkit.getPlayer(uuid) == null);
+                QueueManager.QUEUE.removeIf(uuid -> Bukkit.getPlayer(uuid) == null);
                 QueueManager.sendQueue();
             }
         }

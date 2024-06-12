@@ -66,7 +66,7 @@ public class BucklerPiece extends SpecialDeltaBuckler implements CraftsInto {
                                         damageAmount,
                                         isCrit ? 100 : 0,
                                         100,
-                                        EnumSet.of(InstanceFlags.RECURSIVE)
+                                        EnumSet.of(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                                 );
                             });
             }

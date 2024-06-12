@@ -25,7 +25,7 @@ import java.util.HashSet;
 public class ConsecrateAvenger extends AbstractConsecrate {
 
     public ConsecrateAvenger() {
-        super(158.4f, 213.6f, 50, 20, 175, 20, 5);
+        super(198, 267, 50, 20, 175, 20, 5, 4);
     }
 
     public ConsecrateAvenger(
@@ -38,7 +38,7 @@ public class ConsecrateAvenger extends AbstractConsecrate {
             float radius,
             Location location
     ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location);
+        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, 4, location);
     }
 
     @Override
@@ -46,7 +46,6 @@ public class ConsecrateAvenger extends AbstractConsecrate {
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-        
 
         Location location = wp.getLocation().clone();
 
@@ -79,7 +78,9 @@ public class ConsecrateAvenger extends AbstractConsecrate {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Location updatedLocation = wp.getLocation();
                     circleEffect.setCenter(updatedLocation);
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 30 == 0) {
                         PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)
                                     .aliveEnemiesOf(wp)

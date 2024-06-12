@@ -13,7 +13,7 @@ public class Apothecary extends AbstractRogue {
                 0,
                 new ImpalingStrike(),
                 new SoothingElixir(),
-                new VitalityLiquor(),
+                new VitalityConcoction(),
                 new RemedicChains(),
                 new DrainingMiasma()
         );

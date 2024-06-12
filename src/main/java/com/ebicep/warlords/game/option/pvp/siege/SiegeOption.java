@@ -140,7 +140,7 @@ public class SiegeOption implements Option {
         });
         for (AbstractAbility ability : player.getAbilities()) {
             if (ability instanceof FortifyingHex fortifyingHex) {
-                fortifyingHex.setDamageReduction(3.33f);
+                fortifyingHex.getDamageReduction().setBaseValue(3.33f);
             } else if (ability instanceof GuardianBeam guardianBeam) {
                 guardianBeam.setShieldPercentSelf(guardianBeam.getShieldPercentSelf() - 5);
                 guardianBeam.setShieldPercentAlly(guardianBeam.getShieldPercentAlly() - 5);

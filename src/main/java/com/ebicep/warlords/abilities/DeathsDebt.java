@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -21,14 +20,12 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -48,7 +45,8 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     private int respiteRadius = 10;
     private int debtRadius = 8;
     private float damagePercent = 15;
-    private float selfDamageInPercentPerSecond = .1667f;
+    private float delayedDamageTaken = 90;
+    private int debtTickDuration = 120;
     private boolean inDebt = false;
     private boolean playerInRadius = true;
 
@@ -75,7 +73,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                .append(Component.text(" block radius."))
                                .append(Component.text("\n\nDeath’s Debt", NamedTextColor.LIGHT_PURPLE))
                                .append(Component.text(": Take "))
-                               .append(Component.text(Math.round((selfDamageInPercentPerSecond * 6) * 100) + "%", NamedTextColor.RED))
+                               .append(Component.text(format(delayedDamageTaken) + "%", NamedTextColor.RED))
                                .append(Component.text(" of the damage delayed by "))
                                .append(Component.text("Spirits’ Respite ", NamedTextColor.DARK_GREEN))
                                .append(Component.text("over "))
@@ -124,14 +122,13 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     protected void onActivation(WarlordsEntity wp, ArmorStand totemStand) {
         final int duration = tickDuration + (2 * Math.round(wp.getCurrentHealth() / wp.getMaxHealth())) * 20;
 
-        CircleEffect circle = new CircleEffect(
+        CircleEffect circleEffect = new CircleEffect(
                 wp,
                 totemStand.getLocation().clone().add(0, 1.25, 0),
                 respiteRadius,
                 new CircumferenceEffect(Particle.SPELL),
                 new DoubleLineEffect(Particle.REDSTONE)
         );
-        BukkitTask effectTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
 
         if (wp.isInPve()) {
             for (WarlordsEntity we : PlayerFilter
@@ -248,18 +245,20 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                             },
                             cooldownManager -> {
                                 totemStand.remove();
-                                effectTask.cancel();
                             },
-                            6 * 20,
+                            debtTickDuration,
                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                if (ticksElapsed % 5 == 0) {
+                                    circleEffect.playEffects();
+                                }
                                 //6 self damage ticks
                                 if (ticksElapsed % 20 == 0) {
                                     onDebtTick(wp, totemStand, tempDeathsDebt);
                                 }
                             })
                     ));
-                    circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.SPELL_WITCH));
-                    circle.setRadius(debtRadius);
+                    circleEffect.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.SPELL_WITCH));
+                    circleEffect.setRadius(debtRadius);
 
                     //blue to purple totem
                     totemStand.getEquipment().setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
@@ -270,7 +269,6 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                             .findAny();
                     if (wp.isDead() || wp.getWorld() != totemStand.getWorld() || (cd.isPresent() && cd.get().hasTicksLeft())) {
                         totemStand.remove();
-                        effectTask.cancel();
                     }
                 },
                 duration,
@@ -278,6 +276,10 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                     if (wp.getWorld() != totemStand.getWorld()) {
                         cooldown.setTicksLeft(0);
                         return;
+                    }
+
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
                     }
 
                     boolean isPlayerInRadius = wp.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
@@ -339,7 +341,8 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         Utils.playGlobalSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
 
         // 100% of damage over 6 seconds
-        float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
+        float selfDamageInPercentPerSecond = convertToPercent(tempDeathsDebt.getDelayedDamageTaken() / tempDeathsDebt.getDebtTickDuration() / 20);
+        float damage = (tempDeathsDebt.getDelayedDamage() * selfDamageInPercentPerSecond);
         float debtTrueDamage = (float) (damage * Math.pow(.8,
                 (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()
         ));
@@ -383,14 +386,6 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         this.delayedDamage += delayedDamage;
     }
 
-    public float getSelfDamageInPercentPerSecond() {
-        return selfDamageInPercentPerSecond;
-    }
-
-    public void setSelfDamageInPercentPerSecond(float selfDamageInPercentPerSecond) {
-        this.selfDamageInPercentPerSecond = selfDamageInPercentPerSecond;
-    }
-
     public void setInDebt(boolean inDebt) {
         this.inDebt = inDebt;
     }
@@ -431,5 +426,17 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public float getDelayedDamageTaken() {
+        return delayedDamageTaken;
+    }
+
+    public void setDelayedDamageTaken(float delayedDamageTaken) {
+        this.delayedDamageTaken = delayedDamageTaken;
+    }
+
+    public int getDebtTickDuration() {
+        return debtTickDuration;
     }
 }

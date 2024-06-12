@@ -85,7 +85,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    shreddingFurySpeed.duration = 0;
+                    shreddingFurySpeed.setDuration(0);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -170,7 +170,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 }.runTaskTimer(3, 3);
 
                 if (pveMasterUpgrade2 && procs.get() <= 10) {
-                    shreddingFurySpeed.setModifier(shreddingFurySpeed.modifier + 2.5f);
+                    shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
                     wp.getSpeed().setChanged(true);
                 }
             }

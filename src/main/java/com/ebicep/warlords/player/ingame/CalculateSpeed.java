@@ -136,11 +136,11 @@ public class CalculateSpeed {
         return addSpeedModifier(from, name, modifier, duration, Arrays.asList(toDisable));
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, Collection<String> toDisable) {
+    private Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, Collection<String> toDisable) {
         return addSpeedModifier(from, name, modifier, duration, false, toDisable);
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
+    private Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
         return addSpeedModifier(new Modifier(from,
                 name,
                 modifier,
@@ -208,13 +208,13 @@ public class CalculateSpeed {
     }
 
     public static class Modifier {
-        public final WarlordsEntity from;
-        public final String name;
-        public final boolean afterLimit;
-        public final Collection<String> toDisable;
-        public float modifier;
-        public float calculatedModifier;
-        public int duration;
+        private final WarlordsEntity from;
+        private final String name;
+        private final boolean afterLimit;
+        private final Collection<String> toDisable;
+        private float modifier;
+        private float calculatedModifier;
+        private int duration;
 
         public Modifier(WarlordsEntity from, String name, float modifier, int duration, Collection<String> toDisable, boolean afterLimit) {
             this.from = from;
@@ -234,6 +234,42 @@ public class CalculateSpeed {
         @Override
         public String toString() {
             return "Modifier{" + "name=" + name + ", modifier=" + modifier + " (" + calculatedModifier + "), duration=" + duration + ", toDisable=" + toDisable + '}';
+        }
+
+        public WarlordsEntity getFrom() {
+            return from;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean isAfterLimit() {
+            return afterLimit;
+        }
+
+        public Collection<String> getToDisable() {
+            return toDisable;
+        }
+
+        public float getModifier() {
+            return modifier;
+        }
+
+        public float getCalculatedModifier() {
+            return calculatedModifier;
+        }
+
+        public void setCalculatedModifier(float calculatedModifier) {
+            this.calculatedModifier = calculatedModifier;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public void setDuration(int duration) {
+            this.duration = duration;
         }
     }
 }

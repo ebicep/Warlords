@@ -7,9 +7,11 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -19,10 +21,16 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -31,6 +39,8 @@ import java.util.List;
 public class OldTestCommand implements CommandExecutor {
 
     public static List<DatabaseGameBase> GAMES = new ArrayList<>();
+    static List<DatabasePlayer> updated;
+    static List<DatabasePlayer> old;
 
     private static double getWeight(float itemScore, ItemTier tier) {
         ItemTier.WeightRange weightRange = tier.weightRange;
@@ -108,7 +118,6 @@ public class OldTestCommand implements CommandExecutor {
         float brightness = 1f;
         return Color.getHSBColor(hue, saturation, brightness);
     }
-
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {

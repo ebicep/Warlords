@@ -31,6 +31,20 @@ public class FlyCommand extends BaseCommand {
         );
     }
 
+    @Subcommand("speed")
+    @Description("Sets the fly speed")
+    public void speed(Player player, @Optional @Flags("other") Player otherPlayer, @Conditions("limits:min=-1,max=1") float speed) {
+        if (otherPlayer == null) {
+            otherPlayer = player;
+        }
+        otherPlayer.setFlySpeed(speed);
+        ChatChannels.sendDebugMessage(
+                player,
+                Component.text(otherPlayer.getName(), NamedTextColor.AQUA)
+                         .append(Component.text(" Fly Speed set to " + speed, NamedTextColor.GREEN))
+        );
+    }
+
     @HelpCommand
     public void help(CommandIssuer issuer, CommandHelp help) {
         help.getHelpEntries().sort(Comparator.comparing(HelpEntry::getCommand));

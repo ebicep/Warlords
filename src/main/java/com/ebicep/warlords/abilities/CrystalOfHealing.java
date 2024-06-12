@@ -114,7 +114,9 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                 false,
                 (duration + lifeSpan) * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    teamCircleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        teamCircleEffect.playEffects();
+                    }
                     if (ticksElapsed % 2 == 0) {
                         Location crystalLocation = crystal.getLocation();
                         crystalLocation.setY(Math.sin(ticksElapsed * Math.PI / 40) / 4 + baseY);

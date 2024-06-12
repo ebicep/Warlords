@@ -131,9 +131,14 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             }
 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" Your Inspiring Presence inspired ", NamedTextColor.GRAY))
-                    .append(Component.text(presenceTarget.getName(), NamedTextColor.YELLOW))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                    .append(Component.text(" inspired " + presenceTarget.getName() + "!", NamedTextColor.GRAY))
+            );
+            presenceTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                    .append(Component.text(" inspired you!", NamedTextColor.GRAY))
             );
 
             Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
@@ -185,7 +190,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             }
             ability.subtractCurrentCooldown(15);
         }
-        we.updateItems();
     }
 
     @Override

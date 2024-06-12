@@ -7,7 +7,6 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
-import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -218,20 +217,17 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 });
                                 if (!isExperimental) {
                                     if (partyPlayerPair != null) {
-                                        partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers().add(
-                                                new RegularGamesMenu.RegularGamePlayer(uuid,
-                                                        isBlueTeam ? Team.BLUE : Team.RED,
-                                                        Specializations.getSpecFromName(spec)
-                                                )
-                                        );
+                                        partyPlayerPair.getA()
+                                                       .getRegularGamesMenu()
+                                                       .addPlayer(isBlueTeam ? Team.BLUE : Team.RED, uuid, Specializations.getSpecFromName(spec));
                                     }
                                 }
                             } else {
                                 if (!isExperimental) {
                                     if (partyPlayerPair != null) {
-                                        partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers().add(
-                                                new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Specializations.PYROMANCER)
-                                        );
+                                        partyPlayerPair.getA()
+                                                       .getRegularGamesMenu()
+                                                       .addPlayer(isBlueTeam ? Team.BLUE : Team.RED, uuid, Specializations.PYROMANCER);
                                     }
                                 }
                             }

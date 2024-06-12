@@ -276,7 +276,7 @@ public enum Aspect {
                         if (Aspect.isNegated(warlordsEntity)) {
                             modifier.setModifier(0);
                             calculateSpeed.setChanged(true);
-                        } else if (modifier.modifier != 20) {
+                        } else if (modifier.getModifier() != 20) {
                             modifier.setModifier(20);
                             calculateSpeed.setChanged(true);
                         }

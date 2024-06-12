@@ -30,6 +30,8 @@ public interface GameService {
 
     DatabaseGameBase findOne(Query query, GamesCollections collection);
 
+    List<DatabaseGameBase> find(Query query, GamesCollections collection);
+
     List<DatabaseGameBase> findAll(GamesCollections collection);
 
     BulkOperations bulkOps();

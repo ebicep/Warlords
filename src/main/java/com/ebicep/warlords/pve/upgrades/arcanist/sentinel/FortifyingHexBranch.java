@@ -11,7 +11,6 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
         ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
         ability.setMaxEnemiesHit(2);
         ability.setMaxAlliesHit(3);
-        ability.setDamageReduction(7);
     }
 
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
@@ -53,7 +52,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                     ability.setMaxEnemiesHit(200);
                     ability.setMaxAlliesHit(200);
                     ability.getEnergyCost().addAdditiveModifier("Bolstering Hex", -15);
-                    ability.setDamageReduction(ability.getDamageReduction() + 3);
+                    ability.getDamageReduction().addAdditiveModifier("Bolstering Hex", 3);
                 }
         );
         masterUpgrade2 = new Upgrade(

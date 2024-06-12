@@ -97,11 +97,12 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
-                    wp.getCooldownManager().addRegularCooldown(
+                    Shield shield = new Shield(name, shieldHealth);
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name + " Shield",
                             "SHIELD",
                             Shield.class,
-                            new Shield(name, shieldHealth),
+                            shield,
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager1 -> {
@@ -118,6 +119,24 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                     EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3, 0.3, 0.3, 0);
                                 }
                             })
+                    ) {
+                        @Override
+                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                        }
+
+                        @Override
+                        public PlayerNameData addPrefixFromOther() {
+                            return new PlayerNameData(
+                                    Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                                    we -> we.isTeammate(wp)
+                            );
+                        }
+                    });
+                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your ", NamedTextColor.GRAY))
+                            .append(Component.text(name, NamedTextColor.YELLOW))
+                            .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
                     );
                     if (pveMasterUpgrade) {
                         PlayerFilter.entitiesAround(wp, 4, 4, 4)
@@ -201,6 +220,16 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                     0.25
                             );
                         }
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                .append(Component.text(" has infected " + hexTarget.getName() + "!", NamedTextColor.GRAY))
+                        );
+                        hexTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                                .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                .append(Component.text(" has infected you!", NamedTextColor.GRAY))
+                        );
                     }
                 },
                 false,

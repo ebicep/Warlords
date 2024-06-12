@@ -44,7 +44,7 @@ public class CombatantsCavernMode1 extends GameMap {
                 1,
                 120 * SECOND,
                 "IllusionRiftEvent1",
-                1,
+                3,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }

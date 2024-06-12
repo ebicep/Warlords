@@ -12,11 +12,11 @@ import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.game.option.towerdefense.towers.TowerRegistry;
 import com.ebicep.warlords.guilds.GuildListener;
@@ -37,6 +37,7 @@ import com.ebicep.warlords.util.bukkit.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
+import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
@@ -109,12 +110,12 @@ public class Warlords extends JavaPlugin {
                 .stream()
                 .sorted((o1, o2) -> {
                     try {
-                        Option.Priority o1Priority = o1.getClass()
-                                                       .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
-                                                       .getAnnotation(Option.Priority.class);
-                        Option.Priority o2Priority = o2.getClass()
-                                                       .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
-                                                       .getAnnotation(Option.Priority.class);
+                        Priority o1Priority = o1.getClass()
+                                                .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
+                                                .getAnnotation(Priority.class);
+                        Priority o2Priority = o2.getClass()
+                                                .getMethod("onWarlordsEntityCreated", WarlordsEntity.class)
+                                                .getAnnotation(Priority.class);
                         return Integer.compare(
                                 o1Priority == null ? 3 : o1Priority.value(),
                                 o2Priority == null ? 3 : o2Priority.value()
@@ -350,6 +351,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Shield(), this);
         getServer().getPluginManager().registerEvents(new HorseOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
+        getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
 
         getCommand("oldtest").setExecutor(new OldTestCommand());
 
@@ -462,20 +464,24 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 // Every 1 tick - 0.05 seconds.
                 for (WarlordsEntity we : PLAYERS.values()) {
-                    Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
-                    if (player != null) {
-                        //ACTION BAR
-                        if (player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
-                            we.displayCompassActionBar(player);
-                        } else {
-                            we.displayActionBar();
-                        }
-                    }
                     // Checks whether the game is paused.
                     if (we.getGame().isFrozen()) {
                         continue;
                     }
                     we.runEveryTick();
+                }
+                if (LOOP_TICK_COUNTER.get() % 5 == 0) {
+                    for (WarlordsEntity we : PLAYERS.values()) {
+                        Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
+                        if (player != null) {
+                            //ACTION BAR
+                            if (player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
+                                we.displayCompassActionBar(player);
+                            } else {
+                                we.displayActionBar();
+                            }
+                        }
+                    }
                 }
                 // Every 20 ticks - 1 second.
                 if (LOOP_TICK_COUNTER.get() % 20 == 0) {

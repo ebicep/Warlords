@@ -35,7 +35,7 @@ public class CircleEffect extends AbstractBaseAreaEffect<EffectPlayer<? super Ci
     public CircleEffect(@Nonnull Game game, @Nullable Team team, @Nonnull Location center, double radius, double additionalYOffset, EffectPlayer<? super CircleEffect>... effects) {
         Validate.notNull(game, "game");
         Validate.notNull(center, "center");
-        center.setY(center.getBlockY() + 0.01 + additionalYOffset);
+        center.setY(center.getBlockY() + 0.02 + additionalYOffset);
         this.center = center;
         this.radius = radius;
         this.additionalYOffset = additionalYOffset;

@@ -8,11 +8,11 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
+import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -20,15 +20,39 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class CooldownManager {
+
+    public static List<AbstractCooldown<?>> getPrioritizedCooldowns(List<AbstractCooldown<?>> cooldowns, String method, Class<?>... parameterTypes) {
+        return cooldowns
+                .stream()
+                .sorted((o1, o2) -> {
+                    try {
+                        Priority o1Priority = o1.getClass()
+                                                .getMethod(method, parameterTypes)
+                                                .getAnnotation(Priority.class);
+                        Priority o2Priority = o2.getClass()
+                                                .getMethod(method, parameterTypes)
+                                                .getAnnotation(Priority.class);
+                        return Integer.compare(
+                                o1Priority == null ? 0 : o1Priority.value(),
+                                o2Priority == null ? 0 : o2Priority.value()
+                        );
+                    } catch (Exception e) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+                        return 0;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
 
     private final WarlordsEntity warlordsEntity;
     private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
     private int totalCooldowns = 0;
+    private boolean updatePlayerNames = false;
 
     public CooldownManager(WarlordsEntity warlordsEntity) {
         this.warlordsEntity = warlordsEntity;
@@ -55,6 +79,14 @@ public class CooldownManager {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() != null && cooldown.getCooldownObject() == cooldownObject);
     }
 
+    public void tick() {
+        reduceCooldowns();
+        if (updatePlayerNames) {
+            updatePlayerNames = false;
+            updatePlayerNames();
+        }
+    }
+
     public void reduceCooldowns() {
         //List<AbstractCooldown<?>> cooldowns = Collections.synchronizedList(abstractCooldowns);
         synchronized (abstractCooldowns) {
@@ -76,13 +108,17 @@ public class CooldownManager {
         }
     }
 
+    public void queueUpdatePlayerNames() {
+        updatePlayerNames = true;
+    }
+
     public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
         if (abstractCooldown.changesPlayerName()) {
-            updatePlayerNames();
+            queueUpdatePlayerNames();
         }
     }
 
-    public void updatePlayerNames() {
+    private void updatePlayerNames() {
         Game game = warlordsEntity.getGame();
         game.getState(PlayingState.class)
             .ifPresent(playingState -> {
@@ -318,17 +354,21 @@ public class CooldownManager {
             warlordsEntity.getCooldownManager().removeDebuffCooldowns();
         }
         if (hasCooldownFromName("Debuff Immunity") && abstractCooldown.getCooldownType() == CooldownTypes.DEBUFF) {
+            ChatUtils.MessageType.WARLORDS.sendMessage("***CD SKIP " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
+            abstractCooldown.getOnRemoveForce().accept(this);
             return;
         }
         WarlordsAddCooldownEvent event = new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
+            ChatUtils.MessageType.WARLORDS.sendMessage("****CD SKIP " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
+            abstractCooldown.getOnRemoveForce().accept(this);
             return;
         }
         this.totalCooldowns++;
         abstractCooldowns.add(abstractCooldown);
         if (abstractCooldown.changesPlayerName()) {
-            updatePlayerNames();
+            queueUpdatePlayerNames();
         }
     }
 
@@ -392,58 +432,6 @@ public class CooldownManager {
         addRegularCooldown(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true, timeLeft, new ArrayList<>());
     }
 
-    public final <T> void addPersistentCooldown(
-            String name,
-            String actionBarName,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            Consumer<CooldownManager> onRemove,
-            Consumer<CooldownManager> onRemoveForce,
-            int timeLeft,
-            Predicate<T> objectCheck,
-            List<TriConsumer<RegularCooldown<T>, Integer, Integer>> triConsumers
-    ) {
-        addCooldown(new PersistentCooldown<>(name,
-                actionBarName,
-                cooldownClass,
-                cooldownObject,
-                from,
-                cooldownType,
-                onRemove,
-                onRemoveForce,
-                timeLeft,
-                objectCheck,
-                triConsumers
-        ));
-    }
-
-    @SafeVarargs
-    public final <T> void addPermanentCooldown(
-            String name,
-            String actionBarName,
-            Class<T> cooldownClass,
-            T cooldownObject,
-            WarlordsEntity from,
-            CooldownTypes cooldownType,
-            boolean removeOnDeath,
-            BiConsumer<PermanentCooldown<T>, Integer>... biConsumers
-    ) {
-        addCooldown(new PermanentCooldown<>(
-                name,
-                actionBarName,
-                cooldownClass,
-                cooldownObject,
-                from,
-                cooldownType,
-                cooldownManager -> {
-                },
-                removeOnDeath,
-                biConsumers
-        ));
-    }
-
     public void removeCooldownNoForce(AbstractCooldown<?> abstractCooldown) {
         abstractCooldowns.remove(abstractCooldown);
     }
@@ -465,6 +453,14 @@ public class CooldownManager {
         new ArrayList<>(abstractCooldowns).forEach(cd -> {
             if (abstractCooldowns.contains(cd) && Objects.equals(cd.getName(), cooldownName)) {
                 removeCooldown(cd, noForce);
+            }
+        });
+    }
+
+    public void removeIf(Predicate<AbstractCooldown<?>> predicate) {
+        new ArrayList<>(abstractCooldowns).forEach(cd -> {
+            if (abstractCooldowns.contains(cd) && predicate.test(cd)) {
+                removeCooldown(cd);
             }
         });
     }
@@ -535,7 +531,7 @@ public class CooldownManager {
         ) {
             if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
                 this.warlordsEntity.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
-                linkInformation.add(new LinkInformation(soulbinding.getRadius(), soulbinding.getMaxAlliesHit()));
+                linkInformation.add(new LinkInformation(soulbinding.getRadius(), soulbinding.getMaxAlliesHit(), soulbinding.getSelfHealing(), soulbinding.getAllyHealing()));
             }
         }
         int counter = linkInformation.size();
@@ -561,7 +557,7 @@ public class CooldownManager {
         return linkInformation;
     }
 
-    public record LinkInformation(float radius, int limit) {
+    public record LinkInformation(float radius, int limit, int selfHealing, int allyHealing) {
     }
 
     @SuppressWarnings("unchecked")

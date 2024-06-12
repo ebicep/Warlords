@@ -31,13 +31,23 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
     protected int strikeDamageBoost;
     protected FloatModifiable hitBox;
+    protected int tickDuration;
     protected Location location;
-    protected int tickDuration = 100;
 
-    public AbstractConsecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float hitBox) {
+    public AbstractConsecrate(
+            float minDamageHeal,
+            float maxDamageHeal,
+            float energyCost,
+            float critChance,
+            float critMultiplier,
+            int strikeDamageBoost,
+            float hitBox,
+            int duration
+    ) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
         this.hitBox = new FloatModifiable(hitBox);
+        this.tickDuration = duration * 20;
     }
 
     public AbstractConsecrate(
@@ -48,12 +58,14 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
             float critMultiplier,
             int strikeDamageBoost,
             float hitBox,
+            int duration,
             Location location
     ) {
         super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
         this.strikeDamageBoost = strikeDamageBoost;
         this.hitBox = new FloatModifiable(hitBox);
         this.location = location;
+        this.tickDuration = duration * 20;
     }
 
     @Override
@@ -81,8 +93,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
         Location location = wp.getLocation().clone();
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
@@ -110,7 +120,9 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 2 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                     .aliveEnemiesOf(wp)

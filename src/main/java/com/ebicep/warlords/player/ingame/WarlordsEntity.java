@@ -2,7 +2,10 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.HealingPowerup;
+import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -198,9 +201,6 @@ public abstract class WarlordsEntity {
         this.speed = isInPve() ?
                      new CalculateSpeed(this, this::setWalkSpeed, 13, true) :
                      new CalculateSpeed(this, this::setWalkSpeed, 13);
-        if (specClass == Specializations.APOTHECARY) {
-            this.speed.addBaseModifier(10);
-        }
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
     }
@@ -514,7 +514,7 @@ public abstract class WarlordsEntity {
 
         debugMessage.append(Component.newline()).append(Component.text("Crit Modifiers:", NamedTextColor.AQUA));
         appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Attacker Cooldowns");
-        if (critChance > 0) {
+        if (critChance > 0 && !flags.contains(InstanceFlags.IGNORE_CRIT_MODIFIERS)) {
             float previousCC = critChance;
             float previousCM = critMultiplier;
             for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
@@ -689,7 +689,7 @@ public abstract class WarlordsEntity {
                         remainingVeneDamage,
                         isCrit ? 100 : 0,
                         100,
-                        EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                        EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
@@ -701,7 +701,8 @@ public abstract class WarlordsEntity {
                         damageValue,
                         damageValue,
                         isCrit ? 100 : 0,
-                        100
+                        100,
+                        EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -746,7 +747,11 @@ public abstract class WarlordsEntity {
                 // Example: .8 = 20% reduction.
                 debugMessage.append(Component.newline()).append(Component.text("After Intervene:", NamedTextColor.AQUA));
                 appendDebugMessage(debugMessage, 1, NamedTextColor.DARK_GREEN, "Self Cooldowns");
-                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                for (AbstractCooldown<?> abstractCooldown : CooldownManager.getPrioritizedCooldowns(selfCooldownsDistinct,
+                        "modifyDamageAfterInterveneFromSelf",
+                        WarlordsDamageHealingEvent.class,
+                        float.class
+                )) {
                     float newDamageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
                     if (newDamageValue < damageValue && ignoreDamageReduction) { // pierce ignores victim dmg reduction
                         continue;
@@ -809,7 +814,7 @@ public abstract class WarlordsEntity {
                             isCrit ? 100 : 0,
                             100,
                             true,
-                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES),
+                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES, InstanceFlags.IGNORE_CRIT_MODIFIERS),
                             customFlags
                     ));
 
@@ -1795,28 +1800,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateItem(AbstractAbility ability) {
-        if (entity instanceof Player player) {
-            updateItem(player, ability);
-        }
-    }
-
-    public void updateItem(Player player, AbstractAbility ability) {
-        Integer inventoryIndex = spec.getInventoryAbilityIndex(ability);
-        if (inventoryIndex == null || inventoryIndex == 0) { // exclude weapon
-            return;
-        }
-        if (ability.getCurrentCooldown() > 0) {
-            ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
-            if (!ability.getSecondaryAbilities().isEmpty()) {
-                cooldown.enchant(Enchantment.OXYGEN, 1);
-            }
-            player.getInventory().setItem(inventoryIndex, cooldown.get());
-        } else {
-            player.getInventory().setItem(
-                    inventoryIndex,
-                    ability.getItem()
-            );
-        }
+        ability.queueUpdateItem();
     }
 
     /**
@@ -1878,6 +1862,9 @@ public abstract class WarlordsEntity {
         this.currentHealth = getMaxHealth();
         heal();
         this.energy = this.spec.getMaxEnergy();
+        if (this instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.queueUpdateTabName();
+        }
     }
 
     public float getCurrentHealth() {
@@ -2299,26 +2286,19 @@ public abstract class WarlordsEntity {
     }
 
     public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
-        if (modifier < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
-            return () -> {
-            };
-        }
-        AtomicReference<String> nameRef = new AtomicReference<>(name);
-        AtomicReference<Float> modifierRef = new AtomicReference<>(modifier);
-        AtomicInteger durationRef = new AtomicInteger(duration);
-        AtomicReference<String[]> toDisableRef = new AtomicReference<>(toDisable);
+        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), false));
+    }
 
-        Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, from, nameRef, modifierRef, durationRef, toDisableRef));
-
-        return this.speed.addSpeedModifier(from, nameRef.get(), modifierRef.get(), durationRef.get(), toDisableRef.get());
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, String... toDisable) {
+        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), afterLimit));
     }
 
     public Runnable addSpeedModifier(CalculateSpeed.Modifier modifier) {
-        if (modifier.modifier < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
+        if (modifier.getModifier() < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
             return () -> {
             };
         }
-        // TODO event stuff?
+        Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, modifier));
         return this.speed.addSpeedModifier(modifier);
     }
 
@@ -2570,7 +2550,7 @@ public abstract class WarlordsEntity {
         this.walkSpeed = walkspeed;
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
-            player.setWalkSpeed(this.walkSpeed);
+            player.setWalkSpeed(MathUtils.clamp(this.walkSpeed, -1f, 1f));
         } else if (entity instanceof LivingEntity livingEntity) {
             livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
         }
@@ -2595,6 +2575,9 @@ public abstract class WarlordsEntity {
 
     public void setCarriedFlag(@Nullable FlagInfo carriedFlag) {
         this.carriedFlag = carriedFlag;
+        if (this instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.queueUpdateTabName();
+        }
     }
 
     public List<Achievement.AbstractAchievementRecord<?>> getAchievementsUnlocked() {
@@ -2638,7 +2621,6 @@ public abstract class WarlordsEntity {
         this.health.tick();
         updateHealth();
         getSpeed().updateSpeed();
-        updateItems();
         getCooldownManager().reduceCooldowns();
 
         setWasSneaking(isSneaking());
@@ -2662,7 +2644,7 @@ public abstract class WarlordsEntity {
         } else if (newHealth > 40) {
             newHealth = 40;
         }
-        if (checkUndyingArmy(newHealth)) {
+        if (UndyingArmy.checkUndyingArmy(this, newHealth)) {
             newHealth = 40;
         }
 
@@ -2708,113 +2690,6 @@ public abstract class WarlordsEntity {
         if (getHitCooldown() > 0) {
             setHitCooldown(getHitCooldown() - 1);
         }
-    }
-
-    private boolean checkUndyingArmy(float newHealth) {
-        // Checks whether the player has any remaining active Undying Army instances active.
-        if (!getCooldownManager().checkUndyingArmy(false) || newHealth > 0) {
-            return false;
-        }
-        for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClass(UndyingArmy.class)
-                .stream()
-                .toList()
-        ) {
-            UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
-            if (undyingArmy.isArmyDead(this)) {
-                continue;
-            }
-            undyingArmy.pop(this);
-
-            // Drops the flag when popped.
-            FlagHolder.dropFlagForPlayer(this);
-
-            // Sending the message + check if getFrom is self
-            int armyDamage = Math.round(getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));
-            if (undyingArmyCooldown.getFrom() == this) {
-                sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                     .append(Component.text(
-                                             "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                             NamedTextColor.LIGHT_PURPLE
-                                     ))
-                                     .append(Component.text(armyDamage, NamedTextColor.RED))
-                                     .append(Component.text(" every second.", NamedTextColor.GRAY))
-                );
-            } else {
-                sendMessage(Component.text("» ", NamedTextColor.GREEN)
-                                     .append(Component.text(undyingArmyCooldown.getFrom()
-                                                                               .getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by ",
-                                             NamedTextColor.LIGHT_PURPLE
-                                     ))
-                                     .append(Component.text(armyDamage, NamedTextColor.RED))
-                                     .append(Component.text(" every second.", NamedTextColor.LIGHT_PURPLE))
-                );
-            }
-
-            EffectUtils.playFirework(getLocation(), FireworkEffect.builder()
-                                                                  .withColor(Color.LIME)
-                                                                  .with(FireworkEffect.Type.BALL)
-                                                                  .build());
-
-            heal();
-
-            if (getEntity() instanceof Player player) {
-                player.getWorld().spigot().strikeLightningEffect(getLocation(), false);
-                player.getInventory().setItem(5, UndyingArmy.BONE);
-            }
-
-            //gives 50% of max energy if player is less than half
-            if (getEnergy() < getMaxEnergy() / 2) {
-                setEnergy(getMaxEnergy() / 2);
-            }
-
-            if (undyingArmy.isPveMasterUpgrade()) {
-                addSpeedModifier(this, "ARMY", 40, 16 * 20, "BASE");
-            }
-
-            undyingArmyCooldown.setNameAbbreviation("POPPED");
-            undyingArmyCooldown.setTicksLeft(16 * 20);
-            undyingArmyCooldown.setOnRemove(cooldownManager -> {
-                if (getEntity() instanceof Player) {
-                    if (cooldownManager.checkUndyingArmy(true)) {
-                        ((Player) getEntity()).getInventory().remove(UndyingArmy.BONE);
-                    }
-                }
-            });
-            undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
-                if (ticksElapsed % 20 == 0) {
-                    addDamageInstance(
-                            this,
-                            "",
-                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                            getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                            0,
-                            100
-                    );
-
-                    if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
-                        PlayerFilter.entitiesAround(this, 6, 6, 6)
-                                    .aliveEnemiesOf(this)
-                                    .forEach(enemy -> {
-                                        float healthDamage = enemy.getMaxHealth() * .02f;
-                                        healthDamage = DamageCheck.clamp(healthDamage);
-                                        enemy.addDamageInstance(
-                                                this,
-                                                "Undying Army",
-                                                458 + healthDamage,
-                                                612 + healthDamage,
-                                                0,
-                                                100
-                                        );
-                                    });
-
-                    }
-                }
-            });
-            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(this, undyingArmy));
-            return true;
-        }
-        return false;
     }
 
     private void decrementRespawnTimer() {
@@ -2897,9 +2772,7 @@ public abstract class WarlordsEntity {
     }
 
     public void updateItems() {
-        if (entity instanceof Player player) {
-            spec.getAbilities().forEach(ability -> updateItem(player, ability));
-        }
+        spec.getAbilities().forEach(this::updateItem);
     }
 
     public boolean isSneaking() {
@@ -2939,8 +2812,10 @@ public abstract class WarlordsEntity {
     }
 
     public void onRespawn(Location respawnPoint) {
-        if (entity instanceof Player) {
+        if (entity instanceof Player player) {
             entity.clearTitle();
+            player.setFlying(false);
+            player.setGameMode(GameMode.ADVENTURE);
         }
         setRespawnTimerSeconds(-1);
         setEnergy(getMaxEnergy() / 2);

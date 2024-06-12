@@ -16,6 +16,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.timings.pojos.DatabaseTiming;
+import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
@@ -122,7 +123,7 @@ public class StatsLeaderboardManager {
                                 if (value == PlayersCollections.LIFETIME && lessThan20Plays && noCurrentEventPlays) {
                                     continue;
                                 }
-                                if (value == PlayersCollections.SEASON_8 && lessThan20Plays) {
+                                if (value == PlayersCollections.SEASON_9 && lessThan20Plays) {
                                     continue;
                                 }
                                 DatabasePlayer cachedPlayer = concurrentHashMap.get(databasePlayer.getUuid());
@@ -193,6 +194,9 @@ public class StatsLeaderboardManager {
             return;
         }
         LAST_BOARD_RESETS.put(playersCollections, System.currentTimeMillis());
+        if (Warlords.getGameManager().getGames().stream().anyMatch(gameHolder -> gameHolder.getGame() != null && gameHolder.getMap() != GameMap.MAIN_LOBBY)) {
+            return;
+        }
         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Resetting leaderboards for " + playersCollections.name + " (" + gameMode + ")");
         STATS_LEADERBOARDS.forEach((gameType, statsLeaderboardGameType) -> {
             if (gameMode == null || gameType.shouldUpdateLeaderboard(gameMode)) {
@@ -519,28 +523,28 @@ public class StatsLeaderboardManager {
 
         ;
 
+        public static final List<GameType> ACTIVE_LEADERBOARDS = Arrays.asList(ALL, CTF, PVE);
+
         public static boolean isPve(GameType gameType) {
             return gameType == PVE || gameType == WAVE_DEFENSE || gameType == ONSLAUGHT;
         }
 
         public static GameType getAfter(GameType gameType) {
-            return switch (gameType) {
-                case ALL -> CTF;
-                case CTF -> PVE;
-                case PVE -> WAVE_DEFENSE;
-                case WAVE_DEFENSE -> ONSLAUGHT;
-                case ONSLAUGHT -> ALL;
-            };
+            int index = ACTIVE_LEADERBOARDS.indexOf(gameType);
+            if (index == ACTIVE_LEADERBOARDS.size() - 1) {
+                return ACTIVE_LEADERBOARDS.get(0);
+            } else {
+                return ACTIVE_LEADERBOARDS.get(index + 1);
+            }
         }
 
         public static GameType getBefore(GameType gameType) {
-            return switch (gameType) {
-                case ALL -> ONSLAUGHT;
-                case CTF -> ALL;
-                case PVE -> CTF;
-                case WAVE_DEFENSE -> PVE;
-                case ONSLAUGHT -> WAVE_DEFENSE;
-            };
+            int index = ACTIVE_LEADERBOARDS.indexOf(gameType);
+            if (index == 0) {
+                return ACTIVE_LEADERBOARDS.get(ACTIVE_LEADERBOARDS.size() - 1);
+            } else {
+                return ACTIVE_LEADERBOARDS.get(index - 1);
+            }
         }
 
         public final String name;

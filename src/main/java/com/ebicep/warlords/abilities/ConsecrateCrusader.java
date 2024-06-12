@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConsecrateCrusader extends AbstractConsecrate {
 
     public ConsecrateCrusader() {
-        super(144, 194.4f, 50, 15, 200, 15, 4);
+        super(144, 194.4f, 50, 20, 175, 15, 4, 5);
     }
 
     public ConsecrateCrusader(
@@ -38,7 +38,7 @@ public class ConsecrateCrusader extends AbstractConsecrate {
             float radius,
             Location location
     ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location);
+        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, 5, location);
     }
 
     @Override
@@ -78,7 +78,9 @@ public class ConsecrateCrusader extends AbstractConsecrate {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Location updatedLocation = wp.getLocation();
                     circleEffect.setCenter(updatedLocation);
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 30 == 0) {
                         AtomicInteger energyGiven = new AtomicInteger();
                         PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)

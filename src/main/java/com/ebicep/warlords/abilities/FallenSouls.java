@@ -25,11 +25,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -111,7 +113,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(2);
-                wp.updateItem(spiritLink);
             }
         }
 
@@ -171,7 +172,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(2);
-                wp.updateItem(spiritLink);
             }
 
             reduceCooldowns(wp, hit);
@@ -180,38 +180,47 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
+        return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(0f);
     }
 
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
-            armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
-            armorStand.setHeadPose(new EulerAngle(-Math.atan2(
-                    projectile.getSpeed().getY(),
-                    Math.sqrt(
-                            Math.pow(projectile.getSpeed().getX(), 2) +
-                                    Math.pow(projectile.getSpeed().getZ(), 2)
-                    )
-            ), 0, 0));
+
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation)
+                .pitch(0);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+            itemDisplay.setItemStack(new ItemStack(Material.ACACIA_FENCE_GATE));
+            itemDisplay.setTeleportDuration(1);
+            itemDisplay.setBrightness(new Display.Brightness(15, 15));
+            itemDisplay.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                    new Vector3f(.75f),
+                    new AxisAngle4f()
+            ));
         });
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {
-                fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                EffectUtils.displayParticle(
-                        Particle.SPELL_WITCH,
-                        projectile.getCurrentLocation().clone().add(0, 0, 0),
-                        1
-                );
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation)
+                        .pitch(0);
+                display.teleport(location);
+                if (projectile.getTicksLived() % 4 == 0) {
+                    EffectUtils.displayParticle(
+                            Particle.SPELL_WITCH,
+                            projectile.getCurrentLocation(),
+                            1
+                    );
+                }
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
-                fallenSoul.remove();
+                display.remove();
                 EffectUtils.displayParticle(
                         Particle.SPELL_WITCH,
                         projectile.getCurrentLocation(),
@@ -251,7 +260,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                     for (AbstractAbility ability : wp.getAbilities()) {
                         ability.subtractCurrentCooldownForce(pveMasterUpgrade ? 1.75f : 1.5f);
                     }
-                    wp.updateItems();
 
                     int radius = soulbinding.getRadius();
                     for (WarlordsEntity teammate : PlayerFilter
@@ -270,7 +278,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                         for (AbstractAbility ability : teammate.getAbilities()) {
                             ability.subtractCurrentCooldown(pveCheck);
                         }
-                        teammate.updateItems();
                     }
 
                     if (masterUpgrade) {

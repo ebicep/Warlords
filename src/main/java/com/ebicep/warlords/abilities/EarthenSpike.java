@@ -7,6 +7,7 @@ import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthenSpikeBranch;
@@ -31,6 +32,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
@@ -205,7 +207,8 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                                healing,
                                healing,
                                finalEvent.isCrit() ? 100 : 0,
-                               100
+                               100,
+                               EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                        );
                        if (finalEvent.isCrit()) {
                            caster.addEnergy(caster, "Earthen Verdancy", 10);

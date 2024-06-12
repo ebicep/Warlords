@@ -39,7 +39,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     public int playersHealed = 0;
 
-    private int tickDuration = 240;
+    private int tickDuration = 200;
     private FloatModifiable radius = new FloatModifiable(8);
 
     public HealingRain() {
@@ -47,7 +47,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     public HealingRain(float cooldown, float startCooldown) {
-        super("Healing Rain", 100, 125, cooldown, 50, 25, 200, startCooldown);
+        super("Healing Rain", 100, 125, cooldown, 50, 25, 180, startCooldown);
     }
 
     @Override
@@ -130,10 +130,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    List<WarlordsEntity> teammatesInRain = PlayerFilter
-                            .entitiesAround(location, rad, rad, rad)
-                            .aliveTeammatesOf(wp)
-                            .toList();
                     List<Pair<WarlordsEntity, CircleEffect>> personalCloudList = personalCloud.get();
                     if (pveMasterUpgrade2) {
                         personalCloudList.forEach(warlordsEntityCircleEffectPair -> {
@@ -145,9 +141,15 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                             effect.playEffects();
                         });
                     }
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
 
                     if (ticksElapsed % 10 == 0) {
+                        List<WarlordsEntity> teammatesInRain = PlayerFilter
+                                .entitiesAround(location, rad, rad, rad)
+                                .aliveTeammatesOf(wp)
+                                .toList();
                         if (pveMasterUpgrade2) {
                             // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
                             personalCloudList.removeIf(teammate ->

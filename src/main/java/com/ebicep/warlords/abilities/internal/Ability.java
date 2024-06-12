@@ -101,6 +101,7 @@ public enum Ability {
     UNDYING_ARMY(UndyingArmy.class, UndyingArmy::new),
     VINDICATE(Vindicate.class, Vindicate::new),
     VITALITY_LIQUOR(VitalityLiquor.class, VitalityLiquor::new),
+    VITALITY_CONCOCTION(VitalityConcoction.class, VitalityConcoction::new),
     WATER_BOLT(WaterBolt.class, WaterBolt::new),
     WATER_BREATH(WaterBreath.class, WaterBreath::new),
     WINDFURY_WEAPON(WindfuryWeapon.class, WindfuryWeapon::new),

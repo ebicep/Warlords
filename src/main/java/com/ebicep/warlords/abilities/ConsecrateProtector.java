@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConsecrateProtector extends AbstractConsecrate implements CanReduceCooldowns {
 
     public ConsecrateProtector() {
-        super(96, 130, 10, 15, 200, 15, 4);
+        super(96, 130, 10, 20, 175, 15, 4, 5);
     }
 
     public ConsecrateProtector(
@@ -39,7 +39,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
             float radius,
             Location location
     ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location);
+        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, 5, location);
     }
 
     @Override
@@ -80,7 +80,9 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Location updatedLocation = wp.getLocation();
                     circleEffect.setCenter(updatedLocation);
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 30 == 0) {
                         PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)
                                     .aliveEnemiesOf(wp)

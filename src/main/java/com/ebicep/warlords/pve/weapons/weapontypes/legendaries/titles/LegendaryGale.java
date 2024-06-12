@@ -125,7 +125,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         @Override
         public void updateDescription(Player player) {
             description = Component.text("Increase movement speed by ")
-                                   .append(Component.text("40%", NamedTextColor.YELLOW))
+                                   .append(Component.text("50%", NamedTextColor.YELLOW))
                                    .append(Component.text(", decrease energy consumption of all abilities by "))
                                    .append(Component.text(DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease), NamedTextColor.YELLOW))
                                    .append(Component.text(" and gain "))
@@ -142,6 +142,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
         @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            Runnable cancelSpeed = wp.addSpeedModifier(wp, name, 50, 10 * 20, "BASE");
             List<FloatModifiable.FloatModifier> modifiers = wp
                     .getAbilities()
                     .stream()
@@ -158,6 +159,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                     },
                     cooldownManager -> {
                         modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                        cancelSpeed.run();
                     },
                     10 * 20
             ) {

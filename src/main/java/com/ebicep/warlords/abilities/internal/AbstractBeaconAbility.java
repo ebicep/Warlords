@@ -87,6 +87,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
         new GameRunnable(wp.getGame()) {
             int interval = 4;
+
             @Override
             public void run() {
                 interval--;
@@ -125,7 +126,9 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 tickDuration + 1,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     //particle effects
-                    teamCircleEffect.playEffects();
+                    if (ticksElapsed % 3 == 0) {
+                        teamCircleEffect.playEffects();
+                    }
                     whileActive(wp, cooldown, ticksLeft, ticksElapsed);
                 })
         ));
@@ -140,9 +143,9 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public abstract T getObject(Location groundLocation, CircleEffect effect);
 
-    public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
-
     public abstract ArmorStand getCrystal();
+
+    public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
 
     @Override
     public int getTickDuration() {

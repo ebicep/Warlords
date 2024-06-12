@@ -17,11 +17,17 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -48,6 +54,7 @@ public class PowerupOption implements Option {
     @Nonnegative
     private int cooldown;
     private boolean randomPowerup = false;
+    private TextDisplay timerDisplay;
 
 
     public PowerupOption(
@@ -129,14 +136,21 @@ public class PowerupOption implements Option {
                             .first((nearPlayer) -> {
                                 type.onPickUp(PowerupOption.this, nearPlayer);
                                 remove();
+                                spawnTimerDisplay();
                                 currentCooldown = cooldown;
                             });
                 }
                 if (ticksElapsed % 20 == 0 && currentCooldown != 0) {
                     currentCooldown--;
+                    if (timerDisplay != null) {
+                        timerDisplay.text(Component.text(currentCooldown, type.textColor));
+                    }
                     if (currentCooldown == 0) {
                         if (randomPowerup) {
                             type = PowerUp.getRandomPowerupType();
+                        }
+                        if (timerDisplay != null) {
+                            timerDisplay.remove();
                         }
                         spawn();
                     }
@@ -145,6 +159,22 @@ public class PowerupOption implements Option {
             }
 
         }.runTaskTimer(0, 0);
+    }
+
+    private void spawnTimerDisplay() {
+        timerDisplay = location.getWorld().spawn(location, TextDisplay.class, textDisplay -> {
+            textDisplay.setTransformation(new Transformation(
+                    new Vector3f(0, -.5f, 0),
+                    new AxisAngle4f(),
+                    new Vector3f(4, 4, 4),
+                    new AxisAngle4f()
+            ));
+            textDisplay.setBillboard(Display.Billboard.CENTER);
+            textDisplay.setAlignment(TextDisplay.TextAlignment.CENTER);
+            textDisplay.setViewRange(.05f);
+            textDisplay.setSeeThrough(true);
+            textDisplay.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
+        });
     }
 
     private void remove() {
@@ -212,7 +242,7 @@ public class PowerupOption implements Option {
                         getTickDuration()
                 );
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
-                                        .append(Component.text("SPEED", NamedTextColor.AQUA, TextDecoration.BOLD))
+                                        .append(Component.text("SPEED", NamedTextColor.YELLOW, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+40% ", NamedTextColor.GREEN))
                                         .append(Component.text("Speed for "))

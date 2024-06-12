@@ -78,7 +78,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
     public int numberOfDismounts = 0;
     private float damageReductionPerBounce = 10;
-    private float maxDamageReduction = 30;
+    private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
 
     public ChainLightning() {
@@ -86,7 +86,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     }
 
     public ChainLightning(float cooldown, float startCooldown) {
-        super("Chain Lightning", 370, 499, cooldown, 40, 20, 175, 20, 10, 3);
+        super("Chain Lightning", 370, 499, cooldown, 40, 20, 175, 20, 10, 3, startCooldown);
     }
 
     @Override

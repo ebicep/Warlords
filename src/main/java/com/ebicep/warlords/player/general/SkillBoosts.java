@@ -54,7 +54,7 @@ public enum SkillBoosts {
             TimeWarpPyromancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpPyromancer timeWarp) {
-                    timeWarp.setWarpHealPercentage(40);
+                    timeWarp.setWarpHealPercentage(timeWarp.getWarpHealPercentage() + 10);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
@@ -150,7 +150,7 @@ public enum SkillBoosts {
             IceBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier iceBarrier) {
-                    iceBarrier.setDamageReductionPercent(55);
+                    iceBarrier.setDamageReductionPercent(iceBarrier.getDamageReductionPercent() + 5);
                     iceBarrier.setTickDuration(iceBarrier.getTickDuration() + 40);
                 }
             }
@@ -247,7 +247,7 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractSeismicWave.class,
+            SeismicWaveBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractSeismicWave) {
                     abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
@@ -263,7 +263,7 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractGroundSlam.class,
+            GroundSlamBerserker.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam) {
                     abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
@@ -282,7 +282,7 @@ public enum SkillBoosts {
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust bloodLust) {
-                    bloodLust.setDamageConvertPercent(70);
+                    bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() + 5);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -326,7 +326,7 @@ public enum SkillBoosts {
                      .append(Component.text("", NamedTextColor.GREEN))
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractSeismicWave.class,
+            SeismicWaveDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractSeismicWave seismicWave) {
                     seismicWave.setVelocity(1.8f);
@@ -341,7 +341,7 @@ public enum SkillBoosts {
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractGroundSlam.class,
+            GroundSlamDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
@@ -359,9 +359,9 @@ public enum SkillBoosts {
             Intervene.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Intervene intervene) {
-                    intervene.setMaxDamagePrevented(4000);
-                    intervene.setRadius(15);
-                    intervene.setBreakRadius(20);
+                    intervene.setMaxDamagePrevented(intervene.getMaxDamagePrevented() + 400);
+                    intervene.setRadius(intervene.getRadius() + 5);
+                    intervene.setBreakRadius(intervene.getBreakRadius() + 5);
                 }
             }
     ),
@@ -375,8 +375,8 @@ public enum SkillBoosts {
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand lastStand) {
-                    lastStand.setSelfDamageReductionPercent(55);
-                    lastStand.setTeammateDamageReductionPercent(45);
+                    lastStand.setSelfDamageReductionPercent((int) (lastStand.getSelfDamageReduction() + 5));
+                    lastStand.setTeammateDamageReductionPercent((int) (lastStand.getTeammateDamageReduction() + 5));
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
@@ -406,7 +406,7 @@ public enum SkillBoosts {
             RecklessCharge.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge recklessCharge) {
-                    recklessCharge.setStunTimeInTicks(16);
+                    recklessCharge.setStunTimeInTicks(recklessCharge.getStunTimeInTicks() + 6);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -416,7 +416,7 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Ground Slam by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractGroundSlam.class,
+            GroundSlamRevenant.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
@@ -472,7 +472,7 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
                      .append(Component.text("35%", NamedTextColor.RED))
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
-            AbstractConsecrate.class,
+            ConsecrateAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
@@ -544,7 +544,7 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Consecrate by ", NamedTextColor.GREEN)
                      .append(Component.text("35%", NamedTextColor.RED))
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
-            AbstractConsecrate.class,
+            ConsecrateCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
@@ -583,7 +583,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader holyRadiance) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
-                    holyRadiance.setMarkDuration(12);
+                    holyRadiance.setMarkDuration(holyRadiance.getMarkDuration() + 4);
                     holyRadiance.setMarkSpeed(holyRadiance.getMarkSpeed() + 15);
                 }
             }
@@ -613,8 +613,7 @@ public enum SkillBoosts {
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike protectorsStrike) {
-                    protectorsStrike.setMinConvert(protectorsStrike.getMinConvert() + 10);
-                    protectorsStrike.setMaxConvert(protectorsStrike.getMaxConvert() + 10);
+                    protectorsStrike.setAllyHealing(protectorsStrike.getAllyHealing() + 10);
                     protectorsStrike.setMaxAllies(protectorsStrike.getMaxAllies() + 1);
                 }
             }
@@ -626,7 +625,7 @@ public enum SkillBoosts {
                      .append(Component.text("blocks and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            AbstractConsecrate.class,
+            ConsecrateProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate consecrate) {
                     consecrate.getHitBoxRadius().addAdditiveModifier("Skill Boost", 2);
@@ -710,14 +709,13 @@ public enum SkillBoosts {
             Component.text("Increase the damage of Windfury Weapon by 30% and increase the proc chance by 10%.", NamedTextColor.GRAY),
             Component.text("Increase the damage of Windfury Weapon by ", NamedTextColor.GREEN)
                      .append(Component.text("30% ", NamedTextColor.RED))
-                     .append(Component.text("and increase the proc ", NamedTextColor.RED))
-                     .append(Component.text("chance by ", NamedTextColor.GREEN))
+                     .append(Component.text("and increase the proc chance by ", NamedTextColor.GREEN))
                      .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             WindfuryWeapon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof WindfuryWeapon windfuryWeapon) {
-                    windfuryWeapon.setProcChance(45);
+                    windfuryWeapon.setProcChance(windfuryWeapon.getProcChance() + 10);
                     windfuryWeapon.setWeaponDamage(windfuryWeapon.getWeaponDamage() + 30);
                 }
             }
@@ -801,7 +799,7 @@ public enum SkillBoosts {
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance repentance) {
-                    repentance.setDamageConvertPercent(15);
+                    repentance.setDamageConvertPercent(repentance.getDamageConvertPercent() + 5);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
@@ -816,9 +814,9 @@ public enum SkillBoosts {
             DeathsDebt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DeathsDebt deathsDebt) {
-                    deathsDebt.setRespiteRadius(15);
-                    deathsDebt.setDebtRadius(13);
-                    deathsDebt.setSelfDamageInPercentPerSecond(.1f);
+                    deathsDebt.setRespiteRadius(deathsDebt.getRespiteRadius() + 5);
+                    deathsDebt.setDebtRadius(deathsDebt.getDebtRadius() + 5);
+                    deathsDebt.setDelayedDamageTaken(deathsDebt.getDelayedDamageTaken() - 40);
                 }
             }
     ),
@@ -839,8 +837,8 @@ public enum SkillBoosts {
             }
     ),
     BOULDER("Boulder",
-            Component.text("Increase the damage of Boulder by 25%.", NamedTextColor.GRAY),
-            Component.text("Increase the damage you deal with Boulder by ", NamedTextColor.RED)
+            Component.text("Increase the damage you deal with Boulder by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the damage you deal with Boulder by ", NamedTextColor.GREEN)
                      .append(Component.text("25%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             Boulder.class,
@@ -859,7 +857,7 @@ public enum SkillBoosts {
             EarthlivingWeapon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EarthlivingWeapon earthlivingWeapon) {
-                    earthlivingWeapon.setProcChance(60);
+                    earthlivingWeapon.setProcChance(earthlivingWeapon.getProcChance() + 20);
                 }
             }
     ),
@@ -915,7 +913,7 @@ public enum SkillBoosts {
             IncendiaryCurse.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse incendiaryCurse) {
-                    incendiaryCurse.setBlindDurationInTicks(50);
+                    incendiaryCurse.setBlindDurationInTicks(incendiaryCurse.getBlindDurationInTicks() + 10);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
                 }
             }
@@ -1013,7 +1011,7 @@ public enum SkillBoosts {
             PrismGuard.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard prismGuard) {
-                    prismGuard.setProjectileDamageReduction(75);
+                    prismGuard.setProjectileDamageReduction(prismGuard.getProjectileDamageReduction() + 15);
                     prismGuard.setBubbleHealing(prismGuard.getBubbleHealing() + 300);
                 }
             }
@@ -1028,7 +1026,7 @@ public enum SkillBoosts {
             Vindicate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Vindicate vindicate) {
-                    vindicate.setVindicateDamageReduction(40);
+                    vindicate.setVindicateDamageReduction(vindicate.getVindicateDamageReduction() + 10);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -1043,7 +1041,7 @@ public enum SkillBoosts {
             ImpalingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike impalingStrike) {
-                    impalingStrike.setLeechDuration(10);
+                    impalingStrike.setLeechDuration(impalingStrike.getLeechDuration() + 5);
                     abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                     abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                 }
@@ -1062,20 +1060,14 @@ public enum SkillBoosts {
                 }
             }
     ),
-    VITALITY_LIQUOR("Vitality Liquor",
-            Component.text("Increase the healing of Vitality Liquor by 15% and reduce the cooldown by 30%.", NamedTextColor.GRAY),
-            Component.text("Increase the healing of Vitality Liquor by ", NamedTextColor.GREEN)
-                     .append(Component.text("15% ", NamedTextColor.RED))
-                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+    VITALITY_CONCOCTION("Vitality Concoction",
+            Component.text("Reduce the cooldown of Vitality Concoction by 30%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Vitality Concoction by ", NamedTextColor.GREEN)
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            VitalityLiquor.class,
+            VitalityConcoction.class,
             abstractAbility -> {
-                if (abstractAbility instanceof VitalityLiquor vitalityLiquor) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
-                    vitalityLiquor.setMinWaveHealing(vitalityLiquor.getMinWaveHealing() * 1.15f);
-                    vitalityLiquor.setMaxWaveHealing(vitalityLiquor.getMaxWaveHealing() * 1.15f);
+                if (abstractAbility instanceof VitalityConcoction vitalityConcoction) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -1092,7 +1084,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof RemedicChains remedicChains) {
                     abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
                     abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
-                    remedicChains.setLinkBreakRadius(25);
+                    remedicChains.setLinkBreakRadius(remedicChains.getLinkBreakRadius() + 10);
                 }
             }
     ),
@@ -1106,7 +1098,7 @@ public enum SkillBoosts {
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma drainingMiasma) {
-                    drainingMiasma.setLeechDuration(10);
+                    drainingMiasma.setLeechDuration(drainingMiasma.getLeechDuration() + 5);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -1304,14 +1296,14 @@ public enum SkillBoosts {
             }
     ),
     SANCTIFIED_BEACON("Sanctified Beacon",
-            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 10%.", NamedTextColor.GRAY),
             Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by ", NamedTextColor.GREEN)
                      .append(Component.text("30%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             SanctifiedBeacon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
-                    sanctifiedBeacon.setCritMultiplierReducedTo(sanctifiedBeacon.getCritMultiplierReducedTo() - 30);
+                    sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() + 10);
                 }
             }
     ),

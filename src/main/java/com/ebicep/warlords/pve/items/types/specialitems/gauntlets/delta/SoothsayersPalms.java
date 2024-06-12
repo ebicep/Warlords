@@ -67,10 +67,7 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
                 AbstractAbility ability = abilities.get(ThreadLocalRandom.current().nextInt(abilities.size()));
                 Player player = event.getPlayer();
                 //temp scuffed account for energy cost
-                float energyCost = ability.getEnergyCostValue(); //TODO
-                ability.setEnergyCost(0);
                 ability.onActivate(warlordsPlayer);
-                ability.setEnergyCost(energyCost);
                 ability.addTimesUsed();
                 AbstractPlayerClass.sendRightClickPacket(warlordsPlayer);
                 AbstractItem.sendItemMessage(

@@ -8,11 +8,11 @@ public class Sentinel extends AbstractArcanist {
     public Sentinel() {
         super(
                 "Sentinel",
-                6000,
+                5800,
                 305,
                 20,
                 14,
-                15,
+                0,
                 new FortifyingHex(),
                 new GuardianBeam(),
                 new EnergySeerSentinel(),

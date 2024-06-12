@@ -30,7 +30,7 @@ public class RayOfLight extends AbstractBeam {
     private int healingIncrease = 100;
 
     public RayOfLight() {
-        super("Ray of Light", 511, 689, 10, 10, 20, 150, 30, 30, true);
+        super("Ray of Light", 409, 551, 10, 10, 20, 150, 30, 30, true);
     }
 
     @Override

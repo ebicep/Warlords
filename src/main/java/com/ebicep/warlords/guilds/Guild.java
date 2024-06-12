@@ -27,6 +27,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.annotation.Nonnull;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Predicate;
@@ -74,7 +75,8 @@ public class Guild {
     public HashMap<UUID, GuildPlayer> guildPlayerUUIDCache = new HashMap<>();
     @Id
     private String id;
-    private String name;
+    @Nonnull
+    private String name = "";
     private GuildTag tag;
     @Field("date_created")
     private Instant creationDate = Instant.now();
@@ -114,7 +116,7 @@ public class Guild {
     public Guild() {
     }
 
-    public Guild(Player player, String name) {
+    public Guild(Player player, @Nonnull String name) {
         this.name = name;
         this.createdBy = player.getUniqueId();
         this.currentMaster = player.getUniqueId();
@@ -555,7 +557,11 @@ public class Guild {
     }
 
     public void sendMOTD(Player player) {
-        if (motd == null || motd.isEmpty()) {
+        if (motd == null) {
+            return;
+        }
+        motd.removeIf(Objects::isNull);
+        if (motd.isEmpty()) {
             return;
         }
         player.sendMessage(Component.text("---------- Guild Message of the Day ----------", NamedTextColor.GREEN, TextDecoration.BOLD));

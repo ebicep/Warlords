@@ -29,7 +29,7 @@ import java.util.List;
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
 
     private final int maxAllies = 2;
-    private int critMultiplierReducedTo = 100;
+    private int critMultiplierReducedBy = 25;
     private ArmorStand crystal;
     private int hexIntervalTicks = 80;
     private float damageReductionPve = 30;
@@ -46,8 +46,8 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     public Component getBonusDescription() {
         return Component.text("All enemies within a ")
                         .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                        .append(Component.text(" block radius have their Crit Multiplier reduced to "))
-                        .append(Component.text(critMultiplierReducedTo + "%", NamedTextColor.RED))
+                        .append(Component.text(" block radius have their Crit Multiplier reduced by "))
+                        .append(Component.text(critMultiplierReducedBy + "%", NamedTextColor.RED))
                         .append(Component.text(". The beacon will emit a wave of energy that grants "))
                         .append(Component.text(maxAllies, NamedTextColor.YELLOW))
                         .append(Component.text(" nearby allies "))
@@ -130,7 +130,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     ) {
                         @Override
                         public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                            return critMultiplierReducedTo;
+                            return currentCritMultiplier * convertToDivisionDecimal(critMultiplierReducedBy);
                         }
 
                         @Override
@@ -215,12 +215,12 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
         return new SanctifiedBeaconBranch(abilityTree, this);
     }
 
-    public int getCritMultiplierReducedTo() {
-        return critMultiplierReducedTo;
+    public int getCritMultiplierReducedBy() {
+        return critMultiplierReducedBy;
     }
 
-    public void setCritMultiplierReducedTo(int critMultiplierReducedTo) {
-        this.critMultiplierReducedTo = critMultiplierReducedTo;
+    public void setCritMultiplierReducedBy(int critMultiplierReducedBy) {
+        this.critMultiplierReducedBy = critMultiplierReducedBy;
     }
 
     public int getHexIntervalTicks() {

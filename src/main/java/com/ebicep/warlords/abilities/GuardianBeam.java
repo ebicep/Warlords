@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractBeam;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -32,12 +33,12 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
 
     private float runeTimerIncrease = 1.5f;
-    private int shieldPercentSelf = 20;
+    private int shieldPercentSelf = 30;
     private int shieldPercentAlly = 30;
     private int tickDuration = 120;
 
     public GuardianBeam() {
-        super("Guardian Beam", 329, 445, 10, 10, 20, 175, 30, 30, true);
+        super("Guardian Beam", 313, 423, 10, 10, 20, 175, 30, 30, true);
     }
 
     @Override
@@ -77,21 +78,37 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
-
-        boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
-        if (hit.isEnemy(wp)) {
-            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-            if (pveMasterUpgrade2) {
-                hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+        if (!projectile.getHit().contains(hit)) {
+            boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
+            if (hit.isEnemy(wp)) {
+                hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                if (pveMasterUpgrade2) {
+                    hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+                }
+            } else {
+                giveShield(wp, hit, hasSanctuary, shieldPercentAlly + (hit.hasFlag() ? 15 : 0));
+                hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                        .append(Component.text(name, NamedTextColor.YELLOW))
+                        .append(Component.text(" is now shielding " + hit.getName() + "!", NamedTextColor.GRAY))
+                );
+                hit.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                        .append(Component.text(" " + wp.getName() + " is shielding you with their ", NamedTextColor.GRAY))
+                        .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
+                );
             }
-        } else {
-            giveShield(wp, hit, hasSanctuary, shieldPercentAlly);
-            hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+            if (projectile.getHit().isEmpty()) {
+                giveShield(wp, wp, hasSanctuary, shieldPercentSelf + (wp.hasFlag() ? 15 : 0));
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                        .append(Component.text(name, NamedTextColor.YELLOW))
+                        .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
+                );
+            }
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         }
-        if (projectile.getHit().isEmpty()) {
-            giveShield(wp, wp, hasSanctuary, shieldPercentSelf);
-        }
-        projectile.getHit().add(hit);
     }
 
     private void giveShield(WarlordsEntity from, WarlordsEntity to, boolean hasSanctuary, int percent) {
@@ -104,11 +121,12 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                 to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
             }
             Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
+            GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
             to.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name + " Shield",
                     "SHIELD",
                     Shield.class,
-                    new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent),
+                    shield,
                     from,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -125,7 +143,20 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                             EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
                         }
                     })
-            ));
+            ) {
+                @Override
+                public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                }
+
+                @Override
+                public PlayerNameData addPrefixFromOther() {
+                    return new PlayerNameData(
+                            Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                            we -> we.isTeammate(from)
+                    );
+                }
+            });
         }
     }
 

@@ -56,7 +56,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                .append(Component.text(format(healthRestore), NamedTextColor.GREEN))
                                .append(Component.text(" health after reaching your ally. Has a maximum range of"))
                                .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks.\n\nHeart to Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
+                               .append(Component.text(" blocks.\n\nHeart to Heart has reduced range when holding a flag.", NamedTextColor.GRAY));
 
     }
 

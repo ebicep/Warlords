@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -95,7 +96,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
 
         Shield shield = new Shield(name, maxShieldHealth);
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "ARCA",
                 Shield.class,
@@ -116,7 +117,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                         }
                     } else if (pveMasterUpgrade2) {
                         List<AbstractAbility> abilities = wp.getAbilities();
-                        if (abilities.size() == 0) {
+                        if (abilities.isEmpty()) {
                             return;
                         }
                         AbstractAbility rightClick = abilities.get(0);
@@ -162,7 +163,20 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                         EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3, 0.3, 0.3, 0);
                     }
                 })
-        );
+        ) {
+            @Override
+            public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+            }
+
+            @Override
+            public PlayerNameData addPrefixFromOther() {
+                return new PlayerNameData(
+                        Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                        we -> we.isTeammate(wp)
+                );
+            }
+        });
 
         return true;
     }
