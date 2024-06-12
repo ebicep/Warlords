@@ -47,8 +47,8 @@ public class RegularGamesMenu {
                 Team team = entry.getKey();
                 RegularGameTeam regularGameTeam = entry.getValue();
                 menu.setItem(i + 1, 1,
-                        new ItemBuilder(team.getWoolItem())
-                                .name(Component.text(team.getName(), team.teamColor()))
+                        new ItemBuilder(team.getWool())
+                                .name(Component.text(team.getName(), team.getTeamColor()))
                                 .get(),
                         (m, e) -> {
                             regularGameTeam.openMenuForPlayer(player);

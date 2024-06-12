@@ -403,8 +403,18 @@ public abstract class AbstractAbility implements AbilityIcon {
         return critChance;
     }
 
+    public void setCritChance(float critChance) {
+        this.critChance = critChance;
+        queueUpdateItem();
+    }
+
     public float getCritMultiplier() {
         return critMultiplier;
+    }
+
+    public void setCritMultiplier(float critMultiplier) {
+        this.critMultiplier = critMultiplier;
+        queueUpdateItem();
     }
 
     public List<Component> getDescription() {

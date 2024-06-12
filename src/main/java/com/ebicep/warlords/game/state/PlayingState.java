@@ -159,7 +159,7 @@ public class PlayingState implements State, TimerDebugAble {
                                                                    .append(Component.text("[", NamedTextColor.DARK_GRAY))
                                                                    .append(Component.text(warlordsPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
                                                                    .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().teamColor))
+                                                                   .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
                                                                    .append(Component.text(" [", NamedTextColor.DARK_GRAY))
                                                                    .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
                                                                    .append(Component.text("] ", NamedTextColor.DARK_GRAY));
