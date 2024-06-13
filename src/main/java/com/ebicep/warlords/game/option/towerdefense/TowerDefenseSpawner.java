@@ -31,10 +31,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -167,6 +164,7 @@ public class TowerDefenseSpawner implements Option, Listener {
         if (mobData == null || targetedMobData == null) {
             return;
         }
+        warlordsNPC.getMob().onEntityTarget(target);
         mobData.setTargeting(target);
         targetedMobData.getTargetedBy().add(warlordsNPC);
     }
@@ -256,6 +254,10 @@ public class TowerDefenseSpawner implements Option, Listener {
             Node<Location> node = path.getNodeIndex().get(lastNodeIdentifier);
             List<TowerDefenseDirectAcyclicGraph.TowerDefenseEdge> outgoingEdges = path.getEdges(node);
             if (outgoingEdges == null || outgoingEdges.isEmpty()) {
+                mob.getNpc().getNavigator().setPaused(true);
+                if (mob.getNpc().getEntity() instanceof LivingEntity livingEntity) {
+                    livingEntity.setAI(false);
+                }
                 Bukkit.getPluginManager().callEvent(new TowerDefenseMobCompletePathEvent(game, towerDefenseMob));
                 return;
             }
@@ -279,7 +281,10 @@ public class TowerDefenseSpawner implements Option, Listener {
         PathDirection randomEdgePathDirection = randomEdge.getPathDirection();
 
         Location nextTargetLocation = targetNode.getValue();
-        Location lineTarget = randomEdgePathDirection.getForwardLocation(npc.getStoredLocation(), nextTargetLocation);
+        LocationBuilder lineTarget = randomEdgePathDirection.getForwardLocation(npc.getStoredLocation(), nextTargetLocation);
+        if (mob instanceof TowerDefenseMob towerDefenseMob) {
+            towerDefenseMob.getMobType().onNextLocationSet(lineTarget);
+        }
         npc.getNavigator().setStraightLineTarget(lineTarget);
 
         if (!towerDefenseOption.isDebug()) {
@@ -397,6 +402,7 @@ public class TowerDefenseSpawner implements Option, Listener {
                 edgeIndex,
                 mobs.size() + 1
         ));
+        mob.getMobType().onSpawn(mob);
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 

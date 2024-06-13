@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
+import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -103,32 +104,39 @@ public class NPCTowerDefenseDefenderGoal extends BehaviorGoalAdapter {
         } else {
             eye = npc.getStoredLocation();
         }
-        return PlayerFilterGeneric.entitiesAround(thisWarlordsEntity, range, range, range)
-                                  .warlordsNPCs()
-                                  .aliveEnemiesOf(thisWarlordsEntity)
-                                  .filter(warlordsNPC -> {
-                                      TowerDefenseOption.TowerDefenseMobData mobData = towerDefenseOption.getMobsMap().get(warlordsNPC.getMob());
-                                      if (!(mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData)) {
-                                          return false;
-                                      }
-                                      return attackingMobData.getAttackingTeam() == towerMob.getSpawner().getTeam();
-                                  })
-                                  .filter(warlordsNPC ->
-                                          warlordsNPC.getEntity() instanceof LivingEntity livingEntity &&
-                                                  LocationUtils.getDotToLocation(livingEntity.getEyeLocation(), eye) > 0.5
-                                  )
-                                  .sorted((o1, o2) -> {
-                                      // whoever has least targetedBy
-                                      TowerDefenseOption.TowerDefenseMobData mobData1 = towerDefenseOption.getMobsMap().get(o1.getMob());
-                                      TowerDefenseOption.TowerDefenseMobData mobData2 = towerDefenseOption.getMobsMap().get(o2.getMob());
-                                      if (!(mobData1 instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData1) ||
-                                              !(mobData2 instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData2)) {
-                                          return 0;
-                                      }
-                                      return Integer.compare(attackingMobData1.getTargetedBy().size(), attackingMobData2.getTargetedBy().size());
-                                  })
-                                  .stream()
-                                  .collect(Collectors.toList());
+        return PlayerFilterGeneric
+                .entitiesAround(thisWarlordsEntity, range, range, range)
+                .warlordsNPCs()
+                .aliveEnemiesOf(thisWarlordsEntity)
+                .filter(warlordsNPC -> {
+                    TowerDefenseOption.TowerDefenseMobData mobData = towerDefenseOption.getMobsMap().get(warlordsNPC.getMob());
+                    if (!(mobData instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData)) {
+                        return false;
+                    }
+                    return attackingMobData.getAttackingTeam() == towerMob.getSpawner().getTeam();
+                })
+                .filter(warlordsNPC -> {
+                    if (warlordsNPC.getMob() instanceof TowerDefenseMob attacking) {
+                        return attacking.getBlockingMode().filterAttacker(warlordsNPC);
+                    }
+                    return true;
+                })
+                .filter(warlordsNPC ->
+                        warlordsNPC.getEntity() instanceof LivingEntity livingEntity &&
+                                LocationUtils.getDotToLocation(livingEntity.getEyeLocation(), eye) > 0.5
+                )
+                .sorted((o1, o2) -> {
+                    // whoever has least targetedBy
+                    TowerDefenseOption.TowerDefenseMobData mobData1 = towerDefenseOption.getMobsMap().get(o1.getMob());
+                    TowerDefenseOption.TowerDefenseMobData mobData2 = towerDefenseOption.getMobsMap().get(o2.getMob());
+                    if (!(mobData1 instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData1) ||
+                            !(mobData2 instanceof TowerDefenseOption.TowerDefenseAttackingMobData attackingMobData2)) {
+                        return 0;
+                    }
+                    return Integer.compare(attackingMobData1.getTargetedBy().size(), attackingMobData2.getTargetedBy().size());
+                })
+                .stream()
+                .collect(Collectors.toList());
     }
 
 

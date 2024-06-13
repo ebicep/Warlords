@@ -6,6 +6,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.game.option.towerdefense.mobs.attributes.blocking.Blockable;
+import com.ebicep.warlords.game.option.towerdefense.mobs.attributes.blocking.TDBlockingMode;
+import com.ebicep.warlords.game.option.towerdefense.mobs.attributes.type.GroundType;
+import com.ebicep.warlords.game.option.towerdefense.mobs.attributes.type.TDMobType;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -36,6 +40,12 @@ public abstract class TowerDefenseMob extends AbstractMob {
     private final FloatModifiable magicResistance = new FloatModifiable(0);
     @Nullable
     private WarlordsEntity spawner;
+
+    // air/ground
+    // blocking state
+    // list<pathfinding modifying>
+    private TDMobType mobType = GroundType.DEFAULT;
+    private TDBlockingMode blockingMode = Blockable.DEFAULT;
 
     public TowerDefenseMob(
             Location spawnLocation,
@@ -174,4 +184,21 @@ public abstract class TowerDefenseMob extends AbstractMob {
     public FloatModifiable getMagicResistance() {
         return magicResistance;
     }
+
+    public TDMobType getMobType() {
+        return mobType;
+    }
+
+    public void setMobType(TDMobType mobType) {
+        this.mobType = mobType;
+    }
+
+    public TDBlockingMode getBlockingMode() {
+        return blockingMode;
+    }
+
+    public void setBlockingMode(TDBlockingMode blockingMode) {
+        this.blockingMode = blockingMode;
+    }
+
 }

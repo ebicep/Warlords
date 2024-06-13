@@ -344,6 +344,10 @@ public abstract class AbstractMob implements Mob {
         });
     }
 
+    public void onEntityTarget(WarlordsEntity warlordsEntity) {
+
+    }
+
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
 
     }

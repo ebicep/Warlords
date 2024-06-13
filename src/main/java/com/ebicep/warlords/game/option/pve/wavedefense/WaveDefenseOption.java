@@ -38,6 +38,9 @@ import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.citizensnpcs.api.ai.EntityTarget;
+import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -187,6 +190,24 @@ public class WaveDefenseOption implements PveOption {
             public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
                 WarlordsEntity player = event.getWarlordsEntity();
                 AbilityTree.handleAutoUpgrade(player);
+            }
+
+            @EventHandler
+            public void onMobStartNavigating(NavigationBeginEvent event) {
+                NPC npc = event.getNPC();
+                // handle setting targetedBy/targeting
+                EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
+                if (entityTarget == null) {
+                    return;
+                }
+                if (!(npc.data().get(WarlordsEntity.WARLORDS_ENTITY_METADATA) instanceof WarlordsNPC warlordsNPC)) {
+                    return;
+                }
+                WarlordsEntity targetWarlordsEntity = Warlords.getPlayer(entityTarget.getTarget());
+                if (targetWarlordsEntity == null) {
+                    return;
+                }
+                warlordsNPC.getMob().onEntityTarget(targetWarlordsEntity);
             }
 
         });

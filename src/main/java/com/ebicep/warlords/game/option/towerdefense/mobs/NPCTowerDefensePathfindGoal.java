@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.mobs;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseSpawner;
+import com.ebicep.warlords.game.option.towerdefense.towers.TowerDefenseTowerMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -96,12 +97,23 @@ public class NPCTowerDefensePathfindGoal extends BehaviorGoalAdapter {
                 .aliveEnemiesOf(thisWarlordsEntity)
                 .filter(warlordsNPC -> mobData.getAttackingTeam() == warlordsNPC.getTeam())
                 .filter(warlordsNPC -> {
+                    if (mob instanceof TowerDefenseMob attacking) {
+                        return attacking.getBlockingMode().filterDefender(warlordsNPC);
+                    }
+                    return true;
+                })
+                .filter(warlordsNPC -> {
                     TowerDefenseOption.TowerDefenseMobData mobData = towerDefenseSpawner.getMobs().get(warlordsNPC.getMob());
                     if (!(mobData instanceof TowerDefenseOption.TowerDefenseDefendingMobData defendingMobData)) {
                         return false;
                     }
                     return defendingMobData.getTargetedBy().isEmpty();
                 })
+                .filter(warlordsNPC ->
+                        warlordsNPC.getMob() instanceof TowerDefenseMob attacking &&
+                                mob instanceof TowerDefenseTowerMob defending &&
+                                defending.getTroopType().canAttack(attacking)
+                )
                 .filter(warlordsNPC -> {
                     if (npc.getEntity() instanceof LivingEntity livingEntity) {
                         Location eyeLocation = livingEntity.getEyeLocation();

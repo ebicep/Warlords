@@ -4,6 +4,7 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.towerdefense.towers.trooptype.TDTroopType;
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
@@ -26,6 +27,7 @@ import java.util.function.Consumer;
 public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
 
     private WarlordsTower spawner;
+    public TDTroopType troopType = TDTroopType.DEFAULT;
 
     public TowerDefenseTowerMob(
             Location spawnLocation,
@@ -144,4 +146,13 @@ public abstract class TowerDefenseTowerMob extends AbstractMob implements Mob {
     public TextColor getTextColor() {
         return NamedTextColor.WHITE;
     }
+
+    public TDTroopType getTroopType() {
+        return troopType;
+    }
+
+    public void setTroopType(TDTroopType troopType) {
+        this.troopType = troopType;
+    }
+
 }

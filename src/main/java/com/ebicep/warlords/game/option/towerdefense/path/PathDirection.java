@@ -1,15 +1,14 @@
 package com.ebicep.warlords.game.option.towerdefense.path;
 
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.MathUtils;
 import org.bukkit.Location;
 
 public enum PathDirection {
     X {
         @Override
-        public Location getForwardLocation(Location current, Location target) {
-            Location location = target.clone();
-            location.setZ(current.getZ());
-            return location;
+        public LocationBuilder getForwardLocation(Location current, Location target) {
+            return new LocationBuilder(target).z(current.getZ());
         }
 
         @Override
@@ -39,10 +38,8 @@ public enum PathDirection {
     },
     Z {
         @Override
-        public Location getForwardLocation(Location current, Location target) {
-            Location location = target.clone();
-            location.setX(current.getX());
-            return location;
+        public LocationBuilder getForwardLocation(Location current, Location target) {
+            return new LocationBuilder(target).x(current.getX());
         }
 
         @Override
@@ -72,8 +69,8 @@ public enum PathDirection {
     },
     UNKNOWN {
         @Override
-        public Location getForwardLocation(Location current, Location target) {
-            return target;
+        public LocationBuilder getForwardLocation(Location current, Location target) {
+            return new LocationBuilder(target);
         }
 
         @Override
@@ -105,7 +102,7 @@ public enum PathDirection {
         return UNKNOWN;
     }
 
-    public abstract Location getForwardLocation(Location current, Location target);
+    public abstract LocationBuilder getForwardLocation(Location current, Location target);
 
     public abstract int compare(Location loc1, Location loc2, Location target);
 
