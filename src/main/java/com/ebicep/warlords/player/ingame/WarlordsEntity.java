@@ -75,7 +75,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -978,7 +977,7 @@ public abstract class WarlordsEntity {
                 resetRegenTimer();
                 updateHealth();
 
-                float cappedDamage = Math.min(damageValue, currentHealth);
+                float cappedDamage = Math.min(damageValue, currentHealth - (flags.contains(InstanceFlags.CANT_KILL) ? 1 : 0));
                 attacker.addDamage(cappedDamage, FlagHolder.isPlayerHolderFlag(this));
                 this.addDamageTaken(cappedDamage);
                 playHurtAnimation(this.entity, attacker);

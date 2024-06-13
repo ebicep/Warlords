@@ -39,7 +39,7 @@ public class TDSkeleton extends TowerDefenseMob implements BasicMob {
 
     @Override
     public double getDefaultAttackRange() {
-        return 5;
+        return 6;
     }
 
 }

@@ -11,6 +11,7 @@ public enum InstanceFlags {
     RECURSIVE,
     DOT, // damage over time
     REFLECTIVE_DAMAGE,
+    CANT_KILL,
 
     IGNORE_SELF_RES,
     NO_DISMOUNT,
