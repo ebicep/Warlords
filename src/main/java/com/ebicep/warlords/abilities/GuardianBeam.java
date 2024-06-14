@@ -77,20 +77,20 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
             if (hit.isEnemy(wp)) {
                 hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 if (pveMasterUpgrade2) {
                     hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
                 }
-            } else {
+            } else if (projectile.getHit().stream().filter(warlordsEntity -> hit.isTeammate(wp)).count() == 1) {
                 giveShield(wp, hit, hasSanctuary, shieldPercentAlly + (hit.hasFlag() ? 15 : 0));
                 hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
             }
-            if (projectile.getHit().isEmpty()) {
+            if (projectile.getHit().size() == 1) {
                 giveShield(wp, wp, hasSanctuary, shieldPercentSelf + (wp.hasFlag() ? 15 : 0));
             }
-            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         }
     }
 
@@ -118,7 +118,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                     .append(Component.text(" is now shielding " + to.getName() + "!", NamedTextColor.GRAY))
             );
             to.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                    .append(Component.text(" " + to.getName() + " is shielding you with their ", NamedTextColor.GRAY))
+                    .append(Component.text(" " + from.getName() + " is shielding you with their ", NamedTextColor.GRAY))
                     .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
                     .append(Component.text("!", NamedTextColor.GRAY))
             );
