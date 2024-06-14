@@ -10,6 +10,7 @@ import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -25,6 +26,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -153,7 +155,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         if (pveMasterUpgrade2) {
                             nearEntity.getCooldownManager().removeDebuffCooldowns();
                             nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                    "Debuff Immunity",
+                                    "Healing Elixir",
                                     "ELIXIR",
                                     SoothingElixir.class,
                                     new SoothingElixir(),
@@ -162,7 +164,12 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                     cooldownManager -> {
                                     },
                                     4 * 20
-                            ));
+                            ) {
+                                @Override
+                                protected Listener getListener() {
+                                    return CooldownManager.getDefaultDebuffImmunityListener();
+                                }
+                            });
                         }
                     }
 

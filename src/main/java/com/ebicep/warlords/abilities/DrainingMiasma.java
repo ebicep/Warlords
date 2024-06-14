@@ -10,6 +10,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -25,6 +26,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -222,7 +224,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             } else {
                 if (pveMasterUpgrade2) {
                     miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            "Debuff Immunity",
+                            "Toxic Immunity",
                             "MIAS",
                             DrainingMiasma.class,
                             tempDrainingMiasma,
@@ -247,7 +249,12 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                 );
                                 Overheal.giveOverHeal(wp, miasmaTarget);
                             })
-                    ));
+                    ) {
+                        @Override
+                        protected Listener getListener() {
+                            return CooldownManager.getDefaultDebuffImmunityListener();
+                        }
+                    });
                 }
             }
         }

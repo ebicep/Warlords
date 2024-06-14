@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -20,6 +21,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -55,11 +57,6 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new VitalityConcoctionBranch(abilityTree, this);
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
@@ -78,7 +75,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         for (WarlordsEntity target : targets) {
             target.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
             target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Debuff Immunity",
+                    name,
                     "STIM",
                     VitalityConcoction.class,
                     new VitalityConcoction(),
@@ -117,10 +114,21 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     return currentDamageValue * convertToDivisionDecimal(damageResistance);
                 }
+
+                @Override
+                protected Listener getListener() {
+                    return CooldownManager.getDefaultDebuffImmunityListener();
+                }
+
             });
         }
 
         return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new VitalityConcoctionBranch(abilityTree, this);
     }
 
     @Override

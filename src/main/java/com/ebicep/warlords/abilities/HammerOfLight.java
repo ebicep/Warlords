@@ -168,7 +168,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             allyTargetCooldownManager.removeDebuffCooldowns();
                             allyTargetCooldownManager.removeCooldownByObject(tempHammerOfLight);
                             allyTargetCooldownManager.addCooldown(new RegularCooldown<>(
-                                    "Debuff Immunity",
+                                    "Hammer of Disillusion",
                                     null,
                                     HammerOfLight.class,
                                     tempHammerOfLight,
@@ -177,7 +177,12 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                     cooldownManager -> {
                                     },
                                     5
-                            ));
+                            ) {
+                                @Override
+                                protected Listener getListener() {
+                                    return CooldownManager.getDefaultDebuffImmunityListener();
+                                }
+                            });
                         }
 
                     }

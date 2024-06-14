@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.general.CustomScoreboard;
@@ -15,8 +17,11 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.java.TriConsumer;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.*;
@@ -47,6 +52,40 @@ public class CooldownManager {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    public static Listener getDefaultDebuffImmunityListener() {
+        return new Listener() {
+
+            @EventHandler
+            public void onAddCooldown(WarlordsAddCooldownEvent event) {
+                WarlordsEntity warlordsEntity = event.getWarlordsEntity();
+                warlordsEntity.getSpeed().removeSlownessModifiers();
+                warlordsEntity.getCooldownManager().removeDebuffCooldowns();
+                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
+                    return;
+                }
+                event.setCancelled(true);
+            }
+
+            @EventHandler
+            public void onAddSpeed(WarlordsAddSpeedModifierEvent event) {
+                if (event.getModifier().getModifier() < 0) {
+                    event.setCancelled(true);
+                }
+            }
+
+            @EventHandler
+            public void onAddPotionEffect(WarlordsAddPotionEffectEvent event) {
+                PotionEffect potionEffect = event.getPotionEffect();
+                if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
+                        PotionEffectType.CONFUSION.equals(potionEffect.getType())
+                ) {
+                    event.setCancelled(true);
+                }
+            }
+
+        };
     }
 
     private final WarlordsEntity warlordsEntity;
@@ -349,15 +388,6 @@ public class CooldownManager {
     }
 
     public void addCooldown(AbstractCooldown<?> abstractCooldown) {
-        if (Objects.equals(abstractCooldown.getName(), "Debuff Immunity")) {
-            warlordsEntity.getSpeed().removeSlownessModifiers();
-            warlordsEntity.getCooldownManager().removeDebuffCooldowns();
-        }
-        if (hasCooldownFromName("Debuff Immunity") && abstractCooldown.getCooldownType() == CooldownTypes.DEBUFF) {
-            ChatUtils.MessageType.WARLORDS.sendMessage("***CD SKIP " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
-            abstractCooldown.getOnRemoveForce().accept(this);
-            return;
-        }
         WarlordsAddCooldownEvent event = new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {

@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractLightInfusion;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.pve.upgrades.paladin.protector.LightInfusionBranchPro
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -124,7 +126,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                 infusionTarget.getCooldownManager().removeDebuffCooldowns();
                 infusionTarget.addSpeedModifier(wp, "Chiron Light", speedBuff, tickDuration);
                 infusionTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Debuff Immunity",
+                        "Chiron Light",
                         "CHIRON",
                         LightInfusionProtector.class,
                         tempLightInfusion,
@@ -133,7 +135,12 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                         cooldownManager -> {
                         },
                         4 * 20
-                ));
+                ) {
+                    @Override
+                    protected Listener getListener() {
+                        return CooldownManager.getDefaultDebuffImmunityListener();
+                    }
+                });
             }
         }
 
