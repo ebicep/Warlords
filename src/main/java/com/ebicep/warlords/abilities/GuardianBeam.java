@@ -86,24 +86,9 @@ public class GuardianBeam extends AbstractBeam implements Duration {
             } else {
                 giveShield(wp, hit, hasSanctuary, shieldPercentAlly + (hit.hasFlag() ? 15 : 0));
                 hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                        .append(Component.text(" Your ", NamedTextColor.GRAY))
-                        .append(Component.text(name, NamedTextColor.YELLOW))
-                        .append(Component.text(" is now shielding " + hit.getName() + "!", NamedTextColor.GRAY))
-                );
-                hit.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                        .append(Component.text(" " + wp.getName() + " is shielding you with their ", NamedTextColor.GRAY))
-                        .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
-                        .append(Component.text("!", NamedTextColor.GRAY))
-                );
             }
             if (projectile.getHit().isEmpty()) {
                 giveShield(wp, wp, hasSanctuary, shieldPercentSelf + (wp.hasFlag() ? 15 : 0));
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                        .append(Component.text(" Your ", NamedTextColor.GRAY))
-                        .append(Component.text(name, NamedTextColor.YELLOW))
-                        .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
-                );
             }
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         }
@@ -114,48 +99,67 @@ public class GuardianBeam extends AbstractBeam implements Duration {
                 .filterCooldownClass(FortifyingHex.class)
                 .stream()
                 .count();
-        if (selfHexStacks >= 3) {
-            if (!hasSanctuary) {
-                to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
-            }
-            Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
-            GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
-            to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name + " Shield",
-                    "SHIELD",
-                    Shield.class,
-                    shield,
-                    from,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                    },
-                    tickDuration,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 4 == 0) {
-                            Location location = to.getLocation();
-                            location.add(0, 1.5, 0);
-                            EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
-                            EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
-                            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
-                        }
-                    })
-            ) {
-                @Override
-                public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
-                }
-
-                @Override
-                public PlayerNameData addPrefixFromOther() {
-                    return new PlayerNameData(
-                            Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
-                            we -> we.isTeammate(from)
-                    );
-                }
-            });
+        if (selfHexStacks < 3) {
+            return;
         }
+        if (!hasSanctuary) {
+            to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
+        }
+        if (from == to) {
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
+            );
+        } else {
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" is now shielding " + to.getName() + "!", NamedTextColor.GRAY))
+            );
+            to.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + to.getName() + " is shielding you with their ", NamedTextColor.GRAY))
+                    .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
+        }
+        Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
+        GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name + " Shield",
+                "SHIELD",
+                Shield.class,
+                shield,
+                from,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = to.getLocation();
+                        location.add(0, 1.5, 0);
+                        EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
+                        EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
+                        EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
+                    }
+                })
+        ) {
+            @Override
+            public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+            }
+
+            @Override
+            public PlayerNameData addPrefixFromOther() {
+                return new PlayerNameData(
+                        Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                        we -> we.isTeammate(from)
+                );
+            }
+        });
     }
 
     @Nullable
