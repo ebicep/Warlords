@@ -59,9 +59,6 @@ public class CooldownManager {
 
             @EventHandler
             public void onAddCooldown(WarlordsAddCooldownEvent event) {
-                WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                warlordsEntity.getSpeed().removeSlownessModifiers();
-                warlordsEntity.getCooldownManager().removeDebuffCooldowns();
                 if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
                     return;
                 }
@@ -88,6 +85,26 @@ public class CooldownManager {
         };
     }
 
+    public int removeDebuffCooldowns() {
+        List<AbstractCooldown<?>> toRemove = abstractCooldowns
+                .stream()
+                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                .toList();
+        toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
+        abstractCooldowns.removeAll(toRemove);
+        toRemove.forEach(this::updatePlayerNames);
+        return toRemove.size();
+    }
+
+    public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
+        if (abstractCooldown.changesPlayerName()) {
+            queueUpdatePlayerNames();
+        }
+    }
+
+    public void queueUpdatePlayerNames() {
+        updatePlayerNames = true;
+    }
     private final WarlordsEntity warlordsEntity;
     private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
     private int totalCooldowns = 0;
@@ -144,16 +161,6 @@ public class CooldownManager {
                     }
                 }
             }
-        }
-    }
-
-    public void queueUpdatePlayerNames() {
-        updatePlayerNames = true;
-    }
-
-    public void updatePlayerNames(AbstractCooldown<?> abstractCooldown) {
-        if (abstractCooldown.changesPlayerName()) {
-            queueUpdatePlayerNames();
         }
     }
 
@@ -402,16 +409,6 @@ public class CooldownManager {
         }
     }
 
-    public int removeDebuffCooldowns() {
-        List<AbstractCooldown<?>> toRemove = abstractCooldowns.stream()
-                                                              .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
-                                                              .toList();
-        toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
-        abstractCooldowns.removeAll(toRemove);
-        toRemove.forEach(this::updatePlayerNames);
-        return toRemove.size();
-    }
-
     public boolean hasCooldownFromName(String name) {
         return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName() != null && cooldown.getName().equalsIgnoreCase(name));
     }
@@ -587,9 +584,6 @@ public class CooldownManager {
         return linkInformation;
     }
 
-    public record LinkInformation(float radius, int limit, int selfHealing, int allyHealing) {
-    }
-
     @SuppressWarnings("unchecked")
     public <T> void incrementCooldown(RegularCooldown<T> regularCooldown, int ticksToAdd, int tickCap) {
         Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(this, RegularCooldown.class)
@@ -635,6 +629,9 @@ public class CooldownManager {
         //if popped returns false - all undying armies are not popped (there is no popped armies)
         //if !popped return false - all undying armies are popped (there is no unpopped armies)
         return false;
+    }
+
+    public record LinkInformation(float radius, int limit, int selfHealing, int allyHealing) {
     }
 
 }

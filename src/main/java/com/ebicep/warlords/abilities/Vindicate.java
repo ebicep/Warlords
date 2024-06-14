@@ -6,11 +6,9 @@ import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -24,10 +22,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -194,40 +189,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
             @Override
             protected Listener getListener() {
-                return new Listener() {
-
-                    @EventHandler
-                    public void onAddCooldown(WarlordsAddCooldownEvent event) {
-                        WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                        warlordsEntity.getSpeed().removeSlownessModifiers();
-                        warlordsEntity.getCooldownManager().removeDebuffCooldowns();
-                        if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
-                            return;
-                        }
-                        if (event.getAbstractCooldown().getName().equals("Poisonous Hex")) {
-                            return;
-                        }
-                        event.setCancelled(true);
-                    }
-
-                    @EventHandler
-                    public void onAddSpeed(WarlordsAddSpeedModifierEvent event) {
-                        if (event.getModifier().getModifier() < 0) {
-                            event.setCancelled(true);
-                        }
-                    }
-
-                    @EventHandler
-                    public void onAddPotionEffect(WarlordsAddPotionEffectEvent event) {
-                        PotionEffect potionEffect = event.getPotionEffect();
-                        if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
-                                PotionEffectType.CONFUSION.equals(potionEffect.getType())
-                        ) {
-                            event.setCancelled(true);
-                        }
-                    }
-
-                };
+                return CooldownManager.getDefaultDebuffImmunityListener();
             }
         });
         if (vindPveMaster2) {

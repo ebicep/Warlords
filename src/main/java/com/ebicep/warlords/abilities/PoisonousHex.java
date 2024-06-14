@@ -259,7 +259,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 PoisonousHex.class,
                 new PoisonousHex(),
                 from,
-                CooldownTypes.DEBUFF,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {
                     to.addDamageInstance(
                             from,
