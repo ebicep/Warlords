@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
@@ -26,14 +28,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AvengersStrike extends AbstractStrike {
+public class AvengersStrike extends AbstractStrike implements Damages<AvengersStrike.AvengerStrikeValues> {
 
     public float energyStole = 0;
-
+    private final AvengerStrikeValues values = new AvengerStrikeValues();
     private float energySteal = 10;
 
     public AvengersStrike() {
         super("Avenger's Strike", 359, 485, 0, 90, 25, 185);
+    }
+
+    @Override
+    public AvengerStrikeValues getDamageValues() {
+        return values;
     }
 
     @Override
@@ -136,5 +143,17 @@ public class AvengersStrike extends AbstractStrike {
 
     public void setEnergySteal(float energySteal) {
         this.energySteal = energySteal;
+    }
+
+    public static class AvengerStrikeValues implements Value.ValueHolder {
+
+        private final Value.RangedValue strikeDamage = new Value.RangedValue(359, 485);
+        private final List<Value> values = List.of(strikeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }
