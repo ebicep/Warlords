@@ -80,7 +80,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
         return upgrades;
     }
 
-    private static class BoltAttack extends AbstractAbility implements HitBox {
+    private static class BoltAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private static final double WATER_EFFECT_RANDOMNESS = .1;
         private static final float WATER_EFFECT_BLOCK_SCALE = .3f;

@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.game.option.towerdefense.towers.TDAbility;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -371,22 +372,26 @@ public abstract class AbstractAbility implements AbilityIcon {
                 .unbreakable();
 
         List<Component> lore = new ArrayList<>();
-        if (getCooldownValue() != 0) {
-            lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                              .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.AQUA)));
+        if (this instanceof TDAbility) {
+
+        } else {
+            if (getCooldownValue() != 0) {
+                lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
+                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.AQUA)));
+            }
+            if (getEnergyCostValue() != 0) {
+                lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)
+                                  .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
+            }
+            if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
+                lore.add(Component.text("Crit Chance: ", NamedTextColor.GRAY)
+                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)));
+                lore.add(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
+                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)));
+            }
+            lore.add(Component.empty());
+            lore.addAll(getDescription());
         }
-        if (getEnergyCostValue() != 0) {
-            lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)
-                              .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
-        }
-        if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
-            lore.add(Component.text("Crit Chance: ", NamedTextColor.GRAY)
-                              .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)));
-            lore.add(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
-                              .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)));
-        }
-        lore.add(Component.empty());
-        lore.addAll(getDescription());
 
         return itemBuilder.lore(lore).get();
     }

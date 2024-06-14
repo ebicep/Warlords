@@ -76,7 +76,7 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
         return upgrades;
     }
 
-    private static class BoltAttack extends AbstractAbility implements HitBox {
+    private static class BoltAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private static final int STUN_TICKS = 20;
         private final FloatModifiable range = new FloatModifiable(30);

@@ -91,7 +91,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         return upgrades;
     }
 
-    private static class StrikeAttack extends AbstractAbility implements HitBox {
+    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
         private final int minHeal = 100;
@@ -153,7 +153,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
 
     }
 
-    private static class PoisonAttack extends AbstractAbility implements HitBox {
+    private static class PoisonAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private static final int POSION_TICKS = 100;
         private static final int SLOW_TICKS = 40;

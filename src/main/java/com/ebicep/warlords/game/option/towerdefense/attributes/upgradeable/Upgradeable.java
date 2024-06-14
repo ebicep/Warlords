@@ -113,7 +113,7 @@ public interface Upgradeable {
             return UpgradeResult.LOCKED;
         }
         if (upgrade.getCost() > 0) { // TODO
-            return UpgradeResult.INSUFFICIENT_FUNDS;
+//            return UpgradeResult.INSUFFICIENT_FUNDS;
         }
         if (index != 0 && !tower.isPreviousUnlocked(upgrades, index)) {
             return UpgradeResult.MISSING_REQUIREMENTS;
@@ -180,21 +180,21 @@ public interface Upgradeable {
     }
 
     /**
-     * <p>OOX</p>
-     * <p>XXO</p>
-     * <p>OOX</p>
+     * <p>OOOX</p>
+     * <p>XXXO</p>
+     * <p>OOOX</p>
      */
     interface Path2 extends Upgradeable {
 
-        int MAX_UPGRADES = 4;
+        int MAX_UPGRADES = 5;
 
         @Override
         default boolean isUpgradeLocked(List<TowerUpgrade> upgrades, int index) {
-            if (index == 2) {
-                return upgrades.get(3).isUnlocked();
-            }
             if (index == 3) {
-                return upgrades.get(2).isUnlocked();
+                return upgrades.get(4).isUnlocked();
+            }
+            if (index == 4) {
+                return upgrades.get(3).isUnlocked();
             }
             return false;
         }
@@ -204,8 +204,8 @@ public interface Upgradeable {
             if (index == 0) {
                 return true;
             }
-            if (index == 3) {
-                return upgrades.get(1).isUnlocked();
+            if (index == MAX_UPGRADES - 1) {
+                return upgrades.get(2).isUnlocked();
             }
             return upgrades.get(index - 1).isUnlocked();
         }
@@ -217,10 +217,11 @@ public interface Upgradeable {
                 ChatUtils.MessageType.TOWER_DEFENSE.sendErrorMessage(new Exception(tower + " has too many upgrades"));
                 upgrades = upgrades.subList(0, MAX_UPGRADES);
             }
-            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 0, 5, 2);
-            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 1, 6, 2);
-            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 2, 7, 1);
-            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 3, 7, 3);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 0, 4, 2);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 1, 5, 2);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 2, 6, 2);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 3, 7, 1);
+            addUpgradeToMenu(player, warlordsEntity, menu, tower, upgrades, 4, 7, 3);
         }
 
     }

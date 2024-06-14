@@ -77,7 +77,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         return upgrades;
     }
 
-    private static class HexAttack extends AbstractAbility implements HitBox {
+    private static class HexAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
 

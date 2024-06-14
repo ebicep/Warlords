@@ -88,7 +88,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         return upgrades;
     }
 
-    private static class HexAttack extends AbstractAbility implements HitBox {
+    private static class HexAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(45);
 
@@ -122,7 +122,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
 
     }
 
-    private static class BuffTowers extends AbstractAbility implements HitBox {
+    private static class BuffTowers extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
@@ -163,7 +163,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         }
     }
 
-    private static class MercifulHex extends AbstractAbility implements HitBox {
+    private static class MercifulHex extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(20);
 

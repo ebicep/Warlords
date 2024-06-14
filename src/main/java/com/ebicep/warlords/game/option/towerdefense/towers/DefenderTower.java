@@ -92,7 +92,7 @@ public class DefenderTower extends AbstractTower implements Upgradeable.Path2 {
     }
 
 
-    private static class SpawnTroops extends AbstractAbility implements Spawner, HitBox {
+    private static class SpawnTroops extends AbstractAbility implements TDAbility, Spawner, HitBox {
 
         private final List<LocationUtils.LocationXYZ> mobSpawnLocations;
         private final List<TowerDefenseTowerMob> spawnedMobs = new ArrayList<>();

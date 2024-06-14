@@ -93,7 +93,7 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
         return upgrades;
     }
 
-    private static class SpiritAttack extends AbstractAbility implements HitBox {
+    private static class SpiritAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
 
@@ -145,7 +145,7 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
     }
 
 
-    private static class SpawnTroops extends AbstractAbility implements Spawner, HitBox {
+    private static class SpawnTroops extends AbstractAbility implements TDAbility, Spawner, HitBox {
 
         private final List<LocationUtils.LocationXYZ> mobSpawnLocations;
         private final List<TowerDefenseTowerMob> spawnedMobs = new ArrayList<>();

@@ -100,7 +100,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
     }
 
 
-    private static class SpawnTroops extends AbstractAbility implements Spawner, HitBox {
+    private static class SpawnTroops extends AbstractAbility implements TDAbility, Spawner, HitBox {
 
         private final List<LocationUtils.LocationXYZ> mobSpawnLocations;
         private final List<TowerDefenseTowerMob> spawnedMobs = new ArrayList<>();
@@ -215,7 +215,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
             }
         }
 
-        private static class AssassinRangeAttack extends AbstractAbility {
+        private static class AssassinRangeAttack extends AbstractAbility implements TDAbility {
 
             private static final double SPEED = 0.30;
             private static final double GRAVITY = -0.007;

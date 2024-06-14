@@ -75,7 +75,7 @@ public class CryomancerTower extends AbstractTower implements Upgradeable.Path2 
         return upgrades;
     }
 
-    private static class SlowAttack extends AbstractAbility implements HitBox {
+    private static class SlowAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private static final int SLOW_TICKS = 40;
         private final FloatModifiable range = new FloatModifiable(30);

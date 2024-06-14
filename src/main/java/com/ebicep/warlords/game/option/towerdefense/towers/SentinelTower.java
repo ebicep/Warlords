@@ -80,7 +80,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         return upgrades;
     }
 
-    private static class HexAttack extends AbstractAbility implements HitBox {
+    private static class HexAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(60);
 
@@ -114,7 +114,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
 
     }
 
-    private static class BeamAttack extends AbstractAbility implements HitBox {
+    private static class BeamAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(60);
         private float currentTargetDamage;
@@ -197,7 +197,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
     }
 
 
-    private static class BuffTowers extends AbstractAbility implements HitBox {
+    private static class BuffTowers extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
