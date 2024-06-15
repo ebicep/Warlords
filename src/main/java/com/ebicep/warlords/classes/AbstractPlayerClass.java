@@ -179,7 +179,7 @@ public abstract class AbstractPlayerClass {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability);
                 Bukkit.getPluginManager().callEvent(post);
 
-                wp.subtractEnergy(name, ability.getEnergyCost(), false);
+                wp.subtractEnergy(ability.getName(), ability.getEnergyCost(), false);
                 ability.addTimesUsed();
                 if (!wp.isDisableCooldowns()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());
