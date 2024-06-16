@@ -52,7 +52,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                                .append(Component.text(energyDrainPerSecond, NamedTextColor.YELLOW))
                                .append(Component.text(" for the duration."))
                                .append(Component.text("\n\nMark has an optimal range of "))
-                               .append(Component.text(markRadius, NamedTextColor.YELLOW));
+                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
     }
 
     @Override
