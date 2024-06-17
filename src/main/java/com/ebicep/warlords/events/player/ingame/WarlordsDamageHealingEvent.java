@@ -88,26 +88,26 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             WarlordsEntity source,
             @Nullable AbstractAbility ability,
             String cause,
-            float critChance,
             float min,
             float max,
+            float critChance,
             float critMultiplier,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
             @Nullable UUID uuid
     ) {
         super(player);
-        this.uuid = uuid;
-        this.customFlags = customFlags;
-        this.flags = flags;
         this.instanceType = instanceType;
-        this.critMultiplier = critMultiplier;
-        this.critChance = critChance;
-        this.max = max;
-        this.min = min;
-        this.cause = cause;
-        this.ability = ability;
         this.source = source;
+        this.ability = ability;
+        this.cause = cause;
+        this.flags = flags;
+        this.min = min;
+        this.max = max;
+        this.critChance = critChance;
+        this.critMultiplier = critMultiplier;
+        this.customFlags = customFlags;
+        this.uuid = uuid;
     }
 
     public WarlordsEntity getSource() {

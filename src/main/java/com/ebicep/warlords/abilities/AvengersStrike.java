@@ -5,10 +5,10 @@ import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -26,7 +26,6 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class AvengersStrike extends AbstractStrike implements Damages<AvengersStrike.AvengerStrikeValues> {
 
@@ -104,13 +103,13 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
         }
         healthDamage = DamageCheck.clamp(healthDamage);
 
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
-                wp,
-                name,
-                (minDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
-                (maxDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min((values.strikeDamage.min().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .max((values.strikeDamage.max().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .crit(values.strikeDamage)
         );
 
         if (pveMasterUpgrade) {
@@ -121,13 +120,13 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
                     .excluding(nearPlayer)
                     .limit(2)
             ) {
-                we.addDamageInstance(
-                        wp,
-                        "Avenger's Slash",
-                        ((minDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
-                        ((maxDamageHeal.getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .min(((values.strikeDamage.min().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
+                        .max(((values.strikeDamage.max().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
+                        .crit(values.strikeDamage)
                 );
                 Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
             }
@@ -147,7 +146,7 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
 
     public static class AvengerStrikeValues implements Value.ValueHolder {
 
-        private final Value.RangedValue strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
         private final List<Value> values = List.of(strikeDamage);
 
         @Override

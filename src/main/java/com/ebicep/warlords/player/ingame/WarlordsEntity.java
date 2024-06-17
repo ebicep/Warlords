@@ -25,6 +25,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
@@ -212,6 +213,10 @@ public abstract class WarlordsEntity {
                 '}';
     }
 
+    public Optional<WarlordsDamageHealingFinalEvent> addInstance(InstanceBuilder instanceBuilder) {
+        return InstanceManager.addDamageHealingInstance(this, instanceBuilder.target(this).build());
+    }
+
     /**
      * Adds a damage instance to an ability or a player.
      *
@@ -241,6 +246,30 @@ public abstract class WarlordsEntity {
                 flags.length == 0 ? EnumSet.noneOf(InstanceFlags.class) : EnumSet.copyOf(Arrays.asList(flags)),
                 null
         );
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            EnumSet<InstanceFlags> flags,
+            UUID uuid
+    ) {
+        return InstanceManager.addDamageHealingInstance(this, new WarlordsDamageHealingEvent(this,
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                true,
+                flags,
+                new ArrayList<>(),
+                uuid
+        ));
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -294,6 +323,31 @@ public abstract class WarlordsEntity {
             float max,
             float critChance,
             float critMultiplier,
+            EnumSet<InstanceFlags> flags,
+            List<CustomInstanceFlags> customInstanceFlags,
+            UUID uuid
+    ) {
+        return InstanceManager.addDamageHealingInstance(this, new WarlordsDamageHealingEvent(this,
+                attacker,
+                ability,
+                min,
+                max,
+                critChance,
+                critMultiplier,
+                true,
+                flags,
+                customInstanceFlags,
+                uuid
+        ));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
+            WarlordsEntity attacker,
+            String ability,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
             UUID uuid
     ) {
         return addDamageInstance(attacker, ability, min, max, critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class), uuid);
@@ -333,55 +387,6 @@ public abstract class WarlordsEntity {
             EnumSet<InstanceFlags> flags
     ) {
         return addDamageInstance(attacker, ability, min.getCalculatedValue(), max.getCalculatedValue(), critChance, critMultiplier, flags, null);
-    }
-
-    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
-            WarlordsEntity attacker,
-            String ability,
-            float min,
-            float max,
-            float critChance,
-            float critMultiplier,
-            EnumSet<InstanceFlags> flags,
-            UUID uuid
-    ) {
-        return InstanceManager.addDamageHealingInstance(this, new WarlordsDamageHealingEvent(this,
-                attacker,
-                ability,
-                min,
-                max,
-                critChance,
-                critMultiplier,
-                true,
-                flags,
-                new ArrayList<>(),
-                uuid
-        ));
-    }
-
-    public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
-            WarlordsEntity attacker,
-            String ability,
-            float min,
-            float max,
-            float critChance,
-            float critMultiplier,
-            EnumSet<InstanceFlags> flags,
-            List<CustomInstanceFlags> customInstanceFlags,
-            UUID uuid
-    ) {
-        return InstanceManager.addDamageHealingInstance(this, new WarlordsDamageHealingEvent(this,
-                attacker,
-                ability,
-                min,
-                max,
-                critChance,
-                critMultiplier,
-                true,
-                flags,
-                customInstanceFlags,
-                uuid
-        ));
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
@@ -432,17 +437,6 @@ public abstract class WarlordsEntity {
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
             WarlordsEntity attacker,
             String ability,
-            FloatModifiable min,
-            FloatModifiable max,
-            float critChance,
-            float critMultiplier
-    ) {
-        return this.addHealingInstance(attacker, ability, min.getCalculatedValue(), max.getCalculatedValue(), critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class));
-    }
-
-    public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
-            WarlordsEntity attacker,
-            String ability,
             float min,
             float max,
             float critChance,
@@ -462,6 +456,17 @@ public abstract class WarlordsEntity {
                 new ArrayList<>(),
                 null
         ));
+    }
+
+    public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
+            WarlordsEntity attacker,
+            String ability,
+            FloatModifiable min,
+            FloatModifiable max,
+            float critChance,
+            float critMultiplier
+    ) {
+        return this.addHealingInstance(attacker, ability, min.getCalculatedValue(), max.getCalculatedValue(), critChance, critMultiplier, EnumSet.noneOf(InstanceFlags.class));
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
@@ -497,6 +502,11 @@ public abstract class WarlordsEntity {
         }
     }
 
+    @Nonnull
+    public Location getLocation() {
+        return this.entity.getLocation();
+    }
+
     public void playHitSound() {
         if (entity instanceof Player player) {
             player.playSound(getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
@@ -516,16 +526,18 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public World getWorld() {
+        return this.entity.getWorld();
+    }
+
     public void cancelHealingPowerUp() {
         if (this.getCooldownManager().hasCooldown(HealingPowerup.class)) {
             this.getCooldownManager().removeCooldown(HealingPowerup.class, false);
         }
     }
 
-    public void removeHorse() {
-        if (entity.getVehicle() != null) {
-            entity.getVehicle().remove();
-        }
+    public CooldownManager getCooldownManager() {
+        return cooldownManager;
     }
 
     public void die(@Nullable WarlordsEntity attacker) {
@@ -588,6 +600,137 @@ public abstract class WarlordsEntity {
         heal();
     }
 
+    public void removeHorse() {
+        if (entity.getVehicle() != null) {
+            entity.getVehicle().remove();
+        }
+    }
+
+    @Nonnull
+    public Location getLocation(@Nonnull Location copyInto) {
+        return this.entity.getLocation(copyInto);
+    }
+
+    public void showDeathAnimation() {
+//        if (!(this.entity instanceof Player player)) {
+//            this.entity.damage(200);
+//        } else {
+        // TODO: Fix zombie not dying upon spawn
+//            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class, false, z -> {
+//                EntityEquipment equipment = z.getEquipment();
+//                PlayerInventory playerInventory = player.getInventory();
+//                equipment.setBoots(playerInventory.getBoots());
+//                equipment.setLeggings(playerInventory.getLeggings());
+//                equipment.setChestplate(playerInventory.getChestplate());
+//                equipment.setHelmet(playerInventory.getHelmet());
+//                equipment.setItemInMainHand(playerInventory.getItemInMainHand());
+//            });
+//            zombie.setAI(false);
+//            zombie.damage(2000);
+//        }
+    }
+
+    public LinkedHashMap<WarlordsEntity, Integer> getHealedBy() {
+        return healedBy;
+    }
+
+    public void addDeath() {
+        this.minuteStats.addDeath();
+        addToSpecMinuteStats(PlayerStatisticsMinute::addDeath);
+    }
+
+    /**
+     * PotionEffectType.ABSORPTION gives 2 absorption hearts per amplifier, starting at amplifier 0
+     *
+     * @param amount The amount of absorption to give > 1 = 1 heart
+     */
+    public void giveAbsorption(double amount) {
+        if (this instanceof WarlordsPlayer && entity instanceof Player player) {
+            player.setAbsorptionAmount(MathUtils.clamp(amount, 0, Double.MAX_VALUE));
+        }
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    @Nonnull
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    public void sendMessage(Component component) {
+        sendMessage(component, false);
+    }
+
+    public Component getColoredName() {
+        return Component.text(getName(), getTeam().getTeamColor());
+    }
+
+    public void addAssist() {
+        this.minuteStats.addAssist();
+        addToSpecMinuteStats(PlayerStatisticsMinute::addAssist);
+    }
+
+    public void heal() {
+        this.currentHealth = getMaxBaseHealth();
+    }
+
+    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
+        if (specClass != null) {
+            consumer.accept(specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()));
+        }
+    }
+
+    public void sendMessage(Component component, boolean isDamageHealMessage) {
+        if (isDamageHealMessage && !showDebugMessage) {
+            this.entity.sendMessage(component.hoverEvent(null));
+        } else {
+            this.entity.sendMessage(component);
+        }
+        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
+            game.spectators()
+                .map(Bukkit::getPlayer)
+                .filter(Objects::nonNull)
+                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
+                .forEach(player -> {
+                    if (Permissions.isAdmin(player)) {
+                        player.sendMessage(component);
+                    } else {
+                        player.sendMessage(component.hoverEvent(null));
+                    }
+                });
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public float getMaxBaseHealth() {
+        return maxBaseHealthFilter.getCachedValue();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
     protected boolean shouldCheckForAchievements() {
         return false;
     }
@@ -599,6 +742,10 @@ public abstract class WarlordsEntity {
         if (hasFlag()) {
 
         }
+    }
+
+    public boolean hasFlag() {
+        return FlagHolder.isPlayerHolderFlag(this);
     }
 
     private void checkForAchievementsDamageAttacker(WarlordsEntity attacker) {
@@ -641,6 +788,13 @@ public abstract class WarlordsEntity {
         getAbilitiesMatching(abilityClass).forEach(consumer);
     }
 
+    public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
+        return spec.getAbilities().stream()
+                   .filter(clazz::isInstance)
+                   .map(clazz::cast)
+                   .collect(Collectors.toList());
+    }
+
     public void updateArmor() {
         if (!(this.entity instanceof Player player)) {
             return;
@@ -667,18 +821,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public boolean hasFlag() {
-        return FlagHolder.isPlayerHolderFlag(this);
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
     public Specializations getSpecClass() {
         return specClass;
     }
@@ -689,10 +831,6 @@ public abstract class WarlordsEntity {
 
     public void setDisableCooldowns(boolean disableCooldowns) {
         this.disableCooldowns = disableCooldowns;
-    }
-
-    public void updateItem(AbstractAbility ability) {
-        ability.queueUpdateItem();
     }
 
     /**
@@ -716,13 +854,6 @@ public abstract class WarlordsEntity {
                     ability.getItem(item)
             );
         }
-    }
-
-    public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
-        return spec.getAbilities().stream()
-                   .filter(clazz::isInstance)
-                   .map(clazz::cast)
-                   .collect(Collectors.toList());
     }
 
     public boolean isActive() {
@@ -759,6 +890,10 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public float getMaxHealth() {
+        return health.getCalculatedValue();
+    }
+
     public float getCurrentHealth() {
         return currentHealth;
     }
@@ -771,40 +906,9 @@ public abstract class WarlordsEntity {
         return health;
     }
 
-    public float getMaxHealth() {
-        return health.getCalculatedValue();
-    }
-
-    public float getMaxBaseHealth() {
-        return maxBaseHealthFilter.getCachedValue();
-    }
-
     public void setMaxHealthAndHeal(float newBaseValue) {
         health.setBaseValue(newBaseValue);
         heal();
-    }
-
-    public void showDeathAnimation() {
-//        if (!(this.entity instanceof Player player)) {
-//            this.entity.damage(200);
-//        } else {
-        // TODO: Fix zombie not dying upon spawn
-//            Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class, false, z -> {
-//                EntityEquipment equipment = z.getEquipment();
-//                PlayerInventory playerInventory = player.getInventory();
-//                equipment.setBoots(playerInventory.getBoots());
-//                equipment.setLeggings(playerInventory.getLeggings());
-//                equipment.setChestplate(playerInventory.getChestplate());
-//                equipment.setHelmet(playerInventory.getHelmet());
-//                equipment.setItemInMainHand(playerInventory.getItemInMainHand());
-//            });
-//            zombie.setAI(false);
-//            zombie.damage(2000);
-//        }
-    }
-
-    public void heal() {
-        this.currentHealth = getMaxBaseHealth();
     }
 
     public void resetRegenTimer() {
@@ -877,56 +981,6 @@ public abstract class WarlordsEntity {
 
     public float getMaxEnergy() {
         return spec.getMaxEnergy();
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    @Nonnull
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    public void sendMessage(Component component) {
-        sendMessage(component, false);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void sendMessage(Component component, boolean isDamageHealMessage) {
-        if (isDamageHealMessage && !showDebugMessage) {
-            this.entity.sendMessage(component.hoverEvent(null));
-        } else {
-            this.entity.sendMessage(component);
-        }
-        if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
-            game.spectators()
-                .map(Bukkit::getPlayer)
-                .filter(Objects::nonNull)
-                .filter(player -> Objects.equals(player.getSpectatorTarget(), entity))
-                .forEach(player -> {
-                    if (Permissions.isAdmin(player)) {
-                        player.sendMessage(component);
-                    } else {
-                        player.sendMessage(component.hoverEvent(null));
-                    }
-                });
-        }
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public float subtractEnergy(String from, FloatModifiable amount, boolean fromAttacker) {
@@ -1026,22 +1080,6 @@ public abstract class WarlordsEntity {
     public void addKill() {
         this.minuteStats.addKill();
         addToSpecMinuteStats(PlayerStatisticsMinute::addKill);
-    }
-
-    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
-        if (specClass != null) {
-            consumer.accept(specMinuteStats.computeIfAbsent(specClass, k -> new PlayerStatisticsMinute()));
-        }
-    }
-
-    public void addAssist() {
-        this.minuteStats.addAssist();
-        addToSpecMinuteStats(PlayerStatisticsMinute::addAssist);
-    }
-
-    public void addDeath() {
-        this.minuteStats.addDeath();
-        addToSpecMinuteStats(PlayerStatisticsMinute::addDeath);
     }
 
     public void addDamage(float amount, boolean onCarrier) {
@@ -1181,10 +1219,6 @@ public abstract class WarlordsEntity {
         return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), false));
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, String... toDisable) {
-        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), afterLimit));
-    }
-
     public Runnable addSpeedModifier(CalculateSpeed.Modifier modifier) {
         if (modifier.getModifier() < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
             return () -> {
@@ -1194,8 +1228,8 @@ public abstract class WarlordsEntity {
         return this.speed.addSpeedModifier(modifier);
     }
 
-    public CooldownManager getCooldownManager() {
-        return cooldownManager;
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, String... toDisable) {
+        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), afterLimit));
     }
 
     public Location getDeathLocation() {
@@ -1239,11 +1273,6 @@ public abstract class WarlordsEntity {
 
     public void setDead(boolean dead) {
         this.dead = dead;
-    }
-
-    @Nonnull
-    public Location getLocation(@Nonnull Location copyInto) {
-        return this.entity.getLocation(copyInto);
     }
 
     @Nonnull
@@ -1308,11 +1337,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    @Nonnull
-    public Location getLocation() {
-        return this.entity.getLocation();
-    }
-
     /**
      * Gets the damage multiplier caused by any carried flag
      *
@@ -1324,10 +1348,6 @@ public abstract class WarlordsEntity {
                        && ((PlayerFlagLocation) this.carriedFlag.getFlag()).getPlayer() == this
                ? ((PlayerFlagLocation) this.carriedFlag.getFlag()).getComputedMultiplier()
                : 1;
-    }
-
-    public Component getColoredName() {
-        return Component.text(getName(), getTeam().getTeamColor());
     }
 
     public Component getColoredNameBold() {
@@ -1388,10 +1408,6 @@ public abstract class WarlordsEntity {
             return livingEntity.hasPotionEffect(type);
         }
         return false;
-    }
-
-    public World getWorld() {
-        return this.entity.getWorld();
     }
 
     public boolean isNoEnergyConsumption() {
@@ -1667,6 +1683,10 @@ public abstract class WarlordsEntity {
         spec.getAbilities().forEach(this::updateItem);
     }
 
+    public void updateItem(AbstractAbility ability) {
+        ability.queueUpdateItem();
+    }
+
     public boolean isSneaking() {
         return this.entity instanceof Player && this.entity.isSneaking();
     }
@@ -1769,20 +1789,16 @@ public abstract class WarlordsEntity {
         return this.minuteStats;
     }
 
-    public Map<Specializations, PlayerStatisticsMinute> getSpecMinuteStats() {
-        return specMinuteStats;
-    }
-
     public LinkedHashMap<WarlordsEntity, Integer> getHitBy() {
         return hitBy;
     }
 
-    public LinkedHashMap<WarlordsEntity, Integer> getHealedBy() {
-        return healedBy;
-    }
-
     public void setFlagPickCooldown(int flagPickCooldown) {
         this.flagPickCooldown = flagPickCooldown;
+    }
+
+    public Map<Specializations, PlayerStatisticsMinute> getSpecMinuteStats() {
+        return specMinuteStats;
     }
 
     public void onRemove() {
@@ -1890,17 +1906,6 @@ public abstract class WarlordsEntity {
 
     public int getBaseHitCooldownValue() {
         return 20;
-    }
-
-    /**
-     * PotionEffectType.ABSORPTION gives 2 absorption hearts per amplifier, starting at amplifier 0
-     *
-     * @param amount The amount of absorption to give > 1 = 1 heart
-     */
-    public void giveAbsorption(double amount) {
-        if (this instanceof WarlordsPlayer && entity instanceof Player player) {
-            player.setAbsorptionAmount(MathUtils.clamp(amount, 0, Double.MAX_VALUE));
-        }
     }
 
     public abstract ItemStack getHead();

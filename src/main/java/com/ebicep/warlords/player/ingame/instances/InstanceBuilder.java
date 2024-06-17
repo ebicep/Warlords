@@ -18,6 +18,14 @@ public class InstanceBuilder {
         return new InstanceBuilder(instanceType);
     }
 
+    public static InstanceBuilder damage() {
+        return new InstanceBuilder(InstanceType.DAMAGE);
+    }
+
+    public static InstanceBuilder healing() {
+        return new InstanceBuilder(InstanceType.HEALING);
+    }
+
     private final InstanceType instanceType;
     private WarlordsEntity target;
     private WarlordsEntity source;
@@ -58,6 +66,16 @@ public class InstanceBuilder {
         return this;
     }
 
+    public InstanceBuilder min(float min) {
+        this.min = min;
+        return this;
+    }
+
+    public InstanceBuilder max(float max) {
+        this.max = max;
+        return this;
+    }
+
     public InstanceBuilder value(Value.RangedValue rangedValue) {
         this.min = rangedValue.min().getCalculatedValue();
         this.max = rangedValue.max().getCalculatedValue();
@@ -87,6 +105,12 @@ public class InstanceBuilder {
     public InstanceBuilder crit(float critChance, float critMultiplier) {
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
+        return this;
+    }
+
+    public InstanceBuilder crit(Value.RangedValueCritable rangedValueCritable) {
+        this.critChance = rangedValueCritable.critChance().getCalculatedValue();
+        this.critMultiplier = rangedValueCritable.critMultiplier().getCalculatedValue();
         return this;
     }
 
