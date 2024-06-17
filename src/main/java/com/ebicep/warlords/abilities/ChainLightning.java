@@ -60,12 +60,12 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return event.getAttacker().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
+                return event.getSource().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
             }
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (event.getAttacker().equals(giver) && isKiller) {
+                if (event.getSource().equals(giver) && isKiller) {
                     for (AbstractAbility ability : giver.getAbilities()) {
                         if (ability instanceof OrangeAbilityIcon) {
                             ability.subtractCurrentCooldown(.5f);

@@ -250,7 +250,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
                     @EventHandler
                     public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                        if (!event.isDamageInstance() || !event.getAttacker().equals(wp)) {
+                        if (!event.isDamageInstance() || !event.getSource().equals(wp)) {
                             return;
                         }
                         if (tempHammerOfLight.isCrownOfLight) {

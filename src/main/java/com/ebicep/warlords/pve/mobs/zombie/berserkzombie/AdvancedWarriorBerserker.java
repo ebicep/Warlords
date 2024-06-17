@@ -142,7 +142,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 attacker.addHealingInstance(
                         attacker,
                         name,

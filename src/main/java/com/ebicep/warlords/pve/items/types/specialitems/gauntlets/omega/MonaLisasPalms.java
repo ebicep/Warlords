@@ -51,13 +51,13 @@ public class MonaLisasPalms extends SpecialOmegaGauntlet implements AppliesToWar
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
+                if (!Objects.equals(event.getSource(), warlordsPlayer)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (!Objects.equals(event.getAbility(), weaponRightClick)) {
+                if (!Objects.equals(event.getCause(), weaponRightClick)) {
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();

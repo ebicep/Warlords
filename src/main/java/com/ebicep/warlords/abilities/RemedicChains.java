@@ -226,12 +226,12 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 if (!pveMasterUpgrade2) {
                     return;
                 }
-                if (!event.getAbility().contains("Strike")) {
+                if (!event.getCause().contains("Strike")) {
                     return;
                 }
-                switch (Specializations.getClass(event.getAttacker().getSpecClass())) {
+                switch (Specializations.getClass(event.getSource().getSpecClass())) {
                     case WARRIOR, PALADIN, ROGUE -> ImpalingStrike.giveLeechCooldown(
-                            event.getAttacker(),
+                            event.getSource(),
                             event.getWarlordsEntity(),
                             impalingStrike.getLeechDuration(),
                             impalingStrike.getLeechSelfAmount() / 100f,

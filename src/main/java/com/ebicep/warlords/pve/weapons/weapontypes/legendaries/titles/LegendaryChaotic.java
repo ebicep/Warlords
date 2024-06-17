@@ -164,7 +164,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
             ) {
                 @Override
                 public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                    if (!abilityNames.contains(event.getAbility())) {
+                    if (!abilityNames.contains(event.getCause())) {
                         return currentCritChance;
                     }
                     return currentCritChance + (CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevel()) * stacks;
@@ -172,7 +172,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
 
                 @Override
                 public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                    if (!abilityNames.contains(event.getAbility())) {
+                    if (!abilityNames.contains(event.getCause())) {
                         return currentCritMultiplier;
                     }
                     return currentCritMultiplier + 10 * stacks;

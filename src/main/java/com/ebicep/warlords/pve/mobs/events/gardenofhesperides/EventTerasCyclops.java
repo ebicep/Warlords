@@ -58,7 +58,7 @@ public class EventTerasCyclops extends AbstractMob implements BossMinionMob, Ter
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     WarlordsEntity victim = event.getWarlordsEntity();
                     Utils.addKnockback(name, victim.getLocation(), victim, 1, 0.7f);
                 }

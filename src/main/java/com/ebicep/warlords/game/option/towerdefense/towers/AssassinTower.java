@@ -200,7 +200,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
 
         @Override
         public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-            if (immuneToRangeAttacks && Utils.isProjectile(event.getAbility())) {
+            if (immuneToRangeAttacks && Utils.isProjectile(event.getCause())) {
                 event.setCancelled(true);
             } else if (ThreadLocalRandom.current().nextDouble() < .3) {
                 event.setCancelled(true);

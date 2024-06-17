@@ -26,10 +26,10 @@ public class ConqueringEnergy implements FieldEffect {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!(event.getAttacker() instanceof WarlordsPlayer)) {
+                if (!(event.getSource() instanceof WarlordsPlayer)) {
                     return;
                 }
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     event.setMin(event.getMin() * 1.5f);
                     event.setMax(event.getMax() * 1.5f);
                 }

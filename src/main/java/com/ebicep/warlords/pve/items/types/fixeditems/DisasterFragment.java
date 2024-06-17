@@ -195,13 +195,13 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     return;
                                 }
                                 float healingMultiplier;
-                                if (event.getAttacker() == attacker) {
+                                if (event.getSource() == attacker) {
                                     healingMultiplier = 15;
                                 } else {
                                     healingMultiplier = 25;
                                 }
                                 float healValue = Math.min(500, currentDamageValue * healingMultiplier);
-                                event.getAttacker().addHealingInstance(
+                                event.getSource().addHealingInstance(
                                         attacker,
                                         "Leech",
                                         healValue,

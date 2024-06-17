@@ -117,7 +117,7 @@ public enum Aspect {
                                 return;
                             }
                             if (ThreadLocalRandom.current().nextDouble() < .05) {
-                                event.getAttacker().sendMessage(warlordsEntity.getColoredName().append(Component.text(" dodged your attack.", NamedTextColor.GRAY)));
+                                event.getSource().sendMessage(warlordsEntity.getColoredName().append(Component.text(" dodged your attack.", NamedTextColor.GRAY)));
                                 event.setCancelled(true);
                             }
                         }
@@ -324,7 +324,7 @@ public enum Aspect {
                     if (Aspect.isNegated(warlordsEntity)) {
                         return;
                     }
-                    WarlordsEntity attacker = event.getAttacker();
+                    WarlordsEntity attacker = event.getSource();
                     float healAmount = currentDamageValue * .2f;
                     attacker.addHealingInstance(
                             attacker,

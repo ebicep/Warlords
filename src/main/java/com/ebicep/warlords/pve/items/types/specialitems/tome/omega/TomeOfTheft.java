@@ -37,7 +37,7 @@ public class TomeOfTheft extends SpecialOmegaTome implements AppliesToWarlordsPl
                 if (ThreadLocalRandom.current().nextDouble() < .1) {
                     // doenst make logical sense for item to dodge but whatever
                     warlordsPlayer.sendMessage(Component.text("Your " + getName() + " dodged ", NamedTextColor.GREEN)
-                                                        .append(event.getAttacker().getColoredName())
+                                                        .append(event.getSource().getColoredName())
                                                         .append(Component.text("'s attack.")));
                     event.setCancelled(true);
                 }

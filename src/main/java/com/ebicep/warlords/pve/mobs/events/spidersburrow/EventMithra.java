@@ -84,10 +84,10 @@ public class EventMithra extends AbstractMob implements BossMob {
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 if (inEntangledState) {
-                    if (!event.getWarlordsEntity().equals(warlordsNPC) && !event.getAttacker().equals(warlordsNPC)) {
+                    if (!event.getWarlordsEntity().equals(warlordsNPC) && !event.getSource().equals(warlordsNPC)) {
                         return;
                     }
-                    if (!event.getAbility().equals("Ground Slam")) {
+                    if (!event.getCause().equals("Ground Slam")) {
                         event.setCancelled(true);
                     }
                 }

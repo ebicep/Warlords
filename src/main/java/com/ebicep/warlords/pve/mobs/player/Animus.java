@@ -109,7 +109,7 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (event.getAbility().equals("Judgement Strike")) {
+        if (event.getCause().equals("Judgement Strike")) {
             double speed = attacker.getSpeed()
                                    .getModifiers()
                                    .stream()

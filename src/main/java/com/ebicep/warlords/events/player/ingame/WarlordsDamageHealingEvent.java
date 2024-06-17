@@ -1,6 +1,7 @@
-
 package com.ebicep.warlords.events.player.ingame;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.player.ingame.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.CustomInstanceFlags;
 import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
@@ -17,16 +18,23 @@ import java.util.UUID;
  *
  */
 public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent implements Cancellable {
+
     private static final HandlerList handlers = new HandlerList();
 
-    private WarlordsEntity attacker;
-    private String ability;
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    private final InstanceBuilder.InstanceType instanceType;
+
+    private WarlordsEntity source;
+    @Nullable
+    private AbstractAbility ability;
+    private String cause;
     private float min;
     private float max;
     private float critChance;
     private float critMultiplier;
-    private boolean isDamageInstance;
-
     private final EnumSet<InstanceFlags> flags;
     private final List<CustomInstanceFlags> customFlags;
     @Nullable
@@ -35,59 +43,87 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
 
     public WarlordsDamageHealingEvent(
             WarlordsEntity player,
-            WarlordsEntity attacker,
-            String ability,
+            WarlordsEntity source,
+            String cause,
             float min,
             float max,
             float critChance,
             float critMultiplier,
-            boolean isDamageInstance,
+            boolean instanceType,
+            EnumSet<InstanceFlags> flags,
+            List<CustomInstanceFlags> customFlags
+    ) {
+        this(player, source, cause, min, max, critChance, critMultiplier, instanceType, flags, customFlags, null);
+    }
+
+    public WarlordsDamageHealingEvent(
+            WarlordsEntity player,
+            WarlordsEntity source,
+            String cause,
+            float min,
+            float max,
+            float critChance,
+            float critMultiplier,
+            boolean instanceType,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
             @Nullable UUID uuid
     ) {
         super(player);
-        this.attacker = attacker;
-        this.ability = ability;
+        this.source = source;
+        this.cause = cause;
         this.min = min;
         this.max = max;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
-        this.isDamageInstance = isDamageInstance;
+        this.instanceType = instanceType ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING;
         this.flags = flags;
         this.customFlags = customFlags;
         this.uuid = uuid;
     }
 
     public WarlordsDamageHealingEvent(
-            WarlordsEntity player,
-            WarlordsEntity attacker,
-            String ability,
+            InstanceBuilder.InstanceType instanceType,
+            @Nonnull WarlordsEntity player,
+            WarlordsEntity source,
+            @Nullable AbstractAbility ability,
+            String cause,
+            float critChance,
             float min,
             float max,
-            float critChance,
             float critMultiplier,
-            boolean isDamageInstance,
             EnumSet<InstanceFlags> flags,
-            List<CustomInstanceFlags> customFlags
+            List<CustomInstanceFlags> customFlags,
+            @Nullable UUID uuid
     ) {
-        this(player, attacker, ability, min, max, critChance, critMultiplier, isDamageInstance, flags, customFlags, null);
-    }
-
-    public WarlordsEntity getAttacker() {
-        return attacker;
-    }
-
-    public void setAttacker(WarlordsEntity attacker) {
-        this.attacker = attacker;
-    }
-
-    public String getAbility() {
-        return ability;
-    }
-
-    public void setAbility(String ability) {
+        super(player);
+        this.uuid = uuid;
+        this.customFlags = customFlags;
+        this.flags = flags;
+        this.instanceType = instanceType;
+        this.critMultiplier = critMultiplier;
+        this.critChance = critChance;
+        this.max = max;
+        this.min = min;
+        this.cause = cause;
         this.ability = ability;
+        this.source = source;
+    }
+
+    public WarlordsEntity getSource() {
+        return source;
+    }
+
+    public void setSource(WarlordsEntity source) {
+        this.source = source;
+    }
+
+    public String getCause() {
+        return cause;
+    }
+
+    public void setCause(String cause) {
+        this.cause = cause;
     }
 
     public float getMin() {
@@ -137,19 +173,11 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     }
 
     public boolean isDamageInstance() {
-        return isDamageInstance;
-    }
-
-    public void setIsDamageInstance(boolean isDamageInstance) {
-        this.isDamageInstance = isDamageInstance;
+        return instanceType == InstanceBuilder.InstanceType.DAMAGE;
     }
 
     public boolean isHealingInstance() {
-        return !isDamageInstance;
-    }
-
-    public void setIsHealingInstance(boolean isHealingInstance) {
-        this.isDamageInstance = !isHealingInstance;
+        return instanceType == InstanceBuilder.InstanceType.HEALING;
     }
 
     public EnumSet<InstanceFlags> getFlags() {
@@ -181,23 +209,19 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         return handlers;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     @Override
     public String toString() {
         return "WarlordsDamageHealingEvent{" +
                 "player=" + getWarlordsEntity() +
-                ", attacker=" + attacker +
-                ", ability=" + ability +
+                ", attacker=" + source +
+                ", ability=" + cause +
                 ", min=" + min +
                 ", max=" + max +
                 ", critChance=" + critChance +
                 ", critMultiplier=" + critMultiplier +
-                ", isDamageInstance=" + isDamageInstance +
+                ", isDamageInstance=" + instanceType +
                 ", cancelled=" + cancelled +
                 '}';
     }
-            
+
 }

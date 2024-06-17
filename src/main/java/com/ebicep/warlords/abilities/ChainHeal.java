@@ -229,7 +229,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
 
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                     return currentCritChance;
                 }
 
@@ -238,7 +238,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
 
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                     return currentCritMultiplier;
                 }
                 return currentCritMultiplier + 40;

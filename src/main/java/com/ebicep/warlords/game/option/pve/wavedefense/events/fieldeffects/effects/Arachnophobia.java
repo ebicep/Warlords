@@ -28,7 +28,7 @@ public class Arachnophobia implements FieldEffect {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!(event.getAttacker() instanceof WarlordsPlayer)) {
+                if (!(event.getSource() instanceof WarlordsPlayer)) {
                     return;
                 }
                 if (event.isDamageInstance()) {
@@ -39,7 +39,7 @@ public class Arachnophobia implements FieldEffect {
                     if (!(mob instanceof EventPoisonousSpider) && !(mob instanceof EventEggSac)) {
                         return;
                     }
-                    if (event.getAbility().contains("Strike")) {
+                    if (event.getCause().contains("Strike")) {
                         event.setMin(event.getMin() * 3);
                         event.setMax(event.getMax() * 3);
                     }

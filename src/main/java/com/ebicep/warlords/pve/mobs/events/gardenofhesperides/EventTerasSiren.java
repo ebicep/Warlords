@@ -71,7 +71,7 @@ public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10, 2f);
-        if (Utils.isProjectile(event.getAbility())) {
+        if (Utils.isProjectile(event.getCause())) {
             event.setCancelled(true);
         }
     }

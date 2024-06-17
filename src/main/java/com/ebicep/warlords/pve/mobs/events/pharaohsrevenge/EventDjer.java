@@ -104,7 +104,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
                 if (aboveHealthThreshold()) {
                     return;
                 }
-                if (!skillsImmuneTo.contains(event.getAbility())) {
+                if (!skillsImmuneTo.contains(event.getCause())) {
                     return;
                 }
                 event.setMin(event.getMin() * .75f);

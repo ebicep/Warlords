@@ -226,9 +226,9 @@ public abstract class WarlordsEntity {
                     .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Self", this.getName(), false);
         debugMessage.append(grayBar);
-        appendDebugMessage(debugMessage, "Attacker", event.getAttacker().getName(), false);
+        appendDebugMessage(debugMessage, "Attacker", event.getSource().getName(), false);
         debugMessage.append(grayBar);
-        appendDebugMessage(debugMessage, "Ability", event.getAbility(), false);
+        appendDebugMessage(debugMessage, "Ability", event.getCause(), false);
         debugMessage.append(Component.newline())
                     .append(Component.text(" - ", NamedTextColor.GRAY));
         appendDebugMessage(debugMessage, "Min", event.getMin(), false);
@@ -466,12 +466,12 @@ public abstract class WarlordsEntity {
         for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
             abstractCooldown.damageDoBeforeVariableSetFromSelf(event);
         }
-        for (AbstractCooldown<?> abstractCooldown : event.getAttacker().getCooldownManager().getCooldownsDistinct()) {
+        for (AbstractCooldown<?> abstractCooldown : event.getSource().getCooldownManager().getCooldownsDistinct()) {
             abstractCooldown.damageDoBeforeVariableSetFromAttacker(event);
         }
 
-        WarlordsEntity attacker = event.getAttacker();
-        String ability = event.getAbility();
+        WarlordsEntity attacker = event.getSource();
+        String ability = event.getCause();
         float min = event.getMin();
         float max = event.getMax();
         float critChance = event.getCritChance();
@@ -1176,7 +1176,7 @@ public abstract class WarlordsEntity {
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(TextComponent.Builder debugMessage, WarlordsDamageHealingEvent event) {
-        WarlordsEntity attacker = event.getAttacker();
+        WarlordsEntity attacker = event.getSource();
 
         List<AbstractCooldown<?>> selfCooldownsDistinct = getCooldownManager().getCooldownsDistinct();
         List<AbstractCooldown<?>> attackersCooldownsDistinct = attacker.getCooldownManager().getCooldownsDistinct();
@@ -1188,7 +1188,7 @@ public abstract class WarlordsEntity {
             abstractCooldown.healingDoBeforeVariableSetFromAttacker(event);
         }
 
-        String ability = event.getAbility();
+        String ability = event.getCause();
         float min = event.getMin();
         float max = event.getMax();
         float critChance = event.getCritChance();

@@ -137,7 +137,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 if (pveMasterUpgrade) {
                                     reflectFlags.add(InstanceFlags.TRUE_DAMAGE);
                                 }
-                                event.getAttacker().addDamageInstance(
+                                event.getSource().addDamageInstance(
                                         event.getWarlordsEntity(),
                                         name,
                                         damageToReflect,

@@ -48,7 +48,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
+                if (!Objects.equals(event.getSource(), warlordsPlayer)) {
                     return;
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {

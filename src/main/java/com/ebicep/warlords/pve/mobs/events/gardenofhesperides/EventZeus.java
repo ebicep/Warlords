@@ -120,7 +120,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (event.getAbility().equals("Lightning Bolt")) {
+        if (event.getCause().equals("Lightning Bolt")) {
             event.getFlags().add(InstanceFlags.PIERCE);
         }
     }
@@ -172,7 +172,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (event.getAbility().isEmpty()) {
+                    if (event.getCause().isEmpty()) {
                         return currentDamageValue;
                     }
                     return currentDamageValue * damageBuff;

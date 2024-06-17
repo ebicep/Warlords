@@ -62,7 +62,7 @@ public class TutorialOption implements Option {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!event.getAttacker().equals(warlordsPlayer)) {
+                if (!event.getSource().equals(warlordsPlayer)) {
                     return;
                 }
                 if (!(event.getWarlordsEntity() instanceof WarlordsNPC) || !testDummies.contains((WarlordsNPC) event.getWarlordsEntity())) {
@@ -70,14 +70,14 @@ public class TutorialOption implements Option {
                 }
                 switch (stage.get()) {
                     case 1 -> {
-                        if (event.getAbility().equals("Avenger's Strike") && stageSection.get() == 1) {
+                        if (event.getCause().equals("Avenger's Strike") && stageSection.get() == 1) {
                             nextStageSection();
                         } else {
                             event.setCancelled(true);
                         }
                     }
                     case 2 -> {
-                        if (event.getAbility().isEmpty()) {
+                        if (event.getCause().isEmpty()) {
                             event.setCancelled(true);
                         } else {
                             nextStageSection();
@@ -85,7 +85,7 @@ public class TutorialOption implements Option {
                     }
                     case 3 -> {
                         if (stageSection.get() == 1) {
-                            if (event.getAbility().isEmpty()) {
+                            if (event.getCause().isEmpty()) {
                                 event.setCancelled(true);
                             } else {
                                 if (!stage3DamageHealDone) {

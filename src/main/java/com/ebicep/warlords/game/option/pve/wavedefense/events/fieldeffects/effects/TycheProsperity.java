@@ -135,7 +135,7 @@ public class TycheProsperity implements FieldEffect {
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     return currentDamageValue * 1.1f;
                 }
                 return currentDamageValue;

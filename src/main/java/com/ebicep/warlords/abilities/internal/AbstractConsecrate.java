@@ -142,7 +142,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!event.getAbility().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                if (!event.getCause().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     return currentDamageValue;
                 }
                 boolean insideCons = location.distanceSquared(event.getWarlordsEntity().getLocation()) < radius * radius;

@@ -124,7 +124,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 WarlordsEntity hit = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
                     Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
                     attacker.addDamageInstance(

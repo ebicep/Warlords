@@ -104,11 +104,11 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getAbility().isEmpty()) {
+                if (!event.getCause().isEmpty()) {
                     return;
                 }
                 WarlordsEntity victim = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
 
                 double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
                 if (firstProc) {

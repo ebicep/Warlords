@@ -99,7 +99,7 @@ public class Chessking extends AbstractMob implements BossMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (Utils.isProjectile(event.getAbility())) {
+        if (Utils.isProjectile(event.getCause())) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ARROW_HIT, 2, 0.1f);
             warlordsNPC.addHealingInstance(warlordsNPC, "Blob Heal", 500, 500, -1, 100);
         } else {

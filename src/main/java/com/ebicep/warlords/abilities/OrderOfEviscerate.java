@@ -159,7 +159,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
                         Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
-                                !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getAttacker())
+                                !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())
                 ) {
                     numberOfBackstabs++;
                     return currentDamageValue * (inPve ? 2 : 1.3f);

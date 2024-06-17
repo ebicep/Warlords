@@ -93,7 +93,7 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (Utils.isProjectile(event.getAbility())) {
+        if (Utils.isProjectile(event.getCause())) {
             attacker.addDamageInstance(self, "Projectile Thorns", 300, 300, -1, 100);
         }
     }

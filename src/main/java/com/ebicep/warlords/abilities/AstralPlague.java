@@ -105,7 +105,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2 && event.getAbility().equals("Soulfire Beam")) {
+                if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
                     return currentDamageValue * 1.4f;
                 }
                 return currentDamageValue;
@@ -135,7 +135,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (victim.equals(wp)) {
                             return;
                         }
-                        if (!event.getAttacker().equals(wp)) {
+                        if (!event.getSource().equals(wp)) {
                             return;
                         }
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
@@ -150,7 +150,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (inPve) {
                             event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
                         }
-                        if (pveMasterUpgrade && Objects.equals(event.getAbility(), "Soulfire Beam")) {
+                        if (pveMasterUpgrade && Objects.equals(event.getCause(), "Soulfire Beam")) {
                             event.setCritChance(100);
                         }
                     }

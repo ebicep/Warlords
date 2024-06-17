@@ -101,14 +101,14 @@ public class LegendaryFervent extends AbstractLegendaryWeapon implements Passive
 
             @EventHandler
             public void onDamageHealing(WarlordsDamageHealingEvent event) {
-                if (!event.getAttacker().equals(player)) {
+                if (!event.getSource().equals(player)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
                     return;
                 }
                 if (player.getCooldownManager().hasCooldownFromName("Fervent Ability")) {
-                    if (!event.getAbility().contains("Strike")) {
+                    if (!event.getCause().contains("Strike")) {
                         return;
                     }
                     float strikeDamageBoost = 1 + (ABILITY_STRIKE_DAMAGE_BOOST + ABILITY_STRIKE_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;

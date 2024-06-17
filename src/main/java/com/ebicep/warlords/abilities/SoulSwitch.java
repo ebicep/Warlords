@@ -202,7 +202,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                         ) {
                             @Override
                             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                if (event.getAbility().equals("Judgement Strike")) {
+                                if (event.getCause().equals("Judgement Strike")) {
                                     wp.addEnergy(wp, "Tricky Switch", 10);
                                     float heal = currentDamageValue * .1f;
                                     wp.addHealingInstance(wp, "Tricky Switch", heal, heal, 0, 100);

@@ -136,7 +136,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
 
             @EventHandler
             public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
-                if (event.getAttacker().equals(warlordsNPC)) {
+                if (event.getSource().equals(warlordsNPC)) {
                     event.setMin(event.getMin() * hpDamageIncrease);
                     event.setMax(event.getMax() * hpDamageIncrease);
                 } else if (event.getWarlordsEntity().equals(warlordsNPC)) {

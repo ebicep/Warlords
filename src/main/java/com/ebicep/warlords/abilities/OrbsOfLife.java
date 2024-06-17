@@ -167,7 +167,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
             @Override
             public void doBeforeReductionFromAttacker(WarlordsDamageHealingEvent event) {
-                String ability = event.getAbility();
+                String ability = event.getCause();
                 if (ability.equals("Vengeful Army") || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
                 }

@@ -56,7 +56,7 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getAbility().isEmpty() || !(ThreadLocalRandom.current().nextDouble() <= .25) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                if (!event.getCause().isEmpty() || !(ThreadLocalRandom.current().nextDouble() <= .25) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
                 }
                 EnumSet<InstanceFlags> flags = EnumSet.copyOf(event.getFlags());
@@ -64,7 +64,7 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
                 for (int i = 0; i < 2; i++) {
                     event.getWarlordsEntity().addDamageInstance(
                             warlordsPlayer,
-                            event.getAbility(),
+                            event.getCause(),
                             event.getMin(),
                             event.getMax(),
                             event.getCritChance(),

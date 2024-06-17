@@ -48,7 +48,7 @@ public class GuideForTheRiverStyx extends SpecialOmegaTome implements AppliesToW
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (!Utils.isPrimaryProjectile(event.getAbility())) {
+                if (!Utils.isPrimaryProjectile(event.getCause())) {
                     return;
                 }
                 event.setCancelled(true);

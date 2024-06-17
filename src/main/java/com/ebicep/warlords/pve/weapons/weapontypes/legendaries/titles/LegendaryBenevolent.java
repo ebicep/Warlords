@@ -59,7 +59,7 @@ public class LegendaryBenevolent extends AbstractLegendaryWeapon {
         player.getGame().registerEvents(new Listener() {
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.isHealingInstance() && event.getAttacker().equals(player)) {
+                if (event.isHealingInstance() && event.getSource().equals(player)) {
                     float healingIncrease = 1 + (HEALING_INCREASE + HEALING_INCREASE_PER_UPGRADE * getTitleLevel()) / 100f;
                     event.setMin(event.getMin() * healingIncrease);
                     event.setMax(event.getMax() * healingIncrease);

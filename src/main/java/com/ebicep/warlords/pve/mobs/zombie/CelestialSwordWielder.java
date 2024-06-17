@@ -67,7 +67,7 @@ public class CelestialSwordWielder extends AbstractMob implements EliteMob {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (Utils.isProjectile(event.getAbility())) {
+                if (Utils.isProjectile(event.getCause())) {
                     return currentDamageValue * 0.1f;
                 }
 

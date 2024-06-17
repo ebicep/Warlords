@@ -113,7 +113,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
 
     @Override
     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-        if (event.getAttacker() instanceof WarlordsNPC warlordsNPC) {
+        if (event.getSource() instanceof WarlordsNPC warlordsNPC) {
             Aspect aspect = warlordsNPC.getMob().getAspect();
             if (aspect == null) {
                 return currentDamageValue;
@@ -130,7 +130,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     @Override
     public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
         // prevent recursion
-        WarlordsEntity attacker = event.getAttacker();
+        WarlordsEntity attacker = event.getSource();
         if (Objects.equals(attacker, from) || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
             return;
         }

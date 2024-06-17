@@ -125,10 +125,10 @@ public class Zenith extends AbstractMob implements BossMob {
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
-        if (event.getAbility().equals("Uppercut") ||
-                event.getAbility().equals("Armageddon") ||
-                event.getAbility().equals("Intervene") ||
-                event.getAbility().equals("Thunder Strike")
+        if (event.getCause().equals("Uppercut") ||
+                event.getCause().equals("Armageddon") ||
+                event.getCause().equals("Intervene") ||
+                event.getCause().equals("Thunder Strike")
         ) {
             return;
         }

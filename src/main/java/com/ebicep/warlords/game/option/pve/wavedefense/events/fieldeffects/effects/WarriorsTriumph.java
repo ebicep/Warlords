@@ -48,13 +48,13 @@ public class WarriorsTriumph implements FieldEffect {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!(event.getAttacker() instanceof WarlordsPlayer)) {
+                if (!(event.getSource() instanceof WarlordsPlayer)) {
                     return;
                 }
-                if (Specializations.getClass(event.getAttacker().getSpecClass()) != Classes.WARRIOR) {
+                if (Specializations.getClass(event.getSource().getSpecClass()) != Classes.WARRIOR) {
                     return;
                 }
-                String ability = event.getAbility();
+                String ability = event.getCause();
                 if (ability.equals("Wounding Strike") || ability.equals("Crippling Strike")) {
                     event.setMin(event.getMin() * 3);
                     event.setMax(event.getMax() * 3);

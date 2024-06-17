@@ -69,7 +69,7 @@ public class FuriousSoul extends AbstractMob implements BossMinionMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 81, 18, 59, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.35f, 2);
-        if (!event.getAbility().isEmpty() && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+        if (!event.getCause().isEmpty() && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
             float damage = attacker.getMaxBaseHealth() * maxHPPercent;
             attacker.addDamageInstance(
                     self,

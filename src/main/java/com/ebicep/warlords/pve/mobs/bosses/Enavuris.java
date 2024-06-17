@@ -635,7 +635,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     }
                     float healingMultiplier = .15f;
                     float healValue = currentDamageValue * healingMultiplier;
-                    event.getAttacker().addHealingInstance(
+                    event.getSource().addHealingInstance(
                             wp,
                             "Leech",
                             healValue,

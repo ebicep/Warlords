@@ -147,7 +147,7 @@ public class ImpalingStrike extends AbstractStrike {
                     return;
                 }
                 float healingMultiplier;
-                if (event.getAttacker() == wp) {
+                if (event.getSource() == wp) {
                     healingMultiplier = selfHealMultiplier;
                 } else {
                     healingMultiplier = allyHealMultiplier;
@@ -156,7 +156,7 @@ public class ImpalingStrike extends AbstractStrike {
                 if (inPve) {
                     healValue = Math.min(500, healValue);
                 }
-                event.getAttacker().addHealingInstance(
+                event.getSource().addHealingInstance(
                         wp,
                         "Leech",
                         healValue,

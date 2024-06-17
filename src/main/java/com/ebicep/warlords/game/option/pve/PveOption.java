@@ -151,7 +151,7 @@ public interface PveOption extends Option {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 WarlordsEntity receiver = event.getWarlordsEntity();
 
                 if (!event.isDamageInstance()) {

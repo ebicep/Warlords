@@ -104,7 +104,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
 
                 int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
                 attacker.addHealingInstance(

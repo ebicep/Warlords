@@ -114,7 +114,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 if (pveMasterUpgrade) {
-                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return currentCritChance;
                     }
                     float critBoost = (0.2f * multiplier);
@@ -129,7 +129,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
                 if (pveMasterUpgrade) {
-                    if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                    if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                         return currentCritMultiplier;
                     }
                     float critBoost = (0.2f * multiplier);

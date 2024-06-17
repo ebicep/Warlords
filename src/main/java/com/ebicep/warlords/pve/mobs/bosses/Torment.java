@@ -80,7 +80,7 @@ public class Torment extends AbstractMob implements BossMob {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getAttacker().getCooldownManager().hasCooldown(DamageCheck.class)) {
+                if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
                     return currentDamageValue * 5;
                 }
 

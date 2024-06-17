@@ -97,7 +97,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getAbility().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
+                if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();

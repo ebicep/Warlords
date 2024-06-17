@@ -110,10 +110,10 @@ public class CodexCollector implements FieldEffect {
                 if (codexesEquipped < 4) {
                     return;
                 }
-                if (!(event.getAttacker() instanceof WarlordsPlayer warlordsPlayer)) {
+                if (!(event.getSource() instanceof WarlordsPlayer warlordsPlayer)) {
                     return;
                 }
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     event.setCritChance(event.getCritChance() + 5);
                     event.setCritMultiplier(event.getCritMultiplier() + 10);
                 }

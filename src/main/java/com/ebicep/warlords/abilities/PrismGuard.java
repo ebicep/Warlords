@@ -229,8 +229,8 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                     float afterReduction;
-                                    if (Utils.isProjectile(event.getAbility())) {
-                                        if (isInsideBubble.contains(event.getAttacker())) {
+                                    if (Utils.isProjectile(event.getCause())) {
+                                        if (isInsideBubble.contains(event.getSource())) {
                                             afterReduction = currentDamageValue;
                                         } else {
                                             timesProjectilesReduced++;
@@ -265,8 +265,8 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 int totalReduction = 0;
                 hits.getAndIncrement();
-                if (Utils.isProjectile(event.getAbility())) {
-                    if (!isInsideBubble.contains(event.getAttacker())) {
+                if (Utils.isProjectile(event.getCause())) {
+                    if (!isInsideBubble.contains(event.getSource())) {
                         timesProjectilesReduced++;
                         totalReduction += projectileDamageReduction;
                     }
@@ -294,14 +294,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 return new Listener() {
                     @EventHandler
                     public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                        WarlordsEntity attacker = event.getAttacker();
+                        WarlordsEntity attacker = event.getSource();
                         if (attacker.isTeammate(wp)) {
                             return;
                         }
                         if (attacker.getLocation().distanceSquared(wp.getLocation()) > bubbleRadius * bubbleRadius) {
                             return;
                         }
-                        if (event.getAbility().isEmpty()) {
+                        if (event.getCause().isEmpty()) {
                             event.setMin(event.getMin() * .75f);
                             event.setMax(event.getMax() * .75f);
                         }

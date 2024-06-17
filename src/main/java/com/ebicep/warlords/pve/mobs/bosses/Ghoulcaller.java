@@ -100,7 +100,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         //silence player for 2s per melee
-        if (event.getAbility().isEmpty()) {
+        if (event.getCause().isEmpty()) {
             SoulShackle.shacklePlayer(attacker, receiver, 40);
             PlayerFilter.entitiesAround(getWarlordsNPC(), 3, 3, 3)
                         .aliveEnemiesOf(getWarlordsNPC())

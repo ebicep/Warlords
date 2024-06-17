@@ -55,7 +55,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (spec == event.getAttacker().getSpecClass().specType) {
+                if (spec == event.getSource().getSpecClass().specType) {
                     return currentDamageValue * 2;
                 } else {
                     return currentDamageValue * 0.5f;

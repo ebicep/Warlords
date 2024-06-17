@@ -73,7 +73,7 @@ public class VoltaicSoul extends AbstractMob implements BossMinionMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 171, 74, 228, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.BLOCK_GRASS_STEP, 0.35f, 2);
-        if (!event.getAbility().isEmpty()) {
+        if (!event.getCause().isEmpty()) {
             attacker.subtractEnergy(name, -energyRemoved, true);
             hitBuildUp++;
         }

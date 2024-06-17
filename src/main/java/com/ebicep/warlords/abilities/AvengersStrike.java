@@ -147,7 +147,7 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
 
     public static class AvengerStrikeValues implements Value.ValueHolder {
 
-        private final Value.RangedValue strikeDamage = new Value.RangedValue(359, 485);
+        private final Value.RangedValue strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
         private final List<Value> values = List.of(strikeDamage);
 
         @Override

@@ -74,7 +74,7 @@ public class CreepyBomber extends AbstractMob implements EliteMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         super.onDamageTaken(self, attacker, event);
-        if (Utils.isProjectile(event.getAbility())) {
+        if (Utils.isProjectile(event.getCause())) {
             event.setMin(event.getMin() * .2f);
             event.setMax(event.getMax() * .2f);
         }

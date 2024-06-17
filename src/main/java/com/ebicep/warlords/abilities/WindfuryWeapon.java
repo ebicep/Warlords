@@ -118,11 +118,11 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
 
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getAbility().isEmpty() || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                if (!event.getCause().isEmpty() || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
                 }
                 WarlordsEntity victim = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
 
                 double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
                 if (firstProc) {

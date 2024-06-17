@@ -109,7 +109,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             ) {
                 @Override
                 public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    if (event.getAbility().equals("Protector's Strike")) {
+                    if (event.getCause().equals("Protector's Strike")) {
                         return currentHealValue * 1.25f;
                     }
                     return currentHealValue;
