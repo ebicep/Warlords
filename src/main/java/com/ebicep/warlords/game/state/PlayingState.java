@@ -21,7 +21,7 @@ import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.*;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.PlayerNameInstance;
+import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
 import com.ebicep.warlords.util.chat.ChatChannels;

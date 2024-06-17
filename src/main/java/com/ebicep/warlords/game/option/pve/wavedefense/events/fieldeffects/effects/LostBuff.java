@@ -37,7 +37,7 @@ public class LostBuff implements FieldEffect {
                             warlordsEntity.die(warlordsEntity);
                         } else {
                             warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damage);
-                            //warlordsEntity.playHurtAnimation(warlordsEntity.getEntity(), warlordsEntity);
+                            //warlordsEntity.playHurtAnimation(warlordsEntity);
                         }
                     });
     }

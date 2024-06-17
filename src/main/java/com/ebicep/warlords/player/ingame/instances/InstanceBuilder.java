@@ -1,10 +1,10 @@
-package com.ebicep.warlords.player.ingame;
+package com.ebicep.warlords.player.ingame.instances;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.CustomInstanceFlags;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 
 import javax.annotation.Nullable;
 import java.util.Collections;

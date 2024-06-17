@@ -1,4 +1,4 @@
-package com.ebicep.warlords.player.ingame.cooldowns.instances;
+package com.ebicep.warlords.player.ingame.instances.type;
 
 /**
  * Modifies the damage reduction the warlords entity when damage is being applied to them. Applies to fall damage

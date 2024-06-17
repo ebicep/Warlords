@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.*;
+import com.ebicep.warlords.player.ingame.instances.type.*;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;

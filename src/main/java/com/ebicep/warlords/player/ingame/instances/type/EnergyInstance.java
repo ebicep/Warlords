@@ -1,4 +1,4 @@
-package com.ebicep.warlords.player.ingame.cooldowns.instances;
+package com.ebicep.warlords.player.ingame.instances.type;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 

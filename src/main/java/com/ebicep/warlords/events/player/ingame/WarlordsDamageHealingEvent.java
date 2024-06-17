@@ -1,10 +1,10 @@
 package com.ebicep.warlords.events.player.ingame;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.player.ingame.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.CustomInstanceFlags;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -178,6 +178,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
 
     public boolean isHealingInstance() {
         return instanceType == InstanceBuilder.InstanceType.HEALING;
+    }
+
+    public InstanceBuilder.InstanceType getInstanceType() {
+        return instanceType;
     }
 
     public EnumSet<InstanceFlags> getFlags() {
