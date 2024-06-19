@@ -38,7 +38,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox {
 
     public int playersHealed = 0;
-
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 200;
     private FloatModifiable radius = new FloatModifiable(8);
 
@@ -292,10 +293,12 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
-    private final DamageValues damageValues = new DamageValues();
-
     public DamageValues getDamageValues() {
         return damageValues;
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -308,12 +311,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
             return values;
         }
 
-    }
-
-    private final HealingValues healingValues = new HealingValues();
-
-    public HealingValues getHealValues() {
-        return healingValues;
     }
 
     public static class HealingValues implements Value.ValueHolder {

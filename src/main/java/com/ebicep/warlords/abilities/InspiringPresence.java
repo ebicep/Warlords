@@ -192,11 +192,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         }
     }
 
-    @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade;
-    }
-
     public List<WarlordsEntity> getPlayersAffected() {
         return playersAffected;
     }
@@ -204,6 +199,11 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InspiringPresenceBranch(abilityTree, this);
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade;
     }
 
     @Override

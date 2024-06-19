@@ -37,7 +37,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     private static final double GRAVITY = -0.008;
 
     public int playersHit = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private FloatModifiable hitbox = new FloatModifiable(5);
     private int blindDurationInTicks = 30;
 
@@ -91,6 +91,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         );
 
         return true;
+    }
+
+    protected Vector calculateSpeed(WarlordsEntity we) {
+        return we.getLocation().getDirection().multiply(SPEED);
     }
 
     public void onImpact(@Nonnull WarlordsEntity wp, Location newLoc) {
@@ -175,10 +179,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         }
     }
 
-    protected Vector calculateSpeed(WarlordsEntity we) {
-        return we.getLocation().getDirection().multiply(SPEED);
-    }
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new IncendiaryCurseBranch(abilityTree, this);
@@ -196,8 +196,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     public FloatModifiable getHitBoxRadius() {
         return hitbox;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

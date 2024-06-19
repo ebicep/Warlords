@@ -39,17 +39,16 @@ import java.util.List;
 public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Splash {
 
     private final DamageValues damageValues = new DamageValues();
-
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
     private int maxFullDistance = 30;
     private float directHitMultiplier = 15;
     private FloatModifiable splash = new FloatModifiable(4);
     private int slowness = 25;
-
     public FrostBolt() {
         super("Frostbolt", 268.8f, 345.45f, 0, 70, 20, 175, 2, 300, false);
+    }
+
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override

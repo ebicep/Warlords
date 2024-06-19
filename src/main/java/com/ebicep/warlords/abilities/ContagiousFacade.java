@@ -245,14 +245,14 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        damageAbsorption.tick();
-        super.runEveryTick(warlordsEntity);
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ContagiousFacadeBranch(abilityTree, this);
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ContagiousFacadeBranch(abilityTree, this);
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        damageAbsorption.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override

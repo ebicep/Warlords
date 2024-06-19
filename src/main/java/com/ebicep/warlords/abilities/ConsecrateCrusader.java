@@ -27,6 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConsecrateCrusader extends AbstractConsecrate {
 
+    private final DamageValues damageValues = new DamageValues();
+
     public ConsecrateCrusader() {
         super(144, 194.4f, 50, 20, 175, 15, 4, 5);
     }
@@ -123,8 +125,6 @@ public class ConsecrateCrusader extends AbstractConsecrate {
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ConsecrateBranchCrusader(abilityTree, this);
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

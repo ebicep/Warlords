@@ -84,6 +84,11 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     }
 
     @Override
+    public ArmorStand getCrystal() {
+        return crystal;
+    }
+
+    @Override
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<SanctifiedBeacon> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         SanctifiedBeacon beacon = cooldown.getCooldownObject();
         float rad = beacon.getHitBoxRadius().getCalculatedValue();
@@ -196,11 +201,6 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     3
             );
         }
-    }
-
-    @Override
-    public ArmorStand getCrystal() {
-        return crystal;
     }
 
     @Override

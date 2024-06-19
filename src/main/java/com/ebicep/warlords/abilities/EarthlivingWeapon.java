@@ -35,7 +35,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
     public int timesProcd = 0;
     public int playersHealed = 0;
-
+    private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 160;
     private float procChance = 40;
     private int maxAllies = 2;
@@ -269,8 +269,6 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     @Override
     public HealingValues getHealValues() {

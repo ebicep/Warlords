@@ -28,6 +28,7 @@ import java.util.*;
 
 public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
+    private final DamageValues damageValues = new DamageValues();
     private int tickDuration = 15;
     private int damageResistance = 80;
     private int speedBoost = 150;
@@ -54,11 +55,6 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         info.add(new Pair<>("Times Used", "" + timesUsed));
 
         return info;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new VitalityConcoctionBranch(abilityTree, this);
     }
 
     @Override
@@ -124,6 +120,11 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new VitalityConcoctionBranch(abilityTree, this);
+    }
+
+    @Override
     public int getTickDuration() {
         return tickDuration;
     }
@@ -132,8 +133,6 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

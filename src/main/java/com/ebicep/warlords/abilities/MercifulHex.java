@@ -40,15 +40,8 @@ import java.util.List;
 
 public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
 
-    @Nonnull
-    public static MercifulHex getFromHex(WarlordsEntity from) {
-        return from.getSpec().getAbilities().stream()
-                   .filter(MercifulHex.class::isInstance)
-                   .map(MercifulHex.class::cast)
-                   .findFirst()
-                   .orElse(new MercifulHex());
-    }
-
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private int hexStacksPerHit = 1;
     private int maxAlliesHit = 2;
     private float minDamage = 217;
@@ -146,102 +139,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     }
 
-    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
-        if (projectile.getHit().contains(hit)) {
-            return false;
-        }
-
-        WarlordsEntity wp = projectile.getShooter();
-        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-        if (hit.onHorse()) {
-            numberOfDismounts++;
-        }
-
-        List<WarlordsEntity> hits = projectile.getHit();
-        if (hits.size() == 1) {
-            giveMercifulHex(wp, wp);
-        }
-
-        boolean isTeammate = hit.isTeammate(wp);
-        if (isTeammate) {
-            int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
-            float reduction = teammatesHit <= maxAlliesHit ? 1 : convertToPercent(subsequentReduction);
-            hit.addInstance(InstanceBuilder
-                    .healing()
-                    .ability(this)
-                    .source(wp)
-                    .min(healingValues.hexHealing.getMinValue() * reduction)
-                    .max(healingValues.hexHealing.getMaxValue() * reduction)
-                    .crit(healingValues.hexHealing)
-            );
-            if (teammatesHit > maxAlliesHit) {
-                return false;
-            }
-            giveMercifulHex(wp, hit);
-            if (pveMasterUpgrade) {
-                giveMercifulHex(wp, hit);
-            }
-        } else {
-            int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
-            float reduction = enemiesHit == 1 ? 1 : convertToPercent(subsequentReduction);
-            hit.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(wp)
-                    .min(damageValues.hexDamage.getMinValue() * reduction)
-                    .max(damageValues.hexDamage.getMaxValue() * reduction)
-                    .crit(damageValues.hexDamage)
-            );
-        }
-        return true;
-    }
-
-    public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
-        MercifulHex fromHex = getFromHex(from);
-        int tickDuration = fromHex.getTickDuration();
-        HealingValues values = fromHex.healingValues;
-        int ticksBetweenDot = fromHex.getTicksBetweenDot();
-        String name = fromHex.getName();
-        to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Merciful Hex",
-                "MHEX",
-                MercifulHex.class,
-                new MercifulHex(),
-                from,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                    to.addInstance(InstanceBuilder
-                            .healing()
-                            .ability(fromHex)
-                            .source(from)
-                            .value(values.hexDOTHealing)
-                            .flags(InstanceFlags.DOT)
-                    );
-                },
-                tickDuration * 2, // base add 20 to delay damage by a second
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % ticksBetweenDot == 0 && ticksElapsed != 0) {
-                        to.addInstance(InstanceBuilder
-                                .healing()
-                                .ability(fromHex)
-                                .source(from)
-                                .value(values.hexDOTHealing)
-                                .flags(InstanceFlags.DOT)
-                        );
-                    }
-                })
-        ) {
-            @Override
-            public PlayerNameData addPrefixFromOther() {
-                return new PlayerNameData(Component.text("MHEX",
-                        NamedTextColor.GREEN),
-                        we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
-                );
-            }
-        });
-    }
-
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(-.5f);
@@ -332,8 +229,110 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         return 1.2f;
     }
 
-    public int getMaxStacks() {
-        return maxStacks;
+    private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
+        if (projectile.getHit().contains(hit)) {
+            return false;
+        }
+
+        WarlordsEntity wp = projectile.getShooter();
+        getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+        if (hit.onHorse()) {
+            numberOfDismounts++;
+        }
+
+        List<WarlordsEntity> hits = projectile.getHit();
+        if (hits.size() == 1) {
+            giveMercifulHex(wp, wp);
+        }
+
+        boolean isTeammate = hit.isTeammate(wp);
+        if (isTeammate) {
+            int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
+            float reduction = teammatesHit <= maxAlliesHit ? 1 : convertToPercent(subsequentReduction);
+            hit.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .min(healingValues.hexHealing.getMinValue() * reduction)
+                    .max(healingValues.hexHealing.getMaxValue() * reduction)
+                    .crit(healingValues.hexHealing)
+            );
+            if (teammatesHit > maxAlliesHit) {
+                return false;
+            }
+            giveMercifulHex(wp, hit);
+            if (pveMasterUpgrade) {
+                giveMercifulHex(wp, hit);
+            }
+        } else {
+            int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
+            float reduction = enemiesHit == 1 ? 1 : convertToPercent(subsequentReduction);
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.hexDamage.getMinValue() * reduction)
+                    .max(damageValues.hexDamage.getMaxValue() * reduction)
+                    .crit(damageValues.hexDamage)
+            );
+        }
+        return true;
+    }
+
+    public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
+        MercifulHex fromHex = getFromHex(from);
+        int tickDuration = fromHex.getTickDuration();
+        HealingValues values = fromHex.healingValues;
+        int ticksBetweenDot = fromHex.getTicksBetweenDot();
+        String name = fromHex.getName();
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Merciful Hex",
+                "MHEX",
+                MercifulHex.class,
+                new MercifulHex(),
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                    to.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(fromHex)
+                            .source(from)
+                            .value(values.hexDOTHealing)
+                            .flags(InstanceFlags.DOT)
+                    );
+                },
+                tickDuration * 2, // base add 20 to delay damage by a second
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % ticksBetweenDot == 0 && ticksElapsed != 0) {
+                        to.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(fromHex)
+                                .source(from)
+                                .value(values.hexDOTHealing)
+                                .flags(InstanceFlags.DOT)
+                        );
+                    }
+                })
+        ) {
+            @Override
+            public PlayerNameData addPrefixFromOther() {
+                return new PlayerNameData(Component.text("MHEX",
+                        NamedTextColor.GREEN
+                ),
+                        we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
+                );
+            }
+        });
+    }
+
+    @Nonnull
+    public static MercifulHex getFromHex(WarlordsEntity from) {
+        return from.getSpec().getAbilities().stream()
+                   .filter(MercifulHex.class::isInstance)
+                   .map(MercifulHex.class::cast)
+                   .findFirst()
+                   .orElse(new MercifulHex());
     }
 
     @Override
@@ -344,6 +343,18 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    public int getTicksBetweenDot() {
+        return ticksBetweenDot;
+    }
+
+    public void setTicksBetweenDot(int ticksBetweenDot) {
+        this.ticksBetweenDot = ticksBetweenDot;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
     }
 
     public float getDotMinHeal() {
@@ -402,20 +413,9 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         this.subsequentReduction = subsequentReduction;
     }
 
-    public int getTicksBetweenDot() {
-        return ticksBetweenDot;
-    }
-
-    public void setTicksBetweenDot(int ticksBetweenDot) {
-        this.ticksBetweenDot = ticksBetweenDot;
-    }
-
-    private final DamageValues damageValues = new DamageValues();
-
     public DamageValues getDamageValues() {
         return damageValues;
     }
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

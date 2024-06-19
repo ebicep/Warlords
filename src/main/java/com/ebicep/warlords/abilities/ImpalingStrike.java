@@ -29,16 +29,15 @@ public class ImpalingStrike extends AbstractStrike {
 
     protected float healingDoneFromEnemyCarrier = 0;
     private final DamageValues damageValues = new DamageValues();
-
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
     private int leechDuration = 5;
     private float leechAllyAmount = 25;
     private float leechSelfAmount = 15;
-
     public ImpalingStrike() {
         super("Impaling Strike", 323, 427, 0, 90, 20, 175);
+    }
+
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override

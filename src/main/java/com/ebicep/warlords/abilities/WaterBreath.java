@@ -42,7 +42,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
     public int playersHealed = 0;
     public int debuffsRemoved = 0;
-
+    private final HealingValues healingValues = new HealingValues();
     private int maxAnimationTime = 12;
     private int maxAnimationEffects = 4;
     private float hitbox = 10;
@@ -280,8 +280,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     public void setMaxAnimationEffects(int maxAnimationEffects) {
         this.maxAnimationEffects = maxAnimationEffects;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

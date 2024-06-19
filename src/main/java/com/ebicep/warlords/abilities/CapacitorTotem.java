@@ -37,7 +37,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
     protected int numberOfProcsAfterCarrierPassed = 0;
     protected int playersKilledWithFinalHit = 0;
     protected int playersHit = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private Runnable pulseDamage;
     private boolean teamCarrierPassedThrough = false;
     private int tickDuration = 160;
@@ -238,8 +238,6 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
     public int getNumberOfProcsAfterCarrierPassed() {
         return numberOfProcsAfterCarrierPassed;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

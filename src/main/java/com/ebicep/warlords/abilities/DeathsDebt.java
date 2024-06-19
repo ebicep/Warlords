@@ -380,6 +380,18 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         this.delayedDamage += delayedDamage;
     }
 
+    public float getDelayedDamageTaken() {
+        return delayedDamageTaken;
+    }
+
+    public void setDelayedDamageTaken(float delayedDamageTaken) {
+        this.delayedDamageTaken = delayedDamageTaken;
+    }
+
+    public int getDebtTickDuration() {
+        return debtTickDuration;
+    }
+
     public void setInDebt(boolean inDebt) {
         this.inDebt = inDebt;
     }
@@ -420,17 +432,5 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public float getDelayedDamageTaken() {
-        return delayedDamageTaken;
-    }
-
-    public void setDelayedDamageTaken(float delayedDamageTaken) {
-        this.delayedDamageTaken = delayedDamageTaken;
-    }
-
-    public int getDebtTickDuration() {
-        return debtTickDuration;
     }
 }

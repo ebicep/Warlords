@@ -31,6 +31,7 @@ import java.util.*;
 public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration {
 
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
+
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Aftershock",
@@ -73,23 +74,21 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             }
         });
     }
-
-    private final DamageValues damageValues = new DamageValues();
-
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
     public int numberOfDismounts = 0;
+    private final DamageValues damageValues = new DamageValues();
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
-
     public ChainLightning() {
         super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
     }
 
     public ChainLightning(float cooldown, float startCooldown) {
         super("Chain Lightning", 370, 499, cooldown, 40, 20, 175, 20, 10, 3, startCooldown);
+    }
+
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override

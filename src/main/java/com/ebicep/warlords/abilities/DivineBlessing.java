@@ -36,13 +36,13 @@ import java.util.*;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
+    private final HealingValues healingValues = new HealingValues();
     private int hexTickDurationIncrease = 40;
     private int hexHealingBonus = 30;
     private int lethalDamageHealing = 15;
     private int postHealthTickDelay = 40;
     private int postHealthHealAmount = 800;
     private int tickDuration = 240;
-
 
     public DivineBlessing() {
         super("Divine Blessing", 0, 0, 50, 10, 0, 0);
@@ -306,8 +306,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     public void setLethalDamageHealing(int lethalDamageHealing) {
         this.lethalDamageHealing = lethalDamageHealing;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

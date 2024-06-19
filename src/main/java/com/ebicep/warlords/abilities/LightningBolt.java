@@ -35,6 +35,7 @@ import java.util.Optional;
 
 public class LightningBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon {
 
+    private final DamageValues damageValues = new DamageValues();
     private double hitbox = 3;
 
     public LightningBolt() {
@@ -241,8 +242,6 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     public void setHitbox(double hitbox) {
         this.hitbox = hitbox;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

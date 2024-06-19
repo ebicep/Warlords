@@ -32,6 +32,7 @@ import java.util.List;
 public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon {
 
     public int numberOfAdditionalWaves = 0;
+    private final HealingValues healingValues = new HealingValues();
     private int duration = 3;
     private int vitalityRange = 8;
     private int energyPerSecond = 15;
@@ -202,8 +203,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     public void setDuration(int duration) {
         this.duration = duration;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

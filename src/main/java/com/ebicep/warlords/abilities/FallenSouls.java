@@ -44,6 +44,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     public int playersHit = 0;
     public int numberOfDismounts = 0;
+    private final DamageValues damageValues = new DamageValues();
 
     public FallenSouls() {
         this(164f, 212f, 0, 0);
@@ -292,9 +293,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                     }
                 });
     }
-
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

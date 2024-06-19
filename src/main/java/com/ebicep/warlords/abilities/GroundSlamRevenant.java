@@ -19,8 +19,28 @@ import java.util.UUID;
 
 public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<GroundSlamRevenant.DamageValues> {
 
+    private final DamageValues damageValues = new DamageValues();
+
     public GroundSlamRevenant() {
         super(326, 441, 9.32f, 30, 35, 200);
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new GroundSlamBranchRevenant(abilityTree, this);
+    }
+
+    @Override
+    protected void slamDamage(WarlordsEntity wp, WarlordsEntity slamTarget, float damageMultiplier, UUID abilityUUID) {
+        slamTarget.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.slamDamage.getMinValue() * damageMultiplier)
+                .max(damageValues.slamDamage.getMaxValue() * damageMultiplier)
+                .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
+                .uuid(abilityUUID)
+        );
     }
 
     @Override
@@ -45,26 +65,6 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
             });
         }
     }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new GroundSlamBranchRevenant(abilityTree, this);
-    }
-
-    @Override
-    protected void slamDamage(WarlordsEntity wp, WarlordsEntity slamTarget, float damageMultiplier, UUID abilityUUID) {
-        slamTarget.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .min(damageValues.slamDamage.getMinValue() * damageMultiplier)
-                .max(damageValues.slamDamage.getMaxValue() * damageMultiplier)
-                .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
-                .uuid(abilityUUID)
-        );
-    }
-
-    private final DamageValues damageValues = new DamageValues();
 
     @Override
     public DamageValues getDamageValues() {

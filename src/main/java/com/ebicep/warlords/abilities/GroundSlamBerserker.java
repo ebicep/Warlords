@@ -19,6 +19,8 @@ import java.util.UUID;
 
 public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<GroundSlamBerserker.DamageValues> {
 
+    private final DamageValues damageValues = new DamageValues();
+
     public GroundSlamBerserker() {
         this(9.32f, 0);
     }
@@ -29,6 +31,24 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
 
     public GroundSlamBerserker(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
         super(minDamageHeal, maxDamageHeal, cooldown, 60, 20, 175, startCooldown);
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new GroundSlamBranchBerserker(abilityTree, this);
+    }
+
+    @Override
+    protected void slamDamage(WarlordsEntity wp, WarlordsEntity slamTarget, float damageMultiplier, UUID abilityUUID) {
+        slamTarget.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.slamDamage.getMinValue() * damageMultiplier)
+                .max(damageValues.slamDamage.getMaxValue() * damageMultiplier)
+                .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
+                .uuid(abilityUUID)
+        );
     }
 
     @Override
@@ -52,26 +72,6 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
                 }
             });
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new GroundSlamBranchBerserker(abilityTree, this);
-    }
-
-    private final DamageValues damageValues = new DamageValues();
-
-    @Override
-    protected void slamDamage(WarlordsEntity wp, WarlordsEntity slamTarget, float damageMultiplier, UUID abilityUUID) {
-        slamTarget.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .min(damageValues.slamDamage.getMinValue() * damageMultiplier)
-                .max(damageValues.slamDamage.getMaxValue() * damageMultiplier)
-                .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
-                .uuid(abilityUUID)
-        );
     }
 
     @Override

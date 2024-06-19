@@ -32,6 +32,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
 
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.SPRUCE_FENCE_GATE);
     public int numberOfDismounts = 0;
+    private final DamageValues damageValues = new DamageValues();
     private double speedDuration = 1.5;
     private double damageReductionDuration = 4.5;
 
@@ -258,8 +259,6 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
     public void setDamageReductionDuration(double damageReductionDuration) {
         this.damageReductionDuration = damageReductionDuration;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

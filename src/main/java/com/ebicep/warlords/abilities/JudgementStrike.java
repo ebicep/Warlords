@@ -20,7 +20,7 @@ import java.util.List;
 public class JudgementStrike extends AbstractStrike implements Damages<JudgementStrike.DamageValues>, Heals<JudgementStrike.HealingValues> {
 
     private final DamageValues damageValues = new DamageValues();
-
+    private final HealingValues healingValues = new HealingValues();
     private int attacksDone = 0;
     private int speedOnCrit = 25; // %
     private int speedOnCritDuration = 2;
@@ -120,8 +120,6 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
         }
 
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

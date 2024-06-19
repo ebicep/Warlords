@@ -34,7 +34,7 @@ import java.util.Set;
 public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
 
     public int totalPlayersHit = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private int fallDamageNegation = 10;
 
     public ShadowStep() {
@@ -180,7 +180,6 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
         });
     }
 
-
     private void doShadowStep(@Nonnull WarlordsEntity wp, Location playerLoc) {
         List<WarlordsEntity> playersHit = new ArrayList<>();
         for (WarlordsEntity assaultTarget : PlayerFilter
@@ -280,8 +279,6 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
     public void setFallDamageNegation(int fallDamageNegation) {
         this.fallDamageNegation = fallDamageNegation;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

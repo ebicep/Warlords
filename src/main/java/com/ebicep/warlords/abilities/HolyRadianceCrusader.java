@@ -31,6 +31,7 @@ import java.util.List;
 public class HolyRadianceCrusader extends AbstractHolyRadiance {
 
     private final int markRadius = 15;
+    private final HealingValues healingValues = new HealingValues();
     private int markDuration = 8;
     private int energyPerSecond = 6;
     private int markSpeed = 25;
@@ -178,6 +179,11 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
         return false;
     }
 
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
+    }
+
     public int getMarkDuration() {
         return markDuration;
     }
@@ -201,13 +207,6 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
     public void setMarkSpeed(int markSpeed) {
         this.markSpeed = markSpeed;
     }
-
-    @Override
-    public Value.RangedValueCritable getRadianceHealing() {
-        return healingValues.radianceHealing;
-    }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

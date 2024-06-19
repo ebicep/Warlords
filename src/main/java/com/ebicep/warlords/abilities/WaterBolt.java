@@ -34,7 +34,8 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
 
     public int teammatesHit = 0;
     public int enemiesHit = 0;
-
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private int maxFullDistance = 40;
     private float directHitMultiplier = 15;
     private FloatModifiable splashRadius = new FloatModifiable(4);
@@ -254,10 +255,12 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         return splashRadius;
     }
 
-    private final DamageValues damageValues = new DamageValues();
-
     public DamageValues getDamageValues() {
         return damageValues;
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -270,12 +273,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
             return values;
         }
 
-    }
-
-    private final HealingValues healingValues = new HealingValues();
-
-    public HealingValues getHealValues() {
-        return healingValues;
     }
 
     public static class HealingValues implements Value.ValueHolder {

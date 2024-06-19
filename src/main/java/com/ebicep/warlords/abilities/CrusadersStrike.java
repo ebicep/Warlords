@@ -31,7 +31,7 @@ import java.util.Optional;
 public class CrusadersStrike extends AbstractStrike {
 
     public float energyGivenToPlayers = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private int energyGiven = 21;
     private int energyRadius = 10;
     private int energyMaxAllies = 2;
@@ -158,8 +158,6 @@ public class CrusadersStrike extends AbstractStrike {
     public void setEnergyRadius(int energyRadius) {
         this.energyRadius = energyRadius;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

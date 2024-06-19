@@ -36,6 +36,7 @@ import java.util.List;
 public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
 
     private final int knockbackRadius = 5;
+    private final HealingValues healingValues = new HealingValues();
     private int energyRestore = 160;
     private int healthRestore = 30; // TODO
 
@@ -58,7 +59,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
                                .append(Component.text("block radius back."));
 
     }
-
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
@@ -238,8 +238,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
     public HealingValues getHealValues() {
         return healingValues;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

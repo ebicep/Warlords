@@ -15,6 +15,8 @@ import java.util.UUID;
 
 public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduceCooldowns {
 
+    private final DamageValues damageValues = new DamageValues();
+
     public SeismicWaveDefender() {
         super(506, 685, 11.74f, 60, 25, 200);
     }
@@ -51,8 +53,6 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
     public boolean canReduceCooldowns() {
         return pveMasterUpgrade2;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

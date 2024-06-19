@@ -27,6 +27,8 @@ import java.util.List;
 
 public class ConsecrateAvenger extends AbstractConsecrate {
 
+    private final DamageValues damageValues = new DamageValues();
+
     public ConsecrateAvenger() {
         super(198, 267, 50, 20, 175, 20, 5, 4);
     }
@@ -122,8 +124,6 @@ public class ConsecrateAvenger extends AbstractConsecrate {
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ConsecrateBranchAvenger(abilityTree, this);
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

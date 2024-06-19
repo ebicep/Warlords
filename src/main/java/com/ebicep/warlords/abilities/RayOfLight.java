@@ -28,7 +28,7 @@ import java.util.List;
 public class RayOfLight extends AbstractBeam {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
-
+    private final HealingValues healingValues = new HealingValues();
     private int healingIncrease = 100;
 
     public RayOfLight() {
@@ -162,8 +162,6 @@ public class RayOfLight extends AbstractBeam {
     public ItemStack getBeamItem() {
         return BEAM_ITEM;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

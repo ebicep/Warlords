@@ -38,6 +38,7 @@ import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
 
+    private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 40;
     private int hexStacksPerHit = 1;
     private float dotMinDamage = 30;
@@ -311,6 +312,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         return ticksBetweenDot;
     }
 
+    public void setTicksBetweenDot(int ticksBetweenDot) {
+        this.ticksBetweenDot = ticksBetweenDot;
+    }
+
     public float getDotMinDamage() {
         return dotMinDamage;
     }
@@ -327,10 +332,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         this.dotMaxDamage = dotMaxDamage;
     }
 
-    public void setTicksBetweenDot(int ticksBetweenDot) {
-        this.ticksBetweenDot = ticksBetweenDot;
-    }
-
     public int getMaxStacks() {
         return maxStacks;
     }
@@ -338,8 +339,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     public void setMaxEnemiesHit(int maxEnemiesHit) {
         this.maxEnemiesHit = maxEnemiesHit;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

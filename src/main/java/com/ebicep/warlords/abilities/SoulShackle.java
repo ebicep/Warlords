@@ -38,6 +38,7 @@ import java.util.Objects;
 public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
 
     private final int shackleRange = 15;
+    private final DamageValues damageValues = new DamageValues();
     private float shacklePool = 0;
     private int maxShackleTargets = 1;
     private int minSilenceDurationInTicks = 40;
@@ -278,8 +279,6 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
     public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
         this.minSilenceDurationInTicks = minSilenceDurationInTicks;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

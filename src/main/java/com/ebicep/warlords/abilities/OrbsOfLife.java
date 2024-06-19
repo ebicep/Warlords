@@ -47,6 +47,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     private final List<OrbOfLife> spawnedOrbs = new ArrayList<>();
     private final int floatingOrbRadius = 20;
+    private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 280;
     private int orbTickMultiplier = 1;
 
@@ -54,10 +55,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20);
     }
 
+
     public OrbsOfLife(float minDamage, float maxDamage) {
         super("Orbs of Life", minDamage, maxDamage, 19.57f, 20);
     }
-
 
     @Override
     public void updateDescription(Player player) {
@@ -377,6 +378,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         this.tickDuration = tickDuration;
     }
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     static class OrbOfLife extends OrbPassenger {
 
         private final OrbsOfLife cooldown;
@@ -401,12 +406,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             this.playerToMoveTowards = playerToMoveTowards;
         }
 
-    }
-
-    private final HealingValues healingValues = new HealingValues();
-
-    public HealingValues getHealValues() {
-        return healingValues;
     }
 
     public static class HealingValues implements Value.ValueHolder {

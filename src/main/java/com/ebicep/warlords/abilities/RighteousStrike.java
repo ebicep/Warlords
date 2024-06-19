@@ -23,7 +23,7 @@ import java.util.List;
 public class RighteousStrike extends AbstractStrike {
 
     public int silencedTargetStruck = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private int abilityReductionInTicks = 10;
     private int targetsStruck = 0;
 
@@ -116,8 +116,6 @@ public class RighteousStrike extends AbstractStrike {
 
         return true;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

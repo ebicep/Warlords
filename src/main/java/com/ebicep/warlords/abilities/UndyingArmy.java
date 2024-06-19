@@ -170,6 +170,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     public int playersArmied = 0;
     private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
+    private final DamageValues damageValues = new DamageValues();
     private int radius = 12;
     private int tickDuration = 200;
     private int maxArmyAllies = 6;
@@ -482,8 +483,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     public void setMissingHealing(float missingHealing) {
         this.missingHealing = missingHealing;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

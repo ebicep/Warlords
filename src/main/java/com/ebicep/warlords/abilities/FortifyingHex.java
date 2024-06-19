@@ -47,10 +47,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     protected FloatModifiable damageReduction = new FloatModifiable(8);
 
     private final DamageValues damageValues = new DamageValues();
-
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
     private int maxFullDistance = 40;
@@ -58,14 +54,18 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
+    public FortifyingHex(float damageReduction) {
+        this();
+        this.damageReduction = new FloatModifiable(damageReduction);
+    }
+
     public FortifyingHex() {
         super("Fortifying Hex", 287, 387, 0, 70, 20, 175, 2.5, 40, true);
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
-    public FortifyingHex(float damageReduction) {
-        this();
-        this.damageReduction = new FloatModifiable(damageReduction);
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
@@ -219,6 +219,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         return 1.4f;
     }
 
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        super.runEveryTick(warlordsEntity);
+        damageReduction.tick();
+    }
+
     private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
         if (projectile.getHit().contains(hit) || projectile.getShooter().equals(hit)) {
             return false;
@@ -345,12 +351,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         }
     }
 
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        super.runEveryTick(warlordsEntity);
-        damageReduction.tick();
-    }
-
     @Nonnull
     public static FortifyingHex getFromHex(WarlordsEntity from) {
         return from.getSpec().getAbilities().stream()
@@ -360,10 +360,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                    .orElse(new FortifyingHex());
     }
 
-    public FloatModifiable getDamageReduction() {
-        return damageReduction;
-    }
-
     public int getMaxStacks() {
         return maxStacks;
     }
@@ -371,6 +367,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     @Override
     public int getTickDuration() {
         return tickDuration;
+    }
+
+    public FloatModifiable getDamageReduction() {
+        return damageReduction;
     }
 
     @Override

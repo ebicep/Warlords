@@ -43,10 +43,10 @@ import java.util.List;
 
 public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox {
 
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(13);
     private int blindnessTicks = 30;
     private int decoyMaxTicksLived = 60;
-
     // pve
     private int invisTicks = 30;
 
@@ -288,8 +288,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     public void setInvisTicks(int invisTicks) {
         this.invisTicks = invisTicks;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

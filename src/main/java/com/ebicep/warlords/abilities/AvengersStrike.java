@@ -30,6 +30,7 @@ import java.util.List;
 public class AvengersStrike extends AbstractStrike implements Damages<AvengersStrike.DamageValues> {
 
     public float energyStole = 0;
+    private final DamageValues damageValues = new DamageValues();
     private float energySteal = 10;
 
     public AvengersStrike() {
@@ -142,8 +143,6 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
     public void setEnergySteal(float energySteal) {
         this.energySteal = energySteal;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public static class DamageValues implements Value.ValueHolder {
 

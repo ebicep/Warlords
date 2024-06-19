@@ -100,13 +100,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
             }
 
             @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (pveMasterUpgrade2 && isKiller) {
-                    wp.addEnergy(wp, "Inferno", 30);
-                }
-            }
-
-            @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
                 if (event.getCause().isEmpty()) {
                     return currentCritChance;
@@ -139,6 +132,13 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                         setTicksLeft(getTicksLeft() + 5);
                         finalMaxHits--;
                     }
+                }
+            }
+
+            @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (pveMasterUpgrade2 && isKiller) {
+                    wp.addEnergy(wp, "Inferno", 30);
                 }
             }
         });

@@ -28,6 +28,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConsecrateProtector extends AbstractConsecrate implements CanReduceCooldowns {
 
+    private final DamageValues damageValues = new DamageValues();
+
     public ConsecrateProtector() {
         super(96, 130, 10, 20, 175, 15, 4, 5);
     }
@@ -130,8 +132,6 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     public boolean canReduceCooldowns() {
         return pveMasterUpgrade2;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

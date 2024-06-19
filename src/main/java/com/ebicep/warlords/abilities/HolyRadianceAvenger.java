@@ -26,11 +26,11 @@ import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadiance {
 
+    protected int timesWrathReduced = 0;
     private final int markDuration = 8;
+    private final HealingValues healingValues = new HealingValues();
     private int markRadius = 15;
     private int energyDrainPerSecond = 8;
-
-    protected int timesWrathReduced = 0;
 
     public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
@@ -204,6 +204,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
         });
     }
 
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
+    }
+
     public int getEnergyDrainPerSecond() {
         return energyDrainPerSecond;
     }
@@ -211,13 +216,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
     public void setEnergyDrainPerSecond(int energyDrainPerSecond) {
         this.energyDrainPerSecond = energyDrainPerSecond;
     }
-
-    @Override
-    public Value.RangedValueCritable getRadianceHealing() {
-        return healingValues.radianceHealing;
-    }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

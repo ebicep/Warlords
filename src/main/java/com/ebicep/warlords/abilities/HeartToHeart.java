@@ -39,7 +39,8 @@ import java.util.List;
 public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox {
 
     public int timesUsedWithFlag = 0;
-
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(15);
     private int vindDuration = 6;
     private float healthRestore = 600;
@@ -234,12 +235,9 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         this.healthRestore = healthRestore;
     }
 
-    private final DamageValues damageValues = new DamageValues();
-
     public DamageValues getDamageValues() {
         return damageValues;
     }
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

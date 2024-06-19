@@ -49,21 +49,20 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     public int carrierSpiked = 0;
 
     private final DamageValues damageValues = new DamageValues();
-
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
     private FloatModifiable radius = new FloatModifiable(10);
     private float speed = 1;
     private double spikeHitbox = 2.5;
     private double verticalVelocity = .625;
-
     public EarthenSpike() {
         this(404, 562, 0, 0);
     }
 
     public EarthenSpike(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
         super("Earthen Spike", minDamageHeal, maxDamageHeal, cooldown, 100, 15, 175, startCooldown);
+    }
+
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override

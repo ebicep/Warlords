@@ -41,17 +41,16 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
     public int playersHit = 0;
 
     private final DamageValues damageValues = new DamageValues();
-
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
     private final int slowDuration = 4;
     private int slowness = 35;
     private float hitbox = 10;
     private int maxAnimationTime = 12;
-
     public FreezingBreath() {
         super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175, 1.25, 100, false);
+    }
+
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override

@@ -32,7 +32,7 @@ import java.util.List;
 public class HolyRadianceProtector extends AbstractHolyRadiance {
 
     private final FloatModifiable markRadius = new FloatModifiable(15);
-
+    private final HealingValues healingValues = new HealingValues();
     private int markDuration = 8;
     private float markBonusHealing = 10;
 
@@ -187,6 +187,11 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
         });
     }
 
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
+    }
+
     public FloatModifiable getMarkRadius() {
         return markRadius;
     }
@@ -206,13 +211,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
     public void setMarkDuration(int markDuration) {
         this.markDuration = markDuration;
     }
-
-    @Override
-    public Value.RangedValueCritable getRadianceHealing() {
-        return healingValues.radianceHealing;
-    }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

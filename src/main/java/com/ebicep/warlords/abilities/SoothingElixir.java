@@ -44,6 +44,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
     private final int puddleMinDamage = 235;
     private final int puddleMaxDamage = 342;
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable puddleRadius = new FloatModifiable(5);
     private int puddleTickDuration = 80;
     private int puddleMinHealing = 158;
@@ -264,10 +266,12 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         return puddleRadius;
     }
 
-    private final DamageValues damageValues = new DamageValues();
-
     public DamageValues getDamageValues() {
         return damageValues;
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -280,12 +284,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
             return values;
         }
 
-    }
-
-    private final HealingValues healingValues = new HealingValues();
-
-    public HealingValues getHealValues() {
-        return healingValues;
     }
 
     public static class HealingValues implements Value.ValueHolder {

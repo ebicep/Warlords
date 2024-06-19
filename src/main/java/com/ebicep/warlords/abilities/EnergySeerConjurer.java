@@ -23,6 +23,7 @@ import java.util.List;
 public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
 
     protected int energyUsed = 0;
+    private final HealingValues healingValues = new HealingValues();
     private int damageIncrease = 10;
 
     @Override
@@ -92,11 +93,6 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new EnergySeerBranchConjurer(abilityTree, this);
-    }
-
-    @Override
     protected void heal(WarlordsEntity wp, float energyUsed) {
         wp.addInstance(InstanceBuilder
                 .healing()
@@ -106,6 +102,11 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
         );
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchConjurer(abilityTree, this);
+    }
+
     public int getDamageIncrease() {
         return damageIncrease;
     }
@@ -113,8 +114,6 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
     public void setDamageIncrease(int damageIncrease) {
         this.damageIncrease = damageIncrease;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

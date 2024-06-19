@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 public class WoundingStrikeDefender extends AbstractStrike {
 
+    private final DamageValues damageValues = new DamageValues();
     private int wounding = 25;
 
     public WoundingStrikeDefender() {
@@ -190,8 +191,6 @@ public class WoundingStrikeDefender extends AbstractStrike {
     public void setWounding(int wounding) {
         this.wounding = wounding;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

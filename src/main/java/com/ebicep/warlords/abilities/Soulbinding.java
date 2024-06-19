@@ -39,6 +39,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
+    private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
     private int bindDuration = 40;
@@ -349,6 +350,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.allyHealing = allyHealing;
     }
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class SoulBoundPlayer {
         private WarlordsEntity boundPlayer;
         private int ticksLeft;
@@ -395,12 +400,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         public void setHitWithSoul(boolean hitWithSoul) {
             this.hitWithSoul = hitWithSoul;
         }
-    }
-
-    private final HealingValues healingValues = new HealingValues();
-
-    public HealingValues getHealValues() {
-        return healingValues;
     }
 
     public static class HealingValues implements Value.ValueHolder {

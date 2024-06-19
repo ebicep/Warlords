@@ -28,6 +28,8 @@ import java.util.*;
 
 public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
 
+    private final HealingValues healingValues = new HealingValues();
+
     public ChainHeal() {
         super("Chain Heal", 533, 719, 7.99f, 40, 20, 175, 15, 10, 1);
     }
@@ -245,8 +247,6 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
             }
         });
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

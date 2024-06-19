@@ -26,6 +26,7 @@ import java.util.Objects;
 
 public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
 
+    private final HealingValues healingValues = new HealingValues();
     private int damageResistance = 2;
 
     @Override
@@ -119,8 +120,6 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
     public void setDamageResistance(int damageResistance) {
         this.damageResistance = damageResistance;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

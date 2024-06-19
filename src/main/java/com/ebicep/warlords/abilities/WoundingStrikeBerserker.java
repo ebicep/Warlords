@@ -29,6 +29,7 @@ import java.util.List;
 
 public class WoundingStrikeBerserker extends AbstractStrike {
 
+    private final DamageValues damageValues = new DamageValues();
     private int woundingTickDuration = 60;
 
     public WoundingStrikeBerserker() {
@@ -189,8 +190,6 @@ public class WoundingStrikeBerserker extends AbstractStrike {
     public void setWoundingTickDuration(int woundingTickDuration) {
         this.woundingTickDuration = woundingTickDuration;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

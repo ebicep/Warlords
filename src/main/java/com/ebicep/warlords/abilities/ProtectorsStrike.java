@@ -28,6 +28,7 @@ import java.util.List;
 
 public class ProtectorsStrike extends AbstractStrike {
 
+    private final DamageValues damageValues = new DamageValues();
     private int allyHealing = 90; // %
     private int selfHealing = 60; // %
     private int maxAllies = 2;
@@ -185,8 +186,6 @@ public class ProtectorsStrike extends AbstractStrike {
     public void setStrikeRadius(double strikeRadius) {
         this.strikeRadius = strikeRadius;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

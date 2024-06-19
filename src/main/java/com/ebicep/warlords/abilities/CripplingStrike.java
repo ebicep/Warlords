@@ -72,6 +72,7 @@ public class CripplingStrike extends AbstractStrike {
     }
 
     private final int crippleDuration = 3;
+    private final DamageValues damageValues = new DamageValues();
     private int consecutiveStrikeCounter = 0;
     private int cripple = 10;
     private int cripplePerStrike = 5;
@@ -203,8 +204,6 @@ public class CripplingStrike extends AbstractStrike {
     public void setCripplePerStrike(int cripplePerStrike) {
         this.cripplePerStrike = cripplePerStrike;
     }
-
-    private final DamageValues damageValues = new DamageValues();
 
     public DamageValues getDamageValues() {
         return damageValues;

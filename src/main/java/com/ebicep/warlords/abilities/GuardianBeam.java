@@ -33,7 +33,7 @@ import java.util.List;
 public class GuardianBeam extends AbstractBeam implements Duration {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
-
+    private final DamageValues damageValues = new DamageValues();
     private float runeTimerIncrease = 1.5f;
     private int shieldPercentSelf = 30;
     private int shieldPercentAlly = 30;
@@ -228,6 +228,10 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         this.runeTimerIncrease = runeTimerIncrease;
     }
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class GuardianBeamShield extends Shield {
         private final float shieldPercent;
 
@@ -239,12 +243,6 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         public float getShieldPercent() {
             return shieldPercent;
         }
-    }
-
-    private final DamageValues damageValues = new DamageValues();
-
-    public DamageValues getDamageValues() {
-        return damageValues;
     }
 
     public static class DamageValues implements Value.ValueHolder {

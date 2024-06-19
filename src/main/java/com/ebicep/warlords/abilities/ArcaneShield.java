@@ -59,6 +59,11 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     }
 
     @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = Component.text("Surround yourself with arcane energy, creating a shield that will absorb up to ")
                                .append(Component.text(maxShieldHealth, NamedTextColor.YELLOW))
@@ -67,11 +72,6 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                                .append(Component.text(" of your maximum health) incoming damage. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
     }
 
     @Override

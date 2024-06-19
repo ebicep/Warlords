@@ -41,7 +41,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     public int playersCrippled = 0;
 
     protected float amountHealed = 0;
-
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(7);
     private int tickDuration = 120;
     private int crippleDuration = 6;
@@ -398,8 +398,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     public HealingValues getHealValues() {
         return healingValues;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

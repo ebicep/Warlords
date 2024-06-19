@@ -25,16 +25,16 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
 
     private final HealingValues healingValues = new HealingValues();
 
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
     public BeaconOfLight() {
         this(null, null);
     }
 
     public BeaconOfLight(Location location, CircleEffect effect) {
         super("Beacon of Light", 170, 230, 20, 40, 25, 175, location, 4, 20, effect);
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     @Override
@@ -79,6 +79,11 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     @Override
+    public ArmorStand getCrystal() {
+        return null;
+    }
+
+    @Override
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfLight> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 40 == 0) {
             BeaconOfLight beacon = cooldown.getCooldownObject();
@@ -97,11 +102,6 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                 );
             }
         }
-    }
-
-    @Override
-    public ArmorStand getCrystal() {
-        return null;
     }
 
     @Override

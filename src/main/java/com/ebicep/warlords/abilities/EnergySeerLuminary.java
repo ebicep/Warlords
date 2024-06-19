@@ -24,6 +24,7 @@ import java.util.List;
 
 public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> implements PurpleAbilityIcon {
 
+    private final HealingValues healingValues = new HealingValues();
     private int healingIncrease = 20;
 
     @Override
@@ -120,8 +121,6 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
     public void setHealingIncrease(int healingIncrease) {
         this.healingIncrease = healingIncrease;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

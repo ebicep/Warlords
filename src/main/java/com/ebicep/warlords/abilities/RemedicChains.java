@@ -33,7 +33,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
     public int playersLinked = 0;
     public int numberOfBrokenLinks = 0;
-
+    private final HealingValues healingValues = new HealingValues();
     private float healingMultiplier = 12.5f; // %
     private float allyDamageIncrease = 12; // %
     private int tickDuration = 160;
@@ -287,8 +287,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     public void setAllyDamageIncrease(float allyDamageIncrease) {
         this.allyDamageIncrease = allyDamageIncrease;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;

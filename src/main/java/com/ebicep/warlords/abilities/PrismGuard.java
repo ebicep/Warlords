@@ -45,6 +45,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     protected float damageReduced = 0;
 
     private final int damageReduction = 3;
+    private final HealingValues healingValues = new HealingValues();
     private int bubbleRadius = 4;
     private int tickDuration = 100;
     private int bubbleHealing = 200; // TODO REMOVE
@@ -369,8 +370,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     public void setBubbleMissingHealing(float bubbleMissingHealing) {
         this.bubbleMissingHealing = bubbleMissingHealing;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public HealingValues getHealValues() {
         return healingValues;
