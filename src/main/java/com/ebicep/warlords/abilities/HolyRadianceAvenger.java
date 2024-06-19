@@ -219,6 +219,10 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
 
     private final HealingValues healingValues = new HealingValues();
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);

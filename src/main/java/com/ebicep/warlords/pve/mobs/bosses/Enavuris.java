@@ -476,6 +476,10 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue enderStonesDamage = new Value.RangedValue(500, 600);

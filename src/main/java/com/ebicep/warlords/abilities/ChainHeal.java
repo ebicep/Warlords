@@ -248,6 +248,10 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
 
     private final HealingValues healingValues = new HealingValues();
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);

@@ -40,6 +40,10 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
     public int playersCharged = 0;
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     private int stunTimeInTicks = 10;
 
     public RecklessCharge() {

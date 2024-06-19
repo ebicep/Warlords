@@ -125,6 +125,10 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
 
         private final HealingValues healingValues = new HealingValues();
 
+        public HealingValues getHealValues() {
+            return healingValues;
+        }
+
         public static class HealingValues implements Value.ValueHolder {
 
             private final Value.SetValue remedyHealing = new Value.SetValue(500);

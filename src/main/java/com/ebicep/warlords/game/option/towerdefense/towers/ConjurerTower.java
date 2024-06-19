@@ -82,6 +82,10 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public HexAttack() {
             super("Hex Attack", 300, 300, 3, 0);
         }

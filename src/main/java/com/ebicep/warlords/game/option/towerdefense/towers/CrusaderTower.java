@@ -169,6 +169,10 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.SetValue strikeDamage = new Value.SetValue(5);

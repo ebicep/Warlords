@@ -126,6 +126,10 @@ public class ConsecrateCrusader extends AbstractConsecrate {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(144, 194.4f, 20, 175);

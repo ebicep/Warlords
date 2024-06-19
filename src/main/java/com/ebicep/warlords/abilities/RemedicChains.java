@@ -290,6 +290,10 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
     private final HealingValues healingValues = new HealingValues();
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);

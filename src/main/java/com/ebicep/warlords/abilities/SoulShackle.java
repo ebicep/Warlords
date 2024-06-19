@@ -281,6 +281,10 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable shackleDamage = new Value.RangedValueCritable(446, 589, 20, 175);

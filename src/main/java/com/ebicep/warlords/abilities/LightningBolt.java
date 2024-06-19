@@ -244,6 +244,10 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(252, 340, 25, 180);

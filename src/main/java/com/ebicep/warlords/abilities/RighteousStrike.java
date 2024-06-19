@@ -119,6 +119,10 @@ public class RighteousStrike extends AbstractStrike {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(391, 497, 20, 175);

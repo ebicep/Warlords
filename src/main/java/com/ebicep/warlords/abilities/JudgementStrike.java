@@ -20,6 +20,7 @@ import java.util.List;
 public class JudgementStrike extends AbstractStrike implements Damages<JudgementStrike.DamageValues>, Heals<JudgementStrike.HealingValues> {
 
     private final DamageValues damageValues = new DamageValues();
+
     private int attacksDone = 0;
     private int speedOnCrit = 25; // %
     private int speedOnCritDuration = 2;

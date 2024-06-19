@@ -105,6 +105,10 @@ public class PigParticle extends AbstractMob implements ChampionMob {
 
         private final HealingValues healingValues = new HealingValues();
 
+        public HealingValues getHealValues() {
+            return healingValues;
+        }
+
         public static class HealingValues implements Value.ValueHolder {
 
             private final Value.SetValue voidHealing = new Value.SetValue(200);

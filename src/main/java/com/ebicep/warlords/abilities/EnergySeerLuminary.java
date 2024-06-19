@@ -121,11 +121,11 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
         this.healingIncrease = healingIncrease;
     }
 
+    private final HealingValues healingValues = new HealingValues();
+
     public HealingValues getHealValues() {
         return healingValues;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

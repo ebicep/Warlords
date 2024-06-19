@@ -51,7 +51,15 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     protected float amountHealed = 0;
     private final FloatModifiable radius = new FloatModifiable(6);
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     private final HealingValues healingValues = new HealingValues();
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
     private boolean isCrownOfLight = false;
     private Location location;
     private int tickDuration = 200;

@@ -243,6 +243,10 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(313, 423, 20, 175);

@@ -34,6 +34,10 @@ import java.util.List;
 public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash {
 
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     private FloatModifiable splash = new FloatModifiable(5);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;

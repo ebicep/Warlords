@@ -34,6 +34,10 @@ import java.util.List;
 public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, Splash {
 
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     private int maxFullDistance = 50;
     private float directHitMultiplier = 15;
     private FloatModifiable splashRadius = new FloatModifiable(4);

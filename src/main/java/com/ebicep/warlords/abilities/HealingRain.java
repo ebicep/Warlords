@@ -294,6 +294,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
@@ -307,6 +311,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     private final HealingValues healingValues = new HealingValues();
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
 
     public static class HealingValues implements Value.ValueHolder {
 

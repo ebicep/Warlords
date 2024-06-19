@@ -133,6 +133,10 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(96, 130, 20, 175);

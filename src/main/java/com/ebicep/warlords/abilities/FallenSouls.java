@@ -296,6 +296,10 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(164, 212, 20, 180);

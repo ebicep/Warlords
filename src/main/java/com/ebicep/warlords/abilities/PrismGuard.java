@@ -370,11 +370,11 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         this.bubbleMissingHealing = bubbleMissingHealing;
     }
 
+    private final HealingValues healingValues = new HealingValues();
+
     public HealingValues getHealValues() {
         return healingValues;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

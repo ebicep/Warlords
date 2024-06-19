@@ -206,6 +206,10 @@ public class CripplingStrike extends AbstractStrike {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362.25f, 498, 20, 175);

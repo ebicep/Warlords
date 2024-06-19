@@ -114,11 +114,11 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
         this.damageIncrease = damageIncrease;
     }
 
+    private final HealingValues healingValues = new HealingValues();
+
     public HealingValues getHealValues() {
         return healingValues;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

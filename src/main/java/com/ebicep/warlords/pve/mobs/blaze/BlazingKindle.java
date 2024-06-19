@@ -124,6 +124,10 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue kindleWaveDamage = new Value.RangedValue(518, 805);

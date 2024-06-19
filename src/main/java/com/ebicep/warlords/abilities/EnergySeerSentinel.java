@@ -120,11 +120,11 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
         this.damageResistance = damageResistance;
     }
 
+    private final HealingValues healingValues = new HealingValues();
+
     public HealingValues getHealValues() {
         return healingValues;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

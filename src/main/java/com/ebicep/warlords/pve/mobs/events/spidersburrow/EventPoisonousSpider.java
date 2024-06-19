@@ -104,6 +104,10 @@ public class EventPoisonousSpider extends AbstractMob implements BossMinionMob, 
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue poisonDamage = new Value.RangedValue(224, 377);

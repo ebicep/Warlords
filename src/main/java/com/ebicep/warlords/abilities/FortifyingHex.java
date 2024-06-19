@@ -47,6 +47,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     protected FloatModifiable damageReduction = new FloatModifiable(8);
 
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
     private int maxFullDistance = 40;

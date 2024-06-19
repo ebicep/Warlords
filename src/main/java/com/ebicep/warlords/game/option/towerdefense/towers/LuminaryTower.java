@@ -122,6 +122,10 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.SetValue hexDamage = new Value.SetValue(100);
@@ -205,6 +209,10 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         private final HealingValues healingValues = new HealingValues();
+
+        public HealingValues getHealValues() {
+            return healingValues;
+        }
 
         public static class HealingValues implements Value.ValueHolder {
 

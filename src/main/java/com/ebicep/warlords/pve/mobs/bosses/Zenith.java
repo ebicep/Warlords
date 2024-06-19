@@ -191,6 +191,10 @@ public class Zenith extends AbstractMob implements BossMob {
         private final int stormRadius = 10;
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public Armageddon() {
             super(
                     "Armageddon",
@@ -330,6 +334,10 @@ public class Zenith extends AbstractMob implements BossMob {
         }
 
         private final DamageValues damageValues = new DamageValues();
+
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
 
         public static class DamageValues implements Value.ValueHolder {
 

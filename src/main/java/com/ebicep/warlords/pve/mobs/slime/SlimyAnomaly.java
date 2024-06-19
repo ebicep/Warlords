@@ -185,6 +185,10 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.SetValue shimmerDamage = new Value.SetValue(400);

@@ -266,6 +266,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable elixirDamage = new Value.RangedValueCritable(235, 342, 25, 175);
@@ -279,6 +283,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     }
 
     private final HealingValues healingValues = new HealingValues();
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
 
     public static class HealingValues implements Value.ValueHolder {
 

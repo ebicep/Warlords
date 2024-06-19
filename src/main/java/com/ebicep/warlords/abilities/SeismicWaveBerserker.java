@@ -18,6 +18,10 @@ public class SeismicWaveBerserker extends AbstractSeismicWave {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public SeismicWaveBerserker() {
         super(557, 753, 11.74f, 60, 25, 200);
     }

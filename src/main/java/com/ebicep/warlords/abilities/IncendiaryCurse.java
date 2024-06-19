@@ -199,6 +199,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);

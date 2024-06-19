@@ -397,11 +397,11 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         }
     }
 
+    private final HealingValues healingValues = new HealingValues();
+
     public HealingValues getHealValues() {
         return healingValues;
     }
-
-    private final HealingValues healingValues = new HealingValues();
 
     public static class HealingValues implements Value.ValueHolder {
 

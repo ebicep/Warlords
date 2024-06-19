@@ -309,6 +309,10 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
     private final HealingValues healingValues = new HealingValues();
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.SetValue divineBlessingPostHeal = new Value.SetValue(800);

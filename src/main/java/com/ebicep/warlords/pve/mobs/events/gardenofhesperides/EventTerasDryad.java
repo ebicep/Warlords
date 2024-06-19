@@ -113,6 +113,10 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
 
         private final HealingValues healingValues = new HealingValues();
 
+        public HealingValues getHealValues() {
+            return healingValues;
+        }
+
         public static class HealingValues implements Value.ValueHolder {
 
             private final Value.SetValue spiritHealing = new Value.SetValue(200);

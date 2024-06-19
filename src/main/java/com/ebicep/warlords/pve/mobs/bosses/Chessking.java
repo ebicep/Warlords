@@ -161,6 +161,10 @@ public class Chessking extends AbstractMob implements BossMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue belchDamage = new Value.RangedValue(2800, 3600);

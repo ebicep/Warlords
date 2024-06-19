@@ -256,6 +256,10 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(231, 299, 20, 175);
@@ -269,6 +273,10 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
     }
 
     private final HealingValues healingValues = new HealingValues();
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
 
     public static class HealingValues implements Value.ValueHolder {
 

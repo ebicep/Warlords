@@ -291,6 +291,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
     private final HealingValues healingValues = new HealingValues();
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable switchHealing = new Value.RangedValueCritable(300, 500, 15, 175);

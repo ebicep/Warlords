@@ -25,6 +25,10 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
 
     private final HealingValues healingValues = new HealingValues();
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public BeaconOfLight() {
         this(null, null);
     }

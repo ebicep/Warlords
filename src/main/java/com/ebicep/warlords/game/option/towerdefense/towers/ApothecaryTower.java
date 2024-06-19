@@ -98,6 +98,10 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public StrikeAttack() {
             super("Strike Attack", 100, 100, 3, 0);
         }
@@ -159,6 +163,10 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         }
 
         private final HealingValues healingValues = new HealingValues();
+
+        public HealingValues getHealValues() {
+            return healingValues;
+        }
 
         public static class HealingValues implements Value.ValueHolder {
 
@@ -228,6 +236,10 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         }
 
         private final DamageValues damageValues = new DamageValues();
+
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
 
         public static class DamageValues implements Value.ValueHolder {
 

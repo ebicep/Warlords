@@ -485,6 +485,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValue relentlessArmy = new Value.RangedValue(458, 612);

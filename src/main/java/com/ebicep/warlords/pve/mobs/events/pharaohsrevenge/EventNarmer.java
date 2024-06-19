@@ -349,6 +349,10 @@ public class EventNarmer extends AbstractMob implements BossMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue groundShredDamage = new Value.RangedValue(920, 1080);

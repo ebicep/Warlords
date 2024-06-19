@@ -125,6 +125,10 @@ public class ConsecrateAvenger extends AbstractConsecrate {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(198, 267, 20, 175);

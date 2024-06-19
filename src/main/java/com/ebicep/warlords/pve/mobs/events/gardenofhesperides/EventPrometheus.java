@@ -189,6 +189,10 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue burstOfFlamesDamage = new Value.RangedValue(860, 940);

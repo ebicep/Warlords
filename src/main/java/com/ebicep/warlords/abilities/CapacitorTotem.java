@@ -241,6 +241,10 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable totemDamage = new Value.RangedValueCritable(404, 523, 20, 200);

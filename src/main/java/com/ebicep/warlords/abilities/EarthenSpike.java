@@ -49,6 +49,10 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     public int carrierSpiked = 0;
 
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     private FloatModifiable radius = new FloatModifiable(10);
     private float speed = 1;
     private double spikeHitbox = 2.5;

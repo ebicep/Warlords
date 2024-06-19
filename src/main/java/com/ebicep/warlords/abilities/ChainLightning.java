@@ -75,6 +75,10 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     }
 
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     public int numberOfDismounts = 0;
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;

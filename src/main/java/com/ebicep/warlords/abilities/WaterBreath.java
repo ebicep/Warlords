@@ -283,6 +283,10 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
     private final HealingValues healingValues = new HealingValues();
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(409, 551, 25, 175);

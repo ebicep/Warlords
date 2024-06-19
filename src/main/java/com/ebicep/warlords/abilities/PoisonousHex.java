@@ -341,6 +341,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(307, 415, 20, 175);

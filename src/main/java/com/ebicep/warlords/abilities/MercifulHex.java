@@ -411,7 +411,15 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     }
 
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
     private final HealingValues healingValues = new HealingValues();
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
 
     public static class DamageValues implements Value.ValueHolder {
 

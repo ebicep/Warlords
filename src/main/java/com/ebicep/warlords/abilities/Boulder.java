@@ -34,6 +34,11 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
     public int warpsKnockbacked = 0;
 
     private final DamageValues damageValues = new DamageValues();
+
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     private final double boulderGravity = -0.0059;
     private double boulderSpeed = 0.290;
     private double hitbox = 5.5;

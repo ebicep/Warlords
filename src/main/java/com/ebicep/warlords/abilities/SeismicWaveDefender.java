@@ -54,6 +54,10 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
 
     private final DamageValues damageValues = new DamageValues();
 
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable waveDamage = new Value.RangedValueCritable(506, 685, 25, 200);

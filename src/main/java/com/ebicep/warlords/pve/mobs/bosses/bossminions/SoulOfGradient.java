@@ -131,6 +131,10 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.SetValue markDamage = new Value.SetValue(1000);

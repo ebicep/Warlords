@@ -115,6 +115,10 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue poisonArrowDamage = new Value.RangedValue(550, 750);

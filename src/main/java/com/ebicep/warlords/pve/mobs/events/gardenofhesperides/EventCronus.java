@@ -175,6 +175,10 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
         private final DamageValues damageValues = new DamageValues();
 
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue heavenlyDamage = new Value.RangedValue(950, 1100);
