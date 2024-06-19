@@ -279,11 +279,6 @@ public class Narmer extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playRandomHitEffect(self.getLocation(), 255, 255, 255, 7);
     }

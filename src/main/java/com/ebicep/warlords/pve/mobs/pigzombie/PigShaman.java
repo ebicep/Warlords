@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -60,21 +59,6 @@ public class PigShaman extends AbstractMob implements IntermediateMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         getWarlordsNPC().getEntity().getWorld().spigot().strikeLightningEffect(getWarlordsNPC().getLocation(), false);
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override

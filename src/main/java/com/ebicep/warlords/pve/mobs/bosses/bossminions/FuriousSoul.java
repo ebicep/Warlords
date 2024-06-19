@@ -56,15 +56,6 @@ public class FuriousSoul extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 81, 18, 59, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.35f, 2);

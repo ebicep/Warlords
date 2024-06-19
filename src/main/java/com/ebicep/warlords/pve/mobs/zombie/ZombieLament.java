@@ -61,18 +61,8 @@ public class ZombieLament extends AbstractMob implements IntermediateMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         receiver.subtractEnergy(name, 5, true);
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override

@@ -78,11 +78,6 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (aboveHealthThreshold()) {
             warlordsNPC.setDamageResistance(10);
