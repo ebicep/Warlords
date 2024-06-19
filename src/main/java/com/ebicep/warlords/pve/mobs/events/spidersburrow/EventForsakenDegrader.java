@@ -61,18 +61,9 @@ public class EventForsakenDegrader extends AbstractMob implements BossMinionMob,
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         // Applies crippling to enemies for 3s.
         CripplingStrike.cripple(attacker, receiver, name, 3 * 20);
     }
 
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
 }

@@ -84,11 +84,6 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         receiver.getCooldownManager().subtractTicksOnRegularCooldowns(60, CooldownTypes.BUFF);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);

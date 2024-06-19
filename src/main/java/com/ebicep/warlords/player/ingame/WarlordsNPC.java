@@ -259,11 +259,6 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public int getBaseHitCooldownValue() {
-        return 20;
-    }
-
-    @Override
     public ItemStack getHead() {
         return mob.getMobRegistry().getHead();
     }

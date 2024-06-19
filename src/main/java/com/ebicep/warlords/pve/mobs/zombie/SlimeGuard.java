@@ -55,18 +55,9 @@ public class SlimeGuard extends AbstractMob implements AdvancedMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         receiver.playSound(receiver.getLocation(), Sound.ENTITY_SLIME_JUMP, 500, 0.2f);
         receiver.addSpeedModifier(warlordsNPC, "Slime Slowness", -30, 2 * 20);
     }
 
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
 }

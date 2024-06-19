@@ -56,15 +56,6 @@ public class DepressedSoul extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 35, 25, 122, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.BLOCK_SNOW_BREAK, 0.35f, 2);

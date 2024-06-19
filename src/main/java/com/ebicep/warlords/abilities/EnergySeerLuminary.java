@@ -13,14 +13,12 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.EnergySeerBranchLuminary;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> implements PurpleAbilityIcon, Heals<EnergySeerLuminary.HealingValues> {
@@ -32,13 +30,6 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
     public Component getBonus() {
         return Component.text("increase your healing by ")
                         .append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
     }
 
     @Override
@@ -92,22 +83,6 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
                 .source(wp)
                 .value(energyUsed * healingValues.seerHealingMultiplier.getValue())
         );
-    }
-
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getEnergyRestore() {
-        return energyRestore;
-    }
-
-    public void setEnergyRestore(int energyRestore) {
-        this.energyRestore = energyRestore;
     }
 
     @Override

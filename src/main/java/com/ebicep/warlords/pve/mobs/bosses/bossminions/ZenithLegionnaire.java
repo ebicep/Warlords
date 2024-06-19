@@ -66,18 +66,9 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.addKnockback(name, attacker.getLocation(), receiver, -1.1, 0.3);
         Utils.playGlobalSound(attacker.getLocation(), Sound.ENTITY_ENDERMAN_DEATH, 2, 0.2f);
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
     }
 
     @Override

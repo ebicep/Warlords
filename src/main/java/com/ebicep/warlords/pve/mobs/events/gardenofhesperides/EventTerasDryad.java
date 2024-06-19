@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -50,21 +49,6 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
     @Override
     public Mob getMobRegistry() {
         return Mob.EVENT_TERAS_DRYAD;
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
 
     private static class SpiritHealing extends AbstractPveAbility implements Heals<SpiritHealing.HealingValues> {

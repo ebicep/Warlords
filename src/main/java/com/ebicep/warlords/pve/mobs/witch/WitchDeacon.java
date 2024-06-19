@@ -82,11 +82,6 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(self.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.7f);
         EffectUtils.playRandomHitEffect(self.getLocation(), 0, 120, 255, 4);

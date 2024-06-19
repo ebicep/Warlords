@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.bountysystem.bounties;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
-import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.bountysystem.AbstractBounty;
 import com.ebicep.warlords.pve.bountysystem.Bounty;
@@ -56,11 +55,6 @@ public class HuntChampionI extends AbstractBounty implements TracksDuringGame, W
         if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof ChampionMob) {
             newKills++;
         }
-    }
-
-    @Override
-    public boolean trackGame(Game game) {
-        return true;
     }
 
     @Override

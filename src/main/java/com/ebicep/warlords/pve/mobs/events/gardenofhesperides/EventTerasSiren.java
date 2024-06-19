@@ -59,16 +59,6 @@ public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ITEM_SHIELD_BLOCK, 10, 2f);
         if (Utils.isProjectile(event.getCause())) {

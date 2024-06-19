@@ -71,10 +71,6 @@ public class TowerBuildOption implements Option, Listener {
     }
 
     @Override
-    public void start(@Nonnull Game game) {
-    }
-
-    @Override
     public void onGameCleanup(@Nonnull Game game) {
         builtTowers.keySet().forEach(AbstractTower::remove);
     }
