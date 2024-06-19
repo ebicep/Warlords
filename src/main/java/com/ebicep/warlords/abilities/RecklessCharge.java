@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -36,7 +37,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, Listener {
+public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, Listener, Damages<RecklessCharge.DamageValues> {
 
     public int playersCharged = 0;
     private final DamageValues damageValues = new DamageValues();

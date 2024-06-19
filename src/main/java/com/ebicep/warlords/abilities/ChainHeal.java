@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -26,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
+public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
 

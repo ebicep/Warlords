@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
 import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -13,7 +14,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
-public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduceCooldowns {
+public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduceCooldowns, Damages<SeismicWaveDefender.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
 

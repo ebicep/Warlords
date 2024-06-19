@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CripplingStrike extends AbstractStrike {
+public class CripplingStrike extends AbstractStrike implements Damages<CripplingStrike.DamageValues> {
 
     public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration) {
         cripple(from, target, name, new CripplingStrike(), tickDuration, .9f);

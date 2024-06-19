@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox {
+public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox, Heals<SoulSwitch.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(13);

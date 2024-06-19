@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox {
+public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, Damages<HealingRain.DamageValues>, Heals<HealingRain.HealingValues> {
 
     public int playersHealed = 0;
     private final DamageValues damageValues = new DamageValues();

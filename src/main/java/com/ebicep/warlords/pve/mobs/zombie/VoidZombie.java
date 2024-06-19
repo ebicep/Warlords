@@ -94,7 +94,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(
                 deathLocation,

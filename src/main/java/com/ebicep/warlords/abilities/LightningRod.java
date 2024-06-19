@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
+public class LightningRod extends AbstractAbility implements BlueAbilityIcon, Heals<LightningRod.HealingValues> {
 
     private final int knockbackRadius = 5;
     private final HealingValues healingValues = new HealingValues();

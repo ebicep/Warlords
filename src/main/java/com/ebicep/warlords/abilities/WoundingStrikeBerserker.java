@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WoundingStrikeBerserker extends AbstractStrike {
+public class WoundingStrikeBerserker extends AbstractStrike implements Damages<WoundingStrikeBerserker.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private int woundingTickDuration = 60;

@@ -228,7 +228,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         Bukkit.getPluginManager().callEvent(new WarlordsMagmaticOozeSplitEvent(option.getGame(), this));
         Entity top = warlordsNPC.getEntity();
         while (!top.getPassengers().isEmpty()) {

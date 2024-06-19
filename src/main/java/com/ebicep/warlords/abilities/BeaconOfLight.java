@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
@@ -21,7 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
+public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implements Heals<BeaconOfLight.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
 

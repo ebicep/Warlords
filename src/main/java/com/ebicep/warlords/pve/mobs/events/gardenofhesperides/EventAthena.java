@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -127,7 +128,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
         }
     }
 
-    private static class Shockwave extends AbstractPveAbility {
+    private static class Shockwave extends AbstractPveAbility implements Damages<Shockwave.DamageValues> {
 
         private float radius = 10;
 

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.blaze;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -88,7 +89,7 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), kindleRadius, Particle.FLAME, 1, 10);
     }
 
-    private static class KindleWave extends AbstractAbility {
+    private static class KindleWave extends AbstractAbility implements Damages<KindleWave.DamageValues> {
 
         public KindleWave() {
             super("Kindle Wave", 518, 805, 8, 100);

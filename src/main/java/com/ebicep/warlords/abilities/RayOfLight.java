@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -25,7 +26,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RayOfLight extends AbstractBeam {
+public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.HealingValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
     private final HealingValues healingValues = new HealingValues();

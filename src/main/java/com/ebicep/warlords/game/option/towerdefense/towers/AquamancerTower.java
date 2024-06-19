@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -82,7 +83,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
         return upgrades;
     }
 
-    private static class BoltAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class BoltAttack extends AbstractAbility implements TDAbility, HitBox, Damages<BoltAttack.DamageValues> {
 
         private static final double WATER_EFFECT_RANDOMNESS = .1;
         private static final float WATER_EFFECT_BLOCK_SCALE = .3f;

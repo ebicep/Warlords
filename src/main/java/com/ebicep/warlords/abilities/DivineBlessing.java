@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -34,7 +35,7 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
     private int hexTickDurationIncrease = 40;

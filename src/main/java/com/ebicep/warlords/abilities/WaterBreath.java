@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
-import com.ebicep.warlords.abilities.internal.Overheal;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -38,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanReduceCooldowns {
+public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanReduceCooldowns, Heals<WaterBreath.HealingValues> {
 
     public int playersHealed = 0;
     public int debuffsRemoved = 0;

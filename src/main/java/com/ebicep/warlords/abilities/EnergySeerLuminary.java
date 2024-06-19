@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -22,7 +23,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> implements PurpleAbilityIcon {
+public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> implements PurpleAbilityIcon, Heals<EnergySeerLuminary.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
     private int healingIncrease = 20;

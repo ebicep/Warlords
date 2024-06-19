@@ -3,15 +3,14 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseOption;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -21,17 +20,12 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Transformation;
-import org.joml.AxisAngle4f;
-import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +114,7 @@ public class OldTestCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, String[] strings) {
 
         if (commandSender instanceof Player player) {
 

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
+public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration, Damages<PoisonousHex.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 40;

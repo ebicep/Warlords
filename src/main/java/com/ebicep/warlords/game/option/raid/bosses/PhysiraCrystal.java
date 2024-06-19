@@ -14,6 +14,8 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
+import javax.annotation.Nonnull;
+
 public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
 
     private SpecType spec;
@@ -81,7 +83,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
 
     }
 

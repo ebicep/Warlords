@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.GroundSlamBerserker;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -140,7 +141,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
         return healthCheck && !rejuvenateOver;
     }
 
-    private static class HeavenlyDamage extends AbstractPveAbility {
+    private static class HeavenlyDamage extends AbstractPveAbility implements Damages<HeavenlyDamage.DamageValues> {
 
         private float radius = 20;
 

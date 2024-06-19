@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,7 +15,7 @@ import org.bukkit.Sound;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class PigZombieHealing extends AbstractAbility {
+public class PigZombieHealing extends AbstractAbility implements Heals<PigZombieHealing.HealingValues> {
 
     private final float hitbox;
 
@@ -45,6 +46,11 @@ public class PigZombieHealing extends AbstractAbility {
     }
 
     private final HealingValues healingValues;
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
 
     public static class HealingValues implements Value.ValueHolder {
 

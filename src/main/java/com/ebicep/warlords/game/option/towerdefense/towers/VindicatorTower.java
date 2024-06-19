@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.game.Game;
@@ -93,7 +94,7 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
         return upgrades;
     }
 
-    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox, Damages<StrikeAttack.DamageValues> {
 
         private static final ItemStack SWORD_ITEM = new ItemStack(Material.STONE_SWORD);
         private final FloatModifiable range = new FloatModifiable(30);

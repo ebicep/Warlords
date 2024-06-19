@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -39,7 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<UndyingArmy.DamageValues> {
+
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(Component.text("Instant Kill", NamedTextColor.RED))
             .lore(

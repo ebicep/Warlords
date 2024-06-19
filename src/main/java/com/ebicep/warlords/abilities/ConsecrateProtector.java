@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -26,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ConsecrateProtector extends AbstractConsecrate implements CanReduceCooldowns {
+public class ConsecrateProtector extends AbstractConsecrate implements CanReduceCooldowns, Damages<ConsecrateProtector.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
 

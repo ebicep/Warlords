@@ -191,6 +191,7 @@ public class PlayerStatisticsMinute implements Iterable<PlayerStatisticsMinute.E
         return entries;
     }
 
+    @Nonnull
     @Override
     public Iterator<Entry> iterator() {
         return entries.iterator();

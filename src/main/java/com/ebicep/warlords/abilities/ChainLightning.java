@@ -28,7 +28,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration {
+public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration, Damages<ChainLightning.DamageValues> {
 
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
 

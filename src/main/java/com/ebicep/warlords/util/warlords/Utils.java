@@ -528,6 +528,7 @@ public class Utils {
 
         }
 
+        @Nonnull
         @Override
         public ItemStack getItemInHand() {
             return hand;
@@ -598,6 +599,7 @@ public class Utils {
 
         }
 
+        @Nonnull
         @Override
         public ItemStack[] getArmorContents() {
             return new ItemStack[0];
@@ -687,6 +689,7 @@ public class Utils {
 
         }
 
+        @Nonnull
         @Override
         public Entity getHolder() {
             return null;

@@ -132,7 +132,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                            .withColor(Color.ORANGE)

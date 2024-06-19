@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -37,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
-public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<PrismGuard.HealingValues> {
 
     public int timesProjectilesReduced = 0;
     public int timesOtherReduced = 0;

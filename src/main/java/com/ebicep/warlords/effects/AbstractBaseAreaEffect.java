@@ -60,6 +60,7 @@ public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implemen
         }
     }
 
+    @Nonnull
     @Override
     public Iterator<T> iterator() {
         return effects.iterator();

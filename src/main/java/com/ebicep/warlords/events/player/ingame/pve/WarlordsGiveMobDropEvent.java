@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.MobDrop;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class WarlordsGiveMobDropEvent extends AbstractWarlordsEntityEvent {
         return stolenBy;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

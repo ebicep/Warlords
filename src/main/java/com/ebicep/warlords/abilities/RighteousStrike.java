@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RighteousStrike extends AbstractStrike {
+public class RighteousStrike extends AbstractStrike implements Damages<RighteousStrike.DamageValues> {
 
     public int silencedTargetStruck = 0;
     private final DamageValues damageValues = new DamageValues();

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class ImpalingStrike extends AbstractStrike {
+public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingStrike.DamageValues> {
 
     protected float healingDoneFromEnemyCarrier = 0;
     private final DamageValues damageValues = new DamageValues();

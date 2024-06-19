@@ -19,6 +19,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class EventNecronomiconGrimoire extends AbstractMob implements BossMinionMob {
@@ -127,7 +128,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         if (laser != null) {
             laser.stop();

@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HolyRadianceCrusader extends AbstractHolyRadiance {
+public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<HolyRadianceCrusader.HealingValues> {
 
     private final int markRadius = 15;
     private final HealingValues healingValues = new HealingValues();

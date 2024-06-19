@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -31,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
+public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Damages<ShadowStep.DamageValues> {
 
     public int totalPlayersHit = 0;
     private final DamageValues damageValues = new DamageValues();

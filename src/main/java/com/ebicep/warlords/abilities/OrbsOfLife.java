@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<OrbsOfLife.HealingValues> {
 
     public static final double SPAWN_RADIUS = 1.15;
     public static final float ORB_HEALING = 210;

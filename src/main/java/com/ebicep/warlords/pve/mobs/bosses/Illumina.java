@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -204,7 +205,7 @@ public class Illumina extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.BLUE)
@@ -324,7 +325,7 @@ public class Illumina extends AbstractMob implements BossMob {
         }.runTaskTimer(40, 0);
     }
 
-    public static class Bramble extends AbstractPveAbility {
+    public static class Bramble extends AbstractPveAbility implements Damages<Bramble.DamageValues> {
 
         public Bramble() {
             super("Bramble", 1200, 1800, 5, 100);

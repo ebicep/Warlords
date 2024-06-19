@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -27,7 +28,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Boulder extends AbstractAbility implements RedAbilityIcon {
+public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<Boulder.DamageValues> {
 
     public int playersHit = 0;
     public int carrierHit = 0;

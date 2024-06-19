@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.customentities.nms.pve.CustomBat;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -253,7 +254,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
     }
 
@@ -288,7 +289,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         return leashHolder;
     }
 
-    public static class EnderStones extends AbstractProjectile implements PvEAbility {
+    public static class EnderStones extends AbstractProjectile implements PvEAbility, Damages<EnderStones.DamageValues> {
 
         private final int radius = 3;
         private PveOption pveOption;

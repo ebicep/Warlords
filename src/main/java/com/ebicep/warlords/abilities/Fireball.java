@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Splash;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -31,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, Splash {
+public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, Splash, Damages<Fireball.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 50;

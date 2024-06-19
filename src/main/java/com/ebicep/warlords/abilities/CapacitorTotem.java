@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class CapacitorTotem extends AbstractTotem implements Duration {
+public class CapacitorTotem extends AbstractTotem implements Duration, Damages<CapacitorTotem.DamageValues> {
 
     public int numberOfProcs = 0;
 

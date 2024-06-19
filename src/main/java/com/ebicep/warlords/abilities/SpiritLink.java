@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -28,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class SpiritLink extends AbstractChain implements RedAbilityIcon {
+public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages<SpiritLink.DamageValues> {
 
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.SPRUCE_FENCE_GATE);
     public int numberOfDismounts = 0;

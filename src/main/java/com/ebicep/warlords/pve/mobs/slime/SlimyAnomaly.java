@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -89,7 +90,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(warlordsNPC, shimmerRadius, shimmerRadius, shimmerRadius)
@@ -159,7 +160,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SLIME_JUMP, 2, 0.5f);
     }
 
-    private static class Shimmer extends AbstractAbility {
+    private static class Shimmer extends AbstractAbility implements Damages<Shimmer.DamageValues> {
 
         public Shimmer() {
             super("Shimmer", 0.3f, 50);

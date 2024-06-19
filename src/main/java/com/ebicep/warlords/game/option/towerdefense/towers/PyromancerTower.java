@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
@@ -93,7 +90,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
         return upgrades;
     }
 
-    private static class FlameAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class FlameAttack extends AbstractAbility implements TDAbility, HitBox, Damages<FlameAttack.DamageValues> {
 
         private static final int TELEPORT_DURATION = 5; // arrow teleport duration
         private final FloatModifiable range = new FloatModifiable(30);

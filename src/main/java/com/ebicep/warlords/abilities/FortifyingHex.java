@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
@@ -42,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
+public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
 
     protected FloatModifiable damageReduction = new FloatModifiable(8);
 

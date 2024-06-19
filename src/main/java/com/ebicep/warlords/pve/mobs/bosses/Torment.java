@@ -23,6 +23,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 
 public class Torment extends AbstractMob implements BossMob {
@@ -177,7 +178,7 @@ public class Torment extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
     }
 

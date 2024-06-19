@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Splash;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
@@ -36,7 +37,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Splash {
+public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Splash, Damages<FrostBolt.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 30;

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class ProtectorsStrike extends AbstractStrike {
+public class ProtectorsStrike extends AbstractStrike implements Damages<ProtectorsStrike.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private int allyHealing = 90; // %

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -28,7 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class CrusadersStrike extends AbstractStrike {
+public class CrusadersStrike extends AbstractStrike implements Damages<CrusadersStrike.DamageValues> {
 
     public float energyGivenToPlayers = 0;
     private final DamageValues damageValues = new DamageValues();

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -66,7 +67,7 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
 
     }
 
-    private static class SpiritHealing extends AbstractPveAbility {
+    private static class SpiritHealing extends AbstractPveAbility implements Heals<SpiritHealing.HealingValues> {
 
 
         public SpiritHealing() {

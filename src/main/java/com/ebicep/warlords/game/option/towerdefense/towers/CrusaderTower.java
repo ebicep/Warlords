@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.game.Game;
@@ -135,7 +136,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         }
     }
 
-    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox, Damages<StrikeAttack.DamageValues> {
 
         private static final ItemStack SWORD_ITEM = new ItemStack(Material.IRON_SWORD);
         private final FloatModifiable range = new FloatModifiable(30);

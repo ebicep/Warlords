@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
@@ -26,7 +27,7 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, Damages<VitalityConcoction.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private int tickDuration = 15;

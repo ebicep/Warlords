@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -29,7 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues> {
 
     public int playersLinked = 0;
     public int numberOfBrokenLinks = 0;

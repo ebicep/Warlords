@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -29,7 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon {
+public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon, Heals<VitalityLiquor.HealingValues> {
 
     public int numberOfAdditionalWaves = 0;
     private final HealingValues healingValues = new HealingValues();

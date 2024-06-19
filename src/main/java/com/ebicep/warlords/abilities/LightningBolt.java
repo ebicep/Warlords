@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LightningBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon {
+public class LightningBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Damages<LightningBolt.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private double hitbox = 3;
@@ -131,7 +132,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));

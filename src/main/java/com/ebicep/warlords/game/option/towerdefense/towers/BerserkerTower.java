@@ -1,9 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
@@ -95,7 +92,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         return upgrades;
     }
 
-    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox, Damages<StrikeAttack.DamageValues> {
 
         private static final ItemStack SWORD_ITEM = new ItemStack(Material.DIAMOND_SWORD);
         private final FloatModifiable range = new FloatModifiable(30);
@@ -176,7 +173,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         }
     }
 
-    private static class AOEAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class AOEAttack extends AbstractAbility implements TDAbility, HitBox, Damages<AOEAttack.DamageValues> {
 
         private final FloatModifiable range = new FloatModifiable(10);
 

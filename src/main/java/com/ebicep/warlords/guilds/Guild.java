@@ -366,6 +366,7 @@ public class Guild {
         return guildPlayerUUIDCache.containsKey(uuid);
     }
 
+    @Nonnull
     public String getName() {
         return name;
     }

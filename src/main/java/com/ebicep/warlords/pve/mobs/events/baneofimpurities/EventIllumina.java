@@ -30,6 +30,7 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventIllumina extends AbstractMob implements BossMob {
@@ -171,7 +172,7 @@ public class EventIllumina extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.BLUE)

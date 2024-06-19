@@ -1,12 +1,12 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -74,21 +74,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                                                                                    .build());
     }
 
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    private static class TormentingMark extends AbstractPveAbility {
+    private static class TormentingMark extends AbstractPveAbility implements Damages<TormentingMark.DamageValues> {
 
         public TormentingMark() {
             super(

@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -78,7 +79,7 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
         return upgrades;
     }
 
-    private static class BoltAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class BoltAttack extends AbstractAbility implements TDAbility, HitBox, Damages<BoltAttack.DamageValues> {
 
         private static final int STUN_TICKS = 20;
         private final FloatModifiable range = new FloatModifiable(30);

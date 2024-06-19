@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -35,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
+public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Damages<SoulShackle.DamageValues> {
 
     private final int shackleRange = 15;
     private final DamageValues damageValues = new DamageValues();

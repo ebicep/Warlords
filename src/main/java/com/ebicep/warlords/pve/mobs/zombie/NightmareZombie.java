@@ -18,6 +18,8 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
+
 public class NightmareZombie extends AbstractMob implements ChampionMob {
 
     public NightmareZombie(Location spawnLocation) {
@@ -105,7 +107,7 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(
                 deathLocation,

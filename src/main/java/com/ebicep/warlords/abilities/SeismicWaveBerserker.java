@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -14,7 +15,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
-public class SeismicWaveBerserker extends AbstractSeismicWave {
+public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages<SeismicWaveBerserker.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
 

@@ -59,7 +59,7 @@ public class PlayerFlagLocation implements FlagLocation {
     }
 
     @Override
-    public FlagLocation update(FlagInfo info) {
+    public FlagLocation update(@Nonnull FlagInfo info) {
         this.pickUpTicks++;
         return this.pickUpTicks % (20 * 3) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
     }

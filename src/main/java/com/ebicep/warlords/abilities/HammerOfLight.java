@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -44,7 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues> {
 
     public int playersHealed = 0;
     public int playersDamaged = 0;

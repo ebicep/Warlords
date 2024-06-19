@@ -16,6 +16,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 
+import javax.annotation.Nonnull;
+
 public class EventBoltaro extends AbstractMob implements BossMob {
 
     private boolean split = false;
@@ -106,7 +108,7 @@ public class EventBoltaro extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE_NORMAL, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()

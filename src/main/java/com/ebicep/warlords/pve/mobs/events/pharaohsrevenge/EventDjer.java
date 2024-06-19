@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
@@ -134,7 +135,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
         return !(warlordsNPC.getCurrentHealth() <= warlordsNPC.getMaxBaseHealth() * .75);
     }
 
-    private static class GroundShred extends AbstractPveAbility {
+    private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
 

@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
@@ -36,7 +37,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
+public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox, Damages<EarthenSpike.DamageValues> {
 
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",

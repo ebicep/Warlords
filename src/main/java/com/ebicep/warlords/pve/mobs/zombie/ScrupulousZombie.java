@@ -13,6 +13,8 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
+import javax.annotation.Nonnull;
+
 public class ScrupulousZombie extends AbstractMob implements AdvancedMob {
 
     public ScrupulousZombie(Location spawnLocation) {
@@ -74,7 +76,7 @@ public class ScrupulousZombie extends AbstractMob implements AdvancedMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)

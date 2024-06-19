@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
@@ -104,7 +105,7 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         return upgrades;
     }
 
-    private static class SpikeAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class SpikeAttack extends AbstractAbility implements TDAbility, HitBox, Damages<SpikeAttack.DamageValues> {
 
         private static final int SLOW_TICKS = 20;
         private final FloatModifiable range = new FloatModifiable(30);

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -127,7 +128,7 @@ public class Chessking extends AbstractMob implements BossMob {
         }
     }
 
-    private static class Belch extends AbstractAbility {
+    private static class Belch extends AbstractAbility implements Damages<Belch.DamageValues> {
 
         private float range = 9;
 

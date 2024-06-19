@@ -2,9 +2,9 @@ package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -71,17 +71,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
         }
     }
 
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    private static class VoidHealing extends AbstractAbility {
+    private static class VoidHealing extends AbstractAbility implements Heals<VoidHealing.HealingValues> {
 
         public VoidHealing() {
             super("Void Healing", 200, 200, .5f, 100);

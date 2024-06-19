@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -29,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns {
+public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues> {
 
     public int playersBinded = 0;
     public int soulProcs = 0;

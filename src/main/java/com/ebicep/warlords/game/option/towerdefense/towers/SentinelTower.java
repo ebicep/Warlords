@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -82,7 +83,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         return upgrades;
     }
 
-    private static class HexAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class HexAttack extends AbstractAbility implements TDAbility, HitBox, Damages<HexAttack.DamageValues> {
 
         private final FloatModifiable range = new FloatModifiable(60);
 
@@ -131,7 +132,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         }
     }
 
-    private static class BeamAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class BeamAttack extends AbstractAbility implements TDAbility, HitBox, Damages<BeamAttack.DamageValues> {
 
         private final FloatModifiable range = new FloatModifiable(60);
         private float currentTargetDamage;

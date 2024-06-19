@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
-import com.ebicep.warlords.abilities.internal.Overheal;
-import com.ebicep.warlords.abilities.internal.Splash;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -30,7 +27,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, Splash {
+public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, Splash, Damages<WaterBolt.DamageValues>, Heals<WaterBolt.HealingValues> {
 
     public int teammatesHit = 0;
     public int enemiesHit = 0;

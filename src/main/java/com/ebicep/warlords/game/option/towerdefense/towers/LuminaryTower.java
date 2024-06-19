@@ -1,9 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.RayOfLight;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -90,7 +88,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         return upgrades;
     }
 
-    private static class HexAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class HexAttack extends AbstractAbility implements TDAbility, HitBox, Damages<HexAttack.DamageValues> {
 
         private final FloatModifiable range = new FloatModifiable(45);
 
@@ -180,7 +178,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         }
     }
 
-    private static class MercifulHex extends AbstractAbility implements TDAbility, HitBox {
+    private static class MercifulHex extends AbstractAbility implements TDAbility, HitBox, Heals<MercifulHex.HealingValues> {
 
         private final FloatModifiable range = new FloatModifiable(20);
 

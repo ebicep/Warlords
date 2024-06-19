@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -20,7 +21,7 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> {
+public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> implements Heals<EnergySeerConjurer.HealingValues> {
 
     protected int energyUsed = 0;
     private final HealingValues healingValues = new HealingValues();

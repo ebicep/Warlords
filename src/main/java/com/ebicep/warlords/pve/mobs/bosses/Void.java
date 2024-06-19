@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -222,7 +223,7 @@ public class Void extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
             EffectUtils.strikeLightningInCylinder(deathLocation, 8, false);
@@ -439,7 +440,7 @@ public class Void extends AbstractMob implements BossMob {
         }.runTaskLater(tickDelay);
     }
 
-    private static class GroundShred extends AbstractPveAbility {
+    private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 10;
 

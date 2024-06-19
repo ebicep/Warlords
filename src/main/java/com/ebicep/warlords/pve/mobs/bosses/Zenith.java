@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -174,7 +175,7 @@ public class Zenith extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
             EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
@@ -186,7 +187,7 @@ public class Zenith extends AbstractMob implements BossMob {
         EffectUtils.strikeLightning(deathLocation, false, 5);
     }
 
-    private static class Armageddon extends AbstractPveAbility {
+    private static class Armageddon extends AbstractPveAbility implements Damages<Armageddon.DamageValues> {
 
         private final int stormRadius = 10;
         private final DamageValues damageValues = new DamageValues();
@@ -207,8 +208,6 @@ public class Zenith extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             long playerCount = pveOption.getGame().warlordsPlayers().count();
             Location loc = wp.getLocation();
             DifficultyIndex difficulty = pveOption.getDifficulty();

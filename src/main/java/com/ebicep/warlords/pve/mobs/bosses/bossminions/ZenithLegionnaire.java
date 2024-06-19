@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -80,7 +81,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.ORANGE)
@@ -89,7 +90,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
                                                                        .build());
     }
 
-    private static class Remedy extends AbstractPveAbility {
+    private static class Remedy extends AbstractPveAbility implements Heals<Remedy.HealingValues> {
 
         public Remedy() {
             super(

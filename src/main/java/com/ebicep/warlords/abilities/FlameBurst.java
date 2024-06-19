@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Splash;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -31,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash {
+public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash, Damages<FlameBurst.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private FloatModifiable splash = new FloatModifiable(5);

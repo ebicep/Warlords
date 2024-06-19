@@ -34,7 +34,7 @@ public abstract class AbstractProjectile extends AbstractPiercingProjectile {
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         projectile.getHit().add(hit);
     }
 

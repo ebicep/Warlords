@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.ImpalingStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -82,7 +83,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
 
     }
 
-    private static class PoisonArrow extends AbstractPveAbility {
+    private static class PoisonArrow extends AbstractPveAbility implements Damages<PoisonArrow.DamageValues> {
 
         public PoisonArrow() {
             super("Poison Arrow", 550, 750, 5, 100, false);

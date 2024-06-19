@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon {
+public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon, Damages<FreezingBreath.DamageValues> {
 
     public int playersHit = 0;
 

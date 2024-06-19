@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -22,7 +23,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoulfireBeam extends AbstractBeam {
+public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.CRIMSON_FENCE_GATE);
     private final DamageValues damageValues = new DamageValues();

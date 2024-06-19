@@ -1,8 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
@@ -93,7 +91,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         return upgrades;
     }
 
-    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox {
+    private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox, Damages<StrikeAttack.DamageValues>, Heals<StrikeAttack.HealingValues> {
 
         private final FloatModifiable range = new FloatModifiable(30);
         private final DamageValues damageValues = new DamageValues();

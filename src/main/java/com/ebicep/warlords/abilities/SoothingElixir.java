@@ -1,10 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.AreaEffect;
@@ -35,7 +32,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox {
+public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, Damages<SoothingElixir.DamageValues>, Heals<SoothingElixir.HealingValues> {
 
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;

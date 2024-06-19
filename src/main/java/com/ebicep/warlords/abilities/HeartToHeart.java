@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -36,7 +34,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox {
+public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox, Damages<HeartToHeart.DamageValues>, Heals<HeartToHeart.HealingValues> {
 
     public int timesUsedWithFlag = 0;
     private final DamageValues damageValues = new DamageValues();

@@ -13,6 +13,8 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
+import javax.annotation.Nonnull;
+
 public class BoltaroExiled extends AbstractMob implements BossMinionMob {
 
     public BoltaroExiled(Location spawnLocation) {
@@ -68,7 +70,7 @@ public class BoltaroExiled extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_ENDERMAN_DEATH, 2, 1.3f);
     }

@@ -57,7 +57,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
             cryoPod = new CryoPod(warpLocation, wp.getName()) {
 
                 @Override
-                public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+                public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
                     if (wp.isDead()) {
                         return;
                     }

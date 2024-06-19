@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -25,7 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-public class ConsecrateAvenger extends AbstractConsecrate {
+public class ConsecrateAvenger extends AbstractConsecrate implements Damages<ConsecrateAvenger.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
 

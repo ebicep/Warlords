@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -217,7 +218,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
             }
         }
 
-        private static class AssassinRangeAttack extends AbstractAbility implements TDAbility {
+        private static class AssassinRangeAttack extends AbstractAbility implements TDAbility, Damages<AssassinRangeAttack.DamageValues> {
 
             private static final double SPEED = 0.30;
             private static final double GRAVITY = -0.007;

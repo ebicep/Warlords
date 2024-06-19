@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -288,7 +289,7 @@ public class Narmer extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
@@ -350,7 +351,7 @@ public class Narmer extends AbstractMob implements BossMob {
         }
     }
 
-    private static class GroundShred extends AbstractPveAbility {
+    private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
 

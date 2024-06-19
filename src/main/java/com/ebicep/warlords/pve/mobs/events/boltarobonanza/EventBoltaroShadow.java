@@ -16,6 +16,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
@@ -99,7 +100,7 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.ORANGE)

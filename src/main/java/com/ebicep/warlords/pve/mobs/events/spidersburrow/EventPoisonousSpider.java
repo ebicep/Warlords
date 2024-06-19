@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -67,21 +67,7 @@ public class EventPoisonousSpider extends AbstractMob implements BossMinionMob, 
         }
     }
 
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    private static class PoisonNear extends AbstractPveAbility {
+    private static class PoisonNear extends AbstractPveAbility implements Damages<PoisonNear.DamageValues> {
 
         public PoisonNear() {
             super("Poison", 375, 500, 3, 50);

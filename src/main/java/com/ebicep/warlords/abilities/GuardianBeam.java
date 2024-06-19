@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractBeam;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -30,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GuardianBeam extends AbstractBeam implements Duration {
+public class GuardianBeam extends AbstractBeam implements Duration, Damages<GuardianBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
     private final DamageValues damageValues = new DamageValues();

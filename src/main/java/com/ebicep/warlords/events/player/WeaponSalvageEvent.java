@@ -4,6 +4,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,6 +44,7 @@ public abstract class WeaponSalvageEvent extends Event {
             super(uuid, weapon, salvageAmount);
         }
 
+        @Nonnull
         @Override
         public HandlerList getHandlers() {
             return handlers;
@@ -61,6 +63,7 @@ public abstract class WeaponSalvageEvent extends Event {
             super(uuid, weapon, salvageAmount);
         }
 
+        @Nonnull
         @Override
         public HandlerList getHandlers() {
             return handlers;

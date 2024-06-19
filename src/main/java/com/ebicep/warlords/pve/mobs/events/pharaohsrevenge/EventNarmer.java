@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -284,7 +285,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
@@ -317,7 +318,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
         return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
     }
 
-    private static class GroundShred extends AbstractPveAbility {
+    private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
 

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -156,7 +157,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
         }
     }
 
-    private static class BurstOfFlames extends AbstractPveAbility {
+    private static class BurstOfFlames extends AbstractPveAbility implements Damages<BurstOfFlames.DamageValues> {
 
         private float radius = 10;
 

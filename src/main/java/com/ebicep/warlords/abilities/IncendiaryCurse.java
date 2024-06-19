@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
@@ -31,7 +32,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, HitBox {
+public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, HitBox, Damages<IncendiaryCurse.DamageValues> {
 
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
