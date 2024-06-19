@@ -37,6 +37,7 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
         super("Impaling Strike", 323, 427, 0, 90, 20, 175);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

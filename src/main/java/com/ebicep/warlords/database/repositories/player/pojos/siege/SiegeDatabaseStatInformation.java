@@ -59,43 +59,53 @@ public class SiegeDatabaseStatInformation extends AbstractDatabaseStatInformatio
         this.totalTimePlayed += (long) databaseGame.getTimeElapsed() * multiplier;
     }
 
+    @Override
     public int getPointsCaptured() {
         return pointsCaptured;
     }
 
-    public long getTotalTimePlayed() {
-        return totalTimePlayed;
-    }
-
+    @Override
     public int getPointsCapturedFail() {
         return pointsCapturedFail;
     }
 
+    @Override
     public long getTimeOnPoint() {
         return timeOnPoint;
     }
 
+    @Override
     public int getPayloadsEscorted() {
         return payloadsEscorted;
     }
 
+    @Override
     public int getPayloadsEscortedFail() {
         return payloadsEscortedFail;
     }
 
+    @Override
     public int getPayloadsDefended() {
         return payloadsDefended;
     }
 
+    @Override
     public int getPayloadsDefendedFail() {
         return payloadsDefendedFail;
     }
 
+    @Override
     public long getTimeOnPayloadEscorting() {
         return timeOnPayloadEscorting;
     }
 
+    @Override
     public long getTimeOnPayloadDefending() {
         return timeOnPayloadDefending;
+    }
+
+    @Override
+    public long getTotalTimePlayed() {
+        return totalTimePlayed;
     }
 }

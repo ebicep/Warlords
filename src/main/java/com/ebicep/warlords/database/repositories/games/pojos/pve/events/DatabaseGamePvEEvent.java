@@ -29,6 +29,7 @@ public abstract class DatabaseGamePvEEvent<T extends DatabaseGamePlayerPvEEvent>
         return 100_000;
     }
 
+    @Override
     public int getTimeElapsed() {
         return timeElapsed;
     }

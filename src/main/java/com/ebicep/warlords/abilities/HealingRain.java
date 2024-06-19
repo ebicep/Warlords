@@ -293,10 +293,12 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

@@ -45,6 +45,7 @@ public class RaidOption implements PveOption {
         return 0;
     }
 
+    @Override
     public void spawnNewMob(AbstractMob abstractMob) {
         //abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());

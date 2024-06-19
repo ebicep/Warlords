@@ -46,6 +46,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         super("Fireball", minDamageHeal, maxDamageHeal, cooldown, 70, 20, 175, 2, 300, false);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

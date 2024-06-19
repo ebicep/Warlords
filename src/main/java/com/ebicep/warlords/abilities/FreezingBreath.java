@@ -50,6 +50,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
         super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175, 1.25, 100, false);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

@@ -188,6 +188,7 @@ public class Zenith extends AbstractMob implements BossMob {
         private final int stormRadius = 10;
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

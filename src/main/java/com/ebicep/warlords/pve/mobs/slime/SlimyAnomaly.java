@@ -186,6 +186,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

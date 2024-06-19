@@ -218,6 +218,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         this.energyDrainPerSecond = energyDrainPerSecond;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

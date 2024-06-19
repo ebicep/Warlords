@@ -240,6 +240,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         return numberOfProcsAfterCarrierPassed;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

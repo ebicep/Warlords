@@ -30,6 +30,7 @@ public class OnslaughtDatabaseStatInformation extends PvEDatabaseStatInformation
         }
     }
 
+    @Override
     public long getLongestTicksLived() {
         return longestTicksLived;
     }

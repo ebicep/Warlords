@@ -87,6 +87,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         super("Chain Lightning", 370, 499, cooldown, 40, 20, 175, 20, 10, 3, startCooldown);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

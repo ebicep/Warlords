@@ -263,10 +263,12 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         return puddleRadius;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

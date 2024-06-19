@@ -278,6 +278,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         this.maxAnimationEffects = maxAnimationEffects;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

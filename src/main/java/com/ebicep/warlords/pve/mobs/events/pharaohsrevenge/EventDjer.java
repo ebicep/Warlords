@@ -174,6 +174,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

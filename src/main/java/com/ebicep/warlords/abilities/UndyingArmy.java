@@ -482,6 +482,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         this.missingHealing = missingHealing;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

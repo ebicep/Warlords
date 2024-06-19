@@ -244,6 +244,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
         this.hitbox = hitbox;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

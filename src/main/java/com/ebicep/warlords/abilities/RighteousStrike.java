@@ -118,6 +118,7 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
         return true;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

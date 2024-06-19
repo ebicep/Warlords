@@ -477,6 +477,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

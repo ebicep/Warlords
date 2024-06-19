@@ -384,6 +384,7 @@ public class Narmer extends AbstractMob implements BossMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

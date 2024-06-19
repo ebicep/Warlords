@@ -185,6 +185,7 @@ public enum SkullID implements Skull {
         this.textureId = textureId;
     }
 
+    @Override
     public String getTextureID() {
         return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv" + textureId;
     }

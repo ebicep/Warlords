@@ -64,10 +64,12 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         this.location = location;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

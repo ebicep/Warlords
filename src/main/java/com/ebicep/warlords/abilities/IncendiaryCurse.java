@@ -198,6 +198,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         return hitbox;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

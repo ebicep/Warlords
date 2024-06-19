@@ -261,6 +261,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         this.damageReductionDuration = damageReductionDuration;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

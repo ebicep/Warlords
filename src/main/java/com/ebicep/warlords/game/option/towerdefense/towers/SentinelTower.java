@@ -115,6 +115,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }
@@ -212,6 +213,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

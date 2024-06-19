@@ -252,10 +252,12 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         return splashRadius;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

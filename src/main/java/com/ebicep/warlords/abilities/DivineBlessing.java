@@ -308,6 +308,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         this.lethalDamageHealing = lethalDamageHealing;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

@@ -134,6 +134,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
         return pveMasterUpgrade2;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

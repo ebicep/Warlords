@@ -95,6 +95,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
 
         private final HealingValues healingValues = new HealingValues();
 
+        @Override
         public HealingValues getHealValues() {
             return healingValues;
         }

@@ -96,6 +96,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }
@@ -162,6 +163,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
 
         private final HealingValues healingValues = new HealingValues();
 
+        @Override
         public HealingValues getHealValues() {
             return healingValues;
         }

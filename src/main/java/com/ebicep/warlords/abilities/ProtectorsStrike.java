@@ -188,6 +188,7 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
         this.strikeRadius = strikeRadius;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

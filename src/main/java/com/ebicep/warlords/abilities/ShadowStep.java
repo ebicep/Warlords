@@ -281,6 +281,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         this.fallDamageNegation = fallDamageNegation;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

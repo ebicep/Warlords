@@ -124,6 +124,7 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
         return BEAM_ITEM;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

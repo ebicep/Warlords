@@ -135,6 +135,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         this.tickDuration = tickDuration;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

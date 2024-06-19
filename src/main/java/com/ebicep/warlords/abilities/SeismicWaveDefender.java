@@ -55,6 +55,7 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
         return pveMasterUpgrade2;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

@@ -164,6 +164,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
         return BEAM_ITEM;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

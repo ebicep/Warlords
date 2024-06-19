@@ -290,6 +290,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         this.invisTicks = invisTicks;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

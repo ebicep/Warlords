@@ -281,6 +281,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         this.minSilenceDurationInTicks = minSilenceDurationInTicks;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

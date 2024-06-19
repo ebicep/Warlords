@@ -341,6 +341,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         this.maxEnemiesHit = maxEnemiesHit;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

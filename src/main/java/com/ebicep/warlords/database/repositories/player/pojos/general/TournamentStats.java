@@ -75,6 +75,7 @@ public class TournamentStats implements MultiStatsGeneral {
         @Field("duel_stats")
         private DatabasePlayerDuel duelStats = new DatabasePlayerDuel();
 
+        @Override
         public void updateStats(
                 DatabasePlayer databasePlayer,
                 DatabaseGameBase databaseGame,

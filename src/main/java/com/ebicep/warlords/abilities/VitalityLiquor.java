@@ -205,6 +205,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         this.duration = duration;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

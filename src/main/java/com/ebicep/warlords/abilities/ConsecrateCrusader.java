@@ -127,6 +127,7 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         return new ConsecrateBranchCrusader(abilityTree, this);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

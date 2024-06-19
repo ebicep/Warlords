@@ -249,6 +249,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
         });
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

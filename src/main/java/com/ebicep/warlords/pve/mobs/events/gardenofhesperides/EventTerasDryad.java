@@ -98,6 +98,7 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
 
         private final HealingValues healingValues = new HealingValues();
 
+        @Override
         public HealingValues getHealValues() {
             return healingValues;
         }

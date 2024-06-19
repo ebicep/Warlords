@@ -50,6 +50,7 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         super("Flame Burst", 557, 753, cooldown, 60, critChance, 185, 1.65, 200, false);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

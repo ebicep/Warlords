@@ -233,10 +233,12 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         this.healthRestore = healthRestore;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

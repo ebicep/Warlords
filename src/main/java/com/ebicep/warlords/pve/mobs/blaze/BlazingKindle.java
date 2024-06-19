@@ -115,6 +115,7 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

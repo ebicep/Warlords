@@ -347,6 +347,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.allyHealing = allyHealing;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

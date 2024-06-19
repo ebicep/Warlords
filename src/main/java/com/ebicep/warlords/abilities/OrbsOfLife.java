@@ -378,6 +378,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         this.tickDuration = tickDuration;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

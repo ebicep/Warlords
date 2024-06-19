@@ -295,6 +295,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                 });
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

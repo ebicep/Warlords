@@ -213,6 +213,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
         this.markDuration = markDuration;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

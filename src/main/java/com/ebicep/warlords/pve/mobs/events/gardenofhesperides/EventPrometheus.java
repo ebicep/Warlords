@@ -190,6 +190,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

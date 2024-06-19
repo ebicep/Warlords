@@ -122,6 +122,7 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> i
         this.damageResistance = damageResistance;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

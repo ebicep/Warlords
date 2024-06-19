@@ -7,6 +7,7 @@ public interface PurpleAbilityIcon extends AbilityIcon {
 
     ItemStack PURPLE_ABILITY = new ItemStack(Material.GLOWSTONE_DUST);
 
+    @Override
     default ItemStack getAbilityIcon() {
         return PURPLE_ABILITY;
     }

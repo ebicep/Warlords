@@ -435,6 +435,7 @@ public class Warlords extends JavaPlugin {
         //cancel swimming, modified from - https://github.com/PaperMC/Paper/issues/1328
         //added player.isInWater() check or else there is no dynamic fov while on land
         new BukkitRunnable() {
+            @Override
             public void run() {
                 if (AdminCommand.NEW_SWIMMING) {
                     return;

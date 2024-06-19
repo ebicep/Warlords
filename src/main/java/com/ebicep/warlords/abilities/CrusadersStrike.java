@@ -160,6 +160,7 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
         this.energyRadius = energyRadius;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

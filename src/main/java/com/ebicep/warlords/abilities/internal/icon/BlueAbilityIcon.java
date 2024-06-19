@@ -7,6 +7,7 @@ public interface BlueAbilityIcon extends AbilityIcon {
 
     ItemStack BLUE_ABILITY = new ItemStack(Material.LIME_DYE);
 
+    @Override
     default ItemStack getAbilityIcon() {
         return BLUE_ABILITY;
     }

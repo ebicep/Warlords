@@ -209,6 +209,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
         this.markSpeed = markSpeed;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

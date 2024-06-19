@@ -372,6 +372,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         this.bubbleMissingHealing = bubbleMissingHealing;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

@@ -83,6 +83,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }

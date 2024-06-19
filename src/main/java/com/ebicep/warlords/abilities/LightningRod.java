@@ -236,6 +236,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         this.energyRestore = energyRestore;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

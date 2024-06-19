@@ -65,6 +65,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

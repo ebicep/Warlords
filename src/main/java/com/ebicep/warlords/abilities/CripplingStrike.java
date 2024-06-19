@@ -206,6 +206,7 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
         this.cripplePerStrike = cripplePerStrike;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

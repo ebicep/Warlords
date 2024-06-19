@@ -120,6 +120,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
 
         private final DamageValues damageValues = new DamageValues();
 
+        @Override
         public DamageValues getDamageValues() {
             return damageValues;
         }
@@ -208,6 +209,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
 
         private final HealingValues healingValues = new HealingValues();
 
+        @Override
         public HealingValues getHealValues() {
             return healingValues;
         }

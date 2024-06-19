@@ -225,6 +225,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         this.runeTimerIncrease = runeTimerIncrease;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

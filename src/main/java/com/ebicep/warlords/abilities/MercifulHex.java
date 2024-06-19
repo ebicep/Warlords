@@ -414,6 +414,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         this.subsequentReduction = subsequentReduction;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

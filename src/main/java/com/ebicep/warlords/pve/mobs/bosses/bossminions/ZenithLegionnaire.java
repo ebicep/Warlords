@@ -117,6 +117,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
 
         private final HealingValues healingValues = new HealingValues();
 
+        @Override
         public HealingValues getHealValues() {
             return healingValues;
         }

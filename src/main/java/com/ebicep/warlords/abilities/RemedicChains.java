@@ -289,6 +289,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.allyDamageIncrease = allyDamageIncrease;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

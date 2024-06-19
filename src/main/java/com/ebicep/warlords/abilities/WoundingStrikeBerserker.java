@@ -192,6 +192,7 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
         this.woundingTickDuration = woundingTickDuration;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

@@ -116,6 +116,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> i
         this.damageIncrease = damageIncrease;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }

@@ -47,6 +47,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         super("Reckless Charge", 457, 601, 9.32f, 60, 20, 200);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

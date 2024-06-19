@@ -193,6 +193,7 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
         this.wounding = wounding;
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

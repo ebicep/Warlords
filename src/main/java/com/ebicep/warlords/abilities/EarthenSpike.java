@@ -62,6 +62,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         super("Earthen Spike", minDamageHeal, maxDamageHeal, cooldown, 100, 15, 175, startCooldown);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

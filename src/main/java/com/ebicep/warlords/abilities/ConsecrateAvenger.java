@@ -126,6 +126,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
         return new ConsecrateBranchAvenger(abilityTree, this);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

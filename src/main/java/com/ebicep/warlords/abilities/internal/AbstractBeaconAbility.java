@@ -161,6 +161,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         return groundLocation;
     }
 
+    @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
     }

@@ -47,6 +47,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         super("Boulder", minDamageHeal, maxDamageHeal, cooldown, 80, 15, 175, startCooldown);
     }
 
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }

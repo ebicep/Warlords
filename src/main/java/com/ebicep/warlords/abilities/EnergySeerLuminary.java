@@ -98,6 +98,7 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
         this.healingIncrease = healingIncrease;
     }
 
+    @Override
     public HealingValues getHealValues() {
         return healingValues;
     }
