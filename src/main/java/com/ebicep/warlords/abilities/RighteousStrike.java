@@ -1,9 +1,10 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.RighteousStrikeBranch;
@@ -18,7 +19,6 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class RighteousStrike extends AbstractStrike {
 
@@ -69,13 +69,11 @@ public class RighteousStrike extends AbstractStrike {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         targetsStruck++;
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
         );
 
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
@@ -103,13 +101,11 @@ public class RighteousStrike extends AbstractStrike {
                 if (pveMasterUpgrade) {
                     SoulShackle.shacklePlayer(wp, we, 80);
                 }
-                we.addDamageInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage)
                 );
                 if (pveMasterUpgrade2 && targetsStruck % 5 == 0) {
                     wp.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> soulShackle.subtractCurrentCooldown(.5f));
@@ -121,13 +117,18 @@ public class RighteousStrike extends AbstractStrike {
         return true;
     }
 
-    public int getAbilityReductionInTicks() {
-        return abilityReductionInTicks;
-    }
+    private final DamageValues damageValues = new DamageValues();
 
-    public void setAbilityReductionInTicks(int abilityReductionInTicks) {
-        this.abilityReductionInTicks = abilityReductionInTicks;
-    }
+    public static class DamageValues implements Value.ValueHolder {
 
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(391, 497, 20, 175);
+        private final List<Value> values = List.of(strikeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

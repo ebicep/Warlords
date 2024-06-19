@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -7,8 +8,10 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.zombie.ZombieLancer;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -23,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +43,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
     private float hpDamageIncrease = 1;
 
     public EventNarmer(Location spawnLocation) {
-        super(spawnLocation,
+        this(spawnLocation,
                 "Narmer",
                 16000,
                 0,
@@ -64,7 +68,8 @@ public class EventNarmer extends AbstractMob implements BossMob {
                 walkSpeed,
                 damageResistance,
                 minMeleeDamage,
-                maxMeleeDamage
+                maxMeleeDamage,
+                new GroundShred()
         );
     }
 
@@ -198,13 +203,12 @@ public class EventNarmer extends AbstractMob implements BossMob {
                                 .aliveEnemiesOf(warlordsNPC)
                                 .toList();
                         for (WarlordsEntity enemy : warlordsEntities) {
-                            enemy.addDamageInstance(
-                                    warlordsNPC,
-                                    "Death Wish",
-                                    965 * 8,
-                                    1138 * 8,
-                                    0,
-                                    100
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Death Wish")
+                                    .source(warlordsNPC)
+                                    .min(965 * 8)
+                                    .max(1138 * 8)
                             );
                             enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.", NamedTextColor.RED));
                         }
@@ -219,13 +223,12 @@ public class EventNarmer extends AbstractMob implements BossMob {
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
                             Utils.addKnockback(name, warlordsNPC.getLocation(), enemy, -2.5, 0.25);
-                            enemy.addDamageInstance(
-                                    warlordsNPC,
-                                    "Acolyte Revenge",
-                                    965,
-                                    1138,
-                                    0,
-                                    100
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Acolyte Revenge")
+                                    .source(warlordsNPC)
+                                    .min(965)
+                                    .max(1138)
                             );
                         }
                     }
@@ -273,36 +276,6 @@ public class EventNarmer extends AbstractMob implements BossMob {
                 EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIP_LAVA);
             }
         }
-
-        if (ticksElapsed % 160 == 0) {
-            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
-            EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
-            for (WarlordsEntity enemy : PlayerFilter
-                    .entitiesAround(warlordsNPC, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
-                    .aliveEnemiesOf(warlordsNPC)
-            ) {
-                Utils.addKnockback(name, loc, enemy, -2.5, 0.25);
-                enemy.addDamageInstance(
-                        warlordsNPC,
-                        "Ground Shred",
-                        750,
-                        900,
-                        0,
-                        100
-                );
-            }
-        }
-
-        if (ticksElapsed % 300 == 0) {
-            //warlordsNPC.getRedAbility().onActivate(warlordsNPC, null); TODO
-        }
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override
@@ -342,5 +315,51 @@ public class EventNarmer extends AbstractMob implements BossMob {
     @Override
     public Component getDescription() {
         return Component.text("Unifier of Worlds", NamedTextColor.YELLOW);
+    }
+
+    private static class GroundShred extends AbstractPveAbility {
+
+        private final int earthQuakeRadius = 12;
+
+        public GroundShred() {
+            super("Ground Shred", 8, 50);
+        }
+
+        @Override
+        public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
+            Location loc = wp.getLocation();
+            Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
+            EffectUtils.strikeLightning(loc, false);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            for (WarlordsEntity enemy : PlayerFilter
+                    .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
+                    .aliveEnemiesOf(wp)
+            ) {
+                Utils.addKnockback(name, loc, enemy, -2.5, 0.25);
+                enemy.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.groundShredDamage)
+                );
+            }
+            return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue groundShredDamage = new Value.RangedValue(920, 1080);
+            private final List<Value> values = List.of(groundShredDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
+
     }
 }

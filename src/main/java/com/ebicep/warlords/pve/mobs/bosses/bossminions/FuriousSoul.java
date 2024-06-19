@@ -4,6 +4,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -13,8 +14,6 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-
-import java.util.EnumSet;
 
 public class FuriousSoul extends AbstractMob implements BossMinionMob {
 
@@ -71,14 +70,12 @@ public class FuriousSoul extends AbstractMob implements BossMinionMob {
         Utils.playGlobalSound(self.getLocation(), Sound.ENTITY_HOGLIN_CONVERTED_TO_ZOMBIFIED, 0.35f, 2);
         if (!event.getCause().isEmpty() && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
             float damage = attacker.getMaxBaseHealth() * maxHPPercent;
-            attacker.addDamageInstance(
-                    self,
-                    "Outrage",
-                    damage,
-                    damage,
-                    0,
-                    100,
-                    EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.RECURSIVE)
+            attacker.addInstance(InstanceBuilder
+                    .damage()
+                    .cause("Outrage")
+                    .source(self)
+                    .value(damage)
+                    .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.RECURSIVE)
             );
         }
     }

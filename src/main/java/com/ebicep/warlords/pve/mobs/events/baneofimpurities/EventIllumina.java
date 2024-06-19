@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -29,7 +30,6 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
-import java.util.EnumSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventIllumina extends AbstractMob implements BossMob {
@@ -235,13 +235,11 @@ public class EventIllumina extends AbstractMob implements BossMob {
                                 2
                         );
 
-                        we.addDamageInstance(
-                                warlordsNPC,
-                                "Vampiric Leash",
-                                600,
-                                600,
-                                -1,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Vampiric Leash")
+                                .source(warlordsNPC)
+                                .value(600)
                         );
                     }
                 }
@@ -264,23 +262,18 @@ public class EventIllumina extends AbstractMob implements BossMob {
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
                         EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
-                        we.addDamageInstance(
-                                warlordsNPC,
-                                "Death Ray",
-                                7500,
-                                7500,
-                                -1,
-                                100,
-                                EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Death Ray")
+                                .source(warlordsNPC)
+                                .value(7500)
+                                .flags(InstanceFlags.TRUE_DAMAGE)
                         );
-
-                        warlordsNPC.addHealingInstance(
-                                warlordsNPC,
-                                "Death Ray Healing",
-                                we.getMaxHealth() * 2,
-                                we.getMaxHealth() * 2,
-                                -1,
-                                100
+                        warlordsNPC.addInstance(InstanceBuilder
+                                .healing()
+                                .cause("Death Ray Healing")
+                                .source(warlordsNPC)
+                                .value(we.getMaxHealth() * 2)
                         );
                     }
 

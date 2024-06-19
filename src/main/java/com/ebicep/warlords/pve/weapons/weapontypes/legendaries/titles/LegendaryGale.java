@@ -136,11 +136,6 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             Runnable cancelSpeed = wp.addSpeedModifier(wp, name, 50, 10 * 20, "BASE");
             List<FloatModifiable.FloatModifier> modifiers = wp

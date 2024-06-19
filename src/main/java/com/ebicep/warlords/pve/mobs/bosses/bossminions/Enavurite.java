@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.Enavuris;
@@ -137,13 +138,11 @@ public class Enavurite extends AbstractMob implements ChampionMob {
             return;
         }
         float healing = event.getValue() * 0.35f;
-        enavuris.getWarlordsNPC().addHealingInstance(
-                warlordsNPC,
-                "Soul Tether",
-                healing,
-                healing,
-                0,
-                100
+        enavuris.getWarlordsNPC().addInstance(InstanceBuilder
+                .healing()
+                .cause("Soul Tether")
+                .source(warlordsNPC)
+                .value(healing)
         );
         Utils.playGlobalSound(warlordsNPC.getLocation(), "paladin.holyradiance.activation", 2, 1.25f);
 

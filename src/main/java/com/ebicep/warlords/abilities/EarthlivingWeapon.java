@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -11,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthlivingWeaponBranch;
@@ -28,7 +31,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<EarthlivingWeapon.HealingValues> {
 
     public int timesProcd = 0;
     public int playersHealed = 0;
@@ -70,15 +73,13 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
-        EarthlivingWeapon tempEarthlivingWeapon = new EarthlivingWeapon();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "EARTH",
-                EarthlivingWeapon.class,
-                tempEarthlivingWeapon,
+                Data.class,
+                new Data(),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -99,9 +100,6 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 })
         ) {
 
-            private boolean firstProc = true;
-            private Set<WarlordsEntity> alreadyProcd = new HashSet<>();
-
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (!event.getCause().isEmpty()) {
@@ -110,66 +108,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getSource();
 
-                double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
-                if (firstProc) {
-                    firstProc = false;
-                    earthlivingActivate = 0;
-                }
-                if (!(earthlivingActivate < procChance)) {
-                    return;
-                }
-
-                boolean previosulyProcd = alreadyProcd.contains(victim);
-                if (pveMasterUpgrade) {
-                    energyPulseOnHit(attacker, victim);
-                } else if (pveMasterUpgrade2) {
-                    alreadyProcd.add(victim);
-                }
-
-                new GameRunnable(victim.getGame()) {
-                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
-                                            warlordsPlayer.getWeapon().getMeleeDamageMin() : 132;
-                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
-                                            warlordsPlayer.getWeapon().getMeleeDamageMax() : 179;
-                    int counter = 0;
-
-                    @Override
-                    public void run() {
-                        timesProcd++;
-                        Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
-
-                        float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : critChance;
-                        attacker.addHealingInstance(
-                                attacker,
-                                name,
-                                minDamage * convertToPercent(weaponDamage),
-                                maxDamage * convertToPercent(weaponDamage),
-                                cc,
-                                critMultiplier
-                        );
-
-                        for (WarlordsEntity nearPlayer : PlayerFilter
-                                .entitiesAround(attacker, 6, 6, 6)
-                                .aliveTeammatesOfExcludingSelf(attacker)
-                                .limit(maxAllies)
-                        ) {
-                            playersHealed++;
-                            nearPlayer.addHealingInstance(
-                                    attacker,
-                                    name,
-                                    minDamage * convertToPercent(weaponDamage),
-                                    maxDamage * convertToPercent(weaponDamage),
-                                    cc,
-                                    critMultiplier
-                            );
-                        }
-
-                        counter++;
-                        if (counter == maxHits) {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(3, 8);
+                activateEarthliving(victim, attacker, cooldownObject);
             }
 
             @Override
@@ -179,6 +118,71 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         });
 
         return true;
+    }
+
+    public void activateEarthliving(WarlordsEntity victim, WarlordsEntity attacker, Data data) {
+        double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
+        if (data.firstProc) {
+            data.firstProc = false;
+            earthlivingActivate = 0;
+        }
+        if (!(earthlivingActivate < procChance)) {
+            return;
+        }
+
+        boolean previosulyProcd = data.alreadyProcd.contains(victim);
+        if (pveMasterUpgrade) {
+            energyPulseOnHit(attacker, victim);
+        } else if (pveMasterUpgrade2) {
+            data.alreadyProcd.add(victim);
+        }
+
+        new GameRunnable(victim.getGame()) {
+            final float minDamage = attacker instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                    warlordsPlayer.getWeapon().getMeleeDamageMin() : healingValues.earthlivingHealing.getMinValue();
+            final float maxDamage = attacker instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                    warlordsPlayer.getWeapon().getMeleeDamageMax() : healingValues.earthlivingHealing.getMaxValue();
+            int counter = 0;
+
+            @Override
+            public void run() {
+                timesProcd++;
+                Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
+
+                float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : healingValues.earthlivingHealing.getCritChanceValue();
+                attacker.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(EarthlivingWeapon.this)
+                        .source(attacker)
+                        .min(minDamage * convertToPercent(weaponDamage))
+                        .max(maxDamage * convertToPercent(weaponDamage))
+                        .critChance(cc)
+                        .critMultiplier(healingValues.earthlivingHealing.getCritMultiplierValue())
+                );
+
+                for (WarlordsEntity nearPlayer : PlayerFilter
+                        .entitiesAround(attacker, 6, 6, 6)
+                        .aliveTeammatesOfExcludingSelf(attacker)
+                        .limit(maxAllies)
+                ) {
+                    playersHealed++;
+                    nearPlayer.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(EarthlivingWeapon.this)
+                            .source(attacker)
+                            .min(minDamage * convertToPercent(weaponDamage))
+                            .max(maxDamage * convertToPercent(weaponDamage))
+                            .critChance(cc)
+                            .critMultiplier(healingValues.earthlivingHealing.getCritMultiplierValue())
+                    );
+                }
+
+                counter++;
+                if (counter == maxHits) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(3, 8);
     }
 
     private void energyPulseOnHit(WarlordsEntity giver, WarlordsEntity target) {
@@ -201,13 +205,11 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                         if (missingHealth <= 0) {
                             continue;
                         }
-                        ally.addHealingInstance(
-                                giver,
-                                "Loamliving Weapon",
-                                missingHealth,
-                                missingHealth,
-                                0,
-                                100
+                        ally.addInstance(InstanceBuilder
+                                .healing()
+                                .cause("Loamliving Weapon")
+                                .source(giver)
+                                .value(missingHealth)
                         );
                         ally.addEnergy(giver, "Loamliving Weapon", missingHealth / 20);
                     }
@@ -250,10 +252,6 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         return maxAllies;
     }
 
-    public void setMaxAllies(int maxAllies) {
-        this.maxAllies = maxAllies;
-    }
-
     public int getMaxHits() {
         return maxHits;
     }
@@ -271,6 +269,33 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class Data {
+
+        private final Set<WarlordsEntity> alreadyProcd = new HashSet<>();
+        private boolean firstProc = true;
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable earthlivingHealing = new Value.RangedValueCritable(132, 179, 25, 200);
+        private final List<Value> values = List.of(earthlivingHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }
 
 

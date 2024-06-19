@@ -1,16 +1,17 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SpiritLinkBranch;
@@ -89,15 +90,20 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
                     numberOfDismounts++;
                 }
                 chain(wp.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                nearPlayer.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.linkDamage)
+                );
                 hitCounter.add(nearPlayer);
 
-                List<CooldownManager.LinkInformation> linkInformation = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
-                for (CooldownManager.LinkInformation information : linkInformation) {
+                List<Soulbinding> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
+                for (Soulbinding information : soulbindings) {
                     healNearPlayers(wp, nearPlayer, information);
                 }
 
-                additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && linkInformation.size() > 0 ? -1 : 0);
+                additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && !soulbindings.isEmpty() ? -1 : 0);
 
                 if (pveMasterUpgrade2 && nearPlayer instanceof WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().setTarget(wp);
@@ -167,22 +173,24 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
                 numberOfDismounts++;
             }
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
-            bounceTarget.addDamageInstance(wp,
-                    name,
-                    minDamageHeal.getCalculatedValue() * bounceDamageReduction,
-                    maxDamageHeal.getCalculatedValue() * bounceDamageReduction,
-                    critChance,
-                    critMultiplier
+            bounceTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.linkDamage.getMinValue() * bounceDamageReduction)
+                    .max(damageValues.linkDamage.getMaxValue() * bounceDamageReduction)
+                    .crit(damageValues.linkDamage)
             );
+
             hitCounter.add(bounceTarget);
 
-            List<CooldownManager.LinkInformation> linkInformation = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
-            for (CooldownManager.LinkInformation information : linkInformation) {
+            List<Soulbinding> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
+            for (Soulbinding information : soulbindings) {
                 healNearPlayers(wp, bounceTarget, information);
             }
 
             toExclude.add(bounceTarget);
-            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + (pveMasterUpgrade2 && linkInformation.size() > 0 ? 0 : 1));
+            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + (pveMasterUpgrade2 && !soulbindings.isEmpty() ? 0 : 1));
 
             if (pveMasterUpgrade2 && bounceTarget instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.getMob().setTarget(wp);
@@ -201,19 +209,16 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
         }
     }
 
-    private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer, CooldownManager.LinkInformation linkInformation) {
-        float radius = linkInformation.radius();
-        int limit = linkInformation.limit();
-        int selfHealing = linkInformation.selfHealing();
-        int allyHealing = linkInformation.allyHealing();
-        //adding .25 to totem, cap 6 sec
-//        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-//                .filterName("Spirits' Respite")
-//                .findFirst()
-//                .ifPresent(regularCooldown -> {
-//                    regularCooldown.setTicksLeft(Math.min(regularCooldown.getTicksLeft() + 10, 6 * 20));
-//                });
-        warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", selfHealing, selfHealing, 0, 100);
+    private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer, Soulbinding soulbinding) {
+        float radius = soulbinding.getRadius();
+        int limit = soulbinding.getMaxAlliesHit();
+        Soulbinding.HealingValues healValues = soulbinding.getHealValues();
+        warlordsPlayer.addInstance(InstanceBuilder
+                .healing()
+                .ability(soulbinding)
+                .source(warlordsPlayer)
+                .value(healValues.getSelfHealing())
+        );
         for (WarlordsEntity nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
@@ -221,13 +226,18 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
                 .limit(limit)
         ) {
             warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
-            nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", allyHealing, allyHealing, 0, 100);
+            nearPlayer.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(soulbinding)
+                    .source(warlordsPlayer)
+                    .value(healValues.getAllyHealing())
+            );
         }
         new CooldownFilter<>(warlordsPlayer, PersistentCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(hitPlayer))
-                .forEach(soulbinding -> {
-                    if (soulbinding.isPveMasterUpgrade()) {
+                .filter(binding -> binding.hasBoundPlayerSoul(hitPlayer))
+                .forEach(binding -> {
+                    if (binding.isPveMasterUpgrade()) {
                         warlordsPlayer.addEnergy(warlordsPlayer, "Soulbinding Weapon", 1);
                     }
                 });
@@ -248,4 +258,19 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon {
     public void setDamageReductionDuration(double damageReductionDuration) {
         this.damageReductionDuration = damageReductionDuration;
     }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable linkDamage = new Value.RangedValueCritable(290, 392, 20, 175);
+        private final List<Value> values = List.of(linkDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

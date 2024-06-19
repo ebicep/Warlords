@@ -9,16 +9,13 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class RiftWalker extends AbstractMob implements EliteMob {
 
@@ -100,16 +97,6 @@ public class RiftWalker extends AbstractMob implements EliteMob {
 
         public RiftSpeed() {
             super("Rift Speed", 10, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override

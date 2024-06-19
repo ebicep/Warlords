@@ -1,11 +1,13 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddVelocityEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -142,8 +144,6 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
@@ -157,13 +157,11 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
                     .toList();
             for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
                 Utils.addKnockback(name, loc, warlordsPlayer, -2.5, 0.25);
-                warlordsPlayer.addDamageInstance(
-                        wp,
-                        "Ground Shred",
-                        920,
-                        1080,
-                        0,
-                        100
+                warlordsPlayer.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.groundShredDamage)
                 );
             }
             new GameRunnable(pveOption.getGame()) {
@@ -185,6 +183,20 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
                 }
             }.runTaskLater(50);
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue groundShredDamage = new Value.RangedValue(920, 1080);
+            private final List<Value> values = List.of(groundShredDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
 
     }

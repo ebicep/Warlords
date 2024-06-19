@@ -13,15 +13,12 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class WitchDeacon extends AbstractMob implements IntermediateMob {
 
@@ -101,16 +98,6 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
 
         public WitchBuff() {
             super("Witch Buff", 0, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override

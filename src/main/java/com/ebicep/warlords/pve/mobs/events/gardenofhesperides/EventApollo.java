@@ -1,9 +1,11 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.ImpalingStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -101,16 +103,28 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
                                     .35f,
                                     event -> {}
                             );
-                            warlordsEntity.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.poisonArrowDamage)
                             );
                         });
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue poisonArrowDamage = new Value.RangedValue(550, 750);
+            private final List<Value> values = List.of(poisonArrowDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 

@@ -15,6 +15,7 @@ import com.ebicep.warlords.menu.debugmenu.DebugMenu;
 import com.ebicep.warlords.menu.debugmenu.DebugMenuPlayerOptions;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -165,7 +166,12 @@ public class DebugCommand extends BaseCommand {
     @CommandCompletion("@warlordsplayers")
     @Description("Heals a player based on the amount or sender if there is no target")
     public void heal(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
-        target.addHealingInstance(target, "God", amount, amount, 0, 100);
+        target.addInstance(InstanceBuilder
+                .healing()
+                .cause("God")
+                .source(target)
+                .value(amount)
+        );
         target.resetRegenTimer();
         sendDebugMessage(issuer, Component.empty()
                                           .append(target.getColoredName())
@@ -176,7 +182,12 @@ public class DebugCommand extends BaseCommand {
     @CommandCompletion("@warlordsplayers")
     @Description("Damages a player based on the amount or sender if there is no target")
     public void damage(CommandIssuer issuer, @Default("1000") @Conditions("limits:min=0,max=100000") Integer amount, @Optional WarlordsPlayer target) {
-        target.addDamageInstance(target, "God", amount, amount, 0, 100);
+        target.addInstance(InstanceBuilder
+                .damage()
+                .cause("God")
+                .source(target)
+                .value(amount)
+        );
         target.resetRegenTimer();
         sendDebugMessage(issuer, Component.empty()
                                           .append(target.getColoredName())

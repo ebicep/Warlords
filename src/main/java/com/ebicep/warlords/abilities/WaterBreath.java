@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -13,6 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -34,7 +36,6 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanReduceCooldowns {
@@ -77,7 +78,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
         Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, 1);
         wp.getWorld().spawnParticle(
                 Particle.HEART,
@@ -107,8 +107,12 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         int previousDebuffsRemoved = debuffsRemoved;
         debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
-        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(healingValues.breathHealing)
+        );
         Location playerEyeLoc = new LocationBuilder(wp.getLocation())
                 .pitch(0)
                 .backward(1);
@@ -127,7 +131,13 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 playersHealed++;
                 debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
                 breathTarget.getSpeed().removeSlownessModifiers();
-                breathTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS));
+                breathTarget.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(wp)
+                        .value(healingValues.breathHealing)
+                        .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                );
                 Overheal.giveOverHeal(wp, breathTarget);
                 if (pveMasterUpgrade || pveMasterUpgrade2) {
                     regenOnHit(wp, breathTarget);
@@ -166,14 +176,12 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healing = hit.getMaxHealth() * 0.02f;
-                        hit.addHealingInstance(
-                                giver,
-                                name,
-                                healing,
-                                healing,
-                                0,
-                                100,
-                                EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                        hit.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(this)
+                                .source(giver)
+                                .value(healing)
+                                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
                         );
                     }
                 })
@@ -269,11 +277,21 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         this.hitbox = hitbox;
     }
 
-    public int getMaxAnimationEffects() {
-        return maxAnimationEffects;
-    }
-
     public void setMaxAnimationEffects(int maxAnimationEffects) {
         this.maxAnimationEffects = maxAnimationEffects;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(409, 551, 25, 175);
+        private final List<Value> values = List.of(breathHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

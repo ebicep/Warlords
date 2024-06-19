@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
@@ -94,7 +95,12 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (Utils.isProjectile(event.getCause())) {
-            attacker.addDamageInstance(self, "Projectile Thorns", 300, 300, -1, 100);
+            attacker.addInstance(InstanceBuilder
+                    .damage()
+                    .cause("Projectile Thorns")
+                    .source(self)
+                    .value(300)
+            );
         }
     }
 

@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -146,13 +147,11 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
             return;
         }
         float healing = warlordsPlayer.getMaxBaseHealth() * .05f;
-        warlordsPlayer.addHealingInstance(
-                warlordsPlayer,
-                getTitleName(),
-                healing,
-                healing,
-                0,
-                100
+        warlordsPlayer.addInstance(InstanceBuilder
+                .healing()
+                .cause(getTitleName())
+                .source(warlordsPlayer)
+                .value(healing)
         );
         if (stacks < 5) {
             stacks++;

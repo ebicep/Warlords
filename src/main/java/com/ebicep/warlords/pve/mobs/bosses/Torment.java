@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
@@ -149,13 +150,11 @@ public class Torment extends AbstractMob implements BossMob {
                                         .entitiesAround(we, 3.2, 3.2, 3.2)
                                         .aliveTeammatesOfExcludingSelf(we)
                                 ) {
-                                    ally.addDamageInstance(
-                                            warlordsNPC,
-                                            "Tormenting Mark",
-                                            1000,
-                                            1000,
-                                            -1,
-                                            100
+                                    ally.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Tormenting Mark")
+                                            .source(warlordsNPC)
+                                            .value(1000)
                                     );
                                 }
                             }

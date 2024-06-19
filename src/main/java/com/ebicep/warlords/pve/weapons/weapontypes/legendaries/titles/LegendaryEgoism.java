@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -83,13 +84,11 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                         })
                 ));
                 float healthRestore = player.getMaxHealth() * (HEALTH_RESTORE + HEALTH_RESTORE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100;
-                player.addHealingInstance(
-                        player,
-                        getTitleName(),
-                        healthRestore,
-                        healthRestore,
-                        0,
-                        100
+                player.addInstance(InstanceBuilder
+                        .healing()
+                        .cause(getTitleName())
+                        .source(player)
+                        .value(healthRestore)
                 );
             }
         });

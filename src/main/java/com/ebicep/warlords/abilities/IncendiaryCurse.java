@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
@@ -114,13 +116,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         for (WarlordsEntity nearEntity : enemies) {
             playersHit++;
 
-            nearEntity.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damageValues.curseDamage)
             );
             if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.setStunTicks(blindDurationInTicks);
@@ -195,5 +195,19 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     @Override
     public FloatModifiable getHitBoxRadius() {
         return hitbox;
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
+        private final List<Value> values = List.of(curseDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

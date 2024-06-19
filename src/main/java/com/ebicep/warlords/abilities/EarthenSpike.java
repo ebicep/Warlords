@@ -3,10 +3,12 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -32,7 +34,6 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
@@ -47,6 +48,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     public int playersSpiked = 0;
     public int carrierSpiked = 0;
 
+    private final DamageValues damageValues = new DamageValues();
     private FloatModifiable radius = new FloatModifiable(10);
     private float speed = 1;
     private double spikeHitbox = 2.5;
@@ -137,7 +139,12 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                                         .entitiesAround(targetLocation, 6, 6, 6)
                                         .aliveEnemiesOf(wp)
                                 ) {
-                                    wave.addDamageInstance(wp, "Earthen Rupture", 548, 695, -1, 100);
+                                    wave.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Earthen Rupture")
+                                            .source(wp)
+                                            .value(damageValues.earthenRuptureDamage)
+                                    );
                                     wave.addSpeedModifier(wp, "Spike Slow", -35, 20);
                                 }
                                 Utils.playGlobalSound(targetLocation, Sound.BLOCK_GRAVEL_BREAK, 2, 0.5f);
@@ -192,28 +199,31 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         if (spikeTarget.hasFlag()) {
             carrierSpiked++;
         }
-        spikeTarget.addDamageInstance(caster, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier)
-                   .ifPresent(finalEvent -> {
-                       if (!pveMasterUpgrade2) {
-                           return;
-                       }
-                       if (!finalEvent.isDead()) {
-                           return;
-                       }
-                       float healing = finalEvent.getValue() * .35f;
-                       caster.addHealingInstance(
-                               caster,
-                               "Earthen Verdancy",
-                               healing,
-                               healing,
-                               finalEvent.isCrit() ? 100 : 0,
-                               100,
-                               EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
-                       );
-                       if (finalEvent.isCrit()) {
-                           caster.addEnergy(caster, "Earthen Verdancy", 10);
-                       }
-                   });
+        spikeTarget.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(caster)
+                .value(damageValues.spikeDamage)
+        ).ifPresent(finalEvent -> {
+            if (!pveMasterUpgrade2) {
+                return;
+            }
+            if (!finalEvent.isDead()) {
+                return;
+            }
+            float healing = finalEvent.getValue() * .35f;
+            caster.addInstance(InstanceBuilder
+                    .healing()
+                    .cause("Earthen Verdancy")
+                    .source(caster)
+                    .value(healing)
+                    .showAsCrit(finalEvent.isCrit())
+                    .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
+            );
+            if (finalEvent.isCrit()) {
+                caster.addEnergy(caster, "Earthen Verdancy", 10);
+            }
+        });
         if (LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {
             spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
         }
@@ -236,14 +246,6 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         this.speed = speed;
     }
 
-    public double getVerticalVelocity() {
-        return verticalVelocity;
-    }
-
-    public void setVerticalVelocity(double verticalVelocity) {
-        this.verticalVelocity = verticalVelocity;
-    }
-
     public double getSpikeHitbox() {
         return spikeHitbox;
     }
@@ -256,5 +258,19 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     public FloatModifiable getHitBoxRadius() {
         return radius;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable spikeDamage = new Value.RangedValueCritable(404, 562, 15, 175);
+        private final Value.RangedValue earthenRuptureDamage = new Value.RangedValue(548, 695);
+        private final List<Value> values = List.of(spikeDamage, earthenRuptureDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 
 }

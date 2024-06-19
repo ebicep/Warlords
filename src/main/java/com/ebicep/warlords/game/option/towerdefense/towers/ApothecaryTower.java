@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgradeInstance;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -94,8 +96,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
     private static class StrikeAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
-        private final int minHeal = 100;
-        private final int maxHeal = 100;
+        private final DamageValues damageValues = new DamageValues();
 
         public StrikeAttack() {
             super("Strike Attack", 100, 100, 3, 0);
@@ -106,38 +107,32 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower tower = warlordsTower.getTower();
                 tower.getEnemyMobs(range, 1).forEach(warlordsNPC -> {
-                    warlordsNPC.addDamageInstance(
-                            warlordsTower,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            InstanceFlags.TD_MAGIC
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(damageValues.strikeDamage)
+                            .flags(InstanceFlags.TD_MAGIC)
                     );
                     PlayerFilter.entitiesAround(warlordsNPC, 3, 3, 3)
                                 .isAlive()
                                 .excluding(warlordsNPC)
                                 .forEach(warlordsEntity -> {
                                     if (warlordsEntity.isEnemy(warlordsTower)) {
-                                        warlordsEntity.addDamageInstance(
-                                                warlordsTower,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier,
-                                                InstanceFlags.TD_MAGIC
+                                        warlordsEntity.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .source(warlordsTower)
+                                                .value(damageValues.strikeDamage)
+                                                .flags(InstanceFlags.TD_MAGIC)
                                         );
                                     } else if (pveMasterUpgrade) {
-                                        warlordsNPC.addDamageInstance(
-                                                warlordsTower,
-                                                name,
-                                                minHeal,
-                                                maxHeal,
-                                                critChance,
-                                                critMultiplier,
-                                                InstanceFlags.TD_MAGIC
+                                        warlordsEntity.addInstance(InstanceBuilder
+                                                .healing()
+                                                .ability(this)
+                                                .source(warlordsTower)
+                                                .value(healingValues.strikeHeal)
+                                                .flags(InstanceFlags.TD_MAGIC)
                                         );
                                     }
                                 });
@@ -149,6 +144,32 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         @Override
         public FloatModifiable getHitBoxRadius() {
             return range;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue strikeDamage = new Value.SetValue(100);
+            private final List<Value> values = List.of(strikeDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
+
+        private final HealingValues healingValues = new HealingValues();
+
+        public static class HealingValues implements Value.ValueHolder {
+
+            private final Value.SetValue strikeHeal = new Value.SetValue(100);
+            private final List<Value> values = List.of(strikeHeal);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
 
     }
@@ -184,14 +205,12 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
                                             POSION_TICKS,
                                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                                 if (ticksElapsed % 20 == 0) {
-                                                    warlordsNPC.addDamageInstance(
-                                                            warlordsTower,
-                                                            name,
-                                                            minDamageHeal,
-                                                            maxDamageHeal,
-                                                            critChance,
-                                                            critMultiplier,
-                                                            InstanceFlags.TD_MAGIC
+                                                    warlordsNPC.addInstance(InstanceBuilder
+                                                            .damage()
+                                                            .ability(this)
+                                                            .source(warlordsTower)
+                                                            .value(damageValues.poisonDamage)
+                                                            .flags(InstanceFlags.TD_MAGIC)
                                                     );
                                                 }
                                             })
@@ -208,6 +227,19 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue poisonDamage = new Value.SetValue(50);
+            private final List<Value> values = List.of(poisonDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
 }

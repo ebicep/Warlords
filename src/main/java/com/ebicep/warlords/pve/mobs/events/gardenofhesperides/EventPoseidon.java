@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
@@ -165,13 +166,11 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         if (npcMob instanceof EventHades) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
                             float healing = warlordsNPC.getCurrentHealth() * 0.25f;
-                            warlordsNPC.addHealingInstance(
-                                    npc,
-                                    "Soul",
-                                    healing,
-                                    healing,
-                                    0,
-                                    100
+                            warlordsNPC.addInstance(InstanceBuilder
+                                    .healing()
+                                    .cause("Soul")
+                                    .source(warlordsNPC)
+                                    .value(healing)
                             );
                         } else if (npcMob instanceof EventZeus) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 2, .5f);

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -31,6 +33,7 @@ import org.bukkit.*;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Illumina extends AbstractMob implements BossMob {
@@ -267,13 +270,11 @@ public class Illumina extends AbstractMob implements BossMob {
                                 2
                         );
 
-                        we.addDamageInstance(
-                                warlordsNPC,
-                                "Vampiric Leash",
-                                600,
-                                600,
-                                -1,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Vampiric Leash")
+                                .source(warlordsNPC)
+                                .value(600)
                         );
                     }
                 }
@@ -296,22 +297,17 @@ public class Illumina extends AbstractMob implements BossMob {
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
                         EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
-                        we.addDamageInstance(
-                                warlordsNPC,
-                                "Death Ray",
-                                we.getMaxHealth() * 0.9f,
-                                we.getMaxHealth() * 0.9f,
-                                -1,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Death Ray")
+                                .source(warlordsNPC)
+                                .value(we.getMaxHealth() * 0.9f)
                         );
-
-                        warlordsNPC.addHealingInstance(
-                                warlordsNPC,
-                                "Death Ray Healing",
-                                we.getMaxHealth() * 2,
-                                we.getMaxHealth() * 2,
-                                -1,
-                                100
+                        warlordsNPC.addInstance(InstanceBuilder
+                                .healing()
+                                .cause("Death Ray Healing")
+                                .source(warlordsNPC)
+                                .value(we.getMaxHealth() * 2)
                         );
                     }
 
@@ -346,16 +342,28 @@ public class Illumina extends AbstractMob implements BossMob {
                     .aliveEnemiesOf(wp)
             ) {
                 we.addSpeedModifier(wp, "Bramble Slowness", -99, 30);
-                we.addDamageInstance(
-                        wp,
-                        "Bramble",
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.brambleDamage)
                 );
             }
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue brambleDamage = new Value.RangedValue(224, 377);
+            private final List<Value> values = List.of(brambleDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 

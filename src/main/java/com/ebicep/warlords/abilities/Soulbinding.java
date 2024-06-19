@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -394,5 +395,32 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         public void setHitWithSoul(boolean hitWithSoul) {
             this.hitWithSoul = hitWithSoul;
         }
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue allyHealing = new Value.SetValue(300);
+        private final Value.SetValue selfHealing = new Value.SetValue(400);
+        private final List<Value> values = List.of(allyHealing, selfHealing);
+
+        public Value.SetValue getAllyHealing() {
+            return allyHealing;
+        }
+
+        public Value.SetValue getSelfHealing() {
+            return selfHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

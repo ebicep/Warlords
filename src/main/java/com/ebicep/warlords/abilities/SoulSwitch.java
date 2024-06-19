@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
@@ -157,13 +159,11 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                         .findFirst()
                                         .orElse(null);
                 if (pveOption != null) {
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healingValues.switchHealing)
                     );
                     wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
                     pveOption.despawnMob(npc.getMob());
@@ -205,7 +205,12 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                 if (event.getCause().equals("Judgement Strike")) {
                                     wp.addEnergy(wp, "Tricky Switch", 10);
                                     float heal = currentDamageValue * .1f;
-                                    wp.addHealingInstance(wp, "Tricky Switch", heal, heal, 0, 100);
+                                    wp.addInstance(InstanceBuilder
+                                            .healing()
+                                            .cause("Tricky Switch")
+                                            .source(wp)
+                                            .value(heal)
+                                    );
                                 }
                             }
                         });
@@ -282,5 +287,19 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
     public void setInvisTicks(int invisTicks) {
         this.invisTicks = invisTicks;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable switchHealing = new Value.RangedValueCritable(300, 500, 15, 175);
+        private final List<Value> values = List.of(switchHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

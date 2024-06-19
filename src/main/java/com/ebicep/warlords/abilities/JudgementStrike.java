@@ -1,8 +1,8 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;
@@ -17,13 +17,13 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JudgementStrike extends AbstractStrike {
+public class JudgementStrike extends AbstractStrike implements Damages<JudgementStrike.DamageValues>, Heals<JudgementStrike.HealingValues> {
 
+    private final DamageValues damageValues = new DamageValues();
     private int attacksDone = 0;
     private int speedOnCrit = 25; // %
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
-    private float strikeHeal = 0;
 
     public JudgementStrike() {
         super("Judgement Strike", 326, 441, 0, 70, 20, 185);
@@ -72,39 +72,25 @@ public class JudgementStrike extends AbstractStrike {
                 critChance = 100;
             }
             float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
-            nearPlayer.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal.getCalculatedValue() + extraDamage,
-                    maxDamageHeal.getCalculatedValue() + extraDamage,
-                    critChance,
-                    critMultiplier
+            nearPlayer.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.strikeDamage.getMinValue() + extraDamage)
+                    .max(damageValues.strikeDamage.getMaxValue() + extraDamage)
+                    .critChance(critChance)
+                    .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
             ).ifPresent(finalEvent -> {
                 if (finalEvent.isCrit()) {
                     wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
                 }
-//                if (pveMasterUpgrade) {
-//                    if (nearPlayer instanceof WarlordsNPC warlordsNPC &&
-//                            finalEvent.getFinalHealth() <= (nearPlayer.getMaxHealth() * .3) &&
-//                            !(warlordsNPC.getMob() instanceof Unexecutable)
-//                    ) {
-//                        nearPlayer.addDamageInstance(
-//                                wp,
-//                                "Execute",
-//                                nearPlayer.getCurrentHealth() + 1,
-//                                nearPlayer.getCurrentHealth() + 1,
-//                                0,
-//                                100,
-//                                EnumSet.of(InstanceFlags.IGNORE_SELF_RES)
-//                        ).ifPresent(finalEvent2 -> {
-//                            if (strikeHeal != 0 && finalEvent2.isDead()) {
-//                                wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
-//                            }
-//                        });
-//                    }
-//                }
-                if (strikeHeal != 0 && finalEvent.isDead()) {
-                    wp.addHealingInstance(wp, name, strikeHeal, strikeHeal, 0, 100);
+                if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healingValues.strikeHealing)
+                    );
                 }
             });
         }
@@ -112,35 +98,43 @@ public class JudgementStrike extends AbstractStrike {
         return true;
     }
 
-    public int getSpeedOnCrit() {
-        return speedOnCrit;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
-    public void setSpeedOnCrit(int speedOnCrit) {
-        this.speedOnCrit = speedOnCrit;
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
-    public int getStrikeCritInterval() {
-        return strikeCritInterval;
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
+        private final List<Value> values = List.of(strikeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
-    public void setStrikeCritInterval(int strikeCritInterval) {
-        this.strikeCritInterval = strikeCritInterval;
-    }
+    private final HealingValues healingValues = new HealingValues();
 
-    public int getSpeedOnCritDuration() {
-        return speedOnCritDuration;
-    }
+    public static class HealingValues implements Value.ValueHolder {
 
-    public void setSpeedOnCritDuration(int speedOnCritDuration) {
-        this.speedOnCritDuration = speedOnCritDuration;
-    }
+        private final Value.SetValue strikeHealing = new Value.SetValue(0);
+        private final List<Value> values = List.of(strikeHealing);
 
-    public float getStrikeHeal() {
-        return strikeHeal;
-    }
+        public Value.SetValue getStrikeHealing() {
+            return strikeHealing;
+        }
 
-    public void setStrikeHeal(float strikeHeal) {
-        this.strikeHeal = strikeHeal;
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

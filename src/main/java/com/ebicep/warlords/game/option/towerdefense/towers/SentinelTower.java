@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.Laser;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -93,14 +95,12 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 1).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, GuardianBeam.BEAM_ITEM, 3);
-                    target.addDamageInstance(
-                            warlordsTower,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            InstanceFlags.TD_PHYSICAL
+                    target.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(damageValues.hexDamage)
+                            .flags(InstanceFlags.TD_PHYSICAL)
                     );
                 });
             }
@@ -112,6 +112,19 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue hexDamage = new Value.SetValue(100);
+            private final List<Value> values = List.of(hexDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
     private static class BeamAttack extends AbstractAbility implements TDAbility, HitBox {
@@ -141,14 +154,12 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
                 if (target == null) {
                     return true;
                 }
-                target.addDamageInstance(
-                        warlordsTower,
-                        name,
-                        currentTargetDamage,
-                        currentTargetDamage,
-                        critChance,
-                        critMultiplier,
-                        InstanceFlags.TD_MAGIC
+                target.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(warlordsTower)
+                        .value(damageValues.beamDamage)
+                        .flags(InstanceFlags.TD_MAGIC)
                 );
             }
             return true;
@@ -194,6 +205,19 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue beamDamage = new Value.SetValue(50);
+            private final List<Value> values = List.of(beamDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
 

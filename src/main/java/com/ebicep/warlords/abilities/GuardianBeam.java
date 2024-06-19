@@ -3,12 +3,14 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.GuardianBeamBranch;
@@ -81,7 +83,12 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         if (!projectile.getHit().contains(hit)) {
             boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
             if (hit.isEnemy(wp)) {
-                hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                hit.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.beamDamage)
+                );
                 if (pveMasterUpgrade2) {
                     hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
                 }
@@ -232,5 +239,19 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         public float getShieldPercent() {
             return shieldPercent;
         }
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(313, 423, 20, 175);
+        private final List<Value> values = List.of(beamDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
@@ -33,7 +35,10 @@ import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 {
 
@@ -119,20 +124,25 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    target.addDamageInstance(warlordsTower, "Flame", minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    target.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(FlameAttack.this)
+                            .source(warlordsTower)
+                            .value(damageValues.flameDamage)
+                    );
                     if (pveMasterUpgrade) {
                         PlayerFilter.entitiesAround(target, 2, 2, 2)
                                     .aliveEnemiesOf(warlordsTower)
                                     .excluding(target)
-                                    .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(
-                                            warlordsTower,
-                                            name,
-                                            minDamageHeal,
-                                            maxDamageHeal,
-                                            critChance,
-                                            critMultiplier,
-                                            InstanceFlags.TD_MAGIC
-                                    ));
+                                    .forEach(warlordsEntity -> {
+                                        warlordsEntity.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(FlameAttack.this)
+                                                .source(warlordsTower)
+                                                .value(damageValues.flameDamage)
+                                                .flags(InstanceFlags.TD_MAGIC)
+                                        );
+                                    });
                     } else if (pveMasterUpgrade2) {
                         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Pyromancer Tower Burn",
@@ -148,14 +158,12 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = target.getMaxHealth() * 0.005f;
                                         healthDamage = DamageCheck.clamp(healthDamage);
-                                        target.addDamageInstance(
-                                                warlordsTower,
-                                                "Burn",
-                                                healthDamage,
-                                                healthDamage,
-                                                0,
-                                                100,
-                                                EnumSet.of(InstanceFlags.RECURSIVE)
+                                        target.addInstance(InstanceBuilder
+                                                .damage()
+                                                .cause("Burn")
+                                                .source(warlordsTower)
+                                                .value(healthDamage)
+                                                .flags(InstanceFlags.RECURSIVE)
                                         );
                                     }
                                 })
@@ -227,5 +235,18 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue flameDamage = new Value.SetValue(500);
+            private final List<Value> values = List.of(flameDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 }

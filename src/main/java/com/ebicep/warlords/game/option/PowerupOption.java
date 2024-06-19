@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -423,7 +424,12 @@ public class PowerupOption implements Option {
         SELF_DAMAGE("SELF DAMAGE", NamedTextColor.DARK_RED, 0, Material.RED_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.addDamageInstance(we, "Self Damage Powerup", 5000, 5000, 0, 100);
+                we.addInstance(InstanceBuilder
+                        .melee()
+                        .cause("Self Damage Powerup")
+                        .source(we)
+                        .value(5000)
+                );
             }
 
             @Override
@@ -435,7 +441,12 @@ public class PowerupOption implements Option {
         SELF_HEAL("SELF HEAL", NamedTextColor.DARK_GREEN, 0, Material.GREEN_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                we.addHealingInstance(we, "Self Heal Powerup", 5000, 5000, 0, 100);
+                we.addInstance(InstanceBuilder
+                        .healing()
+                        .cause("Self Heal Powerup")
+                        .source(we)
+                        .value(5000)
+                );
             }
 
             @Override

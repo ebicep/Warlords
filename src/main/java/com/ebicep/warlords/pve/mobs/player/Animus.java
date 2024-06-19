@@ -97,7 +97,7 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
                     getCooldown().setBaseValue(2);
                     setMinDamageHeal(new FloatModifiable(judgementStrike.getMinDamageHeal()));
                     setMaxDamageHeal(new FloatModifiable(judgementStrike.getMaxDamageHeal()));
-                    setStrikeHeal(judgementStrike.getStrikeHeal());
+                    getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
                     setInPve(judgementStrike.isInPve());
                     setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
                     setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());

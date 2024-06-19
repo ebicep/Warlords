@@ -12,21 +12,19 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.List;
 
 public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     public SkeletalSorcerer(Location spawnLocation) {
@@ -151,16 +149,6 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
         }
 
         @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
 
@@ -184,13 +172,11 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                             if (ticksLeft % 20 == 0) {
                                 float healthDamage = enemy.getMaxHealth() * 0.05f;
                                 healthDamage = DamageCheck.clamp(healthDamage);
-                                enemy.addDamageInstance(
-                                        wp,
-                                        name,
-                                        healthDamage,
-                                        healthDamage,
-                                        critChance,
-                                        critMultiplier
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(healthDamage)
                                 );
                             }
                         })

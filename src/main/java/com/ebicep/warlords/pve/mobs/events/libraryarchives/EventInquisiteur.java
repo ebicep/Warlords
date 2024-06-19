@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.irongolem.GolemApprentice;
@@ -145,7 +146,12 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                 }
                 Bukkit.getServer().getPluginManager().callEvent(new EventInquisteurKillingBlowEvent(warlordsNPC));
                 if (damageResistance.get() < 10) {
-                    warlordsNPC.addHealingInstance(warlordsNPC, "Killing Blow", 500, 500, 0, 0);
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Killing Blow")
+                            .source(warlordsNPC)
+                            .value(500)
+                    );
                 }
                 if (damageResistance.get() >= 30) {
                     return;

@@ -9,15 +9,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class ZombieKnight extends AbstractMob implements AdvancedMob {
 
@@ -85,16 +82,6 @@ public class ZombieKnight extends AbstractMob implements AdvancedMob {
 
         public ReduceWeaponCooldowns() {
             super("Reduce Weapon", 6, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override

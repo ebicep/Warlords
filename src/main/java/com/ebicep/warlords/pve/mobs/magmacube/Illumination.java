@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -85,7 +86,13 @@ public class Illumination extends AbstractMob implements AdvancedMob {
                     .entitiesAround(we, 5, 5, 5)
                     .aliveEnemiesOf(we)
             ) {
-                enemy.addDamageInstance(we, "Blight", 900, 1200, 0, 100);
+                enemy.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Blight")
+                        .source(we)
+                        .min(900)
+                        .max(1200)
+                );
             }
         }
 

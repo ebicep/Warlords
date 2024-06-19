@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.RemedicChainsBranch;
@@ -132,22 +134,18 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     if (wp.isDead()) {
                         return;
                     }
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healingValues.chainHealing)
                     );
                     for (WarlordsEntity linkedEntity : linkedCooldown.getLinkedEntities()) {
-                        linkedEntity.addHealingInstance(
-                                wp,
-                                name,
-                                minDamageHeal,
-                                maxDamageHeal,
-                                critChance,
-                                critMultiplier
+                        linkedEntity.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(this)
+                                .source(wp)
+                                .value(healingValues.chainHealing)
                         );
                     }
                 },
@@ -186,13 +184,12 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                             numberOfBrokenLinks++;
 
                             float totalHealingMultiplier = ((healingMultiplier / 100f) * (ticksElapsed / 20f));
-                            linked.addHealingInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal.getCalculatedValue() * totalHealingMultiplier,
-                                    maxDamageHeal.getCalculatedValue() * totalHealingMultiplier,
-                                    0,
-                                    100
+                            wp.addInstance(InstanceBuilder
+                                    .healing()
+                                    .ability(this)
+                                    .source(wp)
+                                    .min(healingValues.chainHealing.getMinValue() * totalHealingMultiplier)
+                                    .max(healingValues.chainHealing.getMaxValue() * totalHealingMultiplier)
                             );
                         }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
@@ -277,22 +274,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.linkBreakRadius = linkBreakRadius;
     }
 
-    public int getCastRange() {
-        return castRange;
-    }
-
-    public void setCastRange(int castRange) {
-        this.castRange = castRange;
-    }
-
-    public int getAlliesAffected() {
-        return alliesAffected;
-    }
-
-    public void setAlliesAffected(int alliesAffected) {
-        this.alliesAffected = alliesAffected;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -303,21 +284,22 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
-    public float getHealingMultiplier() {
-        return healingMultiplier;
-    }
-
-    public void setHealingMultiplier(float healingMultiplier) {
-        this.healingMultiplier = healingMultiplier;
-    }
-
-    public float getAllyDamageIncrease() {
-        return allyDamageIncrease;
-    }
-
     public void setAllyDamageIncrease(float allyDamageIncrease) {
         this.allyDamageIncrease = allyDamageIncrease;
     }
 
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
+        private final List<Value> values = List.of(chainHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

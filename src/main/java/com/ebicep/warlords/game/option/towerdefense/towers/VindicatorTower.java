@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgra
 import com.ebicep.warlords.game.option.towerdefense.mobs.TowerDefenseMob;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -106,14 +108,12 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, mobsHit).forEach(warlordsNPC -> {
                     TowerDefenseUtils.playSwordStrikeAnimation(warlordsTower, warlordsNPC, SWORD_ITEM);
-                    warlordsNPC.addDamageInstance(
-                            warlordsTower,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            InstanceFlags.TD_PHYSICAL
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(damageValues.poisonDamage)
+                            .flags(InstanceFlags.TD_PHYSICAL)
                     );
                     if (warlordsNPC.getMob() instanceof TowerDefenseMob towerDefenseMob) {
                         towerDefenseMob.getMagicResistance().addAdditiveModifier(name, -10);
@@ -135,6 +135,19 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
             this.mobsHit = mobsHit;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue poisonDamage = new Value.SetValue(150);
+            private final List<Value> values = List.of(poisonDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
 }

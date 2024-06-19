@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.AreaEffect;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.SoothingElixirBranch;
@@ -140,13 +142,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                             .toList();
                     for (WarlordsEntity nearEntity : teammatesHit) {
                         playersHealed++;
-                        nearEntity.addHealingInstance(
-                                wp,
-                                name,
-                                minDamageHeal,
-                                maxDamageHeal,
-                                critChance,
-                                critMultiplier
+                        nearEntity.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(this)
+                                .source(wp)
+                                .value(healingValues.elixirHealing)
                         );
 
                         if (pveMasterUpgrade2) {
@@ -172,13 +172,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         public void run() {
                             PlayerFilter.entitiesAround(newLoc, radius, radius, radius)
                                         .aliveTeammatesOf(wp)
-                                        .forEach((ally) -> ally.addHealingInstance(
-                                                wp,
-                                                name,
-                                                puddleMinHealing,
-                                                puddleMaxHealing,
-                                                critChance,
-                                                critMultiplier
+                                        .forEach(ally -> ally.addInstance(InstanceBuilder
+                                                .healing()
+                                                .ability(SoothingElixir.this)
+                                                .source(wp)
+                                                .value(healingValues.elixirDOTHealing)
                                         ));
 
                             timeLeft--;
@@ -197,13 +195,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                             .toList();
                     for (WarlordsEntity nearEntity : enemiesHit) {
                         Utils.playGlobalSound(nearEntity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 0.5f);
-                        nearEntity.addDamageInstance(
-                                wp,
-                                name,
-                                puddleMinDamage,
-                                puddleMaxDamage,
-                                critChance,
-                                critMultiplier
+                        nearEntity.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.elixirDamage)
                         );
 
                         if (pveMasterUpgrade) {
@@ -267,4 +263,34 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     public FloatModifiable getHitBoxRadius() {
         return puddleRadius;
     }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable elixirDamage = new Value.RangedValueCritable(235, 342, 25, 175);
+        private final List<Value> values = List.of(elixirDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable elixirHealing = new Value.RangedValueCritable(551, 648, 25, 175);
+        private final Value.RangedValueCritable elixirDOTHealing = new Value.RangedValueCritable(158, 204, 25, 175);
+        private final List<Value> values = List.of(elixirHealing, elixirHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

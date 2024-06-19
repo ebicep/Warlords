@@ -2,7 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
@@ -45,6 +46,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     protected FloatModifiable damageReduction = new FloatModifiable(8);
 
+    private final DamageValues damageValues = new DamageValues();
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 1;
     private int maxFullDistance = 40;
@@ -235,10 +237,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                 return false;
             }
             double distanceSquared = startingLocation.distanceSquared(currentLocation);
-            double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+            float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                               (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
             if (toReduceBy < .2) {
-                toReduceBy = .2;
+                toReduceBy = .2f;
             }
             hitEnemy(hit, wp, toReduceBy);
             if (pveMasterUpgrade2) {
@@ -300,14 +302,14 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
     }
 
-    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, double toReduceBy) {
-        hit.addDamageInstance(
-                wp,
-                name,
-                (float) (minDamageHeal.getCalculatedValue() * toReduceBy),
-                (float) (maxDamageHeal.getCalculatedValue() * toReduceBy),
-                critChance,
-                critMultiplier
+    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy) {
+        hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.hexDamage.getMinValue() * toReduceBy)
+                .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
+                .crit(damageValues.hexDamage)
         );
         if (pveMasterUpgrade2) {
             Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class)
@@ -388,27 +390,16 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.maxAlliesHit = maxAlliesHit;
     }
 
-    static class FortifyingHexShield extends Shield {
+    public static class DamageValues implements Value.ValueHolder {
 
-        private int maxStacks;
-
-        public FortifyingHexShield(String name, float hexShieldAmount, int maxStacks) {
-            super(name, hexShieldAmount);
-            this.maxStacks = maxStacks;
-        }
+        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(287, 387, 20, 175);
+        private final List<Value> values = List.of(hexDamage);
 
         @Override
-        public void addShieldHealth(float damage) {
-            if (-damage < getShieldHealth()) {
-                setShieldHealth(0);
-            } else {
-                setShieldHealth(getShieldHealth() + damage);
-            }
+        public List<Value> getValues() {
+            return values;
         }
 
-        public int getMaxStacks() {
-            return maxStacks;
-        }
     }
 
     static class WeakeningHex {

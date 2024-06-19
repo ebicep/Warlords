@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.PrismGuardBranch;
@@ -45,7 +47,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     private final int damageReduction = 3;
     private int bubbleRadius = 4;
     private int tickDuration = 100;
-    private int bubbleHealing = 200;
+    private int bubbleHealing = 200; // TODO REMOVE
     private float bubbleMissingHealing = 1.5f;
     private int projectileDamageReduction = 60;
 
@@ -139,19 +141,19 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(2)
                     ).playEffects();
 
+                    float baseHealing = healingValues.bubbleBaseHealing.getValue();
                     for (WarlordsEntity entity : PlayerFilter
                             .entitiesAround(wp, bubbleRadius + 1, bubbleRadius + 1, bubbleRadius + 1)
                             .aliveTeammatesOf(wp)
                     ) {
-                        float healingValue = bubbleHealing + (entity.getMaxHealth() - entity.getCurrentHealth()) * (hits.get() * (convertToPercent(bubbleMissingHealing)));
-                        entity.addHealingInstance(
-                                wp,
-                                name,
-                                healingValue,
-                                healingValue,
-                                0,
-                                100
+                        float missingHealthHealing = (entity.getMaxHealth() - entity.getCurrentHealth()) * (hits.get() * healingValues.bubbleMissingHealthHealing.getMultiplicativePercent());
+                        entity.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(this)
+                                .source(wp)
+                                .value(baseHealing + missingHealthHealing)
                         );
+
 
                         if (hits.get() > 10) {
                             hits.set(10);
@@ -368,5 +370,22 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         this.bubbleMissingHealing = bubbleMissingHealing;
     }
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
 
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue bubbleBaseHealing = new Value.SetValue(200);
+        private final Value.SetValue bubbleMissingHealthHealing = new Value.SetValue(1.5f);
+        private final List<Value> values = List.of(bubbleMissingHealthHealing, bubbleMissingHealthHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 }

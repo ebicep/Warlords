@@ -2,18 +2,18 @@ package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -88,33 +88,34 @@ public class PigParticle extends AbstractMob implements ChampionMob {
         }
 
         @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 6, 6, 6)
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
-                we.addHealingInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(wp)
+                        .value(healingValues.voidHealing)
                 );
             }
             return true;
         }
+
+        private final HealingValues healingValues = new HealingValues();
+
+        public static class HealingValues implements Value.ValueHolder {
+
+            private final Value.SetValue voidHealing = new Value.SetValue(200);
+            private final List<Value> values = List.of(voidHealing);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
+
     }
 }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.Color;
@@ -15,7 +16,6 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -125,14 +125,13 @@ public class ThunderCloudAbility extends AbstractPveAbility {
                                 }
                                 float minDamage = teammate ? 100 : 800;
                                 float maxDamage = teammate ? 200 : 1000;
-                                entity.addDamageInstance(
-                                        warlordsEntity,
-                                        "Thunder Strike",
-                                        minDamage,
-                                        maxDamage,
-                                        0,
-                                        100,
-                                        size > 8 ? EnumSet.of(InstanceFlags.PIERCE) : EnumSet.noneOf(InstanceFlags.class)
+                                entity.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Thunder Strike")
+                                        .source(warlordsEntity)
+                                        .min(minDamage)
+                                        .max(maxDamage)
+                                        .flag(InstanceFlags.PIERCE, size > 8)
                                 );
                             });
             }

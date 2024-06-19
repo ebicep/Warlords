@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgra
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -87,7 +89,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public BoltAttack() {
-            super("Strike Attack", 250, 250, 1, 0);
+            super("Bolt Attack", 250, 250, 1, 0);
         }
 
         @Override
@@ -105,13 +107,11 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
                             15
                     );
                     playWaterEffect(wp, warlordsNPC);
-                    warlordsNPC.addDamageInstance(
-                            warlordsTower,
-                            "Water",
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(damageValues.boltDamage)
                     );
                 });
 //            getAllyMob(rangeValue, 1).forEach(warlordsNPC -> {
@@ -185,6 +185,19 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue boltDamage = new Value.SetValue(250);
+            private final List<Value> values = List.of(boltDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
 }

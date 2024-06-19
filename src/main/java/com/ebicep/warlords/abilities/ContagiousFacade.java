@@ -11,6 +11,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
@@ -142,7 +143,12 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                         PlayerFilter.entitiesAround(wp, 4, 4, 4)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
-                                        enemy.addDamageInstance(wp, name, shieldHealth, shieldHealth, 0, 100);
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .source(wp)
+                                                .value(shieldHealth)
+                                        );
                                         enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
                                     });
                     }

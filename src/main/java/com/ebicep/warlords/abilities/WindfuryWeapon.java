@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -146,13 +147,15 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                         Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                         float healthDamage = victim.getMaxHealth() * 0.01f;
                         healthDamage = DamageCheck.clamp(healthDamage);
-                        victim.addDamageInstance(
-                                attacker,
-                                name,
-                                minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
-                                maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
-                                critChance,
-                                critMultiplier
+
+                        victim.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(WindfuryWeapon.this)
+                                .source(attacker)
+                                .min(minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0))
+                                .max(maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0))
+                                .critChance(25)
+                                .critMultiplier(200)
                         );
 
                         if (pveMasterUpgrade) {

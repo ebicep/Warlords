@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -128,14 +129,12 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         abilitiesHit.add(event.getUUID());
                     }
                 }
-                attacker.addHealingInstance(
-                        attacker,
-                        name,
-                        healAmount,
-                        healAmount,
-                        0,
-                        100,
-                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
+                attacker.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(BloodLust.this)
+                        .source(attacker)
+                        .value(healAmount)
+                        .flags(InstanceFlags.NO_HIT_SOUND)
                 );
             }
 

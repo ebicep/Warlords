@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -8,16 +9,15 @@ import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -136,13 +136,11 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
 
                         if (ticksLeft % 20 == 0) {
                             float healthDamage = enemy.getMaxHealth() * 0.04f;
-                            enemy.addDamageInstance(
-                                    warlordsNPC,
-                                    "Shimmer",
-                                    healthDamage,
-                                    healthDamage,
-                                    0,
-                                    100
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Shimmer")
+                                    .source(warlordsNPC)
+                                    .value(healthDamage)
                             );
                         }
                     })
@@ -168,16 +166,6 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
         }
 
         @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
 
@@ -185,10 +173,30 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                     .entitiesAround(wp, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(wp)
             ) {
-                enemy.addDamageInstance(wp, "Shimmer", 400, 400, 0, 100);
+                enemy.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.shimmerDamage)
+                );
             }
             return true;
         }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue shimmerDamage = new Value.SetValue(400);
+            private final List<Value> values = List.of(shimmerDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
+
     }
 
 }

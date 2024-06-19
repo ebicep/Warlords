@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -36,7 +37,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -150,14 +150,15 @@ public class Physira extends AbstractMob implements BossMob {
                                 .playingGame(warlordsNPC.getGame())
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
-                            we.addDamageInstance(
-                                    warlordsNPC,
-                                    "Valerian Death",
-                                    700 * 100,
-                                    1300 * 100,
-                                    100,
-                                    300,
-                                    EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                            we.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Valerian Death")
+                                    .source(warlordsNPC)
+                                    .min(700 * 100)
+                                    .max(1300 * 100)
+                                    .critChance(100)
+                                    .critMultiplier(300)
+                                    .flags(InstanceFlags.TRUE_DAMAGE)
                             );
                             EffectUtils.strikeLightning(we.getLocation(), false);
                             EffectUtils.playParticleLinkAnimation(
@@ -286,14 +287,12 @@ public class Physira extends AbstractMob implements BossMob {
                                 .playingGame(warlordsNPC.getGame())
                                 .aliveEnemiesOf(warlordsNPC)
                         ) {
-                            we.addDamageInstance(
-                                    warlordsNPC,
-                                    "Divine Punishment",
-                                    1000,
-                                    1000,
-                                    -1,
-                                    100,
-                                    EnumSet.of(InstanceFlags.NO_MESSAGE)
+                            we.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Divine Punishment")
+                                    .source(warlordsNPC)
+                                    .value(1000)
+                                    .flags(InstanceFlags.NO_MESSAGE)
                             );
                             EffectUtils.playParticleLinkAnimation(
                                     we.getLocation(),

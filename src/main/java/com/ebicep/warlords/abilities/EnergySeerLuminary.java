@@ -1,12 +1,14 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.EnergySeerBranchLuminary;
@@ -80,6 +82,16 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
         }
     }
 
+    @Override
+    protected void heal(WarlordsEntity wp, float energyUsed) {
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(energyUsed * healingValues.seerHealingMultiplier.getValue())
+        );
+    }
+
     public int getTickDuration() {
         return tickDuration;
     }
@@ -107,5 +119,23 @@ public class EnergySeerLuminary extends AbstractEnergySeer<EnergySeerLuminary> i
 
     public void setHealingIncrease(int healingIncrease) {
         this.healingIncrease = healingIncrease;
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue seerHealingMultiplier = new Value.SetValue(4);
+        private final List<Value> values = List.of(seerHealingMultiplier);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

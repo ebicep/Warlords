@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.HeartToHeartBranch;
@@ -202,34 +204,26 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                     ) {
                         playersHit.add(we);
                         we.setStunTicks(GameRunnable.SECOND);
-                        we.addDamageInstance(
-                                wp,
-                                name,
-                                1635,
-                                2096,
-                                0,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Heart of Hearts")
+                                .source(wp)
+                                .value(damageValues.heartOfHeartsDamage)
                         );
                     }
                 }
 
                 if (timer >= 8) {
                     wp.setVelocity(name, playerLoc.getDirection().multiply(0.4).setY(0.2), true);
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            healthRestore,
-                            healthRestore,
-                            0,
-                            100
+                    wp.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(HeartToHeart.this)
+                            .source(wp)
+                            .value(healingValues.heartToHeartHealing)
                     );
                 }
             }
         }.runTaskTimer(0, 1);
-    }
-
-    public void setVindDuration(int vindDuration) {
-        this.vindDuration = vindDuration;
     }
 
     public float getHealthRestore() {
@@ -240,5 +234,31 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         this.healthRestore = healthRestore;
     }
 
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValue heartOfHeartsDamage = new Value.RangedValue(1635, 2096);
+        private final List<Value> values = List.of(heartOfHeartsDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue heartToHeartHealing = new Value.SetValue(600);
+        private final List<Value> values = List.of(heartToHeartHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.EnergySeerBranchSentinel;
@@ -19,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Objects;
 
 public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
@@ -95,6 +98,16 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
     }
 
     @Override
+    protected void heal(WarlordsEntity wp, float energyUsed) {
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(energyUsed * healingValues.seerHealingMultiplier.getValue())
+        );
+    }
+
+    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new EnergySeerBranchSentinel(abilityTree, this);
     }
@@ -105,5 +118,23 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> {
 
     public void setDamageResistance(int damageResistance) {
         this.damageResistance = damageResistance;
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue seerHealingMultiplier = new Value.SetValue(4);
+        private final List<Value> values = List.of(seerHealingMultiplier);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -28,6 +30,7 @@ import org.bukkit.*;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Void extends AbstractMob implements BossMob {
@@ -270,22 +273,17 @@ public class Void extends AbstractMob implements BossMob {
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
-                    flameTarget.addDamageInstance(
-                            warlordsNPC,
-                            "Augmented Immolation",
-                            damage,
-                            damage,
-                            0,
-                            100
+                    flameTarget.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Augmented Immolation")
+                            .source(warlordsNPC)
+                            .value(damage)
                     );
-
-                    warlordsNPC.addHealingInstance(
-                            warlordsNPC,
-                            "Augmented Immolation",
-                            damage * 0.5f,
-                            damage * 0.5f,
-                            0,
-                            100
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Augmented Immolation")
+                            .source(warlordsNPC)
+                            .value(damage * 0.5f)
                     );
                 }
 
@@ -356,13 +354,11 @@ public class Void extends AbstractMob implements BossMob {
                                 2
                         );
 
-                        we.addDamageInstance(
-                                warlordsNPC,
-                                "Vampiric Leash",
-                                700,
-                                700,
-                                -1,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Vampiric Leash")
+                                .source(warlordsNPC)
+                                .value(700)
                         );
                     }
                 }
@@ -385,22 +381,17 @@ public class Void extends AbstractMob implements BossMob {
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
                         EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
-                        we.addDamageInstance(
-                                warlordsNPC,
-                                "Death Ray",
-                                we.getMaxHealth() * 0.9f,
-                                we.getMaxHealth() * 0.9f,
-                                -1,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Death Ray")
+                                .source(warlordsNPC)
+                                .value(we.getMaxHealth() * 0.9f)
                         );
-
-                        warlordsNPC.addHealingInstance(
-                                warlordsNPC,
-                                "Death Ray Healing",
-                                we.getMaxHealth() * 2,
-                                we.getMaxHealth() * 2,
-                                -1,
-                                100
+                        warlordsNPC.addInstance(InstanceBuilder
+                                .healing()
+                                .cause("Death Ray Healing")
+                                .source(warlordsNPC)
+                                .value(we.getMaxHealth() * 2)
                         );
                     }
 
@@ -434,12 +425,12 @@ public class Void extends AbstractMob implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     if (!we.getCooldownManager().hasCooldownFromName("Cloaked")) {
-                        we.addDamageInstance(warlordsNPC,
-                                "Augmented Armageddon",
-                                (550 * playerCount),
-                                (700 * playerCount),
-                                0,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Augmented Armageddon")
+                                .source(warlordsNPC)
+                                .min(550 * playerCount)
+                                .max(700 * playerCount)
                         );
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.2);
                     }
@@ -458,8 +449,6 @@ public class Void extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
@@ -470,16 +459,28 @@ public class Void extends AbstractMob implements BossMob {
                     .aliveEnemiesOf(wp)
             ) {
                 Utils.addKnockback(name, loc, enemy, -1.5, 0.25);
-                enemy.addDamageInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                enemy.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.groundShredDamage)
                 );
             }
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue groundShredDamage = new Value.RangedValue(750, 900);
+            private final List<Value> values = List.of(groundShredDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 

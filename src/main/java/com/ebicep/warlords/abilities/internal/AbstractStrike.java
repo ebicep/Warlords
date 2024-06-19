@@ -2,10 +2,8 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Bukkit;
@@ -15,11 +13,8 @@ import org.bukkit.Particle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
 
@@ -65,28 +60,14 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
             int additionalHitAmount,
             WarlordsEntity giver,
             WarlordsEntity initialTarget,
-            float damageModifier,
-            Function<WarlordsEntity, EnumSet<InstanceFlags>> getFlags,
-            Consumer<Optional<WarlordsDamageHealingFinalEvent>> onFinalEvent
+            Consumer<WarlordsEntity> onHit
     ) {
-        for (WarlordsEntity we : PlayerFilter
-                .entitiesAround(initialTarget, 4, 4, 4)
-                .aliveEnemiesOf(giver)
-                .closestFirst(initialTarget)
-                .excluding(initialTarget)
-                .limit(additionalHitAmount)
-        ) {
-            EnumSet<InstanceFlags> flags = getFlags != null ? getFlags.apply(we) : EnumSet.noneOf(InstanceFlags.class);
-            onFinalEvent.accept(we.addDamageInstance(
-                    giver,
-                    name,
-                    minDamageHeal.getCalculatedValue() * damageModifier,
-                    maxDamageHeal.getCalculatedValue() * damageModifier,
-                    critChance,
-                    critMultiplier,
-                    flags
-            ));
-        }
+        PlayerFilter.entitiesAround(initialTarget, 4, 4, 4)
+                    .aliveEnemiesOf(giver)
+                    .closestFirst(initialTarget)
+                    .excluding(initialTarget)
+                    .limit(additionalHitAmount)
+                    .forEach(onHit);
     }
 
     protected void randomHitEffect(Location location, int particleAmount, int red, int green, int blue) {

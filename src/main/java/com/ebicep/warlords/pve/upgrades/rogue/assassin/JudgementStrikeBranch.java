@@ -2,10 +2,10 @@ package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike> {
 
-    float strikeHeal = ability.getStrikeHeal();
 
     @Override
     public void runOnce() {
@@ -31,8 +31,8 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setStrikeHeal(strikeHeal + value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
                 }, 100f)
                 .addUpgradeEnergy(ability, 5f)
@@ -48,7 +48,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         Each strike deals 1% of the target's max health as bonus damage.""",
                 50000,
                 () -> {
-                    ability.setStrikeHeal(ability.getStrikeHeal() + 100);
+                    ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Master Upgrade Branch", 100);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                 }
         );

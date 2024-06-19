@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -30,7 +31,6 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -80,7 +80,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
-
 
         Location location = targetBlock.getLocation().clone();
         location.add(0, 1, 0);
@@ -248,23 +247,26 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
             float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
             healthDamage = DamageCheck.clamp(healthDamage);
-            strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, -1, 100);
+            strikeTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(giver)
+                    .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
+                    .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage)
+            );
         }
 
     }
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {
         playersHealed++;
-        teammateInRain.addHealingInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier,
-                EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.NO_HIT_SOUND)
+        teammateInRain.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(healingValues.rainHealing)
+                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.NO_HIT_SOUND)
         );
-
         if (teammateInRain != wp) {
             Overheal.giveOverHeal(wp, teammateInRain);
         }
@@ -288,6 +290,34 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
+        private final List<Value> values = List.of(rainStrikeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable rainHealing = new Value.RangedValueCritable(100, 125, 25, 180);
+        private final List<Value> values = List.of(rainHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
 }

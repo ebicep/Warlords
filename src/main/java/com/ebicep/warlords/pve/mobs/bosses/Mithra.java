@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -112,13 +113,12 @@ public class Mithra extends AbstractMob implements BossMob {
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
                 knockTarget.setVelocity(name, new Vector(0, .75, 0), false);
-                knockTarget.addDamageInstance(
-                        warlordsNPC,
-                        "Virtue Strike",
-                        400 * playerCount,
-                        500 * playerCount,
-                        0,
-                        100
+                knockTarget.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Virtue Strike")
+                        .source(warlordsNPC)
+                        .min(400 * playerCount)
+                        .max(500 * playerCount)
                 );
             }
         }
@@ -238,22 +238,17 @@ public class Mithra extends AbstractMob implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -0.25, 0.07f);
-                    flameTarget.addDamageInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage,
-                            damage,
-                            0,
-                            100
+                    flameTarget.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Immolation")
+                            .source(warlordsNPC)
+                            .value(damage)
                     );
-
-                    warlordsNPC.addHealingInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage * 0.5f,
-                            damage * 0.5f,
-                            0,
-                            100
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Immolation")
+                            .source(warlordsNPC)
+                            .value(damage * 0.5f)
                     );
                 }
 

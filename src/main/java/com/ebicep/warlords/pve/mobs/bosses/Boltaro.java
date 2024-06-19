@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -22,8 +23,6 @@ import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-
-import java.util.EnumSet;
 
 public class Boltaro extends AbstractMob implements BossMob {
 
@@ -126,7 +125,14 @@ public class Boltaro extends AbstractMob implements BossMob {
                     counter++;
                     Utils.playGlobalSound(receiver.getLocation(), "warrior.mortalstrike.impact", 2, 1.5f);
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -0.55, 0.3);
-                    receiver.addDamageInstance(attacker, "Multi Hit", 120, 180, 0, 100, counter == 3 ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class));
+                    receiver.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Multi Hit")
+                            .source(attacker)
+                            .min(120)
+                            .max(180)
+                            .flag(InstanceFlags.TRUE_DAMAGE, counter == 3)
+                    );
 
                     if (counter == 3 || receiver.isDead()) {
                         this.cancel();

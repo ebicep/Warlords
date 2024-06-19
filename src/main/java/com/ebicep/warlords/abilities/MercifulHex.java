@@ -2,12 +2,15 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.MercifulHexBranch;
@@ -163,13 +166,13 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         if (isTeammate) {
             int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
             float reduction = teammatesHit <= maxAlliesHit ? 1 : convertToPercent(subsequentReduction);
-            hit.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal.getCalculatedValue() * reduction,
-                    maxDamageHeal.getCalculatedValue() * reduction,
-                    critChance,
-                    critMultiplier
+            hit.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .min(healingValues.hexHealing.getMinValue() * reduction)
+                    .max(healingValues.hexHealing.getMaxValue() * reduction)
+                    .crit(healingValues.hexHealing)
             );
             if (teammatesHit > maxAlliesHit) {
                 return false;
@@ -181,13 +184,13 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
             float reduction = enemiesHit == 1 ? 1 : convertToPercent(subsequentReduction);
-            hit.addDamageInstance(
-                    wp,
-                    name,
-                    minDamage * reduction,
-                    maxDamage * reduction,
-                    critChance,
-                    critMultiplier
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.hexDamage.getMinValue() * reduction)
+                    .max(damageValues.hexDamage.getMaxValue() * reduction)
+                    .crit(damageValues.hexDamage)
             );
         }
         return true;
@@ -196,8 +199,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     public static void giveMercifulHex(WarlordsEntity from, WarlordsEntity to) {
         MercifulHex fromHex = getFromHex(from);
         int tickDuration = fromHex.getTickDuration();
-        float dotMinHeal = fromHex.getDotMinHeal();
-        float dotMaxHeal = fromHex.getDotMaxHeal();
+        HealingValues values = fromHex.healingValues;
         int ticksBetweenDot = fromHex.getTicksBetweenDot();
         String name = fromHex.getName();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
@@ -209,25 +211,23 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 from,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
-                    to.addHealingInstance(
-                            from,
-                            name,
-                            dotMinHeal,
-                            dotMaxHeal,
-                            0,
-                            100
+                    to.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(fromHex)
+                            .source(from)
+                            .value(values.hexDOTHealing)
+                            .flags(InstanceFlags.DOT)
                     );
                 },
                 tickDuration * 2, // base add 20 to delay damage by a second
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % ticksBetweenDot == 0 && ticksElapsed != 0) {
-                        to.addHealingInstance(
-                                from,
-                                name,
-                                dotMinHeal,
-                                dotMaxHeal,
-                                0,
-                                100
+                        to.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(fromHex)
+                                .source(from)
+                                .value(values.hexDOTHealing)
+                                .flags(InstanceFlags.DOT)
                         );
                     }
                 })
@@ -250,13 +250,11 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter) {
         boolean activate = super.onActivate(shooter);
-        shooter.addHealingInstance(
-                shooter,
-                name,
-                minSelfHeal,
-                maxSelfHeal,
-                critChance,
-                critMultiplier
+        shooter.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(shooter)
+                .value(healingValues.hexSelfHealing)
         );
         return activate;
     }
@@ -411,4 +409,34 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     public void setTicksBetweenDot(int ticksBetweenDot) {
         this.ticksBetweenDot = ticksBetweenDot;
     }
+
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(217, 292, 20, 180);
+        private final List<Value> values = List.of(hexDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(297, 405, 20, 180);
+        private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(230, 310, 20, 180);
+        private final Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
+        private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

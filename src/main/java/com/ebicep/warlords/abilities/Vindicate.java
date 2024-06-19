@@ -10,6 +10,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -24,7 +25,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -127,14 +131,12 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 WarlordsEntity attacker = event.getSource();
                 if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
                     Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
-                    attacker.addDamageInstance(
-                            hit,
-                            name,
-                            currentDamageValue * .75f,
-                            currentDamageValue * .75f,
-                            0,
-                            100,
-                            EnumSet.of(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
+                    attacker.addInstance(InstanceBuilder
+                            .damage()
+                            .cause(name)
+                            .source(hit)
+                            .value(currentDamageValue * .75f)
+                            .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
                     );
                     return currentDamageValue * .1f;
                 } else {

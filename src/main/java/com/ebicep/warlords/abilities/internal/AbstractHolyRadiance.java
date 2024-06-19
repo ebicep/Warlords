@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -44,8 +45,13 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-
+        Value.RangedValueCritable radianceHealing = getRadianceHealing();
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(radianceHealing)
+        );
 
         if (chain(wp)) {
             playersMarked++;
@@ -64,8 +70,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                             radianceTarget,
                             wp,
                             1.1,
-                            minDamageHeal.getCalculatedValue(),
-                            maxDamageHeal.getCalculatedValue()
+                            radianceHealing
                     ).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
@@ -104,6 +109,8 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     public abstract boolean chain(WarlordsEntity wp);
 
+    public abstract Value.RangedValueCritable getRadianceHealing();
+
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
@@ -115,16 +122,14 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         private final WarlordsEntity owner;
         private final double speed;
         private final ArmorStand armorStand;
-        private final float minHeal;
-        private final float maxHeal;
+        private final Value.RangedValueCritable radianceHealing;
 
-        public FlyingArmorStand(Location location, WarlordsEntity target, WarlordsEntity owner, double speed, float minHeal, float maxHeal) {
+        public FlyingArmorStand(Location location, WarlordsEntity target, WarlordsEntity owner, double speed, Value.RangedValueCritable radianceHealing) {
             this.armorStand = Utils.spawnArmorStand(location);
             this.target = target;
             this.speed = speed;
             this.owner = owner;
-            this.minHeal = minHeal;
-            this.maxHeal = maxHeal;
+            this.radianceHealing = radianceHealing;
         }
 
         @Override
@@ -148,13 +153,11 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 if (distance < speed * speed) {
                     playersHealed++;
 
-                    target.addHealingInstance(
-                            owner,
-                            name,
-                            minHeal,
-                            maxHeal,
-                            critChance,
-                            critMultiplier
+                    target.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Holy Radiance")
+                            .source(owner)
+                            .value(radianceHealing)
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         new CooldownFilter<>(owner, RegularCooldown.class)
                                 .filterCooldownFrom(owner)

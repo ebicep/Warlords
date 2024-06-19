@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -44,10 +46,12 @@ import java.util.List;
 
 public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
-    private final FloatModifiable radius = new FloatModifiable(6);
     public int playersHealed = 0;
     public int playersDamaged = 0;
     protected float amountHealed = 0;
+    private final FloatModifiable radius = new FloatModifiable(6);
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private boolean isCrownOfLight = false;
     private Location location;
     private int tickDuration = 200;
@@ -193,13 +197,13 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         ) {
                             if (wp.isTeammate(crownTarget)) {
                                 playersHealed++;
-                                crownTarget.addHealingInstance(
-                                        wp,
-                                        "Crown of Light",
-                                        minDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(crownBonusHealing),
-                                        maxDamageHeal.getCalculatedValue() * convertToMultiplicationDecimal(crownBonusHealing),
-                                        critChance,
-                                        critMultiplier
+                                crownTarget.addInstance(InstanceBuilder
+                                        .healing()
+                                        .cause("Crown of Light")
+                                        .source(wp)
+                                        .min(healingValues.hammerHealing.getMinValue() * convertToMultiplicationDecimal(crownBonusHealing))
+                                        .max(healingValues.hammerHealing.getMaxValue() * convertToMultiplicationDecimal(crownBonusHealing))
+                                        .crit(healingValues.hammerHealing)
                                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                     tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                 });
@@ -216,25 +220,21 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         ) {
                             if (wp.isTeammate(hammerTarget)) {
                                 playersHealed++;
-                                hammerTarget.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier
+                                hammerTarget.addInstance(InstanceBuilder
+                                        .healing()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(healingValues.hammerHealing)
                                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                     tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                 });
                             } else {
                                 playersDamaged++;
-                                hammerTarget.addDamageInstance(
-                                        wp,
-                                        name,
-                                        minDamage,
-                                        maxDamage,
-                                        critChance,
-                                        critMultiplier
+                                hammerTarget.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(damageValues.hammerDamage)
                                 );
                                 if (pveMasterUpgrade2) {
                                     giveHammerOfDisillusionEffect(hammerTarget, wp);
@@ -333,26 +333,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         return true;
     }
 
-    private static void giveHammerOfDisillusionEffect(WarlordsEntity hammerTarget, @Nonnull WarlordsEntity wp) {
-        hammerTarget.getCooldownManager().removeCooldownByName("Hammer of Disillusion");
-        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Hammer of Disillusion",
-                null,
-                HammerOfLight.class,
-                null,
-                wp,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                20
-        ) {
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.1f;
-            }
-        });
-    }
-
     public ArmorStand spawnHammer(Location location) {
         Location newLocation = location.clone();
         for (int i = 0; i < 10; i++) {
@@ -381,6 +361,26 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         this.amountHealed += amount;
     }
 
+    private static void giveHammerOfDisillusionEffect(WarlordsEntity hammerTarget, @Nonnull WarlordsEntity wp) {
+        hammerTarget.getCooldownManager().removeCooldownByName("Hammer of Disillusion");
+        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Hammer of Disillusion",
+                null,
+                HammerOfLight.class,
+                null,
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.1f;
+            }
+        });
+    }
+
     private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier, HammerOfLight tempHammerOfLight) {
         new GameRunnable(wp.getGame()) {
             @Override
@@ -402,13 +402,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         .aliveTeammatesOf(wp)
                 ) {
                     playersHealed++;
-                    allyTarget.addHealingInstance(
-                            wp,
-                            "Hammer of Illusion",
-                            minDamageHeal.getCalculatedValue() * 5,
-                            maxDamageHeal.getCalculatedValue() * 5,
-                            20,
-                            150
+                    allyTarget.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Hammer of Illusion")
+                            .source(wp)
+                            .min(healingValues.hammerHealing.getMinValue() * 5)
+                            .max(healingValues.hammerHealing.getMaxValue() * 5)
+                            .critChance(20)
+                            .critMultiplier(150)
                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                     });
@@ -418,13 +419,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         .entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
                         .aliveEnemiesOf(wp)
                 ) {
-                    enemyTarget.addDamageInstance(
-                            wp,
-                            "Hammer of Illusion",
-                            minDamage * 5,
-                            maxDamage * 5,
-                            20,
-                            150
+                    enemyTarget.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Hammer of Illusion")
+                            .source(wp)
+                            .min(damageValues.hammerDamage.getMinValue() * 5)
+                            .max(damageValues.hammerDamage.getMaxValue() * 5)
+                            .critChance(20)
+                            .critMultiplier(150)
                     );
                 }
             }
@@ -469,4 +471,29 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     public float getAmountHealed() {
         return amountHealed;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable hammerDamage = new Value.RangedValueCritable(178, 244, 20, 175);
+        private final List<Value> values = List.of(hammerDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable hammerHealing = new Value.RangedValueCritable(178, 244, 20, 175);
+        private final List<Value> values = List.of(hammerHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

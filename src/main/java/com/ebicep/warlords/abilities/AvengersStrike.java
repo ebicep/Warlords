@@ -27,10 +27,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AvengersStrike extends AbstractStrike implements Damages<AvengersStrike.AvengerStrikeValues> {
+public class AvengersStrike extends AbstractStrike implements Damages<AvengersStrike.DamageValues> {
 
     public float energyStole = 0;
-    private final AvengerStrikeValues values = new AvengerStrikeValues();
     private float energySteal = 10;
 
     public AvengersStrike() {
@@ -38,8 +37,8 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
     }
 
     @Override
-    public AvengerStrikeValues getDamageValues() {
-        return values;
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
@@ -107,9 +106,9 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
                 .damage()
                 .ability(this)
                 .source(wp)
-                .min((values.strikeDamage.min().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
-                .max((values.strikeDamage.max().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
-                .crit(values.strikeDamage)
+                .min((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .max((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .crit(damageValues.strikeDamage)
         );
 
         if (pveMasterUpgrade) {
@@ -124,9 +123,9 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
                         .damage()
                         .ability(this)
                         .source(wp)
-                        .min(((values.strikeDamage.min().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
-                        .max(((values.strikeDamage.max().getCalculatedValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
-                        .crit(values.strikeDamage)
+                        .min(((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
+                        .max(((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
+                        .crit(damageValues.strikeDamage)
                 );
                 Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
             }
@@ -144,7 +143,9 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
         this.energySteal = energySteal;
     }
 
-    public static class AvengerStrikeValues implements Value.ValueHolder {
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
         private final List<Value> values = List.of(strikeDamage);
@@ -155,4 +156,5 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
         }
 
     }
+
 }

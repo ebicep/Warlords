@@ -1,10 +1,12 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningBoltBranch;
@@ -222,13 +224,13 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
                 );
             }
         }
-        return hit.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal.getCalculatedValue() * damageMultiplier,
-                maxDamageHeal.getCalculatedValue() * damageMultiplier,
-                critChance,
-                critMultiplier
+        return hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.boltDamage.getMinValue() * damageMultiplier)
+                .max(damageValues.boltDamage.getMaxValue() * damageMultiplier)
+                .crit(damageValues.boltDamage)
         );
     }
 
@@ -238,5 +240,19 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
 
     public void setHitbox(double hitbox) {
         this.hitbox = hitbox;
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(252, 340, 25, 180);
+        private final List<Value> values = List.of(boltDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

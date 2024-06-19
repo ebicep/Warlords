@@ -3,9 +3,11 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
@@ -31,6 +33,7 @@ import java.util.List;
 
 public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash {
 
+    private final DamageValues damageValues = new DamageValues();
     private FloatModifiable splash = new FloatModifiable(5);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;
@@ -148,13 +151,14 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
         if (pveMasterUpgrade) {
             int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    minDamageHeal.getCalculatedValue() + damageIncrease,
-                    maxDamageHeal.getCalculatedValue() + damageIncrease,
-                    critChance + damageIncrease,
-                    critMultiplier + damageIncrease
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
+                    .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease)
             );
         } else {
             float damageBoost = 0;
@@ -163,13 +167,14 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
                 blocksTravelled = Math.min(30, blocksTravelled);
                 damageBoost = DamageCheck.clamp(nearEntity.getMaxBaseHealth() * .01f);
             }
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    minDamageHeal.getCalculatedValue() + damageBoost,
-                    maxDamageHeal.getCalculatedValue() + damageBoost,
-                    critChance + blocksTravelled,
-                    critMultiplier
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() + damageBoost)
+                    .max(damageValues.flameBurstDamage.getMaxValue() + damageBoost)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + blocksTravelled)
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue())
             );
         }
     }
@@ -277,18 +282,6 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         return 1;
     }
 
-    public double getAcceleration() {
-        return acceleration;
-    }
-
-    public void setAcceleration(double acceleration) {
-        this.acceleration = acceleration;
-    }
-
-    public double getProjectileWidth() {
-        return projectileWidth;
-    }
-
     public void setProjectileWidth(double projectileWidth) {
         this.projectileWidth = projectileWidth;
     }
@@ -297,4 +290,18 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
     public FloatModifiable getSplashRadius() {
         return splash;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
+        private final List<Value> values = List.of(flameBurstDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+
 }

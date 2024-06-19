@@ -11,6 +11,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractFixedItem;
@@ -124,13 +126,11 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
                                         healthDamage = DamageCheck.clamp(healthDamage);
-                                        victim.addDamageInstance(
-                                                attacker,
-                                                "Burn",
-                                                healthDamage,
-                                                healthDamage,
-                                                0,
-                                                100
+                                        victim.addInstance(InstanceBuilder
+                                                .damage()
+                                                .cause("Burn")
+                                                .source(attacker)
+                                                .value(healthDamage)
                                         );
                                     }
                                 })
@@ -157,13 +157,12 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     if (ticksLeft % 20 == 0) {
                                         float healthDamage = victim.getMaxHealth() * 0.005f;
                                         healthDamage = DamageCheck.clamp(healthDamage);
-                                        victim.addDamageInstance(
-                                                attacker,
-                                                "Bleed",
-                                                healthDamage,
-                                                healthDamage,
-                                                0,
-                                                100
+                                        victim.addInstance(InstanceBuilder
+                                                .damage()
+                                                .cause("Bleed")
+                                                .source(attacker)
+                                                .value(healthDamage)
+                                                .flags(InstanceFlags.DOT)
                                         );
                                     }
                                 })
@@ -201,13 +200,11 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                     healingMultiplier = 25;
                                 }
                                 float healValue = Math.min(500, currentDamageValue * healingMultiplier);
-                                event.getSource().addHealingInstance(
-                                        attacker,
-                                        "Leech",
-                                        healValue,
-                                        healValue,
-                                        -1,
-                                        100
+                                event.getSource().addInstance(InstanceBuilder
+                                        .healing()
+                                        .cause("Leech")
+                                        .source(attacker)
+                                        .value(healValue)
                                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                     totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
                                 });

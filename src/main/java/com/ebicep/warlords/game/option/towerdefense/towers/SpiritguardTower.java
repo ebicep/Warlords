@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.SpiritLink;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -112,27 +114,23 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
 
         private void attack(WarlordsTower warlordsTower, WarlordsEntity target) {
             EffectUtils.playChainAnimation(warlordsTower, target, SpiritLink.CHAIN_ITEM, 3);
-            target.addDamageInstance(
-                    warlordsTower,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier,
-                    InstanceFlags.TD_MAGIC
+            target.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(warlordsTower)
+                    .value(damageValues.spiritAttackDamage)
+                    .flags(InstanceFlags.TD_MAGIC)
             );
             PlayerFilter.entitiesAround(target, 3, 3, 3)
                         .aliveTeammatesOf(target)
                         .excluding(target)
                         .forEach(warlordsEntity -> {
-                            warlordsEntity.addDamageInstance(
-                                    warlordsTower,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    InstanceFlags.TD_MAGIC
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(warlordsTower)
+                                    .value(damageValues.spiritAttackDamage)
+                                    .flags(InstanceFlags.TD_MAGIC)
                             );
                         });
         }
@@ -142,6 +140,19 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue spiritAttackDamage = new Value.SetValue(200);
+            private final List<Value> values = List.of(spiritAttackDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
 

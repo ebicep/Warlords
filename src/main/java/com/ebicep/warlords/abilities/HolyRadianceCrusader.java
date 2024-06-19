@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -200,4 +201,24 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
     public void setMarkSpeed(int markSpeed) {
         this.markSpeed = markSpeed;
     }
+
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);
+        private final List<Value> values = List.of(radianceHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

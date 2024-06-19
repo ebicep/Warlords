@@ -17,6 +17,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -104,7 +105,11 @@ public class DebugMenuPlayerOptions {
                         .name(Component.text("Kill", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    target.addDamageInstance(target, "God", 100000, 100000, 0, 100);
+                    target.addInstance(InstanceBuilder
+                            .fall()
+                            .source(target)
+                            .value(100000)
+                    );
                     sendDebugMessage(player, Component.text("Killed " + targetName, NamedTextColor.GREEN));
                 }
         );
@@ -179,7 +184,12 @@ public class DebugMenuPlayerOptions {
                                    new BukkitRunnable() {
                                        @Override
                                        public void run() {
-                                           target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100);
+                                           target.addInstance(InstanceBuilder
+                                                   .healing()
+                                                   .cause("God")
+                                                   .source(target)
+                                                   .value(amountNumber)
+                                           );
                                            sendDebugMessage(player, Component.text("Healed ", NamedTextColor.GREEN)
                                                                              .append(coloredName)
                                                                              .append(Component.text(" for " + amountNumber))
@@ -210,7 +220,12 @@ public class DebugMenuPlayerOptions {
                                    new BukkitRunnable() {
                                        @Override
                                        public void run() {
-                                           target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100);
+                                           target.addInstance(InstanceBuilder
+                                                   .damage()
+                                                   .cause("God")
+                                                   .source(target)
+                                                   .value(amountNumber)
+                                           );
                                            sendDebugMessage(player, Component.text("Damaged ", NamedTextColor.GREEN)
                                                                              .append(coloredName)
                                                                              .append(Component.text(" for " + amountNumber))

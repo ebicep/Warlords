@@ -523,18 +523,18 @@ public class CooldownManager {
         return false;
     }
 
-    public List<LinkInformation> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
-        List<LinkInformation> linkInformation = new ArrayList<>();
+    public List<Soulbinding> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
+        List<Soulbinding> soulbindings = new ArrayList<>();
         for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                 .toList()
         ) {
             if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
                 this.warlordsEntity.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
-                linkInformation.add(new LinkInformation(soulbinding.getRadius(), soulbinding.getMaxAlliesHit(), soulbinding.getSelfHealing(), soulbinding.getAllyHealing()));
+                soulbindings.add(soulbinding);
             }
         }
-        int counter = linkInformation.size();
+        int counter = soulbindings.size();
         incrementCooldown(
                 new RegularCooldown<Void>("KB Resistance",
                         "KB",
@@ -554,10 +554,7 @@ public class CooldownManager {
                 (int) (counter * 1.2 * 20),
                 (int) (3.6 * 20)
         );
-        return linkInformation;
-    }
-
-    public record LinkInformation(float radius, int limit, int selfHealing, int allyHealing) {
+        return soulbindings;
     }
 
     @SuppressWarnings("unchecked")

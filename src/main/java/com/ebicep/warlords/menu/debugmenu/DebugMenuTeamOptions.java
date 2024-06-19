@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -149,7 +150,11 @@ public class DebugMenuTeamOptions {
                         .name(Component.text("Kill All", NamedTextColor.RED))
                         .lore(Component.text("Kills all the players on the team", NamedTextColor.GRAY))
                         .get(), (m, e) -> {
-                    warlordsEntities.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, 0, 100));
+                    warlordsEntities.forEach(wp -> wp.addInstance(InstanceBuilder
+                            .fall()
+                            .source(wp)
+                            .value(69000)
+                    ));
                     sendDebugMessage(player, Component.text("Killed all " + team.name + " players", NamedTextColor.GREEN));
                 }
         );

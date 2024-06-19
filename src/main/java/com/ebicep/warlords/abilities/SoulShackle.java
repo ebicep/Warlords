@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.SoulShackleBranch;
@@ -149,8 +151,12 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
         if (silenceDuration > maxSilenceDurationInTicks) {
             silenceDuration = maxSilenceDurationInTicks;
         }
-
-        shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        shackleTarget.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.shackleDamage)
+        );
         shacklePlayer(wp, shackleTarget, silenceDuration);
 
         if (pveMasterUpgrade2) {
@@ -253,22 +259,9 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
         }
     }
 
-    public float getShacklePool() {
-        return shacklePool;
-    }
-
     public void addToShacklePool(float amount) {
         this.shacklePool += amount;
     }
-
-    public int getMaxShackleTargets() {
-        return maxShackleTargets;
-    }
-
-    public void setMaxShackleTargets(int maxShackleTargets) {
-        this.maxShackleTargets = maxShackleTargets;
-    }
-
 
     public int getMaxSilenceDurationInTicks() {
         return maxSilenceDurationInTicks;
@@ -284,5 +277,19 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon {
 
     public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
         this.minSilenceDurationInTicks = minSilenceDurationInTicks;
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable shackleDamage = new Value.RangedValueCritable(446, 589, 20, 175);
+        private final List<Value> values = List.of(shackleDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

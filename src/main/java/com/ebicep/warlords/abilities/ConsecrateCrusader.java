@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -20,25 +22,13 @@ import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConsecrateCrusader extends AbstractConsecrate {
 
     public ConsecrateCrusader() {
         super(144, 194.4f, 50, 20, 175, 15, 4, 5);
-    }
-
-    public ConsecrateCrusader(
-            float minDamageHeal,
-            float maxDamageHeal,
-            float energyCost,
-            float critChance,
-            float critMultiplier,
-            int strikeDamageBoost,
-            float radius,
-            Location location
-    ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, 5, location);
     }
 
     @Override
@@ -66,7 +56,7 @@ public class ConsecrateCrusader extends AbstractConsecrate {
                 name,
                 null,
                 AbstractConsecrate.class,
-                createConsecrate(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -87,13 +77,10 @@ public class ConsecrateCrusader extends AbstractConsecrate {
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
                                         playersHit++;
-                                        enemy.addDamageInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .value(damageValues.consecrateDamage)
                                         );
                                         if (energyGiven.get() < 105) {
                                             energyGiven.addAndGet(15);
@@ -116,18 +103,13 @@ public class ConsecrateCrusader extends AbstractConsecrate {
         return true;
     }
 
-    @Nonnull
     @Override
-    public AbstractConsecrate createConsecrate() {
-        return new ConsecrateCrusader(
-                minDamageHeal.getCalculatedValue(),
-                maxDamageHeal.getCalculatedValue(),
-                energyCost.getBaseValue(),
-                critChance,
-                critMultiplier,
-                strikeDamageBoost,
-                hitBox.getBaseValue(),
-                location
+    protected void damageEnemy(WarlordsEntity wp, WarlordsEntity enemy) {
+        enemy.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.consecrateDamage)
         );
     }
 
@@ -140,5 +122,19 @@ public class ConsecrateCrusader extends AbstractConsecrate {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ConsecrateBranchCrusader(abilityTree, this);
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(144, 194.4f, 20, 175);
+        private final List<Value> values = List.of(consecrateDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.customentities.nms.pve.CustomBat;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -20,7 +22,6 @@ import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -308,16 +309,6 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         }
 
         @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
 
         }
@@ -340,13 +331,11 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
                 playersHit++;
 
-                nearEntity.addDamageInstance(
-                        shooter,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                nearEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(shooter)
+                        .value(damageValues.enderStonesDamage)
                 );
 
                 if (Objects.equals(hit, nearEntity)) {
@@ -483,6 +472,20 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         @Override
         public void setPveOption(PveOption pveOption) {
             this.pveOption = pveOption;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue enderStonesDamage = new Value.RangedValue(500, 600);
+            private final List<Value> values = List.of(enderStonesDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 
@@ -635,13 +638,11 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                     }
                     float healingMultiplier = .15f;
                     float healValue = currentDamageValue * healingMultiplier;
-                    event.getSource().addHealingInstance(
-                            wp,
-                            "Leech",
-                            healValue,
-                            healValue,
-                            -1,
-                            100
+                    event.getSource().addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Leech")
+                            .source(wp)
+                            .value(healValue)
                     );
                 }
 

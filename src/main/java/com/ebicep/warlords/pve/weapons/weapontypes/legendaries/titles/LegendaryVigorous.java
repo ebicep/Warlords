@@ -121,11 +121,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "LegendaryVigorous",

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.damage;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import javax.annotation.Nonnull;
@@ -17,7 +18,11 @@ public class VoidDamage extends ExternalDamage {
         if (warlordsEntity.isDead()) {
             warlordsEntity.getEntity().teleport(warlordsEntity.getLocation().clone().add(0, 100, 0));
         } else {
-            warlordsEntity.addDamageInstance(warlordsEntity, "Fall", 1000000, 1000000, 0, 100);
+            warlordsEntity.addInstance(InstanceBuilder
+                    .fall()
+                    .source(warlordsEntity)
+                    .value(1000000)
+            );
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
@@ -109,7 +111,14 @@ public class RayOfLight extends AbstractBeam {
                     }
                 });
             }
-            hit.addHealingInstance(wp, name, minHeal, maxHeal, critChance, critMultiplier);
+            hit.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .min(minHeal)
+                    .max(maxHeal)
+                    .crit(healingValues.rayHealing)
+            );
         }
     }
 
@@ -139,7 +148,12 @@ public class RayOfLight extends AbstractBeam {
             shooter.getCooldownManager().removeDebuffCooldowns();
             shooter.getSpeed().removeSlownessModifiers();
         }
-        shooter.addHealingInstance(shooter, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        shooter.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(shooter)
+                .value(healingValues.rayHealing)
+        );
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
         return super.onActivate(shooter);
     }
@@ -149,11 +163,17 @@ public class RayOfLight extends AbstractBeam {
         return BEAM_ITEM;
     }
 
-    public int getHealingIncrease() {
-        return healingIncrease;
-    }
+    private final HealingValues healingValues = new HealingValues();
 
-    public void setHealingIncrease(int healingIncrease) {
-        this.healingIncrease = healingIncrease;
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(409, 551, 20, 150);
+        private final List<Value> values = List.of(rayHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

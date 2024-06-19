@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -13,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -29,13 +27,13 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     public int playersHit = 0;
     protected int numberOfLeechProcd = 0;
+    private DamageValues damageValues = new DamageValues();
     private int maxHealthDamage = 4;
     private int tickDuration = 100;
     private int leechDuration = 5;
@@ -157,14 +155,12 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
                             float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
                             healthDamage = DamageCheck.clamp(healthDamage);
-                            miasmaTarget.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal.getCalculatedValue() + healthDamage,
-                                    maxDamageHeal.getCalculatedValue() + healthDamage,
-                                    0,
-                                    100,
-                                    EnumSet.of(InstanceFlags.DOT)
+                            miasmaTarget.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.miasmaDamage.getValue() + healthDamage)
+                                    .flags(InstanceFlags.DOT)
                             );
                         })
                 ) {
@@ -190,13 +186,12 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                 ) {
                                     float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
                                     healthDamage = DamageCheck.clamp(healthDamage);
-                                    target.addDamageInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal.getCalculatedValue() + healthDamage,
-                                            maxDamageHeal.getCalculatedValue() + healthDamage,
-                                            0,
-                                            100
+                                    target.addInstance(InstanceBuilder
+                                            .damage()
+                                            .ability(this)
+                                            .source(wp)
+                                            .value(damageValues.miasmaDamage.getValue() + healthDamage)
+                                            .flags(InstanceFlags.DOT)
                                     );
                                 }
                             },
@@ -236,14 +231,11 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                     return;
                                 }
                                 float healing = miasmaTarget.getMaxHealth() * .02f;
-                                miasmaTarget.addHealingInstance(
-                                        wp,
-                                        "Toxic Immunity",
-                                        healing,
-                                        healing,
-                                        0,
-                                        100,
-                                        EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                                miasmaTarget.addInstance(InstanceBuilder
+                                        .healing()
+                                        .source(wp)
+                                        .value(healing)
+                                        .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
                                 );
                                 Overheal.giveOverHeal(wp, miasmaTarget);
                             })
@@ -309,4 +301,17 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     public void setLeechAllyAmount(float leechAllyAmount) {
         this.leechAllyAmount = leechAllyAmount;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.SetValue miasmaDamage = new Value.SetValue(50);
+        private final List<Value> values = List.of(miasmaDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

@@ -1,11 +1,13 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -15,6 +17,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
 
@@ -100,18 +103,14 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             PlayerFilter.playingGame(wp.getGame())
                         .filter(we -> we.getName().equals("Zenith"))
                         .forEach(zenith -> {
-                            zenith.addHealingInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            zenith.addInstance(InstanceBuilder
+                                    .healing()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(healingValues.remedyHealing)
                             );
 
                             Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
@@ -122,6 +121,20 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
             }
 
             return true;
+        }
+
+        private final HealingValues healingValues = new HealingValues();
+
+        public static class HealingValues implements Value.ValueHolder {
+
+            private final Value.SetValue remedyHealing = new Value.SetValue(500);
+            private final List<Value> values = List.of(remedyHealing);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

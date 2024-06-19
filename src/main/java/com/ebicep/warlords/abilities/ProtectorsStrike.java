@@ -1,10 +1,12 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -22,7 +24,6 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
 
 public class ProtectorsStrike extends AbstractStrike {
@@ -81,13 +82,11 @@ public class ProtectorsStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
         ).ifPresent(warlordsDamageHealingFinalEvent -> {
             if (warlordsDamageHealingFinalEvent.getFinalEventFlag() != WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR) {
                 return;
@@ -99,14 +98,13 @@ public class ProtectorsStrike extends AbstractStrike {
             float selfHealingMultiplier = selfHealing / 100f;
 
             // Self Heal
-            wp.addHealingInstance(
-                    wp,
-                    name,
-                    currentDamageValue * selfHealingMultiplier,
-                    currentDamageValue * selfHealingMultiplier,
-                    isCrit ? 100 : 0,
-                    100,
-                    EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
+            wp.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(currentDamageValue * selfHealingMultiplier)
+                    .showAsCrit(isCrit)
+                    .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
             ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class)
                         .filterCooldownFrom(wp)
@@ -123,14 +121,13 @@ public class ProtectorsStrike extends AbstractStrike {
                 ) {
                     boolean isLeastAlive = ally.getCurrentHealth() < ally.getMaxHealth();
                     float healing = currentDamageValue * (allyHealingMultiplier + (isLeastAlive ? .5f : 0));
-                    ally.addHealingInstance(
-                            wp,
-                            name,
-                            healing,
-                            healing,
-                            isCrit ? 100 : 0,
-                            100,
-                            EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                    ally.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healing)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
@@ -146,14 +143,13 @@ public class ProtectorsStrike extends AbstractStrike {
                                           .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
                         .limit(maxAllies)
                 ) {
-                    ally.addHealingInstance(
-                            wp,
-                            name,
-                            currentDamageValue * allyHealingMultiplier,
-                            currentDamageValue * allyHealingMultiplier,
-                            isCrit ? 100 : 0,
-                            100,
-                            EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                    ally.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(currentDamageValue * allyHealingMultiplier)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
@@ -174,14 +170,6 @@ public class ProtectorsStrike extends AbstractStrike {
         this.allyHealing = convertPercent;
     }
 
-    public int getSelfHealing() {
-        return selfHealing;
-    }
-
-    public void setSelfHealing(int selfConvertPercent) {
-        this.selfHealing = selfConvertPercent;
-    }
-
     public int getMaxAllies() {
         return maxAllies;
     }
@@ -196,5 +184,19 @@ public class ProtectorsStrike extends AbstractStrike {
 
     public void setStrikeRadius(double strikeRadius) {
         this.strikeRadius = strikeRadius;
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(261, 352, 20, 175);
+        private final List<Value> values = List.of(strikeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

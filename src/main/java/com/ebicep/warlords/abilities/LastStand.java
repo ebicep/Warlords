@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -30,7 +31,6 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 
@@ -175,14 +175,13 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                     tempLastStand.addAmountPrevented(currentDamageValue);
                     wp.addAbsorbed(currentDamageValue);
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            currentDamageValue,
-                            currentDamageValue,
-                            isCrit ? 100 : 0,
-                            100,
-                            EnumSet.of(InstanceFlags.LAST_STAND_FROM_SHIELD, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(LastStand.this)
+                            .source(wp)
+                            .value(currentDamageValue)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.LAST_STAND_FROM_SHIELD, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );
                 }
 
@@ -190,14 +189,13 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                     tempLastStand.addAmountPrevented(currentDamageValue);
                     wp.addAbsorbed(currentDamageValue);
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            currentDamageValue,
-                            currentDamageValue,
-                            isCrit ? 100 : 0,
-                            100,
-                            EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(LastStand.this)
+                            .source(wp)
+                            .value(currentDamageValue)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );
                 }
             });

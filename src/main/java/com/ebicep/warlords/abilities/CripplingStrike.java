@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.CripplingStrikeBranch;
@@ -121,24 +123,22 @@ public class CripplingStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
 
         if (pveMasterUpgrade || pveMasterUpgrade2) {
-            additionalHit(
-                    1,
-                    wp,
-                    nearPlayer,
-                    1,
-                    null,
-                    finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
-            );
+            additionalHit(1, wp, nearPlayer, warlordsEntity -> {
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage)
+                ).ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event));
+            });
         }
 
         return true;
@@ -204,5 +204,18 @@ public class CripplingStrike extends AbstractStrike {
         this.cripplePerStrike = cripplePerStrike;
     }
 
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362.25f, 498, 20, 175);
+        private final List<Value> values = List.of(strikeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

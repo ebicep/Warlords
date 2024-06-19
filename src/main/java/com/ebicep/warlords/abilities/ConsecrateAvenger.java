@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -21,24 +23,12 @@ import org.bukkit.Particle;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 public class ConsecrateAvenger extends AbstractConsecrate {
 
     public ConsecrateAvenger() {
         super(198, 267, 50, 20, 175, 20, 5, 4);
-    }
-
-    public ConsecrateAvenger(
-            float minDamageHeal,
-            float maxDamageHeal,
-            float energyCost,
-            float critChance,
-            float critMultiplier,
-            int strikeDamageBoost,
-            float radius,
-            Location location
-    ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, 4, location);
     }
 
     @Override
@@ -66,7 +56,7 @@ public class ConsecrateAvenger extends AbstractConsecrate {
                 name,
                 null,
                 AbstractConsecrate.class,
-                createConsecrate(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -87,13 +77,10 @@ public class ConsecrateAvenger extends AbstractConsecrate {
                                     .forEach(enemy -> {
                                         hit.add(enemy);
                                         playersHit++;
-                                        enemy.addDamageInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .value(damageValues.consecrateDamage)
                                         );
                                     });
                     }
@@ -115,17 +102,13 @@ public class ConsecrateAvenger extends AbstractConsecrate {
         return true;
     }
 
-    @Nonnull
     @Override
-    public AbstractConsecrate createConsecrate() {
-        return new ConsecrateAvenger(minDamageHeal.getCalculatedValue(),
-                maxDamageHeal.getCalculatedValue(),
-                energyCost.getBaseValue(),
-                critChance,
-                critMultiplier,
-                strikeDamageBoost,
-                hitBox.getBaseValue(),
-                location
+    protected void damageEnemy(WarlordsEntity wp, WarlordsEntity enemy) {
+        enemy.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.consecrateDamage)
         );
     }
 
@@ -138,5 +121,19 @@ public class ConsecrateAvenger extends AbstractConsecrate {
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ConsecrateBranchAvenger(abilityTree, this);
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(198, 267, 20, 175);
+        private final List<Value> values = List.of(consecrateDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

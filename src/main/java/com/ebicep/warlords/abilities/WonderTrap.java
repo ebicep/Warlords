@@ -117,14 +117,14 @@ public class WonderTrap extends AbstractAbility {
                 PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
                         .aliveEnemiesOf(trapOwner)
                         .forEach((trapTarget) -> {
-                            trapTarget.addDamageInstance(
-                                    trapOwner,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
-                            );
+//                            trapTarget.addDamageInstance(
+//                                    trapOwner,
+//                                    name,
+//                                    minDamageHeal,
+//                                    maxDamageHeal,
+//                                    critChance,
+//                                    critMultiplier
+//                            );
 
                             //final Location loc = trapStand.getLocation();
                             //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);

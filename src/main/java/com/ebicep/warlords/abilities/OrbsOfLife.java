@@ -1,15 +1,13 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.OrbPassenger;
-import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -31,7 +29,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration {
@@ -133,7 +134,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             orb.remove();
                             itr.remove();
 
-                            float orbHeal = tempOrbsOfLight.getMinDamageHeal().getCalculatedValue();
+                            float orbHeal = tempOrbsOfLight.healingValues.orbHealing.getValue();
                             // Increasing heal for low long orb lived for (up to +25%)
                             // 6.5 seconds = 130 ticks
                             // 6.5 seconds = 1 + (130/325) = 1.4
@@ -282,14 +283,12 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     private void healPlayer(WarlordsEntity teammateToHeal, @Nonnull WarlordsEntity wp, float orbHeal) {
-        teammateToHeal.addHealingInstance(
-                wp,
-                "Orbs of Life",
-                orbHeal,
-                orbHeal,
-                0,
-                100,
-                pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS) : EnumSet.noneOf(InstanceFlags.class)
+        teammateToHeal.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(orbHeal)
+                .flag(InstanceFlags.CAN_OVERHEAL_OTHERS, pveMasterUpgrade2)
         );
         if (pveMasterUpgrade2) {
             Overheal.giveOverHeal(wp, teammateToHeal);
@@ -404,4 +403,17 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     }
 
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue orbHealing = new Value.SetValue(210);
+        private final List<Value> values = List.of(orbHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 }

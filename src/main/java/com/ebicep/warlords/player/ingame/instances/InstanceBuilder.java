@@ -22,6 +22,14 @@ public class InstanceBuilder {
         return new InstanceBuilder(InstanceType.DAMAGE);
     }
 
+    public static InstanceBuilder melee() {
+        return new InstanceBuilder(InstanceType.DAMAGE).cause("");
+    }
+
+    public static InstanceBuilder fall() {
+        return new InstanceBuilder(InstanceType.DAMAGE).cause("Fall");
+    }
+
     public static InstanceBuilder healing() {
         return new InstanceBuilder(InstanceType.HEALING);
     }
@@ -76,9 +84,23 @@ public class InstanceBuilder {
         return this;
     }
 
+    public InstanceBuilder value(WarlordsDamageHealingEvent event) {
+        this.min = event.getMin();
+        this.max = event.getMax();
+        this.critChance = event.getCritChance();
+        this.critMultiplier = event.getCritMultiplier();
+        return this;
+    }
+
     public InstanceBuilder value(Value.RangedValue rangedValue) {
-        this.min = rangedValue.min().getCalculatedValue();
-        this.max = rangedValue.max().getCalculatedValue();
+        this.min = rangedValue.getMinValue();
+        this.max = rangedValue.getMaxValue();
+        return this;
+    }
+
+    public InstanceBuilder value(Value.SetValue setValue) {
+        this.min = setValue.value().getCalculatedValue();
+        this.max = setValue.value().getCalculatedValue();
         return this;
     }
 
@@ -95,32 +117,66 @@ public class InstanceBuilder {
     }
 
     public InstanceBuilder value(Value.RangedValueCritable rangedValueCritable) {
-        this.min = rangedValueCritable.min().getCalculatedValue();
-        this.max = rangedValueCritable.max().getCalculatedValue();
-        this.critChance = rangedValueCritable.critChance().getCalculatedValue();
-        this.critMultiplier = rangedValueCritable.critMultiplier().getCalculatedValue();
+        this.min = rangedValueCritable.getMinValue();
+        this.max = rangedValueCritable.getMaxValue();
+        this.critChance = rangedValueCritable.getCritChanceValue();
+        this.critMultiplier = rangedValueCritable.getCritMultiplierValue();
         return this;
     }
 
-    public InstanceBuilder crit(float critChance, float critMultiplier) {
+    public InstanceBuilder critChance(float critChance) {
         this.critChance = critChance;
+        return this;
+    }
+
+    public InstanceBuilder critMultiplier(float critMultiplier) {
         this.critMultiplier = critMultiplier;
         return this;
     }
 
+    public InstanceBuilder showAsCrit(boolean showAsCrit) {
+        if (showAsCrit) {
+            this.critChance = 100;
+        }
+        return this;
+    }
+
     public InstanceBuilder crit(Value.RangedValueCritable rangedValueCritable) {
-        this.critChance = rangedValueCritable.critChance().getCalculatedValue();
-        this.critMultiplier = rangedValueCritable.critMultiplier().getCalculatedValue();
+        this.critChance = rangedValueCritable.getCritChanceValue();
+        this.critMultiplier = rangedValueCritable.getCritMultiplierValue();
         return this;
     }
 
     public InstanceBuilder flags(InstanceFlags... flags) {
-        this.flags = EnumSet.of(flags[0], flags);
+        this.flags.addAll(List.of(flags));
+        return this;
+    }
+
+    public InstanceBuilder flags(EnumSet<InstanceFlags> flags) {
+        this.flags = flags;
+        return this;
+    }
+
+    public InstanceBuilder flag(InstanceFlags flag, boolean add) {
+        if (add) {
+            this.flags.add(flag);
+        } else {
+            this.flags.remove(flag);
+        }
         return this;
     }
 
     public InstanceBuilder customFlags(CustomInstanceFlags... customFlags) {
         this.customFlags = List.of(customFlags);
+        return this;
+    }
+
+    public InstanceBuilder customFlag(CustomInstanceFlags customFlag, boolean add) {
+        if (add) {
+            this.customFlags.add(customFlag);
+        } else {
+            this.customFlags.remove(customFlag);
+        }
         return this;
     }
 

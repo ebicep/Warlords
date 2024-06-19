@@ -1,11 +1,11 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -26,8 +26,6 @@ import org.bukkit.Sound;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-
-import java.util.EnumSet;
 
 public abstract class AbstractEventCore extends AbstractMob implements BossMob, Unswappable {
 
@@ -146,23 +144,19 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         we.getEntity().clearTitle();
-                        we.addDamageInstance(warlordsNPC, "Core Explosion", 25000, 25000, 0, 100, EnumSet.of(InstanceFlags.TRUE_DAMAGE));
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Core Explosion")
+                                .source(warlordsNPC)
+                                .value(25000)
+                                .flags(InstanceFlags.TRUE_DAMAGE)
+                        );
                     }
                 });
             }
 
             option.spawnNewMob(summonList.next().createMob(pveOption.getRandomSpawnLocation(warlordsNPC)));
         }
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
     }
 
     private void playDeathAnimation(Runnable afterAnimation) {

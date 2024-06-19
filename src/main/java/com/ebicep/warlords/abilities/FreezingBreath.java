@@ -1,12 +1,14 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FreezingBreathBranch;
@@ -38,6 +40,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
 
     public int playersHit = 0;
 
+    private final DamageValues damageValues = new DamageValues();
     private final int slowDuration = 4;
     private int slowness = 35;
     private float hitbox = 10;
@@ -102,14 +105,14 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
                 numberOfDismounts++;
             }
             nearEntity.addSpeedModifier(shooter, name, -50, 4 * 20);
-            double damageIncrease = Math.min(1 + projectile.getBlocksTravelled() * .08, 2);
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    (float) (minDamageHeal.getCalculatedValue() * damageIncrease),
-                    (float) (maxDamageHeal.getCalculatedValue() * damageIncrease),
-                    critChance,
-                    critMultiplier
+            float damageIncrease = (float) Math.min(1 + projectile.getBlocksTravelled() * .08, 2);
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.freezingBreathDamage.getMinValue() * damageIncrease)
+                    .max(damageValues.freezingBreathDamage.getMaxValue() * damageIncrease)
+                    .crit(damageValues.freezingBreathDamage)
             );
             nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Chilled",
@@ -129,6 +132,72 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
         }
 
         return playersHit;
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        if (pveMasterUpgrade2) {
+            return super.onActivate(wp);
+        }
+
+        Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);
+
+        Location playerLoc = new LocationBuilder(wp.getLocation())
+                .pitch(0)
+                .add(0, 1.7, 0);
+
+        EffectUtils.playSpiralAnimation(
+                wp,
+                playerLoc,
+                4,
+                maxAnimationTime,
+                (center, animationTimer) -> {
+                    EffectUtils.displayParticle(
+                            Particle.CLOUD,
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0),
+                            5,
+                            0,
+                            0,
+                            0,
+                            0.6f
+                    );
+                },
+                Particle.FIREWORKS_SPARK
+        );
+
+        Location playerEyeLoc = new LocationBuilder(wp.getLocation())
+                .pitch(0)
+                .backward(1);
+
+        Vector viewDirection = playerLoc.getDirection();
+
+        int counter = 0;
+        for (WarlordsEntity breathTarget : PlayerFilter
+                .entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5)
+                .aliveEnemiesOf(wp)
+        ) {
+            counter++;
+            playersHit++;
+            Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
+            if (viewDirection.dot(direction) > .68) {
+                breathTarget.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.freezingBreathDamage)
+                );
+                breathTarget.addSpeedModifier(wp, "Freezing Breath", -slowness, slowDuration * 20);
+            }
+        }
+
+        if (pveMasterUpgrade) {
+            if (counter > 6) {
+                counter = 6;
+            }
+            damageReductionOnHit(wp, counter);
+        }
+
+        return true;
     }
 
     @Override
@@ -191,74 +260,6 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
         });
     }
 
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        if (pveMasterUpgrade2) {
-            return super.onActivate(wp);
-        }
-
-        Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);
-
-        Location playerLoc = new LocationBuilder(wp.getLocation())
-                .pitch(0)
-                .add(0, 1.7, 0);
-
-        EffectUtils.playSpiralAnimation(
-                wp,
-                playerLoc,
-                4,
-                maxAnimationTime,
-                (center, animationTimer) -> {
-                    EffectUtils.displayParticle(
-                            Particle.CLOUD,
-                            center.translateVector(wp.getWorld(), animationTimer / 2D, 0, 0),
-                            5,
-                            0,
-                            0,
-                            0,
-                            0.6f
-                    );
-                },
-                Particle.FIREWORKS_SPARK
-        );
-
-        Location playerEyeLoc = new LocationBuilder(wp.getLocation())
-                .pitch(0)
-                .backward(1);
-
-        Vector viewDirection = playerLoc.getDirection();
-
-        int counter = 0;
-        for (WarlordsEntity breathTarget : PlayerFilter
-                .entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5)
-                .aliveEnemiesOf(wp)
-        ) {
-            counter++;
-            playersHit++;
-            Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
-            if (viewDirection.dot(direction) > .68) {
-                breathTarget.addDamageInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
-                );
-                breathTarget.addSpeedModifier(wp, "Freezing Breath", -slowness, slowDuration * 20);
-            }
-        }
-
-        if (pveMasterUpgrade) {
-            if (counter > 6) {
-                counter = 6;
-            }
-            damageReductionOnHit(wp, counter);
-        }
-
-        return true;
-    }
-
     @Nullable
     @Override
     protected String getActivationSound() {
@@ -319,4 +320,17 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
     public void setSlowness(int slowness) {
         this.slowness = slowness;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable freezingBreathDamage = new Value.RangedValueCritable(422, 585, 20, 175);
+        private final List<Value> values = List.of(freezingBreathDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

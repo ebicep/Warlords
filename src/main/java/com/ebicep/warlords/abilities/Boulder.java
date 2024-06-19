@@ -2,10 +2,12 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.BoulderBranch;
@@ -31,6 +33,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
     public int carrierHit = 0;
     public int warpsKnockbacked = 0;
 
+    private final DamageValues damageValues = new DamageValues();
     private final double boulderGravity = -0.0059;
     private double boulderSpeed = 0.290;
     private double hitbox = 5.5;
@@ -119,7 +122,12 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
                             v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
                         }
                         p.setVelocity(name, v, false, false);
-                        p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        p.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.boulderDamage)
+                        );
                     }
 
                     newLoc.setPitch(-12);
@@ -144,7 +152,12 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
                                 .entitiesAround(impactLocation, 5, 5, 5)
                                 .aliveEnemiesOf(wp)
                         ) {
-                            enemy.addDamageInstance(wp, "Earthquake", 450, 630, 0, 100);
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.earthquakeDamage)
+                            );
                         }
                     }
 
@@ -193,5 +206,17 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon {
         this.hitbox = hitbox;
     }
 
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable boulderDamage = new Value.RangedValueCritable(509, 686, 15, 175);
+        private final Value.RangedValue earthquakeDamage = new Value.RangedValue(450, 630);
+        private final List<Value> values = List.of(boulderDamage, earthquakeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

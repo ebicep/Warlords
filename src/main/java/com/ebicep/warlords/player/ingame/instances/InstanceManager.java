@@ -352,26 +352,31 @@ public class InstanceManager {
                 optionalInterveneCooldown.get().setTicksLeft(0);
                 //remaining vene prevent damage
                 float remainingVeneDamage = (intervene.getMaxDamagePrevented() / 2) - (intervene.getDamagePrevented() - damageValue);
-                intervenedBy.addDamageInstance(attacker,
-                        "Intervene",
-                        remainingVeneDamage,
-                        remainingVeneDamage,
-                        isCrit ? 100 : 0,
-                        100,
-                        EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                intervenedBy.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Intervene")
+                        .source(attacker)
+                        .value(remainingVeneDamage)
+                        .showAsCrit(isCrit)
+                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 //extra overVeneDamage to target
                 float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
-                warlordsEntity.addDamageInstance(attacker, ability, overVeneDamage, overVeneDamage, isCrit ? 100 : 0, 100)
-                              .ifPresent(finalEvent::set);
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .cause(ability)
+                        .source(attacker)
+                        .value(overVeneDamage)
+                        .showAsCrit(isCrit)
+                ).ifPresent(finalEvent::set);
             } else {
-                intervenedBy.addDamageInstance(attacker,
-                        "Intervene",
-                        damageValue,
-                        damageValue,
-                        isCrit ? 100 : 0,
-                        100,
-                        EnumSet.of(InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                intervenedBy.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Intervene")
+                        .source(attacker)
+                        .value(damageValue)
+                        .showAsCrit(isCrit)
+                        .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,

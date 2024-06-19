@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -170,14 +171,12 @@ public enum Aspect {
                                     }
                                     float healthDamage = receiver.getMaxHealth() * 0.005f;
                                     healthDamage = DamageCheck.clamp(healthDamage);
-                                    receiver.addDamageInstance(
-                                            warlordsEntity,
-                                            "Burn",
-                                            healthDamage,
-                                            healthDamage,
-                                            0,
-                                            100,
-                                            EnumSet.of(InstanceFlags.RECURSIVE)
+                                    receiver.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Burn")
+                                            .source(warlordsEntity)
+                                            .value(healthDamage)
+                                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.DOT)
                                     );
                                 }
                             })
@@ -243,13 +242,11 @@ public enum Aspect {
                             if (Aspect.isNegated(warlordsEntity)) {
                                 return;
                             }
-                            warlordsEntity.addHealingInstance(
-                                    warlordsEntity,
-                                    "Regenerative",
-                                    300,
-                                    300,
-                                    0,
-                                    100
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .healing()
+                                    .cause("Regenerative")
+                                    .source(warlordsEntity)
+                                    .value(300)
                             );
                         }
                     }
@@ -326,13 +323,11 @@ public enum Aspect {
                     }
                     WarlordsEntity attacker = event.getSource();
                     float healAmount = currentDamageValue * .2f;
-                    attacker.addHealingInstance(
-                            attacker,
-                            name,
-                            healAmount,
-                            healAmount,
-                            0,
-                            100
+                    attacker.addInstance(InstanceBuilder
+                            .healing()
+                            .cause(name)
+                            .source(attacker)
+                            .value(healAmount)
                     );
                 }
             });

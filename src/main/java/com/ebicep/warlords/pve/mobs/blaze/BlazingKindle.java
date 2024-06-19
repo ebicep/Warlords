@@ -1,22 +1,23 @@
 package com.ebicep.warlords.pve.mobs.blaze;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -94,19 +95,7 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
         }
 
         @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
             Location loc = wp.getLocation();
             EffectUtils.playSphereAnimation(loc, kindleRadius, Particle.FLAME, 1);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 2, 0.2f);
@@ -121,16 +110,30 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
                     .entitiesAround(wp, kindleRadius, kindleRadius, kindleRadius)
                     .aliveEnemiesOf(wp)
             ) {
-                target.addDamageInstance(
-                        wp,
-                        "Kindle Wave",
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                target.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.kindleWaveDamage)
+                        .flags(InstanceFlags.TD_MAGIC)
                 );
             }
             return true;
+        }
+
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue kindleWaveDamage = new Value.RangedValue(518, 805);
+            private final List<Value> values = List.of(kindleWaveDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

@@ -115,14 +115,14 @@ public class NotAShield extends AbstractPiercingProjectile {
             }
         } else {
             float reduction = 1 - (teammatesHit * allyHitDamageReduction / 100f);
-            hit.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal.getCalculatedValue() * reduction,
-                    maxDamageHeal.getCalculatedValue() * reduction,
-                    critChance,
-                    critMultiplier
-            );
+//            hit.addDamageInstance(
+//                    wp,
+//                    name,
+//                    minDamageHeal.getCalculatedValue() * reduction,
+//                    maxDamageHeal.getCalculatedValue() * reduction,
+//                    critChance,
+//                    critMultiplier
+//            );
             hit.getSpec().increaseAllCooldownTimersBy(runeTickIncrease);
             wp.playSound(impactLocation, Sound.ITEM_SHIELD_BLOCK, 1, 1);
         }

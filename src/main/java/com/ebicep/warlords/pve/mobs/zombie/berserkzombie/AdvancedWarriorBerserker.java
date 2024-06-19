@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -143,13 +144,11 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 WarlordsEntity attacker = event.getSource();
-                attacker.addHealingInstance(
-                        attacker,
-                        name,
-                        currentDamageValue * .65f,
-                        currentDamageValue * .65f,
-                        0,
-                        100
+                attacker.addInstance(InstanceBuilder
+                        .healing()
+                        .cause(name)
+                        .source(attacker)
+                        .value(currentDamageValue * .65f)
                 );
             }
         });

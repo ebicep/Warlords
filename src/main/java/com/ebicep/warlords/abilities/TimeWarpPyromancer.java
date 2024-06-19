@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -62,13 +63,11 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     timesSuccessful++;
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            wp.getMaxHealth() * (warpHealPercentage / 100f),
-                            wp.getMaxHealth() * (warpHealPercentage / 100f),
-                            0,
-                            100
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(wp.getMaxHealth() * (warpHealPercentage / 100f))
                     );
 
                     wp.getEntity().teleport(warpLocation);
@@ -78,20 +77,18 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         float cooldownReduction = 0;
                         for (WarlordsEntity linkedPlayer : linkedPlayers) {
                             if (linkedPlayer.isDead()) {
-                                cooldownReduction += .75;
+                                cooldownReduction += .75f;
                                 continue;
                             }
                             float healthDamage = linkedPlayer.getMaxBaseHealth() * .05f;
                             if (linkedPlayer instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                 healthDamage = DamageCheck.clamp(healthDamage);
                             }
-                            linkedPlayer.addDamageInstance(
-                                    wp,
-                                    "Accursed Leap",
-                                    healthDamage,
-                                    healthDamage,
-                                    0,
-                                    100
+                            linkedPlayer.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Accursed Leap")
+                                    .source(wp)
+                                    .value(healthDamage)
                             );
                         }
                         subtractCurrentCooldown(cooldownReduction);

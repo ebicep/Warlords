@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityLiquorBranch;
@@ -74,26 +76,22 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         new FallingBlockWaveEffect(wp.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
 
         VitalityLiquor tempVitalityLiquor = new VitalityLiquor();
-        wp.addHealingInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(healingValues.liquorHealing)
         );
 
         for (WarlordsEntity teammate : PlayerFilter
                 .entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            teammate.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            teammate.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.liquorHealing)
             );
             if (pveMasterUpgrade2) {
                 teammate.addSpeedModifier(wp, "Medicinal Brew", 30, duration * 20);
@@ -128,13 +126,11 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                         .limit(2)
                                 ) {
                                     numberOfAdditionalWaves++;
-                                    allyTarget.addHealingInstance(
-                                            wp,
-                                            name,
-                                            minWaveHealing,
-                                            maxWaveHealing,
-                                            critChance,
-                                            critMultiplier
+                                    allyTarget.addInstance(InstanceBuilder
+                                            .healing()
+                                            .ability(VitalityLiquor.this)
+                                            .source(wp)
+                                            .value(healingValues.liquorHealing)
                                     );
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
                                     allyTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -205,5 +201,19 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
+        private final List<Value> values = List.of(liquorHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

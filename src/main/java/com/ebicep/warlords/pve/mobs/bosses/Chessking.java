@@ -1,14 +1,15 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.slime.SlimyChess;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
@@ -18,7 +19,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -101,7 +101,12 @@ public class Chessking extends AbstractMob implements BossMob {
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (Utils.isProjectile(event.getCause())) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ARROW_HIT, 2, 0.1f);
-            warlordsNPC.addHealingInstance(warlordsNPC, "Blob Heal", 500, 500, -1, 100);
+            warlordsNPC.addInstance(InstanceBuilder
+                    .healing()
+                    .cause("Blob Heal")
+                    .source(warlordsNPC)
+                    .value(500)
+            );
         } else {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SLIME_ATTACK, 2, 0.2f);
         }
@@ -131,30 +136,16 @@ public class Chessking extends AbstractMob implements BossMob {
         }
 
         @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
-        }
-
-        @Override
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, range, range, range)
                     .aliveEnemiesOf(wp)
             ) {
-                we.addDamageInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.belchDamage)
                 );
             }
             return true;
@@ -166,6 +157,20 @@ public class Chessking extends AbstractMob implements BossMob {
 
         public void setRange(float range) {
             this.range = range;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue belchDamage = new Value.RangedValue(2800, 3600);
+            private final List<Value> values = List.of(belchDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 

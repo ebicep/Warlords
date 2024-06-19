@@ -1,12 +1,14 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.ChainHealBranch;
@@ -71,22 +73,17 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
             if (!LocationUtils.isLookingAtChain(wp, chainTarget)) {
                 continue;
             }
-            wp.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            wp.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.chainHealing)
             );
-
-            chainTarget.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            chainTarget.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.chainHealing)
             );
 
             if (pveMasterUpgrade) {
@@ -119,7 +116,12 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                                 return;
                             }
                             float healing = 0.025f * wp.getMaxHealth();
-                            warlordsEntity.addHealingInstance(wp, "Chains of Blessings", healing, healing, 0, 100);
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .healing()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(healing)
+                            );
                             EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25, -1);
                             EffectUtils.displayParticle(
                                     Particle.VILLAGER_HAPPY,
@@ -174,13 +176,11 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                 .warlordPlayersFirst()
         ) {
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
-            bounceTarget.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            bounceTarget.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.chainHealing)
             );
 
             if (pveMasterUpgrade) {
@@ -244,6 +244,20 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                 return currentCritMultiplier + 40;
             }
         });
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);
+        private final List<Value> values = List.of(chainHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
 

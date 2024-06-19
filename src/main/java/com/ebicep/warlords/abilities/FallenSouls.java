@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.FallenSoulsBranch;
@@ -144,7 +146,12 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                 });
             }
         }
-        return enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        return enemy.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.fallenSoulDamage)
+        );
     }
 
     @Override
@@ -284,6 +291,21 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                         wp.addEnergy(wp, "Soulbinding Weapon", 1);
                     }
                 });
+    }
+
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(164, 212, 20, 180);
+        private final List<Value> values = List.of(fallenSoulDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
 }

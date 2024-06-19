@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgra
 import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -245,21 +247,35 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
                                     .aliveEnemiesOf(wp)
                                     .toList();
                             for (WarlordsEntity nearEntity : enemies) {
-                                nearEntity.addDamageInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier,
-                                        InstanceFlags.TD_PHYSICAL
+                                nearEntity.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(damageValues.rangeAttackDamage)
+                                        .flags(InstanceFlags.TD_PHYSICAL)
                                 );
                             }
                         }
                 );
                 return true;
             }
+
+            private final DamageValues damageValues = new DamageValues();
+
+            public static class DamageValues implements Value.ValueHolder {
+
+                private final Value.SetValue rangeAttackDamage = new Value.SetValue(150);
+                private final List<Value> values = List.of(rangeAttackDamage);
+
+                @Override
+                public List<Value> getValues() {
+                    return values;
+                }
+
+            }
         }
+
+
     }
 
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningRodBranch;
@@ -35,7 +37,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
 
     private final int knockbackRadius = 5;
     private int energyRestore = 160;
-    private int healthRestore = 30;
+    private int healthRestore = 30; // TODO
 
     public LightningRod() {
         this(31.32f, 0);
@@ -113,13 +115,11 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
         Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
         new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.ORANGE_TULIP).play();
         wp.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
-        wp.addHealingInstance(
-                wp,
-                name,
-                (wp.getMaxHealth() * (healthRestore / 100f)),
-                (wp.getMaxHealth() * (healthRestore / 100f)),
-                critChance,
-                critMultiplier
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent()))
         );
 
         List<WarlordsEntity> hit = PlayerFilter
@@ -235,5 +235,22 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
         this.energyRestore = energyRestore;
     }
 
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue healthRestore = new Value.SetValue(30);
+        private final List<Value> values = List.of(healthRestore);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

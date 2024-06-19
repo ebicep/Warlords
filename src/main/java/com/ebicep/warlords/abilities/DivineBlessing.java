@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.DivineBlessingBranch;
@@ -169,13 +171,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 if (teammate.getCurrentHealth() - currentDamageValue < 0 && !healedLethal.contains(teammate)) {
                                                     healedLethal.add(teammate);
                                                     float healAmount = teammate.getMaxHealth() * convertToPercent(lethalDamageHealing);
-                                                    teammate.addHealingInstance(
-                                                            wp,
-                                                            name,
-                                                            healAmount,
-                                                            healAmount,
-                                                            0,
-                                                            100
+                                                    teammate.addInstance(InstanceBuilder
+                                                            .healing()
+                                                            .ability(DivineBlessing.this)
+                                                            .source(wp)
+                                                            .value(healAmount)
                                                     );
                                                     teammate.playSound(teammate.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
                                                 }
@@ -209,13 +209,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 if (hasMaxStacks()) {
                     if (wp.getCurrentHealth() - currentDamageValue < 0) {
                         float healAmount = wp.getMaxHealth() * convertToPercent(lethalDamageHealing);
-                        wp.addHealingInstance(
-                                wp,
-                                name,
-                                healAmount,
-                                healAmount,
-                                0,
-                                100
+                        wp.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(DivineBlessing.this)
+                                .source(wp)
+                                .value(healAmount)
                         );
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
                     }
@@ -277,13 +275,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     .forEach(teammate -> {
                         teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
                         teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
-                        teammate.addHealingInstance(
-                                wp,
-                                name,
-                                postHealthHealAmount,
-                                postHealthHealAmount,
-                                0,
-                                100
+                        teammate.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(this)
+                                .source(wp)
+                                .value(healingValues.divineBlessingPostHeal)
                         );
                     });
     }
@@ -309,5 +305,19 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
     public void setLethalDamageHealing(int lethalDamageHealing) {
         this.lethalDamageHealing = lethalDamageHealing;
+    }
+
+    private final HealingValues healingValues = new HealingValues();
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue divineBlessingPostHeal = new Value.SetValue(800);
+        private final List<Value> values = List.of(divineBlessingPostHeal);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

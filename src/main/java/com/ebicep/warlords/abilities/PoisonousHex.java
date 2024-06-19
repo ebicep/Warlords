@@ -2,12 +2,14 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -32,7 +34,6 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
@@ -218,22 +219,21 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         Utils.playGlobalSound(currentLocation, Sound.ENTITY_EVOKER_FANGS_ATTACK, 1, 0.9f);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
-        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                           (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
-            toReduceBy = .2;
+            toReduceBy = .2f;
         }
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
             numberOfDismounts++;
         }
-        hit.addDamageInstance(
-                wp,
-                name,
-                (float) (minDamageHeal.getCalculatedValue() * toReduceBy),
-                (float) (maxDamageHeal.getCalculatedValue() * toReduceBy),
-                critChance,
-                critMultiplier
+        hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.hexDamage.getMinValue() * toReduceBy)
+                .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
         );
         givePoisonousHex(wp, hit);
         if (projectile.getHit().size() >= maxEnemiesHit) {
@@ -250,8 +250,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         String hexName = fromHex.getName();
         int tickDuration = fromHex.getTickDuration();
         int dotTickFrequency = fromHex.getTicksBetweenDot();
-        float dotMinDamage = fromHex.getDotMinDamage();
-        float dotMaxDamage = fromHex.getDotMaxDamage();
+        DamageValues values = fromHex.damageValues;
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, PoisonousHex.class, 3);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Poisonous Hex",
@@ -261,27 +260,23 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 from,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
-                    to.addDamageInstance(
-                            from,
-                            hexName,
-                            dotMinDamage,
-                            dotMaxDamage,
-                            0,
-                            100,
-                            EnumSet.of(InstanceFlags.NO_DISMOUNT)
+                    to.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(fromHex)
+                            .source(from)
+                            .value(values.hexDOTDamage)
+                            .flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT)
                     );
                 },
                 tickDuration * 2,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % dotTickFrequency == 0 && ticksElapsed != 0) {
-                        to.addDamageInstance(
-                                from,
-                                hexName,
-                                dotMinDamage,
-                                dotMaxDamage,
-                                0,
-                                100,
-                                EnumSet.of(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT)
+                        to.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(fromHex)
+                                .source(from)
+                                .value(values.hexDOTDamage)
+                                .flags(InstanceFlags.NO_DISMOUNT, InstanceFlags.DOT)
                         );
                     }
                 })
@@ -340,11 +335,23 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         return maxStacks;
     }
 
-    public int getMaxEnemiesHit() {
-        return maxEnemiesHit;
-    }
-
     public void setMaxEnemiesHit(int maxEnemiesHit) {
         this.maxEnemiesHit = maxEnemiesHit;
     }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(307, 415, 20, 175);
+        private final Value.RangedValue hexDOTDamage = new Value.RangedValue(30, 40);
+        private final List<Value> values = List.of(hexDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

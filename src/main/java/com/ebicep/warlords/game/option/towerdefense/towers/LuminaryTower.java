@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.RayOfLight;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
@@ -101,14 +103,12 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getAllyMobs(range, 1).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, RayOfLight.BEAM_ITEM, 3);
-                    target.addDamageInstance(
-                            warlordsTower,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            InstanceFlags.TD_MAGIC
+                    target.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(damageValues.hexDamage)
+                            .flags(InstanceFlags.TD_MAGIC)
                     );
                 });
             }
@@ -120,6 +120,19 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue hexDamage = new Value.SetValue(100);
+            private final List<Value> values = List.of(hexDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
     private static class BuffTowers extends AbstractAbility implements TDAbility, HitBox {
@@ -175,13 +188,11 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         public boolean onActivate(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getAllyMobs(range).forEach(target -> {
-                    target.addHealingInstance(
-                            warlordsTower,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier
+                    target.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(healingValues.hexHealing)
                     );
                 });
             }
@@ -193,6 +204,19 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        private final HealingValues healingValues = new HealingValues();
+
+        public static class HealingValues implements Value.ValueHolder {
+
+            private final Value.SetValue hexHealing = new Value.SetValue(50);
+            private final List<Value> values = List.of(hexHealing);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
 }

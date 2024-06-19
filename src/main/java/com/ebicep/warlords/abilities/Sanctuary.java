@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -133,18 +134,13 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         3
                                 ))));
                                 Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1, 1.9f);
-                                EnumSet<InstanceFlags> reflectFlags = EnumSet.of(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE);
-                                if (pveMasterUpgrade) {
-                                    reflectFlags.add(InstanceFlags.TRUE_DAMAGE);
-                                }
-                                event.getSource().addDamageInstance(
-                                        event.getWarlordsEntity(),
-                                        name,
-                                        damageToReflect,
-                                        damageToReflect,
-                                        0,
-                                        100,
-                                        reflectFlags
+                                event.getSource().addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause(name)
+                                        .source(wp)
+                                        .value(damageToReflect)
+                                        .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
+                                        .flag(InstanceFlags.TRUE_DAMAGE, pveMasterUpgrade)
                                 );
                                 return currentDamageValue * convertToDivisionDecimal(additionalDamageReduction);
                             }

@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteur;
 import net.kyori.adventure.text.Component;
@@ -102,7 +103,12 @@ public class CodexCollector implements FieldEffect {
                     return;
                 }
                 float healing = warlordsPlayer.getMaxHealth() * 0.05f;
-                warlordsPlayer.addHealingInstance(warlordsPlayer, "Codex Collector", healing, healing, 0, 0);
+                warlordsPlayer.addInstance(InstanceBuilder
+                        .healing()
+                        .cause("Codex Collector")
+                        .source(warlordsPlayer)
+                        .value(healing)
+                );
             }
 
             @EventHandler

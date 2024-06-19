@@ -1,8 +1,10 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -12,6 +14,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class EventPoisonousSpider extends AbstractMob implements BossMinionMob, Spider {
 
@@ -81,24 +84,36 @@ public class EventPoisonousSpider extends AbstractMob implements BossMinionMob, 
     private static class PoisonNear extends AbstractPveAbility {
 
         public PoisonNear() {
-            super("Poison Near", 375, 500, 3, 50);
+            super("Poison", 375, 500, 3, 50);
         }
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             PlayerFilterGeneric.playingGame(pveOption.getGame())
                                .enemiesOf(wp)
-                               .forEach(warlordsEntity -> warlordsEntity.addDamageInstance(
-                                       wp,
-                                       "Poison",
-                                       minDamageHeal,
-                                       maxDamageHeal,
-                                       critChance,
-                                       critMultiplier
-                               ));
+                               .forEach(warlordsEntity -> {
+                                   warlordsEntity.addInstance(InstanceBuilder
+                                           .damage()
+                                           .ability(this)
+                                           .source(wp)
+                                           .value(damageValues.poisonDamage)
+                                   );
+                               });
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue poisonDamage = new Value.RangedValue(224, 377);
+            private final List<Value> values = List.of(poisonDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
 
     }

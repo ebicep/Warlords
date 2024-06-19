@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.SoulfireBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -10,15 +11,14 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
-import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,6 +80,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
     private static class HexAttack extends AbstractAbility implements TDAbility, HitBox {
 
         private final FloatModifiable range = new FloatModifiable(30);
+        private final DamageValues damageValues = new DamageValues();
 
         public HexAttack() {
             super("Hex Attack", 300, 300, 3, 0);
@@ -90,18 +91,16 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 2).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, SoulfireBeam.BEAM_ITEM, 3);
-                    target.addDamageInstance(
-                            warlordsTower,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            EnumSet.of(InstanceFlags.TD_MAGIC),
-                            pveMasterUpgrade ? JavaUtils.newArrayListOf(new CustomInstanceFlags.Valued(
+                    target.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(damageValues.poisonDamage)
+                            .flags(InstanceFlags.TD_MAGIC)
+                            .customFlag(new CustomInstanceFlags.Valued(
                                     floatModifiable -> floatModifiable.addMultiplicativeModifierMult(name + " Upgrade", .5f, 0),
                                     CustomInstanceFlags.Valued.Flag.TD_MAGIC_RES_REDUCTION
-                            )) : new ArrayList<>()
+                            ), pveMasterUpgrade)
                     );
                 });
             }
@@ -113,5 +112,16 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue poisonDamage = new Value.SetValue(300);
+            private final List<Value> values = List.of(poisonDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
@@ -148,14 +150,12 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
                 AbstractTower tower = warlordsTower.getTower();
                 tower.getEnemyMobs(range).forEach(warlordsNPC -> {
                     TowerDefenseUtils.playSwordStrikeAnimation(warlordsTower, warlordsNPC, SWORD_ITEM);
-                    warlordsNPC.addDamageInstance(
-                            warlordsTower,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier,
-                            InstanceFlags.TD_PHYSICAL
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(warlordsTower)
+                            .value(damageValues.strikeDamage)
+                            .flags(InstanceFlags.TD_PHYSICAL)
                     );
                 });
             }
@@ -167,6 +167,19 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue strikeDamage = new Value.SetValue(5);
+            private final List<Value> values = List.of(strikeDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
 

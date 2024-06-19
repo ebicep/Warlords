@@ -6,13 +6,13 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.Aspect;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.Vector;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -141,7 +141,13 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
         if (thornsDamage > maxThornsDamage) {
             thornsDamage = maxThornsDamage;
         }
-        attacker.addDamageInstance(from, "Thorns", thornsDamage, thornsDamage, 0, 100, EnumSet.of(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST));
+        attacker.addInstance(InstanceBuilder
+                .damage()
+                .cause("Thorns")
+                .source(from)
+                .value(thornsDamage)
+                .flags(InstanceFlags.RECURSIVE, InstanceFlags.IGNORE_DAMAGE_BOOST)
+        );
     }
 
     @Override

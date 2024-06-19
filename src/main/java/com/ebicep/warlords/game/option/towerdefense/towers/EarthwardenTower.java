@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
@@ -11,6 +12,7 @@ import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Tower
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.Upgradeable;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -150,14 +152,12 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
                                 display.remove();
                             }
                         }.runTaskLater(Warlords.getInstance(), 8);
-                        target.addDamageInstance(
-                                warlordsTower,
-                                name,
-                                minDamageHeal,
-                                maxDamageHeal,
-                                critChance,
-                                critMultiplier,
-                                InstanceFlags.TD_PHYSICAL
+                        target.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(warlordsTower)
+                                .value(damageValues.spikeDamage)
+                                .flags(InstanceFlags.TD_PHYSICAL)
                         );
                         if (pveMasterUpgrade) {
                             target.addSpeedModifier(warlordsTower, name, -20, SLOW_TICKS);
@@ -166,14 +166,12 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
                                     .aliveTeammatesOf(target)
                                     .excluding(target)
                                     .forEach(warlordsEntity -> {
-                                        warlordsEntity.addDamageInstance(
-                                                warlordsTower,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier,
-                                                InstanceFlags.TD_PHYSICAL
+                                        warlordsEntity.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .source(warlordsTower)
+                                                .value(damageValues.spikeDamage)
+                                                .flags(InstanceFlags.TD_PHYSICAL)
                                         );
                                         if (pveMasterUpgrade) {
                                             warlordsEntity.addSpeedModifier(warlordsTower, name, -20, SLOW_TICKS);
@@ -190,6 +188,19 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue spikeDamage = new Value.SetValue(350);
+            private final List<Value> values = List.of(spikeDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
     private static class SpawnTroops extends AbstractAbility implements TDAbility, Spawner, HitBox {

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.pve.WarlordsMagmaticOozeSplitEvent;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -42,7 +44,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
@@ -187,14 +192,13 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                         }
                                     }
                                     damageCooldown.put(warlordsEntity, Instant.now());
-                                    warlordsEntity.addDamageInstance(
-                                            warlordsNPC,
-                                            "Magma",
-                                            150,
-                                            200,
-                                            0,
-                                            100,
-                                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                                    warlordsEntity.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Magma")
+                                            .source(warlordsNPC)
+                                            .min(150)
+                                            .max(200)
+                                            .flags(InstanceFlags.TRUE_DAMAGE)
                                     );
                                 } else {
                                     damageCooldown.remove(warlordsEntity); // remove if not on magma
@@ -247,6 +251,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         public FieryProjectile(float minDamageHeal, float maxDamageHeal) {
             super("Fiery Projectile", minDamageHeal, maxDamageHeal, 5, 50, 10, 200);
+            this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
         @Override
@@ -306,7 +311,12 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                                         v = new LocationBuilder(p.getLocation()).getVectorTowards(newLoc).multiply(-kbVelocity).setY(1);
                                     }
                                     p.setVelocity(name, v, false, false);
-                                    p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                                    p.addInstance(InstanceBuilder
+                                            .damage()
+                                            .ability(FieryProjectile.this)
+                                            .source(wp)
+                                            .value(damageValues.fieryProjectileDamage)
+                                    );
                                 }
 
                                 newLoc.setPitch(-12);
@@ -321,6 +331,26 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             );
             return true;
         }
+
+
+        private final DamageValues damageValues;
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue fieryProjectileDamage;
+            private final List<Value> values;
+
+            public DamageValues(float min, float max) {
+                this.fieryProjectileDamage = new Value.RangedValue(min, max);
+                this.values = List.of(fieryProjectileDamage);
+            }
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
     public static class FlamingSlam extends AbstractPveAbility {
@@ -330,6 +360,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
             super("Flaming Slam", minDamageHeal, maxDamageHeal, 12, 50, 15, 175);
+            this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
         @Override
@@ -413,13 +444,11 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                         .aliveEnemiesOf(wp)
                         .forEach(enemy -> {
-                            enemy.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.slamDamage)
                             );
                         });
             // lava?
@@ -447,6 +476,24 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             }
         }
 
+        private final DamageValues damageValues;
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue slamDamage;
+            private final List<Value> values;
+
+            public DamageValues(float min, float max) {
+                this.slamDamage = new Value.RangedValue(min, max);
+                this.values = List.of(slamDamage);
+            }
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
     public static class HeatAura extends AbstractPveAbility {
@@ -457,6 +504,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         public HeatAura(float startDamage, int hitbox) {
             super("Heat Aura", startDamage, startDamage, 2, 50, 25, 175);
             this.hitbox = hitbox;
+            this.damageValues = new DamageValues(startDamage);
         }
 
         @Override
@@ -470,18 +518,34 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                         .aliveEnemiesOf(wp)
                         .forEach(enemy -> {
-                            enemy.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.heatAuraDamage)
                             );
                         });
             return true;
         }
 
+        private final DamageValues damageValues;
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue heatAuraDamage;
+            private final List<Value> values;
+
+            public DamageValues(float value) {
+                this.heatAuraDamage = new Value.SetValue(value);
+                this.values = List.of(heatAuraDamage);
+            }
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
     public static class MoltenFissure extends AbstractPveAbility implements RedAbilityIcon {

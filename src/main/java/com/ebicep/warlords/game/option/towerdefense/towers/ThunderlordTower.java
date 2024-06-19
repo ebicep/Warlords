@@ -3,6 +3,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -12,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -96,14 +98,12 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
 
         private void attack(WarlordsTower warlordsTower, WarlordsEntity target) {
             EffectUtils.playChainAnimation(warlordsTower, target, ChainLightning.CHAIN_ITEM, 3);
-            target.addDamageInstance(
-                    warlordsTower,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier,
-                    InstanceFlags.TD_PHYSICAL
+            target.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(warlordsTower)
+                    .value(damageValues.boltDamage)
+                    .flags(InstanceFlags.TD_PHYSICAL)
             );
             if (pveMasterUpgrade) {
                 if (target instanceof WarlordsPlayer warlordsPlayer) {
@@ -125,5 +125,18 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
             return range;
         }
 
+        private final DamageValues damageValues = new DamageValues();
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue boltDamage = new Value.SetValue(200);
+            private final List<Value> values = List.of(boltDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 }

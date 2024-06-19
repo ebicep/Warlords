@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityConcoctionBranch;
@@ -102,13 +104,11 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                                 .warlordsNPCs()
                         ) {
                             playersHit.add(we);
-                            we.addDamageInstance(
-                                    wp,
-                                    name,
-                                    1245,
-                                    1625,
-                                    0,
-                                    100
+                            we.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.concoctionZoneDamage)
                             );
                         }
                     })
@@ -132,4 +132,19 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValue concoctionZoneDamage = new Value.RangedValue(1245, 1625);
+        private final List<Value> values = List.of(concoctionZoneDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

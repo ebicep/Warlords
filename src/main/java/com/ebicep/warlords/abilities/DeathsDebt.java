@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.DeathsDebtBranch;
@@ -194,13 +195,11 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                         .toList();
                                 for (WarlordsEntity totemTarget : enemies) {
                                     playersDamaged++;
-                                    totemTarget.addDamageInstance(
-                                            wp,
-                                            name,
-                                            tempDeathsDebt.getDelayedDamage() * .15f,
-                                            tempDeathsDebt.getDelayedDamage() * .15f,
-                                            critChance,
-                                            critMultiplier
+                                    totemTarget.addInstance(InstanceBuilder
+                                            .damage()
+                                            .ability(this)
+                                            .source(wp)
+                                            .value(tempDeathsDebt.getDelayedDamage() * .15f)
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                         if (warlordsDamageHealingFinalEvent.getValue() > 5000) {
                                             over5000DamageInstances.getAndIncrement();
@@ -347,13 +346,10 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                 (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()
         ));
         // Player damage
-        wp.addDamageInstance(
-                wp,
-                "",
-                debtTrueDamage,
-                debtTrueDamage,
-                critChance,
-                critMultiplier
+        wp.addInstance(InstanceBuilder
+                .melee()
+                .source(wp)
+                .value(debtTrueDamage)
         );
         // Teammate heal
         for (WarlordsEntity allyTarget : PlayerFilter
@@ -361,13 +357,11 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                 .aliveTeammatesOf(wp)
         ) {
             playersHealed++;
-            allyTarget.addHealingInstance(
-                    wp,
-                    name,
-                    damage * convertToPercent(damagePercent),
-                    damage * convertToPercent(damagePercent),
-                    critChance,
-                    critMultiplier
+            allyTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damage * convertToPercent(damagePercent))
             );
         }
 

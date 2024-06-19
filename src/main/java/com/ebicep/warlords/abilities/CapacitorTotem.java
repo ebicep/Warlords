@@ -2,12 +2,14 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.CapacitorTotemBranch;
@@ -131,13 +133,11 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
                         .forEach(warlordsPlayer -> {
                             playersHit++;
                             tempCapacitorTotem.setPlayersHit(tempCapacitorTotem.getPlayersHit() + 1);
-                            warlordsPlayer.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            warlordsPlayer.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.totemDamage)
                             ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                 if (warlordsDamageHealingFinalEvent.isDead()) {
                                     tempCapacitorTotem.addPlayersKilledWithFinalHit();
@@ -237,5 +237,19 @@ public class CapacitorTotem extends AbstractTotem implements Duration {
 
     public int getNumberOfProcsAfterCarrierPassed() {
         return numberOfProcsAfterCarrierPassed;
+    }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable totemDamage = new Value.RangedValueCritable(404, 523, 20, 200);
+        private final List<Value> values = List.of(totemDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -28,7 +27,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
-    private boolean trueDamage = false;
+    protected boolean trueDamage = false;
 
     public AbstractGroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
         this(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 0);
@@ -133,17 +132,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                             final Location loc = slamTarget.getLocation();
                             final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
                             slamTarget.setVelocity(name, v, false, false);
-
-                            slamTarget.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal.getCalculatedValue() * damageMultiplier,
-                                    maxDamageHeal.getCalculatedValue() * damageMultiplier,
-                                    critChance,
-                                    critMultiplier,
-                                    trueDamage ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class),
-                                    abilityUUID
-                            );
+                            slamDamage(wp, slamTarget, damageMultiplier, abilityUUID);
                         }
                     }
 
@@ -160,6 +149,10 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
             }
 
         }.runTaskTimer(0, 2);
+    }
+
+    protected void slamDamage(WarlordsEntity wp, WarlordsEntity slamTarget, float damageMultiplier, UUID abilityUUID) {
+
     }
 
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {

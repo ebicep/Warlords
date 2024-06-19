@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
@@ -29,7 +30,13 @@ public class TDCaveSpider extends TowerDefenseMob implements BasicMob {
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 20 == 0) {
-                        to.addDamageInstance(from, "Poison", 50, 50, 0, 100, InstanceFlags.CANT_KILL);
+                        to.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Poison")
+                                .source(from)
+                                .value(50)
+                                .flags(InstanceFlags.CANT_KILL)
+                        );
                     }
                 })
         ));

@@ -110,7 +110,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 name,
                 null,
                 AbstractConsecrate.class,
-                createConsecrate(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -128,14 +128,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
                                         playersHit++;
-                                        enemy.addDamageInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier
-                                        );
+                                        damageEnemy(wp, enemy);
                                     });
                     }
                 })
@@ -158,8 +151,8 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return true;
     }
 
-    @Nonnull
-    public abstract AbstractConsecrate createConsecrate();
+    protected void damageEnemy(WarlordsEntity wp, WarlordsEntity enemy) {
+    }
 
     @Nonnull
     public abstract String getStrikeName();

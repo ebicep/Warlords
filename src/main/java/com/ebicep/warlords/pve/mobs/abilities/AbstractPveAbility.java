@@ -3,12 +3,9 @@ package com.ebicep.warlords.pve.mobs.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.java.Pair;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 /**
  * Easy to use abstract class for basic pve abilities
@@ -52,16 +49,6 @@ public abstract class AbstractPveAbility extends AbstractAbility implements PvEA
             float startCooldown
     ) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        return null;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
@@ -62,14 +63,13 @@ public class PansTome extends SpecialDeltaTome implements CraftsInto {
                 EnumSet<InstanceFlags> flags = EnumSet.copyOf(event.getFlags());
                 flags.add(InstanceFlags.RECURSIVE);
                 for (int i = 0; i < 2; i++) {
-                    event.getWarlordsEntity().addDamageInstance(
-                            warlordsPlayer,
-                            event.getCause(),
-                            event.getMin(),
-                            event.getMax(),
-                            event.getCritChance(),
-                            event.getCritMultiplier(),
-                            flags
+                    event.getWarlordsEntity().addInstance(InstanceBuilder
+                            .damage()
+                            .cause(event.getCause())
+                            .source(warlordsPlayer)
+                            .value(event)
+                            .flags(event.getFlags())
+                            .flags(InstanceFlags.RECURSIVE)
                     );
                 }
             }

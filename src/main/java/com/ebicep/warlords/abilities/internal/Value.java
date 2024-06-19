@@ -41,6 +41,14 @@ public interface Value {
             return max;
         }
 
+        public float getMinValue() {
+            return min.getCalculatedValue();
+        }
+
+        public float getMaxValue() {
+            return max.getCalculatedValue();
+        }
+
     }
 
     final class RangedValueCritable extends RangedValue {
@@ -62,6 +70,14 @@ public interface Value {
             return critMultiplier;
         }
 
+        public float getCritChanceValue() {
+            return critChance.getCalculatedValue();
+        }
+
+        public float getCritMultiplierValue() {
+            return critMultiplier.getCalculatedValue();
+        }
+
     }
 
     record SetValue(FloatModifiable value) implements Value {
@@ -70,9 +86,21 @@ public interface Value {
             this.value = value;
         }
 
+        public SetValue(float value) {
+            this(new FloatModifiable(value));
+        }
+
         @Override
         public void tick() {
             value.tick();
+        }
+
+        public float getValue() {
+            return value.getCalculatedValue();
+        }
+
+        public float getMultiplicativePercent() {
+            return getValue() / 100f;
         }
 
     }

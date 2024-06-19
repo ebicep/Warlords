@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.ShadowStepBranch;
@@ -139,13 +141,11 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                         .excluding(hit)
                         .forEach(warlordsEntity -> {
                             hit.add(warlordsEntity);
-                            warlordsEntity.addDamageInstance(
-                                    wp,
-                                    "Shadow Dash",
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Shadow Dash")
+                                    .source(wp)
+                                    .value(damageValues.shadowStepDamage)
                             );
                         });
             locationBuilder = locationBuilder.forward(1);
@@ -188,7 +188,12 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                 .aliveEnemiesOf(wp)
         ) {
             totalPlayersHit++;
-            assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            assaultTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damageValues.shadowStepDamage)
+            );
             Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
             playersHit.add(assaultTarget);
         }
@@ -223,7 +228,12 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
                             .excluding(playersHit)
                     ) {
                         totalPlayersHit++;
-                        landingTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        landingTarget.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(ShadowStep.this)
+                                .source(wp)
+                                .value(damageValues.shadowStepDamage)
+                        );
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }
 
@@ -271,5 +281,18 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon {
         this.fallDamageNegation = fallDamageNegation;
     }
 
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable shadowStepDamage = new Value.RangedValueCritable(466, 598, 15, 175);
+        private final List<Value> values = List.of(shadowStepDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

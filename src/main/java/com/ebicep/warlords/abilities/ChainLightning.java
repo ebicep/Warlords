@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractChain;
-import com.ebicep.warlords.abilities.internal.AbstractTotem;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -12,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
@@ -76,6 +74,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         });
     }
 
+    private final DamageValues damageValues = new DamageValues();
     public int numberOfDismounts = 0;
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;
@@ -219,13 +218,13 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 numberOfDismounts++;
             }
 
-            hit.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal.getCalculatedValue() * damageMultiplier,
-                    maxDamageHeal.getCalculatedValue() * damageMultiplier,
-                    critChance,
-                    critMultiplier
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.chainDamage.getMinValue() * damageMultiplier)
+                    .max(damageValues.chainDamage.getMaxValue() * damageMultiplier)
+                    .crit(damageValues.chainDamage)
             );
 
             if (pveMasterUpgrade2) {
@@ -264,22 +263,6 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 .findFirst();
     }
 
-    public float getDamageReductionPerBounce() {
-        return damageReductionPerBounce;
-    }
-
-    public void setDamageReductionPerBounce(float damageReductionPerBounce) {
-        this.damageReductionPerBounce = damageReductionPerBounce;
-    }
-
-    public float getMaxDamageReduction() {
-        return maxDamageReduction;
-    }
-
-    public void setMaxDamageReduction(float maxDamageReduction) {
-        this.maxDamageReduction = maxDamageReduction;
-    }
-
     @Override
     public int getTickDuration() {
         return damageReductionTickDuration;
@@ -289,4 +272,17 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     public void setTickDuration(int tickDuration) {
         this.damageReductionTickDuration = tickDuration;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
+        private final List<Value> values = List.of(chainDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

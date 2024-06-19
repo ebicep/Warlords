@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -15,6 +16,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -120,13 +122,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             });
             undyingArmyCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
                 if (ticksElapsed % 20 == 0) {
-                    warlordsEntity.addDamageInstance(
-                            warlordsEntity,
-                            "",
-                            warlordsEntity.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                            warlordsEntity.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f),
-                            0,
-                            100
+                    warlordsEntity.addInstance(InstanceBuilder
+                            .melee()
+                            .source(warlordsEntity)
+                            .value(warlordsEntity.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f))
                     );
 
                     if (undyingArmy.isPveMasterUpgrade() && ticksElapsed % 40 == 0) {
@@ -135,13 +134,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                     .forEach(enemy -> {
                                         float healthDamage = enemy.getMaxHealth() * .02f;
                                         healthDamage = DamageCheck.clamp(healthDamage);
-                                        enemy.addDamageInstance(
-                                                warlordsEntity,
-                                                "Undying Army",
-                                                458 + healthDamage,
-                                                612 + healthDamage,
-                                                0,
-                                                100
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(undyingArmy)
+                                                .source(warlordsEntity)
+                                                .min(undyingArmy.damageValues.relentlessArmy.getMinValue() + healthDamage)
+                                                .max(undyingArmy.damageValues.relentlessArmy.getMaxValue() + healthDamage)
                                         );
                                     });
 
@@ -324,7 +322,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                             return;
                         }
                         float healAmount = flatHealing + (teammate.getMaxHealth() - teammate.getCurrentHealth()) * (missingHealing / 100f);
-                        teammate.addHealingInstance(wp, name, healAmount, healAmount, 0, 100);
+                        teammate.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(this)
+                                .source(wp)
+                                .value(healAmount)
+                        );
                         teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.1f, 0.7f);
                         // Particles
                         Location playerLoc = teammate.getLocation();
@@ -380,7 +383,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                     healthDamage = DamageCheck.clamp(healthDamage);
                                 }
                                 float damage = 1000 + healthDamage;
-                                enemy.addDamageInstance(wp, "Vengeful Army", damage, damage, 0, 100);
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .cause("Vengeful Army")
+                                        .source(wp)
+                                        .value(damage)
+                                );
                             } else {
                                 new CooldownFilter<>(wp, PersistentCooldown.class)
                                         .filterCooldownClass(OrbsOfLife.class)
@@ -474,4 +482,20 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     public void setMissingHealing(float missingHealing) {
         this.missingHealing = missingHealing;
     }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValue relentlessArmy = new Value.RangedValue(458, 612);
+        private final List<Value> values = List.of(relentlessArmy);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+
 }

@@ -1,9 +1,11 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
@@ -63,8 +65,8 @@ public class SoulfireBeam extends AbstractBeam {
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float minDamage = minDamageHeal.getCalculatedValue();
-            float maxDamage = maxDamageHeal.getCalculatedValue();
+            float minDamage = damageValues.beamDamage.getMinValue();
+            float maxDamage = damageValues.beamDamage.getMaxValue();
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()
@@ -82,7 +84,14 @@ public class SoulfireBeam extends AbstractBeam {
                     maxDamage *= 2;
                 }
             }
-            hit.addDamageInstance(wp, name, minDamage, maxDamage, critChance, critMultiplier);
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(minDamage)
+                    .max(maxDamage)
+                    .crit(damageValues.beamDamage)
+            );
         }
     }
 
@@ -112,4 +121,19 @@ public class SoulfireBeam extends AbstractBeam {
     public ItemStack getBeamItem() {
         return BEAM_ITEM;
     }
+
+    private final DamageValues damageValues = new DamageValues();
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(376, 508, 20, 175);
+        private final List<Value> values = List.of(beamDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }
