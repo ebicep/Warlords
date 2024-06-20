@@ -41,7 +41,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(7);
-    private int tickDuration = 120;
+    private int tickDuration = 100;
     private int crippleDuration = 6;
     private float healingIncrement = 25;
 
@@ -182,10 +182,9 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         for (int i = 0; i < 1; i++) {
                             for (int j = 0; j < 12; j++) {
                                 double angle = j / 10D * Math.PI * 2;
-                                double width = (double) rad;
-                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * rad);
                                 particleLoc.setY(totemLoc.getY() + i / 2D);
-                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
+                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * rad);
 
                                 particleLoc.getWorld().spawnParticle(
                                         Particle.FIREWORKS_SPARK,
@@ -212,7 +211,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
                         int secondsElapsed = ticksElapsed / 20;
-                        float healMultiplier = secondsElapsed == ((tickDuration / 20) - 1) ? 1f : (float) Math.pow((1 - healingIncrement / 100f), secondsElapsed);
+                        float healMultiplier = (float) Math.pow((1 - healingIncrement / 100f), secondsElapsed);
                         PlayerFilter.entitiesAround(totemStand, rad, rad, rad)
                                     .aliveTeammatesOf(wp)
                                     .forEach(teammate -> {
