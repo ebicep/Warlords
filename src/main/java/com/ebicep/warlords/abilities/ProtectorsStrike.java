@@ -42,7 +42,7 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and healing "))
                                .append(Component.text(maxAllies, NamedTextColor.GREEN))
                                .append(Component.text(" nearby allies for "))

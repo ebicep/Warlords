@@ -56,7 +56,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Shoot a frostbolt that will shatter for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.boltDamage))
                                .append(Component.text(" damage and slow by "))
                                .append(Component.text(slowness + "%", NamedTextColor.YELLOW))
                                .append(Component.text("for "))

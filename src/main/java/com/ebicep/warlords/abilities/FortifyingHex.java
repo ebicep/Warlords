@@ -77,7 +77,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                                .append(Component.text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and "))
                                .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
                                .append(Component.text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes "))
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.hexDamage))
                                .append(Component.text(" damage. The ally receives "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex. If Fortifying Hex hits a target, you receive "))

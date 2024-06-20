@@ -61,13 +61,13 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     public void updateDescription(Player player) {
         boolean infiniteHit = maxEnemiesHit >= 200;
         description = Component.text("Throw Hex Fangs in front of you, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.hexDamage))
                                .append(Component.text(" damage " + (infiniteHit ? "" : "to up to "))
                                                 .append(Component.text((infiniteHit ? "infinite" : "" + maxEnemiesHit), NamedTextColor.RED))
                                                 .append(Component.text(" enemies. Additionally, hit targets receive ")))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.\n\nEach stack of Poisonous Hex deals "))
-                               .append(formatRangeDamage(dotMinDamage, dotMaxDamage))
+                               .append(Damages.formatDamage(damageValues.hexDOTDamage))
                                .append(Component.text(" damage every "))
                                .append(Component.text(format(ticksBetweenDot / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds for "))

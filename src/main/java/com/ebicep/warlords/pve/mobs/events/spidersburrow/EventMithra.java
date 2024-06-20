@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -70,6 +71,21 @@ public class EventMithra extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_MITHRA;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 
     @Override
@@ -250,10 +266,17 @@ public class EventMithra extends AbstractMob implements BossMob {
     }
 
     private void groundSlam() {
-        AbstractGroundSlam groundSlam = new AbstractGroundSlam(1000, 1000, 0, 0, 0, 0) {{
-            setTrueDamage(true);
-            getHitBoxRadius().setBaseValue(9);
-        }};
+        AbstractGroundSlam groundSlam = new AbstractGroundSlam(1000, 1000, 0, 0, 0, 0) {
+            {
+                setTrueDamage(true);
+                getHitBoxRadius().setBaseValue(9);
+            }
+
+            @Override
+            public Value.RangedValueCritable getSlamDamage() {
+                return new Value.RangedValueCritable(100, 100, 0, 0);
+            }
+        };
         groundSlam.onActivate(warlordsNPC);
     }
 
@@ -365,20 +388,5 @@ public class EventMithra extends AbstractMob implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.EVENT_MITHRA;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
-    }
-
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.LIGHT_PURPLE;
     }
 }

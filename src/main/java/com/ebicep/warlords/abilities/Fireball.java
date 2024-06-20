@@ -54,7 +54,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Shoot a fireball that will explode for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.fireballDamage))
                                .append(Component.text(" damage. A direct hit will cause the enemy to take an additional "))
                                .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.RED))
                                .append(Component.text(" extra damage."))

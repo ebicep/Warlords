@@ -39,7 +39,7 @@ public class NotAShield extends AbstractPiercingProjectile {
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+//                               .append(Damages.formatDamage(damageValues.))
                                .append(Component.text(" damage and have their rune timers increase by "))
                                .append(Component.text(format(runeTickIncrease), NamedTextColor.GOLD))
                                .append(Component.text(". Allies hit pick up a piece of the shield, reducing its damage by "))

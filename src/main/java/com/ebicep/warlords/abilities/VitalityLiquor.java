@@ -47,13 +47,13 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Discharge a shockwave of special potions around you, healing allies in the range for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.liquorHealing))
                                .append(Component.text(" health.\n\nEach enemy afflicted with your "))
                                .append(Component.text("LEECH", NamedTextColor.GREEN))
                                .append(Component.text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals "))
                                .append(Component.text("2", NamedTextColor.YELLOW))
                                .append(Component.text(" nearby allies for "))
-                               .append(formatRangeHealing(minWaveHealing, maxWaveHealing))
+                               .append(Heals.formatHealing(healingValues.waveHealing))
                                .append(Component.text(" health and increase their energy regeneration by "))
                                .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
                                .append(Component.text(" for "))
@@ -132,7 +132,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                             .healing()
                                             .ability(VitalityLiquor.this)
                                             .source(wp)
-                                            .value(healingValues.liquorHealing)
+                                            .value(healingValues.waveHealing)
                                     );
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
                                     allyTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -213,7 +213,8 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
-        private final List<Value> values = List.of(liquorHealing);
+        private final Value.RangedValueCritable waveHealing = new Value.RangedValueCritable(268, 324, 25, 175);
+        private final List<Value> values = List.of(liquorHealing, waveHealing);
 
         @Override
         public List<Value> getValues() {

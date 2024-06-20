@@ -33,7 +33,7 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text("damage. Every fourth attack is a "))
                                .append(Component.text("guaranteed", NamedTextColor.RED))
                                .append(Component.text(" critical strike. Critical strikes temporarily increase your movement speed by "))

@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -71,7 +72,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(getConsecrateDamage()))
                                .append(Component.text(" damage per second and take "))
                                .append(Component.text(strikeDamageBoost + "%", NamedTextColor.RED))
                                .append(Component.text(" increased damage from your paladin strikes. Has a radius of "))
@@ -128,7 +129,12 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
                                         playersHit++;
-                                        damageEnemy(wp, enemy);
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .source(wp)
+                                                .value(getConsecrateDamage())
+                                        );
                                     });
                     }
                 })
@@ -151,8 +157,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return true;
     }
 
-    protected void damageEnemy(WarlordsEntity wp, WarlordsEntity enemy) {
-    }
+    public abstract Value.RangedValueCritable getConsecrateDamage();
 
     @Nonnull
     public abstract String getStrikeName();

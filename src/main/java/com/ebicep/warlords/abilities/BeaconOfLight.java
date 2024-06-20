@@ -46,8 +46,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implemen
                                .append(Component.text(" seconds. All allies within a "))
                                .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
                                .append(Component.text(" block radius restore "))
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text("  health every 2 seconds." +
+                               .append(Heals.formatHealing(healingValues.beaconHealing))
+                               .append(Component.text(" health every 2 seconds." +
                                        "Only 2 beacons can be on the field at once (Including both Beacon of Light and Impair)."));
     }
 
@@ -56,7 +56,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implemen
         return Component.text("All allies within a ")
                         .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
                         .append(Component.text(" block radius restore "))
-                        .append(Component.text(format(minDamageHeal), NamedTextColor.GREEN))
+                        .append(Heals.formatHealing(healingValues.beaconHealing))
                         .append(Component.text("  health every 2 seconds."));
     }
 

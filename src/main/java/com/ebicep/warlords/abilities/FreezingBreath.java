@@ -58,7 +58,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Breathe cold air in a cone in front of you, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.freezingBreathDamage))
                                .append(Component.text(" damage to all enemies hit and slowing them by "))
                                .append(Component.text(slowness + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" for "))

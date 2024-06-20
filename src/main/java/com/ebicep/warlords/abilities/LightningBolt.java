@@ -50,7 +50,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Hurl a fast, piercing bolt of lightning that deals ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.boltDamage))
                                .append(Component.text(" to all enemies it passes through. Each target hit reduces the cooldown of Chain Lightning by "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))

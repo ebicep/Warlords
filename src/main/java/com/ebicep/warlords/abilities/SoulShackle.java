@@ -54,7 +54,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         description = Component.text("Shackle up to ")
                                .append(Component.text(maxShackleTargets, NamedTextColor.GOLD))
                                .append(Component.text(" enemy and deal "))
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.shackleDamage))
                                .append(Component.text(" damage. Shackled enemies are silenced for "))
                                .append(formatRange(minSilenceDurationInTicks / 20f, maxSilenceDurationInTicks / 20f, NamedTextColor.GOLD))
                                .append(Component.text(" seconds, making them unable to use their main attack for the duration. The silence duration increases by "))

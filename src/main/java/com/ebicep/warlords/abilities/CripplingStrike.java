@@ -90,7 +90,7 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and "))
                                .append(Component.text("crippling ", NamedTextColor.RED))
                                .append(Component.text("them for "))

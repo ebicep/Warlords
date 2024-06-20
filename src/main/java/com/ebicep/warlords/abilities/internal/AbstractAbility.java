@@ -53,6 +53,22 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     }
 
+    public static Component formatRange(float min, float max, NamedTextColor textColor) {
+        return Component.text(" ", NamedTextColor.GRAY)
+                        .append(Component.text(format(min), textColor))
+                        .append(Component.text(" - "))
+                        .append(Component.text(format(max), textColor))
+                        .append(Component.text(" "));
+    }
+
+    public static String format(double input) {
+        return NumberFormat.formatOptionalTenths(input);
+    }
+
+    public static String formatHundredths(double input) {
+        return NumberFormat.formatOptionalHundredths(input);
+    }
+
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected int timesUsed = 0;
@@ -70,7 +86,6 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected boolean inPve = false;
     protected boolean pveMasterUpgrade = false;
     protected boolean pveMasterUpgrade2 = false;
-
     private boolean updateItem = true;
 
     public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
@@ -230,42 +245,6 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public FloatModifiable getEnergyCost() {
         return energyCost;
-    }
-
-    public Component formatRangeDamage(float min, float max) {
-        return formatRange(min, max, NamedTextColor.RED);
-    }
-
-    public Component formatRange(float min, float max, NamedTextColor textColor) {
-        return Component.text(" ", NamedTextColor.GRAY)
-                        .append(Component.text(format(min), textColor))
-                        .append(Component.text(" - "))
-                        .append(Component.text(format(max), textColor))
-                        .append(Component.text(" "));
-    }
-
-    public String format(double input) {
-        return NumberFormat.formatOptionalTenths(input);
-    }
-
-    public Component formatRangeDamage(FloatModifiable min, FloatModifiable max) {
-        return formatRange(min.getCalculatedValue(), max.getCalculatedValue(), NamedTextColor.RED);
-    }
-
-    public String format(FloatModifiable input) {
-        return NumberFormat.formatOptionalTenths(input.getCalculatedValue());
-    }
-
-    public String formatHundredths(double input) {
-        return NumberFormat.formatOptionalHundredths(input);
-    }
-
-    public Component formatRangeHealing(float min, float max) {
-        return formatRange(min, max, NamedTextColor.GREEN);
-    }
-
-    public Component formatRangeHealing(FloatModifiable min, FloatModifiable max) {
-        return formatRange(min.getCalculatedValue(), max.getCalculatedValue(), NamedTextColor.GREEN);
     }
 
     /**

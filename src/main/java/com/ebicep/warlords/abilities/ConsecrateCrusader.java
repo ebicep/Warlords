@@ -107,13 +107,8 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
     }
 
     @Override
-    protected void damageEnemy(WarlordsEntity wp, WarlordsEntity enemy) {
-        enemy.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .value(damageValues.consecrateDamage)
-        );
+    public Value.RangedValueCritable getConsecrateDamage() {
+        return damageValues.consecrateDamage;
     }
 
     @Nonnull

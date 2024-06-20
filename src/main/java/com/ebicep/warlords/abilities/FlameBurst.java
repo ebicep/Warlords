@@ -58,7 +58,7 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Launch a flame burst that will explode for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.flameBurstDamage))
                                .append(Component.text(" damage. The Crit Chance increases by "))
                                .append(Component.text("1%", NamedTextColor.RED))
                                .append(Component.text(" for each travelled block. Up to "))

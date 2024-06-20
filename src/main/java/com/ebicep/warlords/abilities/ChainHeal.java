@@ -39,7 +39,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
     public void updateDescription(Player player) {
         description =
                 Component.text("Discharge a beam of energizing lightning that heals you and a targeted friendly player for ")
-                         .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                         .append(Heals.formatHealing(healingValues.chainHealing))
                          .append(Component.text(" health and jumps to "))
                          .append(Component.text("1", NamedTextColor.YELLOW))
                          .append(Component.text(" additional target within "))

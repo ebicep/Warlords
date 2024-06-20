@@ -51,6 +51,11 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
     }
 
     @Override
+    public Value.RangedValueCritable getWaveDamage() {
+        return damageValues.waveDamage;
+    }
+
+    @Override
     public boolean canReduceCooldowns() {
         return pveMasterUpgrade2;
     }

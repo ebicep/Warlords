@@ -71,7 +71,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     public void updateDescription(Player player) {
         description = Component.text(
                                        "Send forth an underground earth spike that locks onto a targeted enemy player. When the spike reaches its target it emerges from the ground, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.spikeDamage))
                                .append(Component.text(" damage to any nearby enemies and launches them up into the air."))
                                .append(Component.text("\n\nHas an initial cast range of "))
                                .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))

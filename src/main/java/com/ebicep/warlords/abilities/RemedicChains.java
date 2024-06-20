@@ -55,7 +55,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                                .append(Component.text(" as long as the link is active. Lasts "))
                                .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
                                .append(Component.text("seconds.\n\nWhen the link expires you and the allies are healed for "))
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.chainHealing))
                                .append(Component.text(" health. Breaking the link early will only heal the allies for "))
                                .append(Component.text(format(healingMultiplier) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" of the original amount for each second they have been linked.\n\nThe link will break if you are "))

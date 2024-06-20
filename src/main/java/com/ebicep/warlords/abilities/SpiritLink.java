@@ -46,7 +46,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         description = Component.text("Links your spirit with up to ")
                                .append(Component.text("3", NamedTextColor.RED))
                                .append(Component.text(" enemy players, dealing "))
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.linkDamage))
                                .append(Component.text(" damage to the first target hit. Each additional hit deals "))
                                .append(Component.text("20%", NamedTextColor.RED))
                                .append(Component.text(" reduced damage. You gain "))

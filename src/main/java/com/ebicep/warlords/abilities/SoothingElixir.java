@@ -55,11 +55,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.elixirHealing))
                                .append(Component.text(" health and damaging nearby enemies for "))
-                               .append(formatRangeDamage(puddleMinDamage, puddleMaxDamage))
+                               .append(Damages.formatDamage(damageValues.elixirDamage))
                                .append(Component.text(" damage. The projectile will form a small puddle that heals allies for "))
-                               .append(formatRangeHealing(puddleMinHealing, puddleMaxHealing))
+                               .append(Heals.formatHealing(healingValues.elixirDOTHealing))
                                .append(Component.text(" health per second. Lasts "))
                                .append(Component.text(format(puddleTickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));

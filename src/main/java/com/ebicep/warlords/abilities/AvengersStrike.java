@@ -45,7 +45,7 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text("damage and removing "))
                                .append(Component.text(format(energySteal), NamedTextColor.YELLOW))
                                .append(Component.text(" energy."));

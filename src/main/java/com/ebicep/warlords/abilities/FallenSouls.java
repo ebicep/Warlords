@@ -61,7 +61,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Summon a wave of fallen souls, dealing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.fallenSoulDamage))
                                .append(Component.text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by "))
                                .append(Component.text("2", NamedTextColor.GOLD))
                                .append(Component.text(" seconds.\n\nHas a maximum range of "))

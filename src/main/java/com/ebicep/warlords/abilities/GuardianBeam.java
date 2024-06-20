@@ -43,7 +43,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.beamDamage))
                                .append(Component.text(" damage damage and have their cooldowns increased by "))
                                .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If an ally has max stacks of Fortifying Hex, remove all stacks and grant them a shield with "))

@@ -45,7 +45,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Leap forward, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.shadowStepDamage))
                                .append(Component.text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping."))
                                .append(Component.newline())
                                .append(Component.newline())

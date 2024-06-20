@@ -36,7 +36,7 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of demonic power, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.beamDamage))
                                .append(Component.text(" damage to all enemies hit. " +
                                        " If the target is affected by the max stacks of Poisonous Hex, remove all stacks, increase the damage dealt of " + name + " by "))
                                .append(Component.text("100%", NamedTextColor.RED))

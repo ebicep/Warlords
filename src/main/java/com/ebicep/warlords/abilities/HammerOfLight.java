@@ -56,9 +56,11 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     private float minDamage = 178;
     private float maxDamage = 244;
     private float crownBonusHealing = 35;
+
     public HammerOfLight() {
         super("Hammer of Light", 178, 244, 65.25f, 50, 20, 175);
     }
+
     public HammerOfLight(Location location) {
         super("Hammer of Light", 178, 244, 65.25f, 50, 20, 175);
         this.location = location;
@@ -85,9 +87,9 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Throw down a Hammer of Light on the ground, dealing ")
-                               .append(formatRangeDamage(minDamage, maxDamage))
+                               .append(Damages.formatDamage(damageValues.hammerDamage))
                                .append(Component.text(" damage every second to nearby enemies and healing nearby allies for "))
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.hammerHealing))
                                .append(Component.text(" every second in a "))
                                .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" block radius. Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts "))

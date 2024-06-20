@@ -54,7 +54,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         description = Component.text("Breathe water in a cone in front of you, knocking back enemies, cleansing all ")
                                .append(Component.text("de-buffs", NamedTextColor.YELLOW))
                                .append(Component.text(" and restoring "))
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.breathHealing))
                                .append(Component.text(" health to yourself and all allies hit."))
                                .append(Component.text("\n\nWater Breath can overheal allies for up to "))
                                .append(Component.text("10%", NamedTextColor.GREEN))

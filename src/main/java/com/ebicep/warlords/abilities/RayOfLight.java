@@ -39,7 +39,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of holy light, healing ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.rayHealing))
                                .append(Component.text(
                                        " health to all allies hit. If the target is affected by the max stacks of Merciful Hex, remove all stacks and increase the healing of Ray of Light by "))
                                .append(Component.text(healingIncrease + "%", NamedTextColor.GREEN))

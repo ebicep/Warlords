@@ -61,7 +61,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             description = ComponentBuilder.create("Switch locations with an enemy, stunning them for ")
                                           .text(format(blindnessTicks / 20f), NamedTextColor.GOLD)
                                           .text(" seconds. Upon swapping, self heal for ")
-                                          .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                                          .append(Heals.formatHealing(healingValues.switchHealing))
                                           .text(" health, go invisible for ")
                                           .text(format(invisTicks / 20f), NamedTextColor.GOLD)
                                           .text(" seconds, and transform the swapped enemy into your own Animus. " +

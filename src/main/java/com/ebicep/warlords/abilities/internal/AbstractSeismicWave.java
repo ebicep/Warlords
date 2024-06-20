@@ -36,7 +36,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Send a wave of incredible force forward that deals ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(getWaveDamage()))
                                .append(Component.text(" damage to all enemies hit and knocks them back slightly."));
     }
 
@@ -53,7 +53,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
@@ -125,6 +124,8 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, List<WarlordsEntity> playersHit, int i, WarlordsEntity waveTarget) {
     }
+
+    public abstract Value.RangedValueCritable getWaveDamage();
 
     public float getVelocity() {
         return velocity;

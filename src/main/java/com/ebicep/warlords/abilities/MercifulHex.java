@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
@@ -65,17 +62,17 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Send a wave of energy forward. The first two allies hit heal ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.hexHealing))
                                .append(Component.text(" health (subsequent hit allies are healed for 40%) and receives "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit takes "))
-                               .append(formatRangeDamage(minDamage, maxDamage))
+                               .append(Damages.formatDamage(damageValues.hexDamage))
                                .append(Component.text(" damage. Also heal yourself for "))
-                               .append(formatRangeHealing(minSelfHeal, maxSelfHeal))
+                               .append(Heals.formatHealing(healingValues.hexSelfHealing))
                                .append(Component.text(". If Merciful Hex hits a target, you receive "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack of Merciful Hex.\n\nEach stack of Merciful Hex heals "))
-                               .append(formatRangeHealing(dotMinHeal, dotMaxHeal))
+                               .append(Heals.formatHealing(healingValues.hexDOTHealing))
                                .append(Component.text(" health every "))
                                .append(Component.text(format(ticksBetweenDot / 20f), NamedTextColor.GOLD))
                                .append(Component.text("seconds for "))

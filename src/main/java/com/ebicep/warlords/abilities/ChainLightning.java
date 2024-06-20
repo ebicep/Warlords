@@ -95,7 +95,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Discharge a bolt of lightning at the targeted enemy player that deals ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.chainDamage))
                                .append(Component.text(" damage and jumps to "))
                                .append(Component.text(additionalBounces, NamedTextColor.YELLOW))
                                .append(Component.text(" additional targets within "))

@@ -35,7 +35,7 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage. Each strike reduces the duration of your struck target's active ability timers by "))
                                .append(Component.text(format(abilityReductionInTicks / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))

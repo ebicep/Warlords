@@ -45,7 +45,7 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and "))
                                .append(Component.text("wounding", NamedTextColor.RED))
                                .append(Component.text(" them for "))

@@ -55,7 +55,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Charge forward, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.chargeDamage))
                                .append(Component.text(" damage to all enemies you pass through. Enemies hit are "))
                                .append(Component.text("IMMOBILIZED", NamedTextColor.DARK_PURPLE))
                                .append(Component.text(", preventing movement for "))

@@ -54,7 +54,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Conjure rain at targeted location that will restore ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.rainHealing))
                                .append(Component.text(" health every 0.5 seconds to allies. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))

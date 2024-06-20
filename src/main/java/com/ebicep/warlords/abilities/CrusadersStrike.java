@@ -44,7 +44,7 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and restoring "))
                                .append(Component.text(energyGiven, NamedTextColor.YELLOW))
                                .append(Component.text(" energy to " + energyMaxAllies + " nearby allies within "))

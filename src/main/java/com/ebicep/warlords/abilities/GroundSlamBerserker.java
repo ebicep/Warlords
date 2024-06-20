@@ -7,15 +7,12 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.GroundSlamBranchBerserker;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<GroundSlamBerserker.DamageValues> {
 
@@ -39,16 +36,8 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     }
 
     @Override
-    protected void slamDamage(WarlordsEntity wp, WarlordsEntity slamTarget, float damageMultiplier, UUID abilityUUID) {
-        slamTarget.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .min(damageValues.slamDamage.getMinValue() * damageMultiplier)
-                .max(damageValues.slamDamage.getMaxValue() * damageMultiplier)
-                .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
-                .uuid(abilityUUID)
-        );
+    public Value.RangedValueCritable getSlamDamage() {
+        return damageValues.slamDamage;
     }
 
     @Override

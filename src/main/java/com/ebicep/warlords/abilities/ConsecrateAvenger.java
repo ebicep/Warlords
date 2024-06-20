@@ -106,13 +106,8 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
     }
 
     @Override
-    protected void damageEnemy(WarlordsEntity wp, WarlordsEntity enemy) {
-        enemy.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .value(damageValues.consecrateDamage)
-        );
+    public Value.RangedValueCritable getConsecrateDamage() {
+        return damageValues.consecrateDamage;
     }
 
     @Nonnull

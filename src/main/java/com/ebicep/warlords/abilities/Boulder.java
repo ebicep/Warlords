@@ -55,7 +55,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Launch a giant boulder that shatters and deals")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.boulderDamage))
                                .append(Component.text("damage to all enemies near the impact point and knocks them back slightly."));
     }
 

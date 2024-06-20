@@ -3,6 +3,8 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -40,7 +42,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Slam the ground, creating a shockwave around you that deals ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(getSlamDamage()))
                                .append(Component.text(" damage and knocks enemies back slightly."));
 
     }
@@ -55,7 +57,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         UUID abilityUUID = UUID.randomUUID();
@@ -132,7 +133,16 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                             final Location loc = slamTarget.getLocation();
                             final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
                             slamTarget.setVelocity(name, v, false, false);
-                            slamDamage(wp, slamTarget, damageMultiplier, abilityUUID);
+                            Value.RangedValueCritable slamDamage = getSlamDamage();
+                            slamTarget.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(AbstractGroundSlam.this)
+                                    .source(wp)
+                                    .min(slamDamage.getMinValue() * damageMultiplier)
+                                    .max(slamDamage.getMaxValue() * damageMultiplier)
+                                    .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
+                                    .uuid(abilityUUID)
+                            );
                         }
                     }
 
@@ -151,9 +161,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         }.runTaskTimer(0, 2);
     }
 
-    protected void slamDamage(WarlordsEntity wp, WarlordsEntity slamTarget, float damageMultiplier, UUID abilityUUID) {
-
-    }
+    public abstract Value.RangedValueCritable getSlamDamage();
 
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
 

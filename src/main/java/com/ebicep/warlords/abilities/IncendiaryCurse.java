@@ -53,7 +53,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Ignite the targeted area with a cross flame, dealing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.curseDamage))
                                .append(Component.text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for "))
                                .append(Component.text(format(blindDurationInTicks / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));

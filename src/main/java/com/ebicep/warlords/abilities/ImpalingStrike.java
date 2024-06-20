@@ -45,7 +45,7 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Impale an enemy, dealing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text("damage and afflict them with the "))
                                .append(Component.text("LEECH", NamedTextColor.GREEN))
                                .append(Component.text(" effect for "))

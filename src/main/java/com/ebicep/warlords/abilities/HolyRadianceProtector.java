@@ -48,7 +48,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.radianceHealing))
                                .append(Component.text(" health."))
                                .append(Component.text("\n\nYou may look at an ally to mark them for "))
                                .append(Component.text(markDuration, NamedTextColor.GOLD))
