@@ -213,13 +213,6 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                     }
                     case "Silence" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Silence");
-                        if (!victim.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
-                            victim.getEntity().showTitle(Title.title(
-                                    Component.empty(),
-                                    Component.text("SILENCED", NamedTextColor.RED),
-                                    Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                            ));
-                        }
                         victim.getCooldownManager().addRegularCooldown(
                                 "Disaster Fragment - Silence",
                                 "SILENCE",
@@ -231,6 +224,13 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 },
                                 40,
                                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                    if (ticksElapsed == 0) {
+                                        victim.getEntity().showTitle(Title.title(
+                                                Component.empty(),
+                                                Component.text("SILENCED", NamedTextColor.RED),
+                                                Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                                        ));
+                                    }
                                     if (ticksElapsed % 10 == 0) {
                                         Utils.playGlobalSound(victim.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
 

@@ -940,11 +940,12 @@ public abstract class WarlordsEntity {
     }
 
     public Runnable addSpeedModifier(CalculateSpeed.Modifier modifier) {
-        if (modifier.getModifier() < 0 && this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
+        WarlordsAddSpeedModifierEvent speedModifierEvent = new WarlordsAddSpeedModifierEvent(this, modifier);
+        Bukkit.getPluginManager().callEvent(speedModifierEvent);
+        if (speedModifierEvent.isCancelled()) {
             return () -> {
             };
         }
-        Bukkit.getPluginManager().callEvent(new WarlordsAddSpeedModifierEvent(this, modifier));
         return this.speed.addSpeedModifier(modifier);
     }
 
@@ -1103,12 +1104,10 @@ public abstract class WarlordsEntity {
     }
 
     public boolean addPotionEffect(PotionEffect potionEffect) {
-        if (this.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
-            if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
-                    PotionEffectType.CONFUSION.equals(potionEffect.getType())
-            ) {
-                return false;
-            }
+        WarlordsAddPotionEffectEvent potionEffectEvent = new WarlordsAddPotionEffectEvent(this, potionEffect);
+        Bukkit.getPluginManager().callEvent(potionEffectEvent);
+        if (potionEffectEvent.isCancelled()) {
+            return false;
         }
         if (entity instanceof LivingEntity livingEntity) {
             livingEntity.removePotionEffect(potionEffect.getType());

@@ -183,13 +183,6 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
     public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
         shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class, false);
-        if (!shackleTarget.getCooldownManager().hasCooldownFromName("Debuff Immunity")) {
-            shackleTarget.getEntity().showTitle(Title.title(
-                    Component.empty(),
-                    Component.text("SILENCED", NamedTextColor.RED),
-                    Title.Times.times(Ticks.duration(0), Ticks.duration(tickDuration), Ticks.duration(0))
-            ));
-        }
         shackleTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Shackle Silence",
                 "SILENCE",
@@ -201,6 +194,13 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed == 0) {
+                        shackleTarget.getEntity().showTitle(Title.title(
+                                Component.empty(),
+                                Component.text("SILENCED", NamedTextColor.RED),
+                                Title.Times.times(Ticks.duration(0), Ticks.duration(tickDuration), Ticks.duration(0))
+                        ));
+                    }
                     if (ticksElapsed % 10 == 0) {
                         Utils.playGlobalSound(shackleTarget.getLocation(), Sound.BLOCK_SAND_BREAK, 2, 2);
 

@@ -1,12 +1,14 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
 import org.bukkit.Location;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 public class ZombieRaider extends AbstractMob implements AdvancedMob {
@@ -54,7 +56,7 @@ public class ZombieRaider extends AbstractMob implements AdvancedMob {
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Debuff Immunity",
+                name + " Debuff Immunity",
                 null,
                 null,
                 null,
@@ -72,6 +74,12 @@ public class ZombieRaider extends AbstractMob implements AdvancedMob {
             public void multiplyKB(Vector currentVector) {
                 currentVector.multiply(calculatedKBRes);
             }
+
+            @Override
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener();
+            }
+
         });
     }
 

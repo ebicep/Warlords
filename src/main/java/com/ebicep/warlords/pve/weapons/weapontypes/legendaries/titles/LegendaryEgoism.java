@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -71,7 +72,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                 lastActivated.set(Instant.now().plus(35, ChronoUnit.SECONDS));
                 event.setCancelled(true);
                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Debuff Immunity",
+                        getTitleName(),
                         null,
                         LegendaryEgoism.class,
                         null,
@@ -82,7 +83,12 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                         debuffImmunityTickDuration,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         })
-                ));
+                ) {
+                    @Override
+                    protected Listener getListener() {
+                        return CooldownManager.getDefaultDebuffImmunityListener();
+                    }
+                });
                 float healthRestore = player.getMaxHealth() * (HEALTH_RESTORE + HEALTH_RESTORE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100;
                 player.addInstance(InstanceBuilder
                         .healing()

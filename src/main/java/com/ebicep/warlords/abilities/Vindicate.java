@@ -8,6 +8,7 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -22,6 +23,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -159,10 +161,10 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
         // remove other instances of vindicate buff to override
-        target.getCooldownManager().removeCooldownByName("Debuff Immunity");
+        target.getCooldownManager().removeCooldownByName("Vindicate");
         boolean vindPveMaster2 = cooldownObject instanceof Vindicate vindicate && vindicate.pveMasterUpgrade2;
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Debuff Immunity",
+                "Vindicate",
                 "VIND",
                 cooldownClass,
                 cooldownObject,
@@ -185,6 +187,11 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                     return currentDamageValue * .85f;
                 }
                 return currentDamageValue;
+            }
+
+            @Override
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener();
             }
         });
         if (vindPveMaster2) {

@@ -162,7 +162,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                         }
 
                         if (hits.get() != 0) {
-                            String s = wp == entity ? "Your " : wp.getName() + "'s ";
+                            String s = wp == entity ? "Your" : wp.getName() + "'s";
                             entity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + s + " Prism Guard granted you ", NamedTextColor.GRAY))
                                                                               .append(Component.text(hits.get() * damageReduction + "%", NamedTextColor.YELLOW))
                                                                               .append(Component.text(" damage reduction for ", NamedTextColor.GRAY))

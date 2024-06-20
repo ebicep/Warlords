@@ -82,13 +82,6 @@ public class PlayerHotBarItemListener implements Listener {
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
 
     static {
-        SLOT_HOTBAR_LISTENER.put(0, e -> {
-            Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
-            if (p != null) {
-                RegularGamesMenu regularGamesMenu = p.getA().getRegularGamesMenu();
-                regularGamesMenu.openMenuForPlayer(e.getPlayer());
-            }
-        });
         SLOT_HOTBAR_LISTENER.put(1, e -> {
         });
         SLOT_HOTBAR_LISTENER.put(2, e -> {
@@ -104,6 +97,13 @@ public class PlayerHotBarItemListener implements Listener {
         SLOT_HOTBAR_LISTENER.put(4, e -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(e.getPlayer()));
         SLOT_HOTBAR_LISTENER.put(5, e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "spectate"));
 //        SLOT_HOTBAR_LISTENER.put(6, e -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(7, e -> {
+            Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
+            if (p != null) {
+                RegularGamesMenu regularGamesMenu = p.getA().getRegularGamesMenu();
+                regularGamesMenu.openMenuForPlayer(e.getPlayer());
+            }
+        });
 //        SLOT_HOTBAR_LISTENER.put(8, e -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(e.getPlayer()));
     }
 
@@ -120,7 +120,7 @@ public class PlayerHotBarItemListener implements Listener {
                 regularGamesMenu.getRegularGameTeams().forEach((team, regularGameTeam) -> {
                     if (regularGameTeam.getTeamPlayers().stream().anyMatch(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))) {
                         setItem(player,
-                                0,
+                                7,
                                 new ItemBuilder(team.getWool()).name(Component.text("Team Builder", NamedTextColor.GREEN)).get()
                         );
                     }

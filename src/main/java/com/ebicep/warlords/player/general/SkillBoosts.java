@@ -1307,7 +1307,7 @@ public enum SkillBoosts {
             }
     ),
     ENERGY_SEER_SENTINEL("Energy Seer",
-            Component.text("Increase the energy restored by Energy Seer by 40 and increase the damage reduction by 10%.\n", NamedTextColor.GRAY),
+            Component.text("Increase the energy restored by Energy Seer by 40 and increase the damage reduction by 2%.\n", NamedTextColor.GRAY),
             Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
                      .append(Component.text("40 ", NamedTextColor.RED))
                      .append(Component.text("and increase the damage reduction by ", NamedTextColor.GREEN))
@@ -1317,7 +1317,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerSentinel energySeerSentinel) {
                     energySeerSentinel.setEnergyRestore(energySeerSentinel.getEnergyRestore() + 40);
-                    energySeerSentinel.setDamageResistance(energySeerSentinel.getDamageResistance() + 10);
+                    energySeerSentinel.setDamageResistance(energySeerSentinel.getDamageResistance() + 2);
                 }
             }
     ),
