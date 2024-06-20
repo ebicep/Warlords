@@ -228,7 +228,9 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
                 @Override
                 public void multiplyKB(Vector currentVector) {
-                    currentVector.zero();
+                    if (pveMasterUpgrade2) {
+                        currentVector.zero();
+                    }
                 }
 
                 @Override
