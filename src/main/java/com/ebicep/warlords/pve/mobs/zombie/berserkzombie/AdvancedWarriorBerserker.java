@@ -46,7 +46,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new BerserkerZombieWoundingStrike(497, 632)
+                new BerserkerZombieWoundingStrike()
         );
         Value.RangedValueCritable strikeDamage = woundingStrike.getDamageValues().getStrikeDamage();
         strikeDamage.min().addMultiplicativeModifierAdd(name, .5f);

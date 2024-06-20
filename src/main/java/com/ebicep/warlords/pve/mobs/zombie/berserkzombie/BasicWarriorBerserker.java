@@ -35,7 +35,7 @@ public class BasicWarriorBerserker extends AbstractBerserkZombie implements Basi
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new BerserkerZombieWoundingStrike(497, 632)
+                new BerserkerZombieWoundingStrike()
         );
     }
 

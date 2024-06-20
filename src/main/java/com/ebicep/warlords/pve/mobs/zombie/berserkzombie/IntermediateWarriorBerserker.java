@@ -42,7 +42,7 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new BerserkerZombieWoundingStrike(497, 632)
+                new BerserkerZombieWoundingStrike()
         );
         Value.RangedValueCritable strikeDamage = woundingStrike.getDamageValues().getStrikeDamage();
         strikeDamage.min().addMultiplicativeModifierAdd(name, .25f);

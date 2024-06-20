@@ -49,8 +49,8 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
 
     public static class BerserkerZombieWoundingStrike extends WoundingStrikeBerserker {
 
-        public BerserkerZombieWoundingStrike(float minDamageHeal, float maxDamageHeal) {
-            super("Wounding Strike", minDamageHeal, maxDamageHeal, 5, 100, 20, 175);
+        public BerserkerZombieWoundingStrike() {
+            super("Wounding Strike", 5, 100);
         }
 
         @Override

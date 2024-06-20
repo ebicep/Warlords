@@ -28,7 +28,10 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 10,
                 930,
                 1210,
-                new FlameBurst(1200, 1380),
+                new FlameBurst() {{
+                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
+                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
+                }},
                 new SilenceCrippleAll()
         );
     }
@@ -49,7 +52,10 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst(1200, 1380),
+                new FlameBurst() {{
+                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
+                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
+                }},
                 new SilenceCrippleAll()
         );
     }
