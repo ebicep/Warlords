@@ -13,7 +13,7 @@ public class FallenSoulsBranch extends AbstractUpgradeBranch<FallenSouls> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 15f)
+                .addUpgradeDamage(ability.getDamageValues().getFallenSoulDamage(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

@@ -12,18 +12,6 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
     float minDamage;
     float maxDamage;
 
-    @Override
-    public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .15f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .15f);
-        ability.setMinSelfHeal(ability.getMinSelfHeal() * 1.15f);
-        ability.setMaxSelfHeal(ability.getMaxSelfHeal() * 1.15f);
-        ability.setDotMinHeal(ability.getDotMinHeal() * 1.15f);
-        ability.setDotMaxHeal(ability.getDotMaxHeal() * 1.15f);
-        ability.setMinDamage(ability.getMinDamage() * 1.15f);
-        ability.setMaxDamage(ability.getMaxDamage() * 1.15f);
-    }
-
     public MercifulHexBranch(AbilityTree abilityTree, MercifulHex ability) {
         super(abilityTree, ability);
 
@@ -37,18 +25,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.getMinDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", value / 100);
-                        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", value / 100);
-                        ability.setMinSelfHeal(minSelfHeal * v);
-                        ability.setMaxSelfHeal(maxSelfHeal * v);
-                        ability.setDotMinHeal(dotMinHeal * v);
-                        ability.setDotMaxHeal(dotMaxHeal * v);
-                    }
-                }, 15f)
+                .addUpgradeHealing(ability.getHealValues(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -89,6 +66,20 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     ability.setTicksBetweenDot(10);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        ability.getDamageValues()
+               .getValues()
+               .forEach(value -> {
+                   value.forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("PvE", .15f));
+               });
+        ability.getHealValues()
+               .getValues()
+               .forEach(value -> {
+                   value.forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("PvE", .15f));
+               });
     }
 
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
@@ -9,8 +10,9 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
 
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
@@ -18,7 +20,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 15f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

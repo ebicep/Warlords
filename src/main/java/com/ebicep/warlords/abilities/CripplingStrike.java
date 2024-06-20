@@ -29,22 +29,23 @@ import java.util.Optional;
 public class CripplingStrike extends AbstractStrike implements Damages<CripplingStrike.DamageValues> {
 
     public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration) {
-        cripple(from, target, name, new CripplingStrike(), tickDuration, .9f);
+        cripple(from, target, name, 0, tickDuration, .9f);
     }
 
     public static void cripple(
             WarlordsEntity from,
             WarlordsEntity target,
             String name,
-            CripplingStrike cripplingStrike,
+            int consecutiveStrikeCounter,
             int tickDuration,
             float crippleAmount
     ) {
+        CripplingStrikeData cripplingStrikeData = new CripplingStrikeData(consecutiveStrikeCounter);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "CRIP",
-                CripplingStrike.class,
-                cripplingStrike,
+                CripplingStrikeData.class,
+                cripplingStrikeData,
                 from,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
@@ -74,17 +75,11 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
 
     private final int crippleDuration = 3;
     private final DamageValues damageValues = new DamageValues();
-    private int consecutiveStrikeCounter = 0;
     private int cripple = 10;
     private int cripplePerStrike = 5;
 
     public CripplingStrike() {
         super("Crippling Strike", 362.25f, 498, 0, 100, 20, 175);
-    }
-
-    public CripplingStrike(float minDamageHeal, float maxDamageHeal, int consecutiveStrikeCounter) {
-        super("Crippling Strike", minDamageHeal, maxDamageHeal, 0, 100, 20, 175);
-        this.consecutiveStrikeCounter = consecutiveStrikeCounter;
     }
 
     @Override
@@ -155,18 +150,19 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
             return;
         }
 
-        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+        Optional<CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrikeData.class)
                 .findAny();
         if (optionalCripplingStrike.isPresent()) {
-            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
+            CripplingStrikeData data = optionalCripplingStrike.get();
             nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+            int newCrippleCounter = Math.min(data.consecutiveStrikeCounter + 1, 2);
             cripple(wp,
                     nearPlayer,
                     name,
-                    new CripplingStrike(minDamageHeal.getCalculatedValue(), maxDamageHeal.getCalculatedValue(), Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                    newCrippleCounter,
                     crippleDuration * 20,
-                    convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
+                    convertToDivisionDecimal(cripple) - newCrippleCounter * convertToPercent(cripplePerStrike)
             );
         } else {
             nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
@@ -176,10 +172,6 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
         }
     }
 
-    public int getConsecutiveStrikeCounter() {
-        return consecutiveStrikeCounter;
-    }
-
     public static void cripple(
             WarlordsEntity from,
             WarlordsEntity target,
@@ -187,7 +179,7 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
             int tickDuration,
             float crippleAmount
     ) {
-        cripple(from, target, name, new CripplingStrike(), tickDuration, crippleAmount);
+        cripple(from, target, name, 0, tickDuration, crippleAmount);
     }
 
     public int getCripple() {
@@ -216,10 +208,18 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362.25f, 498, 20, 175);
         private final List<Value> values = List.of(strikeDamage);
 
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;
         }
+
+    }
+
+    public record CripplingStrikeData(int consecutiveStrikeCounter) {
 
     }
 

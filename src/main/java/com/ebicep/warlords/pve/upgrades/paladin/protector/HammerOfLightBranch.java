@@ -22,7 +22,7 @@ public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
                         ability.setMaxDamage(maxDamage * value);
                     }
                 }, 7.5f)
-                .addUpgradeHealing(ability, 7.5f)
+                .addUpgradeHealing(ability.getHealValues().getHammerHealing(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

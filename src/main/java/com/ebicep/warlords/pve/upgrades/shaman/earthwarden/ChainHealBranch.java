@@ -8,13 +8,12 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
 
-
     public ChainHealBranch(AbilityTree abilityTree, ChainHeal ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 10f)
+                .addUpgradeHealing(ability.getHealValues().getChainHealing(), 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

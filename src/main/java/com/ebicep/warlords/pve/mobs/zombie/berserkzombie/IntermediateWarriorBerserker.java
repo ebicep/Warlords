@@ -1,41 +1,28 @@
 package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilities.Berserk;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.IntermediateMob;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.inventory.ItemStack;
 
 public class IntermediateWarriorBerserker extends AbstractBerserkZombie implements IntermediateMob {
 
     public IntermediateWarriorBerserker(Location spawnLocation) {
-        super(
+        this(
                 spawnLocation,
                 "Warrior Berserker",
-                new Utils.SimpleEntityEquipment(
-                        ArmorManager.Helmets.GREATER_WARRIOR_HELMET.itemRed,
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.PRISMARINE_SHARD)
-                ),
                 4000,
                 0.494f, //30% more than basic zombie
                 10,
                 300,
-                500,
-                new BerserkerZombieWoundingStrike(497, 632)
+                500
         );
-        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .25f);
-        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .25f);
     }
 
     public IntermediateWarriorBerserker(
@@ -50,13 +37,6 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        ArmorManager.Helmets.GREATER_WARRIOR_HELMET.itemRed,
-                        new ItemStack(Material.CHAINMAIL_CHESTPLATE),
-                        new ItemStack(Material.CHAINMAIL_LEGGINGS),
-                        new ItemStack(Material.CHAINMAIL_BOOTS),
-                        new ItemStack(Material.PRISMARINE_SHARD)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -64,8 +44,9 @@ public class IntermediateWarriorBerserker extends AbstractBerserkZombie implemen
                 maxMeleeDamage,
                 new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .25f);
-        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .25f);
+        Value.RangedValueCritable strikeDamage = woundingStrike.getDamageValues().getStrikeDamage();
+        strikeDamage.min().addMultiplicativeModifierAdd(name, .25f);
+        strikeDamage.max().addMultiplicativeModifierAdd(name, .25f);
     }
 
     @Override

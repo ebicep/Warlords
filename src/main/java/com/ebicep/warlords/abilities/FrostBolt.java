@@ -311,6 +311,10 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         private final Value.RangedValue shatterBoltDamage = new Value.RangedValue(409, 554);
         private final List<Value> values = List.of(boltDamage, shatterBoltDamage);
 
+        public Value.RangedValueCritable getBoltDamage() {
+            return boltDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

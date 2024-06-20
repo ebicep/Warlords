@@ -151,7 +151,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
             if (wp instanceof WarlordsTower warlordsTower) {
                 if (target == null || target.isDead()) {
                     warlordsTower.getTower().getEnemyMobs(range, 1).forEach(warlordsNPC -> {
-                        currentTargetDamage = minDamageHeal.getCalculatedValue();
+                        currentTargetDamage = damageValues.beamDamage.getValue();
                         target = warlordsNPC;
                     });
                 } else {

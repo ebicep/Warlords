@@ -8,13 +8,12 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class SoothingElixirBranch extends AbstractUpgradeBranch<SoothingElixir> {
 
-
     public SoothingElixirBranch(AbilityTree abilityTree, SoothingElixir ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 7.5f)
+                .addUpgradeHealing(ability.getHealValues().getElixirHealing(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

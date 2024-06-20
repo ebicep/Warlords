@@ -27,15 +27,10 @@ import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<HolyRadianceAvenger.HealingValues> {
 
-    protected int timesWrathReduced = 0;
     private final int markDuration = 8;
     private final HealingValues healingValues = new HealingValues();
     private int markRadius = 15;
     private int energyDrainPerSecond = 8;
-
-    public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
-    }
 
     public HolyRadianceAvenger() {
         super("Holy Radiance", 582, 760, 16.53f, 20, 15, 175, 6);
@@ -101,21 +96,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
             EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
 
-            HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
-                    minDamageHeal.getCalculatedValue(),
-                    maxDamageHeal.getCalculatedValue(),
-                    cooldown.getBaseValue(),
-                    energyCost.getBaseValue(),
-                    critChance,
-                    critMultiplier
-            );
-
-            markTarget.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
+            RadianceData radianceData = new RadianceData();
+            markTarget.getCooldownManager().removeCooldown(RadianceData.class, false);
             markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "AVE MARK",
-                    HolyRadianceAvenger.class,
-                    tempMark,
+                    RadianceData.class,
+                    radianceData,
                     wp,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
@@ -162,25 +149,18 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     }
 
     private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
-        HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
-                minDamageHeal.getCalculatedValue(),
-                maxDamageHeal.getCalculatedValue(),
-                cooldown.getBaseValue(),
-                energyCost.getBaseValue(),
-                critChance,
-                critMultiplier
-        );
-        target.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
+        RadianceData radianceData = new RadianceData();
+        target.getCooldownManager().removeCooldown(RadianceData.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "AVE MARK",
-                HolyRadianceAvenger.class,
-                tempMark,
+                RadianceData.class,
+                radianceData,
                 giver,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
-                    if (pveMasterUpgrade2 && target.isDead() && tempMark.timesWrathReduced < 10) {
-                        tempMark.timesWrathReduced++;
+                    if (pveMasterUpgrade2 && target.isDead() && radianceData.timesWrathReduced < 10) {
+                        radianceData.timesWrathReduced++;
                         giver.getAbilitiesMatching(AvengersWrath.class).forEach(avengersWrath -> avengersWrath.subtractCurrentCooldown(.5f));
                         playCooldownReductionEffect(target);
                     }
@@ -232,6 +212,12 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         public List<Value> getValues() {
             return values;
         }
+
+    }
+
+    public static class RadianceData {
+
+        private int timesWrathReduced = 0;
 
     }
 

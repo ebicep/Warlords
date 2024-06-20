@@ -282,6 +282,10 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         private final Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
         private final List<Value> values = List.of(chainDamage);
 
+        public Value.RangedValueCritable getChainDamage() {
+            return chainDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

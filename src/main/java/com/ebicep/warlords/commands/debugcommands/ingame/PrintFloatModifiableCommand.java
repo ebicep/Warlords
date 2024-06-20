@@ -3,9 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -41,13 +39,22 @@ public class PrintFloatModifiableCommand extends BaseCommand {
             }
         },
         DAMAGE_HEAL { // ability cooldowns
-
             @Override
             public void sendDebugInfo(CommandIssuer issuer, WarlordsPlayer player) {
                 for (AbstractAbility ability : player.getAbilities()) {
                     ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text(ability.getName(), NamedTextColor.AQUA, TextDecoration.UNDERLINED).build());
-                    sendDebugInfo(issuer, ability.getMinDamageHeal().getDebugInfo());
-                    sendDebugInfo(issuer, ability.getMaxDamageHeal().getDebugInfo());
+                    if (ability instanceof Damages<?> damages) {
+                        damages.getDamageValues().getValues().forEach(value -> {
+                            value.getDebugInfos().forEach(components -> sendDebugInfo(issuer, components));
+                            ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text("-----------------------", NamedTextColor.DARK_GRAY).build());
+                        });
+                    }
+                    if (ability instanceof Heals<?> heals) {
+                        heals.getHealValues().getValues().forEach(value -> {
+                            value.getDebugInfos().forEach(components -> sendDebugInfo(issuer, components));
+                            ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text("-----------------------", NamedTextColor.DARK_GRAY).build());
+                        });
+                    }
                 }
             }
         },

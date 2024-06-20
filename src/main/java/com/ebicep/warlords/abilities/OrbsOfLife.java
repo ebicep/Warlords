@@ -45,7 +45,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     public int orbsProduced = 0;
 
-    private final List<OrbOfLife> spawnedOrbs = new ArrayList<>();
     private final int floatingOrbRadius = 20;
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 280;
@@ -53,11 +52,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     public OrbsOfLife() {
         super("Orbs of Life", ORB_HEALING, ORB_HEALING, 19.57f, 20);
-    }
-
-
-    public OrbsOfLife(float minDamage, float maxDamage) {
-        super("Orbs of Life", minDamage, maxDamage, 19.57f, 20);
     }
 
     @Override
@@ -96,19 +90,18 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
 
-        OrbsOfLife tempOrbsOfLight = new OrbsOfLife(minDamageHeal.getCalculatedValue(), maxDamageHeal.getCalculatedValue());
-        tempOrbsOfLight.setPveMasterUpgrade2(pveMasterUpgrade2);
-        PersistentCooldown<OrbsOfLife> orbsOfLifeCooldown = new PersistentCooldown<>(
+        OrbsOfLifeData data = new OrbsOfLifeData(this);
+        PersistentCooldown<OrbsOfLifeData> orbsOfLifeCooldown = new PersistentCooldown<>(
                 name,
                 "ORBS",
-                OrbsOfLife.class,
-                tempOrbsOfLight,
+                OrbsOfLifeData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    List<OrbPassenger> orbs = new ArrayList<>(tempOrbsOfLight.getSpawnedOrbs());
+                    List<OrbPassenger> orbs = new ArrayList<>(data.getSpawnedOrbs());
                     orbs.forEach(OrbPassenger::remove);
                 },
                 false,
@@ -118,7 +111,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     if (ticksElapsed % 5 != 0) {
                         return;
                     }
-                    OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
+                    OrbsOfLifeData orbsOfLife = cooldown.getCooldownObject();
                     Iterator<OrbOfLife> itr = new ArrayList<>(orbsOfLife.getSpawnedOrbs()).iterator();
                     while (itr.hasNext()) {
                         OrbOfLife orb = itr.next();
@@ -135,7 +128,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             orb.remove();
                             itr.remove();
 
-                            float orbHeal = tempOrbsOfLight.healingValues.orbHealing.getValue();
+                            float orbHeal = healingValues.orbHealing.getValue();
                             // Increasing heal for low long orb lived for (up to +25%)
                             // 6.5 seconds = 130 ticks
                             // 6.5 seconds = 1 + (130/325) = 1.4
@@ -209,33 +202,33 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
                     //setting target player to move towards (includes self)
                     if (wp.isInPve()) {
-                        tempOrbsOfLight.getSpawnedOrbs()
-                                       .forEach(orb -> {
-                                           orb.getArmorStand().setGravity(false);
-                                           orb.setPlayerToMoveTowards(PlayerFilter
-                                                   .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                                                   .aliveTeammatesOf(wp)
-                                                   .leastAliveFirst()
-                                                   .findFirstOrNull()
-                                           );
-                                       });
+                        data.getSpawnedOrbs()
+                            .forEach(orb -> {
+                                orb.getArmorStand().setGravity(false);
+                                orb.setPlayerToMoveTowards(PlayerFilter
+                                        .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                        .aliveTeammatesOf(wp)
+                                        .leastAliveFirst()
+                                        .findFirstOrNull()
+                                );
+                            });
                     } else {
-                        tempOrbsOfLight.getSpawnedOrbs()
-                                       .forEach(orb -> {
-                                           orb.getArmorStand().setGravity(false);
-                                           orb.setPlayerToMoveTowards(PlayerFilter
-                                                   .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                                                   .aliveTeammatesOf(wp)
-                                                   .closestFirst(orb.getArmorStand().getLocation())
-                                                   .findFirstOrNull()
-                                           );
-                                       });
+                        data.getSpawnedOrbs()
+                            .forEach(orb -> {
+                                orb.getArmorStand().setGravity(false);
+                                orb.setPlayerToMoveTowards(PlayerFilter
+                                        .entitiesAround(orb.getArmorStand().getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                        .aliveTeammatesOf(wp)
+                                        .closestFirst(orb.getArmorStand().getLocation())
+                                        .findFirstOrNull()
+                                );
+                            });
                     }
                     //moving orb
                     new GameRunnable(wp.getGame()) {
                         @Override
                         public void run() {
-                            tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
+                            data.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
                                 WarlordsEntity target = targetOrb.getPlayerToMoveTowards();
                                 ArmorStand orbArmorStand = targetOrb.getArmorStand();
                                 Location orbLocation = orbArmorStand.getLocation();
@@ -260,7 +253,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 );
                             });
 
-                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
+                            if (data.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                 this.cancel();
                             }
                         }
@@ -279,10 +272,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return true;
     }
 
-    public List<OrbOfLife> getSpawnedOrbs() {
-        return spawnedOrbs;
-    }
-
     private void healPlayer(WarlordsEntity teammateToHeal, @Nonnull WarlordsEntity wp, float orbHeal) {
         teammateToHeal.addInstance(InstanceBuilder
                 .healing()
@@ -296,30 +285,24 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         }
     }
 
-    public static void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
+    public static void spawnOrbs(WarlordsEntity owner, WarlordsEntity victim, String ability, PersistentCooldown<OrbsOfLifeData> cooldown) {
         if (ability.isEmpty() || ability.equals("Intervene")) {
             return;
         }
         if (cooldown.isHidden()) {
             return;
         }
-        owner.doOnStaticAbility(OrbsOfLife.class, orbsOfLife -> orbsOfLife.addOrbProduced(1));
 
-        OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
+        OrbsOfLifeData data = cooldown.getCooldownObject();
         Location location = victim.getLocation();
-        Location spawnLocation = generateSpawnLocation(location, orbsOfLife.getSpawnedOrbs().stream().map(orb -> orb.getArmorStand().getLocation()).toList());
+        Location spawnLocation = generateSpawnLocation(location, data.getSpawnedOrbs().stream().map(orb -> orb.getArmorStand().getLocation()).toList());
 
-        OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), orbsOfLife.getOrbTickMultiplier(), orbsOfLife);
-        orbsOfLife.getSpawnedOrbs().add(orb);
-
-        orbsOfLife.addOrbProduced(1);
-        if (cooldown.getCooldownObject().getOrbsProduced() >= 50) {
+        OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), data.getOrbTickMultiplier(), data);
+        data.getSpawnedOrbs().add(orb);
+        data.getOrbsOfLife().orbsProduced++;
+        if (++data.orbsProduced >= 50) {
             ChallengeAchievements.checkForAchievement(owner, ChallengeAchievements.ORBIFICATION);
         }
-    }
-
-    public void addOrbProduced(int amount) {
-        this.orbsProduced += amount;
     }
 
     public static Location generateSpawnLocation(Location location, List<Location> previousLocations) {
@@ -335,14 +318,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             spawnLocation = location.clone().add(x, 0, z);
         } while (counter < 50 && (orbsInsideBlock(spawnLocation) || nearLocation(spawnLocation, previousLocations)));
         return spawnLocation;
-    }
-
-    public int getOrbTickMultiplier() {
-        return orbTickMultiplier;
-    }
-
-    public int getOrbsProduced() {
-        return orbsProduced;
     }
 
     public static boolean orbsInsideBlock(Location location) {
@@ -383,20 +358,20 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return healingValues;
     }
 
-    static class OrbOfLife extends OrbPassenger {
+    public static class OrbOfLife extends OrbPassenger {
 
-        private final OrbsOfLife cooldown;
+        private final OrbsOfLifeData data;
         private WarlordsEntity playerToMoveTowards = null;
 
-        public OrbOfLife(Location location, WarlordsEntity owner, int tickMultiplier, OrbsOfLife cooldown) {
+        public OrbOfLife(Location location, WarlordsEntity owner, int tickMultiplier, OrbsOfLifeData data) {
             super(location, owner, tickMultiplier);
-            this.cooldown = cooldown;
+            this.data = data;
         }
 
         @Override
         public void remove() {
             super.remove();
-            cooldown.getSpawnedOrbs().remove(this);
+            data.getSpawnedOrbs().remove(this);
         }
 
         public WarlordsEntity getPlayerToMoveTowards() {
@@ -414,10 +389,40 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         private final Value.SetValue orbHealing = new Value.SetValue(210);
         private final List<Value> values = List.of(orbHealing);
 
+        public Value.SetValue getOrbHealing() {
+            return orbHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;
         }
 
     }
+
+    public static class OrbsOfLifeData {
+
+        private final OrbsOfLife orbsOfLife;
+        private final List<OrbOfLife> spawnedOrbs = new ArrayList<>();
+        private final int orbTickMultiplier;
+        private int orbsProduced;
+
+        public OrbsOfLifeData(OrbsOfLife orbsOfLife) {
+            this.orbsOfLife = orbsOfLife;
+            this.orbTickMultiplier = orbsOfLife.orbTickMultiplier;
+        }
+
+        public OrbsOfLife getOrbsOfLife() {
+            return orbsOfLife;
+        }
+
+        public List<OrbOfLife> getSpawnedOrbs() {
+            return spawnedOrbs;
+        }
+
+        public int getOrbTickMultiplier() {
+            return orbTickMultiplier;
+        }
+    }
+
 }

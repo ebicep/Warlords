@@ -401,6 +401,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(287, 387, 20, 175);
         private final List<Value> values = List.of(hexDamage);
 
+        public Value.RangedValueCritable getHexDamage() {
+            return hexDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

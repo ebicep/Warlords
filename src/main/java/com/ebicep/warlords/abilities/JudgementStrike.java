@@ -114,6 +114,10 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
         private final List<Value> values = List.of(strikeDamage);
 
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

@@ -37,10 +37,6 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
     private int energyPerSecond = 6;
     private int markSpeed = 25;
 
-    public HolyRadianceCrusader(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
-    }
-
     public HolyRadianceCrusader() {
         super("Holy Radiance", 582, 760, 16.53f, 20, 15, 175, 6);
     }
@@ -104,20 +100,12 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                 }
             }
 
-            HolyRadianceCrusader tempMark = new HolyRadianceCrusader(
-                    minDamageHeal.getCalculatedValue(),
-                    maxDamageHeal.getCalculatedValue(),
-                    cooldown.getBaseValue(),
-                    energyCost.getBaseValue(),
-                    critChance,
-                    critMultiplier
-            );
             markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration, "BASE");
             markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "CRUS MARK",
                     HolyRadianceCrusader.class,
-                    tempMark,
+                    new HolyRadianceCrusader(),
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {

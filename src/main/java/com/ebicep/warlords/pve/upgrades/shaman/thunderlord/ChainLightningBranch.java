@@ -5,7 +5,6 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> {
 
-
     int radius = ability.getRadius();
     int bounceRange = ability.getBounceRange();
 
@@ -14,7 +13,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getChainDamage(), 7.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {

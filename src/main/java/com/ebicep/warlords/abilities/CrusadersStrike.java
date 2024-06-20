@@ -170,6 +170,10 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 175);
         private final List<Value> values = List.of(strikeDamage);
 
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

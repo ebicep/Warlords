@@ -29,11 +29,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<DrainingMiasma.DamageValues> {
 
     public int playersHit = 0;
     protected int numberOfLeechProcd = 0;
-    private DamageValues damageValues = new DamageValues();
+    private final DamageValues damageValues = new DamageValues();
     private int maxHealthDamage = 4;
     private int tickDuration = 100;
     private int leechDuration = 5;
@@ -302,10 +302,19 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         this.leechAllyAmount = leechAllyAmount;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.SetValue miasmaDamage = new Value.SetValue(50);
         private final List<Value> values = List.of(miasmaDamage);
+
+        public Value.SetValue getMiasmaDamage() {
+            return miasmaDamage;
+        }
 
         @Override
         public List<Value> getValues() {

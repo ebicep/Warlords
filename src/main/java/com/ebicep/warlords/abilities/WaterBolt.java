@@ -267,6 +267,10 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(231, 299, 20, 175);
         private final List<Value> values = List.of(boltDamage);
 
+        public Value.RangedValueCritable getBoltDamage() {
+            return boltDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;
@@ -278,6 +282,10 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
 
         private final Value.RangedValueCritable boltHealing = new Value.RangedValueCritable(315, 434, 20, 175);
         private final List<Value> values = List.of(boltHealing);
+
+        public Value.RangedValueCritable getBoltHealing() {
+            return boltHealing;
+        }
 
         @Override
         public List<Value> getValues() {

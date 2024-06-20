@@ -14,7 +14,7 @@ public class WaterBreathBranch extends AbstractUpgradeBranch<WaterBreath> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 7.5f)
+                .addUpgradeHealing(ability.getHealValues().getBreathHealing(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

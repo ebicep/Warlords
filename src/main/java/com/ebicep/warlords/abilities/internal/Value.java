@@ -1,12 +1,22 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.Component;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface Value {
 
     void tick();
+
+    List<List<Component>> getDebugInfos();
+
+    List<FloatModifiable> getValues();
+
+    default void forEachValue(Consumer<FloatModifiable> consumer) {
+        getValues().forEach(consumer);
+    }
 
     interface ValueHolder {
 
@@ -31,6 +41,19 @@ public interface Value {
         public void tick() {
             min.tick();
             max.tick();
+        }
+
+        @Override
+        public List<List<Component>> getDebugInfos() {
+            return List.of(
+                    min.getDebugInfo(),
+                    max.getDebugInfo()
+            );
+        }
+
+        @Override
+        public List<FloatModifiable> getValues() {
+            return List.of(min, max);
         }
 
         public FloatModifiable min() {
@@ -94,6 +117,17 @@ public interface Value {
         public void tick() {
             value.tick();
         }
+
+        @Override
+        public List<List<Component>> getDebugInfos() {
+            return List.of(value.getDebugInfo());
+        }
+
+        @Override
+        public List<FloatModifiable> getValues() {
+            return List.of(value);
+        }
+
 
         public float getValue() {
             return value.getCalculatedValue();

@@ -271,6 +271,10 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         private final Value.RangedValueCritable linkDamage = new Value.RangedValueCritable(290, 392, 20, 175);
         private final List<Value> values = List.of(linkDamage);
 
+        public Value.RangedValueCritable getLinkDamage() {
+            return linkDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
@@ -41,8 +42,9 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 () -> {
                     ability.setProjectileWidth(0.72D);
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 0.2);
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getFlameBurstDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1f);
                     ability.getSplashRadius().addAdditiveModifier("Master Upgrade Branch", 5);
 
                 }

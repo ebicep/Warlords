@@ -131,6 +131,10 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
         private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(198, 267, 20, 175);
         private final List<Value> values = List.of(consecrateDamage);
 
+        public Value.RangedValueCritable getConsecrateDamage() {
+            return consecrateDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

@@ -320,6 +320,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         private final Value.RangedValueCritable rainHealing = new Value.RangedValueCritable(100, 125, 25, 180);
         private final List<Value> values = List.of(rainHealing);
 
+        public Value.RangedValueCritable getRainHealing() {
+            return rainHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

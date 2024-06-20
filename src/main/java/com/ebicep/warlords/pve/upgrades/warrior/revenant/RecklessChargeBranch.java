@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
 import com.ebicep.warlords.abilities.RecklessCharge;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> {
@@ -13,7 +14,7 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 10f)
+                .addUpgradeDamage(ability.getDamageValues().getChargeDamage(), 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -44,8 +45,9 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 "+50% Additional damage\n\nReckless Charge stuns enemies for 3 seconds. Additionally, allies you charge through will receive 100% more healing for 8 seconds.",
                 50000,
                 () -> {
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getChargeDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
                     ability.setStunTimeInTicks(60);
                 }
         );

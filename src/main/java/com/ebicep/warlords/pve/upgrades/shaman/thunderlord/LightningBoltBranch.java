@@ -15,7 +15,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 12.5f)
+                .addUpgradeDamage(ability.getDamageValues().getBoltDamage(), 12.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Nonnull
                     @Override

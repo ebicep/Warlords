@@ -75,8 +75,8 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
         WarlordsEntity wp = projectile.getShooter();
         if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float minHeal = minDamageHeal.getCalculatedValue();
-            float maxHeal = maxDamageHeal.getCalculatedValue();
+            float minHeal = healingValues.rayHealing.getMinValue();
+            float maxHeal = healingValues.rayHealing.getMaxValue();
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(MercifulHex.class)
                     .stream()
@@ -173,6 +173,10 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
 
         private final Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(409, 551, 20, 150);
         private final List<Value> values = List.of(rayHealing);
+
+        public Value.RangedValueCritable getRayHealing() {
+            return rayHealing;
+        }
 
         @Override
         public List<Value> getValues() {

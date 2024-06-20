@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
 import com.ebicep.warlords.abilities.DrainingMiasma;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> {
@@ -51,8 +52,8 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setRadius(ability.getRadius() * 4);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.25f));
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.75f);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.75f);
+                    Value.SetValue damage = ability.getDamageValues().getMiasmaDamage();
+                    damage.value().addMultiplicativeModifierAdd("Master Upgrade Branch", -.75f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -69,8 +70,8 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
                     ability.setRadius(ability.getRadius() * 4);
 
                     ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.5f);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", -.5f);
+                    Value.SetValue damage = ability.getDamageValues().getMiasmaDamage();
+                    damage.value().addMultiplicativeModifierAdd("Master Upgrade Branch", -.5f);
                 }
         );
     }

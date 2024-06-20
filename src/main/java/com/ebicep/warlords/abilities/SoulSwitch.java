@@ -300,6 +300,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         private final Value.RangedValueCritable switchHealing = new Value.RangedValueCritable(300, 500, 15, 175);
         private final List<Value> values = List.of(switchHealing);
 
+        public Value.RangedValueCritable getSwitchHealing() {
+            return switchHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse> {
 
-
     @Override
     public void runOnce() {
         ability.getEnergyCost().setBaseValue(40);
@@ -19,7 +18,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getCurseDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

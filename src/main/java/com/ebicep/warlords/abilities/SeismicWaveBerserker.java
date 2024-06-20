@@ -73,6 +73,10 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
         private final Value.RangedValueCritable waveDamage = new Value.RangedValueCritable(557, 753, 25, 200);
         private final List<Value> values = List.of(waveDamage);
 
+        public Value.RangedValueCritable getWaveDamage() {
+            return waveDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

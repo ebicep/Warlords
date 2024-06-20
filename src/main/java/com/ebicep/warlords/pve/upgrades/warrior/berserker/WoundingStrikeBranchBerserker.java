@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -11,8 +12,9 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
 
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public WoundingStrikeBranchBerserker(AbilityTree abilityTree, WoundingStrikeBerserker ability) {
@@ -20,7 +22,7 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 12.5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 12.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

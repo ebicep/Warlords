@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
 import com.ebicep.warlords.abilities.GuardianBeam;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
@@ -9,8 +10,9 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
@@ -18,7 +20,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 5f)
+                .addUpgradeDamage(ability.getDamageValues().getBeamDamage(), 5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

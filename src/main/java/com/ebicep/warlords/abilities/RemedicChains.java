@@ -299,6 +299,10 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
         private final List<Value> values = List.of(chainHealing);
 
+        public Value.RangedValueCritable getChainHealing() {
+            return chainHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

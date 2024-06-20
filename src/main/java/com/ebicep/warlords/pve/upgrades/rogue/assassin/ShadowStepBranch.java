@@ -14,7 +14,7 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getShadowStepDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

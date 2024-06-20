@@ -248,6 +248,10 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         private final Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(313, 423, 20, 175);
         private final List<Value> values = List.of(beamDamage);
 
+        public Value.RangedValueCritable getBeamDamage() {
+            return beamDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

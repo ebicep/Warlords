@@ -250,6 +250,10 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         private final Value.RangedValueCritable totemDamage = new Value.RangedValueCritable(404, 523, 20, 200);
         private final List<Value> values = List.of(totemDamage);
 
+        public Value.RangedValueCritable getTotemDamage() {
+            return totemDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

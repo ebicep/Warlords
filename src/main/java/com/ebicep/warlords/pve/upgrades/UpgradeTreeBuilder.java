@@ -1,9 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeTreeBuilderAddUpgradeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -57,33 +54,53 @@ public class UpgradeTreeBuilder {
         return this;
     }
 
-    public UpgradeTreeBuilder addUpgradeDamage(AbstractAbility ability, int... levels) {
+    public UpgradeTreeBuilder addUpgradeDamage(Value ability, int... levels) {
         return addUpgradeDamage(ability, .05f, levels);
     }
 
-    public UpgradeTreeBuilder addUpgradeDamage(AbstractAbility ability, float value, int... levels) {
+    public UpgradeTreeBuilder addUpgradeDamage(Value ability, float value, int... levels) {
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false)));
         return addUpgrade(
                 UpgradeTypes.DAMAGE,
-                List.of(
-                        ability.getMinDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false),
-                        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false)
-                ),
+                modifiers,
                 value,
                 levels
         );
     }
 
-    public UpgradeTreeBuilder addUpgradeHealing(AbstractAbility ability, int... levels) {
-        return addUpgradeHealing(ability, .05f, levels);
+    public UpgradeTreeBuilder addUpgradeDamage(Value.ValueHolder ability, float value, int... levels) {
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false))));
+        return addUpgrade(
+                UpgradeTypes.DAMAGE,
+                modifiers,
+                value,
+                levels
+        );
     }
 
-    public UpgradeTreeBuilder addUpgradeHealing(AbstractAbility ability, float value, int... levels) {
+    public UpgradeTreeBuilder addUpgradeHealing(Value value, int... levels) {
+        return addUpgradeHealing(value, .05f, levels);
+    }
+
+    public UpgradeTreeBuilder addUpgradeHealing(Value ability, float value, int... levels) {
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        ability.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false)));
         return addUpgrade(
                 UpgradeTypes.HEALING,
-                List.of(
-                        ability.getMinDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false),
-                        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Upgrade Branch", 0, false)
-                ),
+                modifiers,
+                value,
+                levels
+        );
+    }
+
+    public UpgradeTreeBuilder addUpgradeHealing(Value.ValueHolder ability, float value, int... levels) {
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        ability.getValues().forEach(v -> v.forEachValue(floatModifiable -> modifiers.add(floatModifiable.addMultiplicativeModifierAdd("Upgrade Branch", 0, false))));
+        return addUpgrade(
+                UpgradeTypes.HEALING,
+                modifiers,
                 value,
                 levels
         );

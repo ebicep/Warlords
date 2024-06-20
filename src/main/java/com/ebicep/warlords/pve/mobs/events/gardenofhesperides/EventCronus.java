@@ -123,8 +123,9 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
                     );
                     if (++counter >= 6) {
                         warlordsNPC.getAbilitiesMatching(HeavenlyDamage.class).forEach(heavenlyDamage -> {
-                            heavenlyDamage.getMinDamageHeal().setBaseValue(1150);
-                            heavenlyDamage.getMaxDamageHeal().setBaseValue(1300);
+                            Value.RangedValue damage = heavenlyDamage.getDamageValues().getHeavenlyDamage();
+                            damage.min().setBaseValue(1150);
+                            damage.max().setBaseValue(1300);
                         });
                         CalculateSpeed calculateSpeed = warlordsNPC.getSpeed();
                         calculateSpeed.setBaseSpeedToWalkingSpeed(0.25f);
@@ -185,6 +186,10 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
             private final Value.RangedValue heavenlyDamage = new Value.RangedValue(950, 1100);
             private final List<Value> values = List.of(heavenlyDamage);
+
+            public Value.RangedValue getHeavenlyDamage() {
+                return heavenlyDamage;
+            }
 
             @Override
             public List<Value> getValues() {

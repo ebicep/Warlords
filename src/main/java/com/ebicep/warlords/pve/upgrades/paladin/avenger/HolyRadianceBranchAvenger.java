@@ -20,7 +20,7 @@ public class HolyRadianceBranchAvenger extends AbstractUpgradeBranch<HolyRadianc
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 10f)
+                .addUpgradeHealing(ability.getRadianceHealing(), 10f)
                 .addUpgradeHitBox(ability, 1, 4)
                 .addTo(treeB);
 

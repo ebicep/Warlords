@@ -511,9 +511,8 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             // increase heat / damage on every use
             if (this.timesUsed <= 40) { // ~700 max at split 0
-                damageIncrese += .05;
-                getMinDamageHeal().addMultiplicativeModifierAdd(name, damageIncrese);
-                getMaxDamageHeal().addMultiplicativeModifierAdd(name, damageIncrese);
+                damageIncrese += .05f;
+                damageValues.heatAuraDamage.value().addMultiplicativeModifierAdd(name, damageIncrese);
             }
             PlayerFilter.entitiesAround(wp, hitbox, hitbox, hitbox)
                         .aliveEnemiesOf(wp)

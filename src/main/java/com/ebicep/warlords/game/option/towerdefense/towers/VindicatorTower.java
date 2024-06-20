@@ -70,8 +70,8 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
             @Override
             protected void onUpgrade() {
                 strikeAttack.setMobsHit(2);
-                strikeAttack.getMinDamageHeal().addMultiplicativeModifierAdd(name, -.3f);
-                strikeAttack.getMaxDamageHeal().addMultiplicativeModifierAdd(name, -.3f);
+//                strikeAttack.getMinDamageHeal().addMultiplicativeModifierAdd(name, -.3f); TODO
+//                strikeAttack.getMaxDamageHeal().addMultiplicativeModifierAdd(name, -.3f);
             }
         });
     }

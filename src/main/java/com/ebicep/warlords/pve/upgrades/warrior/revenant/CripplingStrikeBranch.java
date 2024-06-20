@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.warrior.revenant;
 
 import com.ebicep.warlords.abilities.CripplingStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -11,15 +12,16 @@ public class CripplingStrikeBranch extends AbstractUpgradeBranch<CripplingStrike
 
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public CripplingStrikeBranch(AbilityTree abilityTree, CripplingStrike ability) {
         super(abilityTree, ability);
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

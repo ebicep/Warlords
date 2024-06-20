@@ -291,6 +291,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         private final Value.RangedValueCritable elixirDOTHealing = new Value.RangedValueCritable(158, 204, 25, 175);
         private final List<Value> values = List.of(elixirHealing, elixirHealing);
 
+        public Value.RangedValueCritable getElixirHealing() {
+            return elixirHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

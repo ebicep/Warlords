@@ -9,10 +9,6 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
     public void runOnce() {
         ability.getCooldown().setBaseValue(22);
         ability.getEnergyCost().setBaseValue(30);
-        ability.getMinDamageHeal().setBaseValue(300);
-        ability.getMaxDamageHeal().setBaseValue(500);
-        ability.setCritChance(15);
-        ability.setCritMultiplier(175);
     }
 
     public SoulSwitchBranch(AbilityTree abilityTree, SoulSwitch ability) {
@@ -36,7 +32,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 5f)
+                .addUpgradeHealing(ability.getHealValues().getSwitchHealing(), 5f)
                 .addUpgradeHitBox(ability, 7, 4)
                 .addTo(treeB);
 

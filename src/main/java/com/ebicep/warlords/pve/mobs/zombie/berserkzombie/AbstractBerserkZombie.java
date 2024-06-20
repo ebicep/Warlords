@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.PacketUtils;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
-import org.bukkit.inventory.EntityEquipment;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -20,7 +19,6 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
     public AbstractBerserkZombie(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
             float damageResistance,
@@ -49,7 +47,7 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
         }
     }
 
-    static class BerserkerZombieWoundingStrike extends WoundingStrikeBerserker {
+    public static class BerserkerZombieWoundingStrike extends WoundingStrikeBerserker {
 
         public BerserkerZombieWoundingStrike(float minDamageHeal, float maxDamageHeal) {
             super("Wounding Strike", minDamageHeal, maxDamageHeal, 5, 100, 20, 175);

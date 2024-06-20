@@ -217,6 +217,10 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         private final Value.RangedValue earthquakeDamage = new Value.RangedValue(450, 630);
         private final List<Value> values = List.of(boulderDamage, earthquakeDamage);
 
+        public Value.RangedValueCritable getBoulderDamage() {
+            return boulderDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

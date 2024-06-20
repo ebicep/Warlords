@@ -1,16 +1,16 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
 import com.ebicep.warlords.abilities.PoisonousHex;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
-
-
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable hexDamage = ability.getDamageValues().getHexDamage();
+        hexDamage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        hexDamage.max().addMultiplicativeModifierAdd("PvE", .3f);
         ability.setMaxEnemiesHit(4);
     }
 
@@ -19,7 +19,7 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getHexDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -60,8 +60,9 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                         """,
                 50000,
                 () -> {
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
                     ability.setTicksBetweenDot(20);
                 }
         );

@@ -37,10 +37,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     private int markDuration = 8;
     private float markBonusHealing = 10;
 
-    public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
-    }
-
     public HolyRadianceProtector() {
         super("Holy Radiance", 582, 760, 9.87f, 60, 15, 175, 6);
     }
@@ -125,19 +121,11 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     }
 
     private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
-        HolyRadianceProtector tempMark = new HolyRadianceProtector(
-                minDamageHeal.getCalculatedValue(),
-                maxDamageHeal.getCalculatedValue(),
-                cooldown.getBaseValue(),
-                energyCost.getBaseValue(),
-                critChance,
-                critMultiplier
-        );
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "PROT MARK",
                 HolyRadianceProtector.class,
-                tempMark,
+                new HolyRadianceProtector(),
                 giver,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
@@ -223,6 +211,10 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
         private final Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);
         private final Value.RangedValue unrivalledRadianceHealing = new Value.RangedValue(150, 350);
         private final List<Value> values = List.of(radianceHealing, unrivalledRadianceHealing);
+
+        public Value.RangedValueCritable getRadianceHealing() {
+            return radianceHealing;
+        }
 
         @Override
         public List<Value> getValues() {

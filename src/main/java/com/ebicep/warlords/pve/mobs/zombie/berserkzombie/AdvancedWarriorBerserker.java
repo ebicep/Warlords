@@ -2,44 +2,31 @@ package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.BloodLust;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.inventory.ItemStack;
 
 public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements AdvancedMob {
 
     public AdvancedWarriorBerserker(Location spawnLocation) {
-        super(
+        this(
                 spawnLocation,
                 "Warrior Berserker",
-                new Utils.SimpleEntityEquipment(
-                        ArmorManager.Helmets.LEGENDARY_WARRIOR_HELMET.itemRed,
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        new ItemStack(Material.COOKED_SALMON)
-                ),
                 7000,
                 0.43f,
                 20,
                 450,
-                600,
-                new BerserkerZombieWoundingStrike(497, 632)
+                600
         );
-        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .5f);
-        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .5f);
     }
 
     public AdvancedWarriorBerserker(
@@ -54,13 +41,6 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
         super(
                 spawnLocation,
                 name,
-                new Utils.SimpleEntityEquipment(
-                        ArmorManager.Helmets.LEGENDARY_WARRIOR_HELMET.itemRed,
-                        new ItemStack(Material.DIAMOND_CHESTPLATE),
-                        new ItemStack(Material.DIAMOND_LEGGINGS),
-                        new ItemStack(Material.DIAMOND_BOOTS),
-                        new ItemStack(Material.COOKED_SALMON)
-                ),
                 maxHealth,
                 walkSpeed,
                 damageResistance,
@@ -68,8 +48,9 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 maxMeleeDamage,
                 new BerserkerZombieWoundingStrike(497, 632)
         );
-        woundingStrike.getMinDamageHeal().addMultiplicativeModifierAdd(name, .5f);
-        woundingStrike.getMaxDamageHeal().addMultiplicativeModifierAdd(name, .5f);
+        Value.RangedValueCritable strikeDamage = woundingStrike.getDamageValues().getStrikeDamage();
+        strikeDamage.min().addMultiplicativeModifierAdd(name, .5f);
+        strikeDamage.max().addMultiplicativeModifierAdd(name, .5f);
     }
 
     @Override

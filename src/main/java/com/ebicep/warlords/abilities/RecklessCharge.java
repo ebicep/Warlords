@@ -227,6 +227,10 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         private final Value.RangedValueCritable chargeDamage = new Value.RangedValueCritable(457, 601, 20, 200);
         private final List<Value> values = List.of(chargeDamage);
 
+        public Value.RangedValueCritable getChargeDamage() {
+            return chargeDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

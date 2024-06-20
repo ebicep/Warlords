@@ -8,13 +8,12 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class HolyRadianceBranchCrusader extends AbstractUpgradeBranch<HolyRadianceCrusader> {
 
-
     public HolyRadianceBranchCrusader(AbilityTree abilityTree, HolyRadianceCrusader ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 7.5f)
+                .addUpgradeHealing(getAbility().getRadianceHealing(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

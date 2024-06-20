@@ -288,6 +288,10 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         private final Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(409, 551, 25, 175);
         private final List<Value> values = List.of(breathHealing);
 
+        public Value.RangedValueCritable getBreathHealing() {
+            return breathHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

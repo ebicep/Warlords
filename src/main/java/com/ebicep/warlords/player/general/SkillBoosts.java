@@ -12,6 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import java.util.function.Consumer;
 
 public enum SkillBoosts {
+
     FIREBALL("Fireball",
             Component.text("Increase the damage of Fireball by 10% and increase the direct hit damage bonus by 20%.", NamedTextColor.GRAY),
             Component.text("Increase the damage of Fireball by ", NamedTextColor.GREEN)
@@ -22,8 +23,11 @@ public enum SkillBoosts {
             Fireball.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Fireball fireball) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    fireball.getDamageValues()
+                            .getFireballDamage()
+                            .forEachValue(floatModifiable -> {
+                                floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
+                            });
                     fireball.setDirectHitMultiplier(fireball.getDirectHitMultiplier() + 20);
                 }
             }
@@ -37,9 +41,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             FlameBurst.class,
             abstractAbility -> {
-                if (abstractAbility instanceof FlameBurst) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                if (abstractAbility instanceof FlameBurst flameBurst) {
+                    flameBurst.getDamageValues()
+                              .getFlameBurstDamage()
+                              .forEachValue(floatModifiable -> {
+                                  floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                              });
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -40);
                 }
             }
@@ -94,8 +101,11 @@ public enum SkillBoosts {
             FrostBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FrostBolt frostBolt) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    frostBolt.getDamageValues()
+                             .getBoltDamage()
+                             .forEachValue(floatModifiable -> {
+                                 floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                             });
                     frostBolt.setSlowness(frostBolt.getSlowness() + 5);
                 }
             }
@@ -109,9 +119,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             FreezingBreath.class,
             abstractAbility -> {
-                if (abstractAbility instanceof FreezingBreath) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof FreezingBreath freezingBreath) {
+                    freezingBreath.getDamageValues()
+                                  .getFreezingBreathDamage()
+                                  .forEachValue(floatModifiable -> {
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                  });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
@@ -162,9 +175,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             WaterBolt.class,
             abstractAbility -> {
-                if (abstractAbility instanceof WaterBolt) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof WaterBolt waterBolt) {
+                    waterBolt.getHealValues()
+                             .getBoltHealing()
+                             .forEachValue(floatModifiable -> {
+                                 floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                             });
                 }
             }
     ),
@@ -177,9 +193,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             WaterBreath.class,
             abstractAbility -> {
-                if (abstractAbility instanceof WaterBreath) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                if (abstractAbility instanceof WaterBreath waterBreath) {
+                    waterBreath.getHealValues()
+                               .getBreathHealing()
+                               .forEachValue(floatModifiable -> {
+                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
+                               });
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -30);
                 }
             }
@@ -233,9 +252,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             WoundingStrikeBerserker.class,
             abstractAbility -> {
-                if (abstractAbility instanceof WoundingStrikeBerserker) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                if (abstractAbility instanceof WoundingStrikeBerserker woundingStrikeBerserker) {
+                    woundingStrikeBerserker.getDamageValues()
+                                           .getStrikeDamage()
+                                           .forEachValue(floatModifiable -> {
+                                               floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
+                                           });
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -10);
                 }
             }
@@ -249,9 +271,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             SeismicWaveBerserker.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AbstractSeismicWave) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                if (abstractAbility instanceof SeismicWaveBerserker seismicWaveBerserker) {
+                    seismicWaveBerserker.getDamageValues()
+                                        .getWaveDamage()
+                                        .forEachValue(floatModifiable -> {
+                                            floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
+                                        });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -265,9 +290,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             GroundSlamBerserker.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AbstractGroundSlam) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
+                if (abstractAbility instanceof GroundSlamBerserker groundSlamBerserker) {
+                    groundSlamBerserker.getDamageValues()
+                                       .getSlamDamage()
+                                       .forEachValue(floatModifiable -> {
+                                           floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                       });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
@@ -311,10 +339,13 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             WoundingStrikeDefender.class,
             abstractAbility -> {
-                if (abstractAbility instanceof WoundingStrikeDefender strike) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
-                    strike.setWounding(strike.getWounding() + 25);
+                if (abstractAbility instanceof WoundingStrikeDefender woundingStrikeDefender) {
+                    woundingStrikeDefender.getDamageValues()
+                                          .getStrikeDamage()
+                                          .forEachValue(floatModifiable -> {
+                                              floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
+                                          });
+                    woundingStrikeDefender.setWounding(woundingStrikeDefender.getWounding() + 25);
                 }
             }
     ),
@@ -430,9 +461,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             OrbsOfLife.class,
             abstractAbility -> {
-                if (abstractAbility instanceof OrbsOfLife) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof OrbsOfLife orbsOfLife) {
+                    orbsOfLife.getHealValues()
+                              .getOrbHealing()
+                              .forEachValue(floatModifiable -> {
+                                  floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                              });
                 }
             }
     ),
@@ -461,8 +495,11 @@ public enum SkillBoosts {
             AvengersStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersStrike avengersStrike) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    avengersStrike.getDamageValues()
+                                  .getStrikeDamage()
+                                  .forEachValue(floatModifiable -> {
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
+                                  });
                     avengersStrike.setEnergySteal(avengersStrike.getEnergySteal() + 5);
                 }
             }
@@ -474,10 +511,13 @@ public enum SkillBoosts {
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
             ConsecrateAvenger.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AbstractConsecrate) {
+                if (abstractAbility instanceof ConsecrateAvenger consecrateAvenger) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
+                    consecrateAvenger.getDamageValues()
+                                     .getConsecrateDamage()
+                                     .forEachValue(floatModifiable -> {
+                                         floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                     });
                 }
             }
     ),
@@ -533,9 +573,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             CrusadersStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof CrusadersStrike) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof CrusadersStrike crusadersStrike) {
+                    crusadersStrike.getDamageValues()
+                                   .getStrikeDamage()
+                                   .forEachValue(floatModifiable -> {
+                                       floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                   });
                 }
             }
     ),
@@ -546,10 +589,13 @@ public enum SkillBoosts {
                      .append(Component.text(" and remove the energy cost.", NamedTextColor.GREEN)),
             ConsecrateCrusader.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AbstractConsecrate) {
+                if (abstractAbility instanceof ConsecrateCrusader consecrateCrusader) {
                     abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .35f);
+                    consecrateCrusader.getDamageValues()
+                                      .getConsecrateDamage()
+                                      .forEachValue(floatModifiable -> {
+                                          floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                      });
                 }
             }
     ),
@@ -655,9 +701,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             HolyRadianceProtector.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HolyRadianceProtector) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof HolyRadianceProtector holyRadianceProtector) {
+                    holyRadianceProtector.getHealValues()
+                                         .getRadianceHealing()
+                                         .forEachValue(floatModifiable -> {
+                                             floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                         });
                 }
             }
     ),
@@ -670,9 +719,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             HammerOfLight.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HammerOfLight) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                if (abstractAbility instanceof HammerOfLight hammerOfLight) {
+                    hammerOfLight.getHealValues()
+                                 .getHammerHealing()
+                                 .forEachValue(floatModifiable -> {
+                                     floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                                 });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -683,9 +735,12 @@ public enum SkillBoosts {
                      .append(Component.text("20%.", NamedTextColor.RED)),
             LightningBolt.class,
             abstractAbility -> {
-                if (abstractAbility instanceof LightningBolt) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof LightningBolt lightningBolt) {
+                    lightningBolt.getDamageValues()
+                                 .getBoltDamage()
+                                 .forEachValue(floatModifiable -> {
+                                     floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                 });
                 }
             }
     ),
@@ -698,9 +753,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             ChainLightning.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ChainLightning) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                if (abstractAbility instanceof ChainLightning chainLightning) {
+                    chainLightning.getDamageValues()
+                                  .getChainDamage()
+                                  .forEachValue(floatModifiable -> {
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                                  });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
                 }
             }
@@ -741,10 +799,13 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             CapacitorTotem.class,
             abstractAbility -> {
-                if (abstractAbility instanceof CapacitorTotem) {
+                if (abstractAbility instanceof CapacitorTotem capacitorTotem) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
+                    capacitorTotem.getDamageValues()
+                                  .getTotemDamage()
+                                  .forEachValue(floatModifiable -> {
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .3f);
+                                  });
                 }
             }
     ),
@@ -755,9 +816,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             FallenSouls.class,
             abstractAbility -> {
-                if (abstractAbility instanceof FallenSouls) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof FallenSouls fallenSouls) {
+                    fallenSouls.getDamageValues()
+                               .getFallenSoulDamage()
+                               .forEachValue(floatModifiable -> {
+                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                               });
                 }
             }
     ),
@@ -771,8 +835,11 @@ public enum SkillBoosts {
             SpiritLink.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SpiritLink spiritLink) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                    spiritLink.getDamageValues()
+                              .getLinkDamage()
+                              .forEachValue(floatModifiable -> {
+                                  floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                              });
                     spiritLink.setSpeedDuration(spiritLink.getSpeedDuration() + 0.5);
                 }
             }
@@ -830,8 +897,11 @@ public enum SkillBoosts {
             EarthenSpike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EarthenSpike earthenSpike) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    earthenSpike.getDamageValues()
+                                .getSpikeDamage()
+                                .forEachValue(floatModifiable -> {
+                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
+                                });
                     earthenSpike.setSpeed(earthenSpike.getSpeed() * 1.3f);
                 }
             }
@@ -843,9 +913,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             Boulder.class,
             abstractAbility -> {
-                if (abstractAbility instanceof Boulder) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                if (abstractAbility instanceof Boulder boulder) {
+                    boulder.getDamageValues()
+                           .getBoulderDamage()
+                           .forEachValue(floatModifiable -> {
+                               floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                           });
                 }
             }
     ),
@@ -868,9 +941,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             ChainHeal.class,
             abstractAbility -> {
-                if (abstractAbility instanceof ChainHeal) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .3f);
+                if (abstractAbility instanceof ChainHeal chainHeal) {
+                    chainHeal.getHealValues()
+                             .getChainHealing()
+                             .forEachValue(floatModifiable -> {
+                                 floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .3f);
+                             });
                 }
             }
     ),
@@ -883,9 +959,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             HealingTotem.class,
             abstractAbility -> {
-                if (abstractAbility instanceof HealingTotem) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                if (abstractAbility instanceof HealingTotem healingTotem) {
+                    healingTotem.getHealValues()
+                                .getTotemHealing()
+                                .forEachValue(floatModifiable -> {
+                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                                });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
@@ -897,9 +976,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             JudgementStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof JudgementStrike) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof JudgementStrike judgementStrike) {
+                    judgementStrike.getDamageValues()
+                                   .getStrikeDamage()
+                                   .forEachValue(floatModifiable -> {
+                                       floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                   });
                 }
             }
     ),
@@ -968,9 +1050,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             RighteousStrike.class,
             abstractAbility -> {
-                if (abstractAbility instanceof RighteousStrike) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                if (abstractAbility instanceof RighteousStrike righteousStrike) {
+                    righteousStrike.getDamageValues()
+                                   .getStrikeDamage()
+                                   .forEachValue(floatModifiable -> {
+                                       floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                   });
                 }
             }
     ),
@@ -1042,8 +1127,11 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike impalingStrike) {
                     impalingStrike.setLeechDuration(impalingStrike.getLeechDuration() + 5);
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    impalingStrike.getDamageValues()
+                                  .getStrikeDamage()
+                                  .forEachValue(floatModifiable -> {
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
+                                  });
                 }
             }
     ),
@@ -1054,9 +1142,12 @@ public enum SkillBoosts {
                      .append(Component.text(".", NamedTextColor.GREEN)),
             SoothingElixir.class,
             abstractAbility -> {
-                if (abstractAbility instanceof SoothingElixir) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .25f);
+                if (abstractAbility instanceof SoothingElixir soothingElixir) {
+                    soothingElixir.getHealValues()
+                                  .getElixirHealing()
+                                  .forEachValue(floatModifiable -> {
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                                  });
                 }
             }
     ),
@@ -1082,8 +1173,11 @@ public enum SkillBoosts {
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains remedicChains) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .1f);
+                    remedicChains.getHealValues()
+                                 .getChainHealing()
+                                 .forEachValue(floatModifiable -> {
+                                     floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
+                                 });
                     remedicChains.setLinkBreakRadius(remedicChains.getLinkBreakRadius() + 10);
                 }
             }
@@ -1129,8 +1223,11 @@ public enum SkillBoosts {
             SoulfireBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulfireBeam soulfireBeam) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    soulfireBeam.getDamageValues()
+                                .getBeamDamage()
+                                .forEachValue(floatModifiable -> {
+                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
@@ -1184,8 +1281,11 @@ public enum SkillBoosts {
             FortifyingHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FortifyingHex fortifyingHex) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .15f);
+                    fortifyingHex.getDamageValues()
+                                 .getHexDamage()
+                                 .forEachValue(floatModifiable -> {
+                                     floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
+                                 });
                     fortifyingHex.setTickDuration(fortifyingHex.getTickDuration() + 40);
                 }
             }
@@ -1274,8 +1374,11 @@ public enum SkillBoosts {
             RayOfLight.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RayOfLight rayOfLight) {
-                    abstractAbility.getMinDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
-                    abstractAbility.getMaxDamageHeal().addMultiplicativeModifierAdd("Skill Boost", .2f);
+                    rayOfLight.getHealValues()
+                              .getRayHealing()
+                              .forEachValue(floatModifiable -> {
+                                  floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                              });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
@@ -1283,10 +1386,10 @@ public enum SkillBoosts {
     ENERGY_SEER_LUMINARY("Energy Seer",
             Component.text("Increase the energy restored by Energy Seer by 40 and increase the healing modifier by 10%.\n", NamedTextColor.GRAY),
             Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
-                    .append(Component.text("40 ", NamedTextColor.RED))
-                    .append(Component.text("and increase the healing modifier by ", NamedTextColor.GREEN))
-                    .append(Component.text("10%", NamedTextColor.RED))
-                    .append(Component.text(".", NamedTextColor.GREEN)),
+                     .append(Component.text("40 ", NamedTextColor.RED))
+                     .append(Component.text("and increase the healing modifier by ", NamedTextColor.GREEN))
+                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text(".", NamedTextColor.GREEN)),
             EnergySeerLuminary.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerLuminary energySeerLuminary) {

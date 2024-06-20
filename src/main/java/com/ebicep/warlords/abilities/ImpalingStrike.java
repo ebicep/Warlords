@@ -223,6 +223,10 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(323, 427, 20, 175);
         private final List<Value> values = List.of(strikeDamage);
 
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

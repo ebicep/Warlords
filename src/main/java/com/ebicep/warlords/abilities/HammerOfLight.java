@@ -497,6 +497,10 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         private final Value.RangedValueCritable hammerHealing = new Value.RangedValueCritable(178, 244, 20, 175);
         private final List<Value> values = List.of(hammerHealing);
 
+        public Value.RangedValueCritable getHammerHealing() {
+            return hammerHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

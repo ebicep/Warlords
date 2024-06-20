@@ -13,7 +13,7 @@ public class HealingRainBranch extends AbstractUpgradeBranch<HealingRain> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 15f)
+                .addUpgradeHealing(ability.getHealValues().getRainHealing(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

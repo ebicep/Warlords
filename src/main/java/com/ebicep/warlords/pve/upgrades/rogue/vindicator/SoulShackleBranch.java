@@ -14,7 +14,7 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 10f)
+                .addUpgradeDamage(ability.getDamageValues().getShackleDamage(), 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

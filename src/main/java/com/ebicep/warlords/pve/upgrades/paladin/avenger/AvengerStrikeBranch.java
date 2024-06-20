@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -16,8 +17,9 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
@@ -26,7 +28,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {

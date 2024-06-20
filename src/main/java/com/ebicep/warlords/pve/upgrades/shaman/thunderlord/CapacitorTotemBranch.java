@@ -8,13 +8,12 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class CapacitorTotemBranch extends AbstractUpgradeBranch<CapacitorTotem> {
 
-
     public CapacitorTotemBranch(AbilityTree abilityTree, CapacitorTotem ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 12.5f)
+                .addUpgradeDamage(ability.getDamageValues().getTotemDamage(), 12.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

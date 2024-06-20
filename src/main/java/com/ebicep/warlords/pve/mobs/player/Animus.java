@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.player;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -10,7 +11,6 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Untargetable;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
 
@@ -95,8 +95,12 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
             for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {
                 playerClass.addAbility(new JudgementStrike() {{
                     getCooldown().setBaseValue(2);
-                    setMinDamageHeal(new FloatModifiable(judgementStrike.getMinDamageHeal()));
-                    setMaxDamageHeal(new FloatModifiable(judgementStrike.getMaxDamageHeal()));
+                    Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
+                    Value.RangedValueCritable newStrikeDamage = getDamageValues().getStrikeDamage();
+                    newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
+                    newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
+                    newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
+                    newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
                     getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
                     setInPve(judgementStrike.isInPve());
                     setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());

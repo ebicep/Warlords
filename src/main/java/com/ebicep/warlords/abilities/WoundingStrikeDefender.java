@@ -203,6 +203,10 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(415.8f, 556.5f, 20, 200);
         private final List<Value> values = List.of(strikeDamage);
 
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

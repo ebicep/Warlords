@@ -73,6 +73,10 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
         private final Value.RangedValueCritable slamDamage = new Value.RangedValueCritable(448.8f, 606.1f, 20, 175);
         private final List<Value> values = List.of(slamDamage);
 
+        public Value.RangedValueCritable getSlamDamage() {
+            return slamDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

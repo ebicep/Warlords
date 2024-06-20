@@ -297,6 +297,10 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         private final Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
         private final List<Value> values = List.of(flameBurstDamage);
 
+        public Value.RangedValueCritable getFlameBurstDamage() {
+            return flameBurstDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

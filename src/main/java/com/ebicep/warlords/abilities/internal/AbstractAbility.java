@@ -179,22 +179,6 @@ public abstract class AbstractAbility implements AbilityIcon {
         this.timesUsed = timesUsed;
     }
 
-    public FloatModifiable getMinDamageHeal() {
-        return minDamageHeal;
-    }
-
-    public void setMinDamageHeal(FloatModifiable minDamageHeal) {
-        this.minDamageHeal = minDamageHeal;
-    }
-
-    public FloatModifiable getMaxDamageHeal() {
-        return maxDamageHeal;
-    }
-
-    public void setMaxDamageHeal(FloatModifiable maxDamageHeal) {
-        this.maxDamageHeal = maxDamageHeal;
-    }
-
     public void addCurrentCooldown(float cooldown) {
         if (currentCooldown != 0) {
             currentCooldown += cooldown;

@@ -350,7 +350,11 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
         private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(307, 415, 20, 175);
         private final Value.RangedValue hexDOTDamage = new Value.RangedValue(30, 40);
-        private final List<Value> values = List.of(hexDamage);
+        private final List<Value> values = List.of(hexDamage, hexDOTDamage);
+
+        public Value.RangedValueCritable getHexDamage() {
+            return hexDamage;
+        }
 
         @Override
         public List<Value> getValues() {

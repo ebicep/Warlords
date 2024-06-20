@@ -16,8 +16,8 @@ public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 15f)
-                .addUpgradeDamage(ability, 15f, 3, 4)
+                .addUpgradeHealing(ability.getHealValues().getBoltHealing(), 15f)
+                .addUpgradeDamage(ability.getDamageValues().getBoltDamage(), 15f, 3, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

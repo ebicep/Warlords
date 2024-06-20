@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
 import com.ebicep.warlords.abilities.EarthenSpike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
@@ -12,7 +13,7 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 10f)
+                .addUpgradeDamage(ability.getDamageValues().getSpikeDamage(), 10f)
                 .addUpgradeHitBox(ability, 5f, 4)
                 .addTo(treeA);
 
@@ -53,8 +54,9 @@ public class EarthenSpikeBranch extends AbstractUpgradeBranch<EarthenSpike> {
                         """,
                 50000,
                 () -> {
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3f);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3f);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getSpikeDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
                 }
         );
     }

@@ -62,10 +62,10 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         upgrades.add(new TowerUpgrade("Increase Damge and Healing", upgradeDamage4) {
             @Override
             protected void onUpgrade() {
-                hexAttack.getMinDamageHeal().addAdditiveModifier("Upgrade 4", upgradeDamage4.getValue());
-                hexAttack.getMaxDamageHeal().addAdditiveModifier("Upgrade 4", upgradeDamage4.getValue());
-                mercifulHex.getMinDamageHeal().addAdditiveModifier("Upgrade 4", upgradeHealing4.getValue());
-                mercifulHex.getMaxDamageHeal().addAdditiveModifier("Upgrade 4", upgradeHealing4.getValue());
+//                hexAttack.getMinDamageHeal().addAdditiveModifier("Upgrade 4", upgradeDamage4.getValue()); TODO
+//                hexAttack.getMaxDamageHeal().addAdditiveModifier("Upgrade 4", upgradeDamage4.getValue());
+//                mercifulHex.getMinDamageHeal().addAdditiveModifier("Upgrade 4", upgradeHealing4.getValue());
+//                mercifulHex.getMaxDamageHeal().addAdditiveModifier("Upgrade 4", upgradeHealing4.getValue());
             }
         });
     }

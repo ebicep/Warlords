@@ -12,7 +12,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability, 10f)
+                .addUpgradeHealing(ability.getRadianceHealing(), 10f)
                 .addUpgradeEnergy(ability, 30f, 4)
                 .addTo(treeA);
 

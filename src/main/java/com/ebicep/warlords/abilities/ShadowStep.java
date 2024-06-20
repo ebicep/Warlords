@@ -291,6 +291,10 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         private final Value.RangedValueCritable shadowStepDamage = new Value.RangedValueCritable(466, 598, 15, 175);
         private final List<Value> values = List.of(shadowStepDamage);
 
+        public Value.RangedValueCritable getShadowStepDamage() {
+            return shadowStepDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

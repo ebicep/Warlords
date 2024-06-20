@@ -305,6 +305,10 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
         private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(164, 212, 20, 180);
         private final List<Value> values = List.of(fallenSoulDamage);
 
+        public Value.RangedValueCritable getFallenSoulDamage() {
+            return fallenSoulDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

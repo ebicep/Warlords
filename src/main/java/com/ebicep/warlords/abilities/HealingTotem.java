@@ -404,6 +404,10 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         private final Value.RangedValueCritable totemHealing = new Value.RangedValueCritable(621, 728, 25, 175);
         private final List<Value> values = List.of(totemHealing);
 
+        public Value.RangedValueCritable getTotemHealing() {
+            return totemHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

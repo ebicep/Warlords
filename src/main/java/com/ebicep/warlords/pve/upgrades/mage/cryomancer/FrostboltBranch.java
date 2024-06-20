@@ -5,13 +5,12 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
-
     public FrostboltBranch(AbilityTree abilityTree, FrostBolt ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.f)
+                .addUpgradeDamage(ability.getDamageValues().getBoltDamage(), 7.f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {

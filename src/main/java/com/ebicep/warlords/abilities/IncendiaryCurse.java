@@ -208,6 +208,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         private final Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
         private final List<Value> values = List.of(curseDamage);
 
+        public Value.RangedValueCritable getCurseDamage() {
+            return curseDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

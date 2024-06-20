@@ -1,13 +1,13 @@
 package com.ebicep.warlords.pve.upgrades.shaman.earthwarden;
 
 import com.ebicep.warlords.abilities.Boulder;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
 import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
-
 
     double hitbox = ability.getHitbox();
 
@@ -16,7 +16,7 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 10f)
+                .addUpgradeDamage(ability.getDamageValues().getBoulderDamage(), 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -33,8 +33,9 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                     ability.setBoulderSpeed(ability.getBoulderSpeed() * 0.25f);
                     ability.getCooldown().addMultiplicativeModifierMult("Terrestrial Meteor", 2);
                     ability.getEnergyCost().addMultiplicativeModifierMult("Master Upgrade Branch", 1.5f);
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getBoulderDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 3);
                     ability.setHitbox(hitbox + 3);
                 }
         );
@@ -46,8 +47,9 @@ public class BoulderBranch extends AbstractUpgradeBranch<Boulder> {
                         """,
                 50000,
                 () -> {
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getBoulderDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1);
                 }
         );
     }

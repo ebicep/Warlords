@@ -8,14 +8,13 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
 
-
     public HealingTotemBranch(AbilityTree abilityTree, HealingTotem ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeHitBox(ability, 2)
-                .addUpgradeHealing(ability, 20f, 4)
+                .addUpgradeHealing(ability.getHealValues().getTotemHealing(), 20f, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

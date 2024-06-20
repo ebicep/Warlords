@@ -251,6 +251,10 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         private final Value.RangedValue igniteDamage = new Value.RangedValue(450, 650);
         private final List<Value> values = List.of(fireballDamage, igniteDamage);
 
+        public Value.RangedValueCritable getFireballDamage() {
+            return fireballDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

@@ -259,6 +259,10 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
         private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);
         private final List<Value> values = List.of(chainHealing);
 
+        public Value.RangedValueCritable getChainHealing() {
+            return chainHealing;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

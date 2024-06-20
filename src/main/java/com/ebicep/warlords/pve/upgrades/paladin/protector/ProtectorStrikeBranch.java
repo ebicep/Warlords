@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.paladin.protector;
 
 import com.ebicep.warlords.abilities.ProtectorsStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -10,8 +11,9 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
 
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public ProtectorStrikeBranch(AbilityTree abilityTree, ProtectorsStrike ability) {
@@ -19,7 +21,7 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 7.5f)
                 .addUpgradeHitBox(ability, 1, 4)
                 .addTo(treeA);
 
@@ -46,8 +48,9 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
                         """,
                 50000,
                 () -> {
-                    ability.getMinDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
-                    ability.getMaxDamageHeal().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
                     ability.setCritChance(ability.getCritChance() + 15);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                     ability.setMaxAllies(ability.getMaxAllies() + 1);

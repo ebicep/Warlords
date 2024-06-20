@@ -14,9 +14,8 @@ public class AbstractGroundSlamBranch<T extends AbstractGroundSlam> extends Abst
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 5f)
+                .addUpgradeDamage(ability.getSlamDamage(), 5f)
                 .addTo(treeA);
-
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)

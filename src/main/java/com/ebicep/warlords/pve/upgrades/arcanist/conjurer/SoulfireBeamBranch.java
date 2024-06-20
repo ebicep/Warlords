@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
 import com.ebicep.warlords.abilities.SoulfireBeam;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -8,12 +9,11 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
 
-
-
     @Override
     public void runOnce() {
-        ability.getMinDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
-        ability.getMaxDamageHeal().addMultiplicativeModifierAdd("PvE", .3f);
+        Value.RangedValueCritable hexDamage = ability.getDamageValues().getBeamDamage();
+        hexDamage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        hexDamage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public SoulfireBeamBranch(AbilityTree abilityTree, SoulfireBeam ability) {
@@ -26,7 +26,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getBeamDamage(), 7.5f)
                 .addUpgradeHitBox(ability, 2f, 4)
                 .addTo(treeB);
 

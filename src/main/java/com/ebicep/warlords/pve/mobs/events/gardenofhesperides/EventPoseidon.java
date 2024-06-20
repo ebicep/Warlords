@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -89,21 +90,19 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                     @Override
                     protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
                         super.onSpikeTarget(caster, spikeTarget);
-                        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+                        Optional<CripplingStrike.CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.CripplingStrikeData.class)
                                 .findAny();
                         if (optionalCripplingStrike.isPresent()) {
-                            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
+                            CripplingStrike.CripplingStrikeData data = optionalCripplingStrike.get();
                             spikeTarget.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+                            int newCrippleCounter = Math.min(data.consecutiveStrikeCounter() + 1, 2);
                             CripplingStrike.cripple(caster,
                                     spikeTarget,
                                     name,
-                                    new CripplingStrike(minDamageHeal.getCalculatedValue(),
-                                            maxDamageHeal.getCalculatedValue(),
-                                            Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)
-                                    ),
+                                    newCrippleCounter,
                                     2 * 20,
-                                    convertToDivisionDecimal(10) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(5)
+                                    convertToDivisionDecimal(10) - newCrippleCounter * convertToPercent(5)
                             );
                         } else {
                             spikeTarget.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
@@ -176,8 +175,9 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 2, .5f);
                             warlordsNPC.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                                 boulder.setPveMasterUpgrade(true);
-                                boulder.getMinDamageHeal().setBaseValue(720);
-                                boulder.getMaxDamageHeal().setBaseValue(860);
+                                Value.RangedValueCritable boulderDamage = boulder.getDamageValues().getBoulderDamage();
+                                boulderDamage.min().setBaseValue(720);
+                                boulderDamage.max().setBaseValue(860);
                             });
                         }
                     }
