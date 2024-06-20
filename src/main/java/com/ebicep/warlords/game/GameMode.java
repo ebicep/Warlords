@@ -66,7 +66,7 @@ public enum GameMode {
     LOBBY(
             "MainLobby",
             "MainLobby",
-            null,
+            new ItemStack(Material.BEDROCK),
             null,
             null,
             Integer.MAX_VALUE,
@@ -124,7 +124,7 @@ public enum GameMode {
     INTERCEPTION(
             "Interception",
             "INTER",
-            null,//new ItemStack(Material.WOOL),
+            new ItemStack(Material.BEACON),
             DatabaseGameInterception::new,
             GamesCollections.INTERCEPTION,
             16,
@@ -227,7 +227,7 @@ public enum GameMode {
     DUEL(
             "[WIP] Duel",
             "DUEL",
-            null,//new ItemStack(Material.DIAMOND_SWORD),
+            new ItemStack(Material.DIAMOND_SWORD),
             DatabaseGameDuel::new,
             GamesCollections.DUEL,
             2,
@@ -481,7 +481,7 @@ public enum GameMode {
     DEBUG(
             "Sandbox",
             "SandBox",
-            null,
+            new ItemStack(Material.SAND),
             null,
             null,
             16,
@@ -504,7 +504,7 @@ public enum GameMode {
     TUTORIAL(
             "Tutorial",
             "Tutorial",
-            null,
+            new ItemStack(Material.BOOK),
             null,
             null,
             Integer.MAX_VALUE,
@@ -523,7 +523,7 @@ public enum GameMode {
     EVENT_WAVE_DEFENSE(
             "Event Wave Defense",
             "PVE",
-            null,//new ItemStack(Material.ZOMBIE_HEAD),
+            new ItemStack(Material.ZOMBIE_HEAD),
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 if (DatabaseGameEvent.currentGameEvent == null || !DatabaseGameEvent.currentGameEvent.isActive()) {
                     return null;
@@ -642,7 +642,7 @@ public enum GameMode {
             null,
             null,
             100,
-            false
+            true
     ) {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {

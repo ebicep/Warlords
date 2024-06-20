@@ -71,8 +71,9 @@ public class DebugMenuGameOptions {
                     continue;
                 }
                 i++;
+                ItemStack itemStack = gm.getItemStack();
                 menu.setItem(i % 7 + 1, i / 7 + 1,
-                        new ItemBuilder(Material.BLACK_WOOL)
+                        new ItemBuilder(itemStack == null ? Material.BLACK_WOOL : itemStack.getType())
                                 .name(Component.text(gm.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
                                 .get(),
                         (m, e) -> openMapMenu(player, gm)
