@@ -72,6 +72,9 @@ public class LocationBuilder extends Location {
     }
 
     public LocationBuilder faceTowards(Location location) {
+        if (location.getX() == getX() && location.getY() == getY() && location.getZ() == getZ()) {
+            return this;
+        }
         this.setDirection(getVectorTowards(location));
         return this;
     }

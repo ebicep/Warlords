@@ -9,14 +9,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import net.minecraft.server.level.ServerLevel;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -121,9 +118,8 @@ public class OldTestCommand implements CommandExecutor {
         if (commandSender instanceof Player player) {
 //            player.setPose(Pose.DYING);
 //            player.playHurtAnimation(270);
-            ServerLevel serverLevel = ((CraftWorld) player.getWorld()).getHandle();
-            serverLevel.broadcastDamageEvent(((CraftEntity) player).getHandle(), serverLevel.damageSources().generic());
-
+//            ServerLevel serverLevel = ((CraftWorld) player.getWorld()).getHandle();
+//            serverLevel.broadcastDamageEvent(((CraftEntity) player).getHandle(), serverLevel.damageSources().generic());
 //            Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
 //            for (Option option : game.getOptions()) {
 //                if (option instanceof TowerDefenseOption towerDefenseOption) {
