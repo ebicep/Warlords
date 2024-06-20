@@ -39,7 +39,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     private float shieldHealth = 0;
 
     public ArcaneShield() {
-        super("Arcane Shield", 0, 0, 31.32f, 40);
+        super("Arcane Shield", 31.32f, 40);
     }
 
     public void addTimesBroken() {
@@ -190,6 +190,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
     @Override
     public void updateCustomStats(AbstractPlayerClass apc) {
+        super.updateCustomStats(apc);
         if (apc != null) {
             ArcaneShield arcaneShield = (this);
             arcaneShield.setMaxShieldHealth((int) (apc.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));

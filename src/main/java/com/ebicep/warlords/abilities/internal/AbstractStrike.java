@@ -18,10 +18,10 @@ import java.util.function.Consumer;
 
 public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
 
-    private FloatModifiable hitbox = new FloatModifiable(4.8f);
+    private final FloatModifiable hitbox = new FloatModifiable(4.8f);
 
-    public AbstractStrike(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    public AbstractStrike(String name, float cooldown, float energyCost) {
+        super(name, cooldown, energyCost);
     }
 
     @Override

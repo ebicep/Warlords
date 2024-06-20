@@ -39,7 +39,7 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
     private int wounding = 25;
 
     public WoundingStrikeDefender() {
-        super("Wounding Strike", 415.8f, 556.5f, 0, 100, 20, 200);
+        super("Wounding Strike", 0, 100);
     }
 
     @Override

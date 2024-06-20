@@ -74,7 +74,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
     private static class VoidHealing extends AbstractAbility implements Heals<VoidHealing.HealingValues> {
 
         public VoidHealing() {
-            super("Void Healing", 200, 200, .5f, 100);
+            super("Void Healing", .5f, 100);
         }
 
         @Override

@@ -101,7 +101,7 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
         private int mobsHit = 1;
 
         public StrikeAttack() {
-            super("Strike Attack", 150, 150, 4, 0);
+            super("Strike Attack", 4, 0);
         }
 
         @Override

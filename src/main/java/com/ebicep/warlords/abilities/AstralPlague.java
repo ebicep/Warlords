@@ -40,7 +40,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     private int hexTickDurationIncrease = 40;
 
     public AstralPlague() {
-        super("Astral Plague", 0, 0, 50, 10, 0, 0);
+        super("Astral Plague", 50, 10);
     }
 
     @Override

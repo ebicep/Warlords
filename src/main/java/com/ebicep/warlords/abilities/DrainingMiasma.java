@@ -42,7 +42,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     private float leechAllyAmount = 15;
 
     public DrainingMiasma() {
-        super("Draining Miasma", 50, 50, 50, 40);
+        super("Draining Miasma", 50, 40);
     }
 
     @Override

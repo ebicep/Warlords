@@ -41,7 +41,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     private int tickDuration = 240;
 
     public Sanctuary() {
-        super("Sanctuary", 0, 0, 50, 10, 0, 0);
+        super("Sanctuary", 50, 10);
     }
 
     @Override

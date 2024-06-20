@@ -33,14 +33,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class HealingTotem extends AbstractTotem implements Duration, HitBox, Heals<HealingTotem.HealingValues> {
 
     public int playersHealed = 0;
     public int playersCrippled = 0;
 
-    protected float amountHealed = 0;
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(7);
     private int tickDuration = 120;
@@ -52,7 +50,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     }
 
     public HealingTotem(ArmorStand totem, WarlordsEntity owner) {
-        super("Healing Totem", 621, 728, 67.86f, 60, 25, 175, totem, owner);
+        super("Healing Totem", 67.86f, 60, totem, owner);
     }
 
     @Override
@@ -121,14 +119,13 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
     @Override
     protected void onActivation(WarlordsEntity wp, ArmorStand totemStand) {
-        HealingTotem tempHealingTotem = new HealingTotem(totemStand, wp);
-        AtomicInteger cooldownCounter = new AtomicInteger();
         float rad = radius.getCalculatedValue();
-        RegularCooldown<HealingTotem> healingTotemCooldown = new RegularCooldown<>(
+        HealingTotemData data = new HealingTotemData(this, wp, totemStand);
+        RegularCooldown<HealingTotemData> healingTotemCooldown = new RegularCooldown<>(
                 name,
                 "TOTEM",
-                HealingTotem.class,
-                tempHealingTotem,
+                HealingTotemData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -147,10 +144,10 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                             .source(wp)
                                             .value(healingValues.totemHealing)
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                        tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                        data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                                     });
                                 });
-                    if (tempHealingTotem.getAmountHealed() >= 20000) {
+                    if (data.amountHealed >= 20000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
                     }
                 },
@@ -165,7 +162,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                     }
 
                     if (ticksElapsed % 20 == 0) {
-                        cooldownCounter.set(ticksElapsed);
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveMasterUpgrade ? 0.4f : 0.9f);
 
                         totemStand.getLocation().getWorld().spawnParticle(
@@ -229,7 +225,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                                 .max(healingValues.totemHealing.getMaxValue() * healMultiplier)
                                                 .crit(healingValues.totemHealing)
                                         ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                            tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                            data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                                         });
                                     });
 
@@ -246,8 +242,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                             enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                     "Totem Crippling",
                                                     "CRIP",
-                                                    HealingTotem.class,
-                                                    tempHealingTotem,
+                                                    HealingTotemData.class,
+                                                    data,
                                                     wp,
                                                     CooldownTypes.DEBUFF,
                                                     cooldownManager -> {
@@ -286,8 +282,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                         p.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                 "Totem Crippling",
                                                 "CRIP",
-                                                HealingTotem.class,
-                                                tempHealingTotem,
+                                                HealingTotemData.class,
+                                                data,
                                                 wp,
                                                 CooldownTypes.DEBUFF,
                                                 cooldownManager -> {
@@ -324,7 +320,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                     tickDuration,
                                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                         if (ticksElapsed % 4 == 0) {
-                                            if (!tempHealingTotem.playerInsideTotem(warlordsEntity, rad)) {
+                                            if (data.playerOutsideTotem(warlordsEntity, rad)) {
                                                 return;
                                             }
                                             EffectUtils.displayParticle(
@@ -345,7 +341,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                     if (!event.getCause().isEmpty()) {
                                         return;
                                     }
-                                    if (!tempHealingTotem.playerInsideTotem(warlordsEntity, rad)) {
+                                    if (data.playerOutsideTotem(warlordsEntity, rad)) {
                                         return;
                                     }
                                     WarlordsEntity victim = event.getWarlordsEntity();
@@ -357,18 +353,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         });
 
         }
-    }
-
-    public void addAmountHealed(float amount) {
-        amountHealed += amount;
-    }
-
-    public float getAmountHealed() {
-        return amountHealed;
-    }
-
-    private boolean playerInsideTotem(WarlordsEntity warlordsEntity, float radius) {
-        return warlordsEntity.getLocation().distanceSquared(totem.getLocation()) <= radius * radius;
     }
 
     @Override
@@ -411,6 +395,16 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+    }
+
+    public static class HealingTotemData extends TotemData<HealingTotem> {
+
+        private float amountHealed = 0;
+
+        public HealingTotemData(HealingTotem totem, WarlordsEntity owner, ArmorStand armorStand) {
+            super(totem, owner, armorStand);
         }
 
     }

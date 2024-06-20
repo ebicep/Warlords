@@ -96,7 +96,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public FlameAttack() {
-            super("Flame Attack", 500, 500, 10, 0);
+            super("Flame Attack", 10, 0);
         }
 
         @Override

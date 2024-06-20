@@ -41,7 +41,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     private int hitRadius = 5;
 
     public AvengersWrath() {
-        super("Avenger's Wrath", 0, 0, 52.85f, 0);
+        super("Avenger's Wrath", 52.85f, 0);
     }
 
     @Override

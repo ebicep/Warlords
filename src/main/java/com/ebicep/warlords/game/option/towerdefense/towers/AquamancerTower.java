@@ -90,7 +90,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public BoltAttack() {
-            super("Bolt Attack", 250, 250, 1, 0);
+            super("Bolt Attack", 1, 0);
         }
 
         @Override

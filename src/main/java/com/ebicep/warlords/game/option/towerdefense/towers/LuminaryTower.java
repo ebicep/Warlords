@@ -93,7 +93,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(45);
 
         public HexAttack() {
-            super("Hex Attack", 100, 100, 3, 0);
+            super("Hex Attack", 3, 0);
         }
 
         @Override
@@ -144,7 +144,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 0, 0, 20, 0);
+            super("Buff Towers", 20, 0);
         }
 
         @Override
@@ -184,7 +184,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(20);
 
         public MercifulHex() {
-            super("Merciful Hex", 50, 50, 3, 0);
+            super("Merciful Hex", 3, 0);
         }
 
         @Override

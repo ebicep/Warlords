@@ -37,7 +37,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
     private int tickDuration = 120;
 
     public GuardianBeam() {
-        super("Guardian Beam", 313, 423, 10, 10, 20, 175, 30, 30, true);
+        super("Guardian Beam", 10, 10, 30, 30, true);
     }
 
     @Override

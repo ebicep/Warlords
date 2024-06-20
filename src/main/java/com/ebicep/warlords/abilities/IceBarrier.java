@@ -38,11 +38,11 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     private int slownessOnMeleeHit = 20;
 
     public IceBarrier() {
-        super("Ice Barrier", 0, 0, 46.98f, 0);
+        super("Ice Barrier", 46.98f, 0);
     }
 
     public IceBarrier(float damageReductionPercent) {
-        super("Ice Barrier", 0, 0, 46.98f, 0);
+        super("Ice Barrier", 46.98f, 0);
         this.damageReductionPercent = damageReductionPercent;
     }
 

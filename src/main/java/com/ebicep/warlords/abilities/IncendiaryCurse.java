@@ -43,11 +43,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
-        this(408, 552, 8, 0);
+        this(8, 0);
     }
 
-    public IncendiaryCurse(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
-        super("Incendiary Curse", minDamageHeal, maxDamageHeal, cooldown, 60, 25, 175, startCooldown);
+    public IncendiaryCurse(float cooldown, float startCooldown) {
+        super("Incendiary Curse", cooldown, 60, startCooldown);
     }
 
     @Override

@@ -34,20 +34,13 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
     private FloatModifiable splash = new FloatModifiable(5);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;
-    public FlameBurst() {
-        super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 200, false);
-    }
 
-    public FlameBurst(float minDamageHeal, int maxDamageHeal, float filler) {
-        super("Flame Burst", minDamageHeal, maxDamageHeal, 9.4f, 60, 25, 185, 1.65, 200, false);
+    public FlameBurst() {
+        super("Flame Burst", 9.4f, 60, 1.65, 200, false);
     }
 
     public FlameBurst(float cooldown) {
-        super("Flame Burst", 557, 753, cooldown, 60, 25, 185, 1.65, 200, false);
-    }
-
-    public FlameBurst(float cooldown, int critChance) {
-        super("Flame Burst", 557, 753, cooldown, 60, critChance, 185, 1.65, 200, false);
+        super("Flame Burst", cooldown, 60, 1.65, 200, false);
     }
 
     @Override

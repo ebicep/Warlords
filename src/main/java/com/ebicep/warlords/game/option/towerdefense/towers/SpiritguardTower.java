@@ -101,7 +101,7 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpiritAttack() {
-            super("Spirit Attack", 200, 200, 2, 0);
+            super("Spirit Attack", 2, 0);
         }
 
         @Override
@@ -169,7 +169,7 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", 0, 0, 5, 0);
+            super("Spawn Troops", 5, 0);
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 

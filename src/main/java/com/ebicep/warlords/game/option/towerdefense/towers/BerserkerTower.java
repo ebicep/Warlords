@@ -98,7 +98,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
-            super("Strike Attack", 250, 250, 2, 0);
+            super("Strike Attack", 2, 0);
         }
 
         @Override
@@ -179,7 +179,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(10);
 
         public AOEAttack() {
-            super("AOE Attack", 50, 50, 5, 0);
+            super("AOE Attack", 5, 0);
         }
 
         @Override

@@ -33,39 +33,16 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     protected int strikeDamageBoost;
     protected FloatModifiable hitBox;
     protected int tickDuration;
-    protected Location location;
 
     public AbstractConsecrate(
-            float minDamageHeal,
-            float maxDamageHeal,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             int strikeDamageBoost,
             float hitBox,
             int duration
     ) {
-        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
+        super("Consecrate", 7.83f, energyCost);
         this.strikeDamageBoost = strikeDamageBoost;
         this.hitBox = new FloatModifiable(hitBox);
-        this.tickDuration = duration * 20;
-    }
-
-    public AbstractConsecrate(
-            float minDamageHeal,
-            float maxDamageHeal,
-            float energyCost,
-            float critChance,
-            float critMultiplier,
-            int strikeDamageBoost,
-            float hitBox,
-            int duration,
-            Location location
-    ) {
-        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
-        this.strikeDamageBoost = strikeDamageBoost;
-        this.hitBox = new FloatModifiable(hitBox);
-        this.location = location;
         this.tickDuration = duration * 20;
     }
 
@@ -171,10 +148,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return hitBox;
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
     public int getStrikeDamageBoost() {
         return strikeDamageBoost;
     }
@@ -192,4 +165,5 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
 }

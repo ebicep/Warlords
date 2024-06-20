@@ -20,7 +20,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
     private final float hitbox;
 
     public PigZombieHealing(float heal, float hitbox) {
-        super("Zombifaction", heal, heal, 3, 100);
+        super("Zombifaction", 3, 100);
         this.hitbox = hitbox;
         this.healingValues = new HealingValues(heal);
     }

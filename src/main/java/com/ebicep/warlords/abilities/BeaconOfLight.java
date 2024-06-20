@@ -31,7 +31,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implemen
     }
 
     public BeaconOfLight(Location location, CircleEffect effect) {
-        super("Beacon of Light", 170, 230, 20, 40, 25, 175, location, 4, 20, effect);
+        super("Beacon of Light", 20, 40, location, 4, 20, effect);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     public LightningRod(float cooldown, float startCooldown) {
-        super("Lightning Rod", 0, 0, cooldown, 0, startCooldown);
+        super("Lightning Rod", cooldown, 0, startCooldown);
     }
 
     @Override
@@ -93,18 +93,17 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         }
 
         // pulsedamage
-        List<CapacitorTotem> totemDownAndClose = AbstractTotem.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.class);
-        totemDownAndClose.forEach(capacitorTotem -> {
-            ArmorStand totem = capacitorTotem.getTotem();
+        List<CapacitorTotem.CapacitorTotemData> totems = AbstractTotem.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.CapacitorTotemData.class);
+        totems.forEach(data -> {
+            ArmorStand totem = data.getArmorStand();
 
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
             wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
-            capacitorTotem.pulseDamage();
-            if (capacitorTotem.isPveMasterUpgrade()) {
-                capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
+            data.proc();
+            if (data.getTotem().isPveMasterUpgrade()) {
+                data.setRadius(data.getRadius() + 0.5);
             }
-            capacitorTotem.addProc();
         });
 
 

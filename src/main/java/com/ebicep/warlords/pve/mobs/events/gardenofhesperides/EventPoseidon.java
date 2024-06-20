@@ -58,7 +58,11 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthenSpike(600, 700, 6, 6) {
+                new EarthenSpike(6, 6) {
+                    {
+                        this.getDamageValues().getSpikeDamage().min().setBaseValue(600);
+                        this.getDamageValues().getSpikeDamage().max().setBaseValue(700);
+                    }
                     @Override
                     public boolean onActivate(@Nonnull WarlordsEntity wp) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
@@ -95,7 +99,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                                 .findAny();
                         if (optionalCripplingStrike.isPresent()) {
                             CripplingStrike.CripplingStrikeData data = optionalCripplingStrike.get();
-                            spikeTarget.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+                            spikeTarget.getCooldownManager().removeCooldown(CripplingStrike.CripplingStrikeData.class, true);
                             int newCrippleCounter = Math.min(data.consecutiveStrikeCounter() + 1, 2);
                             CripplingStrike.cripple(caster,
                                     spikeTarget,
@@ -112,7 +116,11 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         }
                     }
                 },
-                new Boulder(551, 773, 5, 5) {
+                new Boulder(5, 5) {
+                    {
+                        this.getDamageValues().getBoulderDamage().min().setBaseValue(551);
+                        this.getDamageValues().getBoulderDamage().max().setBaseValue(773);
+                    }
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -128,7 +136,10 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         return speed;
                     }
                 },
-                new GroundSlamBerserker(558, 616, 10, 10),
+                new GroundSlamBerserker(10, 10) {{
+                    this.getDamageValues().getSlamDamage().min().setBaseValue(558);
+                    this.getDamageValues().getSlamDamage().max().setBaseValue(616);
+                }},
                 new LastStand(60f, 60)
         );
     }

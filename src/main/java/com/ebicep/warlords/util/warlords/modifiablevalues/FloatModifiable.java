@@ -20,6 +20,7 @@ public class FloatModifiable {
     private final Map<String, FloatModifiableFilter> filters = new HashMap<>() {{
         put("Base", new FloatModifiableFilter.BaseFilter());
     }};
+    private final Map<String, Runnable> onRefresh = new HashMap<>();
     private float baseValue;
 
     public FloatModifiable(float baseValue) {
@@ -58,6 +59,7 @@ public class FloatModifiable {
             floatModifiableFilter.setCachedMultiplicativeModifierAdditive(cachedMultiplicativeModifierAdditive);
             floatModifiableFilter.setCachedMultiplicativeModifierMultiplicative(cachedMultiplicativeModifierMultiplicative);
         });
+        onRefresh.values().forEach(Runnable::run);
     }
 
     public FloatModifiable(FloatModifiable floatModifiable) {
@@ -80,6 +82,7 @@ public class FloatModifiable {
         )));
         floatModifiable.filters.forEach((s, floatModifiableFilter) -> this.filters.put(s, floatModifiableFilter.clone()));
         refresh();
+        this.onRefresh.putAll(floatModifiable.onRefresh);
     }
 
     public void tick() {
@@ -240,6 +243,10 @@ public class FloatModifiable {
 
     public List<FloatModifier> getMultiplicativeModifierMultiplicative() {
         return multiplicativeModifiersMultiplicative;
+    }
+
+    public void addRefreshListener(String source, Runnable runnable) {
+        onRefresh.put(source, runnable);
     }
 
     public static class FloatModifier {

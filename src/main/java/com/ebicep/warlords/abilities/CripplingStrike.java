@@ -79,7 +79,7 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
     private int cripplePerStrike = 5;
 
     public CripplingStrike() {
-        super("Crippling Strike", 362.25f, 498, 0, 100, 20, 175);
+        super("Crippling Strike", 0, 100);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
                 .findAny();
         if (optionalCripplingStrike.isPresent()) {
             CripplingStrikeData data = optionalCripplingStrike.get();
-            nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+            nearPlayer.getCooldownManager().removeCooldown(CripplingStrikeData.class, true);
             int newCrippleCounter = Math.min(data.consecutiveStrikeCounter + 1, 2);
             cripple(wp,
                     nearPlayer,

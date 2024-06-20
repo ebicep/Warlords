@@ -36,7 +36,10 @@ public class BoltaroExiled extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(200, 400, MathUtils.generateRandomValueBetweenInclusive(6, 12))
+                new Fireball(MathUtils.generateRandomValueBetweenInclusive(6, 12)) {{
+                    this.getDamageValues().getFireballDamage().min().setBaseValue(200);
+                    this.getDamageValues().getFireballDamage().max().setBaseValue(400);
+                }}
         );
     }
 

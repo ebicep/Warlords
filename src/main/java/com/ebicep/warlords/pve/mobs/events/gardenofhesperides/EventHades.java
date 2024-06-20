@@ -60,8 +60,12 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FallenSouls(464, 512, 3, 3),
-                new IncendiaryCurse(524, 607, 8, 8) {
+                new FallenSouls(3, 3),
+                new IncendiaryCurse(8, 8) {
+                    {
+                        this.getDamageValues().getCurseDamage().min().setBaseValue(524);
+                        this.getDamageValues().getCurseDamage().max().setBaseValue(607);
+                    }
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();

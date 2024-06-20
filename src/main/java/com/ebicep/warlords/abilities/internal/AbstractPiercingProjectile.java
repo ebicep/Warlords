@@ -47,17 +47,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     public AbstractPiercingProjectile(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             double projectileSpeed,
             double maxDistance,
             boolean hitTeammates
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super(name, cooldown, energyCost);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
@@ -66,18 +62,14 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     public AbstractPiercingProjectile(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             double projectileSpeed,
             double maxDistance,
             boolean hitTeammates,
             float startCooldown
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
+        super(name, cooldown, energyCost, startCooldown);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;

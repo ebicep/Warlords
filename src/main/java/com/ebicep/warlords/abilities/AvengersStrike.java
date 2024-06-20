@@ -34,7 +34,7 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
     private float energySteal = 10;
 
     public AvengersStrike() {
-        super("Avenger's Strike", 359, 485, 0, 90, 25, 185);
+        super("Avenger's Strike", 0, 90);
     }
 
     @Override

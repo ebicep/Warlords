@@ -33,7 +33,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
     private int healingIncrease = 100;
 
     public RayOfLight() {
-        super("Ray of Light", 409, 551, 10, 10, 20, 150, 30, 30, true);
+        super("Ray of Light", 10, 10, 30, 30, true);
     }
 
     @Override

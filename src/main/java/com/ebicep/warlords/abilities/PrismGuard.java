@@ -54,15 +54,15 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     private int projectileDamageReduction = 60;
 
     public PrismGuard() {
-        super("Prism Guard", 0, 0, 26, 40, 0, 100);
+        super("Prism Guard", 26, 40);
     }
 
     public PrismGuard(float cooldown) {
-        super("Prism Guard", 0, 0, cooldown, 40, 0, 100);
+        super("Prism Guard", cooldown, 40);
     }
 
     public PrismGuard(float cooldown, float startingCooldown) {
-        super("Prism Guard", 0, 0, cooldown, 40, 0, 100, startingCooldown);
+        super("Prism Guard", cooldown, 40, startingCooldown);
     }
 
     @Override

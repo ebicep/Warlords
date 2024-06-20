@@ -18,36 +18,27 @@ public abstract class AbstractChain extends AbstractAbility {
     protected int bounceRange;
     protected int additionalBounces;
 
-
     public AbstractChain(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             int radius,
             int bounceRange,
             int additionalBounces
     ) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, radius, bounceRange, additionalBounces, 0);
+        this(name, cooldown, energyCost, radius, bounceRange, additionalBounces, 0);
     }
 
     public AbstractChain(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             int radius,
             int bounceRange,
             int additionalBounces,
             float startCooldown
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
+        super(name, cooldown, energyCost, startCooldown);
         this.radius = radius;
         this.bounceRange = bounceRange;
         this.additionalBounces = additionalBounces;

@@ -108,7 +108,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         private final float energyPerSecond;
 
         public LegendaryVigorousAbility(float energyPerSecond) {
-            super("Vigorous", 0, 0, 30, 0);
+            super("Vigorous", 30, 0);
             this.energyPerSecond = energyPerSecond;
         }
 

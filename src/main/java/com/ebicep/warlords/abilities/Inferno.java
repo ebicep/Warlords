@@ -34,7 +34,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     private int critMultiplierIncrease = 30;
 
     public Inferno() {
-        super("Inferno", 0, 0, 46.98f, 0);
+        super("Inferno", 46.98f, 0);
     }
 
     @Override

@@ -340,6 +340,7 @@ public class WarlordsEvents implements Listener {
                 if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
                     wpVictim.addInstance(InstanceBuilder
                             .melee()
+                            .source(wpAttacker)
                             .min(warlordsNPC.getMinMeleeDamage())
                             .max(warlordsNPC.getMaxMeleeDamage())
                             .critChance(warlordsNPC.getMeleeCritChance())
@@ -353,6 +354,7 @@ public class WarlordsEvents implements Listener {
                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
                 wpVictim.addInstance(InstanceBuilder
                         .melee()
+                        .source(wpAttacker)
                         .min(weapon.getMeleeDamageMin())
                         .max(weapon.getMeleeDamageMax())
                         .critChance(weapon.getCritChance())
@@ -362,6 +364,7 @@ public class WarlordsEvents implements Listener {
             } else {
                 wpVictim.addInstance(InstanceBuilder
                         .melee()
+                        .source(wpAttacker)
                         .min(132)
                         .max(179)
                         .critChance(25)

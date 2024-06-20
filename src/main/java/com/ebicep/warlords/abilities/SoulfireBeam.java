@@ -29,7 +29,7 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
     private final DamageValues damageValues = new DamageValues();
 
     public SoulfireBeam() {
-        super("Soulfire Beam", 376, 508, 10, 10, 20, 175, 30, 30, false);
+        super("Soulfire Beam", 10, 10, 30, 30, false);
         this.maxTicks = 0;
     }
 

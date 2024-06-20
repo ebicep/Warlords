@@ -54,7 +54,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new LightningBolt(258, 415, 3, 3),
+                new LightningBolt(3, 3),
                 new ChainLightning(7, 7) {{
                     this.setTickDuration(40);
                 }},

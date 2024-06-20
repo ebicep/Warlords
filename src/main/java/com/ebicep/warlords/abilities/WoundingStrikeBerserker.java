@@ -34,11 +34,11 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
     private int woundingTickDuration = 60;
 
     public WoundingStrikeBerserker() {
-        super("Wounding Strike", 497, 632, 0, 100, 20, 175);
+        super("Wounding Strike", 0, 100);
     }
 
-    public WoundingStrikeBerserker(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    public WoundingStrikeBerserker(String name, float cooldown, float energyCost) {
+        super(name, cooldown, energyCost);
     }
 
     @Override

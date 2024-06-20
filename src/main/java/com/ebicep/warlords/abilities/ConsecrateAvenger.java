@@ -31,7 +31,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateAvenger() {
-        super(198, 267, 50, 20, 175, 20, 5, 4);
+        super(50, 20, 5, 4);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     private float damageTakenIncrease = 10;
 
     public Berserk() {
-        super("Berserk", 0, 0, 46.98f, 30);
+        super("Berserk", 46.98f, 30);
     }
 
     @Override

@@ -82,7 +82,7 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
     private static class KindleWave extends AbstractAbility implements Damages<KindleWave.DamageValues> {
 
         public KindleWave() {
-            super("Kindle Wave", 518, 805, 8, 100);
+            super("Kindle Wave", 8, 100);
         }
 
         @Override

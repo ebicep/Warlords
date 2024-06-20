@@ -46,7 +46,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     private int tickDuration = 240;
 
     public DivineBlessing() {
-        super("Divine Blessing", 0, 0, 50, 10, 0, 0);
+        super("Divine Blessing", 50, 10);
     }
 
     @Override

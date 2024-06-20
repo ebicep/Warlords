@@ -52,7 +52,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private int invisTicks = 30;
 
     public SoulSwitch() {
-        super("Soul Switch", 0, 0, 30, 40, -1, 50);
+        super("Soul Switch", 30, 40);
     }
 
     @Override

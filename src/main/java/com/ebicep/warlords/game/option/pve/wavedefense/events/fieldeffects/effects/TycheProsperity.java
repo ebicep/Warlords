@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effects;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
@@ -26,7 +27,7 @@ public class TycheProsperity implements FieldEffect {
         put(Classes.WARRIOR, new ClassBonus(Component.text("+5% Damage / -5% Knockback", NamedTextColor.GRAY), TycheProsperity.this::warriorBonus));
         put(Classes.PALADIN, new ClassBonus(Component.text("+5 EPS / +5% Speed", NamedTextColor.GRAY), TycheProsperity.this::paladinBonus));
         put(Classes.SHAMAN, new ClassBonus(Component.text("+5% Health / +10% Damage Taken", NamedTextColor.GRAY), TycheProsperity.this::shamanBonus));
-        put(Classes.ROGUE, new ClassBonus(Component.text("+10% Crit Chance / +5% Healing", NamedTextColor.GRAY), TycheProsperity.this::rogueBonus));
+        put(Classes.ROGUE, new ClassBonus(Component.text("+10% Cooldown Reduction / +5% Healing", NamedTextColor.GRAY), TycheProsperity.this::rogueBonus));
         put(Classes.ARCANIST, new ClassBonus(Component.text("+10% Crit Chance / -5% Damage Taken", NamedTextColor.GRAY), TycheProsperity.this::arcanistBonus));
     }};
 
@@ -165,10 +166,11 @@ public class TycheProsperity implements FieldEffect {
 
     private void arcanistBonus(WarlordsEntity warlordsEntity) {
         warlordsEntity.getAbilities().forEach(ability -> {
-            float critChance = ability.getCritChance();
-            if (critChance > 0) {
-                ability.setCritChance(critChance + 10f);
-            }
+            Value.applyDamageHealing(ability, value -> {
+                if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                    rangedValueCritable.critChance().addAdditiveModifier(getName(), 10);
+                }
+            });
         });
         warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getName(),

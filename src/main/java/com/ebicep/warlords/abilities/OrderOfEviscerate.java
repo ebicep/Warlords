@@ -50,7 +50,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
-        super("Order of Eviscerate", 0, 0, 50, 60);
+        super("Order of Eviscerate", 50, 60);
     }
 
     @Override

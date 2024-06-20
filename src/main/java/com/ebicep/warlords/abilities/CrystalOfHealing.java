@@ -36,7 +36,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     private int lifeSpan = 45; // seconds
 
     public CrystalOfHealing() {
-        super("Crystal of Healing", 0, 0, 20, 20, 0, 0);
+        super("Crystal of Healing", 20, 20);
     }
 
     @Override

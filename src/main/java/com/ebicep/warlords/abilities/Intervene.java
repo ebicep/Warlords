@@ -47,11 +47,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     private WarlordsEntity target;
 
     public Intervene() {
-        super("Intervene", 0, 0, 14.09f, 20);
+        super("Intervene", 14.09f, 20);
     }
 
     public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target, int damageReduction) {
-        super("Intervene", 0, 0, 14.09f, 20);
+        super("Intervene", 14.09f, 20);
         this.maxDamagePrevented = maxDamagePrevented;
         this.caster = caster;
         this.target = target;

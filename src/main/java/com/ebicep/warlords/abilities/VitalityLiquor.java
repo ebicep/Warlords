@@ -41,7 +41,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     private float maxWaveHealing = 324;
 
     public VitalityLiquor() {
-        super("Vitality Liquor", 359, 485, 14, 30, 25, 175);
+        super("Vitality Liquor", 14, 30);
     }
 
     @Override

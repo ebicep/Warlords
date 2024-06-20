@@ -102,7 +102,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         }
 
         public StrikeAttack() {
-            super("Strike Attack", 100, 100, 3, 0);
+            super("Strike Attack", 3, 0);
         }
 
         @Override
@@ -189,7 +189,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public PoisonAttack() {
-            super("Poison Attack", 25, 25, 2, 0);
+            super("Poison Attack", 2, 0);
         }
 
         @Override

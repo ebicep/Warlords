@@ -32,7 +32,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
     private final HealingValues healingValues = new HealingValues();
 
     public ChainHeal() {
-        super("Chain Heal", 533, 719, 7.99f, 40, 20, 175, 15, 10, 1);
+        super("Chain Heal", 7.99f, 40, 15, 10, 1);
     }
 
     @Override

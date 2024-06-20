@@ -46,7 +46,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     private int maxSilenceDurationInTicks = 70;
 
     public SoulShackle() {
-        super("Soul Shackle", 446, 589, 9, 40, 20, 175);
+        super("Soul Shackle", 9, 40);
     }
 
     @Override

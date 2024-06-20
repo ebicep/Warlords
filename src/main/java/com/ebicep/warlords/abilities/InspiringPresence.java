@@ -43,7 +43,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     private int energyPerSecond = 10;
 
     public InspiringPresence() {
-        super("Inspiring Presence", 0, 0, 60f + 10.47f, 0);
+        super("Inspiring Presence", 60f + 10.47f, 0);
     }
 
     @Override

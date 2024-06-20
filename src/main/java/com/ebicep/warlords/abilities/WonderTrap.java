@@ -26,7 +26,7 @@ public class WonderTrap extends AbstractAbility {
     // CURRENTLY UNUSED CONTENT
 
     public WonderTrap() {
-        super("Wonder Trap", 375, 454, 10, 40, 25, 175);
+        super("Wonder Trap", 10, 40);
     }
 
     @Override

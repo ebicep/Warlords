@@ -35,7 +35,7 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                 "+100% Critical Chance.\n\nCritical Strikes grant you and nearby allies 30% damage reduction for 5 seconds.",
                 50000,
                 () -> {
-                    ability.setCritChance(100);
+                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 100);
                 }
         );
         masterUpgrade2 = new Upgrade(

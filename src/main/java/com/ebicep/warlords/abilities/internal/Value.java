@@ -4,18 +4,50 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public interface Value {
 
+    static void applyDamageHealing(AbstractAbility ability, Consumer<? super Value> consumer) {
+        applyDamageHealing(ability, (isDamage, value) -> consumer.accept(value));
+    }
+
+    static void applyDamageHealing(AbstractAbility ability, BiConsumer<Boolean, ? super Value> consumer) {
+        if (ability instanceof Damages<?> damages) {
+            ValueHolder damageValues = damages.getDamageValues();
+            damageValues.getValues().forEach(value -> consumer.accept(true, value));
+        }
+        if (ability instanceof Heals<?> heals) {
+            ValueHolder healValues = heals.getHealValues();
+            healValues.getValues().forEach(value -> consumer.accept(false, value));
+        }
+    }
+
     void tick();
 
-    List<List<Component>> getDebugInfos();
+    default List<List<Component>> getDebugInfos() {
+        return getAllValues().stream().map(FloatModifiable::getDebugInfo).toList();
+    }
 
+    /**
+     * @return min/max/set value
+     */
     List<FloatModifiable> getValues();
+
+    /**
+     * @return min/max/set/crit chance/crit multiplier value
+     */
+    default List<FloatModifiable> getAllValues() {
+        return getValues();
+    }
 
     default void forEachValue(Consumer<FloatModifiable> consumer) {
         getValues().forEach(consumer);
+    }
+
+    default void forEachAllValues(Consumer<FloatModifiable> consumer) {
+        getAllValues().forEach(consumer);
     }
 
     interface ValueHolder {
@@ -25,6 +57,7 @@ public interface Value {
     }
 
     class RangedValue implements Value {
+
         private final FloatModifiable min;
         private final FloatModifiable max;
 
@@ -41,14 +74,6 @@ public interface Value {
         public void tick() {
             min.tick();
             max.tick();
-        }
-
-        @Override
-        public List<List<Component>> getDebugInfos() {
-            return List.of(
-                    min.getDebugInfo(),
-                    max.getDebugInfo()
-            );
         }
 
         @Override
@@ -85,6 +110,11 @@ public interface Value {
             this.critMultiplier = new FloatModifiable(critMultiplier);
         }
 
+        @Override
+        public List<FloatModifiable> getAllValues() {
+            return List.of(min(), max(), critChance, critMultiplier);
+        }
+
         public FloatModifiable critChance() {
             return critChance;
         }
@@ -105,10 +135,6 @@ public interface Value {
 
     record SetValue(FloatModifiable value) implements Value {
 
-        public SetValue(FloatModifiable value) {
-            this.value = value;
-        }
-
         public SetValue(float value) {
             this(new FloatModifiable(value));
         }
@@ -119,15 +145,9 @@ public interface Value {
         }
 
         @Override
-        public List<List<Component>> getDebugInfos() {
-            return List.of(value.getDebugInfo());
-        }
-
-        @Override
         public List<FloatModifiable> getValues() {
             return List.of(value);
         }
-
 
         public float getValue() {
             return value.getCalculatedValue();

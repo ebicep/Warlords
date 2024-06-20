@@ -34,18 +34,14 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public AbstractBeaconAbility(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             Location groundLocation,
             float radius,
             int secondDuration,
             CircleEffect effect
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super(name, cooldown, energyCost);
         this.groundLocation = groundLocation;
         this.radius = new FloatModifiable(radius);
         this.tickDuration = secondDuration * 20;

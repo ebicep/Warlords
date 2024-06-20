@@ -29,8 +29,8 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     private int waveLength = 8; // foward amount
     private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
-    public AbstractSeismicWave(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Seismic Wave", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    public AbstractSeismicWave(float cooldown, float energyCost) {
+        super("Seismic Wave", cooldown, energyCost);
     }
 
     @Override

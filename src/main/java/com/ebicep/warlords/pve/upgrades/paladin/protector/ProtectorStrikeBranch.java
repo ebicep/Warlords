@@ -51,7 +51,7 @@ public class ProtectorStrikeBranch extends AbstractUpgradeBranch<ProtectorsStrik
                     Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
                     damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
                     damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .2f);
-                    ability.setCritChance(ability.getCritChance() + 15);
+                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
                     ability.setStrikeRadius(ability.getStrikeRadius() * 2);
                     ability.setMaxAllies(ability.getMaxAllies() + 1);
                 }

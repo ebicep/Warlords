@@ -44,7 +44,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     private float healthRestore = 600;
 
     public HeartToHeart() {
-        super("Heart to Heart", 0, 0, 12, 20);
+        super("Heart to Heart", 12, 20);
     }
 
     @Override

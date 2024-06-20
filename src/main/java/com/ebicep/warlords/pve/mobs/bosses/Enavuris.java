@@ -297,12 +297,8 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         public EnderStones() {
             super(
                     "Ender Stones",
-                    500,
-                    600,
                     10,
                     50,
-                    20,
-                    180,
                     2,
                     50,
                     false

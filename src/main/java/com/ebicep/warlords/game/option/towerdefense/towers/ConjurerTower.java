@@ -89,7 +89,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         public HexAttack() {
-            super("Hex Attack", 300, 300, 3, 0);
+            super("Hex Attack", 3, 0);
         }
 
         @Override

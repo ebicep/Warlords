@@ -39,7 +39,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int reactivateTickDuration = 100;
 
     public MysticalBarrier() {
-        super("Mystical Barrier", 0, 0, 28, 20, 0, 0);
+        super("Mystical Barrier", 28, 20);
     }
 
     @Override

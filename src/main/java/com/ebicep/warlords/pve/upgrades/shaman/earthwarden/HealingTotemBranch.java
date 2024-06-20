@@ -46,8 +46,8 @@ public class HealingTotemBranch extends AbstractUpgradeBranch<HealingTotem> {
                         """,
                 50000,
                 () -> {
-                    ability.setCritChance(ability.getCritChance() + 25);
-                    ability.setCritMultiplier(ability.getCritMultiplier() + 25);
+                    ability.getHealValues().getTotemHealing().critChance().addAdditiveModifier("Master Upgrade Branch", 25);
+                    ability.getHealValues().getTotemHealing().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 25);
                     ability.setHealingIncrement(ability.getHealingIncrement() - 7.5f);
                     ability.setTickDuration(ability.getTickDuration() * 2);
                     ability.getHitBoxRadius().addMultiplicativeModifierMult("Master Upgrade Branch", 2);

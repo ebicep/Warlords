@@ -61,7 +61,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     }
 
     public FortifyingHex() {
-        super("Fortifying Hex", 287, 387, 0, 70, 20, 175, 2.5, 40, true);
+        super("Fortifying Hex", 0, 70, 2.5, 40, true);
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 

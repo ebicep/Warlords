@@ -117,7 +117,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         private final float knockbackResistance;
 
         public LegendaryGaleAbility(float abilityEnergyDecrease, float knockbackResistance) {
-            super("Gale", 0, 0, 30, 0);
+            super("Gale", 30, 0);
             this.abilityEnergyDecrease = abilityEnergyDecrease;
             this.knockbackResistance = knockbackResistance;
         }

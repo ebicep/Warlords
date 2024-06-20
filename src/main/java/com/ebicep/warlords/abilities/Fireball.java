@@ -35,15 +35,11 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
     private float directHitMultiplier = 15;
     private FloatModifiable splashRadius = new FloatModifiable(4);
     public Fireball() {
-        super("Fireball", 334.4f, 433.4f, 0, 70, 20, 175, 2, 300, false);
+        super("Fireball", 0, 70, 2, 300, false);
     }
 
     public Fireball(float cooldown) {
-        super("Fireball", 334.4f, 433.4f, cooldown, 70, 20, 175, 2, 300, false);
-    }
-
-    public Fireball(float minDamageHeal, float maxDamageHeal, float cooldown) {
-        super("Fireball", minDamageHeal, maxDamageHeal, cooldown, 70, 20, 175, 2, 300, false);
+        super("Fireball", cooldown, 70, 2, 300, false);
     }
 
     @Override

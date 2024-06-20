@@ -27,7 +27,7 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
     private int strikeCritInterval = 4;
 
     public JudgementStrike() {
-        super("Judgement Strike", 326, 441, 0, 70, 20, 185);
+        super("Judgement Strike", 0, 70);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         for (int i = 0; i < (pveMasterUpgrade2 ? 2 : 1); i++) {
             attacksDone++;
-            float critChance = this.critChance;
+            float critChance = damageValues.strikeDamage.getCritChanceValue();
             if (attacksDone == strikeCritInterval) {
                 attacksDone = 0;
                 critChance = 100;

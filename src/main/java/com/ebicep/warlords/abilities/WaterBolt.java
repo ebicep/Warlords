@@ -40,7 +40,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
     private float maxDamage = 299;
 
     public WaterBolt() {
-        super("Water Bolt", 315, 434, 0, 80, 20, 175, 2, 300, true);
+        super("Water Bolt", 0, 80, 2, 300, true);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float cc = pveMasterUpgrade2 ? 100 : critChance;
+            float cc = pveMasterUpgrade2 ? 100 : healingValues.boltHealing.getCritChanceValue();
             if (hit.isTeammate(shooter)) {
                 teammatesHit++;
                 hit.addInstance(InstanceBuilder

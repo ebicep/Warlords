@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilities.ContagiousFacade;
 import com.ebicep.warlords.pve.upgrades.*;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFacade> {
 
@@ -35,7 +35,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                         return "Impair";
                     }
 
-                    @Nullable
+                    @Nonnull
                     @Override
                     public String getDescription0(String value) {
                         return "+" + value + "% Absorb Damage";

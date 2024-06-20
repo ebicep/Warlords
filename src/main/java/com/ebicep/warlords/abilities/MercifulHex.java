@@ -54,7 +54,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private int tickDuration = 60;
 
     public MercifulHex() {
-        super("Merciful Hex", 297, 405, 0, 70, 20, 180, 2.5, 40, true);
+        super("Merciful Hex", 0, 70, 2.5, 40, true);
         //TODO maybe inflate y separately
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .75f);
     }

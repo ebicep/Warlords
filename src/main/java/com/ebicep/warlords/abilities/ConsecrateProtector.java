@@ -32,7 +32,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateProtector() {
-        super(96, 130, 10, 20, 175, 15, 4, 5);
+        super(10, 15, 4, 5);
     }
 
     @Override
@@ -40,7 +40,6 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-
 
         Location location = wp.getLocation().clone();
 

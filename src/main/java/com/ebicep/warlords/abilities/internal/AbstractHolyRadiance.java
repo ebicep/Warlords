@@ -27,19 +27,15 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     public int playersHealed = 0;
     public int playersMarked = 0;
 
-    private FloatModifiable radius;
+    private final FloatModifiable radius;
 
     public AbstractHolyRadiance(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             int radius
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super(name, cooldown, energyCost);
         this.radius = new FloatModifiable(radius);
     }
 

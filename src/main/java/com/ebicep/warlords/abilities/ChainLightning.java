@@ -79,12 +79,13 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
+
     public ChainLightning() {
-        super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
+        super("Chain Lightning", 9.4f, 40, 20, 10, 3);
     }
 
     public ChainLightning(float cooldown, float startCooldown) {
-        super("Chain Lightning", 370, 499, cooldown, 40, 20, 175, 20, 10, 3, startCooldown);
+        super("Chain Lightning", cooldown, 40, 20, 10, 3, startCooldown);
     }
 
     @Override
@@ -182,21 +183,23 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         boolean firstCheck = checkFrom == wp.getEntity();
         if (!hasHitTotem) {
             if (firstCheck) {
-                Optional<CapacitorTotem> optionalTotem = getLookingAtTotem(wp);
+                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = getLookingAtTotem(wp);
                 if (optionalTotem.isPresent()) {
-                    ArmorStand totem = optionalTotem.get().getTotem();
-                    chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(wp, optionalTotem.get());
+                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
+                    ArmorStand armorStand = data.getArmorStand();
+                    chain(checkFrom.getLocation(), armorStand.getLocation());
+                    partOfChainLightningPulseDamage(data);
                     playersHit.add(null);
-                    return partOfChainLightning(wp, playersHit, totem, true);
+                    return partOfChainLightning(wp, playersHit, armorStand, true);
                 } // no else
             } else {
-                Optional<CapacitorTotem> capacitorTotem = AbstractTotem.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.class);
-                if (capacitorTotem.isPresent()) {
-                    ArmorStand totem = capacitorTotem.get().getTotem();
-                    chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(wp, capacitorTotem.get());
-                    return partOfChainLightning(wp, playersHit, totem, true);
+                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = AbstractTotem.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.CapacitorTotemData.class);
+                if (optionalTotem.isPresent()) {
+                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
+                    ArmorStand armorStand = data.getArmorStand();
+                    chain(checkFrom.getLocation(), armorStand.getLocation());
+                    partOfChainLightningPulseDamage(data);
+                    return partOfChainLightning(wp, playersHit, armorStand, true);
                 } // no else
             }
         } // no else
@@ -246,23 +249,21 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         }
     }
 
-    private void partOfChainLightningPulseDamage(WarlordsEntity wp, CapacitorTotem capacitorTotem) {
-        ArmorStand totem = capacitorTotem.getTotem();
-        capacitorTotem.pulseDamage();
-        if (capacitorTotem.isPveMasterUpgrade()) {
-            capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
+    private void partOfChainLightningPulseDamage(CapacitorTotem.CapacitorTotemData data) {
+        ArmorStand armorStand = data.getArmorStand();
+        data.proc();
+        if (data.getTotem().isPveMasterUpgrade()) {
+            data.setRadius(data.getRadius() + 0.5);
         }
 
-        Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
-        wp.playSound(totem.getLocation(), "shaman.chainlightning.impact", 2, 1);
-
-        capacitorTotem.addProc();
+        Utils.playGlobalSound(armorStand.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+        data.getOwner().playSound(armorStand.getLocation(), "shaman.chainlightning.impact", 2, 1);
     }
 
-    private Optional<CapacitorTotem> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
+    private Optional<CapacitorTotem.CapacitorTotemData> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.class)
-                .filter(totem -> totem.getTotem().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
+                .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.CapacitorTotemData.class)
+                .filter(totem -> totem.getArmorStand().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
                         && totem.isPlayerLookingAtTotem(warlordsPlayer))
                 .findFirst();
     }

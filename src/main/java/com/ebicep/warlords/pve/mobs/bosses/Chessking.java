@@ -133,7 +133,7 @@ public class Chessking extends AbstractMob implements BossMob {
         private float range = 9;
 
         public Belch() {
-            super("Belch", 2800, 3600, 10, 100);
+            super("Belch", 10, 100);
         }
 
         @Override

@@ -17,17 +17,13 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
 
     public AbstractBeam(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             double projectileSpeed,
             double maxDistance,
             boolean hitTeammates
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, projectileSpeed, maxDistance, hitTeammates);
+        super(name, cooldown, energyCost, projectileSpeed, maxDistance, hitTeammates);
         this.maxTicks = 0;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .6f);
     }

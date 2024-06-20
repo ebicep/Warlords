@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effe
 
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
@@ -161,8 +162,12 @@ public class CodexCollector implements FieldEffect {
         if (codexesEquipped >= 4) {
             for (WarlordsEntity player : players) {
                 for (AbstractAbility ability : player.getAbilities()) {
-                    ability.setCritChance(ability.getCritChance() + 5);
-                    ability.setCritMultiplier(ability.getCritMultiplier() + 10);
+                    Value.applyDamageHealing(ability, value -> {
+                        if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                            rangedValueCritable.critChance().addAdditiveModifier(getName(), 5);
+                            rangedValueCritable.critMultiplier().addAdditiveModifier(getName(), 10);
+                        }
+                    });
                 }
             }
         }

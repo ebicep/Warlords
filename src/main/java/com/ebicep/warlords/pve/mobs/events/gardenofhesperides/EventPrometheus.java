@@ -53,7 +53,10 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new BurstOfFlames(),
-                new Fireball(350, 450, 1000)
+                new Fireball(1000) {{
+                    this.getDamageValues().getFireballDamage().min().setBaseValue(350);
+                    this.getDamageValues().getFireballDamage().max().setBaseValue(450);
+                }}
         );
     }
 

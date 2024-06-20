@@ -19,7 +19,7 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
     private final DamageValues damageValues = new DamageValues();
 
     public SeismicWaveDefender() {
-        super(506, 685, 11.74f, 60, 25, 200);
+        super(11.74f, 60);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class NotAShield extends AbstractPiercingProjectile {
     private int maxAlliesHit = 10;
 
     public NotAShield() {
-        super("Not A Shield", 329, 445, 12, 45, 20, 165, 1, 20, true);
+        super("Not A Shield", 12, 45, 1, 20, true);
     }
 
     @Override

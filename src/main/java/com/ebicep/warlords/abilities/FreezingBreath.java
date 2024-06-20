@@ -47,7 +47,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
     private float hitbox = 10;
     private int maxAnimationTime = 12;
     public FreezingBreath() {
-        super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175, 1.25, 100, false);
+        super("Freezing Breath", 6.3f, 60, 1.25, 100, false);
     }
 
     @Override

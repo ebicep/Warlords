@@ -33,7 +33,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     private int energyDrainPerSecond = 8;
 
     public HolyRadianceAvenger() {
-        super("Holy Radiance", 582, 760, 16.53f, 20, 15, 175, 6);
+        super("Holy Radiance", 16.53f, 20, 6);
     }
 
     @Override

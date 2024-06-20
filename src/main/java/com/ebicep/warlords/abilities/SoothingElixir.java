@@ -49,7 +49,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     private int puddleMaxHealing = 204;
 
     public SoothingElixir() {
-        super("Soothing Elixir", 551, 648, 7, 60, 25, 175);
+        super("Soothing Elixir", 7, 60);
     }
 
     @Override

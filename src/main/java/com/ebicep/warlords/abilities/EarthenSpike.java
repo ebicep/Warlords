@@ -54,12 +54,13 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     private float speed = 1;
     private double spikeHitbox = 2.5;
     private double verticalVelocity = .625;
+
     public EarthenSpike() {
-        this(404, 562, 0, 0);
+        this(0, 0);
     }
 
-    public EarthenSpike(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
-        super("Earthen Spike", minDamageHeal, maxDamageHeal, cooldown, 100, 15, 175, startCooldown);
+    public EarthenSpike(float cooldown, float startCooldown) {
+        super("Earthen Spike", cooldown, 100, startCooldown);
     }
 
     @Override

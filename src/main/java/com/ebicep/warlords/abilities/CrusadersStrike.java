@@ -38,7 +38,7 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
     private int energyMaxAllies = 2;
 
     public CrusadersStrike() {
-        super("Crusader's Strike", 326, 441, 0, 90, 25, 175);
+        super("Crusader's Strike", 0, 90);
     }
 
     @Override

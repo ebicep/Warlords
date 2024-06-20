@@ -43,7 +43,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     private int maxHits = 1;
 
     public EarthlivingWeapon() {
-        super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 200);
+        super("Earthliving Weapon", 15.66f, 30);
     }
 
     @Override

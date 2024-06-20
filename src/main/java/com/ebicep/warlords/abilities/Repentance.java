@@ -35,7 +35,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     private float energyConvertPercent = 3.5f;
 
     public Repentance() {
-        super("Repentance", 0, 0, 31.32f, 20);
+        super("Repentance", 31.32f, 20);
     }
 
     @Override

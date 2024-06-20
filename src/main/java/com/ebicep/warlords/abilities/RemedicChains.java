@@ -43,7 +43,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     private int castRange = 10;
 
     public RemedicChains() {
-        super("Remedic Chains", 728, 815, 16, 50, 20, 200);
+        super("Remedic Chains", 16, 50);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.*;
@@ -327,10 +328,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
         for (AbstractAbility ability : playerClass.getAbilities()) {
             if (ability.getClass().equals(selectedSkillBoost.ability)) {
-                if (ability.getCritChance() > 0) {
-                    ability.setCritChance(ability.getCritChance() + getSkillCritChanceBonus());
-                    ability.setCritMultiplier(ability.getCritMultiplier() + getSkillCritMultiplierBonus());
-                }
+                Value.applyDamageHealing(ability, value -> {
+                    if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                        rangedValueCritable.critChance().addAdditiveModifier("Legendary Weapon", getSkillCritChanceBonus());
+                        rangedValueCritable.critMultiplier().addAdditiveModifier("Legendary Weapon", getSkillCritMultiplierBonus());
+                    }
+                });
                 break;
             }
         }

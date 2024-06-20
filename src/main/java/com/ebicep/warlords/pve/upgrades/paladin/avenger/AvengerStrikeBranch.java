@@ -74,7 +74,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         """,
                 50000,
                 () -> {
-                    ability.setCritChance(ability.getCritChance() + 15);
+                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
                     CalculateSpeed calculateSpeed = warlordsPlayer.getSpeed();
                     CalculateSpeed.Modifier modifier = new CalculateSpeed.Modifier(
                             warlordsPlayer,

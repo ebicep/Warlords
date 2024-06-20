@@ -40,7 +40,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     private float vindicateDamageReduction = 30;
 
     public Vindicate() {
-        super("Vindicate", 0, 0, 55, 25);
+        super("Vindicate", 55, 25);
     }
 
     @Override

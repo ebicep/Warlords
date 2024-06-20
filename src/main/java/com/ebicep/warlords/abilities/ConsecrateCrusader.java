@@ -31,7 +31,7 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateCrusader() {
-        super(144, 194.4f, 50, 20, 175, 15, 4, 5);
+        super(50, 15, 4, 5);
     }
 
     @Override
@@ -39,7 +39,6 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-
 
         Location location = wp.getLocation().clone();
 

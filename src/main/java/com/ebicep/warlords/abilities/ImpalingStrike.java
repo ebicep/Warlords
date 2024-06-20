@@ -34,7 +34,7 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
     private float leechAllyAmount = 25;
     private float leechSelfAmount = 15;
     public ImpalingStrike() {
-        super("Impaling Strike", 323, 427, 0, 90, 20, 175);
+        super("Impaling Strike", 0, 90);
     }
 
     @Override

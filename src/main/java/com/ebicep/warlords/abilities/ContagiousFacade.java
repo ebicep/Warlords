@@ -43,7 +43,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private int speedIncreaseDuration = 100;
 
     public ContagiousFacade() {
-        super("Contagious Facade", 0, 0, 30, 20, 0, 0);
+        super("Contagious Facade", 30, 20);
     }
 
     @Override

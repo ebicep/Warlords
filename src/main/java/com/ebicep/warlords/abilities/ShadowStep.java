@@ -39,7 +39,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     private int fallDamageNegation = 10;
 
     public ShadowStep() {
-        super("Shadow Step", 466, 598, 12, 20, 15, 175);
+        super("Shadow Step", 12, 20);
     }
 
     @Override

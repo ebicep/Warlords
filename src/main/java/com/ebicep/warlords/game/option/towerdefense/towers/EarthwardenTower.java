@@ -111,7 +111,7 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpikeAttack() {
-            super("Spike Attack", 350, 350, 6, 0);
+            super("Spike Attack", 6, 0);
         }
 
         @Override
@@ -216,7 +216,7 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", 0, 0, 5, 0);
+            super("Spawn Troops", 5, 0);
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 

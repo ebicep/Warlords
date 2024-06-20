@@ -41,7 +41,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     private float weaponDamage = 135;
 
     public WindfuryWeapon() {
-        super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 200);
+        super("Windfury Weapon", 15.66f, 30);
     }
 
     @Override

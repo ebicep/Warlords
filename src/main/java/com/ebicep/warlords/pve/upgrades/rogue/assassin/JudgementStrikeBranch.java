@@ -64,7 +64,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         """,
                 50000,
                 () -> {
-                    ability.setCritMultiplier(ability.getCritMultiplier() + 45);
+                    ability.getDamageValues().getStrikeDamage().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 45);
                 }
         );
     }

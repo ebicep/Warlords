@@ -15,11 +15,11 @@ public abstract class AbstractPveAbility extends AbstractAbility implements PvEA
     protected PveOption pveOption;
 
     public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost);
+        super(name, cooldown, energyCost);
     }
 
     public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, boolean startNoCooldown) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, startNoCooldown);
+        super(name, cooldown, energyCost, startNoCooldown);
     }
 
     public AbstractPveAbility(String name, float cooldown, float energyCost) {
@@ -35,7 +35,7 @@ public abstract class AbstractPveAbility extends AbstractAbility implements PvEA
     }
 
     public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super(name, cooldown, energyCost);
     }
 
     public AbstractPveAbility(
@@ -48,7 +48,7 @@ public abstract class AbstractPveAbility extends AbstractAbility implements PvEA
             float critMultiplier,
             float startCooldown
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
+        super(name, cooldown, energyCost, startCooldown);
     }
 
     @Override

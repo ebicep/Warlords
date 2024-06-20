@@ -29,7 +29,7 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
     private int targetsStruck = 0;
 
     public RighteousStrike() {
-        super("Righteous Strike", 391, 497, 0, 90, 20, 175);
+        super("Righteous Strike", 0, 90);
     }
 
     @Override

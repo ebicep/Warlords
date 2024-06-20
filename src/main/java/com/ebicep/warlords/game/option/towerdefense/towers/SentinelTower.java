@@ -88,7 +88,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(60);
 
         public HexAttack() {
-            super("Hex Attack", 100, 100, 3, 0);
+            super("Hex Attack", 3, 0);
         }
 
         @Override
@@ -143,7 +143,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         private Laser.GuardianLaser laser;
 
         public BeamAttack() {
-            super("Beam Attack", 25, 25, 3, 0);
+            super("Beam Attack", 3, 0);
         }
 
         @Override
@@ -238,7 +238,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 0, 0, 20, 0);
+            super("Buff Towers", 20, 0);
         }
 
         @Override

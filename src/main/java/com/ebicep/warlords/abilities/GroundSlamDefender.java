@@ -19,7 +19,7 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
     private final DamageValues damageValues = new DamageValues();
 
     public GroundSlamDefender() {
-        super(326, 441, 8.3f, 0, 20, 175);
+        super(8.3f, 0);
     }
 
     @Override

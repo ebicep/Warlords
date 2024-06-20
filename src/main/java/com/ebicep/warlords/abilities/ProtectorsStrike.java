@@ -36,7 +36,7 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
     private double strikeRadius = 10;
 
     public ProtectorsStrike() {
-        super("Protector's Strike", 261, 352, 0, 90, 20, 175);
+        super("Protector's Strike", 0, 90);
     }
 
     @Override

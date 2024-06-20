@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -18,6 +19,7 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
@@ -73,68 +75,30 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected int timesUsed = 0;
     protected String name;
-    protected FloatModifiable minDamageHeal;
-    protected FloatModifiable maxDamageHeal;
     protected float currentCooldown;
     protected FloatModifiable cooldown;
     protected FloatModifiable energyCost;
-    protected float critChance;
-    protected float critMultiplier;
     protected TextComponent description = Component.empty();
-    protected boolean boosted;
+    protected boolean boosted = false;
     //pve
     protected boolean inPve = false;
     protected boolean pveMasterUpgrade = false;
     protected boolean pveMasterUpgrade2 = false;
     private boolean updateItem = true;
 
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0);
-    }
-
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 0);
-    }
-
-    public AbstractAbility(
-            String name,
-            float minDamageHeal,
-            float maxDamageHeal,
-            float cooldown,
-            float energyCost,
-            float critChance,
-            float critMultiplier,
-            float startCooldown
-    ) {
+    public AbstractAbility(String name, float cooldown, float energyCost, float startCooldown) {
         this.name = name;
-        this.minDamageHeal = new FloatModifiable(minDamageHeal);
-        this.maxDamageHeal = new FloatModifiable(maxDamageHeal);
         this.cooldown = new FloatModifiable(cooldown);
         this.currentCooldown = startCooldown;
         this.energyCost = new FloatModifiable(energyCost);
-        this.critChance = critChance;
-        this.critMultiplier = critMultiplier;
-        boosted = false;
-    }
-
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, boolean startNoCooldown) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startNoCooldown ? 0 : cooldown);
-    }
-
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float startCooldown) {
-        this(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, 0, 0, startCooldown);
-    }
-
-    public AbstractAbility(String name, float cooldown, float energyCost) {
-        this(name, 0, 0, cooldown, energyCost, 0, 0);
     }
 
     public AbstractAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
-        this(name, 0, 0, cooldown, energyCost, 0, 0, startNoCooldown ? 0 : cooldown);
+        this(name, cooldown, energyCost, startNoCooldown ? 0 : cooldown);
     }
 
-    public AbstractAbility(String name, float cooldown, float energyCost, float startCooldown) {
-        this(name, 0, 0, cooldown, energyCost, 0, 0, startCooldown);
+    public AbstractAbility(String name, float cooldown, float energyCost) {
+        this(name, cooldown, energyCost, 0);
     }
 
     public void updateDescription(Player player) {
@@ -164,7 +128,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void updateCustomStats(AbstractPlayerClass apc) {
-
+        Value.applyDamageHealing(this, value -> value.forEachAllValues(floatModifiable -> floatModifiable.addRefreshListener("UpdateAbilityItems", this::queueUpdateItem)));
     }
 
     public void addTimesUsed() {
@@ -234,7 +198,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     /**
      * @return returns the input divided by 100
      */
-    public float convertToPercent(float input) {
+    public static float convertToPercent(float input) {
         return input / 100f;
     }
 
@@ -256,8 +220,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        minDamageHeal.tick();
-        maxDamageHeal.tick();
+        Value.applyDamageHealing(this, value -> value.forEachAllValues(FloatModifiable::tick));
         cooldown.tick();
         energyCost.tick();
         if (this instanceof HitBox hitBox) {
@@ -346,11 +309,24 @@ public abstract class AbstractAbility implements AbilityIcon {
                 lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)
                                   .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
             }
-            if (getCritChance() != 0 && getCritChance() != -1 && getCritMultiplier() != 100) {
-                lore.add(Component.text("Crit Chance: ", NamedTextColor.GRAY)
-                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCritChance()) + "%", NamedTextColor.RED)));
-                lore.add(Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
-                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCritMultiplier()) + "%", NamedTextColor.RED)));
+            List<Component> critChanceLore = new ArrayList<>();
+            List<Component> critMultiplierLore = new ArrayList<>();
+            Value.applyDamageHealing(this, (damage, value) -> {
+                if (value instanceof Value.RangedValueCritable critable) {
+                    TextColor textColor = damage ? NamedTextColor.RED : NamedTextColor.GREEN;
+                    critChanceLore.add(Component.text(format(Math.min(critable.critChance().getCalculatedValue(), 100)) + "%", textColor));
+                    critMultiplierLore.add(Component.text(format(critable.critMultiplier().getCalculatedValue()) + "%", textColor));
+                }
+            });
+            if (!critChanceLore.isEmpty()) {
+                lore.add(ComponentBuilder
+                        .create("Crit Chance: ", NamedTextColor.GRAY)
+                        .append(critChanceLore.stream().collect(Component.toComponent(Component.text("/", NamedTextColor.GRAY))))
+                        .build());
+                lore.add(ComponentBuilder
+                        .create("Crit Multiplier: ", NamedTextColor.GRAY)
+                        .append(critMultiplierLore.stream().collect(Component.toComponent(Component.text("/", NamedTextColor.GRAY))))
+                        .build());
             }
             lore.add(Component.empty());
             lore.addAll(getDescription());
@@ -365,24 +341,6 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public float getEnergyCostValue() {
         return energyCost.getCalculatedValue();
-    }
-
-    public float getCritChance() {
-        return critChance;
-    }
-
-    public void setCritChance(float critChance) {
-        this.critChance = critChance;
-        queueUpdateItem();
-    }
-
-    public float getCritMultiplier() {
-        return critMultiplier;
-    }
-
-    public void setCritMultiplier(float critMultiplier) {
-        this.critMultiplier = critMultiplier;
-        queueUpdateItem();
     }
 
     public List<Component> getDescription() {

@@ -46,7 +46,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int allyHealing = 300;
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 21.92f, 30, 0, 100);
+        super("Soulbinding Weapon", 21.92f, 30);
     }
 
     @Override

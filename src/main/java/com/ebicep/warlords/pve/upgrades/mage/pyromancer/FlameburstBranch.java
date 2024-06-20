@@ -3,11 +3,9 @@ package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
-
-
-    float critMultiplier = ability.getCritMultiplier();
 
     public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability) {
         super(abilityTree, ability);
@@ -27,10 +25,10 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setCritMultiplier(critMultiplier + value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 15f, 4)
+                }, ability.getDamageValues().getFlameBurstDamage().critMultiplier().addAdditiveModifier("Upgrade Branch", 0), 15f, 4)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
