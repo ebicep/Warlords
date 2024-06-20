@@ -217,7 +217,7 @@ public class SpidersBurrow extends GameMap {
 
             @Override
             public List<Component> getWaveScoreboard(WarlordsPlayer player) {
-                return Collections.singletonList(Component.text("Event: ").append(Component.text("ARACHNO_VENARIs Burrow", NamedTextColor.GREEN)));
+                return Collections.singletonList(Component.text("Event: ").append(Component.text("Spider's Burrow", NamedTextColor.GREEN)));
             }
 
             @Override
