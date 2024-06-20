@@ -1311,7 +1311,7 @@ public enum SkillBoosts {
             Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
                      .append(Component.text("40 ", NamedTextColor.RED))
                      .append(Component.text("and increase the damage reduction by ", NamedTextColor.GREEN))
-                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text("2%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             EnergySeerSentinel.class,
             abstractAbility -> {
