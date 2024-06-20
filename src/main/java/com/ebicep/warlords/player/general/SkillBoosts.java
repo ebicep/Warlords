@@ -650,17 +650,14 @@ public enum SkillBoosts {
             }
     ),
     PROTECTOR_STRIKE("Protector's Strike",
-            Component.text("Increase the damage converted to healing for allies of Protector's Strike by 10% and increase the number of allies healed by 1.", NamedTextColor.GRAY),
+            Component.text("Increase the damage converted to healing for allies of Protector's Strike by 15%", NamedTextColor.GRAY),
             Component.text("Increase the damage converted to healing for allies of Protector's Strike by ", NamedTextColor.GREEN)
-                     .append(Component.text("10% ", NamedTextColor.RED))
-                     .append(Component.text("and increase the number of allies healed by ", NamedTextColor.GREEN))
-                     .append(Component.text("1", NamedTextColor.RED))
+                     .append(Component.text("15%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike protectorsStrike) {
-                    protectorsStrike.setAllyHealing(protectorsStrike.getAllyHealing() + 10);
-                    protectorsStrike.setMaxAllies(protectorsStrike.getMaxAllies() + 1);
+                    protectorsStrike.setAllyHealing(protectorsStrike.getAllyHealing() + 15);
                 }
             }
     ),
