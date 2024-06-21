@@ -47,7 +47,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
     private float hitbox = 10;
     private int maxAnimationTime = 12;
     public FreezingBreath() {
-        super("Freezing Breath", 6.3f, 60, 1.25, 100, false);
+        super("Freezing Breath", 9.4f, 60, 1.25, 100, false);
     }
 
     @Override
@@ -328,7 +328,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable freezingBreathDamage = new Value.RangedValueCritable(422, 585, 20, 175);
+        private final Value.RangedValueCritable freezingBreathDamage = new Value.RangedValueCritable(630, 873, 20, 175);
         private final List<Value> values = List.of(freezingBreathDamage);
 
         public Value.RangedValueCritable getFreezingBreathDamage() {
