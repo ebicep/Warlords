@@ -44,13 +44,16 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.sounds.SoundSource;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -237,8 +240,8 @@ public abstract class WarlordsEntity {
 
     public void playHurtAnimation(WarlordsEntity attacker) {
         Location location = entity.getLocation();
-//        ServerLevel serverLevel = ((CraftWorld) entity.getWorld()).getHandle();
-//        serverLevel.broadcastDamageEvent(((CraftEntity) entity).getHandle(), serverLevel.damageSources().generic());
+        ServerLevel serverLevel = ((CraftWorld) entity.getWorld()).getHandle();
+        serverLevel.broadcastDamageEvent(((CraftEntity) entity).getHandle(), serverLevel.damageSources().generic());
         for (Player p : attacker.getWorld().getPlayers()) {
             p.playSound(location, Sound.ENTITY_PLAYER_HURT, 2, 1);
         }
