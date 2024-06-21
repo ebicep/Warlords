@@ -120,6 +120,13 @@ public enum Colors {
             Material.WHITE_STAINED_GLASS,
             Material.WHITE_BANNER
     ),
+    TEAM_BLUE(ChatColor.BLUE,
+            NamedTextColor.BLUE,
+            Material.BLUE_WOOL,
+            Color.fromRGB(85, 85, 255),
+            Material.BLUE_STAINED_GLASS,
+            Material.BLUE_BANNER
+    ),
 
     ;
 

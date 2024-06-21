@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 public enum Team {
 
     BLUE(
-            Colors.DARK_BLUE,
+            Colors.TEAM_BLUE,
             "Blue",
             "BLU",
             Color.fromRGB(51, 76, 178),
