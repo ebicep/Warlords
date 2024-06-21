@@ -42,8 +42,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int bindDuration = 40;
     private int radius = 8;
     private int maxAlliesHit = 2;
-    private int selfHealing = 400;
-    private int allyHealing = 300;
 
     public Soulbinding() {
         super("Soulbinding Weapon", 21.92f, 30);
@@ -58,11 +56,11 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                .append(Component.text(" seconds. Against "))
                                .append(Component.text("BOUND", NamedTextColor.LIGHT_PURPLE))
                                .append(Component.text(" targets, your next Spirit Link will heal you for "))
-                               .append(Component.text(selfHealing, NamedTextColor.GREEN))
+                               .append(Heals.formatHealing(healingValues.selfHealing))
                                .append(Component.text(" health and "))
                                .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
                                .append(Component.text(" nearby allies for "))
-                               .append(Component.text(allyHealing, NamedTextColor.GREEN))
+                               .append(Heals.formatHealing(healingValues.allyHealing))
                                .append(Component.text(". Your next Fallen Souls will reduce the cooldown of all abilities by "))
                                .append(Component.text(format(selfCooldownReduction), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. ("))
@@ -329,22 +327,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public void setMaxAlliesHit(int maxAlliesHit) {
         this.maxAlliesHit = maxAlliesHit;
-    }
-
-    public int getSelfHealing() {
-        return selfHealing;
-    }
-
-    public void setSelfHealing(int selfHealing) {
-        this.selfHealing = selfHealing;
-    }
-
-    public int getAllyHealing() {
-        return allyHealing;
-    }
-
-    public void setAllyHealing(int allyHealing) {
-        this.allyHealing = allyHealing;
     }
 
     @Override
