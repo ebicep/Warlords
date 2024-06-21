@@ -36,8 +36,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
     private int maxFullDistance = 40;
     private float directHitMultiplier = 15;
     private FloatModifiable splashRadius = new FloatModifiable(4.125f);
-    private float minDamage = 231;
-    private float maxDamage = 299;
 
     public WaterBolt() {
         super("Water Bolt", 0, 80, 2, 300, true);
@@ -46,7 +44,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Shoot a bolt of water that will burst for")
-                               .append(formatRange(minDamage, maxDamage, NamedTextColor.RED))
+                               .append(Damages.formatDamage(damageValues.boltDamage))
                                .append(Component.text(" damage and restore"))
                                .append(Heals.formatHealing(healingValues.boltHealing))
                                .append(Component.text(" health to allies. A direct hit will cause "))
@@ -229,22 +227,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                 return currentDamageValue * 1.1f;
             }
         });
-    }
-
-    public float getMinDamage() {
-        return minDamage;
-    }
-
-    public void setMinDamage(float minDamage) {
-        this.minDamage = minDamage;
-    }
-
-    public float getMaxDamage() {
-        return maxDamage;
-    }
-
-    public void setMaxDamage(float maxDamage) {
-        this.maxDamage = maxDamage;
     }
 
     @Override

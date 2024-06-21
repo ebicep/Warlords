@@ -8,9 +8,6 @@ import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
 
-    float minDamage = ability.getMinDamage();
-    float maxDamage = ability.getMaxDamage();
-
     public WaterBoltBranch(AbilityTree abilityTree, WaterBolt ability) {
         super(abilityTree, ability);
 
