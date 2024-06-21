@@ -77,7 +77,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                .append(Heals.formatHealingPercent(healingValues.bubbleMissingHealthHealing))
                                .append(Component.text(" missing health and grant "))
                                .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction (max 30%) for "))
+                               .append(Component.text(" damage reduction (max 21%) for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds based on how many hits you took while Prism Guard was active."));
 
@@ -155,8 +155,8 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                         );
 
 
-                        if (hits.get() > 10) {
-                            hits.set(10);
+                        if (hits.get() > 7) {
+                            hits.set(7);
                         }
 
                         if (hits.get() != 0) {
