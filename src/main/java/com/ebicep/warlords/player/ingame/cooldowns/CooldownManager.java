@@ -54,11 +54,14 @@ public class CooldownManager {
                 .collect(Collectors.toList());
     }
 
-    public static Listener getDefaultDebuffImmunityListener() {
+    public static Listener getDefaultDebuffImmunityListener(WarlordsEntity immune) {
         return new Listener() {
 
             @EventHandler
             public void onAddCooldown(WarlordsAddCooldownEvent event) {
+                if (event.getWarlordsEntity() != immune) {
+                    return;
+                }
                 if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
                     return;
                 }
@@ -67,6 +70,9 @@ public class CooldownManager {
 
             @EventHandler
             public void onAddSpeed(WarlordsAddSpeedModifierEvent event) {
+                if (event.getWarlordsEntity() != immune) {
+                    return;
+                }
                 if (event.getModifier().getModifier() < 0) {
                     event.setCancelled(true);
                 }
@@ -74,6 +80,9 @@ public class CooldownManager {
 
             @EventHandler
             public void onAddPotionEffect(WarlordsAddPotionEffectEvent event) {
+                if (event.getWarlordsEntity() != immune) {
+                    return;
+                }
                 PotionEffect potionEffect = event.getPotionEffect();
                 if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
                         PotionEffectType.CONFUSION.equals(potionEffect.getType())
@@ -83,6 +92,15 @@ public class CooldownManager {
             }
 
         };
+    }
+
+    private final WarlordsEntity warlordsEntity;
+    private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
+    private int totalCooldowns = 0;
+    private boolean updatePlayerNames = false;
+
+    public CooldownManager(WarlordsEntity warlordsEntity) {
+        this.warlordsEntity = warlordsEntity;
     }
 
     public int removeDebuffCooldowns() {
@@ -104,14 +122,6 @@ public class CooldownManager {
 
     public void queueUpdatePlayerNames() {
         updatePlayerNames = true;
-    }
-    private final WarlordsEntity warlordsEntity;
-    private final List<AbstractCooldown<?>> abstractCooldowns = new ArrayList<>();
-    private int totalCooldowns = 0;
-    private boolean updatePlayerNames = false;
-
-    public CooldownManager(WarlordsEntity warlordsEntity) {
-        this.warlordsEntity = warlordsEntity;
     }
 
     public WarlordsEntity getWarlordsEntity() {

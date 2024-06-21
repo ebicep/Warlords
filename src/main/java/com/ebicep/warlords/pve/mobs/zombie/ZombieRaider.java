@@ -77,7 +77,7 @@ public class ZombieRaider extends AbstractMob implements AdvancedMob {
 
             @Override
             protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener();
+                return CooldownManager.getDefaultDebuffImmunityListener(warlordsNPC);
             }
 
         });

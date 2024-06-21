@@ -191,7 +191,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
             @Override
             protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener();
+                return CooldownManager.getDefaultDebuffImmunityListener(target);
             }
         });
         if (vindPveMaster2) {

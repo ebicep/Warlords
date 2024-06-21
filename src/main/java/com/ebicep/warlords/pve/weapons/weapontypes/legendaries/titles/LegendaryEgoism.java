@@ -86,7 +86,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                 ) {
                     @Override
                     protected Listener getListener() {
-                        return CooldownManager.getDefaultDebuffImmunityListener();
+                        return CooldownManager.getDefaultDebuffImmunityListener(player);
                     }
                 });
                 float healthRestore = player.getMaxHealth() * (HEALTH_RESTORE + HEALTH_RESTORE_INCREASE_PER_UPGRADE * getTitleLevel()) / 100;
