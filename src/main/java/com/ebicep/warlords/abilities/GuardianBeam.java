@@ -23,9 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GuardianBeam extends AbstractBeam implements Duration, Damages<GuardianBeam.DamageValues> {
 
@@ -35,6 +33,8 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
     private final int carrierBonusMultiplier = 2;
     private float runeTimerIncrease = 1.5f;
     private int tickDuration = 120;
+
+    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
 
     public GuardianBeam() {
         super("Guardian Beam", 10, 10, 30, 30, true);
@@ -67,6 +67,12 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        stacksRemoved.entrySet()
+                     .stream()
+                     .sorted().
+                     forEach(integerIntegerEntry -> {
+                         info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
+                     });
         return info;
     }
 
@@ -134,6 +140,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
             );
         }
         Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
+        stacksRemoved.merge(selfHexStacks, 1, Integer::sum);
         int percent = shieldPercents.get(Math.min(selfHexStacks, 3) - 1) * (to.hasFlag() ? carrierBonusMultiplier : 1);
         GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(

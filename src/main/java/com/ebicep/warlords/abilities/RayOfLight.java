@@ -24,11 +24,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.HealingValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
+    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
     private final HealingValues healingValues = new HealingValues();
 
     public RayOfLight() {
@@ -56,6 +59,12 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        stacksRemoved.entrySet()
+                     .stream()
+                     .sorted().
+                     forEach(integerIntegerEntry -> {
+                         info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
+                     });
         return info;
     }
 
@@ -96,6 +105,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
                 case 2 -> 1.5f;
                 default -> 2f;
             };
+            stacksRemoved.merge(hexStacks, 1, Integer::sum);
             if (pveMasterUpgrade) {
                 hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
@@ -145,14 +155,8 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        int hexStacks = (int) new CooldownFilter<>(shooter, RegularCooldown.class)
-                .filterCooldownClass(MercifulHex.class)
-                .stream()
-                .count();
-        if (hexStacks >= 3) {
-            shooter.getCooldownManager().removeDebuffCooldowns();
-            shooter.getSpeed().removeSlownessModifiers();
-        }
+        shooter.getCooldownManager().removeDebuffCooldowns();
+        shooter.getSpeed().removeSlownessModifiers();
         shooter.addInstance(InstanceBuilder
                 .healing()
                 .ability(this)

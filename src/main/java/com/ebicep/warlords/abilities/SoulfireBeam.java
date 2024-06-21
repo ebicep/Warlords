@@ -21,12 +21,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.CRIMSON_FENCE_GATE);
     private final DamageValues damageValues = new DamageValues();
+
+    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
 
     public SoulfireBeam() {
         super("Soulfire Beam", 10, 10, 30, 30, false);
@@ -52,6 +56,12 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        stacksRemoved.entrySet()
+                     .stream()
+                     .sorted().
+                     forEach(integerIntegerEntry -> {
+                         info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
+                     });
         return info;
     }
 
@@ -84,6 +94,7 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
                 case 2 -> 1.5f;
                 default -> 2f;
             };
+            stacksRemoved.merge(hexStacks, 1, Integer::sum);
             if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks() && projectile.getHit().size() <= 4 && pveMasterUpgrade) {
                 multiplier += 5;
             }
