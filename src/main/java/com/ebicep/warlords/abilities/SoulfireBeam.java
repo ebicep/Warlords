@@ -84,12 +84,14 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()
                     .count();
+            if (hexStacks <= 0) {
+                return;
+            }
             boolean hasAstral = wp.getCooldownManager().hasCooldown(AstralPlague.class);
             if (!hasAstral) {
                 hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
             }
             float multiplier = switch (hexStacks) {
-                case 0 -> 1;
                 case 1 -> 1.25f;
                 case 2 -> 1.5f;
                 default -> 2f;

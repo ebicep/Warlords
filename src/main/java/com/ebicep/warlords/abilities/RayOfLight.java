@@ -94,6 +94,9 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
                     .filterCooldownClass(MercifulHex.class)
                     .stream()
                     .count();
+            if (hexStacks < 0) {
+                return;
+            }
             boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
             if (!hasDivineBlessing) {
                 hit.getCooldownManager().removeCooldown(MercifulHex.class, false);

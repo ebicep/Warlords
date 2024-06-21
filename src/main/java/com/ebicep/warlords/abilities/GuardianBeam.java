@@ -28,13 +28,12 @@ import java.util.*;
 public class GuardianBeam extends AbstractBeam implements Duration, Damages<GuardianBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
+    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
     private final DamageValues damageValues = new DamageValues();
     private final List<Integer> shieldPercents = new ArrayList<>(List.of(6, 12, 24));
     private final int carrierBonusMultiplier = 2;
     private float runeTimerIncrease = 1.5f;
     private int tickDuration = 120;
-
-    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
 
     public GuardianBeam() {
         super("Guardian Beam", 10, 10, 30, 30, true);
@@ -118,6 +117,9 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                 .filterCooldownClass(FortifyingHex.class)
                 .stream()
                 .count();
+        if (selfHexStacks <= 0) {
+            return;
+        }
         if (!hasSanctuary) {
             to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
         }
@@ -178,6 +180,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                 );
             }
         });
+
     }
 
     @Nullable
