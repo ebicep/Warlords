@@ -41,7 +41,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(15);
     private int vindDuration = 6;
-    private float healthRestore = 600;
 
     public HeartToHeart() {
         super("Heart to Heart", 12, 20);
@@ -54,7 +53,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                .append(Component.text(" for "))
                                .append(Component.text(vindDuration, NamedTextColor.GOLD))
                                .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
-                               .append(Component.text(format(healthRestore), NamedTextColor.GREEN))
+                               .append(Heals.formatHealing(healingValues.heartToHeartHealing))
                                .append(Component.text(" health after reaching your ally. Has a maximum range of"))
                                .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks.\n\nHeart to Heart has reduced range when holding a flag.", NamedTextColor.GRAY));
@@ -225,14 +224,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         }.runTaskTimer(0, 1);
     }
 
-    public float getHealthRestore() {
-        return healthRestore;
-    }
-
-    public void setHealthRestore(float healthRestore) {
-        this.healthRestore = healthRestore;
-    }
-
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -259,6 +250,10 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
         private final Value.SetValue heartToHeartHealing = new Value.SetValue(600);
         private final List<Value> values = List.of(heartToHeartHealing);
+
+        public Value.SetValue getHeartToHeartHealing() {
+            return heartToHeartHealing;
+        }
 
         @Override
         public List<Value> getValues() {

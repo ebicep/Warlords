@@ -1079,7 +1079,7 @@ public enum SkillBoosts {
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart heartToHeart) {
-                    heartToHeart.setHealthRestore(heartToHeart.getHealthRestore() + 300);
+                    heartToHeart.getHealValues().getHeartToHeartHealing().value().addAdditiveModifier("Skill Boost", 300);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
                 }
             }
@@ -1356,8 +1356,11 @@ public enum SkillBoosts {
             MercifulHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof MercifulHex mercifulHex) {
-                    mercifulHex.setDotMinHeal(mercifulHex.getDotMinHeal() * 1.35f);
-                    mercifulHex.setDotMaxHeal(mercifulHex.getDotMaxHeal() * 1.35f);
+                    mercifulHex.getHealValues()
+                               .getHexDOTHealing()
+                               .forEachValue(floatModifiable -> {
+                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                               });
                     mercifulHex.setTickDuration(mercifulHex.getTickDuration() + 20);
                 }
             }

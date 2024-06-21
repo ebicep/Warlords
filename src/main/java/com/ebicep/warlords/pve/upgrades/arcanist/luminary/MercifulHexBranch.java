@@ -1,27 +1,15 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
 import com.ebicep.warlords.abilities.MercifulHex;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
 
-    float minSelfHeal;
-    float maxSelfHeal;
-    float dotMinHeal;
-    float dotMaxHeal;
-    float minDamage;
-    float maxDamage;
-
     public MercifulHexBranch(AbilityTree abilityTree, MercifulHex ability) {
         super(abilityTree, ability);
-
-        minSelfHeal = ability.getMinSelfHeal();
-        maxSelfHeal = ability.getMaxSelfHeal();
-        dotMinHeal = ability.getDotMinHeal();
-        dotMaxHeal = ability.getDotMaxHeal();
-        minDamage = ability.getMinDamage();
-        maxDamage = ability.getMaxDamage();
-
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
@@ -31,14 +19,7 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamage(minDamage * v);
-                        ability.setMaxDamage(maxDamage * v);
-                    }
-                }, 15f, 3, 4)
+                .addUpgradeDamage(ability.getDamageValues().getHexDamage(), 15f, 3, 4)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

@@ -36,7 +36,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value);
                     }
-                }, 100f)
+                }, ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Upgrade Branch", 0), 100f)
                 .addUpgradeEnergy(ability, 5f)
                 .addTo(treeB);
 

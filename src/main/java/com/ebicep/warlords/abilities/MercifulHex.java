@@ -44,13 +44,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private final HealingValues healingValues = new HealingValues();
     private int hexStacksPerHit = 1;
     private int maxAlliesHit = 2;
-    private float minDamage = 217;
-    private float maxDamage = 292;
     private int subsequentReduction = 40;
-    private float minSelfHeal = 230;
-    private float maxSelfHeal = 310;
-    private float dotMinHeal = 20;
-    private float dotMaxHeal = 30;
     private int ticksBetweenDot = 40;
     private int maxStacks = 3;
     private int tickDuration = 60;
@@ -357,54 +351,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         return maxStacks;
     }
 
-    public float getDotMinHeal() {
-        return dotMinHeal;
-    }
-
-    public void setDotMinHeal(float dotMinHeal) {
-        this.dotMinHeal = dotMinHeal;
-    }
-
-    public float getDotMaxHeal() {
-        return dotMaxHeal;
-    }
-
-    public void setDotMaxHeal(float dotMaxHeal) {
-        this.dotMaxHeal = dotMaxHeal;
-    }
-
-    public float getMinSelfHeal() {
-        return minSelfHeal;
-    }
-
-    public void setMinSelfHeal(float minSelfHeal) {
-        this.minSelfHeal = minSelfHeal;
-    }
-
-    public float getMaxSelfHeal() {
-        return maxSelfHeal;
-    }
-
-    public void setMaxSelfHeal(float maxSelfHeal) {
-        this.maxSelfHeal = maxSelfHeal;
-    }
-
-    public float getMinDamage() {
-        return minDamage;
-    }
-
-    public void setMinDamage(float minDamage) {
-        this.minDamage = minDamage;
-    }
-
-    public float getMaxDamage() {
-        return maxDamage;
-    }
-
-    public void setMaxDamage(float maxDamage) {
-        this.maxDamage = maxDamage;
-    }
-
     public int getSubsequentReduction() {
         return subsequentReduction;
     }
@@ -427,6 +373,10 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(217, 292, 20, 180);
         private final List<Value> values = List.of(hexDamage);
 
+        public Value.RangedValueCritable getHexDamage() {
+            return hexDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;
@@ -440,6 +390,18 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(230, 310, 20, 180);
         private final Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
         private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
+
+        public Value.RangedValueCritable getHexHealing() {
+            return hexHealing;
+        }
+
+        public Value.RangedValueCritable getHexSelfHealing() {
+            return hexSelfHealing;
+        }
+
+        public Value.RangedValue getHexDOTHealing() {
+            return hexDOTHealing;
+        }
 
         @Override
         public List<Value> getValues() {
