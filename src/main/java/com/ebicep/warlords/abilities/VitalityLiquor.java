@@ -37,8 +37,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     private int duration = 3;
     private int vitalityRange = 8;
     private int energyPerSecond = 15;
-    private float minWaveHealing = 268;
-    private float maxWaveHealing = 324;
 
     public VitalityLiquor() {
         super("Vitality Liquor", 14, 30);
@@ -165,22 +163,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         return new VitalityLiquorBranch(abilityTree, this);
     }
 
-    public float getMinWaveHealing() {
-        return minWaveHealing;
-    }
-
-    public void setMinWaveHealing(float minWaveHealing) {
-        this.minWaveHealing = minWaveHealing;
-    }
-
-    public float getMaxWaveHealing() {
-        return maxWaveHealing;
-    }
-
-    public void setMaxWaveHealing(float maxWaveHealing) {
-        this.maxWaveHealing = maxWaveHealing;
-    }
-
     public int getEnergyPerSecond() {
         return energyPerSecond;
     }
@@ -215,6 +197,14 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         private final Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
         private final Value.RangedValueCritable waveHealing = new Value.RangedValueCritable(268, 324, 25, 175);
         private final List<Value> values = List.of(liquorHealing, waveHealing);
+
+        public Value.RangedValueCritable getLiquorHealing() {
+            return liquorHealing;
+        }
+
+        public Value.RangedValueCritable getWaveHealing() {
+            return waveHealing;
+        }
 
         @Override
         public List<Value> getValues() {
