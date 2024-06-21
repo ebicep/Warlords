@@ -1069,17 +1069,17 @@ public enum SkillBoosts {
             }
     ),
     HEART_TO_HEART("Heart to Heart",
-            Component.text("Increase the healing of Heart to Heart by 300 and reduce the cooldown by 30%.", NamedTextColor.GRAY),
+            Component.text("Increase the healing of Heart to Heart by 300 and reduce the cooldown by 15%.", NamedTextColor.GRAY),
             Component.text("Increase the healing of Heart to Heart by ", NamedTextColor.GREEN)
                      .append(Component.text("300 ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
-                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text("15%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart heartToHeart) {
                     heartToHeart.setHealthRestore(heartToHeart.getHealthRestore() + 300);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
                 }
             }
     ),
