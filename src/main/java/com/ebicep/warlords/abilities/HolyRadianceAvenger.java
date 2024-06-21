@@ -48,7 +48,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                                .append(Component.text(" seconds. Reducing their energy per second by "))
                                .append(Component.text(energyDrainPerSecond, NamedTextColor.YELLOW))
                                .append(Component.text(" for the duration."))
-                               .append(Component.text("\n\nMark has an optimal range of "))
+                               .append(Component.text("\n\nMark has a maximum range of "))
                                .append(Component.text(markRadius, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }

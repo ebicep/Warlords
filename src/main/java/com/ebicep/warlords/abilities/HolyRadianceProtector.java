@@ -51,7 +51,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                                .append(Component.text("seconds. Marked allies receive "))
                                .append(Component.text(format(markBonusHealing) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" more healing from all sources."))
-                               .append(Component.text("\n\nMark has an optimal range of "))
+                               .append(Component.text("\n\nMark has a maximum range of "))
                                .append(Component.text(format(markRadius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
