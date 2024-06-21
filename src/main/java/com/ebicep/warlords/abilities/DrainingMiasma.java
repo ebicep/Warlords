@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -168,7 +169,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                 ) {
                     @Override
                     public TextColor customActionBarColor() {
-                        return NamedTextColor.RED;
+                        return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
                     }
                 });
 

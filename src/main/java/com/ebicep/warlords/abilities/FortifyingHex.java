@@ -23,6 +23,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -308,7 +309,11 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
             @Override
             public PlayerNameData addPrefixFromOther() {
-                return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL);
+                boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
+                return new PlayerNameData(
+                        Component.text("FHEX", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, flag),
+                        we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL
+                );
             }
         });
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);

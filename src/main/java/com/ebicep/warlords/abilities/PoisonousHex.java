@@ -8,6 +8,8 @@ import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -21,6 +23,8 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Display;
@@ -285,7 +289,16 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         ) {
             @Override
             public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("PHEX", NamedTextColor.RED), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER);
+                boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
+                return new PlayerNameData(
+                        Component.text("PHEX", AbstractCooldown.PSEUDO_DEBUFF_COLOR).decoration(TextDecoration.BOLD, flag),
+                        we -> we.isTeammate(from) && we.getSpecClass() == Specializations.CONJURER
+                );
+            }
+
+            @Override
+            public TextColor customActionBarColor() {
+                return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
             }
         });
     }
