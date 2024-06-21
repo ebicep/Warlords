@@ -49,8 +49,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     private final HealingValues healingValues = new HealingValues();
     private int bubbleRadius = 4;
     private int tickDuration = 100;
-    private int bubbleHealing = 200; // TODO REMOVE
-    private float bubbleMissingHealing = 1.5f;
     private int projectileDamageReduction = 60;
 
     public PrismGuard() {
@@ -74,9 +72,9 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                .append(Component.text(".\n\nAfter "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds the bubble will burst, healing you and all allies for "))
-                               .append(Component.text(bubbleHealing + " ", NamedTextColor.GREEN))
-                               .append(Component.text("+ "))
-                               .append(Component.text(bubbleMissingHealing + "%", NamedTextColor.GREEN))
+                               .append(Heals.formatHealing(healingValues.bubbleBaseHealing))
+                               .append(Component.text(" + "))
+                               .append(Heals.formatHealingPercent(healingValues.bubbleMissingHealthHealing))
                                .append(Component.text(" missing health and grant "))
                                .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction (max 30%) for "))
@@ -338,14 +336,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         this.projectileDamageReduction = projectileDamageReduction;
     }
 
-    public int getBubbleHealing() {
-        return bubbleHealing;
-    }
-
-    public void setBubbleHealing(int bubbleHealing) {
-        this.bubbleHealing = bubbleHealing;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -364,14 +354,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         this.bubbleRadius = bubbleRadius;
     }
 
-    public float getBubbleMissingHealing() {
-        return bubbleMissingHealing;
-    }
-
-    public void setBubbleMissingHealing(float bubbleMissingHealing) {
-        this.bubbleMissingHealing = bubbleMissingHealing;
-    }
-
     @Override
     public HealingValues getHealValues() {
         return healingValues;
@@ -382,6 +364,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         private final Value.SetValue bubbleBaseHealing = new Value.SetValue(200);
         private final Value.SetValue bubbleMissingHealthHealing = new Value.SetValue(1.5f);
         private final List<Value> values = List.of(bubbleMissingHealthHealing, bubbleMissingHealthHealing);
+
+        public Value.SetValue getBubbleBaseHealing() {
+            return bubbleBaseHealing;
+        }
+
+        public Value.SetValue getBubbleMissingHealthHealing() {
+            return bubbleMissingHealthHealing;
+        }
 
         @Override
         public List<Value> getValues() {

@@ -2,11 +2,9 @@ package com.ebicep.warlords.pve.upgrades.rogue.vindicator;
 
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
-
-    int bubbleHealing = ability.getBubbleHealing();
-    float bubbleMissingHealing = ability.getBubbleMissingHealing();
 
     @Override
     public void runOnce() {
@@ -27,10 +25,10 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setBubbleHealing((int) (bubbleHealing + value));
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 100f)
+                }, ability.getHealValues().getBubbleBaseHealing().value().addAdditiveModifier("Upgrade Branch", 0), 100f)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
 
                     @Override
@@ -39,10 +37,10 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setBubbleMissingHealing(bubbleMissingHealing + value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 1f)
+                }, ability.getHealValues().getBubbleMissingHealthHealing().value().addAdditiveModifier("Upgrade Branch", 0), 1f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

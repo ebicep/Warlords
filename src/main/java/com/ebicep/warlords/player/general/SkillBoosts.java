@@ -1095,7 +1095,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof PrismGuard prismGuard) {
                     prismGuard.setProjectileDamageReduction(prismGuard.getProjectileDamageReduction() + 15);
-                    prismGuard.setBubbleHealing(prismGuard.getBubbleHealing() + 300);
+                    prismGuard.getHealValues().getBubbleBaseHealing().value().addAdditiveModifier("Skill Boost", 300);
                 }
             }
     ),

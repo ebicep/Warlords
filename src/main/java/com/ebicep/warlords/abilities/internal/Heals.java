@@ -5,8 +5,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public interface Heals<T extends Value.ValueHolder> {
 
-    T getHealValues();
-
     static Component formatHealing(Value.RangedValue rangedValue) {
         return AbstractAbility.formatRange(
                 rangedValue.getMinValue(),
@@ -18,5 +16,11 @@ public interface Heals<T extends Value.ValueHolder> {
     static Component formatHealing(Value.SetValue setValue) {
         return Component.text(AbstractAbility.format(setValue.getValue()), NamedTextColor.GREEN);
     }
+
+    static Component formatHealingPercent(Value.SetValue setValue) {
+        return Component.text(AbstractAbility.format(setValue.getValue()) + "%", NamedTextColor.GREEN);
+    }
+
+    T getHealValues();
 
 }
