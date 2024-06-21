@@ -34,6 +34,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
     private int maxFullDistance = 50;
     private float directHitMultiplier = 15;
     private FloatModifiable splashRadius = new FloatModifiable(4);
+
     public Fireball() {
         super("Fireball", 0, 70, 2, 300, false);
     }

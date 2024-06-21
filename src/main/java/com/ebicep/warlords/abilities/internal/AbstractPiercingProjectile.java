@@ -35,7 +35,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     public int directHits = 0;
     public int numberOfDismounts = 0;
     protected final boolean hitTeammates;
-    protected FloatModifiable hitboxInflation = new FloatModifiable(0.75f);
+    protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected int maxTicks;
     protected double maxDistance;
     protected float forwardTeleportAmount = 0;
