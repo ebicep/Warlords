@@ -68,8 +68,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         info.add(new Pair<>("Times Used", "" + timesUsed));
         stacksRemoved.entrySet()
                      .stream()
-                     .sorted().
-                     forEach(integerIntegerEntry -> {
+                     .forEach(integerIntegerEntry -> {
                          info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
                      });
         return info;

@@ -835,7 +835,6 @@ public abstract class WarlordsEntity {
         if (amount <= 0) {
             return;
         }
-        System.out.println("Absorbed: " + amount);
         this.minuteStats.addAbsorbed((long) amount);
         addToSpecMinuteStats(entries -> entries.addAbsorbed((long) amount));
     }

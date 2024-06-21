@@ -58,8 +58,7 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
         info.add(new Pair<>("Times Used", "" + timesUsed));
         stacksRemoved.entrySet()
                      .stream()
-                     .sorted().
-                     forEach(integerIntegerEntry -> {
+                     .forEach(integerIntegerEntry -> {
                          info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
                      });
         return info;

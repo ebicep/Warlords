@@ -488,7 +488,7 @@ public class WarlordsShopMenu {
     public static void openTeamMenu(Player player) {
         Team selectedTeam = PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam();
         Menu menu = new Menu("Team Selector", 9 * 4);
-        List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
+        List<Team> values = new ArrayList<>(Arrays.asList(Team.RED, Team.BLUE));
         for (int i = 0; i < values.size(); i++) {
             Team team = values.get(i);
             ItemBuilder builder = new ItemBuilder(team.getWool())

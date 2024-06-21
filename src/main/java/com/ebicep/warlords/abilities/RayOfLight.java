@@ -61,8 +61,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
         info.add(new Pair<>("Times Used", "" + timesUsed));
         stacksRemoved.entrySet()
                      .stream()
-                     .sorted().
-                     forEach(integerIntegerEntry -> {
+                     .forEach(integerIntegerEntry -> {
                          info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
                      });
         return info;
