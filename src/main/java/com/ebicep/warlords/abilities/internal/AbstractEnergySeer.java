@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -27,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class AbstractEnergySeer<T> extends AbstractAbility implements PurpleAbilityIcon, Duration {
 
     protected int speedBuff = 30;
-    protected float healingMultiplier = 4;
     protected int tickDuration = 100;
     protected int energyRestore = 80;
     protected int bonusDuration = 100;
@@ -41,7 +41,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
         description = Component.text("Gain ")
                                .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" speed and heal for "))
-                               .append(Component.text(format(healingMultiplier * 100) + "%", NamedTextColor.GREEN))
+                               .append(Heals.formatHealingPercent(getHealMultiplier(), aFloat -> aFloat * 100))
                                .append(Component.text(" of the energy expended for the next "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. If you healed for 4 instances, restore "))
@@ -87,22 +87,24 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 4 == 0) {
-                        Location location = wp.getLocation();
-                        location.add(0, 1.2, 0);
-                        EffectUtils.displayParticle(
-                                Particle.SOUL_FIRE_FLAME,
-                                location,
-                                2,
-                                0.2,
-                                0,
-                                0.2,
-                                0.1
-                        );
-                    }
-                }
-        )) {
+                            if (ticksElapsed % 4 == 0) {
+                                Location location = wp.getLocation();
+                                location.add(0, 1.2, 0);
+                                EffectUtils.displayParticle(
+                                        Particle.SOUL_FIRE_FLAME,
+                                        location,
+                                        2,
+                                        0.2,
+                                        0,
+                                        0.2,
+                                        0.1
+                                );
+                            }
+                        }
+                )
+        ) {
             private RegularCooldown<?> cd = this;
+
             @Override
             protected Listener getListener() {
                 return new Listener() {
@@ -117,8 +119,12 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                             return;
                         }
                         ChatUtils.MessageType.WARLORDS.sendMessage("Seer heal " + " - " + cd + " - " + cooldownObject);
-                        float healAmount = energyUsed * healingMultiplier;
-                        heal(wp, healAmount);
+                        wp.addInstance(InstanceBuilder
+                                .healing()
+                                .ability(AbstractEnergySeer.this)
+                                .source(wp)
+                                .value(energyUsed * getHealMultiplier().getValue())
+                        );
                         timesHealed.getAndIncrement();
                     }
                 };
@@ -127,9 +133,9 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
         return true;
     }
 
-    public abstract Class<T> getEnergySeerClass();
-
     public abstract T getObject();
+
+    public abstract Class<T> getEnergySeerClass();
 
     public abstract RegularCooldown<T> getBonusCooldown(@Nonnull WarlordsEntity wp);
 
@@ -141,8 +147,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
 
     }
 
-    protected void heal(WarlordsEntity wp, float energyUsed) {
-    }
+    public abstract Value.SetValue getHealMultiplier();
 
     @Override
     public int getTickDuration() {
@@ -160,14 +165,6 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
 
     public void setEnergyRestore(int energyRestore) {
         this.energyRestore = energyRestore;
-    }
-
-    public float getHealingMultiplier() {
-        return healingMultiplier;
-    }
-
-    public void setHealingMultiplier(float healingMultiplier) {
-        this.healingMultiplier = healingMultiplier;
     }
 
     public int getBonusDuration() {

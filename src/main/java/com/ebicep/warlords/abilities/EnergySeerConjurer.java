@@ -9,7 +9,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.EnergySeerBranchConjurer;
@@ -94,13 +93,8 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer> i
     }
 
     @Override
-    protected void heal(WarlordsEntity wp, float energyUsed) {
-        wp.addInstance(InstanceBuilder
-                .healing()
-                .ability(this)
-                .source(wp)
-                .value(energyUsed * healingValues.seerHealingMultiplier.getValue())
-        );
+    public Value.SetValue getHealMultiplier() {
+        return healingValues.seerHealingMultiplier;
     }
 
     @Override

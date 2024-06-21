@@ -2,10 +2,10 @@ package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
 import com.ebicep.warlords.abilities.EnergySeerSentinel;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSentinel> {
 
-    float healingMultiplier = ability.getHealingMultiplier();
 
     public EnergySeerBranchSentinel(AbilityTree abilityTree, EnergySeerSentinel ability) {
         super(abilityTree, ability);
@@ -14,11 +14,10 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
-                    public void run(float value) {
-                        value /= 100;
-                        ability.setHealingMultiplier(healingMultiplier + value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value / 100);
                     }
-                }, 25f)
+                }, ability.getHealMultiplier().value().addAdditiveModifier("Upgrade Branch", 0), 25f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
