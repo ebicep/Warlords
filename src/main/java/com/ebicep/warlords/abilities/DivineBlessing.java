@@ -42,7 +42,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     private int hexHealingBonus = 30;
     private int lethalDamageHealing = 15;
     private int postHealthTickDelay = 40;
-    private int postHealthHealAmount = 800;
     private int tickDuration = 240;
 
     public DivineBlessing() {
@@ -60,7 +59,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                .append(Component.text(" of their maximum health when taking lethal damage for the first time. After "))
                                .append(Component.text(format(postHealthTickDelay / 20f), NamedTextColor.GOLD))
                                .append(Component.text("seconds all allies restore "))
-                               .append(Component.text(postHealthHealAmount, NamedTextColor.GREEN))
+                               .append(Heals.formatHealing(healingValues.divineBlessingPostHeal))
                                .append(Component.text(" health. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));

@@ -51,7 +51,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
-                               .append(Component.text("50", NamedTextColor.RED))
+                               .append(Damages.formatDamage(damageValues.miasmaDamage))
                                .append(Component.text(" + "))
                                .append(Component.text(maxHealthDamage + "%", NamedTextColor.RED))
                                .append(Component.text(" of their max health as damage per second, for "))

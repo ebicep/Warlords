@@ -53,8 +53,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     private boolean isCrownOfLight = false;
     private Location location;
     private int tickDuration = 200;
-    private float minDamage = 178;
-    private float maxDamage = 244;
     private float crownBonusHealing = 35;
 
     public HammerOfLight() {
@@ -465,22 +463,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         this.tickDuration = tickDuration;
     }
 
-    public float getMinDamage() {
-        return minDamage;
-    }
-
-    public void setMinDamage(float minDamage) {
-        this.minDamage = minDamage;
-    }
-
-    public float getMaxDamage() {
-        return maxDamage;
-    }
-
-    public void setMaxDamage(float maxDamage) {
-        this.maxDamage = maxDamage;
-    }
-
     public float getAmountHealed() {
         return amountHealed;
     }
@@ -489,6 +471,10 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
         private final Value.RangedValueCritable hammerDamage = new Value.RangedValueCritable(178, 244, 20, 175);
         private final List<Value> values = List.of(hammerDamage);
+
+        public Value.RangedValueCritable getHammerDamage() {
+            return hammerDamage;
+        }
 
         @Override
         public List<Value> getValues() {
