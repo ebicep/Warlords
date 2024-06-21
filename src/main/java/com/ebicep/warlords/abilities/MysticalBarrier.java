@@ -143,6 +143,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 2 != 0) {
+                        return;
+                    }
                     EffectUtils.playCircularEffectAround(
                             target.getGame(),
                             target.getLocation(),
@@ -186,6 +189,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 2 != 0) {
+                        return;
+                    }
                     EffectUtils.displayParticle(
                             Particle.FIREWORKS_SPARK,
                             to.getLocation().add(0, 1.5, 0),
