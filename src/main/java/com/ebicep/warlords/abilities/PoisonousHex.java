@@ -46,8 +46,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 40;
     private int hexStacksPerHit = 1;
-    private float dotMinDamage = 30;
-    private float dotMaxDamage = 40;
     private int maxStacks = 3;
     private int tickDuration = 40;
     private int ticksBetweenDot = 40;
@@ -328,22 +326,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     public void setTicksBetweenDot(int ticksBetweenDot) {
         this.ticksBetweenDot = ticksBetweenDot;
-    }
-
-    public float getDotMinDamage() {
-        return dotMinDamage;
-    }
-
-    public void setDotMinDamage(float dotMinDamage) {
-        this.dotMinDamage = dotMinDamage;
-    }
-
-    public float getDotMaxDamage() {
-        return dotMaxDamage;
-    }
-
-    public void setDotMaxDamage(float dotMaxDamage) {
-        this.dotMaxDamage = dotMaxDamage;
     }
 
     public int getMaxStacks() {

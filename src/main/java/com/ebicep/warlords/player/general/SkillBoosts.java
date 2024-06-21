@@ -1205,8 +1205,11 @@ public enum SkillBoosts {
             PoisonousHex.class,
             abstractAbility -> {
                 if (abstractAbility instanceof PoisonousHex poisonousHex) {
-                    poisonousHex.setDotMinDamage(poisonousHex.getDotMinDamage() * 1.35f);
-                    poisonousHex.setDotMaxDamage(poisonousHex.getDotMaxDamage() * 1.35f);
+                    poisonousHex.getDamageValues()
+                                .getHexDamage()
+                                .forEachValue(floatModifiable -> {
+                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                });
                     poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 20);
                 }
             }
