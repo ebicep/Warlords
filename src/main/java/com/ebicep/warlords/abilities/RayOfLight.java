@@ -175,7 +175,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(409, 551, 20, 150);
+        private final Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(389, 523, 20, 150);
         private final List<Value> values = List.of(rayHealing);
 
         public Value.RangedValueCritable getRayHealing() {
