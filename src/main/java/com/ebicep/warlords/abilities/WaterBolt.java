@@ -35,7 +35,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
     private final HealingValues healingValues = new HealingValues();
     private int maxFullDistance = 40;
     private float directHitMultiplier = 15;
-    private FloatModifiable splashRadius = new FloatModifiable(4);
+    private FloatModifiable splashRadius = new FloatModifiable(4.125f);
     private float minDamage = 231;
     private float maxDamage = 299;
 

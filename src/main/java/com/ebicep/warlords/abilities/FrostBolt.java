@@ -42,7 +42,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
     private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 30;
     private float directHitMultiplier = 15;
-    private FloatModifiable splash = new FloatModifiable(4);
+    private FloatModifiable splash = new FloatModifiable(4.125f);
     private int slowness = 25;
     public FrostBolt() {
         super("Frostbolt", 0, 70, 2, 300, false);
