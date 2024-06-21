@@ -41,14 +41,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
     public int playersHealed = 0;
 
-    private final int puddleMinDamage = 235;
-    private final int puddleMaxDamage = 342;
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable puddleRadius = new FloatModifiable(5);
     private int puddleTickDuration = 80;
-    private int puddleMinHealing = 158;
-    private int puddleMaxHealing = 204;
 
     public SoothingElixir() {
         super("Soothing Elixir", 7, 60);
@@ -237,22 +233,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SoothingElixirBranch(abilityTree, this);
-    }
-
-    public int getPuddleMinHealing() {
-        return puddleMinHealing;
-    }
-
-    public void setPuddleMinHealing(int puddleMinHealing) {
-        this.puddleMinHealing = puddleMinHealing;
-    }
-
-    public int getPuddleMaxHealing() {
-        return puddleMaxHealing;
-    }
-
-    public void setPuddleMaxHealing(int puddleMaxHealing) {
-        this.puddleMaxHealing = puddleMaxHealing;
     }
 
     @Override
