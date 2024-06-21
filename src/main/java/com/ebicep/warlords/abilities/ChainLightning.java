@@ -160,7 +160,6 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                     multiplier = reduction;
                 }
                 newDamageValue = currentDamageValue * multiplier;
-                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
         });

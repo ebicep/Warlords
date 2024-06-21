@@ -176,7 +176,6 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                     return currentDamageValue;
                 }
                 float newDamageValue = currentDamageValue * getDamageReduction();
-                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
 

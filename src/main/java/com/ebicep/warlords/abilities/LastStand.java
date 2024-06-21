@@ -166,34 +166,37 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     },
                     allyTickDuration
             ) {
+                float amountPrevented = 0;
+
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
+                    float newCurrentDamageValue = currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
+                    amountPrevented = currentDamageValue - newCurrentDamageValue;
+                    tempLastStand.addAmountPrevented(amountPrevented);
+                    return newCurrentDamageValue;
                 }
 
                 @Override
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    tempLastStand.addAmountPrevented(currentDamageValue);
-                    wp.addAbsorbed(currentDamageValue);
+                    tempLastStand.addAmountPrevented(amountPrevented);
                     wp.addInstance(InstanceBuilder
                             .healing()
                             .ability(LastStand.this)
                             .source(wp)
-                            .value(currentDamageValue)
+                            .value(amountPrevented)
                             .showAsCrit(isCrit)
                             .flags(InstanceFlags.LAST_STAND_FROM_SHIELD, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );
                 }
 
+
                 @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    tempLastStand.addAmountPrevented(currentDamageValue);
-                    wp.addAbsorbed(currentDamageValue);
                     wp.addInstance(InstanceBuilder
                             .healing()
                             .ability(LastStand.this)
                             .source(wp)
-                            .value(currentDamageValue)
+                            .value(amountPrevented)
                             .showAsCrit(isCrit)
                             .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );

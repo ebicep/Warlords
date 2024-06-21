@@ -147,9 +147,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float newDamageValue = currentDamageValue * .85f;
-                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
-                return newDamageValue;
+                return currentDamageValue * .85f;
             }
         });
     }

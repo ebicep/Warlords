@@ -273,7 +273,6 @@ public class InstanceManager {
             );
         }
         // Reduction before Intervene.
-
         if (!trueDamage) {
             debugMessage.appendTitle("Before Intervene", NamedTextColor.AQUA);
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -287,6 +286,9 @@ public class InstanceManager {
                 }
                 damageValue = newDamageValue;
                 if (previousDamageValue != damageValue) {
+                    if (previousDamageValue > damageValue) {
+                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                    }
                     debugMessage.append(InstanceDebugHoverable.LevelBuilder
                             .create(2)
                             .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
@@ -307,6 +309,9 @@ public class InstanceManager {
                 }
                 damageValue = newDamageValue;
                 if (previousDamageValue != damageValue) {
+                    if (previousDamageValue > damageValue) {
+                        abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                    }
                     debugMessage.append(InstanceDebugHoverable.LevelBuilder
                             .create(2)
                             .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
@@ -441,6 +446,9 @@ public class InstanceManager {
                     }
                     damageValue = newDamageValue;
                     if (previousDamageValue != damageValue) {
+                        if (previousDamageValue > damageValue) {
+                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                        }
                         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                                 .create(2)
                                 .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
@@ -461,6 +469,9 @@ public class InstanceManager {
                     }
                     damageValue = newDamageValue;
                     if (previousDamageValue != damageValue) {
+                        if (previousDamageValue > damageValue) {
+                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                        }
                         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                                 .create(2)
                                 .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
@@ -518,7 +529,7 @@ public class InstanceManager {
                             customFlags
                     ));
 
-                    warlordsEntity.addAbsorbed(-(shield.getShieldHealth()));
+                    cooldown.getFrom().addAbsorbed(-(shield.getShieldHealth()));
 
                     warlordsEntity.doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
@@ -545,7 +556,7 @@ public class InstanceManager {
                                 )));
                     }
 
-                    warlordsEntity.addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
+                    cooldown.getFrom().addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
                 }
 
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
@@ -657,6 +668,9 @@ public class InstanceManager {
                 for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
                     damageValue = abstractCooldown.modifyDamageAfterAllFromSelf(event, damageValue, isCrit);
                     if (previousDamageValue != damageValue) {
+                        if (previousDamageValue > damageValue) {
+                            abstractCooldown.getFrom().addAbsorbed(previousDamageValue - damageValue);
+                        }
                         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                                 .create(2)
                                 .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
