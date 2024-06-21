@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public enum SkillBoosts {
@@ -1288,17 +1289,17 @@ public enum SkillBoosts {
             }
     ),
     GUARDIAN_BEAM("Guardian Beam",
-            Component.text("Increase the health of the shield granted by Guardian Beam by 5% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the health of the shield granted by Guardian Beam by 17% multiplicatively and reduce the cooldown by 20%.", NamedTextColor.GRAY),
             Component.text("Increase the health of the shield granted by Guardian Beam by ", NamedTextColor.GREEN)
-                     .append(Component.text("5% ", NamedTextColor.RED))
-                     .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
+                     .append(Component.text("17% ", NamedTextColor.RED))
+                     .append(Component.text("multiplicatively and reduce the cooldown by ", NamedTextColor.GREEN))
                      .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             GuardianBeam.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GuardianBeam guardianBeam) {
-                    guardianBeam.setShieldPercentSelf(guardianBeam.getShieldPercentSelf() + 5);
-                    guardianBeam.setShieldPercentAlly(guardianBeam.getShieldPercentAlly() + 5);
+                    List<Integer> shieldPercents = guardianBeam.getShieldPercents();
+                    shieldPercents.replaceAll(integer -> (int) (integer * 1.17f));
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }

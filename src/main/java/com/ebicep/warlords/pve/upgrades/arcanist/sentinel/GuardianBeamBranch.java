@@ -48,8 +48,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 50000,
                 () -> {
                     ability.setRuneTimerIncrease(ability.getRuneTimerIncrease() + 3.5f);
-                    ability.setShieldPercentSelf(ability.getShieldPercentSelf() + 25);
-                    ability.setShieldPercentAlly(ability.getShieldPercentAlly() + 25);
+                    ability.getShieldPercents().replaceAll(integer -> (int) (integer * 1.25f));
                 }
         );
         masterUpgrade2 = new Upgrade(

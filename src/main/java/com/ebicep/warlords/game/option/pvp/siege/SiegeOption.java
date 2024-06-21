@@ -142,8 +142,7 @@ public class SiegeOption implements Option {
             if (ability instanceof FortifyingHex fortifyingHex) {
                 fortifyingHex.getDamageReduction().setBaseValue(3.33f);
             } else if (ability instanceof GuardianBeam guardianBeam) {
-                guardianBeam.setShieldPercentSelf(guardianBeam.getShieldPercentSelf() - 5);
-                guardianBeam.setShieldPercentAlly(guardianBeam.getShieldPercentAlly() - 5);
+                guardianBeam.getShieldPercents().replaceAll(integer -> (int) (integer * .9f));
             }
         }
     }
