@@ -30,7 +30,6 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
     private final HealingValues healingValues = new HealingValues();
-    private int healingIncrease = 100;
 
     public RayOfLight() {
         super("Ray of Light", 10, 10, 30, 30, true);
@@ -40,10 +39,15 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of holy light, healing ")
                                .append(Heals.formatHealing(healingValues.rayHealing))
-                               .append(Component.text(
-                                       " health to all allies hit. If the target is affected by the max stacks of Merciful Hex, remove all stacks and increase the healing of Ray of Light by "))
-                               .append(Component.text(healingIncrease + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" and removes their debuffs.\n\nHas a maximum range of "))
+                               .append(Component.text(" health to all allies hit and cleansing all "))
+                               .append(Component.text("de-buffs", NamedTextColor.YELLOW))
+                               .append(Component.text(". If the target is affected by Merciful Hex the healing given is increased by "))
+                               .append(Component.text("25%", NamedTextColor.GREEN))
+                               .append(Component.text("/"))
+                               .append(Component.text("50%", NamedTextColor.GREEN))
+                               .append(Component.text("/"))
+                               .append(Component.text("100%", NamedTextColor.GREEN))
+                               .append(Component.text(" relative to the number of stacks and all stacks are removed.\n\nHas a maximum range of "))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
@@ -75,23 +79,23 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
         WarlordsEntity wp = projectile.getShooter();
         if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float minHeal = healingValues.rayHealing.getMinValue();
-            float maxHeal = healingValues.rayHealing.getMaxValue();
+            hit.getCooldownManager().removeDebuffCooldowns();
+            hit.getSpeed().removeSlownessModifiers();
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(MercifulHex.class)
                     .stream()
                     .count();
             boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
-            boolean maxStacks = hexStacks >= 3;
-            if (maxStacks) {
-                if (!hasDivineBlessing) {
-                    hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
-                }
-                minHeal *= convertToMultiplicationDecimal(healingIncrease);
-                maxHeal *= convertToMultiplicationDecimal(healingIncrease);
-                hit.getCooldownManager().removeDebuffCooldowns();
-                hit.getSpeed().removeSlownessModifiers();
+            if (!hasDivineBlessing) {
+                hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
             }
+            boolean maxStacks = hexStacks >= 3;
+            float multiplier = switch (hexStacks) {
+                case 0 -> 1;
+                case 1 -> 1.25f;
+                case 2 -> 1.5f;
+                default -> 2f;
+            };
             if (pveMasterUpgrade) {
                 hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
@@ -116,8 +120,8 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
                     .healing()
                     .ability(this)
                     .source(wp)
-                    .min(minHeal)
-                    .max(maxHeal)
+                    .min(healingValues.rayHealing.getMinValue() * multiplier)
+                    .max(healingValues.rayHealing.getMaxValue() * multiplier)
                     .crit(healingValues.rayHealing)
             );
         }

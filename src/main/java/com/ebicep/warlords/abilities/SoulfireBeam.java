@@ -37,10 +37,13 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
     public void updateDescription(Player player) {
         description = Component.text("Unleash a concentrated beam of demonic power, dealing ")
                                .append(Damages.formatDamage(damageValues.beamDamage))
-                               .append(Component.text(" damage to all enemies hit. " +
-                                       " If the target is affected by the max stacks of Poisonous Hex, remove all stacks, increase the damage dealt of " + name + " by "))
+                               .append(Component.text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by "))
+                               .append(Component.text("25%", NamedTextColor.RED))
+                               .append(Component.text("/"))
+                               .append(Component.text("50%", NamedTextColor.RED))
+                               .append(Component.text("/"))
                                .append(Component.text("100%", NamedTextColor.RED))
-                               .append(Component.text(".\n\nHas a maximum range of"))
+                               .append(Component.text(" relative to the number of stacks and all stacks are removed.\n\nHas a maximum range of"))
                                .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
@@ -67,31 +70,29 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float minDamage = damageValues.beamDamage.getMinValue();
-            float maxDamage = damageValues.beamDamage.getMaxValue();
             int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
                     .filterCooldownClass(PoisonousHex.class)
                     .stream()
                     .count();
             boolean hasAstral = wp.getCooldownManager().hasCooldown(AstralPlague.class);
-            if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks()) {
-                if (!hasAstral) {
-                    hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
-                }
-                if (projectile.getHit().size() <= 4 && pveMasterUpgrade) {
-                    minDamage *= 7;
-                    maxDamage *= 7;
-                } else {
-                    minDamage *= 2;
-                    maxDamage *= 2;
-                }
+            if (!hasAstral) {
+                hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
+            }
+            float multiplier = switch (hexStacks) {
+                case 0 -> 1;
+                case 1 -> 1.25f;
+                case 2 -> 1.5f;
+                default -> 2f;
+            };
+            if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks() && projectile.getHit().size() <= 4 && pveMasterUpgrade) {
+                multiplier += 5;
             }
             hit.addInstance(InstanceBuilder
                     .damage()
                     .ability(this)
                     .source(wp)
-                    .min(minDamage)
-                    .max(maxDamage)
+                    .min(damageValues.beamDamage.getMinValue() * multiplier)
+                    .max(damageValues.beamDamage.getMaxValue() * multiplier)
                     .crit(damageValues.beamDamage)
             );
         }
