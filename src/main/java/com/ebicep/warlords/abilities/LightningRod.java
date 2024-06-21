@@ -39,7 +39,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private final int knockbackRadius = 5;
     private final HealingValues healingValues = new HealingValues();
     private int energyRestore = 160;
-    private int healthRestore = 30; // TODO
 
     public LightningRod() {
         this(31.32f, 0);
@@ -52,7 +51,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Call down an energizing bolt of lightning upon yourself, restoring ")
-                               .append(Component.text(healthRestore + "%", NamedTextColor.GREEN))
+                               .append(Heals.formatHealingPercent(healingValues.healthRestore))
                                .append(Component.text(" health and "))
                                .append(Component.text(energyRestore + " ", NamedTextColor.YELLOW))
                                .append(Component.text("energy and knock all nearby enemies in a "))
@@ -219,14 +218,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         return new LightningRodBranch(abilityTree, this);
     }
 
-    public int getHealthRestore() {
-        return healthRestore;
-    }
-
-    public void setHealthRestore(int healthRestore) {
-        this.healthRestore = healthRestore;
-    }
-
     public int getEnergyRestore() {
         return energyRestore;
     }
@@ -244,6 +235,10 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
         private final Value.SetValue healthRestore = new Value.SetValue(30);
         private final List<Value> values = List.of(healthRestore);
+
+        public Value.SetValue getHealthRestore() {
+            return healthRestore;
+        }
 
         @Override
         public List<Value> getValues() {

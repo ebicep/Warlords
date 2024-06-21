@@ -107,7 +107,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                         } else if (npcMob instanceof EventPoseidon) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_DROWNED_AMBIENT, 2, .5f);
                             warlordsNPC.getAbilitiesMatching(ZeusLightningRod.class).forEach(lightningRod -> {
-                                lightningRod.setHealthRestore(2);
+                                lightningRod.getHealValues().getHealthRestore().value().setBaseValue(2);
                                 lightningRod.setDamageBuff(lightningRod.getDamageBuff() + .1f);
                             });
                         }
@@ -153,7 +153,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
 
         public ZeusLightningRod() {
             super(15, 15);
-            this.setHealthRestore(0);
+            this.getHealValues().getHealthRestore().value().setBaseValue(0);
         }
 
         @Override
