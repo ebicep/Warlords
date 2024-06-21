@@ -46,7 +46,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     private double velocity = 1.1;
 
     public WaterBreath() {
-        super("Water Breath", 6.3f, 60);
+        super("Water Breath", 9.4f, 60);
     }
 
     @Override
@@ -285,7 +285,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(409, 551, 25, 175);
+        private final Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(641, 863, 25, 175);
         private final List<Value> values = List.of(breathHealing);
 
         public Value.RangedValueCritable getBreathHealing() {
