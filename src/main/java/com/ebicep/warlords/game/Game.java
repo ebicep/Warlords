@@ -416,6 +416,9 @@ public final class Game implements Runnable, AutoCloseable {
         this.state.onPlayerJoinGame(player, asSpectator);
         Player p = player.getPlayer();
         if (p != null) {
+            if (asSpectator) {
+                p.setFlying(true);
+            }
             p.getInventory().setHeldItemSlot(0);
             this.state.onPlayerReJoinGame(p);
             Warlords.getInstance().hideAndUnhidePeople(p);
