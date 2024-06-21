@@ -39,7 +39,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     }
 
     public SanctifiedBeacon(Location location, CircleEffect effect) {
-        super("Sanctified Beacon", 15, 40, location, 8, 20, effect);
+        super("Sanctified Beacon", 20, 40, location, 8, 15, effect);
     }
 
     @Override
