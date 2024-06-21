@@ -436,7 +436,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(297, 405, 20, 180);
+        private final Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(267, 365, 20, 180);
         private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(230, 310, 20, 180);
         private final Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
         private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
