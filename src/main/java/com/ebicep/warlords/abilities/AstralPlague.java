@@ -2,10 +2,12 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -39,6 +41,10 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
 
+    public int tripleStackBeams = 0;
+    public int shieldsPierced = 0;
+    public int intervenesPierced = 0;
+
     public AstralPlague() {
         super("Astral Plague", 50, 10);
     }
@@ -59,13 +65,14 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Triple Stack Beams", "" + tripleStackBeams));
+        info.add(new Pair<>("Shields Pierced", "" + shieldsPierced));
+        info.add(new Pair<>("Intervenes Pierced", "" + intervenesPierced));
         return info;
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
         Utils.playGlobalSound(wp.getLocation(), "arcanist.astralplague.activation", 2, 1.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.7f);
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
@@ -152,6 +159,37 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         }
                         if (pveMasterUpgrade && Objects.equals(event.getCause(), "Soulfire Beam")) {
                             event.setCritChance(100);
+                        }
+                        tripleStackBeams++;
+                    }
+
+                    @EventHandler
+                    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+                        if (event.getAttacker() != wp) {
+                            return;
+                        }
+                        if (!event.getAbility().equals("Soufire Beam")) {
+                            return;
+                        }
+                        if (!event.getInstanceFlags().contains(InstanceFlags.PIERCE)) {
+                            return;
+                        }
+                        WarlordsEntity target = event.getWarlordsEntity();
+                        if (new CooldownFilter<>(target, RegularCooldown.class)
+                                .filterCooldownClass(Intervene.class)
+                                .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
+                                .findAny()
+                                .isPresent()
+                        ) {
+                            intervenesPierced++;
+                        }
+                        if (new CooldownFilter<>(target, RegularCooldown.class)
+                                .filterCooldownClass(Shield.class)
+                                .filter(RegularCooldown::hasTicksLeft)
+                                .findAny()
+                                .isPresent()
+                        ) {
+                            shieldsPierced++;
                         }
                     }
 
