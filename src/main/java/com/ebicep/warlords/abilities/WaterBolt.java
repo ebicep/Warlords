@@ -48,7 +48,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                                .append(Component.text(" damage and restore"))
                                .append(Heals.formatHealing(healingValues.boltHealing))
                                .append(Component.text(" health to allies. A direct hit will cause "))
-                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.GOLD))
+                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" increased damage or healing for the target hit."))
                                .append(Component.text("\n\nHas an optimal range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
