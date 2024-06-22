@@ -34,7 +34,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     private final int maxAllies = 2;
     private int critMultiplierReducedBy = 25;
     private ArmorStand crystal;
-    private int hexIntervalTicks = 80;
+    private int hexIntervalTicks = 100;
     private float damageReductionPve = 30;
 
     public SanctifiedBeacon() {
