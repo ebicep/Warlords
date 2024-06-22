@@ -32,6 +32,8 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     protected int energyRestore = 80;
     protected int bonusDuration = 100;
 
+    public int timesBonusActivated = 0;
+
     public AbstractEnergySeer() {
         super("Energy Seer", 26, 0);
     }
@@ -59,6 +61,8 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Bonus Activated", "" + timesBonusActivated));
+
         return info;
     }
 
@@ -83,6 +87,7 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                         wp.addEnergy(wp, name, energyRestore);
                         wp.getCooldownManager().addCooldown(getBonusCooldown(wp));
                         onEnd(wp, cooldownObject);
+                        timesBonusActivated++;
                     }
                 },
                 tickDuration,
