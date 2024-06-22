@@ -101,6 +101,8 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
             boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
             if (!hasDivineBlessing) {
                 hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
+            } else {
+                wp.doOnStaticAbility(DivineBlessing.class, divineBlessing -> divineBlessing.hexesNotConsumed += hexStacks);
             }
             boolean maxStacks = hexStacks >= 3;
             float multiplier = switch (hexStacks) {

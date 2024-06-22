@@ -37,6 +37,11 @@ import java.util.*;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues> {
 
+    public int hexesProlonged = 0;
+    public float hexesNotConsumed = 0;
+    public float healingIncreased = 0;
+    public int deathsPrevented = 0;
+
     private final HealingValues healingValues = new HealingValues();
     private int hexTickDurationIncrease = 40;
     private int hexHealingBonus = 30;
@@ -69,6 +74,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Hexes Prolonged", "" + hexesProlonged));
+        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
+        info.add(new Pair<>("Healing Increased", "" + Math.round(healingIncreased)));
+        info.add(new Pair<>("Deaths Prevented", "" + deathsPrevented));
+
         return info;
     }
 
@@ -163,7 +173,9 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                         ) {
                                             @Override
                                             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                                return currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
+                                                float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
+                                                healingIncreased += newValue - currentHealValue;
+                                                return newValue;
                                             }
 
                                             @Override
@@ -178,6 +190,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                             .value(healAmount)
                                                     );
                                                     teammate.playSound(teammate.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
+                                                    deathsPrevented++;
                                                 }
                                                 return currentDamageValue;
                                             }
@@ -190,7 +203,9 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             @Override
             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 if (hasMaxStacks()) {
-                    return currentHealValue * (1 + hexHealingBonus / 100f);
+                    float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
+                    healingIncreased += newValue - currentHealValue;
+                    return newValue;
                 } else {
                     return currentHealValue;
                 }
@@ -216,6 +231,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 .value(healAmount)
                         );
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
+                        deathsPrevented++;
                     }
                 }
                 return currentDamageValue;
@@ -232,6 +248,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 cooldown.getCooldownObject() instanceof MercifulHex
                         ) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                            hexesProlonged++;
                         }
                     }
                 };
@@ -243,7 +260,10 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                         new CooldownFilter<>(enemy, RegularCooldown.class)
                                 .filterCooldownClass(MercifulHex.class)
                                 .filterCooldownFrom(wp)
-                                .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease));
+                                .forEach(cd -> {
+                                    cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
+                                    hexesProlonged++;
+                                });
                     });
         new GameRunnable(game) {
 
@@ -253,7 +273,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             }
         }.runTaskLater(postHealthTickDelay);
 
-
         if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, 10, 10, 10)
                         .aliveTeammatesOf(wp)
@@ -262,6 +281,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                     .filterCooldownClass(MercifulHex.class)
                                     .forEach(regularCooldown -> {
                                         regularCooldown.setTicksLeft(regularCooldown.getStartingTicks() + hexTickDurationIncrease);
+                                        hexesProlonged++;
                                     });
                         });
         }
