@@ -393,7 +393,6 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("floatmodifiabletype", command -> Arrays.stream(PrintFloatModifiableCommand.Type.VALUES)
                                                                                            .map(Enum::name)
                                                                                            .toList());
-
     }
 
     public static void registerConditions() {
@@ -585,6 +584,7 @@ public class CommandManager {
     public static void registerCommands() {
         manager.registerCommand(new NPCCommand());
 
+        manager.registerCommand(new CompGameCommand());
         manager.registerCommand(new GameDebugCommand());
         manager.registerCommand(new GameInfoCommand());
         manager.registerCommand(new GameKillCommand());
