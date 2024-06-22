@@ -166,15 +166,14 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (pveMasterUpgrade && Objects.equals(event.getCause(), "Soulfire Beam")) {
                             event.setCritChance(100);
                         }
-                        tripleStackBeams++;
+                        if (event.getCause().equals("Soulfire Beam")) {
+                            tripleStackBeams++;
+                        }
                     }
 
                     @EventHandler
                     public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                         if (event.getAttacker() != wp) {
-                            return;
-                        }
-                        if (!event.getAbility().equals("Soufire Beam")) {
                             return;
                         }
                         if (!event.getInstanceFlags().contains(InstanceFlags.PIERCE)) {
