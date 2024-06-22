@@ -38,6 +38,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int shieldMaxHealth = 1200;
     private int reactivateTickDuration = 100;
 
+    public int timesTeammatesShielded = 0;
+    public int timesCarrierShielded = 0;
+    public int timesCooldownsIncreased = 0;
+
     public MysticalBarrier() {
         super("Mystical Barrier", 28, 20);
     }
@@ -67,6 +71,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Teammates Shielded", "" + timesTeammatesShielded));
+        info.add(new Pair<>("Times Carrier Shielded", "" + timesCarrierShielded));
+        info.add(new Pair<>("Times Cooldowns Increased", "" + timesCooldownsIncreased));
         return info;
     }
 
@@ -103,6 +110,12 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     }
 
     private void giveBarrier(@Nonnull WarlordsEntity wp, WarlordsEntity target) {
+        if (wp != target) {
+            timesTeammatesShielded++;
+            if (target.hasFlag()) {
+                timesCarrierShielded++;
+            }
+        }
         AtomicInteger damageInstances = new AtomicInteger();
 
         boolean isSelf = wp.equals(target);
@@ -170,6 +183,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 event.getSource().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 damageInstances.getAndIncrement();
+                timesCooldownsIncreased++;
             }
         });
     }
