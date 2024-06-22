@@ -40,7 +40,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     public int hexesProlonged = 0;
     public int hexesNotConsumed = 0;
     public float healingIncreased = 0;
-    public int deathsPrevented = 0;
+    public int lethalDamgeHealed = 0;
 
     private final HealingValues healingValues = new HealingValues();
     private int hexTickDurationIncrease = 40;
@@ -77,7 +77,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         info.add(new Pair<>("Hexes Prolonged", "" + hexesProlonged));
         info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
         info.add(new Pair<>("Healing Increased", "" + Math.round(healingIncreased)));
-        info.add(new Pair<>("Deaths Prevented", "" + deathsPrevented));
+        info.add(new Pair<>("Lethal Damage Healed", "" + lethalDamgeHealed));
 
         return info;
     }
@@ -190,7 +190,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                             .value(healAmount)
                                                     );
                                                     teammate.playSound(teammate.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
-                                                    deathsPrevented++;
+                                                    lethalDamgeHealed++;
                                                 }
                                                 return currentDamageValue;
                                             }
@@ -231,7 +231,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 .value(healAmount)
                         );
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
-                        deathsPrevented++;
+                        lethalDamgeHealed++;
                     }
                 }
                 return currentDamageValue;
