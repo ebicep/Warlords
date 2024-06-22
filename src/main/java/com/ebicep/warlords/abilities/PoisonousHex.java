@@ -52,7 +52,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     private int maxEnemiesHit = 2;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 0, 70, 2.5, 40, false);
+        super("Poisonous Hex", 0, 60, 2.5, 40, false);
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 26;
         this.forwardTeleportAmount = 1.6f;
@@ -343,8 +343,8 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(307, 415, 20, 175);
-        private final Value.RangedValue hexDOTDamage = new Value.RangedValue(30, 40);
+        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(263, 356, 20, 175);
+        private final Value.RangedValue hexDOTDamage = new Value.RangedValue(25, 35);
         private final List<Value> values = List.of(hexDamage, hexDOTDamage);
 
         public Value.RangedValueCritable getHexDamage() {
