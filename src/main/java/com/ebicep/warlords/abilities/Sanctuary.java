@@ -64,7 +64,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Total Damage Reflected", "" + totalDamageReflected));
+        info.add(new Pair<>("Total Damage Reflected", "" + Math.round(totalDamageReflected)));
         info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
 
         return info;
