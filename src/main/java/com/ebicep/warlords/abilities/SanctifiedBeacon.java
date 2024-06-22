@@ -28,6 +28,9 @@ import java.util.List;
 
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
 
+    public int hexesGiven = 0;
+    public int critsReduced = 0;
+
     private final int maxAllies = 2;
     private int critMultiplierReducedBy = 25;
     private ArmorStand crystal;
@@ -133,9 +136,23 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                             },
                             6 // a little longer to make sure there's no gaps in the effect
                     ) {
+
                         @Override
                         public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
                             return currentCritMultiplier * convertToDivisionDecimal(critMultiplierReducedBy);
+                        }
+
+                        @Override
+                        public void onPostCritCalculationFromAttacker(
+                                WarlordsDamageHealingEvent event,
+                                float currentDamageValue,
+                                boolean isCrit,
+                                float critChance,
+                                float critMultiplier
+                        ) {
+                            if (isCrit) {
+                                critsReduced++;
+                            }
                         }
 
                         @Override
@@ -175,6 +192,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                         2
                 );
                 MercifulHex.giveMercifulHex(wp, ally);
+                hexesGiven++;
             }
 
             Utils.playGlobalSound(crystal.getLocation(), Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 1, 2);
@@ -207,6 +225,8 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Hexes Given", "" + hexesGiven));
+        info.add(new Pair<>("Crits Reduced", "" + critsReduced));
         return info;
     }
 

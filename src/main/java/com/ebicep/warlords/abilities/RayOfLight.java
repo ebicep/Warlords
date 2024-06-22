@@ -31,7 +31,9 @@ import java.util.Map;
 public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.HealingValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
+
     public Map<Integer, Integer> stacksRemoved = new HashMap<>();
+
     private final HealingValues healingValues = new HealingValues();
 
     public RayOfLight() {

@@ -28,6 +28,7 @@ import java.util.Map;
 public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.CRIMSON_FENCE_GATE);
+
     private final DamageValues damageValues = new DamageValues();
 
     public Map<Integer, Integer> stacksRemoved = new HashMap<>();

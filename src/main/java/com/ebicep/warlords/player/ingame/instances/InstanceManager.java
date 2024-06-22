@@ -180,6 +180,9 @@ public class InstanceManager {
             isCrit = true;
             damageValue *= critMultiplier / 100f;
         }
+        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+            abstractCooldown.onPostCritCalculationFromAttacker(event, damageValue, isCrit, critChance, critMultiplier);
+        }
         debugMessage.appendTitle("Calculated Damage", NamedTextColor.AQUA);
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
