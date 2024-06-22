@@ -39,10 +39,11 @@ import java.util.stream.Collectors;
 
 public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
+    public int hexesProlonged = 0;
+    public float hexesNotConsumed = 0;
     public int tripleStackBeams = 0;
     public int shieldsPierced = 0;
     public int intervenesPierced = 0;
-    public float hexesNotConsumed = 0;
 
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
@@ -67,10 +68,11 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Hexes Prolonged", "" + hexesProlonged));
+        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
         info.add(new Pair<>("Triple Stack Beams", "" + tripleStackBeams));
         info.add(new Pair<>("Shields Pierced", "" + shieldsPierced));
         info.add(new Pair<>("Intervenes Pierced", "" + intervenesPierced));
-        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
         return info;
     }
 
@@ -133,6 +135,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                                 cooldown.getCooldownObject() instanceof PoisonousHex
                         ) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                            hexesProlonged++;
                         }
                     }
 
@@ -210,7 +213,10 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         new CooldownFilter<>(enemy, RegularCooldown.class)
                                 .filterCooldownClass(PoisonousHex.class)
                                 .filterCooldownFrom(wp)
-                                .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease));
+                                .forEach(cd -> {
+                                    cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
+                                    hexesProlonged++;
+                                });
                     });
         return true;
     }
