@@ -29,9 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon, Duration {
 
-    private float runeTimerIncrease = 0.25f;
+    private float runeTimerIncrease = 0.5f;
     private int tickDuration = 100;
-    private float meleeDamageReduction = 50;
+    private float meleeDamageReduction = 80;
     private int radius = 12;
     private int shieldBase = 400;
     private int shieldIncrease = 80;

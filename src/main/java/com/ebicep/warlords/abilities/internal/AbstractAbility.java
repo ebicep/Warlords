@@ -71,6 +71,12 @@ public abstract class AbstractAbility implements AbilityIcon {
         return NumberFormat.formatOptionalHundredths(input);
     }
 
+    /**
+     * @return returns the input divided by 100
+     */
+    public static float convertToPercent(float input) {
+        return input / 100f;
+    }
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected int timesUsed = 0;
@@ -86,15 +92,15 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected boolean pveMasterUpgrade2 = false;
     private boolean updateItem = true;
 
+    public AbstractAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
+        this(name, cooldown, energyCost, startNoCooldown ? 0 : cooldown);
+    }
+
     public AbstractAbility(String name, float cooldown, float energyCost, float startCooldown) {
         this.name = name;
         this.cooldown = new FloatModifiable(cooldown);
         this.currentCooldown = startCooldown;
         this.energyCost = new FloatModifiable(energyCost);
-    }
-
-    public AbstractAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
-        this(name, cooldown, energyCost, startNoCooldown ? 0 : cooldown);
     }
 
     public AbstractAbility(String name, float cooldown, float energyCost) {
@@ -131,6 +137,10 @@ public abstract class AbstractAbility implements AbilityIcon {
         Value.applyDamageHealing(this, value -> value.forEachAllValues(floatModifiable -> floatModifiable.addRefreshListener("UpdateAbilityItems", this::queueUpdateItem)));
     }
 
+    public void queueUpdateItem() {
+        this.updateItem = true;
+    }
+
     public void addTimesUsed() {
         this.timesUsed++;
     }
@@ -144,14 +154,10 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void addCurrentCooldown(float cooldown) {
-        if (currentCooldown != 0) {
-            currentCooldown += cooldown;
-            queueUpdateItem();
-        }
-    }
-
-    public void queueUpdateItem() {
-        this.updateItem = true;
+//        if (currentCooldown != 0) {
+        currentCooldown += cooldown;
+        queueUpdateItem();
+//        }
     }
 
     /**
@@ -193,13 +199,6 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public FloatModifiable getEnergyCost() {
         return energyCost;
-    }
-
-    /**
-     * @return returns the input divided by 100
-     */
-    public static float convertToPercent(float input) {
-        return input / 100f;
     }
 
     /**
