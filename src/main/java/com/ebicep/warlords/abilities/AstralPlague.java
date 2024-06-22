@@ -35,15 +35,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, Duration {
-
-    private int tickDuration = 240;
-    private int hexTickDurationIncrease = 40;
 
     public int tripleStackBeams = 0;
     public int shieldsPierced = 0;
     public int intervenesPierced = 0;
+    private int tickDuration = 240;
+    private int hexTickDurationIncrease = 40;
 
     public AstralPlague() {
         super("Astral Plague", 50, 10);
@@ -175,7 +175,12 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         WarlordsEntity target = event.getWarlordsEntity();
-                        if (new CooldownFilter<>(target, RegularCooldown.class)
+                        List<AbstractCooldown<?>> cooldowns = event
+                                .getPlayerCooldowns()
+                                .stream()
+                                .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                .collect(Collectors.toList());
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
                                 .filterCooldownClass(Intervene.class)
                                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
                                 .findAny()
@@ -183,7 +188,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         ) {
                             intervenesPierced++;
                         }
-                        if (new CooldownFilter<>(target, RegularCooldown.class)
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
                                 .filterCooldownClass(Shield.class)
                                 .filter(RegularCooldown::hasTicksLeft)
                                 .findAny()
