@@ -7,9 +7,11 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
 import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatChannels;
+import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -17,6 +19,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
@@ -36,11 +39,52 @@ public class CompGameCommand extends BaseCommand {
                     .setMap(selectedGameMap)
                     .setGameMode(GameMode.CAPTURE_THE_FLAG)
                     .setRequestedGameAddons(GameAddon.PRIVATE_GAME, GameAddon.FREEZE_GAME)
-                    .setOnResult((queueResult, game) -> {
-                        if (game != null) {
-                            nextMap();
+                    .setOnResult((result, game) -> {
+                        if (game == null) {
+                            sendDebugMessage(player, Component.text("Engine failed to find a game server suitable for your request:", NamedTextColor.RED));
+                            sendDebugMessage(player, Component.text(result.toString(), NamedTextColor.GRAY));
+                            return;
                         }
-                        sendDebugMessage(player, Component.text(queueResult.toString(), NamedTextColor.GRAY));
+                        sendDebugMessage(player,
+                                Component.text("Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") + " a game with the following parameters:",
+                                        NamedTextColor.GREEN
+                                )
+                        );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Gamemode: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(StringUtils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED)));
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Map: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(StringUtils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED)));
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Game Addons: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getAddons()
+                                                                                     .stream()
+                                                                                     .map(e -> StringUtils.toTitleHumanCase(e.name()))
+                                                                                     .collect(Collectors.joining(", ")), NamedTextColor.GOLD))
+                        );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Min players: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getMinPlayers(), NamedTextColor.RED))
+                        );
+
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Max players: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getMaxPlayers(), NamedTextColor.RED))
+                        );
+
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Open for public: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.acceptsPeople(), NamedTextColor.RED))
+                        );
+
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Game ID: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getGameId().toString(), NamedTextColor.RED))
+                        );
+
+                        nextMap();
+
                     });
         });
     }
