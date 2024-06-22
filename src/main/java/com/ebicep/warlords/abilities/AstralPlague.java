@@ -42,6 +42,8 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     public int tripleStackBeams = 0;
     public int shieldsPierced = 0;
     public int intervenesPierced = 0;
+    public float hexesNotConsumed = 0;
+
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
 
@@ -68,6 +70,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         info.add(new Pair<>("Triple Stack Beams", "" + tripleStackBeams));
         info.add(new Pair<>("Shields Pierced", "" + shieldsPierced));
         info.add(new Pair<>("Intervenes Pierced", "" + intervenesPierced));
+        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
         return info;
     }
 
