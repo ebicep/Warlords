@@ -110,7 +110,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
 
             markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
                     .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
-                    .append(Component.text("Protector's Mark", NamedTextColor.GREEN))
+                    .append(Component.text("Protector's Mark", NamedTextColor.YELLOW))
                     .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
             );
 
