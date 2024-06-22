@@ -62,7 +62,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     }
 
     public FortifyingHex() {
-        super("Fortifying Hex", 0, 70, 2.5, 40, true);
+        super("Fortifying Hex", 0, 60, 2.5, 40, true);
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
@@ -403,7 +403,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(287, 387, 20, 175);
+        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(246, 332, 20, 175);
         private final List<Value> values = List.of(hexDamage);
 
         public Value.RangedValueCritable getHexDamage() {
