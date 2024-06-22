@@ -101,7 +101,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     if (!pveMasterUpgrade2) {
                         continue;
                     }
-                    nearBy.getCooldownManager().removeCooldownByObject(this);
+                    nearBy.getCooldownManager().removeCooldownByObject(beacon);
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Shadow Garden",
                             null,
@@ -124,7 +124,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                         }
                     });
                 } else {
-                    nearBy.getCooldownManager().removeCooldownByObject(this);
+                    nearBy.getCooldownManager().removeCooldownByObject(beacon);
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
                             null,
