@@ -102,7 +102,7 @@ public abstract class MobHologram {
                         display.setBillboard(Display.Billboard.CENTER);
                         display.text(customHologramLine.getText());
                         display.setCustomNameVisible(true);
-                        display.setSeeThrough(true);
+                        display.setSeeThrough(false);
                         display.setTeleportDuration(3); // SMOOTH TELEPORTATION
                         display.setViewRange(viewRange);
                     });

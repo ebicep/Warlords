@@ -99,7 +99,7 @@ public abstract class TowerDefenseMob extends AbstractMob {
                 meleeCritMutiplier,
                 this,
                 playerClass,
-                new MobHologram.TextDisplayHologram(50) {
+                new MobHologram.TextDisplayHologram(.2f) {
                     @Nullable
                     @Override
                     public Entity getEntity() {
