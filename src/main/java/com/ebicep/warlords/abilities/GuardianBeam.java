@@ -89,7 +89,6 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
             if (hit.isEnemy(wp)) {
                 hit.getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 hit.addInstance(InstanceBuilder
@@ -102,16 +101,17 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                     hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
                 }
             } else if (projectile.getHit().stream().filter(warlordsEntity -> hit.isTeammate(wp)).count() == 1) {
-                giveShield(wp, hit, hasSanctuary);
+                giveShield(wp, hit);
                 hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
             }
             if (projectile.getHit().size() == 1) {
-                giveShield(wp, wp, hasSanctuary);
+                giveShield(wp, wp);
             }
         }
     }
 
-    private void giveShield(WarlordsEntity from, WarlordsEntity to, boolean hasSanctuary) {
+    private void giveShield(WarlordsEntity from, WarlordsEntity to) {
+        boolean hasSanctuary = from.getCooldownManager().hasCooldown(Sanctuary.class);
         int selfHexStacks = (int) new CooldownFilter<>(to, RegularCooldown.class)
                 .filterCooldownClass(FortifyingHex.class)
                 .stream()
@@ -121,6 +121,8 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         }
         if (!hasSanctuary) {
             to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
+        } else {
+            from.doOnStaticAbility(Sanctuary.class, sanctuary -> sanctuary.hexesNotConsumed += selfHexStacks);
         }
         if (from == to) {
             from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN

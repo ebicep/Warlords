@@ -36,6 +36,9 @@ import java.util.*;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
+    public float totalDamageReflected = 0;
+    public float hexesNotConsumed = 0;
+
     private int hexTickDurationIncrease = 40;
     private int additionalDamageReduction = 10;
     private int tickDuration = 240;
@@ -60,6 +63,9 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Total Damage Reflected", "" + totalDamageReflected));
+        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
+
         return info;
     }
 
@@ -129,10 +135,11 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                     return currentDamageValue;
                                 }
                                 FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
-                                float damageToReflect = (float) (currentDamageValue * (additionalDamageReduction / 100f + (1 - Math.pow(convertToDivisionDecimal(fromHex.getDamageReduction()
-                                                                                                                                                                        .getCalculatedValue()),
-                                        3
-                                ))));
+                                float damageToReflect = (float) (currentDamageValue *
+                                        (additionalDamageReduction / 100f +
+                                                (1 - Math.pow(convertToDivisionDecimal(fromHex.getDamageReduction().getCalculatedValue()), 3
+                                                )))
+                                );
                                 Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1, 1.9f);
                                 event.getSource().addInstance(InstanceBuilder
                                         .damage()
@@ -142,6 +149,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
                                         .flag(InstanceFlags.TRUE_DAMAGE, pveMasterUpgrade)
                                 );
+                                totalDamageReflected += damageToReflect;
                                 return currentDamageValue * convertToDivisionDecimal(additionalDamageReduction);
                             }
 
