@@ -40,6 +40,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     public int timesTeammatesShielded = 0;
     public int timesCarrierShielded = 0;
+    public int meleesReduced = 0;
     public int timesCooldownsIncreased = 0;
 
     public MysticalBarrier() {
@@ -71,9 +72,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Melees Reduced", "" + meleesReduced));
+        info.add(new Pair<>("Times Cooldowns Increased", "" + timesCooldownsIncreased));
         info.add(new Pair<>("Times Teammates Shielded", "" + timesTeammatesShielded));
         info.add(new Pair<>("Times Carrier Shielded", "" + timesCarrierShielded));
-        info.add(new Pair<>("Times Cooldowns Increased", "" + timesCooldownsIncreased));
         return info;
     }
 
@@ -176,7 +178,11 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return event.getCause().isEmpty() ? currentDamageValue * convertToDivisionDecimal(meleeDamageReduction) : currentDamageValue;
+                if (event.getCause().isEmpty()) {
+                    meleesReduced++;
+                    return currentDamageValue * convertToDivisionDecimal(meleeDamageReduction);
+                }
+                return currentDamageValue;
             }
 
             @Override
@@ -271,19 +277,4 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         this.shieldIncrease = shieldIncrease;
     }
 
-    public int getReactivateTickDuration() {
-        return reactivateTickDuration;
-    }
-
-    public void setReactivateTickDuration(int reactivateTickDuration) {
-        this.reactivateTickDuration = reactivateTickDuration;
-    }
-
-    public float getMeleeDamageReduction() {
-        return meleeDamageReduction;
-    }
-
-    public void setMeleeDamageReduction(float meleeDamageReduction) {
-        this.meleeDamageReduction = meleeDamageReduction;
-    }
 }
