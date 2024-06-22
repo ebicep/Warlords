@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     public int hexesProlonged = 0;
-    public float hexesNotConsumed = 0;
+    public int hexesNotConsumed = 0;
     public int tripleStackBeams = 0;
     public int shieldsPierced = 0;
     public int intervenesPierced = 0;

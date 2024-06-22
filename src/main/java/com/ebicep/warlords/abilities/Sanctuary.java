@@ -37,7 +37,7 @@ import java.util.*;
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     public int hexesProlonged = 0;
-    public float hexesNotConsumed = 0;
+    public int hexesNotConsumed = 0;
     public float totalDamageReflected = 0;
 
     private int hexTickDurationIncrease = 40;

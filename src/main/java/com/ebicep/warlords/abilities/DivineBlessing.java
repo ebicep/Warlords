@@ -38,7 +38,7 @@ import java.util.*;
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues> {
 
     public int hexesProlonged = 0;
-    public float hexesNotConsumed = 0;
+    public int hexesNotConsumed = 0;
     public float healingIncreased = 0;
     public int deathsPrevented = 0;
 
