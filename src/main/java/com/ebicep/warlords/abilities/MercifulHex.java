@@ -50,7 +50,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private int tickDuration = 60;
 
     public MercifulHex() {
-        super("Merciful Hex", 0, 70, 2.5, 40, true);
+        super("Merciful Hex", 0, 60, 2.5, 40, true);
         //TODO maybe inflate y separately
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .75f);
     }
@@ -370,7 +370,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(217, 292, 20, 180);
+        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(186, 250, 20, 180);
         private final List<Value> values = List.of(hexDamage);
 
         public Value.RangedValueCritable getHexDamage() {
@@ -386,8 +386,8 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(267, 365, 20, 180);
-        private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(230, 310, 20, 180);
+        private final Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(229, 313, 20, 180);
+        private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(197, 266, 20, 180);
         private final Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
         private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
 
