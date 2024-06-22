@@ -36,8 +36,9 @@ import java.util.*;
 
 public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
-    public float totalDamageReflected = 0;
+    public int hexesProlonged = 0;
     public float hexesNotConsumed = 0;
+    public float totalDamageReflected = 0;
 
     private int hexTickDurationIncrease = 40;
     private int additionalDamageReduction = 10;
@@ -94,7 +95,10 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                         new CooldownFilter<>(teammate, RegularCooldown.class)
                                 .filterCooldownClass(FortifyingHex.class)
                                 .filterCooldownFrom(wp)
-                                .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease));
+                                .forEach(cd -> {
+                                    cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
+                                    hexesProlonged++;
+                                });
                         boolean isSelf = wp == teammate;
                         teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 name,
@@ -168,6 +172,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         Object cdObject = cooldown.getCooldownObject();
                                         if (cdObject instanceof FortifyingHex) {
                                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                                            hexesProlonged++;
                                         }
                                         if (pveMasterUpgrade2 &&
                                                 !event.getWarlordsEntity().equals(wp) &&
