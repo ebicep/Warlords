@@ -328,7 +328,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable freezingBreathDamage = new Value.RangedValueCritable(630, 873, 20, 175);
+        private final Value.RangedValueCritable freezingBreathDamage = new Value.RangedValueCritable(554, 768, 20, 175);
         private final List<Value> values = List.of(freezingBreathDamage);
 
         public Value.RangedValueCritable getFreezingBreathDamage() {
