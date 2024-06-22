@@ -42,6 +42,10 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private int speedIncrease = 40;
     private int speedIncreaseDuration = 100;
 
+    public int timesReactivated = 0;
+    public int totalHexesInflicted = 0;
+    public float totalShieldGained = 0;
+
     public ContagiousFacade() {
         super("Contagious Facade", 30, 20);
     }
@@ -73,6 +77,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Reactivated", "" + timesReactivated));
+        info.add(new Pair<>("Total Hexes Inflicted", "" + totalHexesInflicted));
+        info.add(new Pair<>("Total Shield Gained", "" + Math.round(totalShieldGained)));
         return info;
     }
 
@@ -98,6 +105,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
+                    totalShieldGained += shieldHealth;
                     Shield shield = new Shield(name, shieldHealth);
                     wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name + " Shield",
@@ -236,7 +244,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 .append(Component.text(name, NamedTextColor.YELLOW))
                                 .append(Component.text(" has infected you!", NamedTextColor.GRAY))
                         );
+                        totalHexesInflicted++;
                     }
+                    timesReactivated++;
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)
