@@ -1396,7 +1396,7 @@ public enum SkillBoosts {
     SANCTIFIED_BEACON("Sanctified Beacon",
             Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 10%.", NamedTextColor.GRAY),
             Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by ", NamedTextColor.GREEN)
-                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             SanctifiedBeacon.class,
             abstractAbility -> {
