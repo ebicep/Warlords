@@ -880,7 +880,7 @@ public class InstanceManager {
         );
         debugMessage.append(InstanceDebugHoverable.LevelBuilder
                 .create(1)
-                .prefix(ComponentBuilder.create("Crit", NamedTextColor.GREEN))
+                .prefix(ComponentBuilder.create("Crit: ", NamedTextColor.GREEN))
                 .value(ComponentBuilder.create("" + isCrit, NamedTextColor.GOLD))
         );
 

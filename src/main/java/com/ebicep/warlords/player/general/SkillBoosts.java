@@ -1234,17 +1234,14 @@ public enum SkillBoosts {
             }
     ),
     ENERGY_SEER_CONJURER("Energy Seer",
-            Component.text("Increase the energy restored by Energy Seer by 40 and increase the damage bonus by 10%.", NamedTextColor.GRAY),
-            Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
-                     .append(Component.text("40 ", NamedTextColor.RED))
-                     .append(Component.text("and increase the damage bonus by ", NamedTextColor.GREEN))
-                     .append(Component.text("10%", NamedTextColor.RED))
+            Component.text("Reduce the cooldown of Energy Seer by 40%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Energy Seer by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            EnergySeerConjurer.class,
+            EnergySeer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeerConjurer energySeerConjurer) {
-                    energySeerConjurer.setEnergyRestore(energySeerConjurer.getEnergyRestore() + 40);
-                    energySeerConjurer.setDamageIncrease(energySeerConjurer.getDamageIncrease() + 10);
+                if (abstractAbility instanceof EnergySeer) {
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -1308,17 +1305,14 @@ public enum SkillBoosts {
             }
     ),
     ENERGY_SEER_SENTINEL("Energy Seer",
-            Component.text("Increase the energy restored by Energy Seer by 40 and increase the damage reduction by 2%.\n", NamedTextColor.GRAY),
-            Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
-                     .append(Component.text("40 ", NamedTextColor.RED))
-                     .append(Component.text("and increase the damage reduction by ", NamedTextColor.GREEN))
-                     .append(Component.text("2%", NamedTextColor.RED))
+            Component.text("Reduce the cooldown of Energy Seer by 40%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Energy Seer by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            EnergySeerSentinel.class,
+            EnergySeer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeerSentinel energySeerSentinel) {
-                    energySeerSentinel.setEnergyRestore(energySeerSentinel.getEnergyRestore() + 40);
-                    energySeerSentinel.setDamageResistance(energySeerSentinel.getDamageResistance() + 2);
+                if (abstractAbility instanceof EnergySeer) {
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -1388,17 +1382,14 @@ public enum SkillBoosts {
             }
     ),
     ENERGY_SEER_LUMINARY("Energy Seer",
-            Component.text("Increase the energy restored by Energy Seer by 40 and increase the healing modifier by 10%.\n", NamedTextColor.GRAY),
-            Component.text("Increase the energy restored by Energy Seer by ", NamedTextColor.GREEN)
-                     .append(Component.text("40 ", NamedTextColor.RED))
-                     .append(Component.text("and increase the healing modifier by ", NamedTextColor.GREEN))
-                     .append(Component.text("10%", NamedTextColor.RED))
+            Component.text("Reduce the cooldown of Energy Seer by 40%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Energy Seer by ", NamedTextColor.GREEN)
+                     .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            EnergySeerLuminary.class,
+            EnergySeer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeerLuminary energySeerLuminary) {
-                    energySeerLuminary.setEnergyRestore(energySeerLuminary.getEnergyRestore() + 40);
-                    energySeerLuminary.setHealingIncrease(energySeerLuminary.getHealingIncrease() + 10);
+                if (abstractAbility instanceof EnergySeer) {
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
