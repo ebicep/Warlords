@@ -351,7 +351,7 @@ public enum SkillBoosts {
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            Component.text("Increase the knockback of Seismic Wave by 35% and reduce the cooldown by 25%.", NamedTextColor.GRAY),
+            Component.text("Increase the knockback of Seismic Wave by 35% and reduce the cooldown by 15%.", NamedTextColor.GRAY),
             Component.text("Increase the knockback of Seismic Wave by ", NamedTextColor.GREEN)
                      .append(Component.text("35% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
@@ -361,13 +361,13 @@ public enum SkillBoosts {
             SeismicWaveDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractSeismicWave seismicWave) {
-                    seismicWave.setVelocity(1.8f);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
+                    seismicWave.setVelocity(1.5f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
                 }
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            Component.text("Increase the knockback of Ground Slam by 10% and reduce the cooldown by 20%.", NamedTextColor.GRAY),
+            Component.text("Increase the knockback of Ground Slam by 10% and reduce the cooldown by 10%.", NamedTextColor.GRAY),
             Component.text("Increase the knockback of Ground Slam by ", NamedTextColor.GREEN)
                      .append(Component.text("10% ", NamedTextColor.RED))
                      .append(Component.text("and reduce the cooldown by ", NamedTextColor.GREEN))
@@ -377,7 +377,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
                 }
             }
     ),
