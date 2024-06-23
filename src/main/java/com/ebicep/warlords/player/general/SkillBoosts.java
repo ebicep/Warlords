@@ -1317,17 +1317,17 @@ public enum SkillBoosts {
             }
     ),
     MYSTICAL_BARRIER("Mystical Barrier",
-            Component.text("Increase the rune timer increase inflicted by Mystical Barrier by 0.25 seconds and increase the maximum shield health by 400.", NamedTextColor.GRAY),
+            Component.text("Increase the rune timer increase inflicted by Mystical Barrier by 0.5 seconds and increase the maximum shield health by 800.", NamedTextColor.GRAY),
             Component.text("Increase the rune timer increase inflicted by Mystical Barrier by ", NamedTextColor.GREEN)
-                     .append(Component.text("0.25 ", NamedTextColor.RED))
+                     .append(Component.text("0.5 ", NamedTextColor.RED))
                      .append(Component.text("seconds and increase the maximum shield health by", NamedTextColor.GREEN))
-                     .append(Component.text("400", NamedTextColor.RED))
+                     .append(Component.text("800", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             MysticalBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof MysticalBarrier mysticalBarrier) {
-                    mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.25f);
-                    mysticalBarrier.setShieldMaxHealth(mysticalBarrier.getShieldMaxHealth() + 400);
+                    mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.5f);
+                    mysticalBarrier.setShieldMaxHealth(mysticalBarrier.getShieldMaxHealth() + 800);
                 }
             }
     ),
