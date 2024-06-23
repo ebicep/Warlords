@@ -74,7 +74,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         float radius = getHitBoxRadius().getCalculatedValue();
         float verticalRadius = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
-            radius = 10;
+            radius = 7.5f;
             verticalRadius = 2;
         } else {
             wp.setFlagPickCooldown(2);
