@@ -89,57 +89,61 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
         WarlordsEntity wp = projectile.getShooter();
         if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            hit.getCooldownManager().removeDebuffCooldowns();
-            hit.getSpeed().removeSlownessModifiers();
-            int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
-                    .filterCooldownClass(MercifulHex.class)
-                    .stream()
-                    .count();
-            if (hexStacks <= 0) {
-                return;
-            }
-            boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
-            if (!hasDivineBlessing) {
-                hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
-            } else {
-                wp.doOnStaticAbility(DivineBlessing.class, divineBlessing -> divineBlessing.hexesNotConsumed += hexStacks);
-            }
-            boolean maxStacks = hexStacks >= 3;
-            float multiplier = switch (hexStacks) {
-                case 1 -> 1.25f;
-                case 2 -> 1.5f;
-                default -> 2f;
-            };
-            stacksRemoved.merge(hexStacks, 1, Integer::sum);
-            if (pveMasterUpgrade) {
-                hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "RAY",
-                        RayOfLight.class,
-                        new RayOfLight(),
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        cooldownManager -> {
-                        },
-                        100
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * (maxStacks ? 1.35f : 1.15f);
-                    }
-                });
-            }
-            hit.addInstance(InstanceBuilder
-                    .healing()
-                    .ability(this)
-                    .source(wp)
-                    .min(healingValues.rayHealing.getMinValue() * multiplier)
-                    .max(healingValues.rayHealing.getMaxValue() * multiplier)
-                    .crit(healingValues.rayHealing)
-            );
+            beamPlayer(hit, wp);
         }
+    }
+
+    private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
+        hit.getCooldownManager().removeDebuffCooldowns();
+        hit.getSpeed().removeSlownessModifiers();
+        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
+                .filterCooldownClass(MercifulHex.class)
+                .stream()
+                .count();
+        if (hexStacks <= 0) {
+            return;
+        }
+        boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
+        if (!hasDivineBlessing) {
+            hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
+        } else {
+            wp.doOnStaticAbility(DivineBlessing.class, divineBlessing -> divineBlessing.hexesNotConsumed += hexStacks);
+        }
+        boolean maxStacks = hexStacks >= 3;
+        float multiplier = switch (hexStacks) {
+            case 1 -> 1.25f;
+            case 2 -> 1.5f;
+            default -> 2f;
+        };
+        stacksRemoved.merge(hexStacks, 1, Integer::sum);
+        if (pveMasterUpgrade) {
+            hit.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    "RAY",
+                    RayOfLight.class,
+                    new RayOfLight(),
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    cooldownManager -> {
+                    },
+                    100
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * (maxStacks ? 1.35f : 1.15f);
+                }
+            });
+        }
+        hit.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .min(healingValues.rayHealing.getMinValue() * multiplier)
+                .max(healingValues.rayHealing.getMaxValue() * multiplier)
+                .crit(healingValues.rayHealing)
+        );
     }
 
     @Nullable
@@ -160,14 +164,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        shooter.getCooldownManager().removeDebuffCooldowns();
-        shooter.getSpeed().removeSlownessModifiers();
-        shooter.addInstance(InstanceBuilder
-                .healing()
-                .ability(this)
-                .source(shooter)
-                .value(healingValues.rayHealing)
-        );
+        beamPlayer(shooter, shooter);
         Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
         return super.onActivate(shooter);
     }
