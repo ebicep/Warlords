@@ -38,6 +38,7 @@ public enum Ability {
     DRAINING_MIASMA(DrainingMiasma.class, DrainingMiasma::new),
     EARTHEN_SPIKE(EarthenSpike.class, EarthenSpike::new),
     EARTHLIVING_WEAPON(EarthlivingWeapon.class, EarthlivingWeapon::new),
+    ENERGY_SEER(EnergySeer.class, EnergySeer::new),
     ENERGY_SEER_CONJURER(EnergySeerConjurer.class, EnergySeerConjurer::new),
     ENERGY_SEER_LUMINARY(EnergySeerLuminary.class, EnergySeerLuminary::new),
     ENERGY_SEER_SENTINEL(EnergySeerSentinel.class, EnergySeerSentinel::new),

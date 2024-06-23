@@ -176,7 +176,7 @@ public class EnergySeer extends AbstractAbility implements PurpleAbilityIcon, Du
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.SetValue seerHealingMultiplier = new Value.SetValue(5);
+        private final Value.SetValue seerHealingMultiplier = new Value.SetValue(6);
         private final List<Value> values = List.of(seerHealingMultiplier);
 
         @Override
