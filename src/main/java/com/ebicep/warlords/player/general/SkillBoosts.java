@@ -1246,14 +1246,14 @@ public enum SkillBoosts {
             }
     ),
     CONTAGIOUS_FACADE("Contagious Facade",
-            Component.text("Increased the damage reduction of Contagious Facade by 10%.", NamedTextColor.GRAY),
+            Component.text("Increased the damage reduction of Contagious Facade by 20%.", NamedTextColor.GRAY),
             Component.text("Increased the damage reduction of Contagious Facade by ", NamedTextColor.GREEN)
-                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             ContagiousFacade.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
-                    contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 10);
+                    contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 20);
                 }
             }
     ),
@@ -1317,17 +1317,17 @@ public enum SkillBoosts {
             }
     ),
     MYSTICAL_BARRIER("Mystical Barrier",
-            Component.text("Increase the rune timer increase inflicted by Mystical Barrier by 0.25 seconds and increase the maximum shield health by 400.", NamedTextColor.GRAY),
+            Component.text("Increase the rune timer increase inflicted by Mystical Barrier by 0.5 seconds and increase the maximum shield health by 800.", NamedTextColor.GRAY),
             Component.text("Increase the rune timer increase inflicted by Mystical Barrier by ", NamedTextColor.GREEN)
-                     .append(Component.text("0.25 ", NamedTextColor.RED))
+                     .append(Component.text("0.5 ", NamedTextColor.RED))
                      .append(Component.text("seconds and increase the maximum shield health by", NamedTextColor.GREEN))
-                     .append(Component.text("400", NamedTextColor.RED))
+                     .append(Component.text("800", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             MysticalBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof MysticalBarrier mysticalBarrier) {
-                    mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.25f);
-                    mysticalBarrier.setShieldMaxHealth(mysticalBarrier.getShieldMaxHealth() + 400);
+                    mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.5f);
+                    mysticalBarrier.setShieldMaxHealth(mysticalBarrier.getShieldMaxHealth() + 800);
                 }
             }
     ),
@@ -1396,7 +1396,7 @@ public enum SkillBoosts {
     SANCTIFIED_BEACON("Sanctified Beacon",
             Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by 10%.", NamedTextColor.GRAY),
             Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by ", NamedTextColor.GREEN)
-                     .append(Component.text("30%", NamedTextColor.RED))
+                     .append(Component.text("10%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             SanctifiedBeacon.class,
             abstractAbility -> {
