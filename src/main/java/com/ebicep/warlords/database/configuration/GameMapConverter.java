@@ -23,7 +23,7 @@ public class GameMapConverter {
                 }
             }
             ChatChannels.sendDebugMessage((CommandIssuer) null, "Could not convert " + source + " to GameMap");
-            return null;
+            throw new IllegalArgumentException("Could not convert " + source + " to GameMap");
         }
     }
 

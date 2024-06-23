@@ -44,7 +44,7 @@ public class StringToSpendableConverter implements Converter<String, Spendable> 
             }
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null, "Could not convert " + s + " to Spendable");
-        return null;
+        throw new IllegalArgumentException("Could not convert " + s + " to Spendable");
     }
 
 }

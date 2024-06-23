@@ -23,7 +23,7 @@ public class StringToSkillBoostConverter implements Converter<String, SkillBoost
             }
         }
         ChatChannels.sendDebugMessage((CommandIssuer) null, "Could not convert " + s + " to SkillBoosts");
-        return null;
+        throw new IllegalArgumentException("Could not convert " + s + " to SkillBoosts");
     }
 
 }
