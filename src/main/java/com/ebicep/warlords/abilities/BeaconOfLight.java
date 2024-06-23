@@ -76,7 +76,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implemen
     }
 
     @Override
-    public BeaconOfLight getObject(Location groundLocation, CircleEffect effect) {
+    public BeaconOfLight getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect) {
         return new BeaconOfLight(groundLocation, effect);
     }
 

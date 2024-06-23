@@ -6,6 +6,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -24,9 +25,13 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
+
+    public static final Map<Integer, Team> BEACON_IDS = new HashMap<>();
 
     public int hexesGiven = 0;
     public int critsReduced = 0;
@@ -76,11 +81,12 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     }
 
     @Override
-    public SanctifiedBeacon getObject(Location groundLocation, CircleEffect effect) {
+    public SanctifiedBeacon getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect) {
         crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
+            BEACON_IDS.put(armorStand.getEntityId(), warlordsEntity.getTeam());
             armorStand.setGravity(true);
             armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.BROWN_STAINED_GLASS_PANE));
+            armorStand.getEquipment().setHelmet(new ItemStack(Material.LIME_STAINED_GLASS));
         });
         return new SanctifiedBeacon(groundLocation, effect);
 
@@ -219,6 +225,11 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     3
             );
         }
+    }
+
+    @Override
+    protected void onRemove() {
+        BEACON_IDS.remove(crystal.getEntityId());
     }
 
     @Override

@@ -107,7 +107,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 name,
                 getAbbreviation(),
                 getBeaconClass(),
-                getObject(groundLocation, teamCircleEffect),
+                getObject(wp, groundLocation, teamCircleEffect),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -117,12 +117,13 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                     if (getCrystal() != null) {
                         getCrystal().remove();
                     }
+                    onRemove();
                 },
                 false,
                 tickDuration + 1,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     //particle effects
-                    if (ticksElapsed % 3 == 0) {
+                    if (ticksElapsed % 2 == 0) {
                         teamCircleEffect.playEffects();
                     }
                     whileActive(wp, cooldown, ticksLeft, ticksElapsed);
@@ -137,11 +138,15 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public abstract Class<T> getBeaconClass();
 
-    public abstract T getObject(Location groundLocation, CircleEffect effect);
+    public abstract T getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect);
 
     public abstract ArmorStand getCrystal();
 
     public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
+
+    protected void onRemove() {
+
+    }
 
     @Override
     public int getTickDuration() {
