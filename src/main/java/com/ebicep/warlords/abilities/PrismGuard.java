@@ -77,9 +77,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                .append(Heals.formatHealingPercent(healingValues.bubbleMissingHealthHealing))
                                .append(Component.text(" missing health and grant "))
                                .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction (max 21%) for "))
+                               .append(Component.text(" damage reduction for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds based on how many hits you took while Prism Guard was active."));
+                               .append(Component.text(" seconds based on how many hits you took while Prism Guard was active; up to a maximum of "))
+                               .append(Component.text(1200, NamedTextColor.YELLOW))
+                               .append(Component.text(" health and "))
+                               .append(Component.text("21%", NamedTextColor.YELLOW))
+                               .append(Component.text(" damage reduction."))
+        ;
 
     }
 
@@ -151,7 +156,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                 .healing()
                                 .ability(this)
                                 .source(wp)
-                                .value(baseHealing + missingHealthHealing)
+                                .value(Math.min(1200, baseHealing + missingHealthHealing))
                         );
 
 
@@ -195,10 +200,12 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                         return;
                     }
 
-                    if (ticksElapsed % 4 == 0) {
+                    if (ticksElapsed % 5 == 0) {
                         playSphereAnimation(wp.getLocation(), bubbleRadius, 120, 120, 220);
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_CREEPER_DEATH, 2, 2);
+                    }
 
+                    if (ticksElapsed % 3 == 0) {
                         isInsideBubble.clear();
                         for (WarlordsEntity enemyInsideBubble : PlayerFilter
                                 .entitiesAround(wp, bubbleRadius, bubbleRadius, bubbleRadius)
@@ -226,7 +233,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     CooldownTypes.ABILITY,
                                     cooldownManager -> {
                                     },
-                                    10
+                                    4
                             ) {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
