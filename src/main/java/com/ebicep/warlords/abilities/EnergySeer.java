@@ -52,7 +52,9 @@ public class EnergySeer extends AbstractAbility implements PurpleAbilityIcon, Du
                                .append(Component.text(epsDecrease, NamedTextColor.YELLOW))
                                .append(Component.text(" energy per second and gain"))
                                .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" speed."));
+                               .append(Component.text(" speed for "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds."));
     }
 
     @Override
