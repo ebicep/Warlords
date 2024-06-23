@@ -25,6 +25,9 @@ public class FlyOption implements Option {
 
     @Override
     public void onPlayerReJoinGame(Player player) {
+        if (Warlords.getPlayer(player) == null) {
+            return;
+        }
         new BukkitRunnable() {
             @Override
             public void run() {
