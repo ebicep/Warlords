@@ -1246,14 +1246,14 @@ public enum SkillBoosts {
             }
     ),
     CONTAGIOUS_FACADE("Contagious Facade",
-            Component.text("Increased the damage reduction of Contagious Facade by 10%.", NamedTextColor.GRAY),
+            Component.text("Increased the damage reduction of Contagious Facade by 20%.", NamedTextColor.GRAY),
             Component.text("Increased the damage reduction of Contagious Facade by ", NamedTextColor.GREEN)
-                     .append(Component.text("10%", NamedTextColor.RED))
+                     .append(Component.text("20%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             ContagiousFacade.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
-                    contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 10);
+                    contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 20);
                 }
             }
     ),
