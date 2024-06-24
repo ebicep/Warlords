@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -173,7 +174,7 @@ public class WeaponOption implements Option {
     }
 
     @Override
-    public void onSpecChange(@Nonnull WarlordsEntity player) {
+    public void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
         if (player instanceof WarlordsPlayer && player.getEntity() instanceof Player) {
             new BukkitRunnable() {
 

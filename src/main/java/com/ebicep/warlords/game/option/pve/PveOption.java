@@ -17,6 +17,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.game.option.pve.rewards.PveRewards;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -314,7 +315,7 @@ public interface PveOption extends Option {
     }
 
     @Override
-    default void onSpecChange(@Nonnull WarlordsEntity player) {
+    default void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
         if (player instanceof WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.resetAbilityTree();
             for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {

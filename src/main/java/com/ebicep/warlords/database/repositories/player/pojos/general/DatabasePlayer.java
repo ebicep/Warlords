@@ -78,6 +78,8 @@ public class DatabasePlayer implements MultiStatsGeneral {
 
     @Field("last_spec")
     private Specializations lastSpec = Specializations.PYROMANCER;
+    @Field("spec_boosts")
+    private Map<Specializations, Integer> specBoosts = new HashMap<>();
     @Field("hotkeymode")
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     @Field("particle_quality")
@@ -314,6 +316,14 @@ public class DatabasePlayer implements MultiStatsGeneral {
 
     public void setLastSpec(Specializations lastSpec) {
         this.lastSpec = lastSpec;
+    }
+
+    public Map<Specializations, Integer> getSpecBoosts() {
+        return specBoosts;
+    }
+
+    public int getSelectedSpecBoost(Specializations specializations) {
+        return specBoosts.computeIfAbsent(specializations, k -> 0);
     }
 
     public Settings.HotkeyMode getHotkeyMode() {

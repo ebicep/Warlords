@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.Priority;
@@ -93,9 +94,10 @@ public interface Option {
     /**
      * Called when a player's spec is changed
      *
-     * @param player The player to act on
+     * @param player  The player to act on
+     * @param oldSpec
      */
-    default void onSpecChange(@Nonnull WarlordsEntity player) {
+    default void onSpecChange(@Nonnull WarlordsEntity player, Specializations oldSpec) {
     }
 
     /**

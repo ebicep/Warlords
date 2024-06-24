@@ -267,6 +267,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @Override
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
+        Specializations oldSpec = this.specClass;
         super.setSpec(spec, skillBoost);
         if (weapon != null && weapon instanceof Listener listener) {
             HandlerList.unregisterAll(listener);
@@ -283,7 +284,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
         ArmorManager.resetArmor(player, this);
         for (Option option : game.getOptions()) {
-            option.onSpecChange(this);
+            option.onSpecChange(this, oldSpec);
         }
         updateInventory(true);
     }
