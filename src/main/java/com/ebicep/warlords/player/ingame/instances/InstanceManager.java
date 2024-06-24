@@ -274,6 +274,7 @@ public class InstanceManager {
                     .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
                     .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
             );
+            previousDamageValue = damageValue;
         }
         // Reduction before Intervene.
         if (!trueDamage) {
