@@ -538,7 +538,7 @@ public enum SkillBoosts {
             }
     ),
     HOLY_RADIANCE_AVENGER("Holy Radiance",
-            Component.text("Reduce the cooldown of Holy Radiance by 20% and increase the energy drain of Avenger's Mark by 100%.", NamedTextColor.GRAY),
+            Component.text("Reduce the cooldown of Holy Radiance by 20% and increase the energy drain of Avenger's Mark by 50%.", NamedTextColor.GRAY),
             Component.text("Reduce the cooldown of Holy Radiance by ", NamedTextColor.GREEN)
                      .append(Component.text("20% ", NamedTextColor.RED))
                      .append(Component.text("and increase the energy drain of Avenger's Mark by ", NamedTextColor.GREEN))
@@ -548,7 +548,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceAvenger holyRadiance) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
-                    holyRadiance.setEnergyDrainPerSecond(holyRadiance.getEnergyDrainPerSecond() * 2);
+                    holyRadiance.setEnergyDrainPerSecond(holyRadiance.getEnergyDrainPerSecond() * 1.5f);
                 }
             }
     ),

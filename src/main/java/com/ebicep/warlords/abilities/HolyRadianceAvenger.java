@@ -30,7 +30,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     private final int markDuration = 8;
     private final HealingValues healingValues = new HealingValues();
     private int markRadius = 15;
-    private int energyDrainPerSecond = 8;
+    private float energyDrainPerSecond = 8;
 
     public HolyRadianceAvenger() {
         super("Holy Radiance", 16.53f, 20, 6);
@@ -46,7 +46,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                                .append(Component.text("You may look at an enemy to mark them for "))
                                .append(Component.text(markDuration, NamedTextColor.GOLD))
                                .append(Component.text(" seconds. Reducing their energy per second by "))
-                               .append(Component.text(energyDrainPerSecond, NamedTextColor.YELLOW))
+                               .append(Component.text(format(energyDrainPerSecond), NamedTextColor.YELLOW))
                                .append(Component.text(" for the duration."))
                                .append(Component.text("\n\nMark has a maximum range of "))
                                .append(Component.text(markRadius, NamedTextColor.YELLOW))
@@ -191,11 +191,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         return healingValues.radianceHealing;
     }
 
-    public int getEnergyDrainPerSecond() {
+    public float getEnergyDrainPerSecond() {
         return energyDrainPerSecond;
     }
 
-    public void setEnergyDrainPerSecond(int energyDrainPerSecond) {
+    public void setEnergyDrainPerSecond(float energyDrainPerSecond) {
         this.energyDrainPerSecond = energyDrainPerSecond;
     }
 
