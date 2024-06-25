@@ -55,13 +55,11 @@ public abstract class AbstractPlayerClass {
         this.damageResistance = damageResistance;
         this.abilities = new ArrayList<>(List.of(abilities));
         this.name = name;
-
-        updateCustomStats();
     }
 
-    public void updateCustomStats() {
+    public void updateCustomStats(WarlordsEntity warlordsEntity) {
         for (AbstractAbility ability : getAbilities()) {
-            ability.updateCustomStats(this);
+            ability.updateCustomStats(warlordsEntity);
         }
     }
 

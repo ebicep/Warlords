@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.towerdefense.towers.TDAbility;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -125,15 +124,15 @@ public abstract class AbstractAbility implements AbilityIcon {
         return null;
     }
 
-    public void boostSkill(SkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
+    public void boostSkill(SkillBoosts skillBoost, WarlordsEntity warlordsEntity) {
         if (!boosted) {
             boosted = true;
             skillBoost.applyBoost.accept(this);
-            updateCustomStats(abstractPlayerClass);
+            updateCustomStats(warlordsEntity);
         }
     }
 
-    public void updateCustomStats(AbstractPlayerClass apc) {
+    public void updateCustomStats(WarlordsEntity warlordsEntity) {
         Value.applyDamageHealing(this, value -> value.forEachAllValues(floatModifiable -> floatModifiable.addRefreshListener("UpdateAbilityItems", this::queueUpdateItem)));
     }
 

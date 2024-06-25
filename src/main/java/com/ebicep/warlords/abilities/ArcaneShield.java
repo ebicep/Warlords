@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -189,11 +188,10 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
 
     @Override
-    public void updateCustomStats(AbstractPlayerClass apc) {
-        super.updateCustomStats(apc);
-        if (apc != null) {
-            ArcaneShield arcaneShield = (this);
-            arcaneShield.setMaxShieldHealth((int) (apc.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
+    public void updateCustomStats(WarlordsEntity warlordsEntity) {
+        super.updateCustomStats(warlordsEntity);
+        if (warlordsEntity != null) {
+            setMaxShieldHealth((int) (warlordsEntity.getMaxHealth() * (getShieldPercentage() / 100f)));
             updateDescription(null);
         }
     }

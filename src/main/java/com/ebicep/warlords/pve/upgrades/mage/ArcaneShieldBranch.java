@@ -21,7 +21,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                     @Override
                     public void run(float value) {
                         ability.setShieldPercentage(shieldPercentage + (int) value);
-                        ability.updateCustomStats(abilityTree.getWarlordsPlayer().getSpec());
+                        ability.updateCustomStats(abilityTree.getWarlordsPlayer());
                     }
                 }, 5f)
                 .addTo(treeA);

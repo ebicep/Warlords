@@ -451,7 +451,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     public void applySkillBoost(Player player) {
         for (AbstractAbility ability : spec.getAbilities()) {
             if (ability.getClass() == skillBoost.ability) {
-                ability.boostSkill(skillBoost, spec);
+                ability.boostSkill(skillBoost, this);
                 ability.updateDescription(player);
                 updateItem(ability);
                 break;

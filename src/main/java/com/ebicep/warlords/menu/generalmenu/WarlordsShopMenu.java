@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -196,7 +197,7 @@ public class WarlordsShopMenu {
             } else {
                 icon = ability.getAbilityIcon();
             }
-            ability2.boostSkill(selectedBoost, apc2);
+            ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
             ability.updateDescription(player);
             ability2.updateDescription(player);
             menu.setItem(3,
@@ -566,7 +567,7 @@ public class WarlordsShopMenu {
         );
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
                                       noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
                               ))
         );

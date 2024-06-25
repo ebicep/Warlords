@@ -144,6 +144,11 @@ public abstract class WarlordsEntity {
         this.entity = player;
         this.specClass = specialization;
         this.spec = specialization.create.get();
+        this.currentHealth = this.spec.getMaxHealth();
+        this.health = new FloatModifiable(this.currentHealth) {{
+            addFilter(maxBaseHealthFilter);
+        }};
+        this.spec.updateCustomStats(this);
     }
 
     public WarlordsEntity() {
@@ -184,11 +189,11 @@ public abstract class WarlordsEntity {
         this.game = game;
         this.team = team;
         this.spec = playerClass;
-//        this.maxHealth = this.spec.getMaxHealth();
         this.currentHealth = this.spec.getMaxHealth();
         this.health = new FloatModifiable(this.currentHealth) {{
             addFilter(maxBaseHealthFilter);
         }};
+        this.spec.updateCustomStats(this);
         this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
         this.speed = isInPve() ?
                      new CalculateSpeed(this, this::setWalkSpeed, 13, true) :

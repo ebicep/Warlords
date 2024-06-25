@@ -298,7 +298,7 @@ public interface PveOption extends Option {
                     warlordsPlayer.setWeapon(abstractWeapon);
                     abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
                     player.updateEntity();
-                    player.getSpec().updateCustomStats();
+                    player.getSpec().updateCustomStats(warlordsPlayer);
                 });
             });
             AbilityTree.handleAutoUpgrade(player);

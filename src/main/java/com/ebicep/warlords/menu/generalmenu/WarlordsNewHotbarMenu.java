@@ -104,7 +104,7 @@ public class WarlordsNewHotbarMenu {
         );
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
                                       noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
                               ))
         );
@@ -873,7 +873,7 @@ public class WarlordsNewHotbarMenu {
                 } else {
                     icon = ability.getAbilityIcon();
                 }
-                ability2.boostSkill(selectedBoost, apc2);
+                ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
                 ability.updateDescription(player);
                 ability2.updateDescription(player);
                 menu.setItem(3,
