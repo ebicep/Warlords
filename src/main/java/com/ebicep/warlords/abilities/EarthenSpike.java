@@ -34,8 +34,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox, Damages<EarthenSpike.DamageValues> {
 
@@ -45,6 +44,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             "shaman.earthenspike.animation.c",
             "shaman.earthenspike.animation.d",
     };
+    public static final Map<UUID, Long> PLAYER_SPIKE_COOLDOWN = new HashMap<>();
 
     public int playersSpiked = 0;
     public int carrierSpiked = 0;
@@ -230,7 +230,10 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 caster.addEnergy(caster, "Earthen Verdancy", 10);
             }
         });
-        if (LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82) {
+        if (LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82 && PLAYER_SPIKE_COOLDOWN.getOrDefault(spikeTarget.getUuid(),
+                System.currentTimeMillis()
+        ) + 750 < System.currentTimeMillis()) {
+            PLAYER_SPIKE_COOLDOWN.put(spikeTarget.getUuid(), System.currentTimeMillis());
             spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
         }
         if (pveMasterUpgrade2) {

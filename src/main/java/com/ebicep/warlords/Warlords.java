@@ -6,6 +6,7 @@ import co.aikar.taskchain.TaskChainFactory;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
+import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
@@ -182,6 +183,7 @@ public class Warlords extends JavaPlugin {
                 p.teleport(getRejoinPoint(player));
             }
         }
+        EarthenSpike.PLAYER_SPIKE_COOLDOWN.remove(player);
     }
 
     public static Warlords getInstance() {
@@ -207,6 +209,7 @@ public class Warlords extends JavaPlugin {
         if (p != null) {
             p.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
         }
+        EarthenSpike.PLAYER_SPIKE_COOLDOWN.remove(player);
     }
 
     public static void setRejoinPoint(@Nonnull UUID key, @Nonnull Location value) {
