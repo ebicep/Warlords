@@ -111,6 +111,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                                                 .ability(this)
                                                 .source(wp)
                                                 .value(getConsecrateDamage())
+                                                .flags(InstanceFlags.DOT)
                                         );
                                     });
                     }
