@@ -31,8 +31,8 @@ public class EnergySeer extends AbstractAbility implements PurpleAbilityIcon, Du
 
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 100;
-    private int energyRestore = 180;
-    private int epsDecrease = 20;
+    private int energyRestore = 130;
+    private int epsDecrease = 10;
     private int speedBuff = 30;
 
     public EnergySeer() {
