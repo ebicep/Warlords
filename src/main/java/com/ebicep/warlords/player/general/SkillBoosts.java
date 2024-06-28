@@ -542,7 +542,7 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Holy Radiance by ", NamedTextColor.GREEN)
                      .append(Component.text("20% ", NamedTextColor.RED))
                      .append(Component.text("and increase the energy drain of Avenger's Mark by ", NamedTextColor.GREEN))
-                     .append(Component.text("100%", NamedTextColor.RED))
+                     .append(Component.text("50%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
             HolyRadianceAvenger.class,
             abstractAbility -> {
