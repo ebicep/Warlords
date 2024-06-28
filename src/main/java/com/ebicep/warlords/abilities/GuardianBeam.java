@@ -30,8 +30,8 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
     public Map<Integer, Integer> stacksRemoved = new HashMap<>();
     private final DamageValues damageValues = new DamageValues();
-    private final List<Integer> shieldPercents = new ArrayList<>(List.of(6, 12, 24));
-    private final int carrierBonusMultiplier = 2;
+    private final List<Integer> shieldPercents = new ArrayList<>(List.of(5, 10, 20));
+    private final float carrierBonusMultiplier = 2.4f;
     private float runeTimerIncrease = 1.5f;
     private int tickDuration = 120;
 
@@ -100,7 +100,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                 if (pveMasterUpgrade2) {
                     hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
                 }
-            } else if (projectile.getHit().stream().filter(warlordsEntity -> hit.isTeammate(wp)).count() == 1) {
+            } else {
                 giveShield(wp, hit);
                 hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
             }
@@ -144,7 +144,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         }
         Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
         stacksRemoved.merge(selfHexStacks, 1, Integer::sum);
-        int percent = shieldPercents.get(Math.min(selfHexStacks, 3) - 1) * (to.hasFlag() ? carrierBonusMultiplier : 1);
+        float percent = shieldPercents.get(Math.min(selfHexStacks, 3) - 1) * (to.hasFlag() ? carrierBonusMultiplier : 1);
         GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name + " Shield",

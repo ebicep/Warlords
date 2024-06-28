@@ -41,7 +41,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     public float totalDamageReflected = 0;
 
     private int hexTickDurationIncrease = 40;
-    private int additionalDamageReduction = 10;
+    private int additionalDamageReduction = 15;
     private int tickDuration = 240;
 
     public Sanctuary() {

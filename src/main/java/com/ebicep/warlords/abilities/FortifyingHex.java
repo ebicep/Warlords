@@ -46,7 +46,7 @@ import java.util.Optional;
 
 public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
 
-    protected FloatModifiable damageReduction = new FloatModifiable(7);
+    protected FloatModifiable damageReduction = new FloatModifiable(5);
 
     private final DamageValues damageValues = new DamageValues();
     private int maxEnemiesHit = 1;
