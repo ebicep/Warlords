@@ -325,15 +325,15 @@ public class PowerupOption implements Option {
                         getTickDuration()
                 ) {
                     @Override
-                    public float multiplyEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick * 1.5f;
+                    public float addEnergyGainPerTick(float energyGainPerTick) {
+                        return energyGainPerTick + .5f;
                     }
                 });
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("ENERGY", NamedTextColor.GOLD, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
-                                        .append(Component.text("+50% ", NamedTextColor.GREEN))
-                                        .append(Component.text("Energy gain for "))
+                                        .append(Component.text("+10 ", NamedTextColor.GREEN))
+                                        .append(Component.text("Energy per second for "))
                                         .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }
