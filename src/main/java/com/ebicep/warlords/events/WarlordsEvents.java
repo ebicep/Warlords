@@ -409,7 +409,6 @@ public class WarlordsEvents implements Listener {
                         player.getInventory().remove(UndyingArmy.BONE);
                         wp.addInstance(InstanceBuilder
                                 .melee()
-                                .cause("God")
                                 .source(wp)
                                 .value(100000)
                         );
