@@ -107,7 +107,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 tickDuration,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty(),
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 5 != 0) {
+                    if (ticksElapsed % 4 != 0) {
                         return;
                     }
                     OrbsOfLifeData orbsOfLife = cooldown.getCooldownObject();
