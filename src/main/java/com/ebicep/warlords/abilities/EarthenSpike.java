@@ -230,9 +230,9 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 caster.addEnergy(caster, "Earthen Verdancy", 10);
             }
         });
-        if (LocationUtils.getDistance(spikeTarget.getEntity(), .1) < 1.82 && PLAYER_SPIKE_COOLDOWN.getOrDefault(spikeTarget.getUuid(),
-                System.currentTimeMillis()
-        ) + 750 < System.currentTimeMillis()) {
+        if (LocationUtils.getDistance(spikeTarget.getEntity(),
+                .1
+        ) < 1.82 && (PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) == null || PLAYER_SPIKE_COOLDOWN.get(spikeTarget.getUuid()) + 750 < System.currentTimeMillis())) {
             PLAYER_SPIKE_COOLDOWN.put(spikeTarget.getUuid(), System.currentTimeMillis());
             spikeTarget.setVelocity(name, new Vector(0, verticalVelocity, 0), false);
         }
