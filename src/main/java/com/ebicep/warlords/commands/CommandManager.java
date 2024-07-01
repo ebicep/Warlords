@@ -270,7 +270,7 @@ public class CommandManager {
             return namedTextColor;
         });
         manager.getCommandContexts().registerContext(GameMap.class, command -> {
-            String map = command.popFirstArg();
+            String map = command.popFirstArg().replaceAll(" ", "_");
             for (GameMap value : GameMap.VALUES) {
                 if (value.getMapName().equalsIgnoreCase(map)) {
                     return value;
