@@ -258,7 +258,7 @@ public class FlagSpawnPointOption implements Option {
                     ));
                 }
             }
-        }.runTaskTimer(0, 4);
+        }.runTaskTimer(0, 3);
         new GameRunnable(game) {
             @Override
             public void run() {
