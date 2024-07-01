@@ -88,14 +88,15 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
 
-        Utils.playGlobalSound(currentLocation, "mage.fireball.impact", 2, 1);
+        Utils.playGlobalSound(effectLocation, "mage.fireball.impact", 2, 1);
 
-        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 5, 0, 0, 0, 0.35);
-        EffectUtils.displayParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 1.5);
-        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1);
+        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, effectLocation, 1, 0, 0, 0, 0.35);
+        EffectUtils.displayParticle(Particle.LAVA, effectLocation, 10, 0.5F, 0, 0.5F, 1.5);
+        EffectUtils.displayParticle(Particle.CLOUD, effectLocation, 3, 0.3F, 0.3F, 0.3F, 1);
 
-        double distanceSquared = startingLocation.distanceSquared(currentLocation);
+        double distanceSquared = startingLocation.distanceSquared(effectLocation);
         float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
                            (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
@@ -125,7 +126,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         int playersHit = 0;
         float radius = splashRadius.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, radius, radius, radius)
+                .entitiesAround(hit != null ? hit.getLocation() : currentLocation, radius, radius, radius)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {

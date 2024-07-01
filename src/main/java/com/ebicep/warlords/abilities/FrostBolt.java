@@ -107,14 +107,15 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
 
-        Utils.playGlobalSound(currentLocation, "mage.frostbolt.impact", 2, 1);
+        Utils.playGlobalSound(effectLocation, "mage.frostbolt.impact", 2, 1);
 
-        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 1);
-        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3, 0.3, 0.3, 1);
+        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, effectLocation, 1);
+        EffectUtils.displayParticle(Particle.CLOUD, effectLocation, 3, 0.3, 0.3, 0.3, 1);
 
 
-        double distanceSquared = currentLocation.distanceSquared(startingLocation);
+        double distanceSquared = startingLocation.distanceSquared(effectLocation);
         float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
                            (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
@@ -142,7 +143,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         int playersHit = 0;
         float splashRadius = splash.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
+                .entitiesAround(hit != null ? hit.getLocation() : currentLocation, splashRadius, splashRadius, splashRadius)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {

@@ -93,13 +93,14 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
         World world = currentLocation.getWorld();
+        Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
 
-        world.spawnParticle(Particle.HEART, currentLocation, 3, 1, 1, 1, 0.2, null, true);
-        world.spawnParticle(Particle.VILLAGER_HAPPY, currentLocation, 5, 1, 1, 1, 0.2, null, true);
+        world.spawnParticle(Particle.HEART, effectLocation, 3, 1, 1, 1, 0.2, null, true);
+        world.spawnParticle(Particle.VILLAGER_HAPPY, effectLocation, 5, 1, 1, 1, 0.2, null, true);
 
-        Utils.playGlobalSound(currentLocation, "mage.waterbolt.impact", 2, 1);
+        Utils.playGlobalSound(effectLocation, "mage.waterbolt.impact", 2, 1);
 
-        double distanceSquared = currentLocation.distanceSquared(startingLocation);
+        double distanceSquared = startingLocation.distanceSquared(effectLocation);
         float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
                            (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
@@ -146,7 +147,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         int playersHit = 0;
         float radius = splashRadius.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, radius, radius, radius)
+                .entitiesAround(hit != null ? hit.getLocation() : currentLocation, radius, radius, radius)
                 .isAlive()
                 .excluding(projectile.getHit())
         ) {
