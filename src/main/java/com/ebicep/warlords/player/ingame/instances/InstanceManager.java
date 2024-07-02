@@ -223,7 +223,6 @@ public class InstanceManager {
                                      .append(Component.text(" melee damage and died.")),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                     ));
-                    warlordsEntity.setCurrentHealth(0);
                     warlordsEntity.die(attacker);
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - min);
@@ -241,7 +240,6 @@ public class InstanceManager {
                                      .append(Component.text(" fall damage and died.")),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                     ));
-                    warlordsEntity.setCurrentHealth(0);
                     warlordsEntity.die(attacker);
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damageValue);

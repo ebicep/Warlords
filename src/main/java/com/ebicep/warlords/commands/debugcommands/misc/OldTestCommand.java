@@ -116,6 +116,7 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
+            player.setHealth(0);
 //            player.setPose(Pose.DYING);
 //            player.playHurtAnimation(270);
 //            ServerLevel serverLevel = ((CraftWorld) player.getWorld()).getHandle();
