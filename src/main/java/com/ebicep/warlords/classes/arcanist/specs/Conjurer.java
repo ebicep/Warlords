@@ -15,7 +15,7 @@ public class Conjurer extends AbstractArcanist {
                 0,
                 new PoisonousHex(),
                 new SoulfireBeam(),
-                new EnergySeer(),
+                new EnergySeerConjurer(),
                 new ContagiousFacade(),
                 new AstralPlague()
         );

@@ -15,7 +15,7 @@ public class Sentinel extends AbstractArcanist {
                 0,
                 new FortifyingHex(),
                 new GuardianBeam(),
-                new EnergySeer(),
+                new EnergySeerSentinel(),
                 new MysticalBarrier(),
                 new Sanctuary()
         );

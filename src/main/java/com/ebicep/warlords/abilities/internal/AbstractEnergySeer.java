@@ -1,16 +1,23 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.abilities.EnergySeerConjurer;
+import com.ebicep.warlords.abilities.EnergySeerLuminary;
+import com.ebicep.warlords.abilities.EnergySeerSentinel;
+import com.ebicep.warlords.abilities.FortifyingHex;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -23,16 +30,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class AbstractEnergySeer<T> extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeerData> extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<AbstractEnergySeer.HealingValues> {
 
-    protected int speedBuff = 30;
-    protected int tickDuration = 100;
-    protected int energyRestore = 80;
-    protected int bonusDuration = 100;
-
-    public int timesBonusActivated = 0;
+    private final HealingValues healingValues = new HealingValues();
+    private int tickDuration = 100;
+    private int postEffectTickDuration = 100;
+    private int energyRestore = 130;
+    private int epsDecrease = 10;
+    private int speedBuff = 30;
 
     public AbstractEnergySeer() {
         super("Energy Seer", 26, 0);
@@ -40,28 +46,43 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Gain ")
-                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" speed and heal for "))
-                               .append(Heals.formatHealingPercent(getHealMultiplier(), aFloat -> aFloat * 100))
-                               .append(Component.text(" of the energy expended for the next "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If you healed for 4 instances, restore "))
-                               .append(Component.text(energyRestore, NamedTextColor.YELLOW))
-                               .append(Component.text(" energy and "))
-                               .append(getBonus())
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(bonusDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds after Energy Seer ends."));
+        if (inPve) {
+            description = getBonus().append(Component.text(", gain "))
+                                    .append(Component.text(energyRestore, NamedTextColor.YELLOW))
+                                    .append(Component.text(" energy, and heal "))
+                                    .append(Component.text(" for "))
+                                    .append(Heals.formatHealingPercent(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100))
+                                    .append(Component.text(" of the energy expended for the next "))
+                                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                    .append(Component.text(" seconds. When Energy Seer ends, lose "))
+                                    .append(Component.text(epsDecrease, NamedTextColor.YELLOW))
+                                    .append(Component.text(" energy per second and gain"))
+                                    .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
+                                    .append(Component.text(" speed for "))
+                                    .append(Component.text(format(postEffectTickDuration / 20f), NamedTextColor.GOLD))
+                                    .append(Component.text(" seconds."));
+        } else {
+            description = Component.text("Gain ")
+                                   .append(Component.text(energyRestore, NamedTextColor.YELLOW))
+                                   .append(Component.text(" energy and heal "))
+                                   .append(Component.text(" for "))
+                                   .append(Heals.formatHealingPercent(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100))
+                                   .append(Component.text(" of the energy expended for the next "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds. When Energy Seer ends, lose "))
+                                   .append(Component.text(epsDecrease, NamedTextColor.YELLOW))
+                                   .append(Component.text(" energy per second and gain"))
+                                   .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" speed for "))
+                                   .append(Component.text(format(postEffectTickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds."));
+        }
     }
-
-    public abstract Component getBonus();
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Bonus Activated", "" + timesBonusActivated));
 
         return info;
     }
@@ -72,43 +93,54 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
         for (int i = 0; i < 20; i++) {
             EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, wp.getLocation(), 3, 0.3, 0.1, 0.3, 0.1);
         }
-        wp.addSpeedModifier(wp, name, 30, tickDuration);
-        AtomicInteger timesHealed = new AtomicInteger();
-        T cooldownObject = getObject();
+
+        wp.addEnergy(wp, name, energyRestore);
+
+        T data = getDataObject();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "SEER",
-                getEnergySeerClass(),
-                cooldownObject,
+                getDataClass(),
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (timesHealed.get() >= 4 && wp.isAlive()) {
-                        wp.addEnergy(wp, name, energyRestore);
-                        wp.getCooldownManager().addCooldown(getBonusCooldown(wp));
-                        onEnd(wp, cooldownObject);
-                        timesBonusActivated++;
-                    }
+                    onEnd(wp, data);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 4 == 0) {
-                                Location location = wp.getLocation();
-                                location.add(0, 1.2, 0);
-                                EffectUtils.displayParticle(
-                                        Particle.SOUL_FIRE_FLAME,
-                                        location,
-                                        2,
-                                        0.2,
-                                        0,
-                                        0.2,
-                                        0.1
-                                );
-                            }
-                        }
-                )
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = wp.getLocation();
+                        location.add(0, 1.2, 0);
+                        EffectUtils.displayParticle(
+                                Particle.SOUL_FIRE_FLAME,
+                                location,
+                                2,
+                                0.3,
+                                0,
+                                0.3,
+                                0.1
+                        );
+                    }
+                })
         ) {
-            private RegularCooldown<?> cd = this;
+
+            @Override
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
+                    return currentHealValue * convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease());
+
+                }
+                return currentHealValue;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
+                    return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
+                }
+                return currentDamageValue;
+            }
 
             @Override
             protected Listener getListener() {
@@ -119,18 +151,34 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
                         if (energyUsed <= 0) {
                             return;
                         }
-                        AbstractEnergySeer.this.onEnergyUsed(wp, event, cooldownObject);
+                        AbstractEnergySeer.this.onEnergyUsed(wp, event, data);
                         if (!Objects.equals(event.getWarlordsEntity(), wp)) {
                             return;
                         }
-                        ChatUtils.MessageType.WARLORDS.sendMessage("Seer heal " + " - " + cd + " - " + cooldownObject);
+                        data.setEnergyUsed(data.getEnergyUsed() + energyUsed);
                         wp.addInstance(InstanceBuilder
                                 .healing()
                                 .ability(AbstractEnergySeer.this)
                                 .source(wp)
-                                .value(energyUsed * getHealMultiplier().getValue())
+                                .value(energyUsed * healingValues.seerHealingMultiplier.getValue())
                         );
-                        timesHealed.getAndIncrement();
+                    }
+
+                    @EventHandler
+                    public void onCooldownAdd(WarlordsAddCooldownEvent event) {
+                        if (!inPve) {
+                            return;
+                        }
+                        if (!(AbstractEnergySeer.this instanceof EnergySeerSentinel energySeerSentinel)) {
+                            return;
+                        }
+                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                        if (!Objects.equals(cooldown.getFrom(), wp)) {
+                            return;
+                        }
+                        if (cooldown.getCooldownObject() instanceof FortifyingHex fortifyingHex) {
+                            fortifyingHex.getDamageReduction().addAdditiveModifier(name, energySeerSentinel.getDamageResistance(), getTicksLeft());
+                        }
                     }
                 };
             }
@@ -138,21 +186,66 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
         return true;
     }
 
-    public abstract T getObject();
+    public abstract T getDataObject();
 
-    public abstract Class<T> getEnergySeerClass();
+    public abstract Class<T> getDataClass();
 
-    public abstract RegularCooldown<T> getBonusCooldown(@Nonnull WarlordsEntity wp);
+    protected void onEnd(WarlordsEntity wp, T data) {
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "SEER",
+                AbstractEnergySeer.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager2 -> {
 
-    protected void onEnd(WarlordsEntity wp, T cooldownObject) {
-
+                },
+                postEffectTickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = wp.getLocation();
+                        location.add(0, 1.2, 0);
+                        EffectUtils.displayParticle(
+                                Particle.SOUL,
+                                location,
+                                2,
+                                0.3,
+                                0,
+                                0.3,
+                                0.1
+                        );
+                    }
+                })
+        ) {
+            @Override
+            public float addEnergyGainPerTick(float energyGainPerTick) {
+                return energyGainPerTick - epsDecrease / 20f;
+            }
+        });
     }
 
-    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUseEvent.Post event, T cooldownObject) {
+    public abstract TextComponent getBonus();
 
+    protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUseEvent.Post event, T cooldownObjet) {
     }
 
-    public abstract Value.SetValue getHealMultiplier();
+    public int getEnergyRestore() {
+        return energyRestore;
+    }
+
+    public void setEnergyRestore(int energyRestore) {
+        this.energyRestore = energyRestore;
+    }
+
+    public int getEpsDecrease() {
+        return epsDecrease;
+    }
+
+    public void setEpsDecrease(int epsDecrease) {
+        this.epsDecrease = epsDecrease;
+    }
 
     @Override
     public int getTickDuration() {
@@ -164,19 +257,39 @@ public abstract class AbstractEnergySeer<T> extends AbstractAbility implements P
         this.tickDuration = tickDuration;
     }
 
-    public int getEnergyRestore() {
-        return energyRestore;
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
-    public void setEnergyRestore(int energyRestore) {
-        this.energyRestore = energyRestore;
+    public static class HealingValues implements Value.ValueHolder {
+
+        protected final Value.SetValue seerHealingMultiplier = new Value.SetValue(6);
+        private final List<Value> values = List.of(seerHealingMultiplier);
+
+        public Value.SetValue getSeerHealingMultiplier() {
+            return seerHealingMultiplier;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
-    public int getBonusDuration() {
-        return bonusDuration;
+    public static class EnergySeerData {
+
+        private float energyUsed = 0;
+
+        public float getEnergyUsed() {
+            return energyUsed;
+        }
+
+        public void setEnergyUsed(float energyUsed) {
+            this.energyUsed = energyUsed;
+        }
+
     }
 
-    public void setBonusDuration(int bonusDuration) {
-        this.bonusDuration = bonusDuration;
-    }
 }

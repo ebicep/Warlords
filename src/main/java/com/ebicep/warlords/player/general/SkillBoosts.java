@@ -1,10 +1,7 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
-import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
-import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
+import com.ebicep.warlords.abilities.internal.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -1238,9 +1235,9 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Energy Seer by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            EnergySeer.class,
+            AbstractEnergySeer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeer) {
+                if (abstractAbility instanceof AbstractEnergySeer) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
@@ -1309,9 +1306,9 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Energy Seer by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            EnergySeer.class,
+            AbstractEnergySeer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeer) {
+                if (abstractAbility instanceof AbstractEnergySeer) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
@@ -1386,9 +1383,9 @@ public enum SkillBoosts {
             Component.text("Reduce the cooldown of Energy Seer by ", NamedTextColor.GREEN)
                      .append(Component.text("40%", NamedTextColor.RED))
                      .append(Component.text(".", NamedTextColor.GREEN)),
-            EnergySeer.class,
+            AbstractEnergySeer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof EnergySeer) {
+                if (abstractAbility instanceof AbstractEnergySeer) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
