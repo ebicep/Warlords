@@ -262,7 +262,7 @@ public class InstanceManager {
         float previousDamageValue = damageValue;
         // Flag carrier multiplier.
         double flagMultiplier = warlordsEntity.getFlagDamageMultiplier();
-        if (flagMultiplier != 1) {
+        if (flagMultiplier != 1 && !trueDamage) {
             damageValue *= (float) flagMultiplier;
             debugMessage.appendTitle(ComponentBuilder
                     .create("Flag Damage Multiplier: ", NamedTextColor.AQUA)
@@ -529,7 +529,7 @@ public class InstanceManager {
                             isCrit ? 100 : 0,
                             100,
                             true,
-                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES, InstanceFlags.IGNORE_CRIT_MODIFIERS),
+                            EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
                             customFlags
                     ));
 
