@@ -134,7 +134,7 @@ public class PartyCommand extends BaseCommand {
                                       .equals(playerUUID) ?
                                  Component.text("their party!") :
                                  Component.textOfChildren(
-                                         Permissions.getPrefixWithColor(player, true),
+                                         Permissions.getPrefixWithColor(party.getPartyLeader().getUUID(), true),
                                          Component.text("'s party!")
                                  ))
                          .build()

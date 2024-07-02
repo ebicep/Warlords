@@ -14,6 +14,8 @@ import net.luckperms.api.node.Node;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.CHAT_ARROW;
@@ -59,6 +61,23 @@ public enum Permissions {
             }
         }
         return Component.text(name, NamedTextColor.AQUA);
+    }
+
+    public static Component getPrefixWithColor(UUID uuid, boolean includeName) {
+        AtomicReference<Component> component = new AtomicReference<>(Component.text("", NamedTextColor.AQUA));
+        DatabaseManager.getPlayer(uuid, databasePlayer -> {
+            String name = includeName ? databasePlayer.getName() : "";
+            for (Permissions value : VALUES) {
+                if (databasePlayer.getPermissions().contains(value.permission)) {
+                    component.set(value == DEFAULT ?
+                                  Component.text(name, NamedTextColor.AQUA) :
+                                  Component.text("[" + value.prefix + "] " + name, value.prefixColor));
+                    return;
+                }
+            }
+            component.set(Component.text(name, NamedTextColor.AQUA));
+        });
+        return component.get();
     }
 
     public static NamedTextColor getColor(Player player) {
