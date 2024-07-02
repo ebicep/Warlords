@@ -201,6 +201,7 @@ public class WarlordsEvents implements Listener {
             player.setHealth(20);
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+            player.resetTitle();
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
             DatabaseManager.getPlayer(uuid, databasePlayer -> {
