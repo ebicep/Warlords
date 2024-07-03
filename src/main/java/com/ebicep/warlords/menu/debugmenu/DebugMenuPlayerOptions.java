@@ -656,7 +656,7 @@ public class DebugMenuPlayerOptions {
                         1,
                         new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")", NamedTextColor.RED))
-                                .lore(WordWrap.wrap(skillBoost.description, 150))
+                                .lore(WordWrap.wrap(skillBoost.getUnselectedDescription(), 150))
                                 .addLore(
                                         Component.empty(),
                                         Component.text("Click to select!", NamedTextColor.YELLOW)

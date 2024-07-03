@@ -154,7 +154,7 @@ public class WarlordsShopMenu {
                     .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
                             skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
                     ));
-            List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
+            List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.getSelectedDescription() : skillBoost.getUnselectedDescription(), 130));
             lore.add(Component.empty());
             if (skillBoost == selectedBoost) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));

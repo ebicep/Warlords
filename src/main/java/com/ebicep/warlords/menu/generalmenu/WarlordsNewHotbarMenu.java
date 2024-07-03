@@ -826,7 +826,7 @@ public class WarlordsNewHotbarMenu {
                         .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
                                 skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
                         ));
-                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description,
+                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.getSelectedDescription() : skillBoost.getUnselectedDescription(),
                         130
                 ));
                 lore.add(Component.empty());

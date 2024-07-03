@@ -78,7 +78,7 @@ public class WeaponOption implements Option {
                                 Component.text(""),
                                 Component.text(spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):", NamedTextColor.GREEN)
                         )
-                        .addLore(WordWrap.wrap(wp.getSkillBoost().selectedDescription, 150))
+                        .addLore(WordWrap.wrap(wp.getSkillBoost().getSelectedDescription(), 150))
                         .addLore(
                                 Component.text(""),
                                 Component.text("Health: ", NamedTextColor.GRAY)
