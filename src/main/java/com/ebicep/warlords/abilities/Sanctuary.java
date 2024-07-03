@@ -41,7 +41,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     public float totalDamageReflected = 0;
 
     private int hexTickDurationIncrease = 40;
-    private int additionalDamageReduction = 15;
+    private int additionalDamageReduction = 4;
     private int tickDuration = 240;
 
     public Sanctuary() {
@@ -55,7 +55,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                .append(Component.text(" seconds and causing Guardian Beam to not consume Fortifying Hex stacks. " +
                                        "\n\nAll allies with max stacks of Fortifying Hex gain an additional "))
                                .append(Component.text(additionalDamageReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction and reflect all reduced damage from Fortifying Hexes back to the dealer. Lasts "))
+                               .append(Component.text(" damage reduction per stack and reflect the reduced damage back to the dealer. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
     }
@@ -140,9 +140,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 }
                                 FortifyingHex fromHex = FortifyingHex.getFromHex(wp);
                                 float damageToReflect = (float) (currentDamageValue *
-                                        (additionalDamageReduction / 100f +
-                                                (1 - Math.pow(convertToDivisionDecimal(fromHex.getDamageReduction().getCalculatedValue()), 3
-                                                )))
+                                        (1 - Math.pow(convertToDivisionDecimal(fromHex.getDamageReduction().getCalculatedValue() + additionalDamageReduction), 3))
                                 );
                                 Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_VEX_HURT, 1, 1.9f);
                                 event.getSource().addInstance(InstanceBuilder
@@ -154,7 +152,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         .flag(InstanceFlags.TRUE_DAMAGE, pveMasterUpgrade)
                                 );
                                 totalDamageReflected += damageToReflect;
-                                return currentDamageValue * convertToDivisionDecimal(additionalDamageReduction);
+                                return (float) (currentDamageValue * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
                             }
 
                             @Override
