@@ -23,7 +23,7 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     }
 
     public GroundSlamBerserker(float cooldown, float startCooldown) {
-        super(cooldown, startCooldown);
+        super(cooldown, 60, startCooldown);
     }
 
     @Override
