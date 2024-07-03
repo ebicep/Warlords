@@ -318,17 +318,19 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         });
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
 
-        from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                .append(Component.text(" Your ", NamedTextColor.GRAY))
-                .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
-                .append(Component.text(" is now protecting " + to.getName() + "!", NamedTextColor.GRAY))
-        );
+        if (from != to) {
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now protecting " + to.getName() + "!", NamedTextColor.GRAY))
+            );
 
-        to.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                .append(Component.text(" " + from.getName() + " is now protecting you with their ", NamedTextColor.GRAY))
-                .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
-                .append(Component.text("!", NamedTextColor.GRAY))
-        );
+            to.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" " + from.getName() + " is now protecting you with their ", NamedTextColor.GRAY))
+                    .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
+        }
     }
 
     private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy) {
