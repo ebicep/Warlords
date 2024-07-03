@@ -243,15 +243,15 @@ public enum SkillBoosts {
     HEALING_RAIN("Healing Rain",
             List.of(
                     Component.text("Increase the duration of Healing Rain by "),
-                    Component.text("4 ", NamedTextColor.RED),
-                    Component.text("seconds and reduce the cooldown by "),
+                    Component.text("2", NamedTextColor.RED),
+                    Component.text(" seconds and reduce the cooldown by "),
                     Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
             ),
             HealingRain.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HealingRain healingRain) {
-                    healingRain.setTickDuration(healingRain.getTickDuration() + 80);
+                    healingRain.setTickDuration(healingRain.getTickDuration() + 40);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
@@ -516,7 +516,7 @@ public enum SkillBoosts {
     AVENGER_STRIKE("Avenger's Strike",
             List.of(
                     Component.text("Increase the damage of Avenger's Strike by "),
-                    Component.text("15% ", NamedTextColor.RED),
+                    Component.text("10% ", NamedTextColor.RED),
                     Component.text("and increase the energy steal by "),
                     Component.text("5", NamedTextColor.RED),
                     Component.text(".")
@@ -527,7 +527,7 @@ public enum SkillBoosts {
                     avengersStrike.getDamageValues()
                                   .getStrikeDamage()
                                   .forEachValue(floatModifiable -> {
-                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
                                   });
                     avengersStrike.setEnergySteal(avengersStrike.getEnergySteal() + 5);
                 }
@@ -940,7 +940,7 @@ public enum SkillBoosts {
                     Component.text("Increase the damage of Earthen Spike by "),
                     Component.text("15% ", NamedTextColor.RED),
                     Component.text("and increase the speed by "),
-                    Component.text("30%", NamedTextColor.RED),
+                    Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
             ),
             EarthenSpike.class,
@@ -951,7 +951,7 @@ public enum SkillBoosts {
                                 .forEachValue(floatModifiable -> {
                                     floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
                                 });
-                    earthenSpike.setSpeed(earthenSpike.getSpeed() * 1.3f);
+                    earthenSpike.setSpeed(earthenSpike.getSpeed() * 1.2f);
                 }
             }
     ),
@@ -1290,7 +1290,7 @@ public enum SkillBoosts {
     SOULFIRE_BEAM("Soulfire Beam",
             List.of(
                     Component.text("Increase the damage of Soulfire Beam by "),
-                    Component.text("20%", NamedTextColor.RED),
+                    Component.text("10%", NamedTextColor.RED),
                     Component.text(" and reduce the cooldown by "),
                     Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
@@ -1301,7 +1301,7 @@ public enum SkillBoosts {
                     soulfireBeam.getDamageValues()
                                 .getBeamDamage()
                                 .forEachValue(floatModifiable -> {
-                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
                                 });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
@@ -1372,7 +1372,7 @@ public enum SkillBoosts {
     GUARDIAN_BEAM("Guardian Beam",
             List.of(
                     Component.text("Increase the health of the shield granted by Guardian Beam by "),
-                    Component.text("17%", NamedTextColor.RED),
+                    Component.text("10%", NamedTextColor.RED),
                     Component.text(" multiplicatively and reduce the cooldown by "),
                     Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
@@ -1381,7 +1381,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof GuardianBeam guardianBeam) {
                     List<Integer> shieldPercents = guardianBeam.getShieldPercents();
-                    shieldPercents.replaceAll(integer -> (int) (integer * 1.17f));
+                    shieldPercents.replaceAll(integer -> (int) (integer * 1.1f));
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
@@ -1451,7 +1451,7 @@ public enum SkillBoosts {
     RAY_OF_LIGHT("Ray of Light",
             List.of(
                     Component.text("Increase the healing of Ray of Light by "),
-                    Component.text("20%", NamedTextColor.RED),
+                    Component.text("10%", NamedTextColor.RED),
                     Component.text(" and reduce the cooldown by "),
                     Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
@@ -1462,7 +1462,7 @@ public enum SkillBoosts {
                     rayOfLight.getHealValues()
                               .getRayHealing()
                               .forEachValue(floatModifiable -> {
-                                  floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                  floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
                               });
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
