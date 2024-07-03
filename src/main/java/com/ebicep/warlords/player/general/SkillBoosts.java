@@ -396,7 +396,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -855,7 +855,7 @@ public enum SkillBoosts {
     FALLEN_SOULS("Fallen Souls",
             List.of(
                     Component.text("Increase the damage of Fallen Souls by "),
-                    Component.text("20%", NamedTextColor.RED),
+                    Component.text("25%", NamedTextColor.RED),
                     Component.text(".")
             ),
             FallenSouls.class,
@@ -864,7 +864,7 @@ public enum SkillBoosts {
                     fallenSouls.getDamageValues()
                                .getFallenSoulDamage()
                                .forEachValue(floatModifiable -> {
-                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
                                });
                 }
             }
@@ -1270,7 +1270,7 @@ public enum SkillBoosts {
     POISONOUS_HEX("Poisonous Hex",
             List.of(
                     Component.text("Increase the damage over time inflicted by Poisonous Hex by "),
-                    Component.text("35%", NamedTextColor.RED),
+                    Component.text("50%", NamedTextColor.RED),
                     Component.text(" and the duration by "),
                     Component.text("2", NamedTextColor.RED),
                     Component.text(" seconds.")
@@ -1281,7 +1281,7 @@ public enum SkillBoosts {
                     poisonousHex.getDamageValues()
                                 .getHexDamage()
                                 .forEachValue(floatModifiable -> {
-                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                    floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .5f);
                                 });
                     poisonousHex.setTickDuration(poisonousHex.getTickDuration() + 20);
                 }
@@ -1324,12 +1324,15 @@ public enum SkillBoosts {
             List.of(
                     Component.text("Increased the damage reduction of Contagious Facade by "),
                     Component.text("20%", NamedTextColor.RED),
+                    Component.text(" and reduce the cooldown by "),
+                    Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
             ),
             ContagiousFacade.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
                     contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 20);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -1428,7 +1431,7 @@ public enum SkillBoosts {
     MERCIFUL_HEX("Merciful Hex",
             List.of(
                     Component.text("Increase the healing over time healed by Merciful Hex by "),
-                    Component.text("35%", NamedTextColor.RED),
+                    Component.text("50%", NamedTextColor.RED),
                     Component.text(" and increase the duration by "),
                     Component.text("2", NamedTextColor.RED),
                     Component.text(" seconds.")
@@ -1439,7 +1442,7 @@ public enum SkillBoosts {
                     mercifulHex.getHealValues()
                                .getHexDOTHealing()
                                .forEachValue(floatModifiable -> {
-                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .5f);
                                });
                     mercifulHex.setTickDuration(mercifulHex.getTickDuration() + 20);
                 }
@@ -1481,13 +1484,16 @@ public enum SkillBoosts {
     SANCTIFIED_BEACON("Sanctified Beacon",
             List.of(
                     Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by "),
-                    Component.text("10%", NamedTextColor.RED),
+                    Component.text("15%", NamedTextColor.RED),
+                    Component.text(" and reduce the cooldown by "),
+                    Component.text("25%", NamedTextColor.RED),
                     Component.text(".")
             ),
             SanctifiedBeacon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
-                    sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() + 10);
+                    sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() + 15);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
     ),
