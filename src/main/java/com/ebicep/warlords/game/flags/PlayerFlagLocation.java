@@ -51,17 +51,17 @@ public class PlayerFlagLocation implements FlagLocation {
     }
 
     public double getComputedMultiplier() {
-        return 1 + (this.pickUpTicks / (20 * 3)) * 0.01;
+        return 1 + (this.pickUpTicks / (20 * 2)) * 0.01;
     }
 
     public int getComputedHumanMultiplier() {
-        return (this.pickUpTicks / (20 * 3));
+        return (this.pickUpTicks / (20 * 2));
     }
 
     @Override
     public FlagLocation update(@Nonnull FlagInfo info) {
         this.pickUpTicks++;
-        return this.pickUpTicks % (20 * 3) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
+        return this.pickUpTicks % (20 * 2) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
     }
 
     @Nonnull
