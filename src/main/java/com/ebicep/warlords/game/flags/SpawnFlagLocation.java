@@ -140,4 +140,8 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     public int getFlagMultiplier() {
         return flagMultiplier;
     }
+
+    public void setFlagMultiplier(int flagMultiplier) {
+        this.flagMultiplier = flagMultiplier;
+    }
 }

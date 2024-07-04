@@ -20,17 +20,17 @@ import java.util.List;
 
 public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 
-    private int despawnTimer;
+    private int ticksUntilSpawn;
     private final WarlordsEntity scorer;
 
     public WaitingFlagLocation(Location location, WarlordsEntity scorer) {
         super(location);
-        this.despawnTimer = 15 * 20;
+        this.ticksUntilSpawn = 15 * 20;
         this.scorer = scorer;
     }
 
-    public int getDespawnTimer() {
-        return despawnTimer;
+    public int getTicksUntilSpawn() {
+        return ticksUntilSpawn;
     }
 
     @Deprecated
@@ -45,8 +45,8 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 
     @Override
     public FlagLocation update(@Nonnull FlagInfo info) {
-        this.despawnTimer--;
-        return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
+        this.ticksUntilSpawn--;
+        return this.ticksUntilSpawn <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
 
     @Nonnull
@@ -55,7 +55,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
         return Arrays.asList(
                 Component.text("Type: " + this.getClass().getSimpleName()),
                 Component.text("scorer: " + getScorer()),
-                Component.text("despawnTimer: " + getDespawnTimer())
+                Component.text("ticksUntilSpawn: " + getTicksUntilSpawn())
         );
     }
 
