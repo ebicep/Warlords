@@ -270,9 +270,9 @@ public class CommandManager {
             return namedTextColor;
         });
         manager.getCommandContexts().registerContext(GameMap.class, command -> {
-            String map = command.popFirstArg().replaceAll(" ", "_");
+            String map = command.popFirstArg();
             for (GameMap value : GameMap.VALUES) {
-                if (value.getMapName().equalsIgnoreCase(map)) {
+                if (value.getMapName().replaceAll(" ", "_").equalsIgnoreCase(map)) {
                     return value;
                 }
             }
@@ -325,6 +325,7 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
                       .map(GameMap::getMapName)
+                      .map(s -> s.replaceAll("", "_"))
                       .toList());
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
