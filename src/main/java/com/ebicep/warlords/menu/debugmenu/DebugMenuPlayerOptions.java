@@ -570,7 +570,7 @@ public class DebugMenuPlayerOptions {
                                 .name(Component.text("Set Multiplier", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
-                            if (target.getCarriedFlag() == holder.getInfo()) {
+                            if (holder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(target)) {
                                 SignGUI.builder()
                                        .setLines("", "^^^^^^^", "Enter flag %", "0 < % < 10,000")
                                        .setHandler((p, lines) -> {
@@ -584,15 +584,11 @@ public class DebugMenuPlayerOptions {
                                                        if (amountNumber < 0 || amountNumber > 10000) {
                                                            throw new NumberFormatException();
                                                        }
-                                                       if (target.getCarriedFlag() != null) {
-                                                           PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
-                                                           flag.setPickUpTicks(amountNumber * 60);
-                                                           sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
-                                                                                             .append(target.getTeam().getChatTagColored())
-                                                                                             .append(Component.text(" flag carrier multiplier to " + amount + "%"))
-                                                           );
-
-                                                       }
+                                                       playerFlagLocation.setFlagMultiplier(amountNumber);
+                                                       sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
+                                                                                         .append(target.getTeam().getChatTagColored())
+                                                                                         .append(Component.text(" flag carrier multiplier to " + amount + "%"))
+                                                       );
                                                    } catch (NumberFormatException exception) {
                                                        p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                                    }

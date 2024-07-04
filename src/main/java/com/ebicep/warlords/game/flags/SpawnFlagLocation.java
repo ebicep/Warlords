@@ -20,26 +20,31 @@ import java.util.List;
 
 public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
 
+    private static final int INITIAL_MULTIPLIER_DECREASE = 20;
+    private static final int MULTIPLIER_DECAY_PERIOD = 20; // ticks
+    private static final int MULTIPLIER_DECAY_AMOUNT = 5;
+
     @Nullable
     private final WarlordsEntity flagReturner;
+    private int ticksElapsed = 0;
+    private int flagMultiplier;
 
     public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsEntity flagReturner) {
-        super(location);
-        this.flagReturner = flagReturner;
+        this(location, flagReturner, 0);
     }
 
-    /**
-     * Get the player who returned the flag
-     *
-     * @return the flag returner, or null is the flag automatically moved back
-     */
-    @Nullable
-    public WarlordsEntity getFlagReturner() {
-        return flagReturner;
+    public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsEntity flagReturner, int flagMultiplier) {
+        super(location);
+        this.flagReturner = flagReturner;
+        this.flagMultiplier = Math.max(0, flagMultiplier - INITIAL_MULTIPLIER_DECREASE);
     }
 
     @Override
     public FlagLocation update(@Nonnull FlagInfo info) {
+        this.ticksElapsed++;
+        if (ticksElapsed % MULTIPLIER_DECAY_PERIOD == 0) {
+            flagMultiplier = Math.max(0, flagMultiplier - MULTIPLIER_DECAY_AMOUNT);
+        }
         return null;
     }
 
@@ -58,7 +63,6 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
         Team eventTeam = event.getTeam();
         NamedTextColor teamColor = eventTeam.getTeamColor();
         Component coloredPrefix = eventTeam.coloredPrefix();
-
 
         WarlordsEntity toucher = getFlagReturner();
         if (event.getOld() instanceof GroundFlagLocation) {
@@ -121,5 +125,19 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                 }));
             }
         }
+    }
+
+    /**
+     * Get the player who returned the flag
+     *
+     * @return the flag returner, or null is the flag automatically moved back
+     */
+    @Nullable
+    public WarlordsEntity getFlagReturner() {
+        return flagReturner;
+    }
+
+    public int getFlagMultiplier() {
+        return flagMultiplier;
     }
 }

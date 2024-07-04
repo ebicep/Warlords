@@ -53,6 +53,7 @@ public class FlagSpawnPointOption implements Option {
             .name(Component.text("Flag Finder", NamedTextColor.GREEN))
             .unbreakable()
             .get();
+    public static final int FLAG_MULTIPLIER_PERIOD = 40; // ticks
 
     @Nonnull
     private final FlagInfo info;
@@ -107,10 +108,12 @@ public class FlagSpawnPointOption implements Option {
             public List<Component> computeLines(@Nullable WarlordsPlayer player) {
                 FlagLocation flag = info.getFlag();
                 Component component = info.getTeam().coloredPrefix().append(Component.text(" Flag: "));
-                if (flag instanceof SpawnFlagLocation) {
-                    return singletonList(component.append(Component.text("Safe", NamedTextColor.GREEN)));
-                } else if (flag instanceof PlayerFlagLocation pFlag) {
-                    String extra = pFlag.getPickUpTicks() == 0 ? "" : " +" + pFlag.getComputedHumanMultiplier() + "%";
+                if (flag instanceof SpawnFlagLocation spawnFlagLocation) {
+                    String extra = spawnFlagLocation.getFlagMultiplier() == 0 ? "" : " +" + spawnFlagLocation.getFlagMultiplier() + "%";
+                    return singletonList(component.append(Component.text("Safe", NamedTextColor.GREEN))
+                                                  .append(Component.text(extra, NamedTextColor.GRAY)));
+                } else if (flag instanceof PlayerFlagLocation playerFlagLocation) {
+                    String extra = playerFlagLocation.getFlagMultiplier() == 0 ? "" : " +" + playerFlagLocation.getFlagMultiplier() + "%";
                     return singletonList(component.append(Component.text("Stolen!", NamedTextColor.RED))
                                                   .append(Component.text(extra, NamedTextColor.YELLOW)));
                 } else if (flag instanceof GroundFlagLocation gFlag) {
@@ -123,6 +126,7 @@ public class FlagSpawnPointOption implements Option {
             }
         });
         game.registerEvents(new Listener() {
+
             @EventHandler(priority = EventPriority.LOW)
             public void onArmorStandBreak(EntityDamageByEntityEvent event) {
                 boolean isOurArmorStand = renderer.getRenderedArmorStands().contains(event.getEntity());
@@ -154,22 +158,22 @@ public class FlagSpawnPointOption implements Option {
                 if (info.getFlag() instanceof GroundFlagLocation groundFlagLocation) {
                     if (team == info.getTeam()) {
                         // Return flag
-                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp));
+                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp, groundFlagLocation.getFlagMultiplier()));
                     } else {
                         // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getDamageTimer()));
+                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getFlagMultiplier()));
                         if (wp.getEntity().getVehicle() != null) {
                             wp.getEntity().getVehicle().remove();
                         }
                     }
                     return true;
-                } else if (info.getFlag() instanceof SpawnFlagLocation) {
+                } else if (info.getFlag() instanceof SpawnFlagLocation spawnFlagLocation) {
                     if (team == info.getTeam()) {
                         // Nothing
                         wp.sendMessage(Component.text("You cannot steal your own team's flag!", NamedTextColor.RED));
                     } else {
                         // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, 0));
+                        info.setFlag(new PlayerFlagLocation(wp, spawnFlagLocation.getFlagMultiplier()));
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Flag Damage Resistance",
                                 "RES",
