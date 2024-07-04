@@ -351,6 +351,10 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
             return hexDamage;
         }
 
+        public Value.RangedValue getHexDOTDamage() {
+            return hexDOTDamage;
+        }
+
         @Override
         public List<Value> getValues() {
             return values;

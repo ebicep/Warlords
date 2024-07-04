@@ -1,7 +1,10 @@
 package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
+import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -1279,7 +1282,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof PoisonousHex poisonousHex) {
                     poisonousHex.getDamageValues()
-                                .getHexDamage()
+                                .getHexDOTDamage()
                                 .forEachValue(floatModifiable -> {
                                     floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .5f);
                                 });
@@ -1313,9 +1316,9 @@ public enum SkillBoosts {
                     Component.text("40%", NamedTextColor.RED),
                     Component.text(".")
             ),
-            AbstractEnergySeer.class,
+            EnergySeerConjurer.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AbstractEnergySeer) {
+                if (abstractAbility instanceof EnergySeerConjurer) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
@@ -1392,9 +1395,9 @@ public enum SkillBoosts {
                     Component.text("40%", NamedTextColor.RED),
                     Component.text(".")
             ),
-            AbstractEnergySeer.class,
+            EnergySeerSentinel.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AbstractEnergySeer) {
+                if (abstractAbility instanceof EnergySeerSentinel) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
@@ -1474,9 +1477,9 @@ public enum SkillBoosts {
                     Component.text("40%", NamedTextColor.RED),
                     Component.text(".")
             ),
-            AbstractEnergySeer.class,
+            EnergySeerLuminary.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AbstractEnergySeer) {
+                if (abstractAbility instanceof EnergySeerLuminary) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
