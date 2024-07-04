@@ -301,6 +301,14 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         this.slowness = slowness;
     }
 
+    public float getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(float directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
     @Override
     public FloatModifiable getSplashRadius() {
         return splash;

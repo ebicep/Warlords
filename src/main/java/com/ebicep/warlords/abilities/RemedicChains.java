@@ -285,6 +285,8 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
+    public float getAllyDamageIncrease() { return allyDamageIncrease; }
+
     public void setAllyDamageIncrease(float allyDamageIncrease) {
         this.allyDamageIncrease = allyDamageIncrease;
     }
