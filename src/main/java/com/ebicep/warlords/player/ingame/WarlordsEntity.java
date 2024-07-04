@@ -1307,7 +1307,9 @@ public abstract class WarlordsEntity {
         // setting health/energy to player
         if (this instanceof WarlordsPlayer && getEntity() instanceof Player player) {
             //precaution
-            player.setHealth(newHealth);
+            if (newHealth != 0) {
+                player.setHealth(newHealth);
+            }
             // Respawn fix for when a player is stuck or leaves the game.
             if (getCurrentHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
                 heal();
