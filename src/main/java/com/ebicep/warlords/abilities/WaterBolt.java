@@ -235,6 +235,14 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         return splashRadius;
     }
 
+    public float getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(float directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
