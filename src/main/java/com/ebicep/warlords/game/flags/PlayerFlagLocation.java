@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
@@ -21,11 +22,12 @@ import java.util.List;
 public class PlayerFlagLocation implements FlagLocation {
 
     private final WarlordsEntity player;
-    private int pickUpTicks;
+    private int ticksElapsed = 0;
+    private int flagMultiplier;
 
-    public PlayerFlagLocation(WarlordsEntity player, int pickUpTicks) {
+    public PlayerFlagLocation(WarlordsEntity player, int flagMultiplier) {
         this.player = player;
-        this.pickUpTicks = pickUpTicks;
+        this.flagMultiplier = flagMultiplier;
     }
 
     @Nonnull
@@ -38,30 +40,29 @@ public class PlayerFlagLocation implements FlagLocation {
         return player;
     }
 
-    public int getPickUpTicks() {
-        return pickUpTicks;
+    public int getTicksElapsed() {
+        return ticksElapsed;
     }
 
-    public void setPickUpTicks(int modifier) {
-        this.pickUpTicks = modifier;
-    }
-
-    public void addPickUpTicks(int amount) {
-        this.pickUpTicks += amount;
+    public void setFlagMultiplier(int flagMultiplier) {
+        this.flagMultiplier = flagMultiplier;
     }
 
     public double getComputedMultiplier() {
-        return 1 + (this.pickUpTicks / (20 * 2)) * 0.01;
+        return 1 + flagMultiplier * 0.01;
     }
 
-    public int getComputedHumanMultiplier() {
-        return (this.pickUpTicks / (20 * 2));
+    public int getFlagMultiplier() {
+        return flagMultiplier;
     }
 
     @Override
     public FlagLocation update(@Nonnull FlagInfo info) {
-        this.pickUpTicks++;
-        return this.pickUpTicks % (20 * 2) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
+        this.ticksElapsed++;
+        if (ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
+            flagMultiplier += 1;
+        }
+        return null;
     }
 
     @Nonnull
@@ -70,14 +71,14 @@ public class PlayerFlagLocation implements FlagLocation {
         return Arrays.asList(
                 Component.text("Type: " + this.getClass().getSimpleName()),
                 Component.text("Player: " + this.getPlayer().getName()),
-                Component.text("pickUpTicks: " + getPickUpTicks()),
-                Component.text("pickUpTicks / 20: " + getPickUpTicks() / 20),
-                Component.text("Multiplier: +" + getComputedHumanMultiplier() + "%")
+                Component.text("pickUpTicks: " + getTicksElapsed()),
+                Component.text("pickUpTicks / 20: " + getTicksElapsed() / 20),
+                Component.text("Multiplier: +" + getFlagMultiplier() + "%")
         );
     }
 
     public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsEntity player) {
-        return flag instanceof GroundFlagLocation ? new PlayerFlagLocation(player, ((GroundFlagLocation) flag).getDamageTimer())
+        return flag instanceof GroundFlagLocation ? new PlayerFlagLocation(player, ((GroundFlagLocation) flag).getFlagMultiplier())
                                                   : new PlayerFlagLocation(player, 0);
     }
 
@@ -98,7 +99,7 @@ public class PlayerFlagLocation implements FlagLocation {
         OrderOfEviscerate.removeCloak(player, false);
         if (event.getOld() instanceof PlayerFlagLocation oldPlayerFlagLocation) {
             // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
-            int computedHumanMultiplier = getComputedHumanMultiplier();
+            int computedHumanMultiplier = getFlagMultiplier();
             if (computedHumanMultiplier % 10 == 0) {
                 game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                     if (t != null && databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
