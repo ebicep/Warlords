@@ -68,7 +68,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         if (ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
             this.flagMultiplier++;
         }
-        return this.despawnTicks <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
+        return this.despawnTicks <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null, flagMultiplier) : null;
     }
 
     @Nonnull
