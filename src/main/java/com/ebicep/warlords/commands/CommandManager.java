@@ -325,7 +325,7 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
                       .map(GameMap::getMapName)
-                      .map(s -> s.replaceAll("", "_"))
+                      .map(s -> s.replaceAll(" ", "_"))
                       .toList());
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
