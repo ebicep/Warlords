@@ -176,6 +176,15 @@ public class FlagSpawnPointOption implements Option {
                         // Nothing
                         wp.sendMessage(Component.text("You cannot steal your own team's flag!", NamedTextColor.RED));
                     } else {
+                        List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
+                        for (FlagHolder flagHolder : flagHolders) {
+                            if (flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().getTeam() == info.getTeam()) {
+                                if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
+                                    wp.sendMessage(Component.text("No repick for you!", NamedTextColor.GRAY));
+                                    return true;
+                                }
+                            }
+                        }
                         // Steal flag
                         info.setFlag(new PlayerFlagLocation(wp, spawnFlagLocation.getFlagMultiplier()));
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -266,7 +275,7 @@ public class FlagSpawnPointOption implements Option {
                     ));
                 }
             }
-        }.runTaskTimer(0, 2);
+        }.runTaskTimer(0, 5);
         new GameRunnable(game) {
             @Override
             public void run() {
