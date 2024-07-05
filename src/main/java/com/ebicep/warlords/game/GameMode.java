@@ -495,6 +495,7 @@ public enum GameMode {
                     3,
                     Component.text("GO!", NamedTextColor.GREEN)
             ));
+            options.add(new FlagOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
