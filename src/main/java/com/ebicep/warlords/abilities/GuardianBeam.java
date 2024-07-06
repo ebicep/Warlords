@@ -58,7 +58,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                    .append(Component.text(" seconds and all stacks are removed.\n\n" +
                                            "If Guardian Beam hits a target, you also receive a shield based on the same percentages."))
-                                   .append(Component.text(".\n\nHas a maximum range of "))
+                                   .append(Component.text("\n\nHas a maximum range of "))
                                    .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                    .append(Component.text(" blocks."));
         } else {
@@ -75,7 +75,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                    .append(Component.text(" seconds and all stacks are removed.\n\n" +
                                            "If Guardian Beam hits a target, you also receive a shield based on the same percentages."))
-                                   .append(Component.text(".\n\nHas a maximum range of "))
+                                   .append(Component.text("\n\nHas a maximum range of "))
                                    .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                    .append(Component.text(" blocks."));
         }

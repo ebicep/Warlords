@@ -8,7 +8,7 @@ public class Cryomancer extends AbstractMage {
     public Cryomancer() {
         super(
                 "Cryomancer",
-                6135,
+                6300,
                 305,
                 20,
                 14,
