@@ -53,7 +53,7 @@ public class FlagSpawnPointOption implements Option {
             .name(Component.text("Flag Finder", NamedTextColor.GREEN))
             .unbreakable()
             .get();
-    public static final int FLAG_MULTIPLIER_PERIOD = 50; // ticks
+    public static final int FLAG_MULTIPLIER_PERIOD = 40; // ticks
 
     @Nonnull
     private final FlagInfo info;

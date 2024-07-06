@@ -21,6 +21,8 @@ import java.util.List;
 
 public class PlayerFlagLocation implements FlagLocation {
 
+    private static final int INCREASE_DELAY = 20 * 30;
+
     private final WarlordsEntity player;
     private int ticksElapsed = 0;
     private int flagMultiplier;
@@ -59,7 +61,7 @@ public class PlayerFlagLocation implements FlagLocation {
     @Override
     public FlagLocation update(@Nonnull FlagInfo info) {
         this.ticksElapsed++;
-        if (ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
+        if (ticksElapsed >= INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
             flagMultiplier += 1;
         }
         return null;
