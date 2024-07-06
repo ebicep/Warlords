@@ -42,6 +42,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     private final DamageValues damageValues = new DamageValues();
     private float shacklePool = 0;
     private int maxShackleTargets = 1;
+    private int silenceDurationInTicks = 30;
     private int minSilenceDurationInTicks = 40;
     private int maxSilenceDurationInTicks = 70;
 
@@ -56,14 +57,8 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                                .append(Component.text(" enemy and deal "))
                                .append(Damages.formatDamage(damageValues.shackleDamage))
                                .append(Component.text(" damage. Shackled enemies are silenced for "))
-                               .append(formatRange(minSilenceDurationInTicks / 20f, maxSilenceDurationInTicks / 20f, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, making them unable to use their main attack for the duration. The silence duration increases by "))
-                               .append(Component.text("0.5", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds for every "))
-                               .append(Component.text("500", NamedTextColor.RED))
-                               .append(Component.text(" damage you took in the last "))
-                               .append(Component.text("6", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Gain a short burst of "))
+                               .append(Component.text(format(silenceDurationInTicks / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds, making them unable to use their main attack for the duration. Gain a short burst of "))
                                .append(Component.text("40%", NamedTextColor.YELLOW))
                                .append(Component.text(" movement speed for "))
                                .append(Component.text("1.5", NamedTextColor.GOLD))
@@ -149,10 +144,11 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
         wp.addSpeedModifier(wp, "Shackle Speed", 40, 30, "BASE");
 
-        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
-        if (silenceDuration > maxSilenceDurationInTicks) {
-            silenceDuration = maxSilenceDurationInTicks;
-        }
+//        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
+//        if (silenceDuration > maxSilenceDurationInTicks) {
+//            silenceDuration = maxSilenceDurationInTicks;
+//        }
+        int silenceDuration = silenceDurationInTicks;
         shackleTarget.addInstance(InstanceBuilder
                 .damage()
                 .ability(this)
@@ -279,6 +275,12 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
     public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
         this.minSilenceDurationInTicks = minSilenceDurationInTicks;
+    }
+
+    public int getSilenceDurationInTicks() { return maxSilenceDurationInTicks; }
+
+    public void setSilenceDurationInTicks(int maxSilenceDurationInTicks) {
+        this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;
     }
 
     @Override
