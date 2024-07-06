@@ -49,7 +49,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     private final HealingValues healingValues = new HealingValues();
     private int bubbleRadius = 4;
     private int tickDuration = 100;
-    private int projectileDamageReduction = 60;
+    private int projectileDamageReduction = 40;
 
     public PrismGuard() {
         super("Prism Guard", 26, 40);
