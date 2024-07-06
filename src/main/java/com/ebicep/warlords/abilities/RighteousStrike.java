@@ -25,11 +25,11 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
 
     public int silencedTargetStruck = 0;
     private final DamageValues damageValues = new DamageValues();
-    private int abilityReductionInTicks = 10;
+    private int abilityReductionInTicks = 16;
     private int targetsStruck = 0;
 
     public RighteousStrike() {
-        super("Righteous Strike", 0, 90);
+        super("Righteous Strike", 0, 70);
     }
 
     @Override
@@ -39,11 +39,11 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
                                .append(Component.text(" damage. Each strike reduces the duration of your struck target's active ability timers by "))
                                .append(Component.text(format(abilityReductionInTicks / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))
-                               .append(Component.text("\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Prism Guard by "))
-                               .append(Component.text(format((abilityReductionInTicks * 1.6f) / 20f), NamedTextColor.GOLD))
+                               .append(Component.text("\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Vindicate by "))
+                               .append(Component.text("0.5", NamedTextColor.GOLD))
                                .append(Component.text(" seconds and reduce their active ability timers by "))
-                               .append(Component.text("0.8", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds instead."));
+                               .append(Component.text(format((abilityReductionInTicks + 4) / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" second instead."));
     }
 
     @Override
@@ -80,8 +80,8 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns((int) (abilityReductionInTicks * 1.6f), CooldownTypes.ABILITY);
-            for (PrismGuard prismGuard : wp.getAbilitiesMatching(PrismGuard.class)) {
-                prismGuard.subtractCurrentCooldown(0.8f);
+            for (Vindicate vindicate : wp.getAbilitiesMatching(Vindicate.class)) {
+                vindicate.subtractCurrentCooldown(0.5f);
             }
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);
@@ -125,7 +125,7 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(391, 497, 20, 175);
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(334, 425, 20, 175);
         private final List<Value> values = List.of(strikeDamage);
 
         public Value.RangedValueCritable getStrikeDamage() {
