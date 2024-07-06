@@ -397,7 +397,7 @@ public class WarlordsEvents implements Listener {
                     } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class)) {
                         player.sendMessage(Component.text("You cannot drop the flag with a Time Warp active!", NamedTextColor.RED));
                     } else {
-                        FlagHolder.dropFlagForPlayer(wp);
+                        FlagHolder.dropFlagForPlayer(wp, true);
                         wp.setFlagDropCooldown(5);
                     }
                     return;

@@ -158,7 +158,11 @@ public class FlagSpawnPointOption implements Option {
                 if (info.getFlag() instanceof GroundFlagLocation groundFlagLocation) {
                     if (team == info.getTeam()) {
                         // Return flag
-                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp, (int) (groundFlagLocation.getFlagMultiplier() * .33f)));
+                        boolean manuallyDropped = groundFlagLocation.isManuallyDropped();
+                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(),
+                                wp,
+                                manuallyDropped ? groundFlagLocation.getFlagMultiplier() : (int) (groundFlagLocation.getFlagMultiplier() * .33f)
+                        ));
                         List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
                         for (FlagHolder flagHolder : flagHolders) {
                             if (flagHolder.getInfo() != info && flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation) {
@@ -170,7 +174,7 @@ public class FlagSpawnPointOption implements Option {
                         }
                     } else {
                         // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getFlagMultiplier()));
+                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getTicksElapsed(), groundFlagLocation.getFlagMultiplier()));
                         if (wp.getEntity().getVehicle() != null) {
                             wp.getEntity().getVehicle().remove();
                         }
@@ -191,7 +195,7 @@ public class FlagSpawnPointOption implements Option {
                             }
                         }
                         // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, spawnFlagLocation.getFlagMultiplier()));
+                        info.setFlag(new PlayerFlagLocation(wp, 0, spawnFlagLocation.getFlagMultiplier()));
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Flag Damage Resistance",
                                 "RES",

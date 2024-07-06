@@ -285,7 +285,7 @@ public abstract class WarlordsEntity {
         }
 
         this.addDeath();
-        FlagHolder.dropFlagForPlayer(this);
+        FlagHolder.dropFlagForPlayer(this, false);
 
         if (entity instanceof Player player) {
             player.setGameMode(GameMode.SPECTATOR);
@@ -1536,7 +1536,7 @@ public abstract class WarlordsEntity {
             getEntity().remove();
         }
         getEntity().removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
-        FlagHolder.dropFlagForPlayer(this);
+        FlagHolder.dropFlagForPlayer(this, false);
         getMinuteStats().getEntries().clear();
         getSecondStats().getEntries().forEach(entry -> {
             entry.getEventsAsSelf().clear();

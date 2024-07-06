@@ -64,7 +64,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             undyingArmy.pop(warlordsEntity);
 
             // Drops the flag when popped.
-            FlagHolder.dropFlagForPlayer(warlordsEntity);
+            FlagHolder.dropFlagForPlayer(warlordsEntity, false);
 
             // Sending the message + check if getFrom is self
             int armyDamage = Math.round(warlordsEntity.getMaxHealth() * (undyingArmy.getMaxHealthDamage() / 100f));

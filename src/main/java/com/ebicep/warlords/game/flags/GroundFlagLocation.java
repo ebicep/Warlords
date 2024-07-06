@@ -25,21 +25,24 @@ import java.util.List;
 
 public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
 
-    private int ticksElapsed = 0;
+    private int ticksElapsed;
     private int flagMultiplier;
     private int despawnTicks;
+    private final boolean manuallyDropped;
 
-    public GroundFlagLocation(Location location, int ticksElapsed, int flagMultiplier) {
+    public GroundFlagLocation(Location location, int ticksElapsed, int flagMultiplier, boolean manuallyDropped) {
         super(location);
         this.ticksElapsed = ticksElapsed;
         this.flagMultiplier = flagMultiplier;
+        this.manuallyDropped = manuallyDropped;
         this.despawnTicks = 15 * 20;
     }
 
-    public GroundFlagLocation(PlayerFlagLocation playerFlagLocation) {
+    public GroundFlagLocation(PlayerFlagLocation playerFlagLocation, boolean manuallyDropped) {
         this(playerFlagLocation.getLocation(),
                 playerFlagLocation.getTicksElapsed(),
-                playerFlagLocation.getPlayer().isDead() ? playerFlagLocation.getFlagMultiplier() + 15 : playerFlagLocation.getFlagMultiplier()
+                playerFlagLocation.getPlayer().isDead() ? playerFlagLocation.getFlagMultiplier() + 15 : playerFlagLocation.getFlagMultiplier(),
+                manuallyDropped
         );
     }
 
@@ -61,11 +64,19 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         return this.despawnTicks / 20;
     }
 
+    public boolean isManuallyDropped() {
+        return manuallyDropped;
+    }
+
+    public int getTicksElapsed() {
+        return ticksElapsed;
+    }
+
     @Override
     public FlagLocation update(@Nonnull FlagInfo info) {
         this.despawnTicks--;
         this.ticksElapsed++;
-        if (ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
+        if (ticksElapsed >= PlayerFlagLocation.INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
             this.flagMultiplier++;
         }
         return this.despawnTicks <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null, flagMultiplier) : null;
@@ -83,8 +94,8 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     }
 
     public static GroundFlagLocation of(@Nonnull FlagLocation flag) {
-        return flag instanceof PlayerFlagLocation ? new GroundFlagLocation((PlayerFlagLocation) flag)
-                                                  : new GroundFlagLocation(flag.getLocation(), 0, 0);
+        return flag instanceof PlayerFlagLocation ? new GroundFlagLocation((PlayerFlagLocation) flag, false)
+                                                  : new GroundFlagLocation(flag.getLocation(), 0, 0, false);
     }
 
     @Override

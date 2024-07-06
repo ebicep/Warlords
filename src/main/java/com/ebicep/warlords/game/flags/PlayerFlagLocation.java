@@ -21,14 +21,15 @@ import java.util.List;
 
 public class PlayerFlagLocation implements FlagLocation {
 
-    private static final int INCREASE_DELAY = 20 * 30;
+    public static final int INCREASE_DELAY = 20 * 30;
 
     private final WarlordsEntity player;
-    private int ticksElapsed = 0;
+    private int ticksElapsed;
     private int flagMultiplier;
 
-    public PlayerFlagLocation(WarlordsEntity player, int flagMultiplier) {
+    public PlayerFlagLocation(WarlordsEntity player, int ticksElapsed, int flagMultiplier) {
         this.player = player;
+        this.ticksElapsed = ticksElapsed;
         this.flagMultiplier = flagMultiplier;
     }
 
@@ -80,8 +81,8 @@ public class PlayerFlagLocation implements FlagLocation {
     }
 
     public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsEntity player) {
-        return flag instanceof GroundFlagLocation ? new PlayerFlagLocation(player, ((GroundFlagLocation) flag).getFlagMultiplier())
-                                                  : new PlayerFlagLocation(player, 0);
+        return flag instanceof GroundFlagLocation ? new PlayerFlagLocation(player, ((GroundFlagLocation) flag).getTicksElapsed(), ((GroundFlagLocation) flag).getFlagMultiplier())
+                                                  : new PlayerFlagLocation(player, 0, 0);
     }
 
     @Override

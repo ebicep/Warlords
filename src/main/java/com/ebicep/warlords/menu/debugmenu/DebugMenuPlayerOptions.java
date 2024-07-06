@@ -557,7 +557,7 @@ public class DebugMenuPlayerOptions {
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
-                                FlagHolder.dropFlagForPlayer(target);
+                                FlagHolder.dropFlagForPlayer(target, false);
                                 sendDebugMessage(player, Component.text("Dropped the flag for ", NamedTextColor.GREEN)
                                                                   .append(targetColoredName));
 
