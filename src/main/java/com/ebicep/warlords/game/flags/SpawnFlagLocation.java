@@ -36,15 +36,15 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsEntity flagReturner, int flagMultiplier) {
         super(location);
         this.flagReturner = flagReturner;
-        this.flagMultiplier = Math.max(0, flagMultiplier - INITIAL_MULTIPLIER_DECREASE);
+        this.flagMultiplier = flagMultiplier;
     }
 
     @Override
     public FlagLocation update(@Nonnull FlagInfo info) {
         this.ticksElapsed++;
-        if (ticksElapsed % MULTIPLIER_DECAY_PERIOD == 0) {
-            flagMultiplier = Math.max(0, flagMultiplier - MULTIPLIER_DECAY_AMOUNT);
-        }
+//        if (ticksElapsed % MULTIPLIER_DECAY_PERIOD == 0) {
+//            flagMultiplier = Math.max(0, flagMultiplier - MULTIPLIER_DECAY_AMOUNT);
+//        }
         return null;
     }
 

@@ -158,8 +158,13 @@ public class FlagSpawnPointOption implements Option {
                 if (info.getFlag() instanceof GroundFlagLocation groundFlagLocation) {
                     if (team == info.getTeam()) {
                         // Return flag
-                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp, groundFlagLocation.getFlagMultiplier()));
+                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp, (int) (groundFlagLocation.getFlagMultiplier() * .33f)));
                         List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
+                        for (FlagHolder flagHolder : flagHolders) {
+                            if (flagHolder.getInfo() != info && flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation) {
+                                playerFlagLocation.setFlagMultiplier((int) (playerFlagLocation.getFlagMultiplier() * .66));
+                            }
+                        }
                         if (flagHolders.stream().allMatch(flagHolder -> flagHolder.getFlag() instanceof SpawnFlagLocation)) {
                             flagHolders.stream().map(FlagHolder::getFlag).map(SpawnFlagLocation.class::cast).forEach(spawnFlagLocation -> spawnFlagLocation.setFlagMultiplier(0));
                         }
