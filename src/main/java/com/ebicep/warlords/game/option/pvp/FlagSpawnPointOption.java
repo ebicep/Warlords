@@ -162,7 +162,7 @@ public class FlagSpawnPointOption implements Option {
                         List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
                         for (FlagHolder flagHolder : flagHolders) {
                             if (flagHolder.getInfo() != info && flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation) {
-                                playerFlagLocation.setFlagMultiplier((int) (playerFlagLocation.getFlagMultiplier() * .66));
+                                playerFlagLocation.setFlagMultiplier((int) (playerFlagLocation.getFlagMultiplier() * .5));
                             }
                         }
                         if (flagHolders.stream().allMatch(flagHolder -> flagHolder.getFlag() instanceof SpawnFlagLocation)) {
