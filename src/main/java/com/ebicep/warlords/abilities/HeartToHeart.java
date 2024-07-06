@@ -52,9 +52,9 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                .append(Component.text("VIND", NamedTextColor.GOLD))
                                .append(Component.text(" for "))
                                .append(Component.text(vindDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
+                               .append(Component.text(" seconds and "))
                                .append(Heals.formatHealing(healingValues.heartToHeartHealing))
-                               .append(Component.text(" health after reaching your ally. Has a maximum range of"))
+                               .append(Component.text(" health. Has a maximum range of"))
                                .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks.\n\nHeart to Heart has reduced range when holding a flag.", NamedTextColor.GRAY));
 
@@ -214,6 +214,12 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 if (timer >= 8) {
                     wp.setVelocity(name, playerLoc.getDirection().multiply(0.4).setY(0.2), true);
                     wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(HeartToHeart.this)
+                            .source(wp)
+                            .value(healingValues.heartToHeartHealing)
+                    );
+                    heartTarget.addInstance(InstanceBuilder
                             .healing()
                             .ability(HeartToHeart.this)
                             .source(wp)
