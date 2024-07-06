@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
@@ -327,8 +328,8 @@ public class InstanceManager {
 
         final float damageHealValueBeforeInterveneReduction = damageValue;
         // Intervene
-        Optional<RegularCooldown> optionalInterveneCooldown = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                .filterCooldownClass(Intervene.class)
+        Optional<LinkedCooldown> optionalInterveneCooldown = new CooldownFilter<>(warlordsEntity, LinkedCooldown.class)
+                .filterCooldownClass(Intervene.InterveneData.class)
                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                 .findFirst();
         if (!trueDamage && !pierceDamage &&
@@ -337,38 +338,34 @@ public class InstanceManager {
         ) {
             debugMessage.appendTitle("Intervene", NamedTextColor.AQUA);
 
-            Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
+            Intervene.InterveneData data = (Intervene.InterveneData) optionalInterveneCooldown.get().getCooldownObject();
+            float maxDamagePrevented = data.getMaxDamagePrevented();
+            float preDamagePrevented = data.getDamagePrevented();
             WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
-            damageValue *= (intervene.getDamageReduction() / 100f);
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                    .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
-            );
-            intervenedBy.addAbsorbed(damageValue);
             intervenedBy.resetRegenTimer();
-            intervene.addDamagePrevented(damageValue);
             // Break Intervene if above damage threshold
-            if (intervene.getDamagePrevented() >= intervene.getMaxDamagePrevented() / 2f) {
-                //defender
-                new CooldownFilter<>(intervenedBy, RegularCooldown.class)
-                        .filterCooldownObject(intervene)
-                        .findFirst()
-                        .ifPresent(regularCooldown -> regularCooldown.setTicksLeft(0));
-                //vene target
+            if (preDamagePrevented + damageValue > maxDamagePrevented) {
                 optionalInterveneCooldown.get().setTicksLeft(0);
+                //extra overVeneDamage to target
+                float overVeneDamage = preDamagePrevented + damageValue - maxDamagePrevented;
                 //remaining vene prevent damage
-                float remainingVeneDamage = (intervene.getMaxDamagePrevented() / 2) - (intervene.getDamagePrevented() - damageValue);
+                float leftOverPrevented = maxDamagePrevented - preDamagePrevented;
+                data.addDamagePrevented(leftOverPrevented);
+                intervenedBy.addAbsorbed(leftOverPrevented * (1 - data.getIntervene().getDamageReduction() / 100f));
+                damageValue = leftOverPrevented * (data.getIntervene().getDamageReduction() / 100f);
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(1)
+                        .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                );
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")
                         .source(attacker)
-                        .value(remainingVeneDamage)
+                        .value(damageValue)
                         .showAsCrit(isCrit)
                         .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
-                //extra overVeneDamage to target
-                float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
                 warlordsEntity.addInstance(InstanceBuilder
                         .damage()
                         .cause(ability)
@@ -377,6 +374,14 @@ public class InstanceManager {
                         .showAsCrit(isCrit)
                 ).ifPresent(finalEvent::set);
             } else {
+                damageValue *= data.getIntervene().getDamageReduction() / 100f;
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(1)
+                        .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                );
+                data.addDamagePrevented(damageHealValueBeforeInterveneReduction);
+                intervenedBy.addAbsorbed(damageHealValueBeforeInterveneReduction - damageValue);
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")

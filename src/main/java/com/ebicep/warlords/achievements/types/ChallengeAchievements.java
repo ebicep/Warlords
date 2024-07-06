@@ -264,7 +264,7 @@ public enum ChallengeAchievements implements Achievement {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
                         .filter(regularCooldown -> regularCooldown.getStartingTicks() - regularCooldown.getTicksLeft() <= 20)
-                        .filterCooldownClassAndMapToObjectsOfClass(Intervene.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(Intervene.InterveneData.class)
                         .anyMatch(intervene -> intervene.getDamagePrevented() >= 2000);
             }
     ),

@@ -96,8 +96,16 @@ public class InstanceDebugHoverable {
         }
 
         public LevelBuilder prefix(AbstractCooldown<?> cooldown) {
-            this.prefix = ComponentBuilder.create(cooldown.getName(), NamedTextColor.GREEN)
-                                          .build();
+            ComponentBuilder builder = ComponentBuilder.create(cooldown.getName(), NamedTextColor.GREEN);
+            Component cooldownDebugMessage = cooldown.getDebugMessage();
+            if (cooldownDebugMessage != null) {
+                builder.append(Component.textOfChildren(
+                        Component.text(" (", NamedTextColor.DARK_GRAY),
+                        cooldownDebugMessage,
+                        Component.text(")", NamedTextColor.DARK_GRAY)
+                ));
+            }
+            this.prefix = builder.build();
             return this;
         }
 
@@ -107,14 +115,14 @@ public class InstanceDebugHoverable {
         }
 
         public LevelBuilder value(float before, float after, AbstractCooldown<?> cooldown) {
-            this.value = ComponentBuilder.create(NumberFormat.formatOptionalHundredths(after), NamedTextColor.GOLD)
-                                         .text(" (", NamedTextColor.DARK_GRAY)
-                                         .text(NumberFormat.formatOptionalHundredths(after / before) + "x", NamedTextColor.RED)
-                                         .text(")", NamedTextColor.DARK_GRAY)
-                                         .text(" (", NamedTextColor.DARK_GRAY)
-                                         .text(cooldown.getName(), NamedTextColor.GRAY)
-                                         .text(")", NamedTextColor.DARK_GRAY)
-                                         .build();
+            ComponentBuilder builder = ComponentBuilder.create(NumberFormat.formatOptionalHundredths(after), NamedTextColor.GOLD)
+                                                       .text(" (", NamedTextColor.DARK_GRAY)
+                                                       .text(NumberFormat.formatOptionalHundredths(after / before) + "x", NamedTextColor.RED)
+                                                       .text(")", NamedTextColor.DARK_GRAY)
+                                                       .text(" (", NamedTextColor.DARK_GRAY)
+                                                       .text(cooldown.getName(), NamedTextColor.GRAY)
+                                                       .text(")", NamedTextColor.DARK_GRAY);
+            this.value = builder.build();
             return this;
         }
 
