@@ -223,6 +223,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (hasMaxStacks()) {
                     if (wp.getCurrentHealth() - currentDamageValue < 0 && !healedLethal.contains(wp)) {
+                        healedLethal.add(wp);
                         float healAmount = wp.getMaxHealth() * convertToPercent(lethalDamageHealing);
                         wp.addInstance(InstanceBuilder
                                 .healing()
