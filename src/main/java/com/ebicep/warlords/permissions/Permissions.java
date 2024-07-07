@@ -26,6 +26,7 @@ public enum Permissions {
     ADMIN("ADMIN", NamedTextColor.DARK_AQUA, "group.administrator"),
     COORDINATOR("HGS", NamedTextColor.GOLD, "group.coordinator"),
     CONTENT_CREATOR("CT", NamedTextColor.LIGHT_PURPLE, "group.contentcreator"),
+    BUILDER("BUILDER", NamedTextColor.DARK_GREEN, "group.builder"),
     GAME_STARTER("GS", NamedTextColor.YELLOW, "group.gamestarter"),
     GAME_TESTER("P", NamedTextColor.GREEN, "group.patreon"),
     DEFAULT("", NamedTextColor.AQUA, "group.default"),
