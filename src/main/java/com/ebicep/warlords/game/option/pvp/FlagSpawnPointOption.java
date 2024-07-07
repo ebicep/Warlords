@@ -173,7 +173,7 @@ public class FlagSpawnPointOption implements Option {
                             flagHolders.stream().map(FlagHolder::getFlag).map(SpawnFlagLocation.class::cast).forEach(spawnFlagLocation -> spawnFlagLocation.setFlagMultiplier(0));
                         }
                     } else {
-                        if (groundFlagLocation.getRepickTickCooldown() <= 0) {
+                        if (groundFlagLocation.getRepickTickCooldown() > 0) {
                             wp.sendMessage(Component.text("You cannot repick the flag yet!", NamedTextColor.RED));
                         } else {
                             // Steal flag
