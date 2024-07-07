@@ -29,14 +29,16 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     private int ticksElapsed;
     private int flagMultiplier;
     private int despawnTicks;
+    private int repickTickCooldown;
     private final boolean manuallyDropped;
 
     public GroundFlagLocation(Location location, int ticksElapsed, int flagMultiplier, boolean manuallyDropped) {
         super(location);
         this.ticksElapsed = ticksElapsed;
         this.flagMultiplier = flagMultiplier;
-        this.manuallyDropped = manuallyDropped;
         this.despawnTicks = 15 * 20;
+        this.repickTickCooldown = manuallyDropped ? 0 : 10;
+        this.manuallyDropped = manuallyDropped;
     }
 
     public GroundFlagLocation(PlayerFlagLocation playerFlagLocation, boolean manuallyDropped) {
@@ -73,10 +75,15 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         return ticksElapsed;
     }
 
+    public int getRepickTickCooldown() {
+        return repickTickCooldown;
+    }
+
     @Override
     public FlagLocation update(Game game, @Nonnull FlagInfo info) {
-        this.despawnTicks--;
         this.ticksElapsed++;
+        this.despawnTicks--;
+        this.repickTickCooldown--;
         if (ticksElapsed >= PlayerFlagLocation.INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
             this.flagMultiplier++;
         }

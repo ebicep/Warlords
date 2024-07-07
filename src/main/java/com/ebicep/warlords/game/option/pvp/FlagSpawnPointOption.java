@@ -173,10 +173,14 @@ public class FlagSpawnPointOption implements Option {
                             flagHolders.stream().map(FlagHolder::getFlag).map(SpawnFlagLocation.class::cast).forEach(spawnFlagLocation -> spawnFlagLocation.setFlagMultiplier(0));
                         }
                     } else {
-                        // Steal flag
-                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getTicksElapsed(), groundFlagLocation.getFlagMultiplier()));
-                        if (wp.getEntity().getVehicle() != null) {
-                            wp.getEntity().getVehicle().remove();
+                        if (groundFlagLocation.getRepickTickCooldown() <= 0) {
+                            wp.sendMessage(Component.text("You cannot repick the flag yet!", NamedTextColor.RED));
+                        } else {
+                            // Steal flag
+                            info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getTicksElapsed(), groundFlagLocation.getFlagMultiplier()));
+                            if (wp.getEntity().getVehicle() != null) {
+                                wp.getEntity().getVehicle().remove();
+                            }
                         }
                     }
                     return true;
@@ -189,7 +193,7 @@ public class FlagSpawnPointOption implements Option {
                         for (FlagHolder flagHolder : flagHolders) {
                             if (flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().getTeam() == info.getTeam()) {
                                 if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
-                                    wp.sendMessage(Component.text("No repick for you!", NamedTextColor.GRAY));
+                                    wp.sendMessage(Component.text("No repick for you!", NamedTextColor.RED));
                                     return true;
                                 }
                             }
