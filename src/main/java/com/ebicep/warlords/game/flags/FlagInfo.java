@@ -41,12 +41,5 @@ public class FlagInfo {
         this.flag = flag;
         onUpdate.accept(this, old);
     }
-
-    void update() {
-        FlagLocation updated = flag.update(this);
-        if (updated != null) {
-            setFlag(updated);
-        }
-    }
 	
 }

@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -73,13 +74,22 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     }
 
     @Override
-    public FlagLocation update(@Nonnull FlagInfo info) {
+    public FlagLocation update(Game game, @Nonnull FlagInfo info) {
         this.despawnTicks--;
         this.ticksElapsed++;
         if (ticksElapsed >= PlayerFlagLocation.INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
             this.flagMultiplier++;
         }
-        return this.despawnTicks <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null, flagMultiplier) : null;
+        if (this.despawnTicks <= 0) {
+            List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
+            for (FlagHolder flagHolder : flagHolders) {
+                if (flagHolder.getInfo() != info && flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation) {
+                    playerFlagLocation.setFlagMultiplier((int) (playerFlagLocation.getFlagMultiplier() * .5));
+                }
+            }
+            return new SpawnFlagLocation(info.getSpawnLocation(), null, flagMultiplier);
+        }
+        return null;
     }
 
     @Nonnull

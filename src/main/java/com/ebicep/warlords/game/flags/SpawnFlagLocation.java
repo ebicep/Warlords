@@ -40,7 +40,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     }
 
     @Override
-    public FlagLocation update(@Nonnull FlagInfo info) {
+    public FlagLocation update(Game game, @Nonnull FlagInfo info) {
         this.ticksElapsed++;
 //        if (ticksElapsed % MULTIPLIER_DECAY_PERIOD == 0) {
 //            flagMultiplier = Math.max(0, flagMultiplier - MULTIPLIER_DECAY_AMOUNT);

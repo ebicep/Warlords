@@ -44,7 +44,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
     }
 
     @Override
-    public FlagLocation update(@Nonnull FlagInfo info) {
+    public FlagLocation update(Game game, @Nonnull FlagInfo info) {
         this.ticksUntilSpawn--;
         return this.ticksUntilSpawn <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }

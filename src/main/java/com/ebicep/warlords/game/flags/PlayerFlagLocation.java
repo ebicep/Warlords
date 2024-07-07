@@ -60,7 +60,7 @@ public class PlayerFlagLocation implements FlagLocation {
     }
 
     @Override
-    public FlagLocation update(@Nonnull FlagInfo info) {
+    public FlagLocation update(Game game, @Nonnull FlagInfo info) {
         this.ticksElapsed++;
         if (ticksElapsed >= INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
             flagMultiplier += 1;
