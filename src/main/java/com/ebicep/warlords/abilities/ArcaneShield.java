@@ -180,12 +180,10 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         return true;
     }
 
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ArcaneShieldBranch(abilityTree, this);
     }
-
 
     @Override
     public void updateCustomStats(WarlordsEntity warlordsEntity) {
@@ -195,7 +193,6 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
             updateDescription(null);
         }
     }
-
 
     public void setMaxShieldHealth(int maxShieldHealth) {
         this.maxShieldHealth = maxShieldHealth;

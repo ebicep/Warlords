@@ -607,6 +607,7 @@ public abstract class WarlordsEntity {
 
     public void setSpec(Specializations spec, SkillBoosts skillBoost) {
         this.spec = spec.create.get();
+        this.spec.updateCustomStats(this);
         this.health.setBaseValue(this.spec.getMaxHealth());
         this.currentHealth = getMaxHealth();
         heal();
