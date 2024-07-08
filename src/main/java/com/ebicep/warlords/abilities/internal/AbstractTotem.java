@@ -24,49 +24,43 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
         return totem;
     }
 
-    public static <T extends AbstractTotem> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+    public static <T extends TotemData<?>> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
-                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
+                .filter(data -> entitiesAround.contains(data.getArmorStand()))
                 .findFirst();
     }
 
-    public static <T extends AbstractTotem> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
+    public static <T extends TotemData<?>> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
-                .filter(abstractTotemBase -> entitiesAround.contains(abstractTotemBase.getTotem()))
+                .filter(data -> entitiesAround.contains(data.getArmorStand()))
                 .toList();
     }
 
     protected WarlordsEntity owner;
     protected ArmorStand totem;
 
-    public AbstractTotem(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    public AbstractTotem(String name, float cooldown, float energyCost) {
+        super(name, cooldown, energyCost);
     }
 
     public AbstractTotem(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             ArmorStand totem,
             WarlordsEntity owner
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super(name, cooldown, energyCost);
         this.totem = totem;
         this.owner = owner;
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
         Location standLocation = LocationUtils.getGroundLocation(wp.getLocation());
         standLocation.setYaw(0);
         standLocation.setY(standLocation.getY() - 0.46);
@@ -89,13 +83,45 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
 
     protected abstract void onActivation(WarlordsEntity wp, ArmorStand totemStand);
 
-    public boolean isPlayerLookingAtTotem(WarlordsEntity warlordsPlayer) {
-        if (!(warlordsPlayer.getEntity() instanceof Player player)) {
-            return false;
+    public static abstract class TotemData<T extends AbstractTotem> {
+
+        protected final T totem;
+        protected WarlordsEntity owner;
+        protected ArmorStand armorStand;
+
+        public TotemData(T totem, WarlordsEntity owner, ArmorStand armorStand) {
+            this.totem = totem;
+            this.owner = owner;
+            this.armorStand = armorStand;
         }
-        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.46).backward(1);
-        Vector toEntity = this.totem.getEyeLocation().add(0, 0, 0).toVector().subtract(eye.toVector());
-        float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > .93f;
+
+        public T getTotem() {
+            return totem;
+        }
+
+        public WarlordsEntity getOwner() {
+            return owner;
+        }
+
+        public ArmorStand getArmorStand() {
+            return armorStand;
+        }
+
+        public boolean playerOutsideTotem(WarlordsEntity warlordsEntity, float radius) {
+            return warlordsEntity.getLocation().distanceSquared(armorStand.getLocation()) > radius * radius;
+        }
+
+        public boolean isPlayerLookingAtTotem(WarlordsEntity warlordsPlayer) {
+            if (!(warlordsPlayer.getEntity() instanceof Player player)) {
+                return false;
+            }
+            Location eye = new LocationBuilder(player.getEyeLocation()).addY(.46).backward(1);
+            Vector toEntity = this.armorStand.getEyeLocation().add(0, 0, 0).toVector().subtract(eye.toVector());
+            float dot = (float) toEntity.normalize().dot(eye.getDirection());
+            return dot > .93f;
+        }
+
+
     }
+
 }

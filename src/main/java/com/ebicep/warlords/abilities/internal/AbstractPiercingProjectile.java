@@ -35,7 +35,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     public int directHits = 0;
     public int numberOfDismounts = 0;
     protected final boolean hitTeammates;
-    protected FloatModifiable hitboxInflation = new FloatModifiable(0.75f);
+    protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected int maxTicks;
     protected double maxDistance;
     protected float forwardTeleportAmount = 0;
@@ -47,17 +47,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     public AbstractPiercingProjectile(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             double projectileSpeed,
             double maxDistance,
             boolean hitTeammates
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super(name, cooldown, energyCost);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
@@ -66,18 +62,14 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     public AbstractPiercingProjectile(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             double projectileSpeed,
             double maxDistance,
             boolean hitTeammates,
             float startCooldown
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
+        super(name, cooldown, energyCost, startCooldown);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
@@ -350,11 +342,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     }
 
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        playSound(projectile);
+    }
+
+    protected void playSound(@Nonnull InternalProjectile projectile) {
         final String activationSound = getActivationSound();
-        final float soundVolume = getSoundVolume();
-        final float soundPitch = getSoundPitch();
         if (activationSound != null) {
-            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, soundVolume, soundPitch);
+            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, getSoundVolume(), getSoundPitch());
         }
     }
 

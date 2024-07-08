@@ -1,70 +1,25 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
 import com.ebicep.warlords.abilities.MercifulHex;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
-
-    float minDamageHeal;
-    float maxDamageHeal;
-    float minSelfHeal;
-    float maxSelfHeal;
-    float dotMinHeal;
-    float dotMaxHeal;
-    float minDamage;
-    float maxDamage;
-
-    @Override
-    public void runOnce() {
-        ability.multiplyMinMax(1.15f);
-        ability.setMinSelfHeal(ability.getMinSelfHeal() * 1.15f);
-        ability.setMaxSelfHeal(ability.getMaxSelfHeal() * 1.15f);
-        ability.setDotMinHeal(ability.getDotMinHeal() * 1.15f);
-        ability.setDotMaxHeal(ability.getDotMaxHeal() * 1.15f);
-        ability.setMinDamage(ability.getMinDamage() * 1.15f);
-        ability.setMaxDamage(ability.getMaxDamage() * 1.15f);
-    }
 
     public MercifulHexBranch(AbilityTree abilityTree, MercifulHex ability) {
         super(abilityTree, ability);
 
-        minDamageHeal = ability.getMinDamageHeal();
-        maxDamageHeal = ability.getMaxDamageHeal();
-        minSelfHeal = ability.getMinSelfHeal();
-        maxSelfHeal = ability.getMaxSelfHeal();
-        dotMinHeal = ability.getDotMinHeal();
-        dotMaxHeal = ability.getDotMaxHeal();
-        minDamage = ability.getMinDamage();
-        maxDamage = ability.getMaxDamage();
-
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamageHeal * v);
-                        ability.setMaxDamageHeal(maxDamageHeal * v);
-                        ability.setMinSelfHeal(minSelfHeal * v);
-                        ability.setMaxSelfHeal(maxSelfHeal * v);
-                        ability.setDotMinHeal(dotMinHeal * v);
-                        ability.setDotMaxHeal(dotMaxHeal * v);
-                    }
-                }, 15f)
+                .addUpgradeHealing(ability.getHealValues(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamage(minDamage * v);
-                        ability.setMaxDamage(maxDamage * v);
-                    }
-                }, 15f, 3, 4)
+                .addUpgradeDamage(ability.getDamageValues().getHexDamage(), 15f, 3, 4)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
@@ -92,6 +47,20 @@ public class MercifulHexBranch extends AbstractUpgradeBranch<MercifulHex> {
                     ability.setTicksBetweenDot(10);
                 }
         );
+    }
+
+    @Override
+    public void runOnce() {
+        ability.getDamageValues()
+               .getValues()
+               .forEach(value -> {
+                   value.forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("PvE", .15f));
+               });
+        ability.getHealValues()
+               .getValues()
+               .forEach(value -> {
+                   value.forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("PvE", .15f));
+               });
     }
 
 }

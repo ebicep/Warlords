@@ -72,7 +72,8 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
         return new MongoCustomConversions(List.of(
                 new StringToSpendableConverter(),
                 new GameMapConverter.StringToGameMapConverter(),
-                new GameMapConverter.GameMapToStringConverter()
+                new GameMapConverter.GameMapToStringConverter(),
+                new StringToSkillBoostConverter()
         ));
     }
 }

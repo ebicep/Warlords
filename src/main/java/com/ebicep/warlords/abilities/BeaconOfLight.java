@@ -1,10 +1,13 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -19,14 +22,21 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
+public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implements Heals<BeaconOfLight.HealingValues> {
+
+    private final HealingValues healingValues = new HealingValues();
 
     public BeaconOfLight() {
         this(null, null);
     }
 
     public BeaconOfLight(Location location, CircleEffect effect) {
-        super("Beacon of Light", 170, 230, 20, 40, 25, 175, location, 4, 20, effect);
+        super("Beacon of Light", 20, 40, location, 4, 20, effect);
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     @Override
@@ -36,8 +46,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                                .append(Component.text(" seconds. All allies within a "))
                                .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
                                .append(Component.text(" block radius restore "))
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text("  health every 2 seconds." +
+                               .append(Heals.formatHealing(healingValues.beaconHealing))
+                               .append(Component.text(" health every 2 seconds." +
                                        "Only 2 beacons can be on the field at once (Including both Beacon of Light and Impair)."));
     }
 
@@ -46,7 +56,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
         return Component.text("All allies within a ")
                         .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
                         .append(Component.text(" block radius restore "))
-                        .append(Component.text(minDamageHeal, NamedTextColor.GREEN))
+                        .append(Heals.formatHealing(healingValues.beaconHealing))
                         .append(Component.text("  health every 2 seconds."));
     }
 
@@ -66,8 +76,13 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
     }
 
     @Override
-    public BeaconOfLight getObject(Location groundLocation, CircleEffect effect) {
+    public BeaconOfLight getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect) {
         return new BeaconOfLight(groundLocation, effect);
+    }
+
+    @Override
+    public ArmorStand getCrystal() {
+        return null;
     }
 
     @Override
@@ -79,21 +94,16 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
                     .aliveTeammatesOf(wp)
             ) {
-                allyTarget.addHealingInstance(
-                        wp,
-                        name,
-                        minDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
-                        maxDamageHeal * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1),
-                        critChance,
-                        critMultiplier
+                allyTarget.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .min(healingValues.beaconHealing.getMinValue() * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1))
+                        .max(healingValues.beaconHealing.getMaxValue() * (wp.getCooldownManager().hasCooldown(DivineBlessing.class) ? 1.5f : 1))
+                        .crit(healingValues.beaconHealing)
                 );
             }
         }
-    }
-
-    @Override
-    public ArmorStand getCrystal() {
-        return null;
     }
 
     @Override
@@ -103,5 +113,16 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> {
         return info;
     }
 
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable beaconHealing = new Value.RangedValueCritable(170, 230, 25, 175);
+        private final List<Value> values = List.of(beaconHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

@@ -29,7 +29,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -61,7 +62,10 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class WarlordsEvents implements Listener {
@@ -108,9 +112,7 @@ public class WarlordsEvents implements Listener {
         Player player = e.getPlayer();
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp != null) {
-            if (wp.isAlive()) {
-                e.getPlayer().setAllowFlight(false);
-            }
+            wp.getGame().getState().onPlayerReJoinGame(player);
             e.joinMessage(Component.textOfChildren(
                             wp.getColoredNameBold(),
                             Component.text(" rejoined the game!", NamedTextColor.GOLD)
@@ -199,6 +201,7 @@ public class WarlordsEvents implements Listener {
             player.setHealth(20);
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+            player.resetTitle();
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
             DatabaseManager.getPlayer(uuid, databasePlayer -> {
@@ -336,38 +339,38 @@ public class WarlordsEvents implements Listener {
         if (wpAttacker instanceof WarlordsNPC warlordsNPC) {
             if (!warlordsNPC.getCooldownManager().hasCooldown(SoulShackle.class) && !(warlordsNPC.getMob() instanceof Unsilencable)) {
                 if (!(warlordsNPC.getMinMeleeDamage() == 0)) {
-                    wpVictim.addDamageInstance(
-                            wpAttacker,
-                            "",
-                            warlordsNPC.getMinMeleeDamage(),
-                            warlordsNPC.getMaxMeleeDamage(),
-                            0,
-                            100,
-                            EnumSet.of(InstanceFlags.NO_HIT_SOUND)
+                    wpVictim.addInstance(InstanceBuilder
+                            .melee()
+                            .source(wpAttacker)
+                            .min(warlordsNPC.getMinMeleeDamage())
+                            .max(warlordsNPC.getMaxMeleeDamage())
+                            .critChance(warlordsNPC.getMeleeCritChance())
+                            .critMultiplier(warlordsNPC.getMeleeCritMultiplier())
+                            .flags(InstanceFlags.NO_HIT_SOUND)
                     );
                 }
             }
         } else {
-            if (wpAttacker instanceof WarlordsPlayer && ((WarlordsPlayer) wpAttacker).getWeapon() != null) {
-                AbstractWeapon weapon = ((WarlordsPlayer) wpAttacker).getWeapon();
-                wpVictim.addDamageInstance(
-                        wpAttacker,
-                        "",
-                        weapon.getMeleeDamageMin(),
-                        weapon.getMeleeDamageMax(),
-                        weapon.getCritChance(),
-                        weapon.getCritMultiplier(),
-                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
+            if (wpAttacker instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null) {
+                AbstractWeapon weapon = warlordsPlayer.getWeapon();
+                wpVictim.addInstance(InstanceBuilder
+                        .melee()
+                        .source(wpAttacker)
+                        .min(weapon.getMeleeDamageMin())
+                        .max(weapon.getMeleeDamageMax())
+                        .critChance(weapon.getCritChance())
+                        .critMultiplier(weapon.getCritMultiplier())
+                        .flags(InstanceFlags.NO_HIT_SOUND)
                 );
             } else {
-                wpVictim.addDamageInstance(
-                        wpAttacker,
-                        "",
-                        132,
-                        179,
-                        25,
-                        200,
-                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
+                wpVictim.addInstance(InstanceBuilder
+                        .melee()
+                        .source(wpAttacker)
+                        .min(132)
+                        .max(179)
+                        .critChance(25)
+                        .critMultiplier(200)
+                        .flags(InstanceFlags.NO_HIT_SOUND)
                 );
             }
         }
@@ -394,7 +397,7 @@ public class WarlordsEvents implements Listener {
                     } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class)) {
                         player.sendMessage(Component.text("You cannot drop the flag with a Time Warp active!", NamedTextColor.RED));
                     } else {
-                        FlagHolder.dropFlagForPlayer(wp);
+                        FlagHolder.dropFlagForPlayer(wp, true);
                         wp.setFlagDropCooldown(5);
                     }
                     return;
@@ -405,13 +408,10 @@ public class WarlordsEvents implements Listener {
                             break;
                         }
                         player.getInventory().remove(UndyingArmy.BONE);
-                        wp.addDamageInstance(
-                                Warlords.getPlayer(player),
-                                "",
-                                100000,
-                                100000,
-                                0,
-                                100
+                        wp.addInstance(InstanceBuilder
+                                .melee()
+                                .source(wp)
+                                .value(100000)
                         );
                     }
                     case COMPASS -> {
@@ -496,15 +496,18 @@ public class WarlordsEvents implements Listener {
     public void switchItemHeld(PlayerItemHeldEvent e) {
         int slot = e.getNewSlot();
         Player player = e.getPlayer();
+        if (player.getInventory().getItem(slot) == null) {
+            return;
+        }
         WarlordsEntity wp = Warlords.getPlayer(player);
         if (wp == null) {
             return;
         }
+        List<AbstractAbility> abilities = wp.getAbilities();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
             if (databasePlayer.getHotkeyMode() == Settings.HotkeyMode.NEW_MODE) {
-                if (slot == 1 || slot == 2 || slot == 3 || slot == 4) {
+                if (1 <= slot && slot <= 4 && slot < abilities.size()) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
-                    e.setCancelled(true);
                 } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                     AbstractWeapon weapon = warlordsPlayer.getWeapon();
                     if (weapon instanceof AbstractLegendaryWeapon) {

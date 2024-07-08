@@ -71,8 +71,9 @@ public class DebugMenuGameOptions {
                     continue;
                 }
                 i++;
+                ItemStack itemStack = gm.getItemStack();
                 menu.setItem(i % 7 + 1, i / 7 + 1,
-                        new ItemBuilder(Material.BLACK_WOOL)
+                        new ItemBuilder(itemStack == null ? Material.BLACK_WOOL : itemStack.getType())
                                 .name(Component.text(gm.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
                                 .get(),
                         (m, e) -> openMapMenu(player, gm)
@@ -380,8 +381,8 @@ public class DebugMenuGameOptions {
                 menu.setItem(
                         x,
                         1,
-                        new ItemBuilder(team.woolItem)
-                                .name(Component.text(team.name, team.teamColor))
+                        new ItemBuilder(team.getWool())
+                                .name(Component.text(team.name, team.getTeamColor()))
                                 .get(),
                         (m, e) -> {
                             SignGUI.builder()

@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -8,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.CripplingStrikeBranch;
@@ -23,25 +26,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CripplingStrike extends AbstractStrike {
+public class CripplingStrike extends AbstractStrike implements Damages<CripplingStrike.DamageValues> {
 
     public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration) {
-        cripple(from, target, name, new CripplingStrike(), tickDuration, .9f);
+        cripple(from, target, name, 0, tickDuration, .9f);
     }
 
     public static void cripple(
             WarlordsEntity from,
             WarlordsEntity target,
             String name,
-            CripplingStrike cripplingStrike,
+            int consecutiveStrikeCounter,
             int tickDuration,
             float crippleAmount
     ) {
+        CripplingStrikeData cripplingStrikeData = new CripplingStrikeData(consecutiveStrikeCounter);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "CRIP",
-                CripplingStrike.class,
-                cripplingStrike,
+                CripplingStrikeData.class,
+                cripplingStrikeData,
                 from,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
@@ -70,23 +74,18 @@ public class CripplingStrike extends AbstractStrike {
     }
 
     private final int crippleDuration = 3;
-    private int consecutiveStrikeCounter = 0;
+    private final DamageValues damageValues = new DamageValues();
     private int cripple = 10;
     private int cripplePerStrike = 5;
 
     public CripplingStrike() {
-        super("Crippling Strike", 362.25f, 498, 0, 100, 15, 200);
-    }
-
-    public CripplingStrike(float minDamageHeal, float maxDamageHeal, int consecutiveStrikeCounter) {
-        super("Crippling Strike", minDamageHeal, maxDamageHeal, 0, 100, 15, 200);
-        this.consecutiveStrikeCounter = consecutiveStrikeCounter;
+        super("Crippling Strike", 0, 100);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and "))
                                .append(Component.text("crippling ", NamedTextColor.RED))
                                .append(Component.text("them for "))
@@ -121,24 +120,22 @@ public class CripplingStrike extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
 
         if (pveMasterUpgrade || pveMasterUpgrade2) {
-            additionalHit(
-                    1,
-                    wp,
-                    nearPlayer,
-                    1,
-                    null,
-                    finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
-            );
+            additionalHit(1, wp, nearPlayer, warlordsEntity -> {
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage)
+                ).ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event));
+            });
         }
 
         return true;
@@ -153,18 +150,19 @@ public class CripplingStrike extends AbstractStrike {
             return;
         }
 
-        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+        Optional<CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrikeData.class)
                 .findAny();
         if (optionalCripplingStrike.isPresent()) {
-            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
-            nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+            CripplingStrikeData data = optionalCripplingStrike.get();
+            nearPlayer.getCooldownManager().removeCooldown(CripplingStrikeData.class, true);
+            int newCrippleCounter = Math.min(data.consecutiveStrikeCounter + 1, 2);
             cripple(wp,
                     nearPlayer,
                     name,
-                    new CripplingStrike(minDamageHeal, maxDamageHeal, Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                    newCrippleCounter,
                     crippleDuration * 20,
-                    convertToDivisionDecimal(cripple) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(cripplePerStrike)
+                    convertToDivisionDecimal(cripple) - newCrippleCounter * convertToPercent(cripplePerStrike)
             );
         } else {
             nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
@@ -174,10 +172,6 @@ public class CripplingStrike extends AbstractStrike {
         }
     }
 
-    public int getConsecutiveStrikeCounter() {
-        return consecutiveStrikeCounter;
-    }
-
     public static void cripple(
             WarlordsEntity from,
             WarlordsEntity target,
@@ -185,7 +179,7 @@ public class CripplingStrike extends AbstractStrike {
             int tickDuration,
             float crippleAmount
     ) {
-        cripple(from, target, name, new CripplingStrike(), tickDuration, crippleAmount);
+        cripple(from, target, name, 0, tickDuration, crippleAmount);
     }
 
     public int getCripple() {
@@ -204,5 +198,29 @@ public class CripplingStrike extends AbstractStrike {
         this.cripplePerStrike = cripplePerStrike;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362.25f, 498, 20, 175);
+        private final List<Value> values = List.of(strikeDamage);
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public record CripplingStrikeData(int consecutiveStrikeCounter) {
+
+    }
 
 }

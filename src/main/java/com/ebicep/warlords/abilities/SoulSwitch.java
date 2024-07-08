@@ -1,17 +1,19 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
@@ -36,22 +38,21 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox {
+public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox, Heals<SoulSwitch.HealingValues> {
 
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(13);
     private int blindnessTicks = 30;
     private int decoyMaxTicksLived = 60;
-
     // pve
     private int invisTicks = 30;
 
     public SoulSwitch() {
-        super("Soul Switch", 0, 0, 30, 40, -1, 50);
+        super("Soul Switch", 30, 40);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             description = ComponentBuilder.create("Switch locations with an enemy, stunning them for ")
                                           .text(format(blindnessTicks / 20f), NamedTextColor.GOLD)
                                           .text(" seconds. Upon swapping, self heal for ")
-                                          .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                                          .append(Heals.formatHealing(healingValues.switchHealing))
                                           .text(" health, go invisible for ")
                                           .text(format(invisTicks / 20f), NamedTextColor.GOLD)
                                           .text(" seconds, and transform the swapped enemy into your own Animus. " +
@@ -159,18 +160,16 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                         .findFirst()
                                         .orElse(null);
                 if (pveOption != null) {
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(healingValues.switchHealing)
                     );
                     wp.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 30, 0, true, false));
                     pveOption.despawnMob(npc.getMob());
                     Animus animus = new Animus(ownLocation, wp, swapTarget);
-                    pveOption.spawnNewMob(animus, Team.BLUE);
+                    pveOption.spawnNewMob(animus, wp.getTeam());
                     if (pveMasterUpgrade2) {
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Tricky Switch",
@@ -204,10 +203,15 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                         ) {
                             @Override
                             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                if (event.getAbility().equals("Judgement Strike")) {
+                                if (event.getCause().equals("Judgement Strike")) {
                                     wp.addEnergy(wp, "Tricky Switch", 10);
                                     float heal = currentDamageValue * .1f;
-                                    wp.addHealingInstance(wp, "Tricky Switch", heal, heal, 0, 100);
+                                    wp.addInstance(InstanceBuilder
+                                            .healing()
+                                            .cause("Tricky Switch")
+                                            .source(wp)
+                                            .value(heal)
+                                    );
                                 }
                             }
                         });
@@ -257,12 +261,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         return new SoulSwitchBranch(abilityTree, this);
     }
 
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
     public int getBlindnessTicks() {
         return blindnessTicks;
     }
@@ -290,5 +288,26 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
     public void setInvisTicks(int invisTicks) {
         this.invisTicks = invisTicks;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable switchHealing = new Value.RangedValueCritable(300, 500, 15, 175);
+        private final List<Value> values = List.of(switchHealing);
+
+        public Value.RangedValueCritable getSwitchHealing() {
+            return switchHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

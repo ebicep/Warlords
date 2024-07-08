@@ -8,9 +8,11 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.VindicateBranch;
@@ -21,10 +23,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -36,7 +42,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     private float vindicateDamageReduction = 30;
 
     public Vindicate() {
-        super("Vindicate", 0, 0, 55, 25);
+        super("Vindicate", 55, 25);
     }
 
     @Override
@@ -45,13 +51,11 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                                .append(Component.text(radius, NamedTextColor.YELLOW))
                                .append(Component.text(" block radius gain the status "))
                                .append(Component.text("VIND", NamedTextColor.GOLD))
-                               .append(Component.text(", which clears all de-buffs. In addition, the status "))
-                               .append(Component.text("VIND", NamedTextColor.GOLD))
-                               .append(Component.text(" prevents allies from being affected by de-buffs and grants "))
-                               .append(Component.text(knockbackResistance + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" knockback resistance for "))
+                               .append(Component.text(" for "))
                                .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. You gain "))
+                               .append(Component.text(" seconds, granting an immunity to de-buffs and "))
+                               .append(Component.text(knockbackResistance + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(" knockback resistance. You gain"))
                                .append(Component.text(format(vindicateDamageReduction) + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction for "))
                                .append(Component.text(format(damageReductionTickDuration / 20f), NamedTextColor.GOLD))
@@ -124,17 +128,15 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 WarlordsEntity hit = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
                     Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
-                    attacker.addDamageInstance(
-                            hit,
-                            name,
-                            currentDamageValue * .75f,
-                            currentDamageValue * .75f,
-                            0,
-                            100,
-                            EnumSet.of(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
+                    attacker.addInstance(InstanceBuilder
+                            .damage()
+                            .cause(name)
+                            .source(hit)
+                            .value(currentDamageValue * .75f)
+                            .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
                     );
                     return currentDamageValue * .1f;
                 } else {
@@ -157,10 +159,10 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
         // remove other instances of vindicate buff to override
-        target.getCooldownManager().removeCooldownByName("Debuff Immunity");
+        target.getCooldownManager().removeCooldownByName("Vindicate");
         boolean vindPveMaster2 = cooldownObject instanceof Vindicate vindicate && vindicate.pveMasterUpgrade2;
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Debuff Immunity",
+                "Vindicate",
                 "VIND",
                 cooldownClass,
                 cooldownObject,
@@ -184,9 +186,14 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 }
                 return currentDamageValue;
             }
+
+            @Override
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener(target);
+            }
         });
         if (vindPveMaster2) {
-            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1);
+            EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
         }
     }
 

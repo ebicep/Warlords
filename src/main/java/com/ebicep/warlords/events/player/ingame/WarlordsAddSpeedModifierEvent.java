@@ -1,13 +1,13 @@
 package com.ebicep.warlords.events.player.ingame;
 
+import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
+public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -15,47 +15,17 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
         return handlers;
     }
 
-    private final WarlordsEntity from;
-    private final AtomicReference<String> name;
-    private final AtomicReference<Float> modifier;
-    private final AtomicInteger duration;
-    private final AtomicReference<String[]> toDisable;
+    private final CalculateSpeed.Modifier modifier;
     private boolean enhanced = false;
+    private boolean cancelled = false;
 
-    public WarlordsAddSpeedModifierEvent(
-            WarlordsEntity warlordsEntity,
-            WarlordsEntity from,
-            AtomicReference<String> name,
-            AtomicReference<Float> modifier,
-            AtomicInteger duration,
-            AtomicReference<String[]> toDisable
-    ) {
-        super(warlordsEntity);
-        this.from = from;
-        this.name = name;
+    public WarlordsAddSpeedModifierEvent(@Nonnull WarlordsEntity player, CalculateSpeed.Modifier modifier) {
+        super(player);
         this.modifier = modifier;
-        this.duration = duration;
-        this.toDisable = toDisable;
     }
 
-    public WarlordsEntity getFrom() {
-        return from;
-    }
-
-    public AtomicReference<String> getName() {
-        return name;
-    }
-
-    public AtomicReference<Float> getModifier() {
+    public CalculateSpeed.Modifier getModifier() {
         return modifier;
-    }
-
-    public AtomicInteger getDuration() {
-        return duration;
-    }
-
-    public AtomicReference<String[]> getToDisable() {
-        return toDisable;
     }
 
     public boolean isEnhanced() {
@@ -71,4 +41,15 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent {
     public HandlerList getHandlers() {
         return handlers;
     }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
+
 }

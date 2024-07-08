@@ -35,7 +35,7 @@ public class Payload {
         this.brain = brain;
         this.renderer = renderer;
         this.escortingTeam = escortingTeam;
-        this.bossBar = BossBar.bossBar(Component.empty(), 0, escortingTeam.bossBarColor, BossBar.Overlay.PROGRESS);
+        this.bossBar = BossBar.bossBar(Component.empty(), 0, escortingTeam.getBossBarColor(), BossBar.Overlay.PROGRESS);
         renderer.init(game);
     }
 
@@ -98,7 +98,7 @@ public class Payload {
         }
         bossBar.name(Component.textOfChildren(
                 Component.text(" ".repeat((int) (progress * BOSS_BAR_FILL_SPACE) + leftPadding)),
-                Component.text("🄿", escortingTeam.teamColor),
+                Component.text("🄿", escortingTeam.getTeamColor()),
                 Component.text(pushing).decoration(TextDecoration.BOLD, contested),
                 Component.text(" ".repeat((int) ((1 - progress) * BOSS_BAR_FILL_SPACE)))
         ));

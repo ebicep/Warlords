@@ -64,6 +64,8 @@ public class AdminCommand extends BaseCommand {
     public void removeEntitiesNearBy(Player player, @Conditions("limits:min=1,max=20") Integer range) {
         player.getWorld()
               .getNearbyEntities(player.getLocation(), range, range, range)
+              .stream()
+              .filter(entity -> !(entity instanceof Player))
               .forEach(Entity::remove);
     }
 
@@ -119,16 +121,13 @@ public class AdminCommand extends BaseCommand {
 
     @Subcommand("bypassinteract")
     @Description("Bypasses interact cancel")
-    public void bypassInteract(CommandIssuer issuer) {
-        if (issuer.isPlayer()) {
-            Player player = issuer.getIssuer();
-            if (BYPASS_INTERACT_CANCEL.contains(player.getUniqueId())) {
-                BYPASS_INTERACT_CANCEL.remove(player.getUniqueId());
-                ChatChannels.sendDebugMessage(player, Component.text("Disabled Bypassing Interact Cancel", NamedTextColor.GREEN));
-            } else {
-                BYPASS_INTERACT_CANCEL.add(player.getUniqueId());
-                ChatChannels.sendDebugMessage(player, Component.text("Enabled Bypassing Interact Cancel", NamedTextColor.GREEN));
-            }
+    public void bypassInteract(CommandIssuer issuer, @Flags("other") Player target) {
+        if (BYPASS_INTERACT_CANCEL.contains(target.getUniqueId())) {
+            BYPASS_INTERACT_CANCEL.remove(target.getUniqueId());
+            ChatChannels.sendDebugMessage(target, Component.text("Disabled Bypassing Interact Cancel for " + target.getName(), NamedTextColor.GREEN));
+        } else {
+            BYPASS_INTERACT_CANCEL.add(target.getUniqueId());
+            ChatChannels.sendDebugMessage(target, Component.text("Enabled Bypassing Interact Cancel" + target.getName(), NamedTextColor.GREEN));
         }
     }
 

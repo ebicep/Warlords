@@ -10,17 +10,13 @@ public abstract class AbstractProjectile extends AbstractPiercingProjectile {
 
     public AbstractProjectile(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             double projectileSpeed,
             double maxDistance,
             boolean hitTeammates
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, projectileSpeed, maxDistance, hitTeammates);
+        super(name, cooldown, energyCost, projectileSpeed, maxDistance, hitTeammates);
     }
 
     @Override
@@ -34,7 +30,7 @@ public abstract class AbstractProjectile extends AbstractPiercingProjectile {
     }
 
     @Override
-    protected void onNonCancellingHit(InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         projectile.getHit().add(hit);
     }
 

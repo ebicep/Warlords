@@ -25,23 +25,23 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
                 "Energizing Oracle",
                 "Energy Seer - Master Upgrade",
                 """
-                        When your Energy Seer ends, add an additional 15% damage bonus and triple energy restored.
+                        Add an additional 15% damage bonus and double energy restored.
                         """,
                 50000,
                 () -> {
                     ability.setDamageIncrease(ability.getDamageIncrease() + 15);
-                    ability.setEnergyRestore(ability.getEnergyRestore() * 3);
+                    ability.setEnergyRestore(ability.getEnergyRestore() * 2);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Replicating Sight",
                 "Energy Seer - Master Upgrade",
                 """
-                        When nearby allies within a 10 block radius expend energy while Energy Seer is active, gain 10% of their energy spent when Energy Seer ends. Increase the duration of the damage buff by 7s.
+                        When nearby allies within a 10 block radius expend energy while Energy Seer is active, gain 10% of their energy spent when Energy Seer ends. Increase the duration of Energy Seer by 5s.
                         """,
                 50000,
                 () -> {
-                    ability.setBonusDuration(ability.getBonusDuration() + 140);
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                 }
         );
     }

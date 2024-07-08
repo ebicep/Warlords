@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.spider.ArachnoVenari;
@@ -57,7 +59,7 @@ public class EventMithra extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -69,6 +71,21 @@ public class EventMithra extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage
         );
+    }
+
+    @Override
+    public Mob getMobRegistry() {
+        return Mob.EVENT_MITHRA;
+    }
+
+    @Override
+    public Component getDescription() {
+        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
+    }
+
+    @Override
+    public TextColor getColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 
     @Override
@@ -84,10 +101,10 @@ public class EventMithra extends AbstractMob implements BossMob {
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 if (inEntangledState) {
-                    if (!event.getWarlordsEntity().equals(warlordsNPC) && !event.getAttacker().equals(warlordsNPC)) {
+                    if (!event.getWarlordsEntity().equals(warlordsNPC) && !event.getSource().equals(warlordsNPC)) {
                         return;
                     }
-                    if (!event.getAbility().equals("Ground Slam")) {
+                    if (!event.getCause().equals("Ground Slam")) {
                         event.setCancelled(true);
                     }
                 }
@@ -110,13 +127,13 @@ public class EventMithra extends AbstractMob implements BossMob {
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
                 knockTarget.setVelocity(name, new Vector(0, 1, 0), false);
-                knockTarget.addDamageInstance(
-                        warlordsNPC,
-                        "Virtue Strike",
-                        400 * playerCount,
-                        500 * playerCount,
-                        0,
-                        100
+                ;
+                knockTarget.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Virtue Strike")
+                        .source(warlordsNPC)
+                        .min(400 * playerCount)
+                        .max(500 * playerCount)
                 );
             }
         }
@@ -207,13 +224,11 @@ public class EventMithra extends AbstractMob implements BossMob {
                         for (int i = 0; i < 3; i++) {
                             option.spawnNewMob(new EventPoisonousSpider(location));
                         }
-                        warlordsNPC.addHealingInstance(
-                                warlordsNPC,
-                                "Entangled",
-                                healthGain,
-                                healthGain,
-                                0,
-                                0
+                        warlordsNPC.addInstance(InstanceBuilder
+                                .healing()
+                                .cause("Entangled")
+                                .source(warlordsNPC)
+                                .value(healthGain)
                         );
                     }
                 }
@@ -251,10 +266,17 @@ public class EventMithra extends AbstractMob implements BossMob {
     }
 
     private void groundSlam() {
-        AbstractGroundSlam groundSlam = new AbstractGroundSlam(1000, 1000, 0, 0, 0, 0) {{
-            setTrueDamage(true);
-            getHitBoxRadius().setBaseValue(9);
-        }};
+        AbstractGroundSlam groundSlam = new AbstractGroundSlam(0, 0) {
+            {
+                setTrueDamage(true);
+                getHitBoxRadius().setBaseValue(9);
+            }
+
+            @Override
+            public Value.RangedValueCritable getSlamDamage() {
+                return new Value.RangedValueCritable(100, 100, 0, 0);
+            }
+        };
         groundSlam.onActivate(warlordsNPC);
     }
 
@@ -335,22 +357,17 @@ public class EventMithra extends AbstractMob implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -1, 0.1f);
-                    flameTarget.addDamageInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage,
-                            damage,
-                            0,
-                            100
+                    flameTarget.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Immolation")
+                            .source(warlordsNPC)
+                            .value(damage)
                     );
-
-                    warlordsNPC.addHealingInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage * 0.5f,
-                            damage * 0.5f,
-                            0,
-                            100
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Immolation")
+                            .source(warlordsNPC)
+                            .value(damage * 0.5f)
                     );
                 }
 
@@ -363,17 +380,7 @@ public class EventMithra extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.BLACK)
@@ -381,20 +388,5 @@ public class EventMithra extends AbstractMob implements BossMob {
                                                                        .with(FireworkEffect.Type.BALL_LARGE)
                                                                        .build());
         EffectUtils.strikeLightning(deathLocation, false, 2);
-    }
-
-    @Override
-    public Mob getMobRegistry() {
-        return Mob.EVENT_MITHRA;
-    }
-
-    @Override
-    public Component getDescription() {
-        return Component.text("The Envoy Queen of Illusion", NamedTextColor.WHITE);
-    }
-
-    @Override
-    public TextColor getColor() {
-        return NamedTextColor.LIGHT_PURPLE;
     }
 }

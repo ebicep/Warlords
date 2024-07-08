@@ -3,10 +3,10 @@ package com.ebicep.warlords.pve.mobs.bosses;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -46,7 +46,7 @@ public class Mithra extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -112,13 +112,12 @@ public class Mithra extends AbstractMob implements BossMob {
             ) {
                 EffectUtils.strikeLightning(knockTarget.getLocation(), false);
                 knockTarget.setVelocity(name, new Vector(0, .75, 0), false);
-                knockTarget.addDamageInstance(
-                        warlordsNPC,
-                        "Virtue Strike",
-                        400 * playerCount,
-                        500 * playerCount,
-                        0,
-                        100
+                knockTarget.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Virtue Strike")
+                        .source(warlordsNPC)
+                        .min(400 * playerCount)
+                        .max(500 * playerCount)
                 );
             }
         }
@@ -155,17 +154,7 @@ public class Mithra extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                               .withColor(Color.BLACK)
@@ -238,22 +227,17 @@ public class Mithra extends AbstractMob implements BossMob {
                         .aliveEnemiesOf(warlordsNPC)
                 ) {
                     Utils.addKnockback(name, warlordsNPC.getLocation(), flameTarget, -0.25, 0.07f);
-                    flameTarget.addDamageInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage,
-                            damage,
-                            0,
-                            100
+                    flameTarget.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Immolation")
+                            .source(warlordsNPC)
+                            .value(damage)
                     );
-
-                    warlordsNPC.addHealingInstance(
-                            warlordsNPC,
-                            "Immolation",
-                            damage * 0.5f,
-                            damage * 0.5f,
-                            0,
-                            100
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Immolation")
+                            .source(warlordsNPC)
+                            .value(damage * 0.5f)
                     );
                 }
 
@@ -278,7 +262,7 @@ public class Mithra extends AbstractMob implements BossMob {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
 
-            Location loc = pveOption.getRandomSpawnLocation(null);
+            Location loc = pveOption.getRandomSpawnLocation((WarlordsEntity) null);
             if (loc == null) {
                 return false;
             }

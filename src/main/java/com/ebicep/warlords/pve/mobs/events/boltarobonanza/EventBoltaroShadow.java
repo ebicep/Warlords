@@ -16,6 +16,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
@@ -24,13 +25,13 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     private int split;
 
     public EventBoltaroShadow(Location spawnLocation, int split) {
-        super(spawnLocation,
+        this(spawnLocation,
                 "Shadow Boltaro",
-                (int) (6000 * (1 + split * .025)),
+                6000,
                 0.42f,
                 10,
-                200 * (1 + split * .025f),
-                400 * (1 + split * .025f)
+                200,
+                400
         );
         this.split = split;
     }
@@ -44,7 +45,7 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             int split
@@ -56,7 +57,10 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage * (1 + split * .025f),
                 maxMeleeDamage * (1 + split * .025f),
-                new Fireball(100, 200, MathUtils.generateRandomValueBetweenInclusive(4, 8))
+                new Fireball(MathUtils.generateRandomValueBetweenInclusive(4, 8)) {{
+                    this.getDamageValues().getFireballDamage().min().setBaseValue(100);
+                    this.getDamageValues().getFireballDamage().max().setBaseValue(200);
+                }}
         );
         this.split = split;
     }
@@ -66,7 +70,7 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -85,21 +89,12 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.addKnockback(name, attacker.getLocation(), receiver, -1.1, 0.26);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.ORANGE)

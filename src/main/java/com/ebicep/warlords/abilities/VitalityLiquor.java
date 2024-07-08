@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -8,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityLiquorBranch;
@@ -27,29 +30,28 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon {
+public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon, Heals<VitalityLiquor.HealingValues> {
 
     public int numberOfAdditionalWaves = 0;
+    private final HealingValues healingValues = new HealingValues();
     private int duration = 3;
     private int vitalityRange = 8;
     private int energyPerSecond = 15;
-    private float minWaveHealing = 268;
-    private float maxWaveHealing = 324;
 
     public VitalityLiquor() {
-        super("Vitality Liquor", 359, 485, 14, 30, 25, 175);
+        super("Vitality Liquor", 14, 30);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Discharge a shockwave of special potions around you, healing allies in the range for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.liquorHealing))
                                .append(Component.text(" health.\n\nEach enemy afflicted with your "))
                                .append(Component.text("LEECH", NamedTextColor.GREEN))
                                .append(Component.text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals "))
                                .append(Component.text("2", NamedTextColor.YELLOW))
                                .append(Component.text(" nearby allies for "))
-                               .append(formatRangeHealing(minWaveHealing, maxWaveHealing))
+                               .append(Heals.formatHealing(healingValues.waveHealing))
                                .append(Component.text(" health and increase their energy regeneration by "))
                                .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
                                .append(Component.text(" for "))
@@ -74,26 +76,22 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         new FallingBlockWaveEffect(wp.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
 
         VitalityLiquor tempVitalityLiquor = new VitalityLiquor();
-        wp.addHealingInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(healingValues.liquorHealing)
         );
 
         for (WarlordsEntity teammate : PlayerFilter
                 .entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            teammate.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            teammate.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.liquorHealing)
             );
             if (pveMasterUpgrade2) {
                 teammate.addSpeedModifier(wp, "Medicinal Brew", 30, duration * 20);
@@ -128,13 +126,11 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                         .limit(2)
                                 ) {
                                     numberOfAdditionalWaves++;
-                                    allyTarget.addHealingInstance(
-                                            wp,
-                                            name,
-                                            minWaveHealing,
-                                            maxWaveHealing,
-                                            critChance,
-                                            critMultiplier
+                                    allyTarget.addInstance(InstanceBuilder
+                                            .healing()
+                                            .ability(VitalityLiquor.this)
+                                            .source(wp)
+                                            .value(healingValues.waveHealing)
                                     );
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
                                     allyTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -167,22 +163,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         return new VitalityLiquorBranch(abilityTree, this);
     }
 
-    public float getMinWaveHealing() {
-        return minWaveHealing;
-    }
-
-    public void setMinWaveHealing(float minWaveHealing) {
-        this.minWaveHealing = minWaveHealing;
-    }
-
-    public float getMaxWaveHealing() {
-        return maxWaveHealing;
-    }
-
-    public void setMaxWaveHealing(float maxWaveHealing) {
-        this.maxWaveHealing = maxWaveHealing;
-    }
-
     public int getEnergyPerSecond() {
         return energyPerSecond;
     }
@@ -205,5 +185,31 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
+        private final Value.RangedValueCritable waveHealing = new Value.RangedValueCritable(268, 324, 25, 175);
+        private final List<Value> values = List.of(liquorHealing, waveHealing);
+
+        public Value.RangedValueCritable getLiquorHealing() {
+            return liquorHealing;
+        }
+
+        public Value.RangedValueCritable getWaveHealing() {
+            return waveHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

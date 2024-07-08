@@ -7,7 +7,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
@@ -164,7 +164,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
             ) {
                 @Override
                 public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                    if (!abilityNames.contains(event.getAbility())) {
+                    if (!abilityNames.contains(event.getCause())) {
                         return currentCritChance;
                     }
                     return currentCritChance + (CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevel()) * stacks;
@@ -172,7 +172,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
 
                 @Override
                 public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                    if (!abilityNames.contains(event.getAbility())) {
+                    if (!abilityNames.contains(event.getCause())) {
                         return currentCritMultiplier;
                     }
                     return currentCritMultiplier + 10 * stacks;

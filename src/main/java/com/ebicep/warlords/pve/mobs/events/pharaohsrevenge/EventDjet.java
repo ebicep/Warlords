@@ -28,7 +28,10 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 10,
                 930,
                 1210,
-                new FlameBurst(1200, 1380),
+                new FlameBurst() {{
+                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
+                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
+                }},
                 new SilenceCrippleAll()
         );
     }
@@ -38,7 +41,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -49,7 +52,10 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst(1200, 1380),
+                new FlameBurst() {{
+                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
+                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
+                }},
                 new SilenceCrippleAll()
         );
     }
@@ -75,11 +81,6 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
             wentBelowHealthThreshold = true;
             playerClass.getAbilities().get(0).getCooldown().addAdditiveModifier("Djet Health Threshold", 1000000f);
         }
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override

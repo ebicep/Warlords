@@ -1,11 +1,10 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
@@ -29,32 +28,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash {
+public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash, Damages<FlameBurst.DamageValues> {
 
-    private FloatModifiable splash = new FloatModifiable(5);
+    private final DamageValues damageValues = new DamageValues();
+    private FloatModifiable splash = new FloatModifiable(5.125f);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;
 
     public FlameBurst() {
-        super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 200, false);
-    }
-
-    public FlameBurst(float minDamageHeal, int maxDamageHeal, float filler) {
-        super("Flame Burst", minDamageHeal, maxDamageHeal, 9.4f, 60, 25, 185, 1.65, 200, false);
+        super("Flame Burst", 9.4f, 60, 1.65, 200, false);
     }
 
     public FlameBurst(float cooldown) {
-        super("Flame Burst", 557, 753, cooldown, 60, 25, 185, 1.65, 200, false);
+        super("Flame Burst", cooldown, 60, 1.65, 200, false);
     }
 
-    public FlameBurst(float cooldown, int critChance) {
-        super("Flame Burst", 557, 753, cooldown, 60, critChance, 185, 1.65, 200, false);
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Launch a flame burst that will explode for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.flameBurstDamage))
                                .append(Component.text(" damage. The Crit Chance increases by "))
                                .append(Component.text("1%", NamedTextColor.RED))
                                .append(Component.text(" for each travelled block. Up to "))
@@ -148,13 +145,14 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
         if (pveMasterUpgrade) {
             int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    minDamageHeal + damageIncrease,
-                    maxDamageHeal + damageIncrease,
-                    critChance + damageIncrease,
-                    critMultiplier + damageIncrease
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
+                    .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease)
             );
         } else {
             float damageBoost = 0;
@@ -163,13 +161,14 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
                 blocksTravelled = Math.min(30, blocksTravelled);
                 damageBoost = DamageCheck.clamp(nearEntity.getMaxBaseHealth() * .01f);
             }
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    minDamageHeal + damageBoost,
-                    maxDamageHeal + damageBoost,
-                    critChance + blocksTravelled,
-                    critMultiplier
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() + damageBoost)
+                    .max(damageValues.flameBurstDamage.getMaxValue() + damageBoost)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + blocksTravelled)
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue())
             );
         }
     }
@@ -277,24 +276,6 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         return 1;
     }
 
-    @Override
-    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
-        splash.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    public double getAcceleration() {
-        return acceleration;
-    }
-
-    public void setAcceleration(double acceleration) {
-        this.acceleration = acceleration;
-    }
-
-    public double getProjectileWidth() {
-        return projectileWidth;
-    }
-
     public void setProjectileWidth(double projectileWidth) {
         this.projectileWidth = projectileWidth;
     }
@@ -303,4 +284,22 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
     public FloatModifiable getSplashRadius() {
         return splash;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
+        private final List<Value> values = List.of(flameBurstDamage);
+
+        public Value.RangedValueCritable getFlameBurstDamage() {
+            return flameBurstDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+
 }

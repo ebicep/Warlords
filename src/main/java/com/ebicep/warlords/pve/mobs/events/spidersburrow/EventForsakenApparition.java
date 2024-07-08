@@ -32,7 +32,7 @@ public class EventForsakenApparition extends AbstractMob implements BossMinionMo
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -60,16 +60,6 @@ public class EventForsakenApparition extends AbstractMob implements BossMinionMo
             float additionalHealthMultiplier = 1 + .15f * (currentWave / 5f - 1);
             warlordsNPC.setMaxHealthAndHeal(warlordsNPC.getMaxBaseHealth() * additionalHealthMultiplier);
         }
-    }
-
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
     }
 
     @Override

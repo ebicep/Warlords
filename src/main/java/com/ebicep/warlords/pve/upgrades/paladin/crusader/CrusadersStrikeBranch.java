@@ -1,34 +1,26 @@
 package com.ebicep.warlords.pve.upgrades.paladin.crusader;
 
 import com.ebicep.warlords.abilities.CrusadersStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike> {
 
-    float minDamage;
-    float maxDamage;
     int energyGiven = ability.getEnergyGiven();
 
     @Override
     public void runOnce() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public CrusadersStrikeBranch(AbilityTree abilityTree, CrusadersStrike ability) {
         super(abilityTree, ability);
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
+
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * value);
-                        ability.setMaxDamageHeal(maxDamage * value);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -67,7 +59,7 @@ public class CrusadersStrikeBranch extends AbstractUpgradeBranch<CrusadersStrike
                 50000,
                 () -> {
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
-                    ability.setCritChance(ability.getCritChance() + 5);
+                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 5);
                 }
         );
     }

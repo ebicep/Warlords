@@ -24,7 +24,7 @@ public class SpawnSouls extends AbstractSpawnMobAbility {
 
     public static List<Location> generateSpawnLocations(PveOption pveOption) {
         List<Location> locations;
-        Location center = pveOption.getRandomSpawnLocation(null);
+        Location center = pveOption.getRandomSpawnLocation((WarlordsEntity) null);
         if (center == null) {
             locations = new ArrayList<>();
             PlayerFilter.playingGame(pveOption.getGame())

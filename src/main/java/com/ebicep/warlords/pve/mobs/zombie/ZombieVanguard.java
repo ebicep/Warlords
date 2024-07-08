@@ -13,6 +13,8 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 
+import javax.annotation.Nonnull;
+
 public class ZombieVanguard extends AbstractMob implements AdvancedMob {
 
     public ZombieVanguard(Location spawnLocation) {
@@ -32,7 +34,7 @@ public class ZombieVanguard extends AbstractMob implements AdvancedMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -59,23 +61,13 @@ public class ZombieVanguard extends AbstractMob implements AdvancedMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.7f);
         receiver.addSpeedModifier(attacker, "Envoy Slowness", -20, 2 * 20);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)

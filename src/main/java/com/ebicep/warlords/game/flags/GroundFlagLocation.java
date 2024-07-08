@@ -9,7 +9,10 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
 import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -22,18 +25,28 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
-	
-    int damageTimer;
-    int despawnTimer;
 
-    public GroundFlagLocation(Location location, int damageTimer) {
+    private int ticksElapsed;
+    private int flagMultiplier;
+    private int despawnTicks;
+    private int repickTickCooldown;
+    private final boolean manuallyDropped;
+
+    public GroundFlagLocation(Location location, int ticksElapsed, int flagMultiplier, boolean manuallyDropped) {
         super(location);
-        this.damageTimer = damageTimer;
-        this.despawnTimer = 15 * 20;
+        this.ticksElapsed = ticksElapsed;
+        this.flagMultiplier = flagMultiplier;
+        this.despawnTicks = 15 * 20;
+        this.repickTickCooldown = manuallyDropped ? 0 : 10;
+        this.manuallyDropped = manuallyDropped;
     }
 
-    public GroundFlagLocation(PlayerFlagLocation playerFlagLocation) {
-        this(playerFlagLocation.getLocation(), playerFlagLocation.getPlayer().isDead() ? playerFlagLocation.getPickUpTicks() + 600 : playerFlagLocation.getPickUpTicks());
+    public GroundFlagLocation(PlayerFlagLocation playerFlagLocation, boolean manuallyDropped) {
+        this(playerFlagLocation.getLocation(),
+                playerFlagLocation.getTicksElapsed(),
+                playerFlagLocation.getPlayer().isDead() ? playerFlagLocation.getFlagMultiplier() + 15 : playerFlagLocation.getFlagMultiplier(),
+                manuallyDropped
+        );
     }
 
     @Nonnull
@@ -42,23 +55,48 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         return location;
     }
 
-    public int getDamageTimer() {
-        return damageTimer;
+    public int getFlagMultiplier() {
+        return flagMultiplier;
     }
 
-    public int getDespawnTimer() {
-        return despawnTimer;
+    public int getDespawnTicks() {
+        return despawnTicks;
     }
 
     public int getDespawnTimerSeconds() {
-        return this.despawnTimer / 20;
+        return this.despawnTicks / 20;
+    }
+
+    public boolean isManuallyDropped() {
+        return manuallyDropped;
+    }
+
+    public int getTicksElapsed() {
+        return ticksElapsed;
+    }
+
+    public int getRepickTickCooldown() {
+        return repickTickCooldown;
     }
 
     @Override
-    public FlagLocation update(@Nonnull FlagInfo info) {
-        this.despawnTimer--;
-        this.damageTimer++;
-        return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
+    public FlagLocation update(Game game, @Nonnull FlagInfo info) {
+        this.ticksElapsed++;
+        this.despawnTicks--;
+        this.repickTickCooldown--;
+        if (ticksElapsed >= PlayerFlagLocation.INCREASE_DELAY && ticksElapsed % FlagSpawnPointOption.FLAG_MULTIPLIER_PERIOD == 0) {
+            this.flagMultiplier++;
+        }
+        if (this.despawnTicks <= 0) {
+            List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
+            for (FlagHolder flagHolder : flagHolders) {
+                if (flagHolder.getInfo() != info && flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation) {
+                    playerFlagLocation.setFlagMultiplier((int) (playerFlagLocation.getFlagMultiplier() * .5));
+                }
+            }
+            return new SpawnFlagLocation(info.getSpawnLocation(), null, flagMultiplier);
+        }
+        return null;
     }
 
     @Nonnull
@@ -66,26 +104,29 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     public List<TextComponent> getDebugInformation() {
         return Arrays.asList(
                 Component.text("Type: " + this.getClass().getSimpleName()),
-                Component.text("Despawn ticks: " + getDespawnTimer()),
+                Component.text("Despawn ticks: " + getDespawnTicks()),
                 Component.text("Despawn seconds: " + getDespawnTimerSeconds()),
-                Component.text("damageTimer: " + getDamageTimer())
+                Component.text("Multiplier: " + getFlagMultiplier())
         );
     }
 
     public static GroundFlagLocation of(@Nonnull FlagLocation flag) {
-        return flag instanceof PlayerFlagLocation ? new GroundFlagLocation((PlayerFlagLocation) flag)
-                                                  : new GroundFlagLocation(flag.getLocation(), 0);
+        return flag instanceof PlayerFlagLocation ? new GroundFlagLocation((PlayerFlagLocation) flag, false)
+                                                  : new GroundFlagLocation(flag.getLocation(), 0, 0, false);
     }
 
     @Override
     public void onFlagUpdateEventNew(WarlordsFlagUpdatedEvent event) {
         Game game = event.getGame();
         Team eventTeam = event.getTeam();
-        NamedTextColor teamColor = eventTeam.teamColor();
+        NamedTextColor teamColor = eventTeam.getTeamColor();
         Component coloredPrefix = eventTeam.coloredPrefix();
 
         if (event.getOld() instanceof PlayerFlagLocation pfl) {
             pfl.getPlayer().updateArmor();
+            if (pfl.getPlayer() instanceof WarlordsPlayer warlordsPlayer) {
+                warlordsPlayer.queueUpdateTabName();
+            }
             game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
                 Component coloredName = pfl.getPlayer().getColoredName();
                 Component flagMessage = Component.text("", NamedTextColor.YELLOW)

@@ -14,10 +14,10 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
     protected int timesSuccessful = 0;
 
     protected int tickDuration = 100;
-    protected int warpHealPercentage = 30;
+    protected int warpHealPercentage = 30; //TODO
 
     public AbstractTimeWarp() {
-        super("Time Warp", 0, 0, 28.19f, 30);
+        super("Time Warp", 28.19f, 30);
     }
 
     @Override

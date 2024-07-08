@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class QueueListener extends ListenerAdapter {
+
     @Override
     public void onSlashCommand(@Nonnull SlashCommandEvent event) {
         if (event.getMember() == null) {
@@ -58,11 +59,11 @@ public class QueueListener extends ListenerAdapter {
     }
 
     private void joinQueue(@Nonnull SlashCommandEvent event, Member member, TextChannel textChannel, String playerName, UUID playerUUID) {
-        if (QueueManager.queue.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
+        if (QueueManager.QUEUE.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
             event.reply("You are already in the queue").queue();
             return;
         }
-        if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.uuid().equals(playerUUID))) {
+        if (QueueManager.FUTURE_QUEUE.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.uuid().equals(playerUUID))) {
             QueueManager.removePlayerFromFutureQueue(playerUUID);
             QueueManager.addPlayerToQueue(playerName, false);
             event.reply("You were moved from the future to the current queue").queue();
@@ -106,7 +107,7 @@ public class QueueListener extends ListenerAdapter {
                         @Override
                         public void run() {
                             QueueManager.addPlayerToQueue(playerName, false);
-                            QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer
+                            QueueManager.FUTURE_QUEUE.removeIf(futureQueuePlayer -> futureQueuePlayer
                                     .uuid()
                                     .equals(Objects.requireNonNull(Bukkit.getOfflinePlayerIfCached(member.getEffectiveName())).getUniqueId()));
                             textChannel.sendMessage("<@" + member.getId() + "> You are now in the queue, make sure you are on the server once the party is open")
@@ -127,10 +128,10 @@ public class QueueListener extends ListenerAdapter {
 
     private void leaveQueue(@Nonnull SlashCommandEvent event, String playerName, UUID playerUUID) {
         try {
-            if (QueueManager.queue.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
+            if (QueueManager.QUEUE.stream().anyMatch(uuid -> uuid.equals(playerUUID))) {
                 QueueManager.removePlayerFromQueue(playerName);
                 event.reply("You left the queue").queue();
-            } else if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.uuid().equals(playerUUID))) {
+            } else if (QueueManager.FUTURE_QUEUE.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.uuid().equals(playerUUID))) {
                 QueueManager.removePlayerFromFutureQueue(playerName);
                 event.reply("You left the future queue").queue();
             } else {

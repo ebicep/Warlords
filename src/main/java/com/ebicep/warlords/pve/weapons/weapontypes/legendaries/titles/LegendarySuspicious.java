@@ -74,7 +74,7 @@ public class LegendarySuspicious extends AbstractLegendaryWeapon {
         ) {
             @Override
             public float setCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     return 50;
                 }
                 return currentCritChance;

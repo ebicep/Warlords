@@ -13,7 +13,8 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
@@ -41,7 +42,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -53,7 +54,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new LightningBolt(258, 415, 3, 3),
+                new LightningBolt(3, 3),
                 new ChainLightning(7, 7) {{
                     this.setTickDuration(40);
                 }},
@@ -97,18 +98,16 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                         if (npcMob instanceof EventHades) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
                             float healing = warlordsNPC.getCurrentHealth() * 0.25f;
-                            warlordsNPC.addHealingInstance(
-                                    npc,
-                                    "Soul",
-                                    healing,
-                                    healing,
-                                    0,
-                                    100
+                            warlordsNPC.addInstance(InstanceBuilder
+                                    .healing()
+                                    .cause("Soul")
+                                    .source(warlordsNPC)
+                                    .value(healing)
                             );
                         } else if (npcMob instanceof EventPoseidon) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_DROWNED_AMBIENT, 2, .5f);
                             warlordsNPC.getAbilitiesMatching(ZeusLightningRod.class).forEach(lightningRod -> {
-                                lightningRod.setHealthRestore(2);
+                                lightningRod.getHealValues().getHealthRestore().value().setBaseValue(2);
                                 lightningRod.setDamageBuff(lightningRod.getDamageBuff() + .1f);
                             });
                         }
@@ -120,7 +119,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (event.getAbility().equals("Lightning Bolt")) {
+        if (event.getCause().equals("Lightning Bolt")) {
             event.getFlags().add(InstanceFlags.PIERCE);
         }
     }
@@ -154,7 +153,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
 
         public ZeusLightningRod() {
             super(15, 15);
-            this.setHealthRestore(0);
+            this.getHealValues().getHealthRestore().value().setBaseValue(0);
         }
 
         @Override
@@ -172,7 +171,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (event.getAbility().isEmpty()) {
+                    if (event.getCause().isEmpty()) {
                         return currentDamageValue;
                     }
                     return currentDamageValue * damageBuff;

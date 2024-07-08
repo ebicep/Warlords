@@ -1,35 +1,26 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
 import com.ebicep.warlords.abilities.GuardianBeam;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
-    float minDamage;
-    float maxDamage;
     double maxDistance = ability.getMaxDistance();
 
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getBeamDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public GuardianBeamBranch(AbilityTree abilityTree, GuardianBeam ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 5f)
+                .addUpgradeDamage(ability.getDamageValues().getBeamDamage(), 5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -57,8 +48,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 50000,
                 () -> {
                     ability.setRuneTimerIncrease(ability.getRuneTimerIncrease() + 3.5f);
-                    ability.setShieldPercentSelf(ability.getShieldPercentSelf() + 25);
-                    ability.setShieldPercentAlly(ability.getShieldPercentAlly() + 25);
+                    ability.getShieldPercents().replaceAll(integer -> (int) (integer * 1.25f));
                 }
         );
         masterUpgrade2 = new Upgrade(

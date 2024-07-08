@@ -48,19 +48,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.ToDoubleFunction;
 
 public interface PveOption extends Option {
 
     @Nullable
     default Location getRandomSpawnLocation(WarlordsEntity entity) {
+        return getRandomSpawnLocation(marker -> marker.getPriority(entity));
+    }
+
+    @Nullable
+    default Location getRandomSpawnLocation(Team team) {
+        return getRandomSpawnLocation(marker -> marker.getPriorityTeam(team));
+    }
+
+    @Nullable
+    private Location getRandomSpawnLocation(ToDoubleFunction<SpawnLocationMarker> priorityFunction) {
         List<Location> candidates = new ArrayList<>();
         double priority = Double.NEGATIVE_INFINITY;
         for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
             if (candidates.isEmpty()) {
                 candidates.add(marker.getLocation());
-                priority = marker.getPriority(entity);
+                priority = priorityFunction.applyAsDouble(marker);
             } else {
-                double newPriority = marker.getPriority(entity);
+                double newPriority = priorityFunction.applyAsDouble(marker);
                 if (newPriority >= priority) {
                     if (newPriority > priority) {
                         candidates.clear();
@@ -80,7 +91,7 @@ public interface PveOption extends Option {
 
     default void mobTick() {
         for (AbstractMob mob : new ArrayList<>(getMobs())) {
-            mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob), this);
+            mob.whileAlive(getTicksElapsed() - getMobsMap().get(mob).getSpawnTick(), this);
             mob.activateAbilities();
         }
     }
@@ -89,7 +100,7 @@ public interface PveOption extends Option {
 
     int getTicksElapsed();
 
-    ConcurrentHashMap<AbstractMob, Integer> getMobsMap();
+    ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap();
 
     default int playerCount() {
         return (int) getGame().warlordsPlayers().count();
@@ -117,6 +128,7 @@ public interface PveOption extends Option {
     void spawnNewMob(AbstractMob mob, Team team);
 
     default void despawnMob(AbstractMob mob) {
+        mob.cleanup(this);
         mob.getWarlordsNPC().cleanup();
         getMobsMap().remove(mob);
         getGame().getPlayers().remove(mob.getWarlordsNPC().getUuid());
@@ -139,7 +151,7 @@ public interface PveOption extends Option {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 WarlordsEntity receiver = event.getWarlordsEntity();
 
                 if (!event.isDamageInstance()) {
@@ -181,12 +193,6 @@ public interface PveOption extends Option {
                         mob.onFinalDamageTaken(event);
                     }
                 }
-            }
-
-            @EventHandler
-            public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
-                WarlordsEntity player = event.getWarlordsEntity();
-                AbilityTree.handleAutoUpgrade(player);
             }
 
             @EventHandler
@@ -292,7 +298,7 @@ public interface PveOption extends Option {
                     warlordsPlayer.setWeapon(abstractWeapon);
                     abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
                     player.updateEntity();
-                    player.getSpec().updateCustomStats();
+                    player.getSpec().updateCustomStats(warlordsPlayer);
                 });
             });
             AbilityTree.handleAutoUpgrade(player);
@@ -336,6 +342,18 @@ public interface PveOption extends Option {
                               .append(Component.text("⚔ " + we.getMinuteStats().total().getKills(), NamedTextColor.RED)));
         }
         return list;
+    }
+
+    class MobData {
+        private final int spawnTick;
+
+        public MobData(int spawnTick) {
+            this.spawnTick = spawnTick;
+        }
+
+        public int getSpawnTick() {
+            return spawnTick;
+        }
     }
 
 }

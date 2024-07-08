@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -28,9 +29,13 @@ import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.rewards.RewardInventory;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.RandomCollection;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.citizensnpcs.api.ai.EntityTarget;
+import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -56,7 +61,7 @@ public class OnslaughtOption implements PveOption {
     private final Team team;
     private final WaveList mobSet;
     private final AtomicInteger ticksElapsed = new AtomicInteger(200); //start at 200 to account for 10 second start delay
-    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private OnslaughtRewards onslaughtRewards;
     private HashMap<UUID, HashMap<Spendable, Long>> playerSyntheticPouch = new HashMap<>();
     private HashMap<UUID, HashMap<Spendable, Long>> playerAspirantPouch = new HashMap<>();
@@ -123,6 +128,31 @@ public class OnslaughtOption implements PveOption {
                     }
                 }
             }
+
+            @EventHandler
+            public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
+                WarlordsEntity player = event.getWarlordsEntity();
+                AbilityTree.handleAutoUpgrade(player);
+            }
+
+            @EventHandler
+            public void onMobStartNavigating(NavigationBeginEvent event) {
+                NPC npc = event.getNPC();
+                // handle setting targetedBy/targeting
+                EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
+                if (entityTarget == null) {
+                    return;
+                }
+                if (!(npc.data().get(WarlordsEntity.WARLORDS_ENTITY_METADATA) instanceof WarlordsNPC warlordsNPC)) {
+                    return;
+                }
+                WarlordsEntity targetWarlordsEntity = Warlords.getPlayer(entityTarget.getTarget());
+                if (targetWarlordsEntity == null) {
+                    return;
+                }
+                warlordsNPC.getMob().onEntityTarget(targetWarlordsEntity);
+            }
+
         });
 
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(5, "percentage") {
@@ -248,7 +278,7 @@ public class OnslaughtOption implements PveOption {
                 if (abstractMob == null) {
                     return null;
                 }
-                mobs.put(abstractMob, ticksElapsed.get());
+                mobs.put(abstractMob, new MobData(ticksElapsed.get()));
                 WarlordsNPC wpc = abstractMob.toNPC(game, team, OnslaughtOption.this::modifyStats);
                 game.addNPC(wpc);
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
@@ -389,7 +419,7 @@ public class OnslaughtOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
         return mobs;
     }
 
@@ -407,7 +437,7 @@ public class OnslaughtOption implements PveOption {
     public void spawnNewMob(AbstractMob mob) {
         mob.toNPC(game, Team.RED, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
+        mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 
@@ -415,7 +445,7 @@ public class OnslaughtOption implements PveOption {
     public void spawnNewMob(AbstractMob mob, Team team) {
         mob.toNPC(game, team, this::modifyStats);
         game.addNPC(mob.getWarlordsNPC());
-        mobs.put(mob, ticksElapsed.get());
+        mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 

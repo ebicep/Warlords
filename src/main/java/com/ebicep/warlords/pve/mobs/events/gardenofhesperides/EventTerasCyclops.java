@@ -22,7 +22,7 @@ public class EventTerasCyclops extends AbstractMob implements BossMinionMob, Ter
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -58,7 +58,7 @@ public class EventTerasCyclops extends AbstractMob implements BossMinionMob, Ter
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     WarlordsEntity victim = event.getWarlordsEntity();
                     Utils.addKnockback(name, victim.getLocation(), victim, 1, 0.7f);
                 }
@@ -66,18 +66,4 @@ public class EventTerasCyclops extends AbstractMob implements BossMinionMob, Ter
         });
     }
 
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
 }

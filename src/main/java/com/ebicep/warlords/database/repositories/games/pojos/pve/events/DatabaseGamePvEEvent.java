@@ -7,7 +7,6 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvE
 import com.ebicep.warlords.database.repositories.games.pojos.pve.TimeElapsed;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.game.Team;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.annotation.Nonnull;
@@ -30,13 +29,9 @@ public abstract class DatabaseGamePvEEvent<T extends DatabaseGamePlayerPvEEvent>
         return 100_000;
     }
 
+    @Override
     public int getTimeElapsed() {
         return timeElapsed;
-    }
-
-    @Override
-    public Team getTeam(DatabaseGamePlayerBase player) {
-        return Team.BLUE;
     }
 
     @Override

@@ -13,8 +13,11 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Aggro system
@@ -35,10 +38,18 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
     private final double range;
     private final NPC npc;
     private WarlordsEntity warlordsEntityTarget;
+    private final List<Predicate<WarlordsEntity>> extraFilters = new ArrayList<>();
 
     public NPCTargetAggroWarlordsEntityGoal(NPC npc, double range) {
         this.npc = npc;
         this.range = range;
+    }
+
+    @SafeVarargs
+    public NPCTargetAggroWarlordsEntityGoal(NPC npc, double range, Predicate<WarlordsEntity>... extraFilters) {
+        this.npc = npc;
+        this.range = range;
+        this.extraFilters.addAll(Arrays.asList(extraFilters));
     }
 
     @Override
@@ -72,7 +83,7 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
 
     @Override
     public boolean shouldExecute() {
-        warlordsEntityTarget = getTarget(npc, range);
+        warlordsEntityTarget = getTarget(npc, range, extraFilters);
         if (warlordsEntityTarget == null) {
             return false;
         }
@@ -82,7 +93,7 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
     }
 
     @Nullable
-    public static WarlordsEntity getTarget(NPC npc, double range) {
+    public static WarlordsEntity getTarget(NPC npc, double range, List<Predicate<WarlordsEntity>> extraFilters) {
         if (!npc.isSpawned()) {
             return null;
         }
@@ -92,27 +103,24 @@ public class NPCTargetAggroWarlordsEntityGoal extends BehaviorGoalAdapter {
             return null;
         }
         Location location = npcEntity.getLocation();
-        List<Entity> list = GoalUtils.getNearbyEnemies(npcEntity, thisWarlordsEntity, range);
+        List<WarlordsEntity> list = GoalUtils.getNearbyEnemies(npcEntity, thisWarlordsEntity, range, extraFilters);
         list.sort(Comparator.comparingDouble(o -> o.getLocation().distanceSquared(location)));
         if (list.isEmpty()) {
             return null;
         }
-        Entity closestEntity = list.get(0);
+        WarlordsEntity closestEntity = list.get(0);
         double distanceToClosest = location.distanceSquared(closestEntity.getLocation());
-        RandomCollection<Entity> randomCollection = new RandomCollection<>();
-        for (Entity entity : list) {
-            WarlordsEntity warlordsEntity = Warlords.getPlayer(entity);
-            if (warlordsEntity != null) {
-                randomCollection.add(entity == closestEntity ?
-                                     1000 + warlordsEntity.getBonusAggroWeight() :
-                                     1000 + warlordsEntity.getBonusAggroWeight() - 10 * (location.distanceSquared(entity.getLocation()) - distanceToClosest),
-                        entity
-                );
-            }
+        RandomCollection<WarlordsEntity> randomCollection = new RandomCollection<>();
+        for (WarlordsEntity warlordsEntity : list) {
+            randomCollection.add(warlordsEntity == closestEntity ?
+                                 1000 + warlordsEntity.getBonusAggroWeight() :
+                                 1000 + warlordsEntity.getBonusAggroWeight() - 10 * (location.distanceSquared(warlordsEntity.getLocation()) - distanceToClosest),
+                    warlordsEntity
+            );
         }
         if (randomCollection.getSize() == 0) {
             return null;
         }
-        return Warlords.getPlayer(randomCollection.next());
+        return randomCollection.next();
     }
 }

@@ -22,7 +22,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 
 public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> extends AbstractAbility implements Duration, HitBox {
@@ -35,18 +34,14 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public AbstractBeaconAbility(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             Location groundLocation,
             float radius,
             int secondDuration,
             CircleEffect effect
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super(name, cooldown, energyCost);
         this.groundLocation = groundLocation;
         this.radius = new FloatModifiable(radius);
         this.tickDuration = secondDuration * 20;
@@ -88,6 +83,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
         new GameRunnable(wp.getGame()) {
             int interval = 4;
+
             @Override
             public void run() {
                 interval--;
@@ -111,7 +107,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 name,
                 getAbbreviation(),
                 getBeaconClass(),
-                getObject(groundLocation, teamCircleEffect),
+                getObject(wp, groundLocation, teamCircleEffect),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -121,22 +117,19 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                     if (getCrystal() != null) {
                         getCrystal().remove();
                     }
+                    onRemove();
                 },
                 false,
                 tickDuration + 1,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     //particle effects
-                    teamCircleEffect.playEffects();
+                    if (ticksElapsed % 2 == 0) {
+                        teamCircleEffect.playEffects();
+                    }
                     whileActive(wp, cooldown, ticksLeft, ticksElapsed);
                 })
         ));
         return true;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     public abstract LineEffect getLineEffect(Location target);
@@ -145,11 +138,15 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
     public abstract Class<T> getBeaconClass();
 
-    public abstract T getObject(Location groundLocation, CircleEffect effect);
+    public abstract T getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect);
+
+    public abstract ArmorStand getCrystal();
 
     public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
 
-    public abstract ArmorStand getCrystal();
+    protected void onRemove() {
+
+    }
 
     @Override
     public int getTickDuration() {
@@ -165,6 +162,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         return groundLocation;
     }
 
+    @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
     }

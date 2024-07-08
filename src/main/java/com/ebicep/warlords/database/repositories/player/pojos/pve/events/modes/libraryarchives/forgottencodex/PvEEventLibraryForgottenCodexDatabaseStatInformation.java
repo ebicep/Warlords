@@ -39,6 +39,7 @@ public class PvEEventLibraryForgottenCodexDatabaseStatInformation
         }
     }
 
+    @Override
     public long getFastestGameFinished() {
         return fastestGameFinished;
     }

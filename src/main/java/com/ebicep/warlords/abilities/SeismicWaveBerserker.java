@@ -1,8 +1,11 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.SeismicWaveBranchBerserker;
@@ -12,10 +15,17 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
-public class SeismicWaveBerserker extends AbstractSeismicWave {
+public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages<SeismicWaveBerserker.DamageValues> {
+
+    private final DamageValues damageValues = new DamageValues();
 
     public SeismicWaveBerserker() {
-        super(557, 753, 11.74f, 60, 25, 200);
+        super(11.74f, 60);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
@@ -37,7 +47,15 @@ public class SeismicWaveBerserker extends AbstractSeismicWave {
                 }.runTaskTimer(5, 0);
             }
         }
-        waveTarget.addDamageInstance(wp, name, minDamageHeal * multiplier, maxDamageHeal * multiplier, critChance, critMultiplier, abilityUUID);
+        waveTarget.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.waveDamage.getMinValue() * multiplier)
+                .max(damageValues.waveDamage.getMaxValue() * multiplier)
+                .crit(damageValues.waveDamage)
+                .uuid(abilityUUID)
+        );
     }
 
     @Override
@@ -45,4 +63,24 @@ public class SeismicWaveBerserker extends AbstractSeismicWave {
         return new SeismicWaveBranchBerserker(abilityTree, this);
     }
 
+    @Override
+    public Value.RangedValueCritable getWaveDamage() {
+        return damageValues.waveDamage;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable waveDamage = new Value.RangedValueCritable(557, 753, 25, 200);
+        private final List<Value> values = List.of(waveDamage);
+
+        public Value.RangedValueCritable getWaveDamage() {
+            return waveDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 }

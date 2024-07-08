@@ -142,7 +142,7 @@ public enum Specializations {
             Apothecary::new,
             Component.text("A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes and aid allies.", NamedTextColor.GRAY),
             SpecType.HEALER,
-            IMPALING_STRIKE, SOOTHING_PUDDLE, VITALITY_LIQUOR, REMEDIC_CHAINS, DRAINING_MIASMA
+            IMPALING_STRIKE, SOOTHING_PUDDLE, VITALITY_CONCOCTION, REMEDIC_CHAINS, DRAINING_MIASMA
     ),
     CONJURER("Conjurer",
             List.of("con"),

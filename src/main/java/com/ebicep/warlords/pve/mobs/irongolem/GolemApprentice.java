@@ -15,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
+
 public class GolemApprentice extends AbstractMob implements AdvancedMob {
 
     public GolemApprentice(Location spawnLocation) {
@@ -34,7 +36,7 @@ public class GolemApprentice extends AbstractMob implements AdvancedMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -61,25 +63,15 @@ public class GolemApprentice extends AbstractMob implements AdvancedMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (event.getAbility().isEmpty()) {
+        if (event.getCause().isEmpty()) {
             Utils.playGlobalSound(receiver.getLocation(), Sound.ENTITY_ITEM_BREAK, 1, 0.5f);
             receiver.setVelocity(name, new Vector(0, 0.5, 0), false);
         }
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.PURPLE)

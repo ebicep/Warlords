@@ -1,6 +1,8 @@
 package com.ebicep.warlords.events;
 
+import com.ebicep.warlords.permissions.Permissions;
 import org.bukkit.GameMode;
+import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -13,10 +15,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
@@ -148,6 +147,14 @@ public class GeneralEvents implements Listener {
         // prevent wolf eating item
         if (e.getRightClicked() instanceof Wolf) {
             e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        if (Permissions.isAdmin(player) && event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Sign sign) {
+            player.openSign(sign, sign.getInteractableSideFor(player));
         }
     }
 

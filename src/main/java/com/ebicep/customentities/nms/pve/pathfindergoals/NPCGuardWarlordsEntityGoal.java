@@ -7,6 +7,8 @@ import net.citizensnpcs.api.ai.tree.BehaviorStatus;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Entity;
 
+import java.util.Collections;
+
 public class NPCGuardWarlordsEntityGoal implements Behavior {
 
     private final NPC npc;
@@ -59,7 +61,7 @@ public class NPCGuardWarlordsEntityGoal implements Behavior {
             npc.getNavigator().setTarget(warlordsEntity.getEntity(), false);
             return true;
         }
-        warlordsEntityTarget = NPCTargetAggroWarlordsEntityGoal.getTarget(npc, maxDistanceSquared);
+        warlordsEntityTarget = NPCTargetAggroWarlordsEntityGoal.getTarget(npc, maxDistanceSquared, Collections.emptyList());
         if (warlordsEntityTarget == null) {
             return false;
         }

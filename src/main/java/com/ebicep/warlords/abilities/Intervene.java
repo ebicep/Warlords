@@ -14,6 +14,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -37,25 +38,14 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     public int carriersIntervened = 0;
 
     private int tickDuration = 100;
-    private float damagePrevented = 0;
     private float maxDamagePrevented = 3600;
     private int damageReduction = 50;
     private int radius = 10;
     private int breakRadius = 15;
     private int maxTargets = 1;
-    private WarlordsEntity caster;
-    private WarlordsEntity target;
 
     public Intervene() {
-        super("Intervene", 0, 0, 14.09f, 20);
-    }
-
-    public Intervene(float maxDamagePrevented, WarlordsEntity caster, WarlordsEntity target, int damageReduction) {
-        super("Intervene", 0, 0, 14.09f, 20);
-        this.maxDamagePrevented = maxDamagePrevented;
-        this.caster = caster;
-        this.target = target;
-        this.damageReduction = damageReduction;
+        super("Intervene", 14.09f, 20);
     }
 
     @Override
@@ -107,7 +97,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
-        List<Intervene> venes = new ArrayList<>();
+        List<InterveneData> venes = new ArrayList<>();
 
         for (WarlordsEntity veneTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
@@ -126,14 +116,14 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), Particle.VILLAGER_HAPPY);
 
             // New cooldown, both players have the same instance of intervene.
-            Intervene tempIntervene = new Intervene(maxDamagePrevented, wp, veneTarget, damageReduction);
-            venes.add(tempIntervene);
+            InterveneData data = new InterveneData(this, wp, veneTarget, maxDamagePrevented);
+            venes.add(data);
             // Removing all other intervenes
-            wp.getCooldownManager().getCooldowns().removeIf(cd ->
+            wp.getCooldownManager().removeIf(cd ->
                     cd.getCooldownClass() == Intervene.class &&
                             veneTarget.getCooldownManager().hasCooldown(cd.getCooldownObject()));
 
-            veneTarget.getCooldownManager().getCooldowns().removeIf(cd -> {
+            veneTarget.getCooldownManager().removeIf(cd -> {
                 if (cd.getCooldownClass() == Intervene.class) {
                     cd.getFrom().sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
                             .append(Component.text(" " + cd.getFrom().getName() + "'s ", NamedTextColor.GRAY))
@@ -172,11 +162,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                 veneTargetInterference = null;
             }
 
-            LinkedCooldown<Intervene> interveneCooldown = new LinkedCooldown<>(
+            LinkedCooldown<InterveneData> interveneCooldown = new LinkedCooldown<>(
                     name,
                     "VENE",
-                    Intervene.class,
-                    tempIntervene,
+                    InterveneData.class,
+                    data,
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -222,8 +212,35 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     veneTarget
             ) {
                 @Override
+                public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                }
+
+                @Override
                 public void multiplyKB(Vector currentVector) {
-                    currentVector.zero();
+                    if (pveMasterUpgrade2) {
+                        currentVector.zero();
+                    }
+                }
+
+                @Override
+                public PlayerNameData addPrefixFromOther() {
+                    return new PlayerNameData(
+                            Component.text((int) (data.getMaxDamagePrevented() - data.getDamagePrevented()), NamedTextColor.GOLD),
+                            we -> we.isTeammate(wp)
+                    );
+                }
+
+                @Nonnull
+                @Override
+                public Component getDebugMessage() {
+                    return Component.textOfChildren(
+                            Component.text(NumberFormat.formatOptionalTenths(data.getDamagePrevented()), NamedTextColor.YELLOW),
+                            Component.text("/", NamedTextColor.GRAY),
+                            Component.text(NumberFormat.formatOptionalTenths(data.getMaxDamagePrevented()), NamedTextColor.YELLOW),
+                            Component.text(" - ", NamedTextColor.GRAY),
+                            Component.text(NumberFormat.formatOptionalTenths(damageReduction), NamedTextColor.GREEN)
+                    );
                 }
             };
 
@@ -248,7 +265,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return (float) (currentDamageValue * (1 + venes.stream().mapToDouble(Intervene::getDamagePrevented).sum() / 100 * .01));
+                    return (float) (currentDamageValue * (1 + venes.stream().mapToDouble(InterveneData::getDamagePrevented).sum() / 100 * .01));
                 }
             });
         }
@@ -261,12 +278,12 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         return new InterveneBranch(abilityTree, this);
     }
 
-    public float getDamagePrevented() {
-        return damagePrevented;
+    public float getMaxDamagePrevented() {
+        return maxDamagePrevented;
     }
 
-    public void addDamagePrevented(float amount) {
-        this.damagePrevented += amount;
+    public void setMaxDamagePrevented(float maxDamagePrevented) {
+        this.maxDamagePrevented = maxDamagePrevented;
     }
 
     public int getBreakRadius() {
@@ -283,22 +300,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public void setRadius(int radius) {
         this.radius = radius;
-    }
-
-    public float getMaxDamagePrevented() {
-        return maxDamagePrevented;
-    }
-
-    public void setMaxDamagePrevented(float maxDamagePrevented) {
-        this.maxDamagePrevented = maxDamagePrevented;
-    }
-
-    public WarlordsEntity getCaster() {
-        return caster;
-    }
-
-    public WarlordsEntity getTarget() {
-        return target;
     }
 
     public int getDamageReduction() {
@@ -326,4 +327,46 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     public void setMaxTargets(int maxTargets) {
         this.maxTargets = maxTargets;
     }
+
+    public static class InterveneData {
+
+        private final Intervene intervene;
+        private final WarlordsEntity caster;
+        private final WarlordsEntity target;
+        private final float maxDamagePrevented;
+        private float damagePrevented = 0;
+
+        public InterveneData(Intervene intervene, WarlordsEntity caster, WarlordsEntity target, float maxDamagePrevented) {
+            this.intervene = intervene;
+            this.caster = caster;
+            this.target = target;
+            this.maxDamagePrevented = maxDamagePrevented;
+        }
+
+        public Intervene getIntervene() {
+            return intervene;
+        }
+
+        public WarlordsEntity getCaster() {
+            return caster;
+        }
+
+        public WarlordsEntity getTarget() {
+            return target;
+        }
+
+        public float getMaxDamagePrevented() {
+            return maxDamagePrevented;
+        }
+
+        public float getDamagePrevented() {
+            return damagePrevented;
+        }
+
+        public void addDamagePrevented(float amount) {
+            this.damagePrevented += amount;
+        }
+
+    }
+
 }

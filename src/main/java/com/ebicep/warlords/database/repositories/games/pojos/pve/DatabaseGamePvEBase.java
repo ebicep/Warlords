@@ -135,10 +135,12 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
         );
     }
 
+    @Override
     public DifficultyIndex getDifficulty() {
         return difficulty;
     }
 
+    @Override
     public int getTimeElapsed() {
         return timeElapsed;
     }

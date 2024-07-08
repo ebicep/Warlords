@@ -1,35 +1,25 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.conjurer;
 
 import com.ebicep.warlords.abilities.PoisonousHex;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
 
-    float minDamage;
-    float maxDamage;
-
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.3f);
+        Value.RangedValueCritable hexDamage = ability.getDamageValues().getHexDamage();
+        hexDamage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        hexDamage.max().addMultiplicativeModifierAdd("PvE", .3f);
         ability.setMaxEnemiesHit(4);
     }
 
     public PoisonousHexBranch(AbilityTree abilityTree, PoisonousHex ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getHexDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -70,7 +60,9 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                         """,
                 50000,
                 () -> {
-                    ability.multiplyMinMax(1.35f);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
                     ability.setTicksBetweenDot(20);
                 }
         );

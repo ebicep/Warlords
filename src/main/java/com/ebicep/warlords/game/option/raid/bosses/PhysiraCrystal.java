@@ -14,6 +14,8 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
+import javax.annotation.Nonnull;
+
 public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
 
     private SpecType spec;
@@ -55,7 +57,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (spec == event.getAttacker().getSpecClass().specType) {
+                if (spec == event.getSource().getSpecClass().specType) {
                     return currentDamageValue * 2;
                 } else {
                     return currentDamageValue * 0.5f;
@@ -72,16 +74,7 @@ public class PhysiraCrystal extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
 
     }
 

@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
@@ -16,6 +17,8 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
 
 public class NightmareZombie extends AbstractMob implements ChampionMob {
 
@@ -36,7 +39,7 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -81,11 +84,6 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         receiver.getCooldownManager().subtractTicksOnRegularCooldowns(60, CooldownTypes.BUFF);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
@@ -93,13 +91,18 @@ public class NightmareZombie extends AbstractMob implements ChampionMob {
 
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-        if (Utils.isProjectile(event.getAbility())) {
-            attacker.addDamageInstance(self, "Projectile Thorns", 300, 300, -1, 100);
+        if (Utils.isProjectile(event.getCause())) {
+            attacker.addInstance(InstanceBuilder
+                    .damage()
+                    .cause("Projectile Thorns")
+                    .source(self)
+                    .value(300)
+            );
         }
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(
                 deathLocation,

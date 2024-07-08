@@ -1,13 +1,13 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractBeam;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.GuardianBeamBranch;
@@ -23,42 +23,73 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class GuardianBeam extends AbstractBeam implements Duration {
+public class GuardianBeam extends AbstractBeam implements Duration, Damages<GuardianBeam.DamageValues> {
 
+    public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
+    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
+    private final DamageValues damageValues = new DamageValues();
+    private final List<Integer> shieldPercents = new ArrayList<>(List.of(5, 10, 20));
+    private final float carrierBonusMultiplier = 2.4f;
     private float runeTimerIncrease = 1.5f;
-    private int shieldPercentSelf = 20;
-    private int shieldPercentAlly = 30;
     private int tickDuration = 120;
 
     public GuardianBeam() {
-        super("Guardian Beam", 329, 445, 10, 10, 20, 175, 30, 30, true);
+        super("Guardian Beam", 10, 10, 30, 30, true);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" damage damage and have their cooldowns increased by "))
-                               .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If an ally has max stacks of Fortifying Hex, remove all stacks and grant them a shield with "))
-                               .append(Component.text(shieldPercentAlly + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of the ally’s maximum health that lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. If Guardian Beam hits a target and you have max stacks of Fortifying Hex, you also receive a shield but for "))
-                               .append(Component.text(shieldPercentSelf + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(".\n\nHas a maximum range of "))
-                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        if (inPve) {
+            description = Component.text("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
+                                   .append(Damages.formatDamage(damageValues.beamDamage))
+                                   .append(Component.text(" damage and have their cooldowns increased by "))
+                                   .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds. Any ally hit with stacks of Fortifying Hex is granted a shield with "))
+                                   .append(Component.text(format(shieldPercents.get(0)) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text("/"))
+                                   .append(Component.text(format(shieldPercents.get(1)) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text("/"))
+                                   .append(Component.text(format(shieldPercents.get(2)) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" of the ally’s maximum health relative to the number of stacks. Shield health on flag carriers is increased by "))
+                                   .append(Component.text(format(carrierBonusMultiplier) + "x", NamedTextColor.YELLOW))
+                                   .append(Component.text(". Lasts "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds and all stacks are removed.\n\n" +
+                                           "If Guardian Beam hits a target, you also receive a shield based on the same percentages."))
+                                   .append(Component.text("\n\nHas a maximum range of "))
+                                   .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
+                                   .append(Component.text(" blocks."));
+        } else {
+            description = Component.text(
+                                           "Unleash a concentrated beam of mystical power, piercing all enemies and allies. Any ally hit with stacks of Fortifying Hex is granted a shield with ")
+                                   .append(Component.text(format(shieldPercents.get(0)) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text("/"))
+                                   .append(Component.text(format(shieldPercents.get(1)) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text("/"))
+                                   .append(Component.text(format(shieldPercents.get(2)) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" of the ally’s maximum health relative to the number of stacks. Shield health on flag carriers is increased by "))
+                                   .append(Component.text(format(carrierBonusMultiplier) + "x", NamedTextColor.YELLOW))
+                                   .append(Component.text(". Lasts "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds and all stacks are removed.\n\n" +
+                                           "If Guardian Beam hits a target, you also receive a shield based on the same percentages."))
+                                   .append(Component.text("\n\nHas a maximum range of "))
+                                   .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
+                                   .append(Component.text(" blocks."));
+        }
     }
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        stacksRemoved.entrySet()
+                     .stream()
+                     .forEach(integerIntegerEntry -> {
+                         info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
+                     });
         return info;
     }
 
@@ -75,56 +106,103 @@ public class GuardianBeam extends AbstractBeam implements Duration {
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
-
-        boolean hasSanctuary = wp.getCooldownManager().hasCooldown(Sanctuary.class);
-        if (hit.isEnemy(wp)) {
-            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-            if (pveMasterUpgrade2) {
-                hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+        if (!projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            if (hit.isEnemy(wp)) {
+                if (inPve) {
+                    hit.getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
+                }
+                hit.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.beamDamage)
+                );
+                if (pveMasterUpgrade2) {
+                    hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+                }
+            } else {
+                giveShield(wp, hit);
+                hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
             }
-        } else {
-            giveShield(wp, hit, hasSanctuary, shieldPercentAlly);
-            hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+            if (projectile.getHit().size() == 1) {
+                giveShield(wp, wp);
+            }
         }
-        if (projectile.getHit().isEmpty()) {
-            giveShield(wp, wp, hasSanctuary, shieldPercentSelf);
-        }
-        projectile.getHit().add(hit);
     }
 
-    private void giveShield(WarlordsEntity from, WarlordsEntity to, boolean hasSanctuary, int percent) {
+    private void giveShield(WarlordsEntity from, WarlordsEntity to) {
+        boolean hasSanctuary = from.getCooldownManager().hasCooldown(Sanctuary.class);
         int selfHexStacks = (int) new CooldownFilter<>(to, RegularCooldown.class)
                 .filterCooldownClass(FortifyingHex.class)
                 .stream()
                 .count();
-        if (selfHexStacks >= 3) {
-            if (!hasSanctuary) {
-                to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
-            }
-            Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
-            to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name + " Shield",
-                    "SHIELD",
-                    Shield.class,
-                    new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent),
-                    from,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                    },
-                    tickDuration,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 4 == 0) {
-                            Location location = to.getLocation();
-                            location.add(0, 1.5, 0);
-                            EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
-                            EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
-                            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
-                        }
-                    })
-            ));
+        if (selfHexStacks <= 0) {
+            return;
         }
+        if (!hasSanctuary) {
+            to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
+        } else {
+            from.doOnStaticAbility(Sanctuary.class, sanctuary -> sanctuary.hexesNotConsumed += selfHexStacks);
+        }
+        if (from == to) {
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
+            );
+        } else {
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" is now shielding " + to.getName() + "!", NamedTextColor.GRAY))
+            );
+            to.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + from.getName() + " is shielding you with their ", NamedTextColor.GRAY))
+                    .append(Component.text("Guardian Beam", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
+        }
+        Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
+        stacksRemoved.merge(selfHexStacks, 1, Integer::sum);
+        float percent = shieldPercents.get(Math.min(selfHexStacks, 3) - 1) * (to.hasFlag() ? carrierBonusMultiplier : 1);
+        GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
+        to.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name + " Shield",
+                "SHIELD",
+                Shield.class,
+                shield,
+                from,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = to.getLocation();
+                        location.add(0, 1.5, 0);
+                        EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
+                        EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
+                        EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
+                    }
+                })
+        ) {
+            @Override
+            public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+            }
+
+            @Override
+            public PlayerNameData addPrefixFromOther() {
+                return new PlayerNameData(
+                        Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                        we -> we.isTeammate(from)
+                );
+            }
+        });
+
     }
 
     @Nullable
@@ -151,7 +229,7 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     @Override
     public ItemStack getBeamItem() {
-        return new ItemStack(Material.WARPED_SLAB);
+        return BEAM_ITEM;
     }
 
     @Override
@@ -164,20 +242,8 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         this.tickDuration = tickDuration;
     }
 
-    public int getShieldPercentAlly() {
-        return shieldPercentAlly;
-    }
-
-    public void setShieldPercentAlly(int shieldPercentAlly) {
-        this.shieldPercentAlly = shieldPercentAlly;
-    }
-
-    public int getShieldPercentSelf() {
-        return shieldPercentSelf;
-    }
-
-    public void setShieldPercentSelf(int shieldPercentSelf) {
-        this.shieldPercentSelf = shieldPercentSelf;
+    public List<Integer> getShieldPercents() {
+        return shieldPercents;
     }
 
     public float getRuneTimerIncrease() {
@@ -186,6 +252,11 @@ public class GuardianBeam extends AbstractBeam implements Duration {
 
     public void setRuneTimerIncrease(float runeTimerIncrease) {
         this.runeTimerIncrease = runeTimerIncrease;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     public static class GuardianBeamShield extends Shield {
@@ -199,5 +270,21 @@ public class GuardianBeam extends AbstractBeam implements Duration {
         public float getShieldPercent() {
             return shieldPercent;
         }
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(313, 423, 20, 175);
+        private final List<Value> values = List.of(beamDamage);
+
+        public Value.RangedValueCritable getBeamDamage() {
+            return beamDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service("gameService")
@@ -78,6 +80,11 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public List<DatabaseGameBase> find(Query query, GamesCollections collection) {
+        return mongoTemplate.find(query, DatabaseGameBase.class, collection.collectionName);
+    }
+
+    @Override
     public List<DatabaseGameBase> findAll(GamesCollections collection) {
         return mongoTemplate.findAll(DatabaseGameBase.class, collection.collectionName);
     }
@@ -94,7 +101,7 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public List<? extends DatabaseGameBase> getLastGames(int amount) {
-        List<DatabaseGameBase> games = findAll(GamesCollections.ALL);
+        List<DatabaseGameBase> games = find(new Query(Criteria.where("exact_date").gt(Instant.now().minus(30, ChronoUnit.DAYS))), GamesCollections.ALL);
         if (games.size() <= amount) {
             return games;
         }

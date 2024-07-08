@@ -1,15 +1,19 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.CrusadersStrikeBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -25,22 +29,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class CrusadersStrike extends AbstractStrike {
+public class CrusadersStrike extends AbstractStrike implements Damages<CrusadersStrike.DamageValues> {
 
-    public int energyGivenToPlayers = 0;
-
-    private int energyGiven = 24;
+    public float energyGivenToPlayers = 0;
+    private final DamageValues damageValues = new DamageValues();
+    private int energyGiven = 21;
     private int energyRadius = 10;
     private int energyMaxAllies = 2;
 
     public CrusadersStrike() {
-        super("Crusader's Strike", 326, 441, 0, 90, 25, 175);
+        super("Crusader's Strike", 0, 90);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and restoring "))
                                .append(Component.text(energyGiven, NamedTextColor.YELLOW))
                                .append(Component.text(" energy to " + energyMaxAllies + " nearby allies within "))
@@ -59,7 +63,7 @@ public class CrusadersStrike extends AbstractStrike {
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Players Struck", "" + timesUsed));
-        info.add(new Pair<>("Energy Given", "" + energyGivenToPlayers));
+        info.add(new Pair<>("Energy Given", NumberFormat.addCommaAndRound(energyGivenToPlayers)));
 
         return info;
     }
@@ -87,20 +91,25 @@ public class CrusadersStrike extends AbstractStrike {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         boolean crit = false;
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
         );
         if (finalEvent.isPresent()) {
             crit = finalEvent.get().isCrit();
         }
 
         if (pveMasterUpgrade) {
-            additionalHit(2, wp, nearPlayer, 1, null, finalEvent2 -> {});
+            additionalHit(2, wp, nearPlayer, warlordsEntity -> {
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage)
+                );
+            });
         } else if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius)
                         .aliveTeammatesOfExcludingSelf(wp)
@@ -110,7 +119,7 @@ public class CrusadersStrike extends AbstractStrike {
                         });
         }
 
-        int previousEnergyGiven = energyGivenToPlayers;
+        float previousEnergyGiven = energyGivenToPlayers;
         // Give energy to nearby allies and check if they have mark active
         for (WarlordsEntity energyTarget : PlayerFilter
                 .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
@@ -151,12 +160,24 @@ public class CrusadersStrike extends AbstractStrike {
         this.energyRadius = energyRadius;
     }
 
-
-    public int getEnergyMaxAllies() {
-        return energyMaxAllies;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
-    public void setEnergyMaxAllies(int energyMaxAllies) {
-        this.energyMaxAllies = energyMaxAllies;
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 175);
+        private final List<Value> values = List.of(strikeDamage);
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

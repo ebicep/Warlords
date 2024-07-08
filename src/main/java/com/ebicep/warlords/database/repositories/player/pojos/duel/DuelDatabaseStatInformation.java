@@ -31,6 +31,7 @@ public class DuelDatabaseStatInformation extends AbstractDatabaseStatInformation
         this.totalTimePlayed += (long) (900 - databaseGame.getTimeLeft()) * multiplier;
     }
 
+    @Override
     public long getTotalTimePlayed() {
         return totalTimePlayed;
     }

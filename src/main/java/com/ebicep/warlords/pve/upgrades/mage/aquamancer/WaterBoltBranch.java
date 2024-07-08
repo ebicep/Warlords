@@ -1,36 +1,20 @@
 package com.ebicep.warlords.pve.upgrades.mage.aquamancer;
 
 import com.ebicep.warlords.abilities.WaterBolt;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class WaterBoltBranch extends AbstractUpgradeBranch<WaterBolt> {
-
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
-    float minDamage = ability.getMinDamage();
-    float maxDamage = ability.getMaxDamage();
 
     public WaterBoltBranch(AbilityTree abilityTree, WaterBolt ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 15f)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamage(minDamage * value);
-                        ability.setMaxDamage(maxDamage * value);
-                    }
-                }, 15f, 3, 4)
+                .addUpgradeHealing(ability.getHealValues().getBoltHealing(), 15f)
+                .addUpgradeDamage(ability.getDamageValues().getBoltDamage(), 15f, 3, 4)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

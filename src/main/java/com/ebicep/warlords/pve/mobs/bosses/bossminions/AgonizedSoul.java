@@ -27,7 +27,7 @@ public class AgonizedSoul extends AbstractMob implements BossMinionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -55,19 +55,10 @@ public class AgonizedSoul extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playParticleLinkAnimation(self.getLocation(), attacker.getLocation(), 54, 54, 54, 1);
         Utils.playGlobalSound(self.getLocation(), Sound.BLOCK_ANCIENT_DEBRIS_HIT, 0.35f, 2);
-        if (!event.getAbility().isEmpty()) {
+        if (!event.getCause().isEmpty()) {
             attacker.getCooldownManager().subtractTicksOnRegularCooldowns(cdReduction, CooldownTypes.ABILITY, CooldownTypes.BUFF);
         }
     }

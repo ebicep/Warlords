@@ -1,14 +1,13 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
-import com.ebicep.warlords.abilities.internal.Overheal;
-import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBoltBranch;
@@ -26,32 +25,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
-public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, Splash {
+public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, Splash, Damages<WaterBolt.DamageValues>, Heals<WaterBolt.HealingValues> {
 
     public int teammatesHit = 0;
     public int enemiesHit = 0;
-
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private int maxFullDistance = 40;
     private float directHitMultiplier = 15;
-    private FloatModifiable splashRadius = new FloatModifiable(4);
-    private float minDamage = 231;
-    private float maxDamage = 299;
+    private FloatModifiable splashRadius = new FloatModifiable(4.125f);
 
     public WaterBolt() {
-        super("Water Bolt", 315, 434, 0, 80, 20, 175, 2, 300, true);
+        super("Water Bolt", 0, 80, 2, 300, true);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Shoot a bolt of water that will burst for")
-                               .append(formatRange(minDamage, maxDamage, NamedTextColor.RED))
+                               .append(Damages.formatDamage(damageValues.boltDamage))
                                .append(Component.text(" damage and restore"))
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.boltHealing))
                                .append(Component.text(" health to allies. A direct hit will cause "))
-                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.GOLD))
+                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.GREEN))
                                .append(Component.text(" increased damage or healing for the target hit."))
                                .append(Component.text("\n\nHas an optimal range of "))
                                .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
@@ -96,30 +93,33 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
         World world = currentLocation.getWorld();
+        Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
 
-        world.spawnParticle(Particle.HEART, currentLocation, 3, 1, 1, 1, 0.2, null, true);
-        world.spawnParticle(Particle.VILLAGER_HAPPY, currentLocation, 5, 1, 1, 1, 0.2, null, true);
+        world.spawnParticle(Particle.HEART, effectLocation, 3, 1, 1, 1, 0.2, null, true);
+        world.spawnParticle(Particle.VILLAGER_HAPPY, effectLocation, 5, 1, 1, 1, 0.2, null, true);
 
-        Utils.playGlobalSound(currentLocation, "mage.waterbolt.impact", 2, 1);
+        Utils.playGlobalSound(effectLocation, "mage.waterbolt.impact", 2, 1);
 
-        double distanceSquared = currentLocation.distanceSquared(startingLocation);
-        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        double distanceSquared = startingLocation.distanceSquared(effectLocation);
+        float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                           (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
-            toReduceBy = .2;
+            toReduceBy = .2f;
         }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            float cc = pveMasterUpgrade2 ? 100 : critChance;
+            float cc = pveMasterUpgrade2 ? 100 : healingValues.boltHealing.getCritChanceValue();
             if (hit.isTeammate(shooter)) {
                 teammatesHit++;
-                hit.addHealingInstance(shooter,
-                        name,
-                        (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                        (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                        cc,
-                        critMultiplier,
-                        EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                hit.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(shooter)
+                        .min(healingValues.boltHealing.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                        .max(healingValues.boltHealing.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                        .critChance(cc)
+                        .critMultiplier(healingValues.boltHealing.getCritMultiplierValue())
+                        .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
                 );
                 if (hit != shooter) {
                     Overheal.giveOverHeal(shooter, hit);
@@ -132,12 +132,14 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                 if (hit.onHorse()) {
                     numberOfDismounts++;
                 }
-                hit.addDamageInstance(shooter,
-                        name,
-                        (float) (minDamage * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                        (float) (maxDamage * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                        cc,
-                        critMultiplier
+                hit.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(shooter)
+                        .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                        .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                        .critChance(cc)
+                        .critMultiplier(damageValues.boltDamage.getCritMultiplierValue())
                 );
             }
         }
@@ -145,7 +147,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         int playersHit = 0;
         float radius = splashRadius.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, radius, radius, radius)
+                .entitiesAround(hit != null ? hit.getLocation() : currentLocation, radius, radius, radius)
                 .isAlive()
                 .excluding(projectile.getHit())
         ) {
@@ -153,14 +155,14 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
             playersHit++;
             if (nearEntity.isTeammate(shooter)) {
                 teammatesHit++;
-                nearEntity.addHealingInstance(
-                        shooter,
-                        name,
-                        (float) (minDamageHeal * toReduceBy),
-                        (float) (maxDamageHeal * toReduceBy),
-                        critChance,
-                        critMultiplier,
-                        EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS)
+                nearEntity.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(shooter)
+                        .min(healingValues.boltHealing.getMinValue() * toReduceBy)
+                        .max(healingValues.boltHealing.getMaxValue() * toReduceBy)
+                        .crit(healingValues.boltHealing)
+                        .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
                 );
                 if (nearEntity != shooter) {
                     Overheal.giveOverHeal(shooter, nearEntity);
@@ -173,13 +175,13 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                 if (nearEntity.onHorse()) {
                     numberOfDismounts++;
                 }
-                nearEntity.addDamageInstance(
-                        shooter,
-                        name,
-                        (float) (minDamage * toReduceBy),
-                        (float) (maxDamage * toReduceBy),
-                        critChance,
-                        critMultiplier
+                nearEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(shooter)
+                        .min(damageValues.boltDamage.getMinValue() * toReduceBy)
+                        .max(damageValues.boltDamage.getMaxValue() * toReduceBy)
+                        .crit(damageValues.boltDamage)
                 );
             }
         }
@@ -208,12 +210,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         return 1;
     }
 
-    @Override
-    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
-        splashRadius.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
     private void increaseDamageOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removeCooldown(WaterBolt.class, false);
         hit.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -234,12 +230,9 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         });
     }
 
-    public int getMaxFullDistance() {
-        return maxFullDistance;
-    }
-
-    public void setMaxFullDistance(int maxFullDistance) {
-        this.maxFullDistance = maxFullDistance;
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splashRadius;
     }
 
     public float getDirectHitMultiplier() {
@@ -250,25 +243,46 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         this.directHitMultiplier = directHitMultiplier;
     }
 
-    public float getMinDamage() {
-        return minDamage;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
-
-    public void setMinDamage(float minDamage) {
-        this.minDamage = minDamage;
-    }
-
-    public float getMaxDamage() {
-        return maxDamage;
-    }
-
-    public void setMaxDamage(float maxDamage) {
-        this.maxDamage = maxDamage;
-    }
-
 
     @Override
-    public FloatModifiable getSplashRadius() {
-        return splashRadius;
+    public HealingValues getHealValues() {
+        return healingValues;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(231, 299, 20, 175);
+        private final List<Value> values = List.of(boltDamage);
+
+        public Value.RangedValueCritable getBoltDamage() {
+            return boltDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable boltHealing = new Value.RangedValueCritable(315, 434, 20, 175);
+        private final List<Value> values = List.of(boltHealing);
+
+        public Value.RangedValueCritable getBoltHealing() {
+            return boltHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

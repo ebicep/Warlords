@@ -13,6 +13,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -22,6 +23,7 @@ import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.ItemType;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.NoTarget;
+import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.mobs.tiers.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
@@ -64,12 +66,14 @@ import java.util.function.Consumer;
 
 public abstract class AbstractMob implements Mob {
 
-    protected final Location spawnLocation;
     protected final String name;
     protected final int maxHealth;
     protected final float walkSpeed;
     protected final float minMeleeDamage;
     protected final float maxMeleeDamage;
+    protected final float meleeCritChance;
+    protected final float meleeCritMutiplier;
+    protected Location spawnLocation;
     protected NPC npc;
     protected EntityEquipment equipment;
     @Nullable
@@ -86,9 +90,35 @@ public abstract class AbstractMob implements Mob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
+            AbstractAbility... abilities
+    ) {
+        this(
+                spawnLocation,
+                name,
+                maxHealth,
+                walkSpeed,
+                damageResistance,
+                minMeleeDamage,
+                maxMeleeDamage,
+                0,
+                100,
+                abilities
+        );
+    }
+
+    public AbstractMob(
+            Location spawnLocation,
+            String name,
+            int maxHealth,
+            float walkSpeed,
+            float damageResistance,
+            float minMeleeDamage,
+            float maxMeleeDamage,
+            float meleeCritChance,
+            float meleeCritMultiplier,
             AbstractAbility... abilities
     ) {
         this.spawnLocation = spawnLocation;
@@ -101,6 +131,8 @@ public abstract class AbstractMob implements Mob {
         this.walkSpeed = walkSpeed;
         this.minMeleeDamage = minMeleeDamage;
         this.maxMeleeDamage = maxMeleeDamage;
+        this.meleeCritChance = meleeCritChance;
+        this.meleeCritMutiplier = meleeCritMultiplier;
         this.playerClass = new MobPlayerClass(name, maxHealth, damageResistance, abilities);
     }
 
@@ -112,7 +144,7 @@ public abstract class AbstractMob implements Mob {
 
         NavigatorParameters defaultParameters = this.npc.getNavigator().getDefaultParameters();
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
-        defaultParameters.attackRange(1)
+        defaultParameters.attackRange(getDefaultAttackRange())
                          .stuckAction(null) // disable tping to player if too far away
                          .updatePathRate(5)
                          .distanceMargin(.5)
@@ -176,8 +208,22 @@ public abstract class AbstractMob implements Mob {
                 walkSpeed,
                 minMeleeDamage,
                 maxMeleeDamage,
+                meleeCritChance,
+                meleeCritMutiplier,
                 this,
-                playerClass
+                playerClass,
+                new MobHologram.TextDisplayHologram(.5f) {
+
+                    @Nullable
+                    @Override
+                    public Entity getEntity() {
+                        if (warlordsNPC == null) {
+                            return null;
+                        }
+                        return warlordsNPC.getEntity();
+                    }
+
+                }
         );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCurrentCooldown() < ability.getCooldownValue()) {
@@ -245,6 +291,10 @@ public abstract class AbstractMob implements Mob {
                     20, 30, 20
             );
         }
+        handleAspects(option);
+    }
+
+    protected void handleAspects(PveOption option) {
         // null checks to handle manual spawns with aspects
         if (this.aspect == null &&
                 ThreadLocalRandom.current().nextDouble() < option.getDifficulty().getAspectChance().apply(option) &&
@@ -276,14 +326,14 @@ public abstract class AbstractMob implements Mob {
             if (warlordsNPC.getEnergy() < ability.getEnergyCostValue() * warlordsNPC.getEnergyModifier()) {
                 return;
             }
-            WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsNPC, null, ability);
+            WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsNPC, null, ability, -1);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return;
             }
             boolean shouldApplyCooldown = ability.onActivate(warlordsNPC);
             if (shouldApplyCooldown) {
-                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsNPC, null, ability);
+                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsNPC, null, ability, -1);
                 Bukkit.getPluginManager().callEvent(post);
 
                 ability.addTimesUsed();
@@ -292,6 +342,10 @@ public abstract class AbstractMob implements Mob {
                 }
             }
         });
+    }
+
+    public void onEntityTarget(WarlordsEntity warlordsEntity) {
+
     }
 
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
@@ -310,11 +364,9 @@ public abstract class AbstractMob implements Mob {
 
     }
 
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        cleanup(option);
         if (DatabaseManager.playerService == null || !(killer instanceof WarlordsPlayer)) {
-            return;
-        }
-        if (pveOption == null) {
             return;
         }
         dropWeapon(killer);
@@ -519,8 +571,8 @@ public abstract class AbstractMob implements Mob {
     }
 
     public void toggleStun(boolean stun) {
-        if (stun) {
-            //npc.getNavigator().cancelNavigation(CancelReason.PLUGIN);
+        if (stun && this instanceof Unstunnable) {
+            return;
         }
         npc.getNavigator().setPaused(stun);
     }
@@ -529,6 +581,13 @@ public abstract class AbstractMob implements Mob {
         return npc;
     }
 
+    public Location getSpawnLocation() {
+        return spawnLocation;
+    }
+
+    public void setSpawnLocation(Location spawnLocation) {
+        this.spawnLocation = spawnLocation;
+    }
 
     public WarlordsNPC getWarlordsNPC() {
         return warlordsNPC;
@@ -579,4 +638,19 @@ public abstract class AbstractMob implements Mob {
     public EnumSet<DynamicFlags> getDynamicFlags() {
         return dynamicFlags;
     }
+
+    public PveOption getPveOption() {
+        return pveOption;
+    }
+
+    /**
+     * Method is guaranteed to be called after the mob has been killed/removed from game
+     */
+    public void cleanup(PveOption pveOption) {
+    }
+
+    public double getDefaultAttackRange() {
+        return 2;
+    }
+
 }

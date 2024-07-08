@@ -5,7 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AppliesToWarlordsPlayer;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
@@ -51,13 +51,13 @@ public class RobinHoodsGloves extends SpecialOmegaGauntlet implements AppliesToW
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
+                if (!Objects.equals(event.getSource(), warlordsPlayer)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (!Objects.equals(event.getAbility(), weaponRightClick)) {
+                if (!Objects.equals(event.getCause(), weaponRightClick)) {
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();

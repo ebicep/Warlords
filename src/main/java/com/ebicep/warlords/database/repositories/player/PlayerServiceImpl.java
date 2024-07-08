@@ -41,8 +41,9 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public DatabasePlayer update(DatabasePlayer player, PlayersCollections collection) {
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Updating: - " + player + " in " + collection);
         DatabasePlayer p = playerRepository.save(player, collection);
-        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Updated: - " + player + " in " + collection);
+        ChatUtils.MessageType.PLAYER_SERVICE.sendMessage("Updated: - " + p + " in " + collection);
         return p;
     }
 

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.upgrades;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -30,6 +31,7 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.util.*;
@@ -424,7 +426,12 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
 
         Bukkit.getPluginManager().callEvent(new WarlordsUpgradeUnlockEvent(player, upgrade));
         globalAnnouncement(player.getGame(), upgrade, ability, autoUpgraded);
-        player.updateInventory(false);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.updateInventory(false);
+            }
+        }.runTaskLater(Warlords.getInstance(), 1);
         if (!autoUpgraded) {
             openUpgradeBranchMenu();
         }

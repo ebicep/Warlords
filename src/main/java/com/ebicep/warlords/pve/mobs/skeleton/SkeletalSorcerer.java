@@ -12,21 +12,19 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.List;
 
 public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     public SkeletalSorcerer(Location spawnLocation) {
@@ -47,7 +45,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -129,12 +127,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                            .withColor(Color.ORANGE)
@@ -148,16 +141,6 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
 
         public BlightedScorch() {
             super("Blighted Scorch", 4, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override
@@ -184,13 +167,11 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                             if (ticksLeft % 20 == 0) {
                                 float healthDamage = enemy.getMaxHealth() * 0.05f;
                                 healthDamage = DamageCheck.clamp(healthDamage);
-                                enemy.addDamageInstance(
-                                        wp,
-                                        name,
-                                        healthDamage,
-                                        healthDamage,
-                                        critChance,
-                                        critMultiplier
+                                enemy.addInstance(InstanceBuilder
+                                        .damage()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(healthDamage)
                                 );
                             }
                         })

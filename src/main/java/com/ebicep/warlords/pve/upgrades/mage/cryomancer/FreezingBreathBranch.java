@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.mage.cryomancer;
 
 import com.ebicep.warlords.abilities.FreezingBreath;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 import javax.annotation.Nullable;
@@ -8,21 +9,12 @@ import javax.annotation.Nullable;
 public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> {
 
     int slowness = ability.getSlowness();
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
 
     public FreezingBreathBranch(AbilityTree abilityTree, FreezingBreath ability) {
         super(abilityTree, ability);
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getFreezingBreathDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -58,7 +50,9 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                         """,
                 50000,
                 () -> {
-                    ability.multiplyMinMax(1.5f);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getFreezingBreathDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
                     ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
                 }
@@ -73,7 +67,6 @@ public class FreezingBreathBranch extends AbstractUpgradeBranch<FreezingBreath> 
                         """,
                 50000,
                 () -> {
-                    ability.multiplyMinMax(1.5f);
                     ability.setHitbox(ability.getHitbox() * 1.6f);
                     ability.setMaxAnimationTime(ability.getMaxAnimationTime() * 2);
                 }

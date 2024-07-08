@@ -34,7 +34,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     private int critMultiplierIncrease = 30;
 
     public Inferno() {
-        super("Inferno", 0, 0, 46.98f, 0);
+        super("Inferno", 46.98f, 0);
     }
 
     @Override
@@ -93,22 +93,15 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
 
             @Override
             public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                if (pveMasterUpgrade2 && event.getAbility().equals("Ignite")) {
+                if (pveMasterUpgrade2 && event.getCause().equals("Ignite")) {
                     event.setMinForce(event.getMin() * 2);
                     event.setMaxForce(event.getMax() * 2);
                 }
             }
 
             @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (pveMasterUpgrade2 && isKiller) {
-                    wp.addEnergy(wp, "Inferno", 30);
-                }
-            }
-
-            @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     return currentCritChance;
                 }
                 hitsAmplified++;
@@ -117,7 +110,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
 
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     return currentCritMultiplier;
                 }
                 return currentCritMultiplier + critMultiplierIncrease;
@@ -138,8 +131,14 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                         subtractCurrentCooldown(0.5f);
                         setTicksLeft(getTicksLeft() + 5);
                         finalMaxHits--;
-                        wp.updateItem(Inferno.this);
                     }
+                }
+            }
+
+            @Override
+            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
+                if (pveMasterUpgrade2 && isKiller) {
+                    wp.addEnergy(wp, "Inferno", 30);
                 }
             }
         });

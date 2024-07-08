@@ -34,7 +34,7 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     protected int energyGiven = 120;
 
     public AbstractLightInfusion(float cooldown) {
-        super("Light Infusion", 0, 0, cooldown, 0);
+        super("Light Infusion", cooldown, 0);
     }
 
     @Override

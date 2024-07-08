@@ -46,7 +46,7 @@ public class MysticalBarrierBranch extends AbstractUpgradeBranch<MysticalBarrier
                 "Illusory Barrier",
                 "Mystical Barrier - Master Upgrade",
                 """
-                        Reactivating Mystical Barrier, will now grant yourself and all nearby allies the shield. Not reactivating the ability will reduce its cooldown by 35%.
+                        Mystical Barrier, will now grant yourself and a nearby allies the shield. If there was no nearby ally the ability will reduce its cooldown by 35%.
                         """,
                 50000,
                 () -> {

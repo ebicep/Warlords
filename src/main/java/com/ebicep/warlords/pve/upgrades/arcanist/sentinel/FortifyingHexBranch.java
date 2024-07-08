@@ -1,38 +1,26 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 
 import com.ebicep.warlords.abilities.FortifyingHex;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 
 public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
-    float minDamage;
-    float maxDamage;
-
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
         ability.setMaxEnemiesHit(2);
         ability.setMaxAlliesHit(3);
-        ability.setDamageReduction(7);
     }
 
     public FortifyingHexBranch(AbilityTree abilityTree, FortifyingHex ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 5f)
+                .addUpgradeDamage(ability.getDamageValues().getHexDamage(), 5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -66,7 +54,7 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                     ability.setMaxEnemiesHit(200);
                     ability.setMaxAlliesHit(200);
                     ability.getEnergyCost().addAdditiveModifier("Bolstering Hex", -15);
-                    ability.setDamageReduction(ability.getDamageReduction() + 3);
+                    ability.getDamageReduction().addAdditiveModifier("Bolstering Hex", 3);
                 }
         );
         masterUpgrade2 = new Upgrade(

@@ -12,7 +12,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
@@ -28,19 +29,18 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox {
+public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, Damages<HealingRain.DamageValues>, Heals<HealingRain.HealingValues> {
 
     public int playersHealed = 0;
-
-    private int tickDuration = 240;
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
+    private int tickDuration = 200;
     private FloatModifiable radius = new FloatModifiable(8);
 
     public HealingRain() {
@@ -48,13 +48,13 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     public HealingRain(float cooldown, float startCooldown) {
-        super("Healing Rain", 100, 125, cooldown, 50, 25, 200, startCooldown);
+        super("Healing Rain", cooldown, 50, startCooldown);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Conjure rain at targeted location that will restore ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.rainHealing))
                                .append(Component.text(" health every 0.5 seconds to allies. Lasts "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))
@@ -81,7 +81,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
-
 
         Location location = targetBlock.getLocation().clone();
         location.add(0, 1, 0);
@@ -131,10 +130,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    List<WarlordsEntity> teammatesInRain = PlayerFilter
-                            .entitiesAround(location, rad, rad, rad)
-                            .aliveTeammatesOf(wp)
-                            .toList();
                     List<Pair<WarlordsEntity, CircleEffect>> personalCloudList = personalCloud.get();
                     if (pveMasterUpgrade2) {
                         personalCloudList.forEach(warlordsEntityCircleEffectPair -> {
@@ -146,9 +141,15 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                             effect.playEffects();
                         });
                     }
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
 
                     if (ticksElapsed % 10 == 0) {
+                        List<WarlordsEntity> teammatesInRain = PlayerFilter
+                                .entitiesAround(location, rad, rad, rad)
+                                .aliveTeammatesOf(wp)
+                                .toList();
                         if (pveMasterUpgrade2) {
                             // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
                             personalCloudList.removeIf(teammate ->
@@ -247,23 +248,26 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
             strikeTarget.getWorld().spigot().strikeLightningEffect(strikeTarget.getLocation(), true);
             float healthDamage = strikeTarget.getMaxHealth() * 0.01f;
             healthDamage = DamageCheck.clamp(healthDamage);
-            strikeTarget.addDamageInstance(giver, name, 224 + healthDamage, 377 + healthDamage, -1, 100);
+            strikeTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(giver)
+                    .min(damageValues.rainStrikeDamage.getMinValue() + healthDamage)
+                    .max(damageValues.rainStrikeDamage.getMaxValue() + healthDamage)
+            );
         }
 
     }
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {
         playersHealed++;
-        teammateInRain.addHealingInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier,
-                EnumSet.of(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.NO_HIT_SOUND)
+        teammateInRain.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(healingValues.rainHealing)
+                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.NO_HIT_SOUND)
         );
-
         if (teammateInRain != wp) {
             Overheal.giveOverHeal(wp, teammateInRain);
         }
@@ -290,8 +294,41 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
+        private final List<Value> values = List.of(rainStrikeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable rainHealing = new Value.RangedValueCritable(100, 125, 25, 180);
+        private final List<Value> values = List.of(rainHealing);
+
+        public Value.RangedValueCritable getRainHealing() {
+            return rainHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

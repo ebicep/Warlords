@@ -1,12 +1,15 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.GroundSlamBerserker;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -22,7 +25,6 @@ import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 
 public class EventCronus extends AbstractMob implements BossMob, LesserGod {
@@ -40,7 +42,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -112,20 +114,18 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
                     }
                     groundSlamBerserker.onActivate(self);
 
-                    warlordsNPC.addHealingInstance(
-                            warlordsNPC,
-                            "Cronus Healing",
-                            healing,
-                            healing,
-                            0,
-                            100,
-                            EnumSet.of(InstanceFlags.PIERCE)
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Cronus Healing")
+                            .source(warlordsNPC)
+                            .value(healing)
+                            .flags(InstanceFlags.PIERCE)
                     );
-
                     if (++counter >= 6) {
                         warlordsNPC.getAbilitiesMatching(HeavenlyDamage.class).forEach(heavenlyDamage -> {
-                            heavenlyDamage.setMinDamageHeal(1150);
-                            heavenlyDamage.setMaxDamageHeal(1300);
+                            Value.RangedValue damage = heavenlyDamage.getDamageValues().getHeavenlyDamage();
+                            damage.min().setBaseValue(1150);
+                            damage.max().setBaseValue(1300);
                         });
                         CalculateSpeed calculateSpeed = warlordsNPC.getSpeed();
                         calculateSpeed.setBaseSpeedToWalkingSpeed(0.25f);
@@ -142,7 +142,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
         return healthCheck && !rejuvenateOver;
     }
 
-    private static class HeavenlyDamage extends AbstractPveAbility {
+    private static class HeavenlyDamage extends AbstractPveAbility implements Damages<HeavenlyDamage.DamageValues> {
 
         private float radius = 20;
 
@@ -152,7 +152,6 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
             EffectUtils.displayParticle(
                     Particle.END_ROD,
                     wp.getLocation().add(0, 2.5, 0),
@@ -165,17 +164,38 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
             PlayerFilter.entitiesAround(wp, radius, radius, radius)
                         .aliveEnemiesOf(wp)
                         .forEach(warlordsEntity -> {
-                            warlordsEntity.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    EnumSet.of(InstanceFlags.PIERCE)
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.heavenlyDamage)
+                                    .flags(InstanceFlags.PIERCE)
                             );
                         });
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        @Override
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue heavenlyDamage = new Value.RangedValue(950, 1100);
+            private final List<Value> values = List.of(heavenlyDamage);
+
+            public Value.RangedValue getHeavenlyDamage() {
+                return heavenlyDamage;
+            }
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

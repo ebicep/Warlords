@@ -1,13 +1,11 @@
 package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
-
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
-    float critMultiplier = ability.getCritMultiplier();
 
     public FlameburstBranch(AbilityTree abilityTree, FlameBurst ability) {
         super(abilityTree, ability);
@@ -27,10 +25,10 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setCritMultiplier(critMultiplier + value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 15f, 4)
+                }, ability.getDamageValues().getFlameBurstDamage().critMultiplier().addAdditiveModifier("Upgrade Branch", 0), 15f, 4)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
@@ -42,8 +40,9 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 () -> {
                     ability.setProjectileWidth(0.72D);
                     ability.setProjectileSpeed(ability.getProjectileSpeed() * 0.2);
-                    ability.setMinDamageHeal(minDamage * 2);
-                    ability.setMaxDamageHeal(maxDamage * 2);
+                    Value.RangedValueCritable damage = ability.getDamageValues().getFlameBurstDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1f);
                     ability.getSplashRadius().addAdditiveModifier("Master Upgrade Branch", 5);
 
                 }

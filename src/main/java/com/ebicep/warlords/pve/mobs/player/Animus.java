@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.player;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -34,7 +35,7 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             AbstractAbility... abilities
@@ -94,9 +95,13 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
             for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {
                 playerClass.addAbility(new JudgementStrike() {{
                     getCooldown().setBaseValue(2);
-                    setMinDamageHeal(judgementStrike.getMinDamageHeal());
-                    setMaxDamageHeal(judgementStrike.getMaxDamageHeal());
-                    setStrikeHeal(judgementStrike.getStrikeHeal());
+                    Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
+                    Value.RangedValueCritable newStrikeDamage = getDamageValues().getStrikeDamage();
+                    newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
+                    newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
+                    newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
+                    newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
+                    getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
                     setInPve(judgementStrike.isInPve());
                     setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
                     setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
@@ -108,12 +113,12 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (event.getAbility().equals("Judgement Strike")) {
+        if (event.getCause().equals("Judgement Strike")) {
             double speed = attacker.getSpeed()
                                    .getModifiers()
                                    .stream()
-                                   .filter(modifier -> modifier.modifier > 0)
-                                   .mapToDouble(value -> value.modifier)
+                                   .filter(modifier -> modifier.getModifier() > 0)
+                                   .mapToDouble(value -> value.getModifier())
                                    .sum();
             float damageBoost = (float) (1 + speed / 100);
             event.setMin(event.getMin() * damageBoost);

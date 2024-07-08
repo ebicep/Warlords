@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.SoulOfGradient;
@@ -22,6 +23,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 
 public class Torment extends AbstractMob implements BossMob {
@@ -43,7 +45,7 @@ public class Torment extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -80,7 +82,7 @@ public class Torment extends AbstractMob implements BossMob {
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getAttacker().getCooldownManager().hasCooldown(DamageCheck.class)) {
+                if (event.getSource().getCooldownManager().hasCooldown(DamageCheck.class)) {
                     return currentDamageValue * 5;
                 }
 
@@ -149,13 +151,11 @@ public class Torment extends AbstractMob implements BossMob {
                                         .entitiesAround(we, 3.2, 3.2, 3.2)
                                         .aliveTeammatesOfExcludingSelf(we)
                                 ) {
-                                    ally.addDamageInstance(
-                                            warlordsNPC,
-                                            "Tormenting Mark",
-                                            1000,
-                                            1000,
-                                            -1,
-                                            100
+                                    ally.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Tormenting Mark")
+                                            .source(warlordsNPC)
+                                            .value(1000)
                                     );
                                 }
                             }
@@ -178,7 +178,7 @@ public class Torment extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
     }
 

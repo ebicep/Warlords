@@ -1,26 +1,20 @@
 package com.ebicep.warlords.pve.upgrades.rogue.vindicator;
 
 import com.ebicep.warlords.abilities.SoulShackle;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
 
-    float minDamage = ability.getMinDamageHeal();
-    float maxDamage = ability.getMaxDamageHeal();
 
     public SoulShackleBranch(AbilityTree abilityTree, SoulShackle ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 10f)
+                .addUpgradeDamage(ability.getDamageValues().getShackleDamage(), 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -35,9 +29,9 @@ public class SoulShackleBranch extends AbstractUpgradeBranch<SoulShackle> {
                 "Soul Shackle now hits up to 8 enemies in a cone and increase silence duration by 4s.",
                 50000,
                 () -> {
-
-                    ability.setMinSilenceDurationInTicks(ability.getMinSilenceDurationInTicks() + 80);
-                    ability.setMaxSilenceDurationInTicks(ability.getMaxSilenceDurationInTicks() + 80);
+                    ability.setSilenceDurationInTicks(ability.getSilenceDurationInTicks() + 80);
+//                    ability.setMinSilenceDurationInTicks(ability.getMinSilenceDurationInTicks() + 80);
+//                    ability.setMaxSilenceDurationInTicks(ability.getMaxSilenceDurationInTicks() + 80);
                 }
         );
         masterUpgrade2 = new Upgrade(

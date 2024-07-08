@@ -2,10 +2,10 @@ package com.ebicep.warlords.pve.upgrades.shaman.thunderlord;
 
 import com.ebicep.warlords.abilities.LightningRod;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
 
-    int healthRestore = ability.getHealthRestore();
     int energyRestore = ability.getEnergyRestore();
 
     public LightningRodBranch(AbilityTree abilityTree, LightningRod ability) {
@@ -31,10 +31,10 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
-                    public void run(float value) {
-                        ability.setHealthRestore(healthRestore + (int) value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 6f)
+                }, ability.getHealValues().getHealthRestore().value().addAdditiveModifier("Upgrade Branch", 0), 6f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

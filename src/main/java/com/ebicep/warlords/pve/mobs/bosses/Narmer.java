@@ -2,6 +2,8 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,6 +11,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -53,7 +56,7 @@ public class Narmer extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -165,15 +168,13 @@ public class Narmer extends AbstractMob implements BossMob {
                 Location location = warlordsNPC.getLocation();
 
                 if (dead.isTeammate(warlordsNPC) && minionsCanHeal.contains(dead.getUuid())) {
-                    EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.VILLAGER_HAPPY, 1, 2);
+                    EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.VILLAGER_HAPPY, 1, 2, -1);
                     float healing = warlordsNPC.getCurrentHealth() * 1.1f;
-                    warlordsNPC.addHealingInstance(
-                            warlordsNPC,
-                            "Undead Healing",
-                            healing,
-                            healing,
-                            0,
-                            100
+                    warlordsNPC.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Undead Healing")
+                            .source(warlordsNPC)
+                            .value(healing)
                     );
                 }
 
@@ -205,13 +206,12 @@ public class Narmer extends AbstractMob implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                             .toList();
                     for (WarlordsEntity enemy : warlordsEntities) {
-                        enemy.addDamageInstance(
-                                warlordsNPC,
-                                "Death Wish",
-                                965 * multiplier,
-                                1138 * multiplier,
-                                0,
-                                100
+                        enemy.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Death Wish")
+                                .source(warlordsNPC)
+                                .min(965 * multiplier)
+                                .max(1138 * multiplier)
                         );
                         enemy.sendMessage(Component.text("HINT: Killing Acolytes too quickly might result in an unfavourable outcome.",
                                 NamedTextColor.RED
@@ -228,13 +228,12 @@ public class Narmer extends AbstractMob implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), enemy, -2.5, 0.25);
-                        enemy.addDamageInstance(
-                                warlordsNPC,
-                                "Acolyte Revenge",
-                                965,
-                                1138,
-                                0,
-                                100
+                        enemy.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Acolyte Revenge")
+                                .source(warlordsNPC)
+                                .min(965)
+                                .max(1138)
                         );
                     }
                 }
@@ -280,17 +279,12 @@ public class Narmer extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         EffectUtils.playRandomHitEffect(self.getLocation(), 255, 255, 255, 7);
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
@@ -352,7 +346,7 @@ public class Narmer extends AbstractMob implements BossMob {
         }
     }
 
-    private static class GroundShred extends AbstractPveAbility {
+    private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
 
@@ -368,8 +362,6 @@ public class Narmer extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
@@ -380,16 +372,33 @@ public class Narmer extends AbstractMob implements BossMob {
                     .aliveEnemiesOf(wp)
             ) {
                 Utils.addKnockback(name, loc, enemy, -2.5, 0.25);
-                enemy.addDamageInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                enemy.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.groundShredDamage)
                 );
             }
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        @Override
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue groundShredDamage = new Value.RangedValue(750, 900);
+            private final List<Value> values = List.of(groundShredDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

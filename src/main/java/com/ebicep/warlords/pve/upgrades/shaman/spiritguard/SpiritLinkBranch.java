@@ -1,36 +1,27 @@
 package com.ebicep.warlords.pve.upgrades.shaman.spiritguard;
 
 import com.ebicep.warlords.abilities.SpiritLink;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
 import org.jetbrains.annotations.Nullable;
 
 public class SpiritLinkBranch extends AbstractUpgradeBranch<SpiritLink> {
 
     int bounceRange = ability.getBounceRange();
-    float minDamage;
-    float maxDamage;
 
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.2f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getLinkDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .2f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .2f);
     }
 
     public SpiritLinkBranch(AbilityTree abilityTree, SpiritLink ability) {
         super(abilityTree, ability);
 
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
-
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 10f)
+                .addUpgradeDamage(ability.getDamageValues().getLinkDamage(), 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

@@ -50,7 +50,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
-        super("Order of Eviscerate", 0, 0, 50, 60);
+        super("Order of Eviscerate", 50, 60);
     }
 
     @Override
@@ -146,9 +146,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 if (victim != wp) {
                     if (!Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), victim)) {
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                                .append(Component.text(victim.getName(), NamedTextColor.YELLOW))
-                                .append(Component.text("!", NamedTextColor.GRAY))
+                                .append(Component.text(" You have ", NamedTextColor.GRAY))
+                                .append(Component.text("marked ", NamedTextColor.YELLOW))
+                                .append(Component.text(victim.getName() + "!", NamedTextColor.GRAY))
                         );
                     }
                     tempOrderOfEviscerate.setMarkedPlayer(victim);
@@ -159,7 +159,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
                         Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
-                                !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getAttacker())
+                                !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())
                 ) {
                     numberOfBackstabs++;
                     return currentDamageValue * (inPve ? 2 : 1.3f);
@@ -207,11 +207,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 );
                                 for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
                                     shadowStep.subtractCurrentCooldown(2);
-                                    wp.updateItem(shadowStep);
                                 }
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
-                                    wp.updateItem(orderOfEviscerate);
                                 }
                                 if (pveMasterUpgrade2) {
                                     wp.getCooldownManager().limitCooldowns(RegularCooldown.class, "Cloaked Engagement", 2);
@@ -240,11 +238,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 );
                                 for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
                                     shadowStep.setCurrentCooldown(0);
-                                    wp.updateItem(shadowStep);
                                 }
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.setCurrentCooldown(0);
-                                    wp.updateItem(orderOfEviscerate);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue());
                             }
@@ -265,7 +261,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 );
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
-                                    wp.updateItem(orderOfEviscerate);
                                 }
                             } else {
                                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -275,11 +270,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 );
                                 for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
                                     shadowStep.setCurrentCooldown(shadowStep.getCooldownValue() / 2);
-                                    wp.updateItem(shadowStep);
                                 }
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
                                     orderOfEviscerate.setCurrentCooldown(orderOfEviscerate.getCooldownValue() / 2);
-                                    wp.updateItem(orderOfEviscerate);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue() / 2f);
                             }

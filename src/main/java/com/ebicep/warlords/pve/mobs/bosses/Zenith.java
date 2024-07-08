@@ -1,10 +1,13 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -23,6 +26,7 @@ import org.bukkit.*;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.List;
 
 public class Zenith extends AbstractMob implements BossMob {
 
@@ -42,7 +46,7 @@ public class Zenith extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -118,17 +122,13 @@ public class Zenith extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
-        if (event.getAbility().equals("Uppercut") ||
-                event.getAbility().equals("Armageddon") ||
-                event.getAbility().equals("Intervene") ||
-                event.getAbility().equals("Thunder Strike")
+        if (event.getCause().equals("Uppercut") ||
+                event.getCause().equals("Armageddon") ||
+                event.getCause().equals("Intervene") ||
+                event.getCause().equals("Thunder Strike")
         ) {
             return;
         }
@@ -150,7 +150,13 @@ public class Zenith extends AbstractMob implements BossMob {
                                       .build()
                 );
                 Utils.addKnockback(name, attacker.getLocation(), receiver, -1, 0.3);
-                receiver.addDamageInstance(attacker, "Uppercut", 250, 350, 0, 100);
+                receiver.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Uppercut")
+                        .source(warlordsNPC)
+                        .min(250)
+                        .max(350)
+                );
 
                 if (counter == 3 || receiver.isDead()) {
                     this.cancel();
@@ -165,7 +171,7 @@ public class Zenith extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         for (int i = 0; i < 3; i++) {
             EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
@@ -177,10 +183,15 @@ public class Zenith extends AbstractMob implements BossMob {
         EffectUtils.strikeLightning(deathLocation, false, 5);
     }
 
-    private static class Armageddon extends AbstractPveAbility {
+    private static class Armageddon extends AbstractPveAbility implements Damages<Armageddon.DamageValues> {
 
         private final int stormRadius = 10;
+        private final DamageValues damageValues = new DamageValues();
 
+        @Override
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
 
         public Armageddon() {
             super(
@@ -194,8 +205,6 @@ public class Zenith extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             long playerCount = pveOption.getGame().warlordsPlayers().count();
             Location loc = wp.getLocation();
             DifficultyIndex difficulty = pveOption.getDifficulty();
@@ -252,12 +261,12 @@ public class Zenith extends AbstractMob implements BossMob {
                         if (we.getCooldownManager().hasCooldownFromName("Cloaked")) {
                             continue;
                         }
-                        we.addDamageInstance(wp,
-                                "Armageddon",
-                                (minDamageHeal * playerCount) * damageMultiplier,
-                                (maxDamageHeal * playerCount) * damageMultiplier,
-                                critChance,
-                                critMultiplier
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Armageddon")
+                                .source(wp)
+                                .min((damageValues.armageddonDamage.getMinValue() * playerCount) * damageMultiplier)
+                                .max((damageValues.armageddonDamage.getMaxValue() * playerCount) * damageMultiplier)
                         );
                         Utils.addKnockback(name, wp.getLocation(), we, -2, 0.2);
                     }
@@ -265,6 +274,17 @@ public class Zenith extends AbstractMob implements BossMob {
             }.runTaskLater(tickDelay);
         }
 
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue armageddonDamage = new Value.RangedValue(550, 700);
+            private final List<Value> values = List.of(armageddonDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
     }
 
     private static class Cleanse extends AbstractPveAbility {
@@ -281,8 +301,6 @@ public class Zenith extends AbstractMob implements BossMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             long playerCount = pveOption.getGame().warlordsPlayers().count();
             Location loc = wp.getLocation();
             DifficultyIndex difficulty = pveOption.getDifficulty();
@@ -299,18 +317,36 @@ public class Zenith extends AbstractMob implements BossMob {
                     .aliveEnemiesOf(wp)
             ) {
                 Utils.addKnockback(name, wp.getLocation(), we, -1.5, 0.3);
-                we.addDamageInstance(
-                        wp,
-                        name,
-                        (minDamageHeal * playerCount) * multiplier,
-                        (maxDamageHeal * playerCount) * multiplier,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .min((damageValues.cleanseDamage.getMinValue() * playerCount) * multiplier)
+                        .max((damageValues.cleanseDamage.getMaxValue() * playerCount) * multiplier)
                 );
                 EffectUtils.strikeLightning(we.getLocation(), false);
             }
             return true;
         }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue cleanseDamage = new Value.RangedValue(300, 400);
+            private final List<Value> values = List.of(cleanseDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
+
     }
 
 }

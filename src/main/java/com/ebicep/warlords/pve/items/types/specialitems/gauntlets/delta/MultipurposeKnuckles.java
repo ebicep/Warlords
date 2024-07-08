@@ -28,7 +28,8 @@ public class MultipurposeKnuckles extends SpecialDeltaGauntlet implements Applie
             @EventHandler
             public void onCurrencyAdd(WarlordsAddCurrencyEvent event) {
                 if (event.getWarlordsEntity().equals(warlordsPlayer)) {
-                    event.getCurrencyToAdd().updateAndGet(value -> (int) (value * 1.1));
+                    float currencyToAdd = event.getCurrencyToAdd();
+                    event.setCurrencyToAdd(currencyToAdd * 1.1f);
                 }
             }
         });

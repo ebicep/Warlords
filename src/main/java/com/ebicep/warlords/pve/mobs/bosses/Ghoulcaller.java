@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -22,7 +23,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -100,7 +100,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         //silence player for 2s per melee
-        if (event.getAbility().isEmpty()) {
+        if (event.getCause().isEmpty()) {
             SoulShackle.shacklePlayer(attacker, receiver, 40);
             PlayerFilter.entitiesAround(getWarlordsNPC(), 3, 3, 3)
                         .aliveEnemiesOf(getWarlordsNPC())
@@ -120,7 +120,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                               .withColor(Color.GRAY)
@@ -149,16 +149,6 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
 
         public GhoulcallersFury() {
             super("Ghoulcaller's Fury", 5, 100);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override
@@ -214,13 +204,12 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
             PlayerFilter.entitiesAround(wp, 10, 10, 10)
                         .aliveEnemiesOf(wp)
                         .forEach(enemyPlayer -> {
-                            enemyPlayer.addDamageInstance(
-                                    wp,
-                                    "Fury",
-                                    minDamage * multiplier,
-                                    maxDamage * multiplier,
-                                    critChance,
-                                    critMultiplier
+                            enemyPlayer.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Fury")
+                                    .source(wp)
+                                    .min(minDamage * multiplier)
+                                    .max(maxDamage * multiplier)
                             );
                         });
             return true;

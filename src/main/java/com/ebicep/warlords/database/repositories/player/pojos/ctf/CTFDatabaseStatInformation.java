@@ -48,26 +48,32 @@ public class CTFDatabaseStatInformation extends AbstractDatabaseStatInformation<
         this.totalTimePlayed += (long) (900 - databaseGame.getTimeLeft()) * multiplier;
     }
 
+    @Override
     public int getFlagsCaptured() {
         return flagsCaptured;
     }
 
+    @Override
     public int getFlagsReturned() {
         return flagsReturned;
     }
 
+    @Override
     public long getTotalBlocksTravelled() {
         return totalBlocksTravelled;
     }
 
+    @Override
     public long getMostBlocksTravelled() {
         return mostBlocksTravelled;
     }
 
+    @Override
     public long getTotalTimeInRespawn() {
         return totalTimeInRespawn;
     }
 
+    @Override
     public long getTotalTimePlayed() {
         return totalTimePlayed;
     }

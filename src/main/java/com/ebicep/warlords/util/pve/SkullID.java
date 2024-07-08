@@ -3,7 +3,7 @@ package com.ebicep.warlords.util.pve;
 import javax.annotation.Nonnull;
 
 // https://minecraft-heads.com/
-public enum SkullID {
+public enum SkullID implements Skull {
     // https://minecraft-heads.com/custom-heads/humanoid/50492-ethereal-wither-skull
     ETHEREAL_WITHER_SKULL("YjExNzc3OTE2ZTc1NjQ0M2UzMGEwNDNmMmJjOWNjZTBkMGZlNjI0YmQ2MTkyZDdiYTIzZjk2YTFkNzFiOWYzZiJ9fX0="),
     // https://minecraft-heads.com/custom-heads/humanoid/59545-endless-destination-helmet
@@ -135,23 +135,6 @@ public enum SkullID {
     PINK_6("YWQ2MTdjYzliZjk4MzMzM2JmMTI2NjQxNDNhNzcyZDUyMTU2YWM2YzQ4ZTE2OGExZDkxNmZiNjI5OTE2ZmIifX19"),
     //https://minecraft-heads.com/custom-heads/alphabet/9372-red-7
     RED_7("YWY0ZTdhNWNmNWI1YTRkMmZmNGZiMDQzM2IxYTY4NzUxYWExMmU5YTAyMWQzOTE4ZTkyZTIxOWE5NTNiIn19fQ=="),
-
-    //https://minecraft-heads.com/custom-heads/monsters/55303-spider
-    MC_SPIDER("MzVlMjQ4ZGEyZTEwOGYwOTgxM2E2Yjg0OGEwZmNlZjExMTMwMDk3ODE4MGVkYTQxZDNkMWE3YThlNGRiYTNjMyJ9fX0="),
-    //https://minecraft-heads.com/custom-heads/monsters/52304-slime
-    MC_SLIME("NjFhZmZkMzFlZmMzN2JhODRmNTAxODczOTRkODY4ODM0NGNjZDA2Y2RjOTI2ZGRmY2YyZGYxMTY5ODZkY2E5In19fQ=="),
-    //https://minecraft-heads.com/custom-heads/monsters/45421-magma-cube
-    MC_MAGMACUBE("YTFjOTdhMDZlZmRlMDRkMDAyODdiZjIwNDE2NDA0YWIyMTAzZTEwZjA4NjIzMDg3ZTFiMGMxMjY0YTFjMGYwYyJ9fX0="),
-    //https://minecraft-heads.com/custom-heads/monsters/47778-blaze
-    MC_BLAZE("YjIwNjU3ZTI0YjU2ZTFiMmY4ZmMyMTlkYTFkZTc4OGMwYzI0ZjM2Mzg4YjFhNDA5ZDBjZDJkOGRiYTQ0YWEzYiJ9fX0="),
-    //https://minecraft-heads.com/custom-heads/humanoid/35861-witch
-    MC_WITCH("ZmNlNjYwNDE1N2ZjNGFiNTU5MWU0YmNmNTA3YTc0OTkxOGVlOWM0MWUzNTdkNDczNzZlMGVlNzM0MjA3NGM5MCJ9fX0="),
-    //https://minecraft-heads.com/custom-heads/humanoid/45422-iron-golem
-    MC_GOLEM("ZTEzZjM0MjI3MjgzNzk2YmMwMTcyNDRjYjQ2NTU3ZDY0YmQ1NjJmYTlkYWIwZTEyYWY1ZDIzYWQ2OTljZjY5NyJ9fX0="),
-    //https://minecraft-heads.com/custom-heads/humanoid/38374-piglin
-    MC_PIGLIN("ZDcxYjNhZWUxODJiOWE5OWVkMjZjYmY1ZWNiNDdhZTkwYzJjM2FkYzA5MjdkZGUxMDJjN2IzMGZkZjdmNDU0NSJ9fX0="),
-    //https://minecraft-heads.com/custom-heads/animals/49759-angry-wolf
-    MC_ANGRY_WOLF("M2Y2NWQ5MWU3ZjBhYmU0NmMyNmYyN2VmYmM3NTRhYjI3Yjc5MTdlZTVjODg4YzE3NDdkODgyZDgxYzFhMTNlOSJ9fX0="),
     //https://minecraft-heads.com/custom-heads/alphabet/5650-question-mark
     QUESTION_MARK("ZWNjNThjYjU1YjFhMTFlNmQ4OGMyZDRkMWE2MzY2YzIzODg3ZGVlMjYzMDRiZGE0MTJjNGE1MTgyNWYxOTkifX19="),
     //https://minecraft-heads.com/custom-heads/humans/8152-apollo
@@ -189,7 +172,9 @@ public enum SkullID {
     //https://minecraft-heads.com/custom-heads/head/56786-question-mark-19
     QUESTION_MARK_BLACK_WHITE("MjcwNWZkOTRhMGM0MzE5MjdmYjRlNjM5YjBmY2ZiNDk3MTdlNDEyMjg1YTAyYjQzOWUwMTEyZGEyMmIyZTJlYyJ9fX0="),
     //https://minecraft-heads.com/custom-heads/head/56785-wrong-mark
-    WRONG_MARK("Mjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0=");
+    WRONG_MARK("Mjc1NDgzNjJhMjRjMGZhODQ1M2U0ZDkzZTY4YzU5NjlkZGJkZTU3YmY2NjY2YzAzMTljMWVkMWU4NGQ4OTA2NSJ9fX0="),
+
+    ;
 
     private final String textureId;
 
@@ -200,7 +185,8 @@ public enum SkullID {
         this.textureId = textureId;
     }
 
-    public String getTextureId() {
+    @Override
+    public String getTextureID() {
         return "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUv" + textureId;
     }
 

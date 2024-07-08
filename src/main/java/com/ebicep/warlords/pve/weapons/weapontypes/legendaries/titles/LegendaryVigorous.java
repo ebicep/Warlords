@@ -108,7 +108,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         private final float energyPerSecond;
 
         public LegendaryVigorousAbility(float energyPerSecond) {
-            super("Vigorous", 0, 0, 30, 0);
+            super("Vigorous", 30, 0);
             this.energyPerSecond = energyPerSecond;
         }
 
@@ -118,11 +118,6 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                                    .append(Component.text(" energy per second for "))
                                    .append(Component.text("10", NamedTextColor.GOLD))
                                    .append(Component.text(" seconds."));
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override

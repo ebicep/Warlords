@@ -7,6 +7,7 @@ public interface RedAbilityIcon extends AbilityIcon {
 
     ItemStack RED_ABILITY = new ItemStack(Material.RED_DYE);
 
+    @Override
     default ItemStack getAbilityIcon() {
         return RED_ABILITY;
     }

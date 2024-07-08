@@ -1,11 +1,14 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FrostboltBranch;
@@ -34,21 +37,26 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Splash {
+public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Splash, Damages<FrostBolt.DamageValues> {
 
+    private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 30;
     private float directHitMultiplier = 15;
-    private FloatModifiable splash = new FloatModifiable(4);
-    private int slowness = 25;
-
+    private FloatModifiable splash = new FloatModifiable(4.125f);
+    private int slowness = 30;
     public FrostBolt() {
-        super("Frostbolt", 268.8f, 345.45f, 0, 70, 20, 175, 2, 300, false);
+        super("Frostbolt", 0, 70, 2, 300, false);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Shoot a frostbolt that will shatter for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.boltDamage))
                                .append(Component.text(" damage and slow by "))
                                .append(Component.text(slowness + "%", NamedTextColor.YELLOW))
                                .append(Component.text("for "))
@@ -99,18 +107,19 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
 
-        Utils.playGlobalSound(currentLocation, "mage.frostbolt.impact", 2, 1);
+        Utils.playGlobalSound(effectLocation, "mage.frostbolt.impact", 2, 1);
 
-        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 1);
-        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3, 0.3, 0.3, 1);
+        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, effectLocation, 1);
+        EffectUtils.displayParticle(Particle.CLOUD, effectLocation, 3, 0.3, 0.3, 0.3, 1);
 
 
-        double distanceSquared = currentLocation.distanceSquared(startingLocation);
-        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        double distanceSquared = startingLocation.distanceSquared(effectLocation);
+        float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                           (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
-            toReduceBy = .2;
+            toReduceBy = .2f;
         }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
@@ -118,13 +127,13 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
                 numberOfDismounts++;
             }
             hit.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
-            hit.addDamageInstance(
-                    shooter,
-                    name,
-                    (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                    (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                    critChance,
-                    critMultiplier
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                    .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                    .crit(damageValues.boltDamage)
             );
             if (pveMasterUpgrade) {
                 freezeExplodeOnHit(shooter, hit);
@@ -134,7 +143,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         int playersHit = 0;
         float splashRadius = splash.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
+                .entitiesAround(hit != null ? hit.getLocation() : currentLocation, splashRadius, splashRadius, splashRadius)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -164,10 +173,10 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         Location currentLocation = projectile.getCurrentLocation();
 
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
-        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                           (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
-            toReduceBy = .2;
+            toReduceBy = .2f;
         }
         if (projectile.getHit().size() == 0) {
             toReduceBy += .15;
@@ -255,50 +264,33 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
                 ) {
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 2, 0.7f);
                     Utils.playGlobalSound(freezeTarget.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
-                    freezeTarget.addDamageInstance(giver, name, 409, 554, -1, 100);
+                    freezeTarget.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(FrostBolt.this)
+                            .source(giver)
+                            .value(damageValues.shatterBoltDamage)
+                    );
                 }
             }
         }.runTaskLater(30);
     }
 
-    private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, double damageModifier, int playersHit, WarlordsEntity nearEntity) {
+    private int hit(@Nonnull InternalProjectile projectile, WarlordsEntity shooter, float damageModifier, int playersHit, WarlordsEntity nearEntity) {
         getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
         playersHit++;
         if (nearEntity.onHorse()) {
             numberOfDismounts++;
         }
         nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
-        nearEntity.addDamageInstance(
-                shooter,
-                name,
-                (float) (minDamageHeal * damageModifier),
-                (float) (maxDamageHeal * damageModifier),
-                critChance,
-                critMultiplier
+        nearEntity.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(shooter)
+                .min(damageValues.boltDamage.getMinValue() * damageModifier)
+                .max(damageValues.boltDamage.getMaxValue() * damageModifier)
+                .crit(damageValues.boltDamage)
         );
         return playersHit;
-    }
-
-    @Override
-    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
-        splash.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    public int getMaxFullDistance() {
-        return maxFullDistance;
-    }
-
-    public void setMaxFullDistance(int maxFullDistance) {
-        this.maxFullDistance = maxFullDistance;
-    }
-
-    public float getDirectHitMultiplier() {
-        return directHitMultiplier;
-    }
-
-    public void setDirectHitMultiplier(float directHitMultiplier) {
-        this.directHitMultiplier = directHitMultiplier;
     }
 
     public int getSlowness() {
@@ -309,9 +301,34 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         this.slowness = slowness;
     }
 
+    public float getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(float directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
 
     @Override
     public FloatModifiable getSplashRadius() {
         return splash;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(268.8f, 345.45f, 20, 175);
+        private final Value.RangedValue shatterBoltDamage = new Value.RangedValue(409, 554);
+        private final List<Value> values = List.of(boltDamage, shatterBoltDamage);
+
+        public Value.RangedValueCritable getBoltDamage() {
+            return boltDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

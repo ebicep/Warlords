@@ -117,7 +117,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         private final float knockbackResistance;
 
         public LegendaryGaleAbility(float abilityEnergyDecrease, float knockbackResistance) {
-            super("Gale", 0, 0, 30, 0);
+            super("Gale", 30, 0);
             this.abilityEnergyDecrease = abilityEnergyDecrease;
             this.knockbackResistance = knockbackResistance;
         }
@@ -133,11 +133,6 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                                    .append(Component.text(" knockback resistance for "))
                                    .append(Component.text("10", NamedTextColor.GOLD))
                                    .append(Component.text(" seconds."));
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override

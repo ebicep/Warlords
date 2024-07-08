@@ -30,11 +30,6 @@ public class InterchangeModeOption implements Option {
     private int secondsUntilNextSwap = 0;
 
     @Override
-    public void register(@Nonnull Game game) {
-
-    }
-
-    @Override
     public void start(@Nonnull Game game) {
         generateNextSwapTime();
 

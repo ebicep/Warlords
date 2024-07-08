@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,6 +11,8 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.pve.mobs.flags.Unimmobilizable;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.RecklessChargeBranch;
@@ -33,20 +37,25 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, Listener {
+public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, Listener, Damages<RecklessCharge.DamageValues> {
 
     public int playersCharged = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private int stunTimeInTicks = 10;
 
     public RecklessCharge() {
-        super("Reckless Charge", 457, 601, 9.32f, 60, 20, 200);
+        super("Reckless Charge", 9.32f, 60);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Charge forward, dealing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.chargeDamage))
                                .append(Component.text(" damage to all enemies you pass through. Enemies hit are "))
                                .append(Component.text("IMMOBILIZED", NamedTextColor.DARK_PURPLE))
                                .append(Component.text(", preventing movement for "))
@@ -63,7 +72,6 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
         return info;
     }
-
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
@@ -133,16 +141,22 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                 if (otherPlayer.isEnemyAlive(wp)) {
                                     playersCharged++;
                                     float damageMultiplier = pveMasterUpgrade2 && otherPlayer.getCooldownManager().hasCooldown(CripplingStrike.class) ? 1.75f : 1;
-                                    otherPlayer.addDamageInstance(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier)
-                                               .ifPresent(finalEvent -> {
-                                                   if (pveMasterUpgrade2 && finalEvent.isDead() && timesArmyReduced < 5) {
-                                                       timesArmyReduced++;
-                                                       wp.getAbilitiesMatching(UndyingArmy.class).forEach(ability -> ability.subtractCurrentCooldown(1f));
-                                                       playCooldownReductionEffect(otherPlayer);
-                                                   }
-                                               });
+                                    otherPlayer.addInstance(InstanceBuilder
+                                            .damage()
+                                            .ability(RecklessCharge.this)
+                                            .source(wp)
+                                            .min(damageValues.chargeDamage.getMinValue() * damageMultiplier)
+                                            .max(damageValues.chargeDamage.getMaxValue() * damageMultiplier)
+                                            .crit(damageValues.chargeDamage)
+                                    ).ifPresent(finalEvent -> {
+                                        if (pveMasterUpgrade2 && finalEvent.isDead() && timesArmyReduced < 5) {
+                                            timesArmyReduced++;
+                                            wp.getAbilitiesMatching(UndyingArmy.class).forEach(ability -> ability.subtractCurrentCooldown(1f));
+                                            playCooldownReductionEffect(otherPlayer);
+                                        }
+                                    });
 
-                                    if (otherPlayer instanceof WarlordsNPC warlordsNPC) {
+                                    if (otherPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof Unimmobilizable)) {
                                         warlordsNPC.setStunTicks(getStunTimeInTicks());
                                     } else if (otherPlayer instanceof WarlordsPlayer warlordsPlayer) {
                                         warlordsPlayer.stun();
@@ -157,7 +171,6 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                                 Component.text("IMMOBILIZED", NamedTextColor.LIGHT_PURPLE),
                                                 Title.Times.times(Ticks.duration(0), Ticks.duration(stunTimeInTicks), Ticks.duration(0))
                                         ));
-
                                     }
                                 } else if ((pveMasterUpgrade || pveMasterUpgrade2) && otherPlayer.isTeammateAlive(wp)) {
                                     otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -209,4 +222,19 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         this.stunTimeInTicks = stunTimeInTicks;
     }
 
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable chargeDamage = new Value.RangedValueCritable(457, 601, 20, 200);
+        private final List<Value> values = List.of(chargeDamage);
+
+        public Value.RangedValueCritable getChargeDamage() {
+            return chargeDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 }

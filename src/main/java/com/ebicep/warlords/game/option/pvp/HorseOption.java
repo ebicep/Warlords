@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.pvp;
 
+import com.ebicep.customentities.nms.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHorseEvent;
 import com.ebicep.warlords.game.Game;
@@ -15,12 +16,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -42,7 +44,7 @@ public class HorseOption implements Option, Listener {
                     Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
             )
             .get();
-    private final HashMap<UUID, CustomHorse> playerHorses = new HashMap<>();
+    private final HashMap<UUID, WarlordsHorse> playerHorses = new HashMap<>();
 
     @Override
     public void register(@Nonnull Game game) {
@@ -67,7 +69,7 @@ public class HorseOption implements Option, Listener {
     @Override
     public void onWarlordsEntityCreated(@Nonnull WarlordsEntity player) {
         if (player instanceof WarlordsPlayer) {
-            playerHorses.put(player.getUuid(), new CustomHorse());
+            playerHorses.put(player.getUuid(), new WarlordsHorse());
         }
     }
 
@@ -111,9 +113,9 @@ public class HorseOption implements Option, Listener {
                 player.sendMessage(Component.text("You can't mount while holding the flag!", NamedTextColor.RED));
             } else {
                 player.playSound(player.getLocation(), "mountup", 1, 1);
-                CustomHorse customHorse = activateHorseForPlayer(wp);
-                if (!wp.isDisableCooldowns() && customHorse != null) {
-                    float cooldown = customHorse.getCooldown();
+                WarlordsHorse warlordsHorse = activateHorseForPlayer(wp);
+                if (!wp.isDisableCooldowns() && warlordsHorse != null) {
+                    float cooldown = warlordsHorse.getCooldown();
                     wp.setHorseCooldown(cooldown);
                 }
             }
@@ -121,7 +123,7 @@ public class HorseOption implements Option, Listener {
     }
 
     @Nullable
-    public static CustomHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
+    public static WarlordsHorse activateHorseForPlayer(WarlordsEntity warlordsEntity) {
         if (!(warlordsEntity instanceof WarlordsPlayer)) {
             return null;
         }
@@ -130,50 +132,48 @@ public class HorseOption implements Option, Listener {
         }
         for (Option option : warlordsEntity.getGame().getOptions()) {
             if (option instanceof HorseOption) {
-                HashMap<UUID, CustomHorse> horses = ((HorseOption) option).getPlayerHorses();
-                CustomHorse customHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new CustomHorse());
+                HashMap<UUID, WarlordsHorse> horses = ((HorseOption) option).getPlayerHorses();
+                WarlordsHorse warlordsHorse = horses.computeIfAbsent(warlordsEntity.getUuid(), k -> new WarlordsHorse());
                 WarlordsPlayerHorseEvent horseEvent = new WarlordsPlayerHorseEvent(warlordsEntity);
                 Bukkit.getPluginManager().callEvent(horseEvent);
                 if (horseEvent.isCancelled()) {
                     return null;
                 }
-                customHorse.spawn(player);
-                return customHorse;
+                warlordsHorse.spawn(player);
+                return warlordsHorse;
             }
         }
         return null;
     }
 
-    public HashMap<UUID, CustomHorse> getPlayerHorses() {
+    public HashMap<UUID, WarlordsHorse> getPlayerHorses() {
         return playerHorses;
     }
 
-    public static class CustomHorse {
+    public static class WarlordsHorse {
 
         private final int cooldown = 15;
-        private final float speed = .318f;
+        private final float speed = .32f;
 
         public void spawn(Player player) {
-            Horse h = player.getWorld().spawn(player.getLocation(), Horse.class, false, horse -> {
-                horse.setTamed(true);
-                horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-                horse.setOwner(player);
-                horse.setJumpStrength(0);
-                horse.setColor(Horse.Color.BROWN);
-                horse.setStyle(Horse.Style.NONE);
-                horse.setAdult();
-                AttributeInstance attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-                if (attribute == null) {
-                    horse.registerAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-                    attribute = horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
-                }
-                attribute.setBaseValue(speed);
-            });
-            h.addPassenger(player); // not sure if including this in function above will cause issues
+            CustomHorse customHorse = new CustomHorse(player.getLocation());
+            Horse horse = (Horse) customHorse.getBukkitEntity();
+            horse.setTamed(true);
+            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+            horse.setOwner(player);
+            horse.setJumpStrength(0);
+            horse.setColor(Horse.Color.BROWN);
+            horse.setStyle(Horse.Style.NONE);
+            horse.setAdult();
+            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
+            ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);
+            horse.addPassenger(player); // not sure if including this in function above will cause issues
         }
 
         public int getCooldown() {
             return cooldown;
         }
+
     }
+
 }

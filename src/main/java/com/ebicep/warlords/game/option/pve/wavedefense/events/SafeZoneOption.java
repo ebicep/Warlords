@@ -123,7 +123,7 @@ public class SafeZoneOption implements Option {
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
                 WarlordsEntity player = event.getWarlordsEntity();
                 if (player.getCooldownManager().hasCooldownFromActionBarName("SAFE") ||
-                        event.getAttacker().getCooldownManager().hasCooldownFromActionBarName("SAFE")
+                        event.getSource().getCooldownManager().hasCooldownFromActionBarName("SAFE")
                 ) {
                     event.setCancelled(true);
                 }

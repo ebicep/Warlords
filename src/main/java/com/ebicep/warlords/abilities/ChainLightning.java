@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractChain;
-import com.ebicep.warlords.abilities.internal.AbstractTotem;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -12,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
@@ -30,7 +28,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration {
+public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration, Damages<ChainLightning.DamageValues> {
+
+    public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
 
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -59,12 +59,12 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return event.getAttacker().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
+                return event.getSource().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
             }
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (event.getAttacker().equals(giver) && isKiller) {
+                if (event.getSource().equals(giver) && isKiller) {
                     for (AbstractAbility ability : giver.getAbilities()) {
                         if (ability instanceof OrangeAbilityIcon) {
                             ability.subtractCurrentCooldown(.5f);
@@ -74,24 +74,29 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             }
         });
     }
-
     public int numberOfDismounts = 0;
+    private final DamageValues damageValues = new DamageValues();
     private float damageReductionPerBounce = 10;
-    private float maxDamageReduction = 30;
+    private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
 
     public ChainLightning() {
-        super("Chain Lightning", 370, 499, 9.4f, 40, 20, 175, 20, 10, 3);
+        super("Chain Lightning", 9.4f, 40, 20, 10, 3);
     }
 
     public ChainLightning(float cooldown, float startCooldown) {
-        super("Chain Lightning", 370, 499, cooldown, 40, 20, 175, 20, 10, 3);
+        super("Chain Lightning", cooldown, 40, 20, 10, 3, startCooldown);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Discharge a bolt of lightning at the targeted enemy player that deals ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.chainDamage))
                                .append(Component.text(" damage and jumps to "))
                                .append(Component.text(additionalBounces, NamedTextColor.YELLOW))
                                .append(Component.text(" additional targets within "))
@@ -155,7 +160,6 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                     multiplier = reduction;
                 }
                 newDamageValue = currentDamageValue * multiplier;
-                event.getWarlordsEntity().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
                 return newDamageValue;
             }
         });
@@ -163,7 +167,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
     @Override
     protected ItemStack getChainItem() {
-        return new ItemStack(Material.GRAY_STAINED_GLASS);
+        return CHAIN_ITEM;
     }
 
     private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
@@ -178,21 +182,23 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         boolean firstCheck = checkFrom == wp.getEntity();
         if (!hasHitTotem) {
             if (firstCheck) {
-                Optional<CapacitorTotem> optionalTotem = getLookingAtTotem(wp);
+                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = getLookingAtTotem(wp);
                 if (optionalTotem.isPresent()) {
-                    ArmorStand totem = optionalTotem.get().getTotem();
-                    chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(wp, optionalTotem.get());
+                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
+                    ArmorStand armorStand = data.getArmorStand();
+                    chain(checkFrom.getLocation(), armorStand.getLocation());
+                    partOfChainLightningPulseDamage(data);
                     playersHit.add(null);
-                    return partOfChainLightning(wp, playersHit, totem, true);
+                    return partOfChainLightning(wp, playersHit, armorStand, true);
                 } // no else
             } else {
-                Optional<CapacitorTotem> capacitorTotem = AbstractTotem.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.class);
-                if (capacitorTotem.isPresent()) {
-                    ArmorStand totem = capacitorTotem.get().getTotem();
-                    chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(wp, capacitorTotem.get());
-                    return partOfChainLightning(wp, playersHit, totem, true);
+                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = AbstractTotem.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.CapacitorTotemData.class);
+                if (optionalTotem.isPresent()) {
+                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
+                    ArmorStand armorStand = data.getArmorStand();
+                    chain(checkFrom.getLocation(), armorStand.getLocation());
+                    partOfChainLightningPulseDamage(data);
+                    return partOfChainLightning(wp, playersHit, armorStand, true);
                 } // no else
             }
         } // no else
@@ -218,13 +224,13 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 numberOfDismounts++;
             }
 
-            hit.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal * damageMultiplier,
-                    maxDamageHeal * damageMultiplier,
-                    critChance,
-                    critMultiplier
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.chainDamage.getMinValue() * damageMultiplier)
+                    .max(damageValues.chainDamage.getMaxValue() * damageMultiplier)
+                    .crit(damageValues.chainDamage)
             );
 
             if (pveMasterUpgrade2) {
@@ -242,41 +248,23 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         }
     }
 
-    private void partOfChainLightningPulseDamage(WarlordsEntity wp, CapacitorTotem capacitorTotem) {
-        ArmorStand totem = capacitorTotem.getTotem();
-        capacitorTotem.pulseDamage();
-        if (capacitorTotem.isPveMasterUpgrade()) {
-            capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
+    private void partOfChainLightningPulseDamage(CapacitorTotem.CapacitorTotemData data) {
+        ArmorStand armorStand = data.getArmorStand();
+        data.proc();
+        if (data.getTotem().isPveMasterUpgrade()) {
+            data.setRadius(data.getRadius() + 0.5);
         }
 
-        Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
-        wp.playSound(totem.getLocation(), "shaman.chainlightning.impact", 2, 1);
-
-        capacitorTotem.addProc();
+        Utils.playGlobalSound(armorStand.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+        data.getOwner().playSound(armorStand.getLocation(), "shaman.chainlightning.impact", 2, 1);
     }
 
-    private Optional<CapacitorTotem> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
+    private Optional<CapacitorTotem.CapacitorTotemData> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.class)
-                .filter(totem -> totem.getTotem().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
+                .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.CapacitorTotemData.class)
+                .filter(totem -> totem.getArmorStand().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
                         && totem.isPlayerLookingAtTotem(warlordsPlayer))
                 .findFirst();
-    }
-
-    public float getDamageReductionPerBounce() {
-        return damageReductionPerBounce;
-    }
-
-    public void setDamageReductionPerBounce(float damageReductionPerBounce) {
-        this.damageReductionPerBounce = damageReductionPerBounce;
-    }
-
-    public float getMaxDamageReduction() {
-        return maxDamageReduction;
-    }
-
-    public void setMaxDamageReduction(float maxDamageReduction) {
-        this.maxDamageReduction = maxDamageReduction;
     }
 
     @Override
@@ -288,4 +276,21 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     public void setTickDuration(int tickDuration) {
         this.damageReductionTickDuration = tickDuration;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
+        private final List<Value> values = List.of(chainDamage);
+
+        public Value.RangedValueCritable getChainDamage() {
+            return chainDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

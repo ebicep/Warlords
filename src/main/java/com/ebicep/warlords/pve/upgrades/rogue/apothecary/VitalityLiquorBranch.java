@@ -6,10 +6,6 @@ import com.ebicep.warlords.pve.upgrades.*;
 public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> {
 
     int energyPerSecond = ability.getEnergyPerSecond();
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
-    float minWaveHealing = ability.getMinWaveHealing();
-    float maxWaveHealing = ability.getMaxWaveHealing();
     int vitalityRange = ability.getVitalityRange();
 
     public VitalityLiquorBranch(AbilityTree abilityTree, VitalityLiquor ability) {
@@ -17,16 +13,7 @@ public class VitalityLiquorBranch extends AbstractUpgradeBranch<VitalityLiquor> 
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinWaveHealing(minWaveHealing * v);
-                        ability.setMaxWaveHealing(maxWaveHealing * v);
-                        ability.setMinDamageHeal(minHealing * v);
-                        ability.setMaxDamageHeal(maxHealing * v);
-                    }
-                }, 10f)
+                .addUpgradeHealing(ability.getHealValues().getWaveHealing(), 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

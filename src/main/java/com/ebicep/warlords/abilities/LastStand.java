@@ -10,7 +10,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.LastStandBranch;
@@ -30,7 +31,6 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
 
@@ -43,19 +43,19 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     private int radius = 7;
     private int selfTickDuration = 240;
     private int allyTickDuration = 120;
-    private int selfDamageReductionPercent = 50;
-    private int teammateDamageReductionPercent = 30;
+    private int selfDamageReductionPercent = 35;
+    private int teammateDamageReductionPercent = 35;
 
     public LastStand() {
-        super("Last Stand", 0, 0, 56.38f, 40);
+        super("Last Stand", 56.38f, 40);
     }
 
     public LastStand(float cooldown, float startCooldown) {
-        super("Last Stand", 0, 0, cooldown, 40, startCooldown);
+        super("Last Stand", cooldown, 0, startCooldown);
     }
 
     public LastStand(int selfDamageReductionPercent, int teammateDamageReductionPercent) {
-        super("Last Stand", 0, 0, 56.38f, 40);
+        super("Last Stand", 56.38f, 40);
         this.selfDamageReductionPercent = selfDamageReductionPercent;
         this.teammateDamageReductionPercent = teammateDamageReductionPercent;
     }
@@ -166,37 +166,39 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     },
                     allyTickDuration
             ) {
+                float amountPrevented = 0;
+
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
+                    float newCurrentDamageValue = currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
+                    amountPrevented = currentDamageValue - newCurrentDamageValue;
+                    tempLastStand.addAmountPrevented(amountPrevented);
+                    return newCurrentDamageValue;
                 }
 
                 @Override
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    tempLastStand.addAmountPrevented(currentDamageValue);
-                    wp.addAbsorbed(currentDamageValue);
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            currentDamageValue,
-                            currentDamageValue,
-                            isCrit ? 100 : 0,
-                            100,
-                            EnumSet.of(InstanceFlags.LAST_STAND_FROM_SHIELD)
+                    tempLastStand.addAmountPrevented(amountPrevented);
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(LastStand.this)
+                            .source(wp)
+                            .value(amountPrevented)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.LAST_STAND_FROM_SHIELD, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );
                 }
 
+
                 @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    tempLastStand.addAmountPrevented(currentDamageValue);
-                    wp.addAbsorbed(currentDamageValue);
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            currentDamageValue,
-                            currentDamageValue,
-                            isCrit ? 100 : 0,
-                            100
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(LastStand.this)
+                            .source(wp)
+                            .value(amountPrevented)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                     );
                 }
             });

@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -9,20 +11,29 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.GroundSlamBranchBerserker;
 
+import java.util.List;
 import java.util.Set;
 
-public class GroundSlamBerserker extends AbstractGroundSlam {
+public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<GroundSlamBerserker.DamageValues> {
+
+    private final DamageValues damageValues = new DamageValues();
 
     public GroundSlamBerserker() {
         this(9.32f, 0);
     }
 
     public GroundSlamBerserker(float cooldown, float startCooldown) {
-        this(448.8f, 606.1f, cooldown, startCooldown);
+        super(cooldown, 60, startCooldown);
     }
 
-    public GroundSlamBerserker(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
-        super(minDamageHeal, maxDamageHeal, cooldown, 60, 15, 200, startCooldown);
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new GroundSlamBranchBerserker(abilityTree, this);
+    }
+
+    @Override
+    public Value.RangedValueCritable getSlamDamage() {
+        return damageValues.slamDamage;
     }
 
     @Override
@@ -49,8 +60,23 @@ public class GroundSlamBerserker extends AbstractGroundSlam {
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new GroundSlamBranchBerserker(abilityTree, this);
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable slamDamage = new Value.RangedValueCritable(448.8f, 606.1f, 20, 175);
+        private final List<Value> values = List.of(slamDamage);
+
+        public Value.RangedValueCritable getSlamDamage() {
+            return slamDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 }

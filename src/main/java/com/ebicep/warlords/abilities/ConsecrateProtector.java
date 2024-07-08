@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -9,7 +11,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.ConsecrateBranchProtector;
@@ -21,25 +24,15 @@ import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ConsecrateProtector extends AbstractConsecrate implements CanReduceCooldowns {
+public class ConsecrateProtector extends AbstractConsecrate implements CanReduceCooldowns, Damages<ConsecrateProtector.DamageValues> {
+
+    private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateProtector() {
-        super(96, 130, 10, 15, 200, 15, 4);
-    }
-
-    public ConsecrateProtector(
-            float minDamageHeal,
-            float maxDamageHeal,
-            float energyCost,
-            float critChance,
-            float critMultiplier,
-            int strikeDamageBoost,
-            float radius,
-            Location location
-    ) {
-        super(minDamageHeal, maxDamageHeal, energyCost, critChance, critMultiplier, strikeDamageBoost, radius, location);
+        super(10, 15, 4, 5);
     }
 
     @Override
@@ -47,7 +40,6 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-
 
         Location location = wp.getLocation().clone();
 
@@ -68,7 +60,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                 name,
                 null,
                 AbstractConsecrate.class,
-                createConsecrate(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -80,19 +72,18 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     Location updatedLocation = wp.getLocation();
                     circleEffect.setCenter(updatedLocation);
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 30 == 0) {
                         PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
                                         playersHit++;
-                                        enemy.addDamageInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .value(damageValues.consecrateDamage)
                                         ).ifPresent(finalEvent -> {
                                             if (timesReduced.get() < 15) {
                                                 timesReduced.getAndIncrement();
@@ -116,18 +107,9 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
         return true;
     }
 
-    @Nonnull
     @Override
-    public AbstractConsecrate createConsecrate() {
-        return new ConsecrateProtector(minDamageHeal,
-                maxDamageHeal,
-                energyCost.getBaseValue(),
-                critChance,
-                critMultiplier,
-                strikeDamageBoost,
-                hitBox.getBaseValue(),
-                location
-        );
+    public Value.RangedValueCritable getConsecrateDamage() {
+        return damageValues.consecrateDamage;
     }
 
     @Nonnull
@@ -144,5 +126,22 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     @Override
     public boolean canReduceCooldowns() {
         return pveMasterUpgrade2;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(96, 130, 20, 175);
+        private final List<Value> values = List.of(consecrateDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

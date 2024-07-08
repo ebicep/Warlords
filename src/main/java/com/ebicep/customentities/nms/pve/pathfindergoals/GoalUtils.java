@@ -19,6 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class GoalUtils {
@@ -53,7 +54,7 @@ public class GoalUtils {
 
 
     @Nonnull
-    public static List<Entity> getNearbyEnemies(Entity entity, WarlordsEntity thisWarlordsEntity, double distance) {
+    public static List<WarlordsEntity> getNearbyEnemies(Entity entity, WarlordsEntity thisWarlordsEntity, double distance, List<Predicate<WarlordsEntity>> extraFilters) {
         return PlayerFilter.entitiesAround(entity, distance, distance, distance)
                            .aliveEnemiesOf(thisWarlordsEntity)
                            .filter(warlordsEntity ->
@@ -61,8 +62,8 @@ public class GoalUtils {
                                            !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE &&
                                            !(warlordsEntity instanceof WarlordsNPC npc && npc.getMob() instanceof Untargetable)
                            )
+                           .filter(warlordsEntity -> extraFilters.stream().allMatch(filter -> filter.test(warlordsEntity)))
                            .stream()
-                           .map(WarlordsEntity::getEntity)
                            .collect(Collectors.toList());
     }
 

@@ -7,7 +7,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.BoltaroExiled;
@@ -23,7 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-import java.util.EnumSet;
+import javax.annotation.Nonnull;
 
 public class Boltaro extends AbstractMob implements BossMob {
 
@@ -47,7 +48,7 @@ public class Boltaro extends AbstractMob implements BossMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -117,7 +118,7 @@ public class Boltaro extends AbstractMob implements BossMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (!(event.getAbility().equals("Multi Hit") || event.getAbility().equals("Intervene"))) {
+        if (!(event.getCause().equals("Multi Hit") || event.getCause().equals("Intervene"))) {
             new GameRunnable(attacker.getGame()) {
                 int counter = 0;
 
@@ -126,7 +127,14 @@ public class Boltaro extends AbstractMob implements BossMob {
                     counter++;
                     Utils.playGlobalSound(receiver.getLocation(), "warrior.mortalstrike.impact", 2, 1.5f);
                     Utils.addKnockback(name, attacker.getLocation(), receiver, -0.55, 0.3);
-                    receiver.addDamageInstance(attacker, "Multi Hit", 120, 180, 0, 100, counter == 3 ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class));
+                    receiver.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Multi Hit")
+                            .source(attacker)
+                            .min(120)
+                            .max(180)
+                            .flag(InstanceFlags.TRUE_DAMAGE, counter == 3)
+                    );
 
                     if (counter == 3 || receiver.isDead()) {
                         this.cancel();
@@ -143,7 +151,7 @@ public class Boltaro extends AbstractMob implements BossMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE_NORMAL, 3, 20);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()

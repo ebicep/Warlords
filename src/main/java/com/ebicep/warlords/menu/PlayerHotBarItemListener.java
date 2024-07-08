@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,10 +24,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -85,25 +82,6 @@ public class PlayerHotBarItemListener implements Listener {
     private static final HashMap<Integer, Consumer<PlayerInteractEvent>> SLOT_HOTBAR_LISTENER = new HashMap<>();
 
     static {
-        SLOT_HOTBAR_LISTENER.put(0, e -> {
-            Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
-            if (p != null) {
-                List<RegularGamesMenu.RegularGamePlayer> playerList2 = p.getA().getRegularGamesMenu().getRegularGamePlayers();
-                if (!playerList2.isEmpty()) {
-                    p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (PlainTextComponentSerializer.plainText().serialize(e.getPlayer().getOpenInventory().title()).equals("Team Builder")) {
-                                p.getA().getRegularGamesMenu().openMenuForPlayer(e.getPlayer());
-                            } else {
-                                this.cancel();
-                            }
-                        }
-                    }.runTaskTimer(Warlords.getInstance(), 20, 10);
-                }
-            }
-        });
         SLOT_HOTBAR_LISTENER.put(1, e -> {
         });
         SLOT_HOTBAR_LISTENER.put(2, e -> {
@@ -119,6 +97,13 @@ public class PlayerHotBarItemListener implements Listener {
         SLOT_HOTBAR_LISTENER.put(4, e -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(e.getPlayer()));
         SLOT_HOTBAR_LISTENER.put(5, e -> Bukkit.getServer().dispatchCommand(e.getPlayer(), "spectate"));
 //        SLOT_HOTBAR_LISTENER.put(6, e -> WarlordsNewHotbarMenu.PvEMenu.openPvEMenu(e.getPlayer()));
+        SLOT_HOTBAR_LISTENER.put(7, e -> {
+            Pair<Party, PartyPlayer> p = PartyManager.getPartyAndPartyPlayerFromAny(e.getPlayer().getUniqueId());
+            if (p != null) {
+                RegularGamesMenu regularGamesMenu = p.getA().getRegularGamesMenu();
+                regularGamesMenu.openMenuForPlayer(e.getPlayer());
+            }
+        });
 //        SLOT_HOTBAR_LISTENER.put(8, e -> WarlordsNewHotbarMenu.SettingsMenu.openSettingsMenu(e.getPlayer()));
     }
 
@@ -131,16 +116,15 @@ public class PlayerHotBarItemListener implements Listener {
         if (!fromGame) {
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);
             if (partyPlayerPair != null) {
-                List<RegularGamesMenu.RegularGamePlayer> playerList = partyPlayerPair.getA().getRegularGamesMenu().getRegularGamePlayers();
-                if (!playerList.isEmpty()) {
-                    playerList.stream()
-                              .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))
-                              .findFirst()
-                              .ifPresent(regularGamePlayer -> setItem(player,
-                                      0,
-                                      new ItemBuilder(regularGamePlayer.getTeam().woolItem).name(Component.text("Team Builder", NamedTextColor.GREEN)).get()
-                              ));
-                }
+                RegularGamesMenu regularGamesMenu = partyPlayerPair.getA().getRegularGamesMenu();
+                regularGamesMenu.getRegularGameTeams().forEach((team, regularGameTeam) -> {
+                    if (regularGameTeam.getTeamPlayers().stream().anyMatch(regularGamePlayer -> regularGamePlayer.getUuid().equals(uuid))) {
+                        setItem(player,
+                                7,
+                                new ItemBuilder(team.getWool()).name(Component.text("Team Builder", NamedTextColor.GREEN)).get()
+                        );
+                    }
+                });
             }
         }
         ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();

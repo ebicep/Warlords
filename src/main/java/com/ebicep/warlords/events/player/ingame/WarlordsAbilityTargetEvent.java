@@ -36,6 +36,7 @@ public class WarlordsAbilityTargetEvent extends AbstractWarlordsEntityEvent {
         return targets;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

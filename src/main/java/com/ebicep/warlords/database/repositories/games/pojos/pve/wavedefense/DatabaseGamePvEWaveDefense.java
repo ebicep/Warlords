@@ -77,6 +77,7 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase<DatabaseGame
         return lore;
     }
 
+    @Override
     public int getWavesCleared() {
         return wavesCleared;
     }

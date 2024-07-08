@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.AdvancedMob;
@@ -36,7 +37,7 @@ public class WanderWalker extends AbstractMob implements AdvancedMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -62,19 +63,16 @@ public class WanderWalker extends AbstractMob implements AdvancedMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-    }
-
-    @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         if (!recovered && self.getCurrentHealth() <= self.getMaxHealth() * .1f) {
             recovered = true;
             float healAmount = self.getMaxHealth() * healthRecover;
-            self.addHealingInstance(self, "Void Recovery", healAmount, healAmount, 0, 100);
+            self.addInstance(InstanceBuilder
+                    .healing()
+                    .cause("Void Recovery")
+                    .source(self)
+                    .value(healAmount)
+            );
             removeTarget();
             self.getSpeed().addBaseModifier(speedIncrease);
             warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(

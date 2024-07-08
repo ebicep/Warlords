@@ -1,15 +1,13 @@
 package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
-import org.bukkit.inventory.EntityEquipment;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -21,10 +19,9 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
     public AbstractBerserkZombie(
             Location spawnLocation,
             String name,
-            EntityEquipment ee,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             BerserkerZombieWoundingStrike woundingStrike
@@ -50,25 +47,10 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
         }
     }
 
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
+    public static class BerserkerZombieWoundingStrike extends WoundingStrikeBerserker {
 
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    static class BerserkerZombieWoundingStrike extends WoundingStrikeBerserker {
-
-        public BerserkerZombieWoundingStrike(float minDamageHeal, float maxDamageHeal) {
-            super("Wounding Strike", minDamageHeal, maxDamageHeal, 5, 100, 20, 175);
+        public BerserkerZombieWoundingStrike() {
+            super("Wounding Strike", 5, 100);
         }
 
         @Override

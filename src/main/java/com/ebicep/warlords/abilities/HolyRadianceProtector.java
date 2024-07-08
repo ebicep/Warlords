@@ -1,10 +1,14 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HolyRadianceBranchProtector;
@@ -21,38 +25,33 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HolyRadianceProtector extends AbstractHolyRadiance {
+public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals<HolyRadianceProtector.HealingValues> {
 
     private final FloatModifiable markRadius = new FloatModifiable(15);
-
-    private int markDuration = 6;
-    private float markHealing = 50;
-
-    public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
-    }
+    private final HealingValues healingValues = new HealingValues();
+    private int markDuration = 8;
+    private float markBonusHealing = 10;
 
     public HolyRadianceProtector() {
-        super("Holy Radiance", 582, 760, 9.87f, 60, 15, 175, 6);
+        super("Holy Radiance", 9.87f, 60, 6);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.radianceHealing))
                                .append(Component.text(" health."))
                                .append(Component.text("\n\nYou may look at an ally to mark them for "))
                                .append(Component.text(markDuration, NamedTextColor.GOLD))
-                               .append(Component.text("seconds. Your marked ally will emit a second Holy Radiance for "))
-                               .append(Component.text(markHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the original healing amount after the mark ends."))
-                               .append(Component.text("\n\nMark has an optimal range of "))
+                               .append(Component.text("seconds. Marked allies receive "))
+                               .append(Component.text(format(markBonusHealing) + "%", NamedTextColor.GREEN))
+                               .append(Component.text(" more healing from all sources."))
+                               .append(Component.text("\n\nMark has a maximum range of "))
                                .append(Component.text(format(markRadius.getCalculatedValue()), NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
     }
@@ -104,14 +103,14 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
             emitMarkRadiance(wp, markTarget);
 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                    .append(Component.text(markTarget.getName(), NamedTextColor.GREEN))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Protector's Mark", NamedTextColor.YELLOW))
+                    .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY))
             );
 
-            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
                     .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
-                    .append(Component.text("Protector's Mark", NamedTextColor.GREEN))
+                    .append(Component.text("Protector's Mark", NamedTextColor.YELLOW))
                     .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
             );
 
@@ -122,52 +121,15 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
     }
 
     private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
-        HolyRadianceProtector tempMark = new HolyRadianceProtector(
-                minDamageHeal,
-                maxDamageHeal,
-                cooldown.getBaseValue(),
-                energyCost.getBaseValue(),
-                critChance,
-                critMultiplier
-        );
-        target.getCooldownManager().addRegularCooldown(
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "PROT MARK",
                 HolyRadianceProtector.class,
-                tempMark,
+                new HolyRadianceProtector(),
                 giver,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
-                    if (target.isDead()) {
-                        return;
-                    }
 
-                    EffectUtils.displayParticle(
-                            Particle.SPELL,
-                            target.getLocation(),
-                            12,
-                            1,
-                            1,
-                            1,
-                            0.06
-                    );
-
-                    Utils.playGlobalSound(target.getLocation(), "paladin.holyradiance.activation", 2, 0.95f);
-                    for (WarlordsEntity waveTarget : PlayerFilter
-                            .entitiesAround(target, 6, 6, 6)
-                            .aliveTeammatesOf(target)
-                    ) {
-                        target.getGame().registerGameTask(
-                                new FlyingArmorStand(
-                                        target.getLocation(),
-                                        waveTarget,
-                                        giver,
-                                        1.1,
-                                        minDamageHeal * (markHealing / 100f),
-                                        maxDamageHeal * (markHealing / 100f)
-                                ).runTaskTimer(Warlords.getInstance(), 1, 1)
-                        );
-                    }
                 },
                 markDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -196,37 +158,39 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
                             PlayerFilter.entitiesAround(target, 10, 10, 10)
                                         .aliveTeammatesOf(giver)
                                         .forEach(warlordsEntity -> {
-                                            warlordsEntity.addHealingInstance(
-                                                    giver,
-                                                    "Unrivalled Radiance",
-                                                    150,
-                                                    350,
-                                                    0,
-                                                    100
+                                            warlordsEntity.addInstance(InstanceBuilder
+                                                    .healing()
+                                                    .ability(this)
+                                                    .source(giver)
+                                                    .value(healingValues.unrivalledRadianceHealing)
                                             );
                                         });
                         }
                     }
                 })
-        );
+        ) {
+            @Override
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                return currentHealValue * convertToMultiplicationDecimal(markBonusHealing);
+            }
+        });
     }
 
     @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        super.runEveryTick(warlordsEntity);
-        markRadius.tick();
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
     }
 
     public FloatModifiable getMarkRadius() {
         return markRadius;
     }
 
-    public float getMarkHealing() {
-        return markHealing;
+    public float getMarkBonusHealing() {
+        return markBonusHealing;
     }
 
-    public void setMarkHealing(float markHealing) {
-        this.markHealing = markHealing;
+    public void setMarkBonusHealing(float markBonusHealing) {
+        this.markBonusHealing = markBonusHealing;
     }
 
     public int getMarkDuration() {
@@ -236,4 +200,27 @@ public class HolyRadianceProtector extends AbstractHolyRadiance {
     public void setMarkDuration(int markDuration) {
         this.markDuration = markDuration;
     }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);
+        private final Value.RangedValue unrivalledRadianceHealing = new Value.RangedValue(150, 350);
+        private final List<Value> values = List.of(radianceHealing, unrivalledRadianceHealing);
+
+        public Value.RangedValueCritable getRadianceHealing() {
+            return radianceHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

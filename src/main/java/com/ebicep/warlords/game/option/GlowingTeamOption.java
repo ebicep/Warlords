@@ -11,7 +11,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;

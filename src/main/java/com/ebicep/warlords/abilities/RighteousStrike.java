@@ -1,9 +1,11 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.RighteousStrikeBranch;
@@ -18,31 +20,30 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class RighteousStrike extends AbstractStrike {
+public class RighteousStrike extends AbstractStrike implements Damages<RighteousStrike.DamageValues> {
 
     public int silencedTargetStruck = 0;
-
-    private int abilityReductionInTicks = 10;
+    private final DamageValues damageValues = new DamageValues();
+    private int abilityReductionInTicks = 16;
     private int targetsStruck = 0;
 
     public RighteousStrike() {
-        super("Righteous Strike", 391, 497, 0, 90, 20, 175);
+        super("Righteous Strike", 0, 70);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage. Each strike reduces the duration of your struck target's active ability timers by "))
                                .append(Component.text(format(abilityReductionInTicks / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."))
-                               .append(Component.text("\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Prism Guard by "))
-                               .append(Component.text(format((abilityReductionInTicks * 1.6f) / 20f), NamedTextColor.GOLD))
+                               .append(Component.text("\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Vindicate by "))
+                               .append(Component.text("0.5", NamedTextColor.GOLD))
                                .append(Component.text(" seconds and reduce their active ability timers by "))
-                               .append(Component.text("0.8", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds instead."));
+                               .append(Component.text(format((abilityReductionInTicks + 4) / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" second instead."));
     }
 
     @Override
@@ -69,21 +70,18 @@ public class RighteousStrike extends AbstractStrike {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         targetsStruck++;
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
         );
 
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns((int) (abilityReductionInTicks * 1.6f), CooldownTypes.ABILITY);
-            for (PrismGuard prismGuard : wp.getAbilitiesMatching(PrismGuard.class)) {
-                prismGuard.subtractCurrentCooldown(0.8f);
-                wp.updateItem(prismGuard);
+            for (Vindicate vindicate : wp.getAbilitiesMatching(Vindicate.class)) {
+                vindicate.subtractCurrentCooldown(0.5f);
             }
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);
@@ -104,13 +102,11 @@ public class RighteousStrike extends AbstractStrike {
                 if (pveMasterUpgrade) {
                     SoulShackle.shacklePlayer(wp, we, 80);
                 }
-                we.addDamageInstance(
-                        wp,
-                        name,
-                        minDamageHeal,
-                        maxDamageHeal,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage)
                 );
                 if (pveMasterUpgrade2 && targetsStruck % 5 == 0) {
                     wp.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> soulShackle.subtractCurrentCooldown(.5f));
@@ -122,13 +118,25 @@ public class RighteousStrike extends AbstractStrike {
         return true;
     }
 
-    public int getAbilityReductionInTicks() {
-        return abilityReductionInTicks;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
-    public void setAbilityReductionInTicks(int abilityReductionInTicks) {
-        this.abilityReductionInTicks = abilityReductionInTicks;
-    }
+    public static class DamageValues implements Value.ValueHolder {
 
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(334, 425, 20, 175);
+        private final List<Value> values = List.of(strikeDamage);
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

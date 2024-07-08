@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effe
 
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.gameevents.libraryarchives.PlayerCodex;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventInquisiteur;
 import net.kyori.adventure.text.Component;
@@ -102,7 +104,12 @@ public class CodexCollector implements FieldEffect {
                     return;
                 }
                 float healing = warlordsPlayer.getMaxHealth() * 0.05f;
-                warlordsPlayer.addHealingInstance(warlordsPlayer, "Codex Collector", healing, healing, 0, 0);
+                warlordsPlayer.addInstance(InstanceBuilder
+                        .healing()
+                        .cause("Codex Collector")
+                        .source(warlordsPlayer)
+                        .value(healing)
+                );
             }
 
             @EventHandler
@@ -110,10 +117,10 @@ public class CodexCollector implements FieldEffect {
                 if (codexesEquipped < 4) {
                     return;
                 }
-                if (!(event.getAttacker() instanceof WarlordsPlayer warlordsPlayer)) {
+                if (!(event.getSource() instanceof WarlordsPlayer warlordsPlayer)) {
                     return;
                 }
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     event.setCritChance(event.getCritChance() + 5);
                     event.setCritMultiplier(event.getCritMultiplier() + 10);
                 }
@@ -136,7 +143,6 @@ public class CodexCollector implements FieldEffect {
                     if (ThreadLocalRandom.current().nextDouble() < 0.25) {
                         AbstractAbility ability = abilityMap.get(event.getAbility());
                         ability.setCurrentCooldown(0);
-                        warlordsPlayer.updateItem(ability);
                     }
                 }
             }
@@ -156,8 +162,12 @@ public class CodexCollector implements FieldEffect {
         if (codexesEquipped >= 4) {
             for (WarlordsEntity player : players) {
                 for (AbstractAbility ability : player.getAbilities()) {
-                    ability.setCritChance(ability.getCritChance() + 5);
-                    ability.setCritMultiplier(ability.getCritMultiplier() + 10);
+                    Value.applyDamageHealing(ability, value -> {
+                        if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                            rangedValueCritable.critChance().addAdditiveModifier(getName(), 5);
+                            rangedValueCritable.critMultiplier().addAdditiveModifier(getName(), 10);
+                        }
+                    });
                 }
             }
         }

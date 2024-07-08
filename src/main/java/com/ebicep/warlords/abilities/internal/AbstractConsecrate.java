@@ -8,7 +8,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -20,7 +21,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,35 +32,24 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
     protected int strikeDamageBoost;
     protected FloatModifiable hitBox;
-    protected Location location;
-    protected int tickDuration = 100;
-
-    public AbstractConsecrate(float minDamageHeal, float maxDamageHeal, float energyCost, float critChance, float critMultiplier, int strikeDamageBoost, float hitBox) {
-        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
-        this.strikeDamageBoost = strikeDamageBoost;
-        this.hitBox = new FloatModifiable(hitBox);
-    }
+    protected int tickDuration;
 
     public AbstractConsecrate(
-            float minDamageHeal,
-            float maxDamageHeal,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             int strikeDamageBoost,
             float hitBox,
-            Location location
+            int duration
     ) {
-        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
+        super("Consecrate", 7.83f, energyCost);
         this.strikeDamageBoost = strikeDamageBoost;
         this.hitBox = new FloatModifiable(hitBox);
-        this.location = location;
+        this.tickDuration = duration * 20;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(getConsecrateDamage()))
                                .append(Component.text(" damage per second and take "))
                                .append(Component.text(strikeDamageBoost + "%", NamedTextColor.RED))
                                .append(Component.text(" increased damage from your paladin strikes. Has a radius of "))
@@ -82,8 +71,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
         Location location = wp.getLocation().clone();
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
@@ -101,7 +88,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 name,
                 null,
                 AbstractConsecrate.class,
-                createConsecrate(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -111,19 +98,20 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    circleEffect.playEffects();
+                    if (ticksElapsed % 2 == 0) {
+                        circleEffect.playEffects();
+                    }
                     if (ticksElapsed % 20 == 0) {
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
                                         playersHit++;
-                                        enemy.addDamageInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .source(wp)
+                                                .value(getConsecrateDamage())
+                                                .flags(InstanceFlags.DOT)
                                         );
                                     });
                     }
@@ -131,7 +119,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (!event.getAbility().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
+                if (!event.getCause().equals(getStrikeName()) || event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     return currentDamageValue;
                 }
                 boolean insideCons = location.distanceSquared(event.getWarlordsEntity().getLocation()) < radius * radius;
@@ -147,17 +135,10 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return true;
     }
 
-    @Nonnull
-    public abstract AbstractConsecrate createConsecrate();
+    public abstract Value.RangedValueCritable getConsecrateDamage();
 
     @Nonnull
     public abstract String getStrikeName();
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitBox.tick();
-        super.runEveryTick(warlordsEntity);
-    }
 
     public void addStrikesBoosted() {
         strikesBoosted++;
@@ -166,10 +147,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     @Override
     public FloatModifiable getHitBoxRadius() {
         return hitBox;
-    }
-
-    public Location getLocation() {
-        return location;
     }
 
     public int getStrikeDamageBoost() {
@@ -189,4 +166,5 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
 }

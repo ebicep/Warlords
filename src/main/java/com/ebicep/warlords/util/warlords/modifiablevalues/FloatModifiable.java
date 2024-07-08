@@ -20,6 +20,7 @@ public class FloatModifiable {
     private final Map<String, FloatModifiableFilter> filters = new HashMap<>() {{
         put("Base", new FloatModifiableFilter.BaseFilter());
     }};
+    private final Map<String, Runnable> onRefresh = new HashMap<>();
     private float baseValue;
 
     public FloatModifiable(float baseValue) {
@@ -58,6 +59,30 @@ public class FloatModifiable {
             floatModifiableFilter.setCachedMultiplicativeModifierAdditive(cachedMultiplicativeModifierAdditive);
             floatModifiableFilter.setCachedMultiplicativeModifierMultiplicative(cachedMultiplicativeModifierMultiplicative);
         });
+        onRefresh.values().forEach(Runnable::run);
+    }
+
+    public FloatModifiable(FloatModifiable floatModifiable) {
+        this.baseValue = floatModifiable.baseValue;
+        floatModifiable.overridingModifiers.forEach(floatModifier -> this.overridingModifiers.add(new FloatModifier(floatModifier.getLog(),
+                floatModifier.getModifier(),
+                floatModifier.getTicksLeft()
+        )));
+        floatModifiable.additiveModifiers.forEach(floatModifier -> this.additiveModifiers.add(new FloatModifier(floatModifier.getLog(),
+                floatModifier.getModifier(),
+                floatModifier.getTicksLeft()
+        )));
+        floatModifiable.multiplicativeModifiersAdditive.forEach(floatModifier -> this.multiplicativeModifiersAdditive.add(new FloatModifier(floatModifier.getLog(),
+                floatModifier.getModifier(),
+                floatModifier.getTicksLeft()
+        )));
+        floatModifiable.multiplicativeModifiersMultiplicative.forEach(floatModifier -> this.multiplicativeModifiersMultiplicative.add(new FloatModifier(floatModifier.getLog(),
+                floatModifier.getModifier(),
+                floatModifier.getTicksLeft()
+        )));
+        floatModifiable.filters.forEach((s, floatModifiableFilter) -> this.filters.put(s, floatModifiableFilter.clone()));
+        refresh();
+        this.onRefresh.putAll(floatModifiable.onRefresh);
     }
 
     public void tick() {
@@ -125,6 +150,17 @@ public class FloatModifiable {
     }
 
     public FloatModifier addMultiplicativeModifierAdd(String log, float multiplicativeModifier) {
+        return addMultiplicativeModifierAdd(log, multiplicativeModifier, true);
+    }
+
+    public FloatModifier addMultiplicativeModifierAdd(String log, float multiplicativeModifier, boolean override) {
+        if (!override) {
+            for (FloatModifier modifier : multiplicativeModifiersAdditive) {
+                if (modifier.getLog().equals(log)) {
+                    return modifier;
+                }
+            }
+        }
         FloatModifier modifier = new FloatModifier(log, multiplicativeModifier);
         addModifier(this.multiplicativeModifiersAdditive, modifier);
         return modifier;
@@ -207,6 +243,10 @@ public class FloatModifiable {
 
     public List<FloatModifier> getMultiplicativeModifierMultiplicative() {
         return multiplicativeModifiersMultiplicative;
+    }
+
+    public void addRefreshListener(String source, Runnable runnable) {
+        onRefresh.put(source, runnable);
     }
 
     public static class FloatModifier {

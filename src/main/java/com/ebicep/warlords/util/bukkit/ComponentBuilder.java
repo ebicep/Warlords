@@ -19,6 +19,10 @@ public class ComponentBuilder {
         return new ComponentBuilder(text, textColor);
     }
 
+    public static ComponentBuilder create(String text, TextColor textColor, TextDecoration... textDecoration) {
+        return new ComponentBuilder(text, textColor, textDecoration);
+    }
+
     public static ComponentBuilder text() {
         return new ComponentBuilder("");
     }

@@ -31,6 +31,7 @@ public class WarlordsStrikeEvent extends AbstractWarlordsEntityEvent {
         return strikedEntity;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

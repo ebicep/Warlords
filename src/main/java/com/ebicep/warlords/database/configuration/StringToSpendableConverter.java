@@ -1,15 +1,19 @@
 package com.ebicep.warlords.database.configuration;
 
+import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.guilds.GuildSpendable;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.ExpSpendable;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.types.SpendableRandomItem;
 import com.ebicep.warlords.pve.mobs.MobDrop;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.ReadingConverter;
 
 import javax.annotation.Nonnull;
 
+@ReadingConverter
 public class StringToSpendableConverter implements Converter<String, Spendable> {
 
     @Override
@@ -39,7 +43,8 @@ public class StringToSpendableConverter implements Converter<String, Spendable> 
                 return value;
             }
         }
-        return null;
+        ChatChannels.sendDebugMessage((CommandIssuer) null, "Could not convert " + s + " to Spendable");
+        throw new IllegalArgumentException("Could not convert " + s + " to Spendable");
     }
 
 }

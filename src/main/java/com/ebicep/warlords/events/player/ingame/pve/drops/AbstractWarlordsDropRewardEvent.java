@@ -6,6 +6,8 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.google.common.util.concurrent.AtomicDouble;
 import org.bukkit.event.HandlerList;
 
+import javax.annotation.Nonnull;
+
 public abstract class AbstractWarlordsDropRewardEvent extends AbstractWarlordsEntityEvent {
 
     protected static final HandlerList handlers = new HandlerList();
@@ -50,6 +52,7 @@ public abstract class AbstractWarlordsDropRewardEvent extends AbstractWarlordsEn
         this.modifier += modifier;
     }
 
+    @Nonnull
     @Override
     public HandlerList getHandlers() {
         return handlers;

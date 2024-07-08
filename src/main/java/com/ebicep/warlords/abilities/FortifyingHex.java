@@ -1,8 +1,9 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -11,46 +12,63 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.Nullable;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration {
+public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
 
+    protected FloatModifiable damageReduction = new FloatModifiable(4);
+
+    private final DamageValues damageValues = new DamageValues();
     private int maxEnemiesHit = 1;
-    private int maxAlliesHit = 1;
+    private int maxAlliesHit = 2;
     private int maxFullDistance = 40;
     private int tickDuration = 120;
-    private float damageReduction = 5;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
 
+    public FortifyingHex(float damageReduction) {
+        this();
+        this.damageReduction = new FloatModifiable(damageReduction);
+    }
+
     public FortifyingHex() {
-        super("Fortifying Hex", 256, 350, 0, 70, 20, 175, 2.5, 40, true);
+        super("Fortifying Hex", 0, 60, 2.5, 40, true);
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
@@ -60,7 +78,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                                .append(Component.text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and "))
                                .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
                                .append(Component.text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes "))
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.hexDamage))
                                .append(Component.text(" damage. The ally receives "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex. If Fortifying Hex hits a target, you receive "))
@@ -68,7 +86,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                                .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex.\n\nEach stack of Fortifying Hex lasts  "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds and grants"))
-                               .append(Component.text(format(damageReduction) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text(format(damageReduction.getCalculatedValue()) + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction. Stacks up to"))
                                .append(Component.text(maxStacks, NamedTextColor.BLUE))
                                .append(Component.text(" times.\n\nHas a maximum range of "))
@@ -128,44 +146,53 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
+        return new LocationBuilder(startingLocation.clone()).addY(-.63).backward(0f);
     }
 
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
-            armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.WARPED_DOOR));
-            armorStand.setHeadPose(new EulerAngle(-Math.atan2(
-                    projectile.getSpeed().getY(),
-                    Math.sqrt(
-                            Math.pow(projectile.getSpeed().getX(), 2) +
-                                    Math.pow(projectile.getSpeed().getZ(), 2)
-                    )
-            ), 0, 0));
+
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation)
+                .pitch(0);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+            itemDisplay.setItemStack(new ItemStack(Material.WARPED_DOOR));
+            itemDisplay.setTeleportDuration(1);
+            itemDisplay.setBrightness(new Display.Brightness(15, 15));
+            itemDisplay.setTransformation(new Transformation(
+                    new Vector3f(),
+                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                    new Vector3f(1f),
+                    new AxisAngle4f()
+            ));
         });
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {
-                fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                Matrix4d center = new Matrix4d(projectile.getCurrentLocation());
-
-                for (float i = 0; i < 2; i++) {
-                    double angle = Math.toRadians(i * 180) + projectile.getTicksLived() * 0.45;
-                    double width = 0.32D;
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation)
+                        .pitch(0);
+                display.teleport(location);
+                if (projectile.getTicksLived() % 3 == 0) {
                     EffectUtils.displayParticle(
                             Particle.END_ROD,
-                            center.translateVector(projectile.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                            2
+                            new LocationBuilder(projectile.getCurrentLocation()).addY(.875).left(.8f),
+                            1
+                    );
+                    EffectUtils.displayParticle(
+                            Particle.END_ROD,
+                            new LocationBuilder(projectile.getCurrentLocation()).addY(.875).right(.8f),
+                            1
                     );
                 }
             }
 
             @Override
             public void onDestroy(InternalProjectile projectile) {
-                fallenSoul.remove();
+                display.remove();
+                Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
                 EffectUtils.displayParticle(
                         Particle.EXPLOSION_LARGE,
                         projectile.getCurrentLocation(),
@@ -173,7 +200,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                         0,
                         0,
                         0,
-                        0.7f
+                        0.7
                 );
             }
         });
@@ -193,6 +220,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     @Override
     protected float getSoundPitch() {
         return 1.4f;
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        super.runEveryTick(warlordsEntity);
+        damageReduction.tick();
     }
 
     private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
@@ -217,10 +250,10 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                 return false;
             }
             double distanceSquared = startingLocation.distanceSquared(currentLocation);
-            double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                                1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+            float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                               (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
             if (toReduceBy < .2) {
-                toReduceBy = .2;
+                toReduceBy = .2f;
             }
             hitEnemy(hit, wp, toReduceBy);
             if (pveMasterUpgrade2) {
@@ -251,42 +284,63 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     public static void giveFortifyingHex(WarlordsEntity from, WarlordsEntity to) {
         FortifyingHex fromHex = getFromHex(from);
         String hexName = fromHex.getName();
-        float damageReduction = fromHex.getDamageReduction();
         int maxStacks = fromHex.getMaxStacks();
         int duration = fromHex.getTickDuration();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHex.class, maxStacks);
+        FortifyingHex tempFortifyingHex = new FortifyingHex(fromHex.getDamageReduction().getCalculatedValue());
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 hexName,
                 "FHEX",
                 FortifyingHex.class,
-                new FortifyingHex(),
+                tempFortifyingHex,
                 from,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
-                duration
+                duration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    tempFortifyingHex.getDamageReduction().tick();
+                })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - damageReduction / 100f);
+                return currentDamageValue * (1 - tempFortifyingHex.getDamageReduction().getCalculatedValue() / 100f);
             }
 
             @Override
-            public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("FHEX", NamedTextColor.YELLOW), we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL);
+            public PlayerNameData addPrefixFromOther() {
+                boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
+                return new PlayerNameData(
+                        Component.text("FHEX", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, flag),
+                        we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL
+                );
             }
         });
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);
+
+        if (from != to) {
+            from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
+                    .append(Component.text(" is now protecting " + to.getName() + "!", NamedTextColor.GRAY))
+            );
+
+            to.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" " + from.getName() + " is now protecting you with their ", NamedTextColor.GRAY))
+                    .append(Component.text("Fortifying Hex", NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY))
+            );
+        }
     }
 
-    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, double toReduceBy) {
-        hit.addDamageInstance(
-                wp,
-                name,
-                (float) (minDamageHeal * toReduceBy),
-                (float) (maxDamageHeal * toReduceBy),
-                critChance,
-                critMultiplier
+    private void hitEnemy(@Nonnull WarlordsEntity hit, WarlordsEntity wp, float toReduceBy) {
+        hit.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.hexDamage.getMinValue() * toReduceBy)
+                .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
+                .crit(damageValues.hexDamage)
         );
         if (pveMasterUpgrade2) {
             Optional<RegularCooldown> weakeningHexCooldown = new CooldownFilter<>(hit, RegularCooldown.class)
@@ -327,10 +381,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                    .orElse(new FortifyingHex());
     }
 
-    public float getDamageReduction() {
-        return damageReduction;
-    }
-
     public int getMaxStacks() {
         return maxStacks;
     }
@@ -340,13 +390,13 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         return tickDuration;
     }
 
+    public FloatModifiable getDamageReduction() {
+        return damageReduction;
+    }
+
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public void setDamageReduction(float damageReduction) {
-        this.damageReduction = damageReduction;
     }
 
     public int getMaxEnemiesHit() {
@@ -365,27 +415,20 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.maxAlliesHit = maxAlliesHit;
     }
 
-    static class FortifyingHexShield extends Shield {
+    public static class DamageValues implements Value.ValueHolder {
 
-        private int maxStacks;
+        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(271, 365, 20, 175);
+        private final List<Value> values = List.of(hexDamage);
 
-        public FortifyingHexShield(String name, float hexShieldAmount, int maxStacks) {
-            super(name, hexShieldAmount);
-            this.maxStacks = maxStacks;
+        public Value.RangedValueCritable getHexDamage() {
+            return hexDamage;
         }
 
         @Override
-        public void addShieldHealth(float damage) {
-            if (-damage < getShieldHealth()) {
-                setShieldHealth(0);
-            } else {
-                setShieldHealth(getShieldHealth() + damage);
-            }
+        public List<Value> getValues() {
+            return values;
         }
 
-        public int getMaxStacks() {
-            return maxStacks;
-        }
     }
 
     static class WeakeningHex {

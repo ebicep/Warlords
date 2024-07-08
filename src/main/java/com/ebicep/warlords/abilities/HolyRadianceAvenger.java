@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -23,36 +25,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HolyRadianceAvenger extends AbstractHolyRadiance {
+public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<HolyRadianceAvenger.HealingValues> {
 
     private final int markDuration = 8;
+    private final HealingValues healingValues = new HealingValues();
     private int markRadius = 15;
-    private int energyDrainPerSecond = 8;
-
-    protected int timesWrathReduced = 0;
-
-    public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
-    }
+    private float energyDrainPerSecond = 8;
 
     public HolyRadianceAvenger() {
-        super("Holy Radiance", 582, 760, 19.57f, 20, 15, 175, 6);
+        super("Holy Radiance", 16.53f, 20, 6);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.radianceHealing))
                                .append(Component.text(" health."))
                                .append(Component.newline())
                                .append(Component.newline())
                                .append(Component.text("You may look at an enemy to mark them for "))
                                .append(Component.text(markDuration, NamedTextColor.GOLD))
                                .append(Component.text(" seconds. Reducing their energy per second by "))
-                               .append(Component.text(energyDrainPerSecond, NamedTextColor.YELLOW))
+                               .append(Component.text(format(energyDrainPerSecond), NamedTextColor.YELLOW))
                                .append(Component.text(" for the duration."))
-                               .append(Component.text("\n\nMark has an optimal range of "))
-                               .append(Component.text(markRadius, NamedTextColor.YELLOW));
+                               .append(Component.text("\n\nMark has a maximum range of "))
+                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
+                               .append(Component.text(" blocks."));
     }
 
     @Override
@@ -99,21 +97,13 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
             EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
 
-            HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
-                    minDamageHeal,
-                    maxDamageHeal,
-                    cooldown.getBaseValue(),
-                    energyCost.getBaseValue(),
-                    critChance,
-                    critMultiplier
-            );
-
-            markTarget.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
+            RadianceData radianceData = new RadianceData();
+            markTarget.getCooldownManager().removeCooldown(RadianceData.class, false);
             markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "AVE MARK",
-                    HolyRadianceAvenger.class,
-                    tempMark,
+                    RadianceData.class,
+                    radianceData,
                     wp,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {
@@ -128,7 +118,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     if (pveMasterUpgrade) {
-                        if (event.getAbility().equals("Avenger's Strike")) {
+                        if (event.getCause().equals("Avenger's Strike")) {
                             return currentDamageValue * 1.4f;
                         }
                         return currentDamageValue;
@@ -143,14 +133,14 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
             });
 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                    .append(Component.text(markTarget.getName(), NamedTextColor.GOLD))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
+                    .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY))
             );
 
             markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
                     .append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
-                    .append(Component.text("Avenger's Mark", NamedTextColor.GOLD))
+                    .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
                     .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
             );
 
@@ -160,25 +150,18 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
     }
 
     private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
-        HolyRadianceAvenger tempMark = new HolyRadianceAvenger(
-                minDamageHeal,
-                maxDamageHeal,
-                cooldown.getBaseValue(),
-                energyCost.getBaseValue(),
-                critChance,
-                critMultiplier
-        );
-        target.getCooldownManager().removeCooldown(HolyRadianceAvenger.class, false);
+        RadianceData radianceData = new RadianceData();
+        target.getCooldownManager().removeCooldown(RadianceData.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "AVE MARK",
-                HolyRadianceAvenger.class,
-                tempMark,
+                RadianceData.class,
+                radianceData,
                 giver,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
-                    if (pveMasterUpgrade2 && target.isDead() && tempMark.timesWrathReduced < 10) {
-                        tempMark.timesWrathReduced++;
+                    if (pveMasterUpgrade2 && target.isDead() && radianceData.timesWrathReduced < 10) {
+                        radianceData.timesWrathReduced++;
                         giver.getAbilitiesMatching(AvengersWrath.class).forEach(avengersWrath -> avengersWrath.subtractCurrentCooldown(.5f));
                         playCooldownReductionEffect(target);
                     }
@@ -193,7 +176,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade) {
-                    if (event.getAbility().equals("Avenger's Strike")) {
+                    if (event.getCause().equals("Avenger's Strike")) {
                         return currentDamageValue * 1.4f;
                     }
                     return currentDamageValue;
@@ -203,20 +186,40 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance {
         });
     }
 
-    public int getMarkRadius() {
-        return markRadius;
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
     }
 
-    public void setMarkRadius(int markRadius) {
-        this.markRadius = markRadius;
-    }
-
-    public int getEnergyDrainPerSecond() {
+    public float getEnergyDrainPerSecond() {
         return energyDrainPerSecond;
     }
 
-    public void setEnergyDrainPerSecond(int energyDrainPerSecond) {
+    public void setEnergyDrainPerSecond(float energyDrainPerSecond) {
         this.energyDrainPerSecond = energyDrainPerSecond;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);
+        private final List<Value> values = List.of(radianceHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public static class RadianceData {
+
+        private int timesWrathReduced = 0;
+
     }
 
 

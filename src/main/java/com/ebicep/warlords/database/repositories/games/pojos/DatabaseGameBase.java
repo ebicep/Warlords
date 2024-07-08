@@ -499,7 +499,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         for (DatabaseGamePlayerBase allPlayer : allPlayers) {
             Team team = getTeam(allPlayer);
             if (team != null) {
-                playerColor.put(allPlayer, team.oldTeamColor);
+                playerColor.put(allPlayer, team.getChatColor());
             }
         }
 

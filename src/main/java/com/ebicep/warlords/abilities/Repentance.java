@@ -9,7 +9,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
@@ -23,7 +24,6 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 public class Repentance extends AbstractAbility implements BlueAbilityIcon, Duration {
@@ -35,7 +35,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     private float energyConvertPercent = 3.5f;
 
     public Repentance() {
-        super("Repentance", 0, 0, 31.32f, 20);
+        super("Repentance", 31.32f, 20);
     }
 
     @Override
@@ -104,23 +104,21 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
 
                 int healthToAdd = (int) (pool * (damageConvertPercent / 100f)) + 10;
-                attacker.addHealingInstance(
-                        attacker,
-                        "Repentance",
-                        Math.min(500, healthToAdd),
-                        Math.min(500, healthToAdd),
-                        0,
-                        100,
-                        pveMasterUpgrade2 ? EnumSet.of(InstanceFlags.CAN_OVERHEAL_SELF) : EnumSet.noneOf(InstanceFlags.class)
+                attacker.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(Repentance.this)
+                        .source(attacker)
+                        .value(Math.min(500, healthToAdd))
+                        .flag(InstanceFlags.CAN_OVERHEAL_SELF, pveMasterUpgrade2)
                 );
                 if (pveMasterUpgrade2) {
                     Overheal.giveOverHeal(wp, wp);
                 }
                 energyGained.addAndGet(attacker.addEnergy(attacker, "Repentance", healthToAdd * (energyConvertPercent / 100f)));
-                pool *= .5;
+                pool *= .5f;
             }
         });
 

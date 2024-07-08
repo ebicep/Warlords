@@ -52,7 +52,7 @@ public class ChakramOfBlades extends SpecialOmegaBuckler implements AppliesToWar
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (event.getAttacker().equals(warlordsPlayer) && isKiller) {
+                if (event.getSource().equals(warlordsPlayer) && isKiller) {
                     kills++;
                     if (kills % 7 == 0) {
                         warlordsPlayer.addEnergy(warlordsPlayer, getName(), 30);

@@ -153,7 +153,7 @@ public class ImposterModeOption implements Option, EventGameEndOption {
             Team team = entry.getKey();
             List<UUID> warlordsPlayers = entry.getValue();
             message.append(Component.text("The "))
-                   .append(Component.text(team.name, team.teamColor))
+                   .append(Component.text(team.name, team.getTeamColor()))
                    .append(Component.text(warlordsPlayers.size() == 1 ? " imposter was " : " imposters were "))
                    .append(Component.text(warlordsPlayers.stream()
                                                          .map(uuid -> Bukkit.getOfflinePlayer(uuid).getName())
@@ -285,14 +285,14 @@ public class ImposterModeOption implements Option, EventGameEndOption {
                             Component title = Component.empty();
                             Component subtitle = Component.empty();
                             switch (counter) {
-                                case 0, 1 -> title = Component.text(team.name + " voted...", team.teamColor);
+                                case 0, 1 -> title = Component.text(team.name + " voted...", team.getTeamColor());
                                 case 2, 3 -> {
                                     if (votedCorrectly) {
                                         title = Component.text("Correctly!", NamedTextColor.GREEN);
                                     } else {
                                         title = Component.text("Incorrectly!", NamedTextColor.RED);
                                     }
-                                    subtitle = Component.text(Bukkit.getOfflinePlayer(imposters.get(team).get(0)).getName(), team.teamColor)
+                                    subtitle = Component.text(Bukkit.getOfflinePlayer(imposters.get(team).get(0)).getName(), team.getTeamColor())
                                                         .append(Component.text(" was the imposter", NamedTextColor.YELLOW));
                                 }
                             }
@@ -311,7 +311,7 @@ public class ImposterModeOption implements Option, EventGameEndOption {
                                         );
                                     });
                             } else if (counter == 9) {
-                                game.removeFrozenCause(Component.text(team.name, team.teamColor)
+                                game.removeFrozenCause(Component.text(team.name, team.getTeamColor())
                                                                 .append(Component.text(" is voting!", NamedTextColor.GREEN)));
                                 int scoreNeededToEndGame = game.getOptions()
                                                                .stream()

@@ -75,7 +75,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (pveMasterUpgrade) {
-                    if (event.getAbility().equals("Avenger's Strike")) {
+                    if (event.getCause().equals("Avenger's Strike")) {
                         strikesUsed.getAndIncrement();
                     }
                 }

@@ -46,7 +46,7 @@ public class ShawlOfMithra extends AbstractFixedItem implements FixedItemApplies
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 if (attacker instanceof WarlordsNPC warlordsNPC) {
                     if (warlordsNPC.getMob().getLevel() < 2) {
                         return currentDamageValue * 0.9f;

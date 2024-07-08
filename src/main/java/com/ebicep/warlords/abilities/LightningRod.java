@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -10,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningRodBranch;
@@ -31,24 +34,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
+public class LightningRod extends AbstractAbility implements BlueAbilityIcon, Heals<LightningRod.HealingValues> {
 
     private final int knockbackRadius = 5;
+    private final HealingValues healingValues = new HealingValues();
     private int energyRestore = 160;
-    private int healthRestore = 30;
 
     public LightningRod() {
         this(31.32f, 0);
     }
 
     public LightningRod(float cooldown, float startCooldown) {
-        super("Lightning Rod", 0, 0, cooldown, 0, startCooldown);
+        super("Lightning Rod", cooldown, 0, startCooldown);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Call down an energizing bolt of lightning upon yourself, restoring ")
-                               .append(Component.text(healthRestore + "%", NamedTextColor.GREEN))
+                               .append(Heals.formatHealingPercent(healingValues.healthRestore))
                                .append(Component.text(" health and "))
                                .append(Component.text(energyRestore + " ", NamedTextColor.YELLOW))
                                .append(Component.text("energy and knock all nearby enemies in a "))
@@ -56,7 +59,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
                                .append(Component.text("block radius back."));
 
     }
-
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {
@@ -90,18 +92,17 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
         }
 
         // pulsedamage
-        List<CapacitorTotem> totemDownAndClose = AbstractTotem.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.class);
-        totemDownAndClose.forEach(capacitorTotem -> {
-            ArmorStand totem = capacitorTotem.getTotem();
+        List<CapacitorTotem.CapacitorTotemData> totems = AbstractTotem.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.CapacitorTotemData.class);
+        totems.forEach(data -> {
+            ArmorStand totem = data.getArmorStand();
 
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
             wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
 
-            capacitorTotem.pulseDamage();
-            if (capacitorTotem.isPveMasterUpgrade()) {
-                capacitorTotem.setRadius(capacitorTotem.getRadius() + 0.5);
+            data.proc();
+            if (data.getTotem().isPveMasterUpgrade()) {
+                data.setRadius(data.getRadius() + 0.5);
             }
-            capacitorTotem.addProc();
         });
 
 
@@ -113,13 +114,11 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
         Utils.playGlobalSound(wp.getLocation(), "shaman.lightningrod.activation", 2, 1);
         new FallingBlockWaveEffect(wp.getLocation(), knockbackRadius, 1, Material.ORANGE_TULIP).play();
         wp.getWorld().spigot().strikeLightningEffect(wp.getLocation(), true);
-        wp.addHealingInstance(
-                wp,
-                name,
-                (wp.getMaxHealth() * (healthRestore / 100f)),
-                (wp.getMaxHealth() * (healthRestore / 100f)),
-                critChance,
-                critMultiplier
+        wp.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(wp.getMaxHealth() * (healingValues.healthRestore.getMultiplicativePercent()))
         );
 
         List<WarlordsEntity> hit = PlayerFilter
@@ -219,14 +218,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
         return new LightningRodBranch(abilityTree, this);
     }
 
-    public int getHealthRestore() {
-        return healthRestore;
-    }
-
-    public void setHealthRestore(int healthRestore) {
-        this.healthRestore = healthRestore;
-    }
-
     public int getEnergyRestore() {
         return energyRestore;
     }
@@ -235,5 +226,25 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon {
         this.energyRestore = energyRestore;
     }
 
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue healthRestore = new Value.SetValue(30);
+        private final List<Value> values = List.of(healthRestore);
+
+        public Value.SetValue getHealthRestore() {
+            return healthRestore;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

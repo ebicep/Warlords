@@ -264,7 +264,7 @@ public enum ChallengeAchievements implements Achievement {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
                         .filter(regularCooldown -> regularCooldown.getStartingTicks() - regularCooldown.getTicksLeft() <= 20)
-                        .filterCooldownClassAndMapToObjectsOfClass(Intervene.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(Intervene.InterveneData.class)
                         .anyMatch(intervene -> intervene.getDamagePrevented() >= 2000);
             }
     ),
@@ -382,12 +382,15 @@ public enum ChallengeAchievements implements Achievement {
             Difficulty.EASY,
             warlordsEntity -> {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
-                return lastDamageEvent != null && lastDamageEvent.getAttackerCooldowns().stream()
+                return lastDamageEvent != null && lastDamageEvent.getAttackerCooldowns()
+                                                                 .stream()
                                                                  .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
                                                                  .filter(RegularCooldown.class::isInstance)
                                                                  .map(RegularCooldown.class::cast)
-                                                                 .filter(regularCooldown -> Objects.equals(regularCooldown.getCooldownClass(), CapacitorTotem.class))
-                                                                 .map(regularCooldown -> ((CapacitorTotem) regularCooldown.getCooldownObject()))
+                                                                 .filter(regularCooldown -> Objects.equals(regularCooldown.getCooldownClass(),
+                                                                         CapacitorTotem.CapacitorTotemData.class
+                                                                 ))
+                                                                 .map(regularCooldown -> ((CapacitorTotem.CapacitorTotemData) regularCooldown.getCooldownObject()))
                                                                  .anyMatch(capacitorTotem -> capacitorTotem.getNumberOfProcsAfterCarrierPassed() >= 3);
             }
     ),

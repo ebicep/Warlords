@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.game.pve.WarlordsGameWaveRespawnEvent;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyFinalEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -34,8 +35,12 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.commands.MobCommand;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.citizensnpcs.api.ai.EntityTarget;
+import net.citizensnpcs.api.ai.event.NavigationBeginEvent;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -63,8 +68,10 @@ import static com.ebicep.warlords.util.chat.ChatUtils.sendMessage;
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class WaveDefenseOption implements PveOption {
+
     protected static final int SCOREBOARD_PRIORITY = 5;
-    private final ConcurrentHashMap<AbstractMob, Integer> mobs = new ConcurrentHashMap<>();
+
+    private final ConcurrentHashMap<AbstractMob, MobData> mobs = new ConcurrentHashMap<>();
     private final Team team;
     private final WaveList waves;
     private final DifficultyIndex difficulty;
@@ -179,6 +186,29 @@ public class WaveDefenseOption implements PveOption {
                 });
             }
 
+            @EventHandler
+            public void onAddCurrency(WarlordsAddCurrencyFinalEvent event) {
+                WarlordsEntity player = event.getWarlordsEntity();
+                AbilityTree.handleAutoUpgrade(player);
+            }
+
+            @EventHandler
+            public void onMobStartNavigating(NavigationBeginEvent event) {
+                NPC npc = event.getNPC();
+                // handle setting targetedBy/targeting
+                EntityTarget entityTarget = npc.getNavigator().getEntityTarget();
+                if (entityTarget == null) {
+                    return;
+                }
+                if (!(npc.data().get(WarlordsEntity.WARLORDS_ENTITY_METADATA) instanceof WarlordsNPC warlordsNPC)) {
+                    return;
+                }
+                WarlordsEntity targetWarlordsEntity = Warlords.getPlayer(entityTarget.getTarget());
+                if (targetWarlordsEntity == null) {
+                    return;
+                }
+                warlordsNPC.getMob().onEntityTarget(targetWarlordsEntity);
+            }
 
         });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
@@ -411,7 +441,7 @@ public class WaveDefenseOption implements PveOption {
                 }
                 WarlordsNPC npc = abstractMob.toNPC(game, team, WaveDefenseOption.this::modifyStats);
                 game.addNPC(npc);
-                mobs.put(abstractMob, ticksElapsed.get());
+                mobs.put(abstractMob, new MobData(ticksElapsed.get()));
                 Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, abstractMob));
                 return npc;
             }
@@ -582,7 +612,7 @@ public class WaveDefenseOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
         return mobs;
     }
 
@@ -604,7 +634,7 @@ public class WaveDefenseOption implements PveOption {
     @Override
     public void spawnNewMob(AbstractMob mob, Team team) {
         game.addNPC(mob.toNPC(game, team, this::modifyStats));
-        mobs.put(mob, ticksElapsed.get());
+        mobs.put(mob, new MobData(ticksElapsed.get()));
         Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
     }
 

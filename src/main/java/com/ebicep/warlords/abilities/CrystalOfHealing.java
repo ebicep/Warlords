@@ -8,8 +8,9 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -35,7 +36,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     private int lifeSpan = 45; // seconds
 
     public CrystalOfHealing() {
-        super("Crystal of Healing", 0, 0, 20, 20, 0, 0);
+        super("Crystal of Healing", 20, 20);
     }
 
     @Override
@@ -114,7 +115,9 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                 false,
                 (duration + lifeSpan) * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    teamCircleEffect.playEffects();
+                    if (ticksElapsed % 5 == 0) {
+                        teamCircleEffect.playEffects();
+                    }
                     if (ticksElapsed % 2 == 0) {
                         Location crystalLocation = crystal.getLocation();
                         crystalLocation.setY(Math.sin(ticksElapsed * Math.PI / 40) / 4 + baseY);
@@ -134,13 +137,11 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                     .entitiesAround(crystal.getLocation(), 6, 6, 6)
                                     .aliveTeammatesOf(wp)
                             ) {
-                                allyTarget.addHealingInstance(
-                                        wp,
-                                        name,
-                                        50,
-                                        50,
-                                        0,
-                                        100
+                                allyTarget.addInstance(InstanceBuilder
+                                        .healing()
+                                        .ability(this)
+                                        .source(wp)
+                                        .value(50)
                                 );
                             }
                         }
@@ -181,7 +182,12 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                                     cooldown.setTicksLeft(0);
                                     int secondsElapsed = ticksElapsed / 20;
                                     float healAmount = secondsElapsed >= duration ? maxHeal : (maxHeal * ticksElapsed) / (duration * 20);
-                                    teammate.addHealingInstance(wp, name, healAmount, healAmount, critChance, critMultiplier);
+                                    teammate.addInstance(InstanceBuilder
+                                            .healing()
+                                            .ability(this)
+                                            .source(wp)
+                                            .value(healAmount)
+                                    );
                                 });
                 })
         ));

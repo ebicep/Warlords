@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -16,6 +15,8 @@ import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+
+import javax.annotation.Nonnull;
 
 public class SkeletalMesmer extends AbstractMob implements EliteMob {
 
@@ -31,7 +32,9 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
                 0,
                 0,
                 new Fireball(5.5f),
-                new FlameBurst(20, 0),
+                new FlameBurst(20) {{
+                    this.getDamageValues().getFlameBurstDamage().critChance().setBaseValue(0);
+                }},
                 new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 30)
         );
     }
@@ -41,7 +44,7 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -54,7 +57,9 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new Fireball(5.5f),
-                new FlameBurst(20, 0),
+                new FlameBurst(20) {{
+                    this.getDamageValues().getFlameBurstDamage().critChance().setBaseValue(0);
+                }},
                 new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 30)
         );
     }
@@ -71,20 +76,7 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)

@@ -118,6 +118,9 @@ public class ItemLoadout {
     }
 
     public String getName() {
+        if (name == null) {
+            name = "bugged";
+        }
         return name;
     }
 

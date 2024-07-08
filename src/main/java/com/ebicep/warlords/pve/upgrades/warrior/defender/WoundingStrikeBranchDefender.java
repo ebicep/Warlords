@@ -1,33 +1,27 @@
 package com.ebicep.warlords.pve.upgrades.warrior.defender;
 
 import com.ebicep.warlords.abilities.WoundingStrikeDefender;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<WoundingStrikeDefender> {
 
-    float minDamage;
-    float maxDamage;
-
     @Override
     public void runOnce() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public WoundingStrikeBranchDefender(AbilityTree abilityTree, WoundingStrikeDefender ability) {
         super(abilityTree, ability);
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
+
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -41,7 +35,7 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                 "+100% Critical Chance.\n\nCritical Strikes grant you and nearby allies 30% damage reduction for 5 seconds.",
                 50000,
                 () -> {
-                    ability.setCritChance(100);
+                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 100);
                 }
         );
         masterUpgrade2 = new Upgrade(

@@ -1,13 +1,15 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -20,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class SoulOfGradient extends AbstractMob implements BossMinionMob {
 
@@ -41,7 +44,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -71,21 +74,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                                                                                    .build());
     }
 
-    @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-
-    }
-
-    @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-
-    }
-
-    private static class TormentingMark extends AbstractPveAbility {
+    private static class TormentingMark extends AbstractPveAbility implements Damages<TormentingMark.DamageValues> {
 
         public TormentingMark() {
             super(
@@ -101,8 +90,6 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             new CircleEffect(
                     wp.getGame(),
                     wp.getTeam(),
@@ -117,17 +104,34 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                     .aliveEnemiesOf(wp)
             ) {
                 if (we.getCooldownManager().hasCooldown(DamageCheck.class)) {
-                    we.addDamageInstance(
-                            wp,
-                            name,
-                            minDamageHeal,
-                            maxDamageHeal,
-                            critChance,
-                            critMultiplier
+                    we.addInstance(InstanceBuilder
+                            .damage()
+                            .ability(this)
+                            .source(wp)
+                            .value(damageValues.markDamage)
                     );
                 }
             }
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        @Override
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue markDamage = new Value.SetValue(1000);
+            private final List<Value> values = List.of(markDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

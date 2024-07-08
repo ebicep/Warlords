@@ -74,4 +74,11 @@ public class JavaUtils {
     public static <T> Iterable<T> iterable(@Nonnull Stream<T> stream) {
         return stream::iterator;
     }
+
+    @SafeVarargs
+    public static <T> List<T> newArrayListOf(T... elements) {
+        List<T> list = new ArrayList<>();
+        Collections.addAll(list, elements);
+        return list;
+    }
 }

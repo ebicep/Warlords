@@ -63,7 +63,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         Team team = getTeam();
         Team playerTeam = player.getTeam();
         TextComponent.Builder builder = Component.text()
-                                                 .color(team.teamColor())
+                                                 .color(team.getTeamColor())
                                                  .decorate(TextDecoration.BOLD);
         if (flag.getLocation().getWorld() != player.getLocation().getWorld()) {
             return Component.empty();
@@ -98,7 +98,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         return newLocations;
     }
 
-    static boolean dropFlagForPlayer(WarlordsEntity player) {
+    static boolean dropFlagForPlayer(WarlordsEntity player, boolean manual) {
         for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
             FlagInfo info = holder.getInfo();
             boolean drop = info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer().equals(player);
@@ -109,14 +109,14 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
                         public void run() {
                             holder.update(i ->
                                     i.getFlag() instanceof PlayerFlagLocation &&
-                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null
+                                            ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
                             );
                         }
                     }.runTaskLater(Warlords.getInstance(), 1);
                 } else {
                     holder.update(i ->
                             i.getFlag() instanceof PlayerFlagLocation &&
-                            ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null
+                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
                     );
                 }
                 return true;

@@ -1,5 +1,9 @@
 package com.ebicep.warlords.pve.mobs;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.game.option.towerdefense.mobs.*;
+import com.ebicep.warlords.game.option.towerdefense.towers.*;
+import com.ebicep.warlords.game.option.whackamole.moles.MoleArmorStand;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.pve.mobs.blaze.BlazingKindle;
@@ -42,9 +46,15 @@ import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.AdvancedWarriorBerserke
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.BasicWarriorBerserker;
 import com.ebicep.warlords.pve.mobs.zombie.berserkzombie.IntermediateWarriorBerserker;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.pve.SkullID;
 import com.ebicep.warlords.util.pve.SkullUtils;
+import com.ebicep.warlords.util.pve.VanillaHeads;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Function7;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -55,9 +65,16 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public enum Mob {
 
@@ -390,6 +407,7 @@ public enum Mob {
             Weapons.VOID_EDGE.getItem()
     )),
     MAGMATIC_OOZE(EntityType.MAGMA_CUBE, MagmaticOoze.class, MagmaticOoze::new, MagmaticOoze::new, null),
+    ENAVURIS(EntityType.ENDERMAN, Enavuris.class, Enavuris::new, Enavuris::new, null),
 
 
     // Boss minions
@@ -478,6 +496,9 @@ public enum Mob {
             null
     )),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
+    CURSED_PSION(EntityType.WITHER_SKELETON, CursedPsion.class, CursedPsion::new, CursedPsion::new, null),
+    ENAVURITE(EntityType.ENDERMITE, Enavurite.class, Enavurite::new, Enavurite::new, null),
+    VANISHING_ENAVURITE(EntityType.ENDERMITE, VanishingEnavurite.class, VanishingEnavurite::new, VanishingEnavurite::new, null),
 
 
     // Raid Boss
@@ -780,7 +801,68 @@ public enum Mob {
     TEST_DUMMY(EntityType.ZOMBIE, TestDummy.class, TestDummy::new, TestDummy::new, null),
     CRYOPOD(EntityType.ARMOR_STAND, CryoPod.class, CryoPod::new, CryoPod::new, null),
     DECOY(EntityType.ARMOR_STAND, Decoy.class, Decoy::new, Decoy::new, null),
-    ANIMUS(EntityType.PLAYER, Animus.class, Animus::new, Animus::new, null);
+    ANIMUS(EntityType.PLAYER, Animus.class, Animus::new, Animus::new, null),
+
+    // tower defense
+    TD_ZOMBIE(EntityType.ZOMBIE, TDZombie.class, TDZombie::new, TDZombie::new, null),
+    TD_ZOMBIE_BABY(EntityType.ZOMBIE, TDZombieBaby.class, TDZombieBaby::new, TDZombieBaby::new, null),
+    TD_ZOMBIE_VILLAGER(EntityType.ZOMBIE_VILLAGER, TDZombieVillager.class, TDZombieVillager::new, TDZombieVillager::new, null),
+    TD_HUSK(EntityType.HUSK, TDHusk.class, TDHusk::new, TDHusk::new, null),
+    TD_SKELETON(EntityType.SKELETON, TDSkeleton.class, TDSkeleton::new, TDSkeleton::new, null),
+    TD_STRAY(EntityType.STRAY, TDStray.class, TDStray::new, TDStray::new, null),
+    TD_SPIDER(EntityType.SPIDER, TDSpider.class, TDSpider::new, TDSpider::new, null),
+    TD_CAVE_SPIDER(EntityType.CAVE_SPIDER, TDCaveSpider.class, TDCaveSpider::new, TDCaveSpider::new, null),
+    TD_SILVERFISH(EntityType.SILVERFISH, TDSilverfish.class, TDSilverfish::new, TDSilverfish::new, null),
+    TD_ENDERMITE(EntityType.ENDERMITE, TDEndermite.class, TDEndermite::new, TDEndermite::new, null),
+    TD_WITCH(EntityType.WITCH, TDWitch.class, TDWitch::new, TDWitch::new, null),
+    TD_ENDERMAN(EntityType.ENDERMAN, TDEnderman.class, TDEnderman::new, TDEnderman::new, null),
+    TD_WITHER_SKELETON(EntityType.WITHER_SKELETON, TDWitherSkeleton.class, TDWitherSkeleton::new, TDWitherSkeleton::new, null),
+    TD_GHAST(EntityType.GHAST, TDGhast.class, TDGhast::new, TDGhast::new, null),
+    TD_BLAZE(EntityType.BLAZE, TDBlaze.class, TDBlaze::new, TDBlaze::new, null),
+    TD_PIGLIN(EntityType.PIGLIN, TDPiglin.class, TDPiglin::new, TDPiglin::new, null),
+    TD_ZOMBIFIED_PIGLIN(EntityType.ZOMBIFIED_PIGLIN, TDZombifiedPiglin.class, TDZombifiedPiglin::new, TDZombifiedPiglin::new, null),
+    TD_PIGLIN_BRUTE(EntityType.PIGLIN_BRUTE, TDPiglinBrute.class, TDPiglinBrute::new, TDPiglinBrute::new, null),
+    TD_HOGLIN(EntityType.HOGLIN, TDHoglin.class, TDHoglin::new, TDHoglin::new, null),
+    TD_ZOGLIN(EntityType.ZOGLIN, TDZoglin.class, TDZoglin::new, TDZoglin::new, null),
+    TD_EVOKER(EntityType.EVOKER, TDEvoker.class, TDEvoker::new, TDEvoker::new, null),
+    TD_VINDICATOR(EntityType.VINDICATOR, TDVindicator.class, TDVindicator::new, TDVindicator::new, null),
+    TD_PILLAGER(EntityType.PILLAGER, TDPillager.class, TDPillager::new, TDPillager::new, null),
+    TD_RAVAGER(EntityType.RAVAGER, TDRavager.class, TDRavager::new, TDRavager::new, null),
+    TD_ILLUSIONER(EntityType.ILLUSIONER, TDIllusioner.class, TDIllusioner::new, TDIllusioner::new, null),
+    TD_VEX(EntityType.VEX, TDVex.class, TDVex::new, TDVex::new, null),
+    TD_CREEPER(EntityType.CREEPER, TDCreeper.class, TDCreeper::new, TDCreeper::new, null),
+    TD_CREEPER_CHARGED(EntityType.CREEPER, TDCreeperCharged.class, TDCreeperCharged::new, TDCreeperCharged::new, null),
+    TD_SLIME(EntityType.SLIME, TDSlime.class, TDSlime::new, TDSlime::new, null),
+    TD_MAGMA_CUBE(EntityType.MAGMA_CUBE, TDMagmaCube.class, TDMagmaCube::new, TDMagmaCube::new, null),
+    TD_PHANTOM(EntityType.PHANTOM, TDPhantom.class, TDPhantom::new, TDPhantom::new, null),
+    TD_DROWNED(EntityType.DROWNED, TDDrowned.class, TDDrowned::new, TDDrowned::new, null),
+    TD_GUARDIAN(EntityType.GUARDIAN, TDGuardian.class, TDGuardian::new, TDGuardian::new, null),
+    TD_ELDER_GUARDIAN(EntityType.ELDER_GUARDIAN, TDElderGuardian.class, TDElderGuardian::new, TDElderGuardian::new, null),
+    TD_WARDEN(EntityType.WARDEN, TDWarden.class, TDWarden::new, TDWarden::new, null),
+    TD_ENDER_DRAGON(EntityType.ENDER_DRAGON, TDEnderDragon.class, TDEnderDragon::new, TDEnderDragon::new, null),
+    TD_WITHER(EntityType.WITHER, TDWither.class, TDWither::new, TDWither::new, null),
+    TD_GIANT(EntityType.GIANT, TDGiant.class, TDGiant::new, TDGiant::new, null),
+    // tower defense tower mobs
+
+    TD_TOWER_AVENGER(EntityType.ZOMBIE, AvengerTower.TDTowerAvenger.class, AvengerTower.TDTowerAvenger::new, AvengerTower.TDTowerAvenger::new, null),
+    TD_TOWER_PROTECTOR(EntityType.ZOMBIE, ProtectorTower.TDTowerProtector.class, ProtectorTower.TDTowerProtector::new, ProtectorTower.TDTowerProtector::new, null),
+    TD_TOWER_DEFENDER(EntityType.ZOMBIE, DefenderTower.TDTowerDefender.class, DefenderTower.TDTowerDefender::new, DefenderTower.TDTowerDefender::new, null),
+    TD_TOWER_REVENANT(EntityType.ZOMBIE, RevenantTower.TDTowerRevenant.class, RevenantTower.TDTowerRevenant::new, RevenantTower.TDTowerRevenant::new, null),
+    TD_TOWER_SPIRITGUARD(EntityType.ALLAY, SpiritguardTower.TDTowerSpiritguard.class, SpiritguardTower.TDTowerSpiritguard::new, SpiritguardTower.TDTowerSpiritguard::new, null),
+    TD_TOWER_EARTHWARDEN(EntityType.ZOMBIE, EarthwardenTower.TDTowerEarthwarden.class, EarthwardenTower.TDTowerEarthwarden::new, EarthwardenTower.TDTowerEarthwarden::new, null),
+    TD_TOWER_ASSASSIN(EntityType.ZOMBIE, AssassinTower.TDTowerAssassin.class, AssassinTower.TDTowerAssassin::new, AssassinTower.TDTowerAssassin::new, null),
+
+    // whack a mole
+    WHACK_A_MOLE_ARMOR_STAND(EntityType.ARMOR_STAND, MoleArmorStand.class, MoleArmorStand::new, MoleArmorStand::new, new Utils.SimpleEntityEquipment(
+            null,
+            null,
+            null,
+            null,
+            null
+    )),
+
+    ;
+
 
     public static final Mob[] VALUES = values();
     public static final Mob[] BASIC = {
@@ -818,26 +900,93 @@ public enum Mob {
     private static final Map<EntityType, ItemStack> MOB_HEADS = new HashMap<>() {{
         put(EntityType.ZOMBIE, new ItemStack(Material.ZOMBIE_HEAD));
         put(EntityType.SKELETON, new ItemStack(Material.SKELETON_SKULL));
-        put(EntityType.SPIDER, SkullUtils.getSkullFrom(SkullID.MC_SPIDER));
-        put(EntityType.SLIME, SkullUtils.getSkullFrom(SkullID.MC_SLIME));
-        put(EntityType.MAGMA_CUBE, SkullUtils.getSkullFrom(SkullID.MC_MAGMACUBE));
-        put(EntityType.BLAZE, SkullUtils.getSkullFrom(SkullID.MC_BLAZE));
-        put(EntityType.WITCH, SkullUtils.getSkullFrom(SkullID.MC_WITCH));
-        put(EntityType.IRON_GOLEM, SkullUtils.getSkullFrom(SkullID.MC_GOLEM));
+        put(EntityType.SPIDER, SkullUtils.getSkullFrom(VanillaHeads.SPIDER));
+        put(EntityType.SLIME, SkullUtils.getSkullFrom(VanillaHeads.SLIME));
+        put(EntityType.MAGMA_CUBE, SkullUtils.getSkullFrom(VanillaHeads.MAGMACUBE));
+        put(EntityType.BLAZE, SkullUtils.getSkullFrom(VanillaHeads.BLAZE));
+        put(EntityType.WITCH, SkullUtils.getSkullFrom(VanillaHeads.WITCH));
+        put(EntityType.IRON_GOLEM, SkullUtils.getSkullFrom(VanillaHeads.GOLEM));
         put(EntityType.WITHER_SKELETON, new ItemStack(Material.WITHER_SKELETON_SKULL));
-        put(EntityType.PIGLIN, SkullUtils.getSkullFrom(SkullID.MC_PIGLIN));
-        put(EntityType.WOLF, SkullUtils.getSkullFrom(SkullID.MC_ANGRY_WOLF));
+        put(EntityType.PIGLIN, SkullUtils.getSkullFrom(VanillaHeads.PIGLIN));
+        put(EntityType.WOLF, SkullUtils.getSkullFrom(VanillaHeads.ANGRY_WOLF));
+        put(EntityType.ZOMBIE_VILLAGER, SkullUtils.getSkullFrom(VanillaHeads.ZOMBIE_VILLAGER));
+        put(EntityType.HUSK, SkullUtils.getSkullFrom(VanillaHeads.HUSK));
+        put(EntityType.STRAY, SkullUtils.getSkullFrom(VanillaHeads.STRAY));
+        put(EntityType.CAVE_SPIDER, SkullUtils.getSkullFrom(VanillaHeads.CAVE_SPIDER));
+        put(EntityType.SILVERFISH, SkullUtils.getSkullFrom(VanillaHeads.SILVERFISH));
+        put(EntityType.ENDERMITE, SkullUtils.getSkullFrom(VanillaHeads.ENDERMITE));
+        put(EntityType.ENDERMAN, SkullUtils.getSkullFrom(VanillaHeads.ENDERMAN));
+        put(EntityType.GHAST, SkullUtils.getSkullFrom(VanillaHeads.GHAST));
+        put(EntityType.ZOMBIFIED_PIGLIN, SkullUtils.getSkullFrom(VanillaHeads.ZOMBIFIED_PIGLIN));
+        put(EntityType.PIGLIN_BRUTE, SkullUtils.getSkullFrom(VanillaHeads.PIGLIN_BRUTE));
+        put(EntityType.HOGLIN, SkullUtils.getSkullFrom(VanillaHeads.HOGLIN));
+        put(EntityType.ZOGLIN, SkullUtils.getSkullFrom(VanillaHeads.ZOGLIN));
+        put(EntityType.EVOKER, SkullUtils.getSkullFrom(VanillaHeads.EVOKER));
+        put(EntityType.VINDICATOR, SkullUtils.getSkullFrom(VanillaHeads.VINDICATOR));
+        put(EntityType.PILLAGER, SkullUtils.getSkullFrom(VanillaHeads.PILLAGER));
+        put(EntityType.RAVAGER, SkullUtils.getSkullFrom(VanillaHeads.RAVAGER));
+        put(EntityType.ILLUSIONER, SkullUtils.getSkullFrom(VanillaHeads.ILLUSIONER));
+        put(EntityType.VEX, SkullUtils.getSkullFrom(VanillaHeads.VEX));
+        put(EntityType.CREEPER, new ItemStack(Material.CREEPER_HEAD));
+        put(EntityType.PHANTOM, SkullUtils.getSkullFrom(VanillaHeads.PHANTOM));
+        put(EntityType.DROWNED, SkullUtils.getSkullFrom(VanillaHeads.DROWNED));
+        put(EntityType.GUARDIAN, SkullUtils.getSkullFrom(VanillaHeads.GUARDIAN));
+        put(EntityType.ELDER_GUARDIAN, SkullUtils.getSkullFrom(VanillaHeads.ELDER_GUARDIAN));
+        put(EntityType.WARDEN, SkullUtils.getSkullFrom(VanillaHeads.WARDEN));
+        put(EntityType.ENDER_DRAGON, new ItemStack(Material.DRAGON_HEAD));
+        put(EntityType.WITHER, SkullUtils.getSkullFrom(VanillaHeads.WITHER));
+        put(EntityType.GIANT, new ItemStack(Material.ZOMBIE_HEAD));
     }};
+
+    public static void validateMobConfig() {
+        List<Mob> missingMob = new ArrayList<>();
+        for (Mob mob : VALUES) {
+            if (mob.name == null) {
+                missingMob.add(mob);
+            }
+        }
+        if (missingMob.isEmpty()) {
+            return;
+        }
+        ChatUtils.MessageType.WARLORDS.sendErrorMessage("Missing Mobs: " + missingMob.stream().map(mob -> mob.name).collect(Collectors.joining(", ")));
+        ChatUtils.MessageType.WARLORDS.sendMessage("Automatically adding mobs to config...");
+        try {
+            File file = new File(Warlords.getInstance().getDataFolder(), "mobs.json");
+            JsonObject mobJson = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
+            missingMob.forEach(value -> {
+                JsonObject mobObject = new JsonObject();
+                AbstractMob mob = value.createMobLegacy.apply(null);
+                mobObject.addProperty("name", value.name = mob.getName());
+                mobObject.addProperty("max_health", value.maxHealth = mob.getMaxHealth());
+                mobObject.addProperty("walk_speed", value.walkSpeed = mob.getWalkSpeed());
+                mobObject.addProperty("damage_resistance", value.damageResistance = mob.getPlayerClass().getDamageResistance());
+                mobObject.addProperty("min_melee_damage", value.minMeleeDamage = mob.getMinMeleeDamage());
+                mobObject.addProperty("max_melee_damage", value.maxMeleeDamage = mob.getMaxMeleeDamage());
+                mobJson.add(value.name(), mobObject);
+                ChatUtils.MessageType.WARLORDS.sendMessage("Automatically added " + value.name() + " to config...");
+            });
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            FileWriter writer = new FileWriter(new File(Warlords.getInstance().getDataFolder(), "mobs.json"));
+            gson.toJson(mobJson, writer);
+            writer.flush();
+            writer.close();
+            ChatUtils.MessageType.WARLORDS.sendMessage("Successfully added missing mobs to mobs.json!");
+        } catch (IOException e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem writing to mobs.json");
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
+    }
+
     public final EntityType entityType;
     public final Class<?> mobClass;
     @Deprecated
     public final Function<Location, AbstractMob> createMobLegacy;
-    public final Function7<Location, String, Integer, Float, Integer, Float, Float, AbstractMob> createMobFunction;
+    public final Function7<Location, String, Integer, Float, Float, Float, Float, AbstractMob> createMobFunction;
     public final EntityEquipment equipment;
     public String name;
     public int maxHealth;
     public float walkSpeed;
-    public int damageResistance;
+    public float damageResistance;
     public float minMeleeDamage;
     public float maxMeleeDamage;
 
@@ -845,7 +994,7 @@ public enum Mob {
             EntityType entityType,
             Class<?> mobClass,
             Function<Location, AbstractMob> createMobLegacy,
-            Function7<Location, String, Integer, Float, Integer, Float, Float, AbstractMob> createMobFunction,
+            Function7<Location, String, Integer, Float, Float, Float, Float, AbstractMob> createMobFunction,
             EntityEquipment equipment
     ) {
         this.entityType = entityType;

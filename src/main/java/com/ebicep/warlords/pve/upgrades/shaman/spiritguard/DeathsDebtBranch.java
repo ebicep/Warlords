@@ -11,7 +11,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
 
     @Override
     public void runOnce() {
-        ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.5f);
+        ability.setDelayedDamageTaken(ability.getDelayedDamageTaken() * .5f);
     }
 
     public DeathsDebtBranch(AbilityTree abilityTree, DeathsDebt ability) {
@@ -60,7 +60,7 @@ public class DeathsDebtBranch extends AbstractUpgradeBranch<DeathsDebt> {
                 () -> {
 
                     ability.setDamagePercent(ability.getDamagePercent() * 2);
-                    ability.setSelfDamageInPercentPerSecond(ability.getSelfDamageInPercentPerSecond() * 0.2f);
+                    ability.setDelayedDamageTaken(ability.getDelayedDamageTaken() - 40);
                 }
         );
         masterUpgrade2 = new Upgrade(

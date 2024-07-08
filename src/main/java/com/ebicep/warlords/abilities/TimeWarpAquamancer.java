@@ -7,6 +7,7 @@ import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.TimeWarpBranchAquamancer;
@@ -94,13 +95,11 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     timesSuccessful++;
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            wp.getMaxHealth() * (warpHealPercentage / 100f),
-                            wp.getMaxHealth() * (warpHealPercentage / 100f),
-                            0,
-                            100
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .value(wp.getMaxHealth() * (warpHealPercentage / 100f))
                     );
 
                     wp.getEntity().teleport(warpLocation);

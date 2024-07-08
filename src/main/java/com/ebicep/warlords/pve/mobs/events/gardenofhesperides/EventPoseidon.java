@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
@@ -44,7 +46,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -56,7 +58,11 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthenSpike(600, 700, 6, 6) {
+                new EarthenSpike(6, 6) {
+                    {
+                        this.getDamageValues().getSpikeDamage().min().setBaseValue(600);
+                        this.getDamageValues().getSpikeDamage().max().setBaseValue(700);
+                    }
                     @Override
                     public boolean onActivate(@Nonnull WarlordsEntity wp) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
@@ -88,18 +94,19 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                     @Override
                     protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
                         super.onSpikeTarget(caster, spikeTarget);
-                        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
-                                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
+                        Optional<CripplingStrike.CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.CripplingStrikeData.class)
                                 .findAny();
                         if (optionalCripplingStrike.isPresent()) {
-                            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
-                            spikeTarget.getCooldownManager().removeCooldown(CripplingStrike.class, true);
+                            CripplingStrike.CripplingStrikeData data = optionalCripplingStrike.get();
+                            spikeTarget.getCooldownManager().removeCooldown(CripplingStrike.CripplingStrikeData.class, true);
+                            int newCrippleCounter = Math.min(data.consecutiveStrikeCounter() + 1, 2);
                             CripplingStrike.cripple(caster,
                                     spikeTarget,
                                     name,
-                                    new CripplingStrike(minDamageHeal, maxDamageHeal, Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                                    newCrippleCounter,
                                     2 * 20,
-                                    convertToDivisionDecimal(10) - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * convertToPercent(5)
+                                    convertToDivisionDecimal(10) - newCrippleCounter * convertToPercent(5)
                             );
                         } else {
                             spikeTarget.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
@@ -109,7 +116,11 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         }
                     }
                 },
-                new Boulder(551, 773, 5, 5) {
+                new Boulder(5, 5) {
+                    {
+                        this.getDamageValues().getBoulderDamage().min().setBaseValue(551);
+                        this.getDamageValues().getBoulderDamage().max().setBaseValue(773);
+                    }
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -125,7 +136,10 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         return speed;
                     }
                 },
-                new GroundSlamBerserker(558, 616, 10, 10),
+                new GroundSlamBerserker(10, 10) {{
+                    this.getDamageValues().getSlamDamage().min().setBaseValue(558);
+                    this.getDamageValues().getSlamDamage().max().setBaseValue(616);
+                }},
                 new LastStand(60f, 60)
         );
     }
@@ -162,20 +176,19 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         if (npcMob instanceof EventHades) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, .5f);
                             float healing = warlordsNPC.getCurrentHealth() * 0.25f;
-                            warlordsNPC.addHealingInstance(
-                                    npc,
-                                    "Soul",
-                                    healing,
-                                    healing,
-                                    0,
-                                    100
+                            warlordsNPC.addInstance(InstanceBuilder
+                                    .healing()
+                                    .cause("Soul")
+                                    .source(warlordsNPC)
+                                    .value(healing)
                             );
                         } else if (npcMob instanceof EventZeus) {
                             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_PHANTOM_AMBIENT, 2, .5f);
                             warlordsNPC.getAbilitiesMatching(Boulder.class).forEach(boulder -> {
                                 boulder.setPveMasterUpgrade(true);
-                                boulder.setMinDamageHeal(720);
-                                boulder.setMaxDamageHeal(860);
+                                Value.RangedValueCritable boulderDamage = boulder.getDamageValues().getBoulderDamage();
+                                boulderDamage.min().setBaseValue(720);
+                                boulderDamage.max().setBaseValue(860);
                             });
                         }
                     }

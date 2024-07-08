@@ -1,7 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -10,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.HeartToHeartBranch;
@@ -31,20 +31,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox {
+public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox, Damages<HeartToHeart.DamageValues>, Heals<HeartToHeart.HealingValues> {
 
     public int timesUsedWithFlag = 0;
-
+    private final DamageValues damageValues = new DamageValues();
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(15);
     private int vindDuration = 6;
-    private float healthRestore = 600;
 
     public HeartToHeart() {
-        super("Heart to Heart", 0, 0, 12, 20);
+        super("Heart to Heart", 12, 20);
     }
 
     @Override
@@ -53,11 +52,11 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                .append(Component.text("VIND", NamedTextColor.GOLD))
                                .append(Component.text(" for "))
                                .append(Component.text(vindDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, granting immunity to de-buffs. You are healed for "))
-                               .append(Component.text(format(healthRestore), NamedTextColor.GREEN))
-                               .append(Component.text(" health after reaching your ally. Has a maximum range of"))
+                               .append(Component.text(" seconds and "))
+                               .append(Heals.formatHealing(healingValues.heartToHeartHealing))
+                               .append(Component.text(" health. Has a maximum range of"))
                                .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks.\n\nHeart to Heart's range is greatly reduced when holding a flag.", NamedTextColor.GRAY));
+                               .append(Component.text(" blocks.\n\nHeart to Heart has reduced range when holding a flag.", NamedTextColor.GRAY));
 
     }
 
@@ -75,7 +74,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         float radius = getHitBoxRadius().getCalculatedValue();
         float verticalRadius = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
-            radius = 10;
+            radius = 7.5f;
             verticalRadius = 2;
         } else {
             wp.setFlagPickCooldown(2);
@@ -115,12 +114,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
@@ -209,43 +202,70 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                     ) {
                         playersHit.add(we);
                         we.setStunTicks(GameRunnable.SECOND);
-                        we.addDamageInstance(
-                                wp,
-                                name,
-                                1635,
-                                2096,
-                                0,
-                                100
+                        we.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Heart of Hearts")
+                                .source(wp)
+                                .value(damageValues.heartOfHeartsDamage)
                         );
                     }
                 }
 
                 if (timer >= 8) {
                     wp.setVelocity(name, playerLoc.getDirection().multiply(0.4).setY(0.2), true);
-                    wp.addHealingInstance(
-                            wp,
-                            name,
-                            healthRestore,
-                            healthRestore,
-                            0,
-                            100
+                    wp.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(HeartToHeart.this)
+                            .source(wp)
+                            .value(healingValues.heartToHeartHealing)
+                    );
+                    heartTarget.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(HeartToHeart.this)
+                            .source(wp)
+                            .value(healingValues.heartToHeartHealing)
                     );
                 }
             }
         }.runTaskTimer(0, 1);
     }
 
-    public void setVindDuration(int vindDuration) {
-        this.vindDuration = vindDuration;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
-    public float getHealthRestore() {
-        return healthRestore;
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
-    public void setHealthRestore(float healthRestore) {
-        this.healthRestore = healthRestore;
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValue heartOfHeartsDamage = new Value.RangedValue(1635, 2096);
+        private final List<Value> values = List.of(heartOfHeartsDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue heartToHeartHealing = new Value.SetValue(600);
+        private final List<Value> values = List.of(heartToHeartHealing);
+
+        public Value.SetValue getHeartToHeartHealing() {
+            return heartToHeartHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

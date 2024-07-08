@@ -24,57 +24,52 @@ public class WinByAllDeathOption implements Option {
 
 
     private final EnumSet<Team> deadTeams = EnumSet.noneOf(Team.class);
-    private final Team onlyCheckTeam;
+    private final EnumSet<Team> onlyCheckTeam; // if these teams got team wiped at least once and there is only 1 other team, then that team wins, scuffed for pve
 
-    public WinByAllDeathOption() {
-        this(null);
-    }
-
-    public WinByAllDeathOption(Team onlyCheckTeam) {
-        this.onlyCheckTeam = onlyCheckTeam;
+    public WinByAllDeathOption(Team... onlyCheckTeam) {
+        this.onlyCheckTeam = onlyCheckTeam.length == 0 ? null : EnumSet.copyOf(List.of(onlyCheckTeam));
     }
 
     @Override
     public void start(@Nonnull Game game) {
         final EnumSet<Team> teams = TeamMarker.getTeams(game);
-        if (onlyCheckTeam != null) {
-            teams.removeIf(team -> team != onlyCheckTeam);
-        }
 
         game.registerEvents(new Listener() {
 
             @EventHandler
             public void onDeath(WarlordsDeathEvent event) {
-                if (event.getWarlordsEntity() instanceof WarlordsPlayer) {
-                    if (onlyCheckTeam != null) {
+                if (!(event.getWarlordsEntity() instanceof WarlordsPlayer)) {
+                    return;
+                }
+                if (onlyCheckTeam != null) {
+                    for (Team team : onlyCheckTeam) {
                         if (PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                               .matchingTeam(onlyCheckTeam)
+                                               .matchingTeam(team)
                                                .stream()
                                                .allMatch(WarlordsEntity::isDead)
                         ) {
-                            Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, WinByAllDeathOption.this, onlyCheckTeam.enemy()));
-                        }
-
-                    } else {
-                        teams.removeIf(team -> {
-                            List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
-                                                                                      .matchingTeam(team)
-                                                                                      .toList();
-                            if (warlordsPlayers.isEmpty()) {
-                                return false;
-                            }
-                            for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                                if (warlordsPlayer.isAlive()) {
-                                    return false;
-                                }
-                            }
-                            deadTeams.add(team);
-                            return true;
-                        });
-                        if (teams.size() == 1) {
-                            Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, WinByAllDeathOption.this, teams.iterator().next()));
+                            teams.remove(team);
                         }
                     }
+                } else {
+                    teams.removeIf(team -> {
+                        List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric.playingGameWarlordsPlayers(game)
+                                                                                  .matchingTeam(team)
+                                                                                  .toList();
+                        if (warlordsPlayers.isEmpty()) {
+                            return false;
+                        }
+                        for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
+                            if (warlordsPlayer.isAlive()) {
+                                return false;
+                            }
+                        }
+                        deadTeams.add(team);
+                        return true;
+                    });
+                }
+                if (teams.size() == 1) {
+                    Bukkit.getPluginManager().callEvent(new WarlordsGameTriggerWinEvent(game, WinByAllDeathOption.this, teams.iterator().next()));
                 }
             }
 

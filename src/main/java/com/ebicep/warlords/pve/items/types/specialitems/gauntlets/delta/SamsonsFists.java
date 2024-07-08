@@ -38,7 +38,7 @@ public class SamsonsFists extends SpecialDeltaGauntlet implements AppliesToWarlo
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     return currentDamageValue * 1.4f;
                 }
                 return currentDamageValue;

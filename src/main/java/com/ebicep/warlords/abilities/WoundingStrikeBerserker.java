@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -9,7 +11,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBerserker;
@@ -23,25 +26,25 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
-public class WoundingStrikeBerserker extends AbstractStrike {
+public class WoundingStrikeBerserker extends AbstractStrike implements Damages<WoundingStrikeBerserker.DamageValues> {
 
+    private final DamageValues damageValues = new DamageValues();
     private int woundingTickDuration = 60;
 
     public WoundingStrikeBerserker() {
-        super("Wounding Strike", 497, 632, 0, 100, 20, 175);
+        super("Wounding Strike", 0, 100);
     }
 
-    public WoundingStrikeBerserker(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    public WoundingStrikeBerserker(String name, float cooldown, float energyCost) {
+        super(name, cooldown, energyCost);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and "))
                                .append(Component.text("wounding", NamedTextColor.RED))
                                .append(Component.text(" them for "))
@@ -73,24 +76,26 @@ public class WoundingStrikeBerserker extends AbstractStrike {
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         float lustDamageBoost = wp.getCooldownManager().hasCooldown(BloodLust.class) ? pveMasterUpgrade ? 2 : pveMasterUpgrade2 ? 1.3f : 1 : 1;
-        nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal * lustDamageBoost,
-                maxDamageHeal * lustDamageBoost,
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min(damageValues.strikeDamage.getMinValue() * lustDamageBoost)
+                .max(damageValues.strikeDamage.getMaxValue() * lustDamageBoost)
+                .crit(damageValues.strikeDamage)
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
 
         if (pveMasterUpgrade2) {
-            additionalHit(
-                    1,
-                    wp,
-                    nearPlayer,
-                    lustDamageBoost,
-                    null,
-                    finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
-            );
+            additionalHit(1, wp, nearPlayer, warlordsEntity -> {
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .min(damageValues.strikeDamage.getMinValue() * lustDamageBoost)
+                        .max(damageValues.strikeDamage.getMaxValue() * lustDamageBoost)
+                        .crit(damageValues.strikeDamage)
+                ).ifPresent(finalEvent -> onFinalEvent(wp, finalEvent.getWarlordsEntity(), finalEvent));
+            });
         }
 
         return true;
@@ -162,14 +167,12 @@ public class WoundingStrikeBerserker extends AbstractStrike {
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
                         healthDamage = DamageCheck.clamp(healthDamage);
-                        hit.addDamageInstance(
-                                giver,
-                                "Bleed",
-                                healthDamage,
-                                healthDamage,
-                                0,
-                                100,
-                                EnumSet.of(InstanceFlags.DOT)
+                        hit.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Bleed")
+                                .source(giver)
+                                .value(healthDamage)
+                                .flags(InstanceFlags.DOT)
                         );
                     }
                 })
@@ -189,5 +192,25 @@ public class WoundingStrikeBerserker extends AbstractStrike {
         this.woundingTickDuration = woundingTickDuration;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(497, 632, 20, 175);
+        private final List<Value> values = List.of(strikeDamage);
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
 
 }

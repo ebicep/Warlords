@@ -8,7 +8,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
@@ -32,7 +33,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     private float healReductionPercent = 10;
 
     public BloodLust() {
-        super("Blood Lust", 0, 0, 31.32f, 20);
+        super("Blood Lust", 31.32f, 20);
     }
 
 
@@ -119,7 +120,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 float healAmount = currentDamageValue * convertToPercent(damageConvertPercent);
                 if (attacker.isInPve() && event.getUUID() != null) {
                     if (abilitiesHit.contains(event.getUUID())) {
@@ -128,14 +129,12 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         abilitiesHit.add(event.getUUID());
                     }
                 }
-                attacker.addHealingInstance(
-                        attacker,
-                        name,
-                        healAmount,
-                        healAmount,
-                        0,
-                        100,
-                        EnumSet.of(InstanceFlags.NO_HIT_SOUND)
+                attacker.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(BloodLust.this)
+                        .source(attacker)
+                        .value(healAmount)
+                        .flags(InstanceFlags.NO_HIT_SOUND)
                 );
             }
 

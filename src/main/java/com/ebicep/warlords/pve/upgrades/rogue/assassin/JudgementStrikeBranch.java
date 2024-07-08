@@ -1,34 +1,26 @@
 package com.ebicep.warlords.pve.upgrades.rogue.assassin;
 
 import com.ebicep.warlords.abilities.JudgementStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike> {
 
-    float minDamage;
-    float maxDamage;
-    float strikeHeal = ability.getStrikeHeal();
 
     @Override
     public void runOnce() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public JudgementStrikeBranch(AbilityTree abilityTree, JudgementStrike ability) {
         super(abilityTree, ability);
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
+
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * v);
-                        ability.setMaxDamageHeal(maxDamage * v);
-                    }
-                }, 15f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -41,10 +33,10 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setStrikeHeal(strikeHeal + value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 100f)
+                }, ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Upgrade Branch", 0), 100f)
                 .addUpgradeEnergy(ability, 5f)
                 .addTo(treeB);
 
@@ -58,7 +50,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         Each strike deals 1% of the target's max health as bonus damage.""",
                 50000,
                 () -> {
-                    ability.setStrikeHeal(ability.getStrikeHeal() + 100);
+                    ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Master Upgrade Branch", 100);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                 }
         );
@@ -72,7 +64,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         """,
                 50000,
                 () -> {
-                    ability.setCritMultiplier(ability.getCritMultiplier() + 45);
+                    ability.getDamageValues().getStrikeDamage().critMultiplier().addAdditiveModifier("Master Upgrade Branch", 45);
                 }
         );
     }

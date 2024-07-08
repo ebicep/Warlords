@@ -38,6 +38,7 @@ public class PvEEventLibraryArchivesGrimoiresGraveyardDatabaseStatInformation
         }
     }
 
+    @Override
     public long getFastestGameFinished() {
         return fastestGameFinished;
     }

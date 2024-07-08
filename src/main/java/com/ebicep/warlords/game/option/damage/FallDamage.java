@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.damage;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 import javax.annotation.Nonnull;
@@ -26,7 +27,11 @@ public class FallDamage extends ExternalDamage {
         //HEIGHT x 40 - 200
         int damage = (int) e.getDamage();
         if (damage > 5) {
-            warlordsEntity.addDamageInstance(warlordsEntity, "Fall", ((damage + 3) * 40 - 200), ((damage + 3) * 40 - 200), 0, 100);
+            warlordsEntity.addInstance(InstanceBuilder
+                    .fall()
+                    .source(warlordsEntity)
+                    .value(((damage + 3) * 40 - 200))
+            );
             warlordsEntity.resetRegenTimer();
         }
     }

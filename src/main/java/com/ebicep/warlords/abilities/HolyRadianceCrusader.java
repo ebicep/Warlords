@@ -2,6 +2,8 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -27,25 +29,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HolyRadianceCrusader extends AbstractHolyRadiance {
+public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<HolyRadianceCrusader.HealingValues> {
 
     private final int markRadius = 15;
+    private final HealingValues healingValues = new HealingValues();
     private int markDuration = 8;
     private int energyPerSecond = 6;
     private int markSpeed = 25;
 
-    public HolyRadianceCrusader(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
-    }
-
     public HolyRadianceCrusader() {
-        super("Holy Radiance", 582, 760, 19.57f, 20, 15, 175, 6);
+        super("Holy Radiance", 16.53f, 20, 6);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                               .append(Heals.formatHealing(healingValues.radianceHealing))
                                .append(Component.text(" health."))
                                .append(Component.newline())
                                .append(Component.newline())
@@ -55,7 +54,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
                                .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
                                .append(Component.text(" and speed by "))
                                .append(Component.text(markSpeed + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for the duration.\n\nMark has an optimal range of "))
+                               .append(Component.text(" for the duration.\n\nMark has a maximum range of "))
                                .append(Component.text(markRadius, NamedTextColor.YELLOW))
                                .append(Component.text(" blocks."));
 
@@ -101,20 +100,12 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
                 }
             }
 
-            HolyRadianceCrusader tempMark = new HolyRadianceCrusader(
-                    minDamageHeal,
-                    maxDamageHeal,
-                    cooldown.getBaseValue(),
-                    energyCost.getBaseValue(),
-                    critChance,
-                    critMultiplier
-            );
             markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration, "BASE");
             markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "CRUS MARK",
                     HolyRadianceCrusader.class,
-                    tempMark,
+                    new HolyRadianceCrusader(),
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {
@@ -160,12 +151,12 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
             });
 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" You have marked ", NamedTextColor.GRAY))
-                    .append(Component.text(markTarget.getName(), NamedTextColor.YELLOW))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
+                    .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY))
             );
 
-            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
                     .append(Component.text(" You have been granted ", NamedTextColor.GRAY))
                     .append(Component.text("Crusader's Mark", NamedTextColor.YELLOW))
                     .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
@@ -175,6 +166,11 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
         }
 
         return false;
+    }
+
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
     }
 
     public int getMarkDuration() {
@@ -200,4 +196,22 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance {
     public void setMarkSpeed(int markSpeed) {
         this.markSpeed = markSpeed;
     }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);
+        private final List<Value> values = List.of(radianceHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

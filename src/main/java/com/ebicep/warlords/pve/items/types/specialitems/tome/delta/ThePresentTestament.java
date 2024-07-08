@@ -4,7 +4,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.statpool.BasicStatPool;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.items.types.specialitems.CraftsInto;
@@ -48,7 +48,7 @@ public class ThePresentTestament extends SpecialDeltaTome implements CraftsInto 
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
+                if (!Objects.equals(event.getSource(), warlordsPlayer)) {
                     return;
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {

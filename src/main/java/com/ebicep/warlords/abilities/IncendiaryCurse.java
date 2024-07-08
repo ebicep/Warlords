@@ -1,7 +1,9 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -9,6 +11,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
@@ -24,34 +27,33 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, HitBox {
+public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, HitBox, Damages<IncendiaryCurse.DamageValues> {
 
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
 
     public int playersHit = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private FloatModifiable hitbox = new FloatModifiable(5);
     private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
-        this(408, 552, 8, 0);
+        this(8, 0);
     }
 
-    public IncendiaryCurse(float minDamageHeal, float maxDamageHeal, float cooldown, float startCooldown) {
-        super("Incendiary Curse", minDamageHeal, maxDamageHeal, cooldown, 60, 25, 175, startCooldown);
+    public IncendiaryCurse(float cooldown, float startCooldown) {
+        super("Incendiary Curse", cooldown, 60, startCooldown);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Ignite the targeted area with a cross flame, dealing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.curseDamage))
                                .append(Component.text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for "))
                                .append(Component.text(format(blindDurationInTicks / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds."));
@@ -92,6 +94,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         return true;
     }
 
+    protected Vector calculateSpeed(WarlordsEntity we) {
+        return we.getLocation().getDirection().multiply(SPEED);
+    }
+
     public void onImpact(@Nonnull WarlordsEntity wp, Location newLoc) {
         Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
 
@@ -115,13 +121,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         for (WarlordsEntity nearEntity : enemies) {
             playersHit++;
 
-            nearEntity.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damageValues.curseDamage)
             );
             if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.setStunTicks(blindDurationInTicks);
@@ -176,19 +180,9 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         }
     }
 
-    protected Vector calculateSpeed(WarlordsEntity we) {
-        return we.getLocation().getDirection().multiply(SPEED);
-    }
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new IncendiaryCurseBranch(abilityTree, this);
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        super.runEveryTick(warlordsEntity);
-        hitbox.tick();
     }
 
     public int getBlindDurationInTicks() {
@@ -202,5 +196,26 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     @Override
     public FloatModifiable getHitBoxRadius() {
         return hitbox;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
+        private final List<Value> values = List.of(curseDamage);
+
+        public Value.RangedValueCritable getCurseDamage() {
+            return curseDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

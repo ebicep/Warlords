@@ -32,8 +32,8 @@ public class DebugModeCommand extends BaseCommand {
         warlordsPlayer.setShowDebugMessage(true);
         for (AbstractAbility ability : warlordsPlayer.getSpec().getAbilities()) {
             ability.setCurrentCooldown(0);
+            ability.queueUpdateItem();
         }
-        warlordsPlayer.updateItems();
         warlordsPlayer.setHorseCooldown(0.05f);
         if (gmc) {
             if (warlordsPlayer.getEntity() instanceof Player) {

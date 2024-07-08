@@ -79,6 +79,40 @@ public class UpgradeTypes {
             modifier.setModifier(value);
         }
     };
+    public static final NamedUpgradeType DAMAGE = new UpgradeTypes.NamedUpgradeType() {
+
+        @Override
+        public String getName() {
+            return "Impair";
+        }
+
+        @Override
+        public String getDescription0(String value) {
+            return "+" + value + "% Damage";
+        }
+
+        @Override
+        public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+            modifier.setModifier(value / 100);
+        }
+    };
+    public static final NamedUpgradeType HEALING = new UpgradeTypes.NamedUpgradeType() {
+
+        @Override
+        public String getName() {
+            return "Alleviate";
+        }
+
+        @Override
+        public String getDescription0(String value) {
+            return "+" + value + "% Healing";
+        }
+
+        @Override
+        public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+            modifier.setModifier(value / 100);
+        }
+    };
 
     public interface UpgradeType {
 

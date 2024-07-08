@@ -106,6 +106,7 @@ public abstract class AbstractDatabaseStatInformation<T extends DatabaseGameBase
     }
 
 
+    @Override
     public int getLevel() {
         return ExperienceManager.getLevelFromExp(experience);
     }

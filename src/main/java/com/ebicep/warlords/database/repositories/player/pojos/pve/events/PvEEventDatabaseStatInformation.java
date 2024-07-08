@@ -38,10 +38,12 @@ public class PvEEventDatabaseStatInformation<
         }
     }
 
+    @Override
     public long getEventPointsCumulative() {
         return eventPointsCumulative;
     }
 
+    @Override
     public long getHighestEventPointsGame() {
         return highestEventPointsGame;
     }

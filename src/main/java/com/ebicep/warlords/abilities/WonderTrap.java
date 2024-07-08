@@ -26,7 +26,7 @@ public class WonderTrap extends AbstractAbility {
     // CURRENTLY UNUSED CONTENT
 
     public WonderTrap() {
-        super("Wonder Trap", 375, 454, 10, 40, 25, 175);
+        super("Wonder Trap", 10, 40);
     }
 
     @Override
@@ -115,35 +115,35 @@ public class WonderTrap extends AbstractAbility {
                 EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, Particle.FIREWORKS_SPARK);
 
                 PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
-                        .aliveEnemiesOf(trapOwner)
-                        .forEach((trapTarget) -> {
-                            trapTarget.addDamageInstance(
-                                    trapOwner,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
-                            );
+                            .aliveEnemiesOf(trapOwner)
+                            .forEach((trapTarget) -> {
+//                            trapTarget.addDamageInstance(
+//                                    trapOwner,
+//                                    name,
+//                                    minDamageHeal,
+//                                    maxDamageHeal,
+//                                    critChance,
+//                                    critMultiplier
+//                            );
 
-                            //final Location loc = trapStand.getLocation();
-                            //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
-                            //trapTarget.setVelocity(v);
+                                //final Location loc = trapStand.getLocation();
+                                //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
+                                //trapTarget.setVelocity(v);
 
-                            WonderTrap tempTrap = new WonderTrap();
+                                WonderTrap tempTrap = new WonderTrap();
 
-                            trapTarget.getCooldownManager().addRegularCooldown(
-                                    "KB Increase",
-                                    "KB",
-                                    WonderTrap.class,
-                                    tempTrap,
-                                    trapOwner,
-                                    CooldownTypes.DEBUFF,
-                                    cooldownManager -> {
-                                    },
-                                    30 * 20
-                            );
-                        });
+                                trapTarget.getCooldownManager().addRegularCooldown(
+                                        "KB Increase",
+                                        "KB",
+                                        WonderTrap.class,
+                                        tempTrap,
+                                        trapOwner,
+                                        CooldownTypes.DEBUFF,
+                                        cooldownManager -> {
+                                        },
+                                        30 * 20
+                                );
+                            });
                 this.cancel();
             }
 

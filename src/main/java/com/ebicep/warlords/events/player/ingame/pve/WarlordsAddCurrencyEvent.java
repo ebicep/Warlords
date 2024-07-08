@@ -5,19 +5,22 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class WarlordsAddCurrencyEvent extends AbstractWarlordsEntityEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final AtomicInteger currencyToAdd;
+    private float currencyToAdd;
 
-    public WarlordsAddCurrencyEvent(WarlordsEntity player, AtomicInteger currencyToAdd) {
+    public WarlordsAddCurrencyEvent(WarlordsEntity player, float currencyToAdd) {
         super(player);
         this.currencyToAdd = currencyToAdd;
     }
 
-    public AtomicInteger getCurrencyToAdd() {
+    public float getCurrencyToAdd() {
         return currencyToAdd;
+    }
+
+    public void setCurrencyToAdd(float currencyToAdd) {
+        this.currencyToAdd = currencyToAdd;
     }
 
     @Nonnull

@@ -11,6 +11,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
@@ -41,8 +42,12 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private int speedIncrease = 40;
     private int speedIncreaseDuration = 100;
 
+    public int timesReactivated = 0;
+    public int totalHexesInflicted = 0;
+    public float totalShieldGained = 0;
+
     public ContagiousFacade() {
-        super("Contagious Facade", 0, 0, 30, 20, 0, 0);
+        super("Contagious Facade", 30, 20);
     }
 
     @Override
@@ -72,6 +77,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Times Reactivated", "" + timesReactivated));
+        info.add(new Pair<>("Total Hexes Inflicted", "" + totalHexesInflicted));
+        info.add(new Pair<>("Total Shield Gained", "" + Math.round(totalShieldGained)));
         return info;
     }
 
@@ -97,11 +105,13 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
-                    wp.getCooldownManager().addRegularCooldown(
+                    totalShieldGained += shieldHealth;
+                    Shield shield = new Shield(name, shieldHealth);
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name + " Shield",
                             "SHIELD",
                             Shield.class,
-                            new Shield(name, shieldHealth),
+                            shield,
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager1 -> {
@@ -118,12 +128,35 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                     EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3, 0.3, 0.3, 0);
                                 }
                             })
+                    ) {
+                        @Override
+                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
+                        }
+
+                        @Override
+                        public PlayerNameData addPrefixFromOther() {
+                            return new PlayerNameData(
+                                    Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
+                                    we -> we.isTeammate(wp)
+                            );
+                        }
+                    });
+                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your ", NamedTextColor.GRAY))
+                            .append(Component.text(name, NamedTextColor.YELLOW))
+                            .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
                     );
                     if (pveMasterUpgrade) {
                         PlayerFilter.entitiesAround(wp, 4, 4, 4)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
-                                        enemy.addDamageInstance(wp, name, shieldHealth, shieldHealth, 0, 100);
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(this)
+                                                .source(wp)
+                                                .value(shieldHealth)
+                                        );
                                         enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
                                     });
                     }
@@ -201,7 +234,19 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                     0.25
                             );
                         }
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                .append(Component.text(" has infected " + hexTarget.getName() + "!", NamedTextColor.GRAY))
+                        );
+                        hexTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                                .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                .append(Component.text(name, NamedTextColor.YELLOW))
+                                .append(Component.text(" has infected you!", NamedTextColor.GRAY))
+                        );
+                        totalHexesInflicted++;
                     }
+                    timesReactivated++;
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)
@@ -210,14 +255,14 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        damageAbsorption.tick();
-        super.runEveryTick(warlordsEntity);
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ContagiousFacadeBranch(abilityTree, this);
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ContagiousFacadeBranch(abilityTree, this);
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        damageAbsorption.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override

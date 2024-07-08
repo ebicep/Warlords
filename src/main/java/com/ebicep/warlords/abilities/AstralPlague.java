@@ -2,16 +2,18 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.AstralPlagueBranch;
@@ -33,14 +35,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, Duration {
+
+    public int hexesProlonged = 0;
+    public int hexesNotConsumed = 0;
+    public int tripleStackBeams = 0;
+    public int shieldsPierced = 0;
+    public int intervenesPierced = 0;
 
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
 
     public AstralPlague() {
-        super("Astral Plague", 0, 0, 50, 10, 0, 0);
+        super("Astral Plague", 50, 10);
     }
 
     @Override
@@ -59,13 +68,16 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
+        info.add(new Pair<>("Hexes Prolonged", "" + hexesProlonged));
+        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
+        info.add(new Pair<>("Triple Stack Beams", "" + tripleStackBeams));
+        info.add(new Pair<>("Shields Pierced", "" + shieldsPierced));
+        info.add(new Pair<>("Intervenes Pierced", "" + intervenesPierced));
         return info;
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-
         Utils.playGlobalSound(wp.getLocation(), "arcanist.astralplague.activation", 2, 1.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.7f);
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
@@ -105,7 +117,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2 && event.getAbility().equals("Soulfire Beam")) {
+                if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
                     return currentDamageValue * 1.4f;
                 }
                 return currentDamageValue;
@@ -123,6 +135,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                                 cooldown.getCooldownObject() instanceof PoisonousHex
                         ) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                            hexesProlonged++;
                         }
                     }
 
@@ -135,7 +148,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (victim.equals(wp)) {
                             return;
                         }
-                        if (!event.getAttacker().equals(wp)) {
+                        if (!event.getSource().equals(wp)) {
                             return;
                         }
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
@@ -150,8 +163,43 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         if (inPve) {
                             event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
                         }
-                        if (pveMasterUpgrade && Objects.equals(event.getAbility(), "Soulfire Beam")) {
+                        if (pveMasterUpgrade && Objects.equals(event.getCause(), "Soulfire Beam")) {
                             event.setCritChance(100);
+                        }
+                        if (event.getCause().equals("Soulfire Beam")) {
+                            tripleStackBeams++;
+                        }
+                    }
+
+                    @EventHandler
+                    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+                        if (event.getAttacker() != wp) {
+                            return;
+                        }
+                        if (!event.getInstanceFlags().contains(InstanceFlags.PIERCE)) {
+                            return;
+                        }
+                        WarlordsEntity target = event.getWarlordsEntity();
+                        List<AbstractCooldown<?>> cooldowns = event
+                                .getPlayerCooldowns()
+                                .stream()
+                                .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                .collect(Collectors.toList());
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
+                                .filterCooldownClass(Intervene.class)
+                                .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
+                                .findAny()
+                                .isPresent()
+                        ) {
+                            intervenesPierced++;
+                        }
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
+                                .filterCooldownClass(Shield.class)
+                                .filter(RegularCooldown::hasTicksLeft)
+                                .findAny()
+                                .isPresent()
+                        ) {
+                            shieldsPierced++;
                         }
                     }
 
@@ -164,7 +212,10 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                         new CooldownFilter<>(enemy, RegularCooldown.class)
                                 .filterCooldownClass(PoisonousHex.class)
                                 .filterCooldownFrom(wp)
-                                .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease));
+                                .forEach(cd -> {
+                                    cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
+                                    hexesProlonged++;
+                                });
                     });
         return true;
     }

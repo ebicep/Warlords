@@ -58,19 +58,21 @@ public class Aperture extends GameMap {
         options.add(SpawnpointOption.forTeam(loc.addXYZ(560.5, 32.5, 294.5, -140, 0), Team.BLUE));
         options.add(SpawnpointOption.forTeam(loc.addXYZ(640.5, 32.5, 180.5, 40, 0), Team.RED));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(522.5, 37.5, 233.5, 90, 0), Team.BLUE));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(522.5, 37.5, 233.5, 90, 0), Team.BLUE));
+        options.add(new FlagCapturePointOption(loc.addXYZ(506.5, 37, 240.5, -90, 0), Team.BLUE));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(506.5, 37, 240.5, -90, 0), Team.BLUE));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(678.5, 37.5, 241.1, -90, 0), Team.RED));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(678.5, 37.5, 241.1, -90, 0), Team.RED));
+        options.add(new FlagCapturePointOption(loc.addXYZ(694.5, 37, 234.5, 90, 0), Team.RED));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(694.5, 37, 234.5, 90, 0), Team.RED));
 
-        options.add(new GateOption(loc.addXYZ(665, 36, 228), loc.addXYZ(665, 40, 232)));
-        options.add(new GateOption(loc.addXYZ(683, 36, 252), loc.addXYZ(690, 40, 252)));
-        options.add(new GateOption(loc.addXYZ(663, 42, 212), loc.addXYZ(663, 46, 215)));
+        options.add(new GateOption(loc.addXYZ(665.5, 37, 228.5), loc.addXYZ(665.5, 41, 232.5)));
+        options.add(new GateOption(loc.addXYZ(683.5, 37, 245), loc.addXYZ(690.5, 42, 245)));
+        options.add(new GateOption(loc.addXYZ(672.5, 37, 234.5), loc.addXYZ(668.5, 43, 234.5)));
+        options.add(new GateOption(loc.addXYZ(666.5, 42, 214.5), loc.addXYZ(666.5, 45.5, 212.5)));
 
-        options.add(new GateOption(loc.addXYZ(535, 36, 242), loc.addXYZ(535, 40, 247)));
-        options.add(new GateOption(loc.addXYZ(510, 36, 222), loc.addXYZ(518, 40, 222)));
-        options.add(new GateOption(loc.addXYZ(537, 42, 262), loc.addXYZ(537, 46, 259)));
+        options.add(new GateOption(loc.addXYZ(535, 37, 242), loc.addXYZ(535, 41, 247)));
+        options.add(new GateOption(loc.addXYZ(517.5, 37, 229.5), loc.addXYZ(510.5, 42, 229.5)));
+        options.add(new GateOption(loc.addXYZ(532.5, 37, 240), loc.addXYZ(528.5, 43, 240)));
+        options.add(new GateOption(loc.addXYZ(534.5, 42, 260.5), loc.addXYZ(534.5, 45.5, 262.5)));
 
         options.add(new WinByPointsOption());
         options.add(new MercyWinOption());

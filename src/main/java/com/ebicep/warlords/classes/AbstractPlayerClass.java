@@ -1,13 +1,13 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.util.bukkit.PacketUtils;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -38,13 +38,14 @@ public abstract class AbstractPlayerClass {
     protected String name;
     protected String className;
     protected String classNameShort;
+
     public AbstractPlayerClass(
             String name,
             int maxHealth,
             int maxEnergy,
             int energyPerSec,
             int energyPerHit,
-            int damageResistance,
+            float damageResistance,
             AbstractAbility... abilities
     ) {
         this.maxHealth = maxHealth;
@@ -54,13 +55,11 @@ public abstract class AbstractPlayerClass {
         this.damageResistance = damageResistance;
         this.abilities = new ArrayList<>(List.of(abilities));
         this.name = name;
-
-        updateCustomStats();
     }
 
-    public void updateCustomStats() {
+    public void updateCustomStats(WarlordsEntity warlordsEntity) {
         for (AbstractAbility ability : getAbilities()) {
-            ability.updateCustomStats(this);
+            ability.updateCustomStats(warlordsEntity);
         }
     }
 
@@ -138,16 +137,7 @@ public abstract class AbstractPlayerClass {
                 return;
             }
 
-            if (slot == 0) {
-                if (wp.getCooldownManager().hasCooldown(SoulShackle.class)) {
-                    player.sendMessage(Component.text("You have been silenced!", NamedTextColor.RED));
-                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                } else {
-                    onRightClickAbility(ability, wp, player);
-                }
-            } else {
-                onRightClickAbility(ability, wp, player);
-            }
+            onRightClickAbility(ability, wp, player, slot);
 
             if (player.getVehicle() != null) {
                 player.getVehicle().remove();
@@ -159,7 +149,7 @@ public abstract class AbstractPlayerClass {
         }
     }
 
-    public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player) {
+    public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player, int slot) {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD) {
                 ability.runSecondAbilities();
@@ -168,17 +158,17 @@ public abstract class AbstractPlayerClass {
             return;
         }
         if (player.getLevel() >= ability.getEnergyCostValue() * wp.getEnergyModifier() && abilityCD) {
-            WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability);
+            WarlordsAbilityActivateEvent.Pre pre = new WarlordsAbilityActivateEvent.Pre(wp, player, ability, slot);
             Bukkit.getPluginManager().callEvent(pre);
             if (pre.isCancelled()) {
                 return;
             }
             boolean shouldApplyCooldown = ability.onActivate(wp);
             if (shouldApplyCooldown) {
-                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability);
+                WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability, slot);
                 Bukkit.getPluginManager().callEvent(post);
 
-                wp.subtractEnergy(name, ability.getEnergyCost(), false);
+                wp.subtractEnergy(ability.getName(), ability.getEnergyCost(), false);
                 ability.addTimesUsed();
                 if (!wp.isDisableCooldowns()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());
@@ -319,7 +309,12 @@ public abstract class AbstractPlayerClass {
     }
 
     public void increaseAllCooldownTimersBy(float amount) {
-        abilities.forEach(ability -> ability.addCurrentCooldown(amount));
+        abilities.forEach(ability -> {
+            if (ability instanceof WeaponAbilityIcon && ability.getCooldownValue() == 0) {
+                return;
+            }
+            ability.addCurrentCooldown(amount);
+        });
     }
 
     public void decreaseAllCooldownTimersBy(float amount) {

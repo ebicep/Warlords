@@ -114,6 +114,7 @@ public abstract class AbstractItem {
         }
     }
 
+    @Override
     public abstract AbstractItem clone();
 
     /**

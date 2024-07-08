@@ -58,11 +58,6 @@ public enum SpecialStatPool implements StatPool {
     ;
 
     @Override
-    public Operation getOperation() {
-        return Operation.MULTIPLY;
-    }
-
-    @Override
     public DecimalPlace getDecimalPlace() {
         return DecimalPlace.ONES;
     }

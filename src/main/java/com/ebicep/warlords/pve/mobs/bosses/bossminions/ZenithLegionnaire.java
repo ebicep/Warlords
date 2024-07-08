@@ -1,11 +1,14 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -15,6 +18,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
 
@@ -35,7 +39,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -62,22 +66,13 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
     }
 
     @Override
-    public void whileAlive(int ticksElapsed, PveOption option) {
-
-    }
-
-    @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         Utils.addKnockback(name, attacker.getLocation(), receiver, -1.1, 0.3);
         Utils.playGlobalSound(attacker.getLocation(), Sound.ENTITY_ENDERMAN_DEATH, 2, 0.2f);
     }
 
     @Override
-    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.ORANGE)
@@ -86,7 +81,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
                                                                        .build());
     }
 
-    private static class Remedy extends AbstractPveAbility {
+    private static class Remedy extends AbstractPveAbility implements Heals<Remedy.HealingValues> {
 
         public Remedy() {
             super(
@@ -100,18 +95,14 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             PlayerFilter.playingGame(wp.getGame())
                         .filter(we -> we.getName().equals("Zenith"))
                         .forEach(zenith -> {
-                            zenith.addHealingInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            zenith.addInstance(InstanceBuilder
+                                    .healing()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(healingValues.remedyHealing)
                             );
 
                             Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
@@ -122,6 +113,25 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
             }
 
             return true;
+        }
+
+        private final HealingValues healingValues = new HealingValues();
+
+        @Override
+        public HealingValues getHealValues() {
+            return healingValues;
+        }
+
+        public static class HealingValues implements Value.ValueHolder {
+
+            private final Value.SetValue remedyHealing = new Value.SetValue(500);
+            private final List<Value> values = List.of(remedyHealing);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

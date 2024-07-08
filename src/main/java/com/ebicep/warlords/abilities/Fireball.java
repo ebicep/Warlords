@@ -1,15 +1,14 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Splash;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
@@ -27,31 +26,32 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 
-public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, Splash {
+public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, Splash, Damages<Fireball.DamageValues> {
 
+    private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 50;
     private float directHitMultiplier = 15;
-    private FloatModifiable splashRadius = new FloatModifiable(4);
+    private FloatModifiable splashRadius = new FloatModifiable(4.125f);
 
     public Fireball() {
-        super("Fireball", 334.4f, 433.4f, 0, 70, 20, 175, 2, 300, false);
+        super("Fireball", 0, 70, 2, 300, false);
     }
 
     public Fireball(float cooldown) {
-        super("Fireball", 334.4f, 433.4f, cooldown, 70, 20, 175, 2, 300, false);
+        super("Fireball", cooldown, 70, 2, 300, false);
     }
 
-    public Fireball(float minDamageHeal, float maxDamageHeal, float cooldown) {
-        super("Fireball", minDamageHeal, maxDamageHeal, cooldown, 70, 20, 175, 2, 300, false);
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Shoot a fireball that will explode for ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.fireballDamage))
                                .append(Component.text(" damage. A direct hit will cause the enemy to take an additional "))
                                .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.RED))
                                .append(Component.text(" extra damage."))
@@ -88,31 +88,32 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
+        Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
 
-        Utils.playGlobalSound(currentLocation, "mage.fireball.impact", 2, 1);
+        Utils.playGlobalSound(effectLocation, "mage.fireball.impact", 2, 1);
 
-        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 5, 0, 0, 0, 0.35);
-        EffectUtils.displayParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 1.5);
-        EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1);
+        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, effectLocation, 1, 0, 0, 0, 0.35);
+        EffectUtils.displayParticle(Particle.LAVA, effectLocation, 10, 0.5F, 0, 0.5F, 1.5);
+        EffectUtils.displayParticle(Particle.CLOUD, effectLocation, 3, 0.3F, 0.3F, 0.3F, 1);
 
-        double distanceSquared = startingLocation.distanceSquared(currentLocation);
-        double toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
-                            1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75;
+        double distanceSquared = startingLocation.distanceSquared(effectLocation);
+        float toReduceBy = maxFullDistance * maxFullDistance > distanceSquared ? 1 :
+                           (float) (1 - (Math.sqrt(distanceSquared) - maxFullDistance) / 75);
         if (toReduceBy < .2) {
-            toReduceBy = .2;
+            toReduceBy = .2f;
         }
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
-            hit.addDamageInstance(
-                    shooter,
-                    name,
-                    (float) (minDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                    (float) (maxDamageHeal * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy),
-                    critChance,
-                    critMultiplier
+            hit.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.fireballDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier))
+                    .max(damageValues.fireballDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier))
+                    .crit(damageValues.fireballDamage)
             );
 
             if (pveMasterUpgrade) {
@@ -125,7 +126,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         int playersHit = 0;
         float radius = splashRadius.getCalculatedValue();
         for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, radius, radius, radius)
+                .entitiesAround(hit != null ? hit.getLocation() : currentLocation, radius, radius, radius)
                 .aliveEnemiesOf(shooter)
                 .excluding(projectile.getHit())
         ) {
@@ -134,13 +135,13 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
             if (nearEntity.onHorse()) {
                 numberOfDismounts++;
             }
-            nearEntity.addDamageInstance(
-                    shooter,
-                    name,
-                    (float) (minDamageHeal * toReduceBy),
-                    (float) (maxDamageHeal * toReduceBy),
-                    critChance,
-                    critMultiplier
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.fireballDamage.getMinValue() * toReduceBy)
+                    .max(damageValues.fireballDamage.getMaxValue() * toReduceBy)
+                    .crit(damageValues.fireballDamage)
             );
         }
 
@@ -163,14 +164,12 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
                     if (ticksLeft % 20 == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
                         healthDamage = DamageCheck.clamp(healthDamage);
-                        hit.addDamageInstance(
-                                shooter,
-                                "Burn",
-                                healthDamage,
-                                healthDamage,
-                                0,
-                                100,
-                                EnumSet.of(InstanceFlags.DOT)
+                        hit.addInstance(InstanceBuilder
+                                .damage()
+                                .cause("Burn")
+                                .source(shooter)
+                                .value(healthDamage)
+                                .flags(InstanceFlags.DOT)
                         );
                     }
                 })
@@ -197,14 +196,12 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
                     PlayerFilter.entitiesAround(hit, 3, 3, 3)
                                 .aliveTeammatesOf(hit)
                                 .forEach(warlordsEntity -> {
-                                    warlordsEntity.addDamageInstance(
-                                            shooter,
-                                            "Ignite",
-                                            450,
-                                            650,
-                                            0,
-                                            100,
-                                            EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+                                    warlordsEntity.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause("Ignite")
+                                            .source(shooter)
+                                            .value(damageValues.igniteDamage)
+                                            .flags(InstanceFlags.TRUE_DAMAGE)
                                     );
                                 });
                 },
@@ -233,20 +230,6 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         return 1;
     }
 
-    @Override
-    public void runEveryTick(@javax.annotation.Nullable WarlordsEntity warlordsEntity) {
-        splashRadius.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    public int getMaxFullDistance() {
-        return maxFullDistance;
-    }
-
-    public void setMaxFullDistance(int maxFullDistance) {
-        this.maxFullDistance = maxFullDistance;
-    }
-
     public float getDirectHitMultiplier() {
         return directHitMultiplier;
     }
@@ -258,6 +241,23 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
     @Override
     public FloatModifiable getSplashRadius() {
         return splashRadius;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable fireballDamage = new Value.RangedValueCritable(334.4f, 433.4f, 20, 175);
+        private final Value.RangedValue igniteDamage = new Value.RangedValue(450, 650);
+        private final List<Value> values = List.of(fireballDamage, igniteDamage);
+
+        public Value.RangedValueCritable getFireballDamage() {
+            return fireballDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
 }

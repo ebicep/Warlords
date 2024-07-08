@@ -6,32 +6,14 @@ import com.ebicep.warlords.pve.upgrades.*;
 public class HammerOfLightBranch extends AbstractUpgradeBranch<HammerOfLight> {
 
     int duration = ability.getTickDuration();
-    float minHealing = ability.getMinDamageHeal();
-    float maxHealing = ability.getMaxDamageHeal();
-    float minDamage = ability.getMinDamage();
-    float maxDamage = ability.getMaxDamage();
 
     public HammerOfLightBranch(AbilityTree abilityTree, HammerOfLight ability) {
         super(abilityTree, ability);
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamage(minDamage * value);
-                        ability.setMaxDamage(maxDamage * value);
-                    }
-                }, 7.5f)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minHealing * value);
-                        ability.setMaxDamageHeal(maxHealing * value);
-                    }
-                }, 7.5f)
+                .addUpgradeDamage(ability.getDamageValues().getHammerDamage(), 7.5f)
+                .addUpgradeHealing(ability.getHealValues().getHammerHealing(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

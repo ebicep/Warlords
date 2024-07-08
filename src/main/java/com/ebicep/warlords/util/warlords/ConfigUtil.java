@@ -28,6 +28,7 @@ public class ConfigUtil {
                 saveWeaponConfig(instance);
                 try {
                     readMobConfig(instance);
+                    Mob.validateMobConfig();
                 } catch (Exception e) {
                     ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
                 }

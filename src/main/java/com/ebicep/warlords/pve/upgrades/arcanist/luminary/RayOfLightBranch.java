@@ -1,23 +1,23 @@
 package com.ebicep.warlords.pve.upgrades.arcanist.luminary;
 
 import com.ebicep.warlords.abilities.RayOfLight;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
 
-    float minDamageHeal;
-    float maxDamageHeal;
-
     @Override
     public void runOnce() {
-        ability.multiplyMinMax(1.3f);
+        Value.RangedValueCritable healing = ability.getHealValues().getRayHealing();
+        healing.min().addMultiplicativeModifierAdd("PvE", .3f);
+        healing.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public RayOfLightBranch(AbilityTree abilityTree, RayOfLight ability) {
         super(abilityTree, ability);
-
-        minDamageHeal = ability.getMinDamageHeal();
-        maxDamageHeal = ability.getMaxDamageHeal();
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
@@ -26,14 +26,7 @@ public class RayOfLightBranch extends AbstractUpgradeBranch<RayOfLight> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        float v = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamageHeal * v);
-                        ability.setMaxDamageHeal(maxDamageHeal * v);
-                    }
-                }, 10f)
+                .addUpgradeHealing(ability.getHealValues().getRayHealing(), 10f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

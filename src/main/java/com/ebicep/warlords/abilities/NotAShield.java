@@ -33,13 +33,13 @@ public class NotAShield extends AbstractPiercingProjectile {
     private int maxAlliesHit = 10;
 
     public NotAShield() {
-        super("Not A Shield", 329, 445, 12, 45, 20, 165, 1, 20, true);
+        super("Not A Shield", 12, 45, 1, 20, true);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+//                               .append(Damages.formatDamage(damageValues.))
                                .append(Component.text(" damage and have their rune timers increase by "))
                                .append(Component.text(format(runeTickIncrease), NamedTextColor.GOLD))
                                .append(Component.text(". Allies hit pick up a piece of the shield, reducing its damage by "))
@@ -115,14 +115,14 @@ public class NotAShield extends AbstractPiercingProjectile {
             }
         } else {
             float reduction = 1 - (teammatesHit * allyHitDamageReduction / 100f);
-            hit.addDamageInstance(
-                    wp,
-                    name,
-                    minDamageHeal * reduction,
-                    maxDamageHeal * reduction,
-                    critChance,
-                    critMultiplier
-            );
+//            hit.addDamageInstance(
+//                    wp,
+//                    name,
+//                    minDamageHeal.getCalculatedValue() * reduction,
+//                    maxDamageHeal.getCalculatedValue() * reduction,
+//                    critChance,
+//                    critMultiplier
+//            );
             hit.getSpec().increaseAllCooldownTimersBy(runeTickIncrease);
             wp.playSound(impactLocation, Sound.ITEM_SHIELD_BLOCK, 1, 1);
         }

@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.EliteMob;
@@ -26,7 +27,7 @@ public class CreepyBomber extends AbstractMob implements EliteMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             AbstractAbility... abilities
@@ -47,13 +48,12 @@ public class CreepyBomber extends AbstractMob implements EliteMob {
                         .aliveEnemiesOf(warlordsNPC)
                         .forEach(warlordsEntity -> {
                             hit.set(true);
-                            warlordsEntity.addDamageInstance(
-                                    warlordsNPC,
-                                    "Explosion",
-                                    1000,
-                                    1500,
-                                    0,
-                                    100
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Explosion")
+                                    .source(warlordsNPC)
+                                    .min(1000)
+                                    .max(1500)
                             );
                         });
             if (hit.get()) {
@@ -74,7 +74,7 @@ public class CreepyBomber extends AbstractMob implements EliteMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         super.onDamageTaken(self, attacker, event);
-        if (Utils.isProjectile(event.getAbility())) {
+        if (Utils.isProjectile(event.getCause())) {
             event.setMin(event.getMin() * .2f);
             event.setMax(event.getMax() * .2f);
         }

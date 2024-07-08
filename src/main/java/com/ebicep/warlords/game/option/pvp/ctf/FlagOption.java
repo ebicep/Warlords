@@ -7,7 +7,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -28,24 +27,20 @@ public class FlagOption implements Option {
 
             @EventHandler
             public void onPlayerLogout(PlayerQuitEvent event) {
-                dropFlag(event.getPlayer());
+                dropFlag(Warlords.getPlayer(event.getPlayer()), false);
             }
 
-            public boolean dropFlag(Player player) {
-                return dropFlag(Warlords.getPlayer(player));
-            }
-
-            public boolean dropFlag(@Nullable WarlordsEntity player) {
+            public boolean dropFlag(@Nullable WarlordsEntity player, boolean manuallyDropped) {
                 if (player == null) {
                     return false;
                 }
-                FlagHolder.dropFlagForPlayer(player);
+                FlagHolder.dropFlagForPlayer(player, manuallyDropped);
                 return true;
             }
 
             @EventHandler
             public void onPlayerDeath(WarlordsDeathEvent event) {
-                dropFlag(event.getWarlordsEntity());
+                dropFlag(event.getWarlordsEntity(), true);
             }
         });
     }

@@ -43,7 +43,7 @@ public class PendragonGauntlets extends SpecialDeltaGauntlet implements AppliesT
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility().isEmpty()) {
+                if (event.getCause().isEmpty()) {
                     hits++;
                     if (hits == 5) {
                         warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(

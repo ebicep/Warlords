@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -28,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns {
+public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues> {
 
     public int playersBinded = 0;
     public int soulProcs = 0;
@@ -38,6 +36,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
     private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
+    private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
     private int bindDuration = 40;
@@ -45,7 +44,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int maxAlliesHit = 2;
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 21.92f, 30, 0, 100);
+        super("Soulbinding Weapon", 21.92f, 30);
     }
 
     @Override
@@ -57,10 +56,12 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                .append(Component.text(" seconds. Against "))
                                .append(Component.text("BOUND", NamedTextColor.LIGHT_PURPLE))
                                .append(Component.text(" targets, your next Spirit Link will heal you for "))
-                               .append(Component.text("400", NamedTextColor.GREEN))
-                               .append(Component.text(" health (half for "))
+                               .append(Heals.formatHealing(healingValues.selfHealing))
+                               .append(Component.text(" health and "))
                                .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
-                               .append(Component.text(" nearby allies). Your next Fallen Souls will reduce the cooldown of all abilities by "))
+                               .append(Component.text(" nearby allies for "))
+                               .append(Heals.formatHealing(healingValues.allyHealing))
+                               .append(Component.text(". Your next Fallen Souls will reduce the cooldown of all abilities by "))
                                .append(Component.text(format(selfCooldownReduction), NamedTextColor.GOLD))
                                .append(Component.text(" seconds. ("))
                                .append(Component.text("1", NamedTextColor.GOLD))
@@ -94,7 +95,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
 
         activeSoulbinding(wp);
 
@@ -158,9 +158,9 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         ) {
             @Override
             public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
-                WarlordsEntity wpAttacker = event.getAttacker();
+                WarlordsEntity wpAttacker = event.getSource();
                 WarlordsEntity wpVictim = event.getWarlordsEntity();
-                if (!event.getAbility().isEmpty() || wpAttacker == wpVictim) {
+                if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {
                     return;
                 }
                 tempSoulBinding.bindPlayer(wpAttacker, wpVictim);
@@ -329,6 +329,11 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.maxAlliesHit = maxAlliesHit;
     }
 
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
     public static class SoulBoundPlayer {
         private WarlordsEntity boundPlayer;
         private int ticksLeft;
@@ -375,5 +380,26 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         public void setHitWithSoul(boolean hitWithSoul) {
             this.hitWithSoul = hitWithSoul;
         }
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.SetValue allyHealing = new Value.SetValue(300);
+        private final Value.SetValue selfHealing = new Value.SetValue(400);
+        private final List<Value> values = List.of(allyHealing, selfHealing);
+
+        public Value.SetValue getAllyHealing() {
+            return allyHealing;
+        }
+
+        public Value.SetValue getSelfHealing() {
+            return selfHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

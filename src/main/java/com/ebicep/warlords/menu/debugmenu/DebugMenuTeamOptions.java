@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -37,8 +38,8 @@ public class DebugMenuTeamOptions {
             Team team = teamListEntry.getKey();
             List<WarlordsEntity> warlordsEntities = teamListEntry.getValue();
             menu.setItem(i % 7 + 1, i / 7 + 1,
-                    new ItemBuilder(team.woolItem)
-                            .name(team.chatTagColored)
+                    new ItemBuilder(team.getWool())
+                            .name(team.getChatTagColored())
                             .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                             .get(),
                     (m, e) -> openTeamMenu(player, game, team, warlordsEntities, 1)
@@ -99,7 +100,7 @@ public class DebugMenuTeamOptions {
                 }
                 menu.setItem(i % 9, i / 9,
                         new ItemBuilder(itemStack)
-                                .name(Component.text(warlordsEntity.getName(), team.teamColor)
+                                .name(Component.text(warlordsEntity.getName(), team.getTeamColor())
                                                .append(Component.text(warlordsEntity.hasFlag() ? " ⚑" : "", NamedTextColor.WHITE)))
                                 .lore(lore)
                                 .get(),
@@ -138,8 +139,8 @@ public class DebugMenuTeamOptions {
         menu.setItem(3, 5, MENU_BACK, (m, e) -> openTeamSelectorMenu(player, game));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(5, 5,
-                new ItemBuilder(team.woolItem)
-                        .name(team.chatTagColored)
+                new ItemBuilder(team.getWool())
+                        .name(team.getChatTagColored())
                         .lore(TeamOptionsUtil.getTeamStatLore(warlordsEntities))
                         .get(),
                 ACTION_DO_NOTHING
@@ -149,7 +150,11 @@ public class DebugMenuTeamOptions {
                         .name(Component.text("Kill All", NamedTextColor.RED))
                         .lore(Component.text("Kills all the players on the team", NamedTextColor.GRAY))
                         .get(), (m, e) -> {
-                    warlordsEntities.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, 0, 100));
+                    warlordsEntities.forEach(wp -> wp.addInstance(InstanceBuilder
+                            .fall()
+                            .source(wp)
+                            .value(69000)
+                    ));
                     sendDebugMessage(player, Component.text("Killed all " + team.name + " players", NamedTextColor.GREEN));
                 }
         );

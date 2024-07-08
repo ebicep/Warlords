@@ -73,7 +73,7 @@ public class LocationUtils {
         return lookingAt(player2, eye, 0.925);
     }
 
-    private static boolean lookingAt(LivingEntity player2, Location eye, double dot) {
+    public static boolean lookingAt(LivingEntity player2, Location eye, double dot) {
         return getDotToLocation(eye, player2.getEyeLocation()) > dot;
     }
 
@@ -355,6 +355,32 @@ public class LocationUtils {
         return locations;
     }
 
+    /**
+     * Gets all the blocks in a circle centered around a location.
+     *
+     * @param center The center point of the circle.
+     * @param radius The radius of the circle.
+     * @return A list of all the blocks within the specified circle.
+     */
+    public static List<Block> getCircleBlocks(Location center, int radius) {
+        World world = center.getWorld();
+        List<Block> blocks = new ArrayList<>();
+        int centerX = center.getBlockX();
+        int centerY = center.getBlockY();
+        int centerZ = center.getBlockZ();
+
+        int radiusSquared = radius * radius;
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                if (x * x + z * z <= radiusSquared) {
+                    blocks.add(world.getBlockAt(centerX + x, centerY, centerZ + z));
+                }
+            }
+        }
+
+        return blocks;
+    }
+
     public static List<Location> getSquare(Location center, float radius) {
         //X--X
         //|  |
@@ -461,4 +487,9 @@ public class LocationUtils {
         }
     }
 
+    public record LocationXYZ(double x, double y, double z) {
+        public LocationXYZ(Location location) {
+            this(location.getX(), location.getY(), location.getZ());
+        }
+    }
 }

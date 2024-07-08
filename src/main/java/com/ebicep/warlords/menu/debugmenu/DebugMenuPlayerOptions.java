@@ -7,20 +7,17 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.flags.GroundFlagLocation;
 import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.flags.SpawnFlagLocation;
-import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
-import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
-import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
+import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.MenuItemPairList;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -28,6 +25,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import io.github.rapha149.signgui.SignGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +36,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -106,44 +105,57 @@ public class DebugMenuPlayerOptions {
                         .name(Component.text("Kill", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    target.addDamageInstance(target, "God", 100000, 100000, 0, 100);
+                    target.addInstance(InstanceBuilder
+                            .fall()
+                            .source(target)
+                            .value(100000)
+                    );
                     sendDebugMessage(player, Component.text("Killed " + targetName, NamedTextColor.GREEN));
                 }
         );
-        firstRow.add(new ItemBuilder((PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam().enemy().woolItem))
-                        .name(Component.text("Swap to the ", NamedTextColor.GREEN)
-                                       .append(PlayerSettings.getPlayerSettings(player.getUniqueId())
-                                                             .getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix())
-                                       .append(Component.text(" team")))
-                        .get(),
-                (m, e) -> {
-                    Game game = target.getGame();
-                    Team currentTeam = target.getTeam();
-                    Team otherTeam = target.getTeam().enemy();
-                    game.setPlayerTeam(target.getUuid(), otherTeam);
-                    target.setTeam(otherTeam);
-                    PlayerSettings.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
-                    LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
-                    if (randomLobbyLocation != null) {
-                        Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
-                                                                        .getOppositeLocation(game,
-                                                                                currentTeam,
-                                                                                otherTeam,
-                                                                                target.getLocation(),
-                                                                                randomLobbyLocation.getLocation()
-                                                                        );
-                        target.teleport(teleportDestination);
+        EnumSet<Team> teams = TeamMarker.getTeams(target.getGame());
+        if (teams.size() == 2) {
+            Team currentTeam = target.getTeam();
+            Team otherTeam = teams.stream()
+                                  .filter(t -> t != target.getTeam())
+                                  .findFirst()
+                                  .orElseThrow();
+            firstRow.add(new ItemBuilder(otherTeam.getWool())
+                            .name(Component.text("Swap to the ", NamedTextColor.GREEN)
+                                           .append(otherTeam.coloredPrefix())
+                                           .append(Component.text(" team")))
+                            .get(),
+                    (m, e) -> {
+                        swapPlayerTeam(player, target, coloredName, currentTeam, otherTeam);
                     }
-                    target.updateArmor();
-                    openPlayerMenu(player, target);
-                    sendDebugMessage(player, Component.text("Swapped ", NamedTextColor.GREEN)
-                                                      .append(coloredName)
-                                                      .append(Component.text(" to the "))
-                                                      .append(otherTeam.coloredPrefix())
-                                                      .append(Component.text(" team"))
-                    );
-                }
-        );
+            );
+        } else {
+            firstRow.add(new ItemBuilder(Material.WHITE_WOOL)
+                            .name(Component.text("Swap to another team"))
+                            .get(),
+                    (m, e) -> {
+                        Menu menu2 = new Menu("Select Team: " + targetName, 9 * 4);
+                        int x = 1;
+                        for (Team team : teams) {
+                            if (team == target.getTeam()) {
+                                continue;
+                            }
+                            menu2.setItem(x, 1,
+                                    new ItemBuilder(team.getWool())
+                                            .name(Component.text("Swap to the ", NamedTextColor.GREEN)
+                                                           .append(team.coloredPrefix())
+                                                           .append(Component.text(" team")))
+                                            .get(),
+                                    (m2, e2) -> swapPlayerTeam(player, target, coloredName, target.getTeam(), team)
+                            );
+                            x++;
+                        }
+                        menu2.setItem(4, 3, MENU_BACK, (m2, e2) -> openPlayerMenu(player, target));
+                        menu2.setItem(5, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                        menu2.openForPlayer(player);
+                    }
+            );
+        }
 
         for (int i = 0; i < firstRow.size(); i++) {
             menu.setItem(i + 1, 1, firstRow.get(i).getA(), firstRow.get(i).getB());
@@ -172,7 +184,12 @@ public class DebugMenuPlayerOptions {
                                    new BukkitRunnable() {
                                        @Override
                                        public void run() {
-                                           target.addHealingInstance(target, "God", amountNumber, amountNumber, 0, 100);
+                                           target.addInstance(InstanceBuilder
+                                                   .healing()
+                                                   .cause("God")
+                                                   .source(target)
+                                                   .value(amountNumber)
+                                           );
                                            sendDebugMessage(player, Component.text("Healed ", NamedTextColor.GREEN)
                                                                              .append(coloredName)
                                                                              .append(Component.text(" for " + amountNumber))
@@ -203,7 +220,12 @@ public class DebugMenuPlayerOptions {
                                    new BukkitRunnable() {
                                        @Override
                                        public void run() {
-                                           target.addDamageInstance(target, "God", amountNumber, amountNumber, 0, 100);
+                                           target.addInstance(InstanceBuilder
+                                                   .damage()
+                                                   .cause("God")
+                                                   .source(target)
+                                                   .value(amountNumber)
+                                           );
                                            sendDebugMessage(player, Component.text("Damaged ", NamedTextColor.GREEN)
                                                                              .append(coloredName)
                                                                              .append(Component.text(" for " + amountNumber))
@@ -224,9 +246,31 @@ public class DebugMenuPlayerOptions {
                 (m, e) -> PlayerOptionMenus.openCooldownsMenu(player, target)
         );
         secondRow.add(new ItemBuilder(Material.ENDER_EYE)
-                        .name(Component.text("Teleport To", NamedTextColor.GREEN))
+                        .name(Component.text("Teleport", NamedTextColor.GREEN))
+                        .lore(
+                                Component.textOfChildren(
+                                        Component.text("LEFT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text("Teleport to", NamedTextColor.YELLOW)
+                                ),
+                                Component.textOfChildren(
+                                        Component.text("RIGHT-CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
+                                        Component.text(" - ", NamedTextColor.GRAY),
+                                        Component.text("Teleport here", NamedTextColor.YELLOW)
+                                )
+                        )
                         .get(),
-                (m, e) -> PlayerOptionMenus.openTeleportLocations(player, target)
+                (m, e) -> {
+                    if (e.isLeftClick()) {
+                        PlayerOptionMenus.openTeleportLocations(player, target);
+                    } else {
+                        target.teleport(player.getLocation());
+                        sendDebugMessage(player, Component.text("Teleported ", NamedTextColor.GREEN)
+                                                          .append(coloredName)
+                                                          .append(Component.text(" to you"))
+                        );
+                    }
+                }
         );
         secondRow.add(new ItemBuilder(Material.BLACK_BANNER)
                         .name(Component.text("Flag Options", NamedTextColor.GREEN))
@@ -262,6 +306,31 @@ public class DebugMenuPlayerOptions {
         });
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
+    }
+
+    private static void swapPlayerTeam(Player player, WarlordsEntity target, Component coloredName, Team currentTeam, Team otherTeam) {
+        Game game = target.getGame();
+        game.setPlayerTeam(target.getUuid(), otherTeam);
+        target.setTeam(otherTeam);
+        LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
+        if (randomLobbyLocation != null) {
+            Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
+                                                            .getOppositeLocation(game,
+                                                                    currentTeam,
+                                                                    otherTeam,
+                                                                    target.getLocation(),
+                                                                    randomLobbyLocation.getLocation()
+                                                            );
+            target.teleport(teleportDestination);
+        }
+        target.updateArmor();
+        openPlayerMenu(player, target);
+        sendDebugMessage(player, Component.text("Swapped ", NamedTextColor.GREEN)
+                                          .append(coloredName)
+                                          .append(Component.text(" to the "))
+                                          .append(otherTeam.coloredPrefix())
+                                          .append(Component.text(" team"))
+        );
     }
 
     private static void openPlayerMenuAfterTick(Player player, WarlordsEntity target) {
@@ -383,19 +452,19 @@ public class DebugMenuPlayerOptions {
                                                            cooldown.actionBarName,
                                                            cooldown.cooldownClass,
                                                            cooldown.cooldownObject,
-                                                            target,
-                                                            cooldown.cooldownType,
-                                                            cooldownManager -> {
-                                                            },
-                                                            amountNumber * 20
-                                                    );
-                                                    if (cooldown == StatusEffectCooldowns.SPEED) {
-                                                        target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
-                                                    }
-                                                    sendDebugMessage(player, Component.text("Gave ", NamedTextColor.GREEN)
-                                                                                      .append(coloredName)
-                                                                                      .append(Component.text(" " + amountNumber + " seconds of " + cooldown.name))
-                                                    );
+                                                           target,
+                                                           cooldown.cooldownType,
+                                                           cooldownManager -> {
+                                                           },
+                                                           amountNumber * 20
+                                                   );
+                                                   if (cooldown == StatusEffectCooldowns.SPEED) {
+                                                       target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
+                                                   }
+                                                   sendDebugMessage(player, Component.text("Gave ", NamedTextColor.GREEN)
+                                                                                     .append(coloredName)
+                                                                                     .append(Component.text(" " + amountNumber + " seconds of " + cooldown.name))
+                                                   );
                                                } catch (NumberFormatException exception) {
                                                    p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                                }
@@ -488,7 +557,7 @@ public class DebugMenuPlayerOptions {
                                 .get(),
                         (m, e) -> {
                             if (target.getCarriedFlag() == holder.getInfo()) {
-                                holder.getInfo().setFlag(GroundFlagLocation.of(holder.getFlag()));
+                                FlagHolder.dropFlagForPlayer(target, false);
                                 sendDebugMessage(player, Component.text("Dropped the flag for ", NamedTextColor.GREEN)
                                                                   .append(targetColoredName));
 
@@ -501,7 +570,7 @@ public class DebugMenuPlayerOptions {
                                 .name(Component.text("Set Multiplier", NamedTextColor.GREEN))
                                 .get(),
                         (m, e) -> {
-                            if (target.getCarriedFlag() == holder.getInfo()) {
+                            if (holder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().equals(target)) {
                                 SignGUI.builder()
                                        .setLines("", "^^^^^^^", "Enter flag %", "0 < % < 10,000")
                                        .setHandler((p, lines) -> {
@@ -515,15 +584,11 @@ public class DebugMenuPlayerOptions {
                                                        if (amountNumber < 0 || amountNumber > 10000) {
                                                            throw new NumberFormatException();
                                                        }
-                                                        if (target.getCarriedFlag() != null) {
-                                                            PlayerFlagLocation flag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
-                                                            flag.setPickUpTicks(amountNumber * 60);
-                                                            sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
-                                                                                              .append(target.getTeam().chatTagColored)
-                                                                                              .append(Component.text(" flag carrier multiplier to " + amount + "%"))
-                                                            );
-
-                                                        }
+                                                       playerFlagLocation.setFlagMultiplier(amountNumber);
+                                                       sendDebugMessage(player, Component.text("Set the ", NamedTextColor.RED)
+                                                                                         .append(target.getTeam().getChatTagColored())
+                                                                                         .append(Component.text(" flag carrier multiplier to " + amount + "%"))
+                                                       );
                                                    } catch (NumberFormatException exception) {
                                                        p.sendMessage(Component.text("Invalid number", NamedTextColor.RED));
                                                    }
@@ -587,7 +652,7 @@ public class DebugMenuPlayerOptions {
                         1,
                         new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")", NamedTextColor.RED))
-                                .lore(WordWrap.wrap(skillBoost.description, 150))
+                                .lore(WordWrap.wrap(skillBoost.getUnselectedDescription(), 150))
                                 .addLore(
                                         Component.empty(),
                                         Component.text("Click to select!", NamedTextColor.YELLOW)
@@ -642,7 +707,7 @@ public class DebugMenuPlayerOptions {
                                                    .append(Component.text(abstractCooldown instanceof RegularCooldown ? Math.round(((RegularCooldown<?>) abstractCooldown).getTicksLeft() / 20f * 10) / 10.0 + "s" : "N/A",
                                                            NamedTextColor.GOLD
                                                    )),
-                                            Component.text("From: " + abstractCooldown.getFrom().getColoredName(), NamedTextColor.GREEN)
+                                            Component.text("From: ", NamedTextColor.GREEN).append(abstractCooldown.getFrom().getColoredName())
                                     )
                                     .get(),
                             (m, e) -> openCooldownEditorMenu(player, target, abstractCooldown)
@@ -661,7 +726,7 @@ public class DebugMenuPlayerOptions {
                                 .name(Component.text("Remove", NamedTextColor.AQUA))
                                 .get(),
                         (m, e) -> {
-                            target.getCooldownManager().getCooldowns().remove(abstractCooldown);
+                            target.getCooldownManager().removeCooldown(abstractCooldown);
                             openCooldownManagerMenu(player, target);
                             new BukkitRunnable() {
                                 @Override

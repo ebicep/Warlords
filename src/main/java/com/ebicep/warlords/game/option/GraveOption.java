@@ -32,7 +32,7 @@ public class GraveOption implements Option, Listener {
     public static final byte DEFAULT_GRAVE_MATERIAL_DATA = (byte) 5;
     public static final Function<WarlordsEntity, Component> DEFAULT_GRAVE_TEXT = wp ->
             Component.textOfChildren(
-                    Component.text(wp.getName(), wp.getTeam().teamColor()),
+                    Component.text(wp.getName(), wp.getTeam().getTeamColor()),
                     Component.text(" - ", NamedTextColor.GRAY),
                     Component.text("DEAD", NamedTextColor.YELLOW)
             );

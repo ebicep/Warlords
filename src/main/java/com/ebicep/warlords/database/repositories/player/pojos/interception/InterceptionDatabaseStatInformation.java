@@ -38,14 +38,17 @@ public class InterceptionDatabaseStatInformation extends AbstractDatabaseStatInf
     }
 
 
+    @Override
     public int getPointsCaptured() {
         return pointsCaptured;
     }
 
+    @Override
     public int getPointsDefended() {
         return pointsDefended;
     }
 
+    @Override
     public long getTotalTimePlayed() {
         return totalTimePlayed;
     }

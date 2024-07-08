@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -10,7 +12,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -24,21 +27,25 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class WoundingStrikeDefender extends AbstractStrike {
+public class WoundingStrikeDefender extends AbstractStrike implements Damages<WoundingStrikeDefender.DamageValues> {
 
+    private final DamageValues damageValues = new DamageValues();
     private int wounding = 25;
 
     public WoundingStrikeDefender() {
-        super("Wounding Strike", 415.8f, 556.5f, 0, 100, 20, 200);
+        super("Wounding Strike", 0, 100);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text(" damage and "))
                                .append(Component.text("wounding", NamedTextColor.RED))
                                .append(Component.text(" them for "))
@@ -69,32 +76,24 @@ public class WoundingStrikeDefender extends AbstractStrike {
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addDamageInstance(
-                wp,
-                name,
-                minDamageHeal,
-                maxDamageHeal,
-                critChance,
-                critMultiplier,
-                wp.getCooldownManager().hasCooldown(Intervene.class) && nearPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)
-                ? EnumSet.of(InstanceFlags.PIERCE) :
-                EnumSet.noneOf(InstanceFlags.class)
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .value(damageValues.strikeDamage)
+                .flag(InstanceFlags.PIERCE, nearPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike))
         ).ifPresent(event -> onFinalEvent(wp, nearPlayer, event));
 
         if (pveMasterUpgrade2) {
-            additionalHit(
-                    1,
-                    wp,
-                    nearPlayer,
-                    1,
-                    warlordsEntity -> {
-                        if (warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike)) {
-                            return EnumSet.of(InstanceFlags.PIERCE);
-                        }
-                        return EnumSet.noneOf(InstanceFlags.class);
-                    },
-                    finalEvent -> finalEvent.ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event))
-            );
+            additionalHit(1, wp, nearPlayer, warlordsEntity -> {
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.strikeDamage)
+                        .flag(InstanceFlags.PIERCE, warlordsEntity instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof BossLike))
+                ).ifPresent(finalEvent -> onFinalEvent(wp, finalEvent.getWarlordsEntity(), finalEvent));
+            });
         }
 
         return true;
@@ -192,5 +191,26 @@ public class WoundingStrikeDefender extends AbstractStrike {
 
     public void setWounding(int wounding) {
         this.wounding = wounding;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(415.8f, 556.5f, 20, 200);
+        private final List<Value> values = List.of(strikeDamage);
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 }

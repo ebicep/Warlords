@@ -32,6 +32,7 @@ import com.ebicep.warlords.game.option.respawn.DieOnLogoutOption;
 import com.ebicep.warlords.game.option.respawn.NoRespawnIfOfflineOption;
 import com.ebicep.warlords.game.option.respawn.RespawnProtectionOption;
 import com.ebicep.warlords.game.option.respawn.RespawnWaveOption;
+import com.ebicep.warlords.game.option.towerdefense.WinByLastStandingCastleOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
 import com.ebicep.warlords.game.option.win.WinByPointsOption;
@@ -65,7 +66,7 @@ public enum GameMode {
     LOBBY(
             "MainLobby",
             "MainLobby",
-            null,
+            new ItemStack(Material.BEDROCK),
             null,
             null,
             Integer.MAX_VALUE,
@@ -123,7 +124,7 @@ public enum GameMode {
     INTERCEPTION(
             "Interception",
             "INTER",
-            null,//new ItemStack(Material.WOOL),
+            new ItemStack(Material.BEACON),
             DatabaseGameInterception::new,
             GamesCollections.INTERCEPTION,
             16,
@@ -226,7 +227,7 @@ public enum GameMode {
     DUEL(
             "[WIP] Duel",
             "DUEL",
-            null,//new ItemStack(Material.DIAMOND_SWORD),
+            new ItemStack(Material.DIAMOND_SWORD),
             DatabaseGameDuel::new,
             GamesCollections.DUEL,
             2,
@@ -480,7 +481,7 @@ public enum GameMode {
     DEBUG(
             "Sandbox",
             "SandBox",
-            null,
+            new ItemStack(Material.SAND),
             null,
             null,
             16,
@@ -494,6 +495,7 @@ public enum GameMode {
                     3,
                     Component.text("GO!", NamedTextColor.GREEN)
             ));
+            options.add(new FlagOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
@@ -503,7 +505,7 @@ public enum GameMode {
     TUTORIAL(
             "Tutorial",
             "Tutorial",
-            null,
+            new ItemStack(Material.BOOK),
             null,
             null,
             Integer.MAX_VALUE,
@@ -522,7 +524,7 @@ public enum GameMode {
     EVENT_WAVE_DEFENSE(
             "Event Wave Defense",
             "PVE",
-            null,//new ItemStack(Material.ZOMBIE_HEAD),
+            new ItemStack(Material.ZOMBIE_HEAD),
             (game, warlordsGameTriggerWinEvent, aBoolean) -> {
                 if (DatabaseGameEvent.currentGameEvent == null || !DatabaseGameEvent.currentGameEvent.isActive()) {
                     return null;
@@ -634,6 +636,68 @@ public enum GameMode {
             return options;
         }
     },
+    TOWER_DEFENSE(
+            "Tower Defense",
+            "TD",
+            new ItemStack(Material.OAK_PLANKS),
+            null,
+            null,
+            100,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+
+            Component base = Component.text("", NamedTextColor.YELLOW, TextDecoration.BOLD);
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    Component.text("Warlords", NamedTextColor.WHITE, TextDecoration.BOLD),
+                    Component.empty(),
+                    Component.empty()
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    Component.text("GO!", NamedTextColor.GREEN),
+                    Component.text("", NamedTextColor.YELLOW)
+            ));
+
+            options.add(new GameFreezeOption());
+            options.add(new NoRespawnIfOfflineOption());
+            options.add(new WeaponOption());
+            options.add(new RecordTimeElapsedOption());
+
+            options.add(new WinByLastStandingCastleOption());
+
+            for (Option option : options) {
+                if (option instanceof FlyOption flyOption) {
+                    flyOption.setFlyEnabled(true);
+                    break;
+                }
+            }
+
+
+            return options;
+        }
+    },
+    WHACK_A_MOLE(
+            "Wackamole",
+            "Wackamole",
+            null,
+            null,
+            null,
+            1,
+            true
+    ) {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+
+            options.add(new WinAfterTimeoutOption(60, Team.RED));
+            options.add(new WeaponOption());
+
+            return options;
+        }
+    },
 
     ;
 
@@ -644,7 +708,7 @@ public enum GameMode {
     }
 
     public static boolean isPvE(GameMode mode) {
-        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT;
+        return mode == WAVE_DEFENSE || mode == EVENT_WAVE_DEFENSE || mode == ONSLAUGHT || mode == TREASURE_HUNT || mode == TOWER_DEFENSE || mode == WHACK_A_MOLE;
     }
 
     public final String name;
@@ -731,6 +795,7 @@ public enum GameMode {
         options.add(new FallDamage());
         options.add(new KillDamage());
         options.add(new VoidDamage());
+        options.add(new FlyOption());
 
         return options;
     }

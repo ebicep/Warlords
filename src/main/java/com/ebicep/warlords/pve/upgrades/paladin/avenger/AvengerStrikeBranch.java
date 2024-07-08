@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.paladin.avenger;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -12,31 +13,22 @@ import java.util.Collections;
 
 public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
-    float minDamage;
-    float maxDamage;
     float energySteal = ability.getEnergySteal();
 
     @Override
     public void runOnce() {
-        ability.setMinDamageHeal(ability.getMinDamageHeal() * 1.3f);
-        ability.setMaxDamageHeal(ability.getMaxDamageHeal() * 1.3f);
+        Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
     }
 
     public AvengerStrikeBranch(AbilityTree abilityTree, AvengersStrike ability) {
         super(abilityTree, ability);
         WarlordsPlayer warlordsPlayer = abilityTree.getWarlordsPlayer();
-        minDamage = ability.getMinDamageHeal();
-        maxDamage = ability.getMaxDamageHeal();
+
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.DamageUpgradeType() {
-                    @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setMinDamageHeal(minDamage * value);
-                        ability.setMaxDamageHeal(maxDamage * value);
-                    }
-                }, 5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
@@ -82,7 +74,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                         """,
                 50000,
                 () -> {
-                    ability.setCritChance(ability.getCritChance() + 15);
+                    ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
                     CalculateSpeed calculateSpeed = warlordsPlayer.getSpeed();
                     CalculateSpeed.Modifier modifier = new CalculateSpeed.Modifier(
                             warlordsPlayer,
@@ -109,7 +101,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                                                                      .aliveEnemiesOf(warlordsPlayer)
                                                                      .stream()
                                                                      .count();
-                                    float oldModifier = modifier.modifier;
+                                    float oldModifier = modifier.getModifier();
                                     if (enemiesNearBy >= 2 && oldModifier != 20) {
                                         modifier.setModifier(20);
                                         calculateSpeed.setChanged(true);

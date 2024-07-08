@@ -1,6 +1,8 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -8,16 +10,15 @@ import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BasicMob;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.SlimeSize;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -47,7 +48,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -89,7 +90,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         for (WarlordsEntity enemy : PlayerFilter
                 .entitiesAround(warlordsNPC, shimmerRadius, shimmerRadius, shimmerRadius)
@@ -136,13 +137,11 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
 
                         if (ticksLeft % 20 == 0) {
                             float healthDamage = enemy.getMaxHealth() * 0.04f;
-                            enemy.addDamageInstance(
-                                    warlordsNPC,
-                                    "Shimmer",
-                                    healthDamage,
-                                    healthDamage,
-                                    0,
-                                    100
+                            enemy.addInstance(InstanceBuilder
+                                    .damage()
+                                    .cause("Shimmer")
+                                    .source(warlordsNPC)
+                                    .value(healthDamage)
                             );
                         }
                     })
@@ -161,20 +160,10 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SLIME_JUMP, 2, 0.5f);
     }
 
-    private static class Shimmer extends AbstractAbility {
+    private static class Shimmer extends AbstractAbility implements Damages<Shimmer.DamageValues> {
 
         public Shimmer() {
             super("Shimmer", 0.3f, 50);
-        }
-
-        @Override
-        public void updateDescription(Player player) {
-
-        }
-
-        @Override
-        public List<Pair<String, String>> getAbilityInfo() {
-            return null;
         }
 
         @Override
@@ -185,10 +174,35 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                     .entitiesAround(wp, hitRadius, hitRadius, hitRadius)
                     .aliveEnemiesOf(wp)
             ) {
-                enemy.addDamageInstance(wp, "Shimmer", 400, 400, 0, 100);
+                enemy.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .value(damageValues.shimmerDamage)
+                );
             }
             return true;
         }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        @Override
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.SetValue shimmerDamage = new Value.SetValue(400);
+            private final List<Value> values = List.of(shimmerDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
+        }
+
     }
 
 }

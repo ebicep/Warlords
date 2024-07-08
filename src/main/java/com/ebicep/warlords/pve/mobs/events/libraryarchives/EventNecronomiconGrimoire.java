@@ -5,7 +5,8 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
@@ -18,8 +19,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumSet;
 
 public class EventNecronomiconGrimoire extends AbstractMob implements BossMinionMob {
 
@@ -47,7 +48,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage,
             AbstractAbility... abilities
@@ -127,7 +128,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     }
 
     @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, PveOption option) {
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         if (laser != null) {
             laser.stop();
@@ -145,26 +146,22 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 laser.stop();
             }
         }
-        targetWarlordsEntity.addDamageInstance(
-                warlordsNPC,
-                "Smite",
-                3250,
-                3250,
-                0,
-                100,
-                EnumSet.of(InstanceFlags.TRUE_DAMAGE)
+        targetWarlordsEntity.addInstance(InstanceBuilder
+                .damage()
+                .cause("Smite")
+                .source(warlordsNPC)
+                .value(3250)
+                .flags(InstanceFlags.TRUE_DAMAGE)
         ).ifPresent(event -> {
             if (!event.isDead()) {
                 smiteTickCooldown = 10 * 20;
                 return;
             }
-            warlordsNPC.addHealingInstance(
-                    warlordsNPC,
-                    "Smite Kill",
-                    2500,
-                    2500,
-                    0,
-                    100
+            warlordsNPC.addInstance(InstanceBuilder
+                    .healing()
+                    .cause("Smite Kill")
+                    .source(warlordsNPC)
+                    .value(2500)
             );
             smiteTickCooldown = 5 * 20;
         });

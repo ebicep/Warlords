@@ -1,12 +1,15 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.ChainHealBranch;
@@ -24,17 +27,19 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
+public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues> {
+
+    private final HealingValues healingValues = new HealingValues();
 
     public ChainHeal() {
-        super("Chain Heal", 533, 719, 7.99f, 40, 20, 175, 15, 10, 1);
+        super("Chain Heal", 7.99f, 40, 15, 10, 1);
     }
 
     @Override
     public void updateDescription(Player player) {
         description =
                 Component.text("Discharge a beam of energizing lightning that heals you and a targeted friendly player for ")
-                         .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
+                         .append(Heals.formatHealing(healingValues.chainHealing))
                          .append(Component.text(" health and jumps to "))
                          .append(Component.text("1", NamedTextColor.YELLOW))
                          .append(Component.text(" additional target within "))
@@ -71,22 +76,17 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
             if (!LocationUtils.isLookingAtChain(wp, chainTarget)) {
                 continue;
             }
-            wp.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            wp.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.chainHealing)
             );
-
-            chainTarget.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            chainTarget.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.chainHealing)
             );
 
             if (pveMasterUpgrade) {
@@ -119,8 +119,13 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                                 return;
                             }
                             float healing = 0.025f * wp.getMaxHealth();
-                            warlordsEntity.addHealingInstance(wp, "Chains of Blessings", healing, healing, 0, 100);
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25);
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .healing()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(healing)
+                            );
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25, -1);
                             EffectUtils.displayParticle(
                                     Particle.VILLAGER_HAPPY,
                                     warlordsEntity.getLocation().add(0, 1.2, 0),
@@ -155,7 +160,6 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
             } else {
                 boulder.subtractCurrentCooldown((hitCounter + 1) * 2.5f);
             }
-            wp.updateItem(boulder);
         }
     }
 
@@ -175,13 +179,11 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
                 .warlordPlayersFirst()
         ) {
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
-            bounceTarget.addHealingInstance(
-                    wp,
-                    name,
-                    minDamageHeal,
-                    maxDamageHeal,
-                    critChance,
-                    critMultiplier
+            bounceTarget.addInstance(InstanceBuilder
+                    .healing()
+                    .ability(this)
+                    .source(wp)
+                    .value(healingValues.chainHealing)
             );
 
             if (pveMasterUpgrade) {
@@ -230,7 +232,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
 
             @Override
             public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                     return currentCritChance;
                 }
 
@@ -239,12 +241,33 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon {
 
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp")) {
+                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
                     return currentCritMultiplier;
                 }
                 return currentCritMultiplier + 40;
             }
         });
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);
+        private final List<Value> values = List.of(chainHealing);
+
+        public Value.RangedValueCritable getChainHealing() {
+            return chainHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
     }
 
 

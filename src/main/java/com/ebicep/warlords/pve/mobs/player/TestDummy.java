@@ -29,7 +29,7 @@ public class TestDummy extends AbstractMob implements PlayerMob {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {

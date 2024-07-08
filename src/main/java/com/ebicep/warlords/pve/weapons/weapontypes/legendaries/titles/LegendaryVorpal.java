@@ -7,7 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -66,14 +66,14 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
 
             @EventHandler
             public void onEvent(WarlordsDamageHealingEvent event) {
-                if (event.getAttacker() != player || event.getWarlordsEntity() == player) {
+                if (event.getSource() != player || event.getWarlordsEntity() == player) {
                     return;
                 }
                 if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
                 }
 
-                String ability = event.getAbility();
+                String ability = event.getCause();
                 CooldownManager cooldownManager = player.getCooldownManager();
                 if (cooldownManager.hasCooldownFromName("Windfury Weapon") && ability.equals("Windfury Weapon")) {
                     event.setMin(event.getMin() * meleeDamageBoost);

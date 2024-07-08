@@ -123,7 +123,7 @@ public abstract class AbstractSpecialItem extends AbstractItem implements BonusS
         return itemBuilder;
     }
 
-    public UpgradeTreeBonus getUpgradeTreeBonus() {
+    public @org.jetbrains.annotations.Nullable UpgradeTreeBonus getUpgradeTreeBonus() {
         return upgradeTreeBonus;
     }
 }

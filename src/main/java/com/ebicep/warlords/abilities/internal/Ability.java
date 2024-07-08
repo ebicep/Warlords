@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -101,6 +102,7 @@ public enum Ability {
     UNDYING_ARMY(UndyingArmy.class, UndyingArmy::new),
     VINDICATE(Vindicate.class, Vindicate::new),
     VITALITY_LIQUOR(VitalityLiquor.class, VitalityLiquor::new),
+    VITALITY_CONCOCTION(VitalityConcoction.class, VitalityConcoction::new),
     WATER_BOLT(WaterBolt.class, WaterBolt::new),
     WATER_BREATH(WaterBreath.class, WaterBreath::new),
     WINDFURY_WEAPON(WindfuryWeapon.class, WindfuryWeapon::new),
@@ -120,6 +122,7 @@ public enum Ability {
                 Ability abilityRegistry = getAbility(ability.getClass());
                 if (abilityRegistry == null) {
                     ChatUtils.MessageType.WARLORDS.sendErrorMessage("Unknown ability for " + spec.name() + ": " + ability.getClass().getSimpleName());
+                    Bukkit.getServer().shutdown();
                     continue;
                 }
                 abilities[i] = abilityRegistry;

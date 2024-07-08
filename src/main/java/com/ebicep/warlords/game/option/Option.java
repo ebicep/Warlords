@@ -3,13 +3,10 @@ package com.ebicep.warlords.game.option;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.Priority;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.List;
 
 /**
@@ -101,6 +98,15 @@ public interface Option {
     default void onSpecChange(@Nonnull WarlordsEntity player) {
     }
 
+    /**
+     * Called when a player joins the server while they were part of a game.
+     * Also called directly after adding a player into the game if they were
+     * online at that moment
+     *
+     * @param player
+     */
+    default void onPlayerReJoinGame(Player player) {
+    }
 
     /**
      * Called when player stops spectating game
@@ -109,12 +115,6 @@ public interface Option {
      */
     default void onPlayerQuit(Player player) {
 
-    }
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Priority {
-        int value() default 3;
     }
 
 }

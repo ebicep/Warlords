@@ -11,7 +11,8 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.WindfuryBranch;
@@ -40,7 +41,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     private float weaponDamage = 135;
 
     public WindfuryWeapon() {
-        super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 200);
+        super("Windfury Weapon", 15.66f, 30);
     }
 
     @Override
@@ -85,7 +86,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    shreddingFurySpeed.duration = 0;
+                    shreddingFurySpeed.setDuration(0);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -118,11 +119,11 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
 
             @Override
             public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getAbility().isEmpty() || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                if (!event.getCause().isEmpty() || event.getFlags().contains(InstanceFlags.RECURSIVE)) {
                     return;
                 }
                 WarlordsEntity victim = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
 
                 double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
                 if (firstProc) {
@@ -146,13 +147,15 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                         Utils.playGlobalSound(victim.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                         float healthDamage = victim.getMaxHealth() * 0.01f;
                         healthDamage = DamageCheck.clamp(healthDamage);
-                        victim.addDamageInstance(
-                                attacker,
-                                name,
-                                minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
-                                maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0),
-                                critChance,
-                                critMultiplier
+
+                        victim.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(WindfuryWeapon.this)
+                                .source(attacker)
+                                .min(minDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0))
+                                .max(maxDamage * (weaponDamage / 100f) + (pveMasterUpgrade ? healthDamage : 0))
+                                .critChance(25)
+                                .critMultiplier(200)
                         );
 
                         if (pveMasterUpgrade) {
@@ -170,7 +173,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 }.runTaskTimer(3, 3);
 
                 if (pveMasterUpgrade2 && procs.get() <= 10) {
-                    shreddingFurySpeed.setModifier(shreddingFurySpeed.modifier + 2.5f);
+                    shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
                     wp.getSpeed().setChanged(true);
                 }
             }

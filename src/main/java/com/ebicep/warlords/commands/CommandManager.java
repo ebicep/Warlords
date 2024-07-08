@@ -21,6 +21,8 @@ import com.ebicep.warlords.game.option.pve.onslaught.OnslaughtCommand;
 import com.ebicep.warlords.game.option.pve.tutorial.TutorialCommand;
 import com.ebicep.warlords.game.option.pve.wavedefense.commands.EditCurrencyCommand;
 import com.ebicep.warlords.game.option.pve.wavedefense.commands.WaveCommand;
+import com.ebicep.warlords.game.option.towerdefense.TowerDefenseCommand;
+import com.ebicep.warlords.game.option.whackamole.WhackAMoleCommand;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPermissions;
@@ -52,6 +54,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.quests.QuestCommand;
 import com.ebicep.warlords.pve.weapons.WeaponCommand;
 import com.ebicep.warlords.sr.BalancerCommand;
+import com.ebicep.warlords.sr.hypixel.HypixelBalancerCommand;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
@@ -269,7 +272,7 @@ public class CommandManager {
         manager.getCommandContexts().registerContext(GameMap.class, command -> {
             String map = command.popFirstArg();
             for (GameMap value : GameMap.VALUES) {
-                if (value.getMapName().equalsIgnoreCase(map)) {
+                if (value.getMapName().replaceAll(" ", "_").equalsIgnoreCase(map)) {
                     return value;
                 }
             }
@@ -322,6 +325,7 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
                       .map(GameMap::getMapName)
+                      .map(s -> s.replaceAll(" ", "_"))
                       .toList());
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
@@ -390,7 +394,6 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("floatmodifiabletype", command -> Arrays.stream(PrintFloatModifiableCommand.Type.VALUES)
                                                                                            .map(Enum::name)
                                                                                            .toList());
-
     }
 
     public static void registerConditions() {
@@ -521,6 +524,31 @@ public class CommandManager {
                 throw new ConditionFailedException("Max value must be " + max);
             }
         });
+        manager.getCommandConditions().addCondition(Float.class, "limits", (c, exec, value) -> {
+            if (value == null) {
+                return;
+            }
+            if (c.hasConfig("previousGames")) {
+                int size = DatabaseGameBase.previousGames.size();
+                if (size == 0) {
+                    throw new ConditionFailedException("No previous games found!");
+                }
+                if (value < 0 || value > size) {
+                    throw new ConditionFailedException("Game must be an index in the previous games list!");
+                }
+                return;
+            }
+
+            float min = Float.parseFloat(c.getConfigValue("min", ""));
+            float max = Float.parseFloat(c.getConfigValue("max", ""));
+
+            if (c.hasConfig("min") && min > value) {
+                throw new ConditionFailedException("Min value must be " + min);
+            }
+            if (c.hasConfig("max") && max < value) {
+                throw new ConditionFailedException("Max value must be " + max);
+            }
+        });
         manager.getCommandConditions().addCondition(PartyPlayer.class, "lowerRank", (command, exec, partyPlayer) -> {
             Player player = command.getIssuer().getPlayer();
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
@@ -557,6 +585,7 @@ public class CommandManager {
     public static void registerCommands() {
         manager.registerCommand(new NPCCommand());
 
+        manager.registerCommand(new CompGameCommand());
         manager.registerCommand(new GameDebugCommand());
         manager.registerCommand(new GameInfoCommand());
         manager.registerCommand(new GameKillCommand());
@@ -579,6 +608,7 @@ public class CommandManager {
         manager.registerCommand(new UnstuckCommand(), true);
 
         manager.registerCommand(new AdminCommand());
+        manager.registerCommand(new BuilderCommand());
         manager.registerCommand(new DatabaseCommand());
         manager.registerCommand(new DebugValueCommand());
         manager.registerCommand(new EditStatsCommand());
@@ -657,6 +687,11 @@ public class CommandManager {
         manager.registerCommand(new BountyCommand());
 
         manager.registerCommand(new BalancerCommand());
+        manager.registerCommand(new HypixelBalancerCommand());
+
+        manager.registerCommand(new TowerDefenseCommand());
+
+        manager.registerCommand(new WhackAMoleCommand());
     }
 
     @Nullable

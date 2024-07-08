@@ -1,5 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -7,6 +9,7 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -48,7 +51,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -73,7 +76,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         if (spawnCounter % pveOption.getGame().warlordsPlayers().count() == 0 || spawnLocations.isEmpty()) {
-                            Location randomSpawnLocation = pveOption.getRandomSpawnLocation(null);
+                            Location randomSpawnLocation = pveOption.getRandomSpawnLocation((WarlordsEntity) null);
                             if (randomSpawnLocation == null) {
                                 return null;
                             }
@@ -125,7 +128,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
         }
     }
 
-    private static class Shockwave extends AbstractPveAbility {
+    private static class Shockwave extends AbstractPveAbility implements Damages<Shockwave.DamageValues> {
 
         private float radius = 10;
 
@@ -173,13 +176,11 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                                     .aliveEnemiesOf(wp)
                                     .forEach(warlordsEntity -> {
                                         warlordsEntity.addSpeedModifier(wp, name, -15, 40);
-                                        warlordsEntity.addDamageInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal,
-                                                maxDamageHeal,
-                                                critChance,
-                                                critMultiplier
+                                        warlordsEntity.addInstance(InstanceBuilder
+                                                .damage()
+                                                .ability(Shockwave.this)
+                                                .source(wp)
+                                                .value(damageValues.shockWaveDamage)
                                         );
                                     });
                         if (equipment != null) {
@@ -190,6 +191,25 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                 }
             }.runTaskTimer(0, 0);
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        @Override
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue shockWaveDamage = new Value.RangedValue(650, 800);
+            private final List<Value> values = List.of(shockWaveDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

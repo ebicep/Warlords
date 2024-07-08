@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.*;
@@ -327,10 +328,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + getEnergyPerSecondBonus());
         for (AbstractAbility ability : playerClass.getAbilities()) {
             if (ability.getClass().equals(selectedSkillBoost.ability)) {
-                if (ability.getCritChance() > 0) {
-                    ability.setCritChance(ability.getCritChance() + getSkillCritChanceBonus());
-                    ability.setCritMultiplier(ability.getCritMultiplier() + getSkillCritMultiplierBonus());
-                }
+                Value.applyDamageHealing(ability, value -> {
+                    if (value instanceof Value.RangedValueCritable rangedValueCritable) {
+                        rangedValueCritable.critChance().addAdditiveModifier("Legendary Weapon", getSkillCritChanceBonus());
+                        rangedValueCritable.critMultiplier().addAdditiveModifier("Legendary Weapon", getSkillCritMultiplierBonus());
+                    }
+                });
                 break;
             }
         }
@@ -343,12 +346,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
 
                 @Override
                 public void run() {
-                    if (ability.getCurrentCooldown() > 0) {
-                        ability.subtractCurrentCooldown(.05f);
-                        if (player.getEntity() instanceof Player) {
-                            updateAbilityItem(player, (Player) player.getEntity());
-                        }
-                    }
+                    ability.runEveryTick(player);
                 }
             }.runTaskTimer(20, 0);
         }
@@ -555,7 +553,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
             return;
         }
         if (!wp.getGame().isFrozen()) {
-            wp.getSpec().onRightClickAbility(getAbility(), wp, player);
+            wp.getSpec().onRightClickAbility(getAbility(), wp, player, upgradeLevel);
         }
         if (hotkeyMode) {
             player.getInventory().setHeldItemSlot(0);

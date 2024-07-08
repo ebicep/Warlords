@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -36,7 +37,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -49,8 +50,9 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 minMeleeDamage,
                 maxMeleeDamage,
                 new CripplingStrike() {{
-                    this.setMinDamageHeal(1560);
-                    this.setMaxDamageHeal(1960);
+                    Value.RangedValueCritable strikeDamage = this.getDamageValues().getStrikeDamage();
+                    strikeDamage.min().setBaseValue(1560);
+                    strikeDamage.max().setBaseValue(1960);
                     this.getCooldown().setBaseValue(5);
                     this.pveMasterUpgrade = true;
                 }},

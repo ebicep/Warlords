@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -32,7 +33,6 @@ import java.util.function.Consumer;
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
 import static com.ebicep.warlords.player.general.Settings.ParticleQuality;
-import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
 
 public class WarlordsShopMenu {
 
@@ -154,7 +154,7 @@ public class WarlordsShopMenu {
                     .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
                             skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
                     ));
-            List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
+            List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.getSelectedDescription() : skillBoost.getUnselectedDescription(), 130));
             lore.add(Component.empty());
             if (skillBoost == selectedBoost) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
@@ -197,7 +197,7 @@ public class WarlordsShopMenu {
             } else {
                 icon = ability.getAbilityIcon();
             }
-            ability2.boostSkill(selectedBoost, apc2);
+            ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
             ability.updateDescription(player);
             ability2.updateDescription(player);
             menu.setItem(3,
@@ -489,11 +489,11 @@ public class WarlordsShopMenu {
     public static void openTeamMenu(Player player) {
         Team selectedTeam = PlayerSettings.getPlayerSettings(player.getUniqueId()).getWantedTeam();
         Menu menu = new Menu("Team Selector", 9 * 4);
-        List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
+        List<Team> values = new ArrayList<>(Arrays.asList(Team.RED, Team.BLUE));
         for (int i = 0; i < values.size(); i++) {
             Team team = values.get(i);
-            ItemBuilder builder = new ItemBuilder(team.getWoolItem())
-                    .name(Component.text(team.getName(), team.teamColor));
+            ItemBuilder builder = new ItemBuilder(team.getWool())
+                    .name(Component.text(team.getName(), team.getTeamColor()));
             List<Component> lore = new ArrayList<>();
             if (team == selectedTeam) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
@@ -509,7 +509,7 @@ public class WarlordsShopMenu {
                     (m, e) -> {
                         if (selectedTeam != team) {
                             player.sendMessage(Component.text("You have joined the ", NamedTextColor.GREEN)
-                                                        .append(Component.text(team.getName(), team.teamColor()))
+                                                        .append(Component.text(team.getName(), team.getTeamColor()))
                                                         .append(Component.text(" team!"))
                             );
                             Optional<Game> playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
@@ -565,12 +565,9 @@ public class WarlordsShopMenu {
                          .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
                          .append(Component.text(" per hit"))
         );
-        if (selectedSpec == APOTHECARY) {
-            icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY).append(Component.text("10%", NamedTextColor.YELLOW)));
-        }
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
                                       noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
                               ))
         );

@@ -1,11 +1,10 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.customentities.nms.CustomFallingBlock;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
-import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -14,9 +13,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -32,20 +29,20 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
-    private boolean trueDamage = false;
+    protected boolean trueDamage = false;
 
-    public AbstractGroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        this(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 0);
+    public AbstractGroundSlam(float cooldown, float energyCost) {
+        this(cooldown, energyCost, 0);
     }
 
-    public AbstractGroundSlam(float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier, float startCooldown) {
-        super("Ground Slam", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, startCooldown);
+    public AbstractGroundSlam(float cooldown, float energyCost, float startCooldown) {
+        super("Ground Slam", cooldown, energyCost, startCooldown);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Slam the ground, creating a shockwave around you that deals ")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(getSlamDamage()))
                                .append(Component.text(" damage and knocks enemies back slightly."));
 
     }
@@ -60,7 +57,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         UUID abilityUUID = UUID.randomUUID();
@@ -102,7 +98,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     protected void activateAbility(@Nonnull WarlordsEntity wp, float damageMultiplier, UUID abilityUUID, boolean second) {
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
-        List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
         Set<WarlordsEntity> currentPlayersHit = new HashSet<>();
         Location location = wp.getLocation();
 
@@ -118,11 +113,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
             public void run() {
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
-                        if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                            FallingBlock fallingBlock = Utils.addFallingBlock(location.clone());
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, AbstractGroundSlam.this));
-                            GeneralEvents.addEntityUUID(fallingBlock);
-                        }
+                        Utils.addFallingBlock(location);
                         // Damage
                         for (WarlordsEntity slamTarget : PlayerFilter
                                 .entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.75, 4.5, 0.75)
@@ -142,16 +133,15 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                             final Location loc = slamTarget.getLocation();
                             final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.25);
                             slamTarget.setVelocity(name, v, false, false);
-
-                            slamTarget.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal * damageMultiplier,
-                                    maxDamageHeal * damageMultiplier,
-                                    critChance,
-                                    critMultiplier,
-                                    trueDamage ? EnumSet.of(InstanceFlags.TRUE_DAMAGE) : EnumSet.noneOf(InstanceFlags.class),
-                                    abilityUUID
+                            Value.RangedValueCritable slamDamage = getSlamDamage();
+                            slamTarget.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(AbstractGroundSlam.this)
+                                    .source(wp)
+                                    .min(slamDamage.getMinValue() * damageMultiplier)
+                                    .max(slamDamage.getMaxValue() * damageMultiplier)
+                                    .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
+                                    .uuid(abilityUUID)
                             );
                         }
                     }
@@ -169,29 +159,9 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
             }
 
         }.runTaskTimer(0, 2);
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                for (int i = 0; i < customFallingBlocks.size(); i++) {
-                    CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
-                    customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    if (LocationUtils.getDistance(
-                            customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 ||
-                            customFallingBlock.getTicksLived() > 10
-                    ) {
-                        customFallingBlock.getFallingBlock().remove();
-                        customFallingBlocks.remove(i);
-                        i--;
-                    }
-                }
-                if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                    this.cancel();
-                }
-            }
-
-        }.runTaskTimer(0, 0);
     }
+
+    public abstract Value.RangedValueCritable getSlamDamage();
 
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
 

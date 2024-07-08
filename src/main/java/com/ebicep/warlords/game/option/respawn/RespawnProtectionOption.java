@@ -104,7 +104,7 @@ public class RespawnProtectionOption implements Option, Listener {
         if (!spawnProtection.containsKey(event.getWarlordsEntity())) {
             return;
         }
-        if (removeHorse && event.getAttacker().getTeam() != event.getWarlordsEntity().getTeam()) {
+        if (removeHorse && event.getSource().getTeam() != event.getWarlordsEntity().getTeam()) {
             event.getWarlordsEntity().removeHorse();
         }
         event.setCancelled(true);

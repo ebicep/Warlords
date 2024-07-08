@@ -2,11 +2,13 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -24,22 +26,26 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class AvengersStrike extends AbstractStrike {
+public class AvengersStrike extends AbstractStrike implements Damages<AvengersStrike.DamageValues> {
 
     public float energyStole = 0;
-
+    private final DamageValues damageValues = new DamageValues();
     private float energySteal = 10;
 
     public AvengersStrike() {
-        super("Avenger's Strike", 359, 485, 0, 90, 25, 185);
+        super("Avenger's Strike", 0, 90);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Strike the targeted enemy player, causing")
-                               .append(formatRangeDamage(minDamageHeal, maxDamageHeal))
+                               .append(Damages.formatDamage(damageValues.strikeDamage))
                                .append(Component.text("damage and removing "))
                                .append(Component.text(format(energySteal), NamedTextColor.YELLOW))
                                .append(Component.text(" energy."));
@@ -97,13 +103,13 @@ public class AvengersStrike extends AbstractStrike {
         }
         healthDamage = DamageCheck.clamp(healthDamage);
 
-        Optional<WarlordsDamageHealingFinalEvent> finalEvent = nearPlayer.addDamageInstance(
-                wp,
-                name,
-                (minDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
-                (maxDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0),
-                critChance,
-                critMultiplier
+        nearPlayer.addInstance(InstanceBuilder
+                .damage()
+                .ability(this)
+                .source(wp)
+                .min((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .max((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                .crit(damageValues.strikeDamage)
         );
 
         if (pveMasterUpgrade) {
@@ -114,13 +120,13 @@ public class AvengersStrike extends AbstractStrike {
                     .excluding(nearPlayer)
                     .limit(2)
             ) {
-                we.addDamageInstance(
-                        wp,
-                        "Avenger's Slash",
-                        ((minDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
-                        ((maxDamageHeal * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f,
-                        critChance,
-                        critMultiplier
+                we.addInstance(InstanceBuilder
+                        .damage()
+                        .ability(this)
+                        .source(wp)
+                        .min(((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
+                        .max(((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0)) * 0.5f)
+                        .crit(damageValues.strikeDamage)
                 );
                 Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
             }
@@ -137,4 +143,21 @@ public class AvengersStrike extends AbstractStrike {
     public void setEnergySteal(float energySteal) {
         this.energySteal = energySteal;
     }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
+        private final List<Value> values = List.of(strikeDamage);
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
 }

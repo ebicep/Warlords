@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
@@ -32,7 +32,7 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -47,7 +47,7 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
                 new SpawnMobAbility(10, Mob.INTERMEDIATE_WARRIOR_BERSERKER, 10) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
-                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
+                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
                     }
 
                     @Override
@@ -58,7 +58,7 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
                 new SpawnMobAbility(10, Mob.ADVANCED_WARRIOR_BERSERKER, 10) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
-                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation(null));
+                        return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
                     }
 
                     @Override

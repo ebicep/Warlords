@@ -25,7 +25,6 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +43,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     private int energyPerSecond = 10;
 
     public InspiringPresence() {
-        super("Inspiring Presence", 0, 0, 60f + 10.47f, 0);
+        super("Inspiring Presence", 60f + 10.47f, 0);
     }
 
     @Override
@@ -132,9 +131,14 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             }
 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" Your Inspiring Presence inspired ", NamedTextColor.GRAY))
-                    .append(Component.text(presenceTarget.getName(), NamedTextColor.YELLOW))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" Your ", NamedTextColor.GRAY))
+                    .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                    .append(Component.text(" inspired " + presenceTarget.getName() + "!", NamedTextColor.GRAY))
+            );
+            presenceTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                    .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                    .append(Component.text(" inspired you!", NamedTextColor.GRAY))
             );
 
             Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
@@ -186,12 +190,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             }
             ability.subtractCurrentCooldown(15);
         }
-        we.updateItems();
-    }
-
-    @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade;
     }
 
     public List<WarlordsEntity> getPlayersAffected() {
@@ -201,6 +199,11 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InspiringPresenceBranch(abilityTree, this);
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade;
     }
 
     @Override
@@ -231,12 +234,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
     public void setSpeedBuff(int speedBuff) {
         this.speedBuff = speedBuff;
-    }
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     @Override

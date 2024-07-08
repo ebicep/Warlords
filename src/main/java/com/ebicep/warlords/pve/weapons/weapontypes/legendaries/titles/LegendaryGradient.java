@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
@@ -52,7 +53,12 @@ public class LegendaryGradient extends AbstractLegendaryWeapon implements Passiv
                 if (tickCountdown <= 0) {
                     tickCountdown = interval;
                     float healValue = player.getMaxHealth() * .085f;
-                    player.addHealingInstance(player, "Gradient", healValue, healValue, 0, 100);
+                    player.addInstance(InstanceBuilder
+                            .healing()
+                            .cause("Gradient")
+                            .source(player)
+                            .value(healValue)
+                    );
                 }
             }
         }.runTaskTimer(0, 0);

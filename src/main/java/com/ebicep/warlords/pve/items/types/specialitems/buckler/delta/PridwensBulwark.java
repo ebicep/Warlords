@@ -55,14 +55,14 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
 
             @EventHandler
             public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
+                if (!Objects.equals(event.getSource(), warlordsPlayer)) {
                     return;
                 }
                 if (event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC) {
                     if (ThreadLocalRandom.current().nextDouble() > 0.25) {
                         return;
                     }
-                    if (redAbility.contains(event.getAbility())) {
+                    if (redAbility.contains(event.getCause())) {
                         //delayed to account for wave kb
                         new GameRunnable(warlordsNPC.getGame()) {
 
@@ -70,8 +70,8 @@ public class PridwensBulwark extends SpecialDeltaBuckler implements CraftsInto {
                             public void run() {
                                 warlordsNPC.setStunTicks(10);
                             }
-                        }.runTaskLater(event.getAbility().equals("Seismic Wave") ? 3 : 0);
-                    } else if (Objects.equals(event.getAbility(), "Reckless Charge")) {
+                        }.runTaskLater(event.getCause().equals("Seismic Wave") ? 3 : 0);
+                    } else if (Objects.equals(event.getCause(), "Reckless Charge")) {
                         event.setMin(event.getMin() * 1.25f);
                         event.setMax(event.getMax() * 1.25f);
                     }

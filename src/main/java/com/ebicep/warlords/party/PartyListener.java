@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 public class PartyListener implements Listener {
 
@@ -45,5 +46,17 @@ public class PartyListener implements Listener {
         }
     }
 
+    @EventHandler
+    public static void onPlayerSneak(PlayerToggleSneakEvent e) {
+        Player player = e.getPlayer();
+        Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(player.getUniqueId());
+        if (partyPlayerPair != null) {
+            Party party = partyPlayerPair.getA();
+            PartyPlayer partyPlayer = partyPlayerPair.getB();
+            if (partyPlayer.isAFK()) {
+                party.afk(partyPlayer.getUUID());
+            }
+        }
+    }
 
 }

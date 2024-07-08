@@ -2,10 +2,13 @@ package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -37,7 +40,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
             String name,
             int maxHealth,
             float walkSpeed,
-            int damageResistance,
+            float damageResistance,
             float minMeleeDamage,
             float maxMeleeDamage
     ) {
@@ -50,7 +53,10 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new BurstOfFlames(),
-                new Fireball(350, 450, 1000)
+                new Fireball(1000) {{
+                    this.getDamageValues().getFireballDamage().min().setBaseValue(350);
+                    this.getDamageValues().getFireballDamage().max().setBaseValue(450);
+                }}
         );
     }
 
@@ -154,7 +160,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
         }
     }
 
-    private static class BurstOfFlames extends AbstractPveAbility {
+    private static class BurstOfFlames extends AbstractPveAbility implements Damages<BurstOfFlames.DamageValues> {
 
         private float radius = 10;
 
@@ -175,16 +181,33 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
             PlayerFilter.entitiesAround(wp, radius, radius, radius)
                         .aliveEnemiesOf(wp)
                         .forEach(warlordsEntity -> {
-                            warlordsEntity.addDamageInstance(
-                                    wp,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier
+                            warlordsEntity.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.burstOfFlamesDamage)
                             );
                         });
             return true;
+        }
+
+        private final DamageValues damageValues = new DamageValues();
+
+        @Override
+        public DamageValues getDamageValues() {
+            return damageValues;
+        }
+
+        public static class DamageValues implements Value.ValueHolder {
+
+            private final Value.RangedValue burstOfFlamesDamage = new Value.RangedValue(860, 940);
+            private final List<Value> values = List.of(burstOfFlamesDamage);
+
+            @Override
+            public List<Value> getValues() {
+                return values;
+            }
+
         }
     }
 }

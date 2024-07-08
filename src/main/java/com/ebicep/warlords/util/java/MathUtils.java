@@ -4,6 +4,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtils {
 
+    public static int clamp(int value, int min, int max) {
+        return value < min ? min : Math.min(value, max);
+    }
+
     public static float clamp(float value, float min, float max) {
         return value < min ? min : Math.min(value, max);
     }
@@ -14,6 +18,10 @@ public class MathUtils {
 
     public static int generateRandomValueBetweenInclusive(int min, int max) {
         return ThreadLocalRandom.current().nextInt(min, max + 1);
+    }
+
+    public static double generateRandomValueBetweenInclusive(double min, double max) {
+        return ThreadLocalRandom.current().nextDouble(min, max + .000001);
     }
 
     // Linear Interpolation

@@ -17,7 +17,7 @@ public class ShoutCommand extends BaseCommand {
     @Description("Shouts a message in game")
     public void shout(WarlordsPlayer warlordsPlayer, String message) {
         Component shoutMessage = Component.empty()
-                                          .append(Component.text("[SHOUT] ", warlordsPlayer.getTeam().teamColor()))
+                                          .append(Component.text("[SHOUT] ", warlordsPlayer.getTeam().getTeamColor()))
                                           .append(Component.text(warlordsPlayer.getName(), NamedTextColor.AQUA))
                                           .append(Component.text(": " + message, NamedTextColor.WHITE));
         for (WarlordsEntity p : PlayerFilter.playingGame(warlordsPlayer.getGame())) {

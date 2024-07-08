@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -16,17 +17,13 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
 
     public AbstractBeam(
             String name,
-            float minDamageHeal,
-            float maxDamageHeal,
             float cooldown,
             float energyCost,
-            float critChance,
-            float critMultiplier,
             double projectileSpeed,
             double maxDistance,
             boolean hitTeammates
     ) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, projectileSpeed, maxDistance, hitTeammates);
+        super(name, cooldown, energyCost, projectileSpeed, maxDistance, hitTeammates);
         this.maxTicks = 0;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .6f);
     }
@@ -56,7 +53,7 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
         List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
         for (Location locationsToFireShot : locationsToFireShots) {
             Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
-            AbstractChain.spawnChain(shooter.getLocation(), location, getBeamItem());
+            EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
         }
         return super.onActivate(shooter);
     }

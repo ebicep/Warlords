@@ -45,6 +45,7 @@ public class RaidOption implements PveOption {
         return 0;
     }
 
+    @Override
     public void spawnNewMob(AbstractMob abstractMob) {
         //abstractMob.toNPC(game, Team.RED, UUID.randomUUID());
         game.addNPC(abstractMob.getWarlordsNPC());
@@ -62,7 +63,7 @@ public class RaidOption implements PveOption {
     }
 
     @Override
-    public ConcurrentHashMap<AbstractMob, Integer> getMobsMap() {
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
         return null;
     }
 

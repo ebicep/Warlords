@@ -49,7 +49,6 @@ import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.ARMOR_DESCRIPTION;
 import static com.ebicep.warlords.player.general.ArmorManager.HELMET_DESCRIPTION;
 import static com.ebicep.warlords.player.general.ExperienceManager.getLevelString;
-import static com.ebicep.warlords.player.general.Specializations.APOTHECARY;
 
 public class WarlordsNewHotbarMenu {
 
@@ -103,12 +102,9 @@ public class WarlordsNewHotbarMenu {
                          .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
                          .append(Component.text(" per hit"))
         );
-        if (selectedSpec == APOTHECARY) {
-            icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY).append(Component.text("10%", NamedTextColor.YELLOW)));
-        }
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
                                       noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
                               ))
         );
@@ -830,7 +826,7 @@ public class WarlordsNewHotbarMenu {
                         .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
                                 skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
                         ));
-                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description,
+                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.getSelectedDescription() : skillBoost.getUnselectedDescription(),
                         130
                 ));
                 lore.add(Component.empty());
@@ -877,7 +873,7 @@ public class WarlordsNewHotbarMenu {
                 } else {
                     icon = ability.getAbilityIcon();
                 }
-                ability2.boostSkill(selectedBoost, apc2);
+                ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
                 ability.updateDescription(player);
                 ability2.updateDescription(player);
                 menu.setItem(3,

@@ -9,7 +9,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengersWrathBranch;
@@ -40,7 +41,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     private int hitRadius = 5;
 
     public AvengersWrath() {
-        super("Avenger's Wrath", 0, 0, 52.85f, 0);
+        super("Avenger's Wrath", 52.85f, 0);
     }
 
     @Override
@@ -97,7 +98,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         ) {
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (!event.getAbility().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
+                if (!event.getCause().equals("Avenger's Strike") || event.getFlags().contains(InstanceFlags.AVENGER_WRATH_STRIKE)) {
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
@@ -107,14 +108,12 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     flags.add(InstanceFlags.STRIKE_IN_CONS);
                 }
                 if (pveMasterUpgrade2) {
-                    warlordsEntity.addDamageInstance(
-                            wp,
-                            "Avenger's Strike",
-                            event.getMin(),
-                            event.getMax(),
-                            event.getCritChance(),
-                            event.getCritMultiplier(),
-                            flags
+                    warlordsEntity.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Avenger's Strike")
+                            .source(wp)
+                            .value(event)
+                            .flags(flags)
                     );
                     tempAvengersWrath.addPlayersStruckDuringWrath();
                 }
@@ -128,14 +127,12 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     addExtraPlayersStruck();
                     tempAvengersWrath.addPlayersStruckDuringWrath();
 
-                    wrathTarget.addDamageInstance(
-                            wp,
-                            "Avenger's Strike",
-                            event.getMin(),
-                            event.getMax(),
-                            event.getCritChance(),
-                            event.getCritMultiplier(),
-                            flags
+                    wrathTarget.addInstance(InstanceBuilder
+                            .damage()
+                            .cause("Avenger's Strike")
+                            .source(wp)
+                            .value(event)
+                            .flags(flags)
                     );
 
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));

@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractTotem;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -11,14 +9,13 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.HealingTotemBranch;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -31,52 +28,61 @@ import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public class HealingTotem extends AbstractTotem implements Duration, HitBox {
+public class HealingTotem extends AbstractTotem implements Duration, HitBox, Heals<HealingTotem.HealingValues> {
 
     public int playersHealed = 0;
     public int playersCrippled = 0;
 
-    protected float amountHealed = 0;
-
+    private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(7);
-    private int tickDuration = 120;
+    private int tickDuration = 100;
     private int crippleDuration = 6;
-    private int healingIncrement = 35;
+    private float healingIncrement = 25;
 
     public HealingTotem() {
-        super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
+        this(null, null);
     }
 
     public HealingTotem(ArmorStand totem, WarlordsEntity owner) {
-        super("Healing Totem", 191, 224, 62.64f, 60, 25, 175, totem, owner);
+        super("Healing Totem", 67.86f, 60, totem, owner);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
-                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius for "))
-                               .append(formatRangeHealing(minDamageHeal, maxDamageHeal))
-                               .append(Component.text(" health every second. The healing will gradually increase by "))
-                               .append(Component.text("35%", NamedTextColor.GREEN))
-                               .append(Component.text(" (up to "))
-                               .append(Component.text(Math.round(healingIncrement * tickDuration / 20f)))
-                               .append(Component.text("%) every second. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(
-                                       " seconds.\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for "))
-                               .append(Component.text(crippleDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Crippled enemies deal "))
-                               .append(Component.text("25%", NamedTextColor.RED))
-                               .append(Component.text(" less damage."));
+        if (inPve) {
+            description = Component.text("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
+                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
+                                   .append(Component.text(" block radius for "))
+                                   .append(Heals.formatHealing(healingValues.totemHealing))
+                                   .append(Component.text(" health every second. The healing will gradually decrease by "))
+                                   .append(Component.text(format(healingIncrement) + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(" until the final proc which heals for the normal amount once again. "))
+                                   .append(Component.text("Lasts "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(
+                                           " seconds.\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for "))
+                                   .append(Component.text(crippleDuration, NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds. Crippled enemies deal "))
+                                   .append(Component.text("25%", NamedTextColor.RED))
+                                   .append(Component.text(" less damage."));
+        } else {
+            description = Component.text("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
+                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
+                                   .append(Component.text(" block radius for "))
+                                   .append(Heals.formatHealing(healingValues.totemHealing))
+                                   .append(Component.text(" health every second. The healing will gradually decrease by "))
+                                   .append(Component.text(format(healingIncrement) + "%", NamedTextColor.GREEN))
+                                   .append(Component.text(" until the final proc which heals for the normal amount once again. "))
+                                   .append(Component.text("Lasts "))
+                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds."));
+        }
 
     }
 
@@ -96,6 +102,12 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
     }
 
     @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        radius.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
+    @Override
     protected void playSound(WarlordsEntity warlordsEntity, Location location) {
         Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
     }
@@ -107,14 +119,13 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
 
     @Override
     protected void onActivation(WarlordsEntity wp, ArmorStand totemStand) {
-        HealingTotem tempHealingTotem = new HealingTotem(totemStand, wp);
-        AtomicInteger cooldownCounter = new AtomicInteger();
         float rad = radius.getCalculatedValue();
-        RegularCooldown<HealingTotem> healingTotemCooldown = new RegularCooldown<>(
+        HealingTotemData data = new HealingTotemData(this, wp, totemStand);
+        RegularCooldown<HealingTotemData> healingTotemCooldown = new RegularCooldown<>(
                 name,
                 "TOTEM",
-                HealingTotem.class,
-                tempHealingTotem,
+                HealingTotemData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -123,23 +134,20 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
 
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SPRUCE_SAPLING).play();
 
-                    float healMultiplier = Math.min(1 + (convertToPercent(healingIncrement) * ((cooldownCounter.get() / 20f) + 1)), 3.1f);
                     PlayerFilter.entitiesAround(totemStand, rad, rad, rad)
                                 .aliveTeammatesOf(wp)
                                 .forEach((nearPlayer) -> {
                                     playersHealed++;
-                                    nearPlayer.addHealingInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal * healMultiplier,
-                                            maxDamageHeal * healMultiplier,
-                                            critChance,
-                                            critMultiplier
+                                    nearPlayer.addInstance(InstanceBuilder
+                                            .healing()
+                                            .ability(this)
+                                            .source(wp)
+                                            .value(healingValues.totemHealing)
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                        tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                        data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                                     });
                                 });
-                    if (tempHealingTotem.getAmountHealed() >= 20000) {
+                    if (data.amountHealed >= 20000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.JUNGLE_HEALING);
                     }
                 },
@@ -154,7 +162,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                     }
 
                     if (ticksElapsed % 20 == 0) {
-                        cooldownCounter.set(ticksElapsed);
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveMasterUpgrade ? 0.4f : 0.9f);
 
                         totemStand.getLocation().getWorld().spawnParticle(
@@ -175,10 +182,9 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                         for (int i = 0; i < 1; i++) {
                             for (int j = 0; j < 12; j++) {
                                 double angle = j / 10D * Math.PI * 2;
-                                double width = (double) rad;
-                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setX(totemLoc.getX() + Math.sin(angle) * rad);
                                 particleLoc.setY(totemLoc.getY() + i / 2D);
-                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
+                                particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * rad);
 
                                 particleLoc.getWorld().spawnParticle(
                                         Particle.FIREWORKS_SPARK,
@@ -204,20 +210,21 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                         circle.playEffects();
 
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
-                        float healMultiplier = 1 + (convertToPercent(healingIncrement) * (ticksElapsed / 20f));
+                        int secondsElapsed = ticksElapsed / 20;
+                        float healMultiplier = (float) Math.pow((1 - healingIncrement / 100f), secondsElapsed);
                         PlayerFilter.entitiesAround(totemStand, rad, rad, rad)
                                     .aliveTeammatesOf(wp)
                                     .forEach(teammate -> {
                                         playersHealed++;
-                                        teammate.addHealingInstance(
-                                                wp,
-                                                name,
-                                                minDamageHeal * healMultiplier,
-                                                maxDamageHeal * healMultiplier,
-                                                critChance,
-                                                critMultiplier
+                                        teammate.addInstance(InstanceBuilder
+                                                .healing()
+                                                .ability(this)
+                                                .source(wp)
+                                                .min(healingValues.totemHealing.getMinValue() * healMultiplier)
+                                                .max(healingValues.totemHealing.getMaxValue() * healMultiplier)
+                                                .crit(healingValues.totemHealing)
                                         ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                            tempHealingTotem.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                            data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                                         });
                                     });
 
@@ -234,8 +241,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                             enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                     "Totem Crippling",
                                                     "CRIP",
-                                                    HealingTotem.class,
-                                                    tempHealingTotem,
+                                                    HealingTotemData.class,
+                                                    data,
                                                     wp,
                                                     CooldownTypes.DEBUFF,
                                                     cooldownManager -> {
@@ -254,43 +261,45 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
         );
         wp.getCooldownManager().addCooldown(healingTotemCooldown);
 
-        addSecondaryAbility(
-                1,
-                () -> {
-                    Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
-                    new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING).play();
+        if (inPve) {
+            addSecondaryAbility(
+                    1,
+                    () -> {
+                        Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
+                        new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING).play();
 
-                    PlayerFilter.entitiesAround(totemStand.getLocation(), rad, rad, rad)
-                                .aliveEnemiesOf(wp)
-                                .forEach((p) -> {
-                                    playersCrippled++;
-                                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                            .append(Component.text(" Your Healing Totem has crippled ", NamedTextColor.GRAY))
-                                            .append(Component.text(p.getName(), NamedTextColor.YELLOW))
-                                            .append(Component.text("!", NamedTextColor.GRAY))
-                                    );
+                        PlayerFilter.entitiesAround(totemStand.getLocation(), rad, rad, rad)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach((p) -> {
+                                        playersCrippled++;
+                                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                                .append(Component.text(" Your Healing Totem has crippled ", NamedTextColor.GRAY))
+                                                .append(Component.text(p.getName(), NamedTextColor.YELLOW))
+                                                .append(Component.text("!", NamedTextColor.GRAY))
+                                        );
 
-                                    p.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                            "Totem Crippling",
-                                            "CRIP",
-                                            HealingTotem.class,
-                                            tempHealingTotem,
-                                            wp,
-                                            CooldownTypes.DEBUFF,
-                                            cooldownManager -> {
-                                            },
-                                            crippleDuration * 20
-                                    ) {
-                                        @Override
-                                        public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                            return currentDamageValue * .75f;
-                                        }
+                                        p.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                "Totem Crippling",
+                                                "CRIP",
+                                                HealingTotemData.class,
+                                                data,
+                                                wp,
+                                                CooldownTypes.DEBUFF,
+                                                cooldownManager -> {
+                                                },
+                                                crippleDuration * 20
+                                        ) {
+                                            @Override
+                                            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                return currentDamageValue * .75f;
+                                            }
+                                        });
                                     });
-                                });
-                },
-                false,
-                secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown) || wp.isDead()
-        );
+                    },
+                    false,
+                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingTotemCooldown) || wp.isDead()
+            );
+        }
 
         if (pveMasterUpgrade2) {
             PlayerFilter.playingGame(wp.getGame())
@@ -301,8 +310,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                             warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     earthlivingWeapon.getName(),
                                     null,
-                                    EarthlivingWeapon.class,
-                                    earthlivingWeapon,
+                                    EarthlivingWeapon.Data.class,
+                                    new EarthlivingWeapon.Data(),
                                     wp,
                                     CooldownTypes.ABILITY,
                                     cooldownManager -> {
@@ -310,7 +319,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                     tickDuration,
                                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                                         if (ticksElapsed % 4 == 0) {
-                                            if (!tempHealingTotem.playerInsideTotem(warlordsEntity, rad)) {
+                                            if (data.playerOutsideTotem(warlordsEntity, rad)) {
                                                 return;
                                             }
                                             EffectUtils.displayParticle(
@@ -326,88 +335,23 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
                                     })
                             ) {
 
-                                private float procChance = 40;
-                                private boolean firstProc = true;
-
                                 @Override
                                 public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                                    if (!event.getAbility().isEmpty()) {
+                                    if (!event.getCause().isEmpty()) {
                                         return;
                                     }
-                                    if (!tempHealingTotem.playerInsideTotem(warlordsEntity, rad)) {
+                                    if (data.playerOutsideTotem(warlordsEntity, rad)) {
                                         return;
                                     }
                                     WarlordsEntity victim = event.getWarlordsEntity();
-                                    WarlordsEntity attacker = event.getAttacker();
+                                    WarlordsEntity attacker = event.getSource();
 
-                                    double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
-                                    if (firstProc) {
-                                        firstProc = false;
-                                        earthlivingActivate = 0;
-                                    }
-                                    if (!(earthlivingActivate < procChance)) {
-                                        return;
-                                    }
-
-                                    new GameRunnable(victim.getGame()) {
-                                        final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
-                                                                warlordsPlayer.getWeapon().getMeleeDamageMin() : 132;
-                                        final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
-                                                                warlordsPlayer.getWeapon().getMeleeDamageMax() : 179;
-                                        int counter = 0;
-
-                                        @Override
-                                        public void run() {
-                                            Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
-
-                                            attacker.addHealingInstance(
-                                                    attacker,
-                                                    earthlivingWeapon.getName(),
-                                                    minDamage,
-                                                    maxDamage,
-                                                    earthlivingWeapon.getCritChance(),
-                                                    earthlivingWeapon.getCritMultiplier()
-                                            );
-
-                                            for (WarlordsEntity nearPlayer : PlayerFilter
-                                                    .entitiesAround(attacker, 6, 6, 6)
-                                                    .aliveTeammatesOfExcludingSelf(attacker)
-                                                    .limit(earthlivingWeapon.getMaxAllies())
-                                            ) {
-                                                playersHealed++;
-                                                nearPlayer.addHealingInstance(
-                                                        attacker,
-                                                        earthlivingWeapon.getName(),
-                                                        minDamage * convertToPercent(earthlivingWeapon.getWeaponDamage()),
-                                                        maxDamage * convertToPercent(earthlivingWeapon.getWeaponDamage()),
-                                                        earthlivingWeapon.getCritChance(),
-                                                        earthlivingWeapon.getCritMultiplier()
-                                                );
-                                            }
-
-                                            counter++;
-                                            if (counter == earthlivingWeapon.getMaxHits()) {
-                                                this.cancel();
-                                            }
-                                        }
-                                    }.runTaskTimer(3, 8);
+                                    earthlivingWeapon.activateEarthliving(victim, attacker, cooldownObject);
                                 }
                             });
                         });
 
         }
-    }
-
-    public void addAmountHealed(float amount) {
-        amountHealed += amount;
-    }
-
-    public float getAmountHealed() {
-        return amountHealed;
-    }
-
-    private boolean playerInsideTotem(WarlordsEntity warlordsEntity, float radius) {
-        return warlordsEntity.getLocation().distanceSquared(totem.getLocation()) <= radius * radius;
     }
 
     @Override
@@ -420,19 +364,11 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
         this.tickDuration = tickDuration;
     }
 
-    public int getCrippleDuration() {
-        return crippleDuration;
-    }
-
-    public void setCrippleDuration(int crippleDuration) {
-        this.crippleDuration = crippleDuration;
-    }
-
-    public int getHealingIncrement() {
+    public float getHealingIncrement() {
         return healingIncrement;
     }
 
-    public void setHealingIncrement(int healingIncrement) {
+    public void setHealingIncrement(float healingIncrement) {
         this.healingIncrement = healingIncrement;
     }
 
@@ -442,8 +378,34 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox {
     }
 
     @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        radius.tick();
-        super.runEveryTick(warlordsEntity);
+    public HealingValues getHealValues() {
+        return healingValues;
     }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private final Value.RangedValueCritable totemHealing = new Value.RangedValueCritable(621, 728, 25, 175);
+        private final List<Value> values = List.of(totemHealing);
+
+        public Value.RangedValueCritable getTotemHealing() {
+            return totemHealing;
+        }
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+    }
+
+    public static class HealingTotemData extends TotemData<HealingTotem> {
+
+        private float amountHealed = 0;
+
+        public HealingTotemData(HealingTotem totem, WarlordsEntity owner, ArmorStand armorStand) {
+            super(totem, owner, armorStand);
+        }
+
+    }
+
 }

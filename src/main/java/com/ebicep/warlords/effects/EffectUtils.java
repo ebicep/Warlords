@@ -17,6 +17,7 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -210,6 +211,64 @@ public class EffectUtils {
     }
 
     /**
+     * Plays a circular effect around a location
+     *
+     * @param particle          particle effect
+     * @param location          center of circle
+     * @param circleRadius      radius of the circle
+     * @param amountOfParticles amount of particles
+     * @param xOffset           x offset
+     * @param yOffset           y offset
+     * @param zOffset           z offset
+     * @param speed             speed of the particles
+     */
+    public static void playCircularEffectAround(
+            @Nullable Player player,
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles,
+            double xOffset,
+            double yOffset,
+            double zOffset,
+            double speed
+    ) {
+        Location loc = location.clone();
+        for (int i = 0; i < amountOfParticles; i++) {
+            double angle = (double) i / amountOfParticles * Math.PI * 2;
+            displayParticle(
+                    player,
+                    particle,
+                    loc.clone().add(Math.sin(angle) * circleRadius, 0, Math.cos(angle) * circleRadius),
+                    1,
+                    xOffset,
+                    yOffset,
+                    zOffset,
+                    speed
+            );
+        }
+    }
+
+    public static void playCircularEffectAround(
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles
+    ) {
+        playCircularEffectAround(null, particle, location, circleRadius, amountOfParticles);
+    }
+
+    public static void playCircularEffectAround(
+            @Nullable Player player,
+            Particle particle,
+            Location location,
+            double circleRadius,
+            int amountOfParticles
+    ) {
+        playCircularEffectAround(player, particle, location, circleRadius, amountOfParticles, 0, 0, 0, 0);
+    }
+
+    /**
      * @param loc        what location should the star be around.
      * @param starRadius is how big the star should be.
      * @param effect     which particle effect should be displayed.
@@ -301,22 +360,42 @@ public class EffectUtils {
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, Particle effect) {
-        playParticleLinkAnimation(to, from, effect, 1);
+        playParticleLinkAnimation(to, from, effect, 1, -1);
     }
 
-    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset) {
-        playParticleLinkAnimation(to, from, effect, yOffset, .5);
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset, int period) {
+        playParticleLinkAnimation(to, from, effect, yOffset, .5, period);
     }
 
-    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset, double forwardAmount) {
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, double yOffset, double forwardAmount, int period) {
         to = to.clone().add(0, yOffset, 0);
         from = from.clone().add(0, yOffset, 0);
-        LocationBuilder lineLocation = new LocationBuilder(to)
-                .faceTowards(from);
-        for (int i = 0; i < Math.floor(to.distance(from)) / forwardAmount; i++) {
-            displayParticle(effect, lineLocation, 1);
-            lineLocation.forward(forwardAmount);
+        LocationBuilder lineLocation = new LocationBuilder(to).faceTowards(from);
+        double maxI = Math.floor(to.distance(from));
+        if (period == -1) {
+            for (int i = 0; i < maxI / forwardAmount; i++) {
+                displayParticle(effect, lineLocation, 1);
+                lineLocation.forward(forwardAmount);
+            }
+        } else {
+            new BukkitRunnable() {
+                int i = 0;
+
+                @Override
+                public void run() {
+                    if (i >= maxI / forwardAmount) {
+                        this.cancel();
+                    }
+                    displayParticle(effect, lineLocation, 1);
+                    lineLocation.forward(forwardAmount);
+                    i++;
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, period);
         }
+    }
+
+    public static void playParticleLinkAnimation(Location to, Location from, Particle effect, int period) {
+        playParticleLinkAnimation(to, from, effect, 1, period);
     }
 
     public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount) {
@@ -428,6 +507,21 @@ public class EffectUtils {
             int delayBetweenParticles,
             int amountOfSwirls
     ) {
+        playCircularEffectAround(null, game, location, effect, particleCount, radius, yAxisElevation, interval, delayBetweenParticles, amountOfSwirls);
+    }
+
+    public static void playCircularEffectAround(
+            @Nullable Player player,
+            Game game,
+            Location location,
+            Particle effect,
+            int particleCount,
+            double radius,
+            double yAxisElevation,
+            int interval,
+            int delayBetweenParticles,
+            int amountOfSwirls
+    ) {
         Location loc = location.clone();
         new GameRunnable(game) {
             double t = 0;
@@ -440,7 +534,7 @@ public class EffectUtils {
                 double y = yAxisElevation * t;
                 double z = radius * sin(t);
                 loc.add(x, y, z);
-                loc.getWorld().spawnParticle(effect, loc, particleCount, 0, 0, 0, 0, null, true);
+                displayParticle(player, effect, loc, particleCount, 0, 0, 0, 0);
                 loc.subtract(x, y, z);
 
                 if (t > Math.PI * amountOfSwirls) {
@@ -597,7 +691,24 @@ public class EffectUtils {
             double offsetZ,
             double speed
     ) {
-        loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+        displayParticle(null, particle, loc, count, offsetX, offsetY, offsetZ, speed);
+    }
+
+    public static void displayParticle(
+            @Nullable Player player,
+            Particle particle,
+            Location loc,
+            int count,
+            double offsetX,
+            double offsetY,
+            double offsetZ,
+            double speed
+    ) {
+        if (player == null) {
+            loc.getWorld().spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed, null, true);
+        } else {
+            player.spawnParticle(particle, loc, count, offsetX, offsetY, offsetZ, speed);
+        }
     }
 
     /**
