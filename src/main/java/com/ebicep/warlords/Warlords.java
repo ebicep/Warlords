@@ -11,6 +11,7 @@ import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
+import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
@@ -302,6 +303,11 @@ public class Warlords extends JavaPlugin {
         }
         try {
             NPCManager.destroyNPCs();
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
+        try {
+            StreamChaptersCommand.PLAYER_TIME_START.forEach((uuid, instant) -> StreamChaptersCommand.print(uuid));
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
