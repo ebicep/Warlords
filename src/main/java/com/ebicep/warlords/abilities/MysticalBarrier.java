@@ -265,6 +265,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         this.runeTimerIncrease = runeTimerIncrease;
     }
 
+    public int getShieldBase() { return shieldBase; }
+
+    public void setShieldBase(int shieldBase) { this.shieldBase = shieldBase; }
+
     public int getShieldMaxHealth() {
         return shieldMaxHealth;
     }
