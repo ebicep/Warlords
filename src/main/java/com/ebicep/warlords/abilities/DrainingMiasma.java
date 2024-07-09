@@ -37,7 +37,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     public int playersHit = 0;
     protected int numberOfLeechProcd = 0;
     private final DamageValues damageValues = new DamageValues();
-    private int maxHealthDamage = 4;
+    private int maxHealthDamage = 3;
     private int tickDuration = 100;
     private int leechDuration = 5;
     private int radius = 8;
