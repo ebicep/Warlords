@@ -316,7 +316,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(268.8f, 345.45f, 20, 175);
+        private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(242, 311, 20, 175);
         private final Value.RangedValue shatterBoltDamage = new Value.RangedValue(409, 554);
         private final List<Value> values = List.of(boltDamage, shatterBoltDamage);
 
