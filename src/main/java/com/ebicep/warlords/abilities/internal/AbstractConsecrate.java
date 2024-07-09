@@ -40,7 +40,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
             float hitBox,
             int duration
     ) {
-        super("Consecrate", 7.83f, energyCost);
+        super("Consecrate", 8, energyCost);
         this.strikeDamageBoost = strikeDamageBoost;
         this.hitBox = new FloatModifiable(hitBox);
         this.tickDuration = duration * 20;

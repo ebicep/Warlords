@@ -50,7 +50,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     }
 
     public HealingTotem(ArmorStand totem, WarlordsEntity owner) {
-        super("Healing Totem", 67.86f, 60, totem, owner);
+        super("Healing Totem", 68, 60, totem, owner);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     private int orbTickMultiplier = 1;
 
     public OrbsOfLife() {
-        super("Orbs of Life", 19.57f, 20);
+        super("Orbs of Life", 19.5f, 20);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     private float markBonusHealing = 10;
 
     public HolyRadianceProtector() {
-        super("Holy Radiance", 9.87f, 60, 6);
+        super("Holy Radiance", 10, 60, 6);
     }
 
     @Override

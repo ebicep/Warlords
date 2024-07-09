@@ -49,7 +49,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     private int debtTickDuration = 120;
 
     public DeathsDebt() {
-        super("Death's Debt", 60f + 10.49f, 20);
+        super("Death's Debt", 60f + 10.5f, 20);
     }
 
     @Override

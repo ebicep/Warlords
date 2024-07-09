@@ -36,7 +36,7 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
     private double projectileWidth = 0.24D;
 
     public FlameBurst() {
-        super("Flame Burst", 9.4f, 60, 1.65, 200, false);
+        super("Flame Burst", 9.5f, 60, 1.65, 200, false);
     }
 
     public FlameBurst(float cooldown) {
