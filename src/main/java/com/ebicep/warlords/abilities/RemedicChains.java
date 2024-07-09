@@ -185,7 +185,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                             numberOfBrokenLinks++;
 
                             float totalHealingMultiplier = ((healingMultiplier / 100f) * (ticksElapsed / 20f));
-                            wp.addInstance(InstanceBuilder
+                            linked.addInstance(InstanceBuilder
                                     .healing()
                                     .ability(this)
                                     .source(wp)
