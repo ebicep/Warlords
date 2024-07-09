@@ -35,7 +35,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private float meleeDamageReduction = 80;
     private int radius = 12;
     private int shieldBase = 400;
-    private int shieldIncrease = 80;
+    private int shieldIncrease = 100;
     private int shieldMaxHealth = 1200;
     private int reactivateTickDuration = 100;
 
