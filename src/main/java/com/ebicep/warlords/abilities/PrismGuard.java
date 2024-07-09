@@ -34,7 +34,6 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
@@ -43,13 +42,13 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     public int timesProjectilesReduced = 0;
     public int timesOtherReduced = 0;
 
-    protected float damageReduced = 0;
-
     private final int damageReduction = 3;
     private final HealingValues healingValues = new HealingValues();
     private int bubbleRadius = 4;
     private int tickDuration = 100;
     private int projectileDamageReduction = 40;
+    private int maxHealing = 1200;
+    private int maxDamageReduction = 21;
 
     public PrismGuard() {
         super("Prism Guard", 26, 40);
@@ -80,9 +79,9 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                .append(Component.text(" damage reduction for "))
                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text(" seconds based on how many hits you took while Prism Guard was active; up to a maximum of "))
-                               .append(Component.text(1200, NamedTextColor.YELLOW))
+                               .append(Component.text(maxHealing, NamedTextColor.YELLOW))
                                .append(Component.text(" health and "))
-                               .append(Component.text("21%", NamedTextColor.YELLOW))
+                               .append(Component.text(maxDamageReduction + "%", NamedTextColor.YELLOW))
                                .append(Component.text(" damage reduction."))
         ;
 
@@ -118,18 +117,17 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
         Set<WarlordsEntity> isInsideBubble = new HashSet<>();
         Set<WarlordsEntity> playersHit = new HashSet<>();
-        AtomicInteger hits = new AtomicInteger(0);
-        PrismGuard tempPrismGuard = new PrismGuard();
-        wp.getCooldownManager().removeCooldown(PrismGuard.class, false);
+        PrismGuardData data = new PrismGuardData();
+        wp.getCooldownManager().removeCooldown(PrismGuardData.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Prism Guard",
                 "GUARD",
-                PrismGuard.class,
-                tempPrismGuard,
+                PrismGuardData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (tempPrismGuard.getDamageReduced() >= 8000) {
+                    if (data.totalDamageReduced >= 8000) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.VENERED_REFRACTION);
                     }
                     if (wp.isDead()) {
@@ -151,23 +149,19 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             .entitiesAround(wp, bubbleRadius + 1, bubbleRadius + 1, bubbleRadius + 1)
                             .aliveTeammatesOf(wp)
                     ) {
-                        float missingHealthHealing = (entity.getMaxHealth() - entity.getCurrentHealth()) * (hits.get() * healingValues.bubbleMissingHealthHealing.getMultiplicativePercent());
+                        float missingHealthHealing = entity.getMaxHealth() - entity.getCurrentHealth() * (data.hitsTaken * healingValues.bubbleMissingHealthHealing.getMultiplicativePercent());
                         entity.addInstance(InstanceBuilder
                                 .healing()
                                 .ability(this)
                                 .source(wp)
-                                .value(Math.min(1200, baseHealing + missingHealthHealing))
+                                .value(Math.min(maxHealing, baseHealing + missingHealthHealing))
                         );
 
-
-                        if (hits.get() > 7) {
-                            hits.set(7);
-                        }
-
-                        if (hits.get() != 0) {
+                        if (data.hitsTaken != 0) {
                             String s = wp == entity ? "Your" : wp.getName() + "'s";
+                            int damageReduction = Math.min(maxDamageReduction, data.hitsTaken * PrismGuard.this.damageReduction);
                             entity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + s + " Prism Guard granted you ", NamedTextColor.GRAY))
-                                                                              .append(Component.text(hits.get() * damageReduction + "%", NamedTextColor.YELLOW))
+                                                                              .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
                                                                               .append(Component.text(" damage reduction for ", NamedTextColor.GRAY))
                                                                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
                                                                               .append(Component.text(" seconds!", NamedTextColor.GRAY))
@@ -175,8 +169,8 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             entity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Prism Guard",
                                     "GUARD RES",
-                                    PrismGuard.class,
-                                    tempPrismGuard,
+                                    PrismGuardData.class,
+                                    data,
                                     wp,
                                     CooldownTypes.ABILITY,
                                     cm -> {
@@ -185,9 +179,8 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             ) {
                                 @Override
                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    float afterReduction;
-                                    afterReduction = currentDamageValue * (100 - (hits.get() * 3)) / 100f;
-                                    tempPrismGuard.addDamageReduced(currentDamageValue - afterReduction);
+                                    float afterReduction = currentDamageValue * convertToDivisionDecimal(damageReduction);
+                                    data.totalDamageReduced += currentDamageValue - afterReduction;
                                     return afterReduction;
                                 }
                             });
@@ -223,12 +216,12 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                       .callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, Set.of(bubblePlayer)));
                             }
                             playersHit.add(bubblePlayer);
-                            bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class, false);
+                            bubblePlayer.getCooldownManager().removeCooldownByObject(data);
                             bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     "Prism Guard",
                                     "GUARD",
-                                    PrismGuard.class,
-                                    tempPrismGuard,
+                                    PrismGuardData.class,
+                                    data,
                                     wp,
                                     CooldownTypes.ABILITY,
                                     cooldownManager -> {
@@ -248,7 +241,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                     } else {
                                         afterReduction = currentDamageValue;
                                     }
-                                    tempPrismGuard.addDamageReduced(currentDamageValue - afterReduction);
+                                    data.totalDamageReduced += currentDamageValue - afterReduction;
                                     return afterReduction;
                                 }
                             });
@@ -273,7 +266,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 int totalReduction = 0;
-                hits.getAndIncrement();
                 if (Utils.isProjectile(event.getCause())) {
                     if (!isInsideBubble.contains(event.getSource())) {
                         timesProjectilesReduced++;
@@ -284,7 +276,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     totalReduction += 10;
                 }
                 float afterReduction = currentDamageValue * (100 - totalReduction) / 100f;
-                tempPrismGuard.addDamageReduced(currentDamageValue - afterReduction);
+                data.totalDamageReduced += currentDamageValue - afterReduction;
                 return afterReduction;
             }
 
@@ -327,14 +319,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         return new PrismGuardBranch(abilityTree, this);
     }
 
-    public float getDamageReduced() {
-        return damageReduced;
-    }
-
-    public void addDamageReduced(float amount) {
-        damageReduced += amount;
-    }
-
     public int getProjectileDamageReduction() {
         return projectileDamageReduction;
     }
@@ -361,6 +345,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         this.bubbleRadius = bubbleRadius;
     }
 
+    public int getMaxHealing() {
+        return maxHealing;
+    }
+
+    public void setMaxHealing(int maxHealing) {
+        this.maxHealing = maxHealing;
+    }
+
     @Override
     public HealingValues getHealValues() {
         return healingValues;
@@ -384,6 +376,13 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         public List<Value> getValues() {
             return values;
         }
+
+    }
+
+    public static class PrismGuardData {
+
+        private int hitsTaken = 0;
+        private float totalDamageReduced = 0;
 
     }
 }
