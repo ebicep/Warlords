@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -17,6 +18,7 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -142,7 +144,7 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
                 ImpalingStrike.class,
                 new ImpalingStrike(),
                 wp,
-                CooldownTypes.DEBUFF,
+                CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
                 secondDuration * 20
@@ -178,8 +180,13 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
             }
 
             @Override
+            public TextColor customActionBarColor() {
+                return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
+            }
+
+            @Override
             public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("LCH", NamedTextColor.RED),
+                return new PlayerNameData(Component.text("LCH", AbstractCooldown.PSEUDO_DEBUFF_COLOR),
                         we -> we.isEnemy(target) || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER)
                 );
             }
