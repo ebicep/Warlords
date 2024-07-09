@@ -62,7 +62,7 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable slamDamage = new Value.RangedValueCritable(326, 441, 20, 175);
+        private final Value.RangedValueCritable slamDamage = new Value.RangedValueCritable(293, 397, 20, 175);
         private final List<Value> values = List.of(slamDamage);
 
         @Override
