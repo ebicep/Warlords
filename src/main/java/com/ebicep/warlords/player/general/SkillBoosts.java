@@ -56,17 +56,17 @@ public enum SkillBoosts {
     ),
     TIME_WARP_PYROMANCER("Time Warp",
             List.of(
-                    Component.text("Increase the duration of Time Warp by "),
-                    Component.text("3", NamedTextColor.RED),
-                    Component.text(" seconds and reduce the cooldown by "),
-                    Component.text("30%", NamedTextColor.RED),
+                    Component.text("Increase the healing of Time Warp by "),
+                    Component.text("10% ", NamedTextColor.RED),
+                    Component.text("and reduce the cooldown by "),
+                    Component.text("50%", NamedTextColor.RED),
                     Component.text(".")
             ),
             TimeWarpPyromancer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarpPyromancer timeWarp) {
-                    timeWarp.setTickDuration(timeWarp.getTickDuration() + 60);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
+                    timeWarp.setWarpHealPercentage(timeWarp.getWarpHealPercentage() + 10);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
     ),
