@@ -83,6 +83,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
+                                                .source(wp)
                                                 .value(damageValues.consecrateDamage)
                                         ).ifPresent(finalEvent -> {
                                             if (timesReduced.get() < 15) {
