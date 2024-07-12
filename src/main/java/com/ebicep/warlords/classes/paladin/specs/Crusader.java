@@ -8,9 +8,9 @@ public class Crusader extends AbstractPaladin {
     public Crusader() {
         super(
                 "Crusader",
-                7400,
+                6850,
                 305,
-                10,
+                20,
                 new CrusadersStrike(),
                 new ConsecrateCrusader(),
                 new LightInfusionCrusader(),
