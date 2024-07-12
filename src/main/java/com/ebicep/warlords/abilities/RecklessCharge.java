@@ -44,7 +44,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     private int stunTimeInTicks = 10;
 
     public RecklessCharge() {
-        super("Reckless Charge", 9.32f, 60);
+        super("Reckless Charge", 9.5f, 60);
     }
 
     @Override

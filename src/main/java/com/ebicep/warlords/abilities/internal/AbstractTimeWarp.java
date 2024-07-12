@@ -17,7 +17,7 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
     protected int warpHealPercentage = 30; //TODO
 
     public AbstractTimeWarp() {
-        super("Time Warp", 28.19f, 30);
+        super("Time Warp", 28, 30);
     }
 
     @Override

@@ -45,7 +45,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     private int maxTargets = 1;
 
     public Intervene() {
-        super("Intervene", 14.09f, 20);
+        super("Intervene", 14, 20);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private int energyRestore = 160;
 
     public LightningRod() {
-        this(31.32f, 0);
+        this(31.5f, 0);
     }
 
     public LightningRod(float cooldown, float startCooldown) {

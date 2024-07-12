@@ -38,7 +38,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
     private double damageReductionDuration = 4.5;
 
     public SpiritLink() {
-        super("Spirit Link", 8.61f, 40, 20, 10, 2);
+        super("Spirit Link", 8.5f, 40, 20, 10, 2);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private float meleeDamageReduction = 80;
     private int radius = 12;
     private int shieldBase = 400;
-    private int shieldIncrease = 80;
+    private int shieldIncrease = 100;
     private int shieldMaxHealth = 1200;
     private int reactivateTickDuration = 100;
 
@@ -264,6 +264,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     public void setRuneTimerIncrease(float runeTimerIncrease) {
         this.runeTimerIncrease = runeTimerIncrease;
     }
+
+    public int getShieldBase() { return shieldBase; }
+
+    public void setShieldBase(int shieldBase) { this.shieldBase = shieldBase; }
 
     public int getShieldMaxHealth() {
         return shieldMaxHealth;

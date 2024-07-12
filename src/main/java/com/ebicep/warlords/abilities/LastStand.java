@@ -47,7 +47,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     private int teammateDamageReductionPercent = 35;
 
     public LastStand() {
-        super("Last Stand", 56.38f, 40);
+        super("Last Stand", 56.5f, 40);
     }
 
     public LastStand(float cooldown, float startCooldown) {

@@ -40,11 +40,11 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
     private int playersHit = 0;
 
     public CapacitorTotem() {
-        super("Capacitor Totem", 62.64f, 20);
+        super("Capacitor Totem", 63, 20);
     }
 
     public CapacitorTotem(ArmorStand totem, WarlordsEntity owner) {
-        super("Capacitor Totem", 62.64f, 20, totem, owner);
+        super("Capacitor Totem", 63, 20, totem, owner);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     private double velocity = 1.15;
 
     public Boulder() {
-        this(7.05f, 0);
+        this(7, 0);
     }
 
     public Boulder(float cooldown, float startCooldown) {

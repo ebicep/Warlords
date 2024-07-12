@@ -21,7 +21,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
     }
 
     public LightInfusionCrusader() {
-        super(15.66f);
+        super(15.5f);
     }
 
     @Override

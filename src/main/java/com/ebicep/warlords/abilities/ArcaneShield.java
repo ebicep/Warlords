@@ -38,7 +38,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     private float shieldHealth = 0;
 
     public ArcaneShield() {
-        super("Arcane Shield", 31.32f, 40);
+        super("Arcane Shield", 31, 40);
     }
 
     public void addTimesBroken() {

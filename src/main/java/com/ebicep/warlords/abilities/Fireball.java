@@ -245,7 +245,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable fireballDamage = new Value.RangedValueCritable(334.4f, 433.4f, 20, 175);
+        private final Value.RangedValueCritable fireballDamage = new Value.RangedValueCritable(334, 433, 20, 175);
         private final Value.RangedValue igniteDamage = new Value.RangedValue(450, 650);
         private final List<Value> values = List.of(fireballDamage, igniteDamage);
 

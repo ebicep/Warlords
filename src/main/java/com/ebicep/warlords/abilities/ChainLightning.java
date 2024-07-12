@@ -81,7 +81,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     private int damageReductionTickDuration = 90;
 
     public ChainLightning() {
-        super("Chain Lightning", 9.4f, 40, 20, 10, 3);
+        super("Chain Lightning", 9.5f, 40, 20, 10, 3);
     }
 
     public ChainLightning(float cooldown, float startCooldown) {

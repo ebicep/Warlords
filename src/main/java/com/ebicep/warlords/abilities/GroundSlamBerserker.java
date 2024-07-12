@@ -19,7 +19,7 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     private final DamageValues damageValues = new DamageValues();
 
     public GroundSlamBerserker() {
-        this(9.32f, 0);
+        this(9.5f, 0);
     }
 
     public GroundSlamBerserker(float cooldown, float startCooldown) {
@@ -66,7 +66,7 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable slamDamage = new Value.RangedValueCritable(448.8f, 606.1f, 20, 175);
+        private final Value.RangedValueCritable slamDamage = new Value.RangedValueCritable(449, 606, 20, 175);
         private final List<Value> values = List.of(slamDamage);
 
         public Value.RangedValueCritable getSlamDamage() {

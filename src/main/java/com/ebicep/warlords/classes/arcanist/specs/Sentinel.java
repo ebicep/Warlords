@@ -12,7 +12,7 @@ public class Sentinel extends AbstractArcanist {
                 305,
                 20,
                 14,
-                0,
+                10,
                 new FortifyingHex(),
                 new GuardianBeam(),
                 new EnergySeerSentinel(),

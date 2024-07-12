@@ -25,7 +25,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
     }
 
     public LightInfusionProtector() {
-        super(15.66f);
+        super(15.5f);
     }
 
     @Override
