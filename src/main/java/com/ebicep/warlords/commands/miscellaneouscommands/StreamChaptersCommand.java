@@ -83,7 +83,7 @@ public class StreamChaptersCommand extends BaseCommand {
     @Subcommand("startoffset")
     @Description("Mark start of stream with offset (how long ago stream started)")
     public void startOffset(Player player, Integer hour, Integer minute, Integer second) {
-        PLAYER_TIME_START.put(player.getUniqueId(), Instant.now().minus(hour, ChronoUnit.HOURS).minus(minute, ChronoUnit.MINUTES).minus(second, ChronoUnit.SECONDS;
+        PLAYER_TIME_START.put(player.getUniqueId(), Instant.now().minus(hour, ChronoUnit.HOURS).minus(minute, ChronoUnit.MINUTES).minus(second, ChronoUnit.SECONDS));
         GAME_TIMES.put(player.getUniqueId(), new ArrayList<>());
         player.sendMessage(Component.text("Began recording game time", NamedTextColor.GREEN));
     }
