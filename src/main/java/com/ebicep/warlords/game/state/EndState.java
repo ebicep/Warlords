@@ -373,19 +373,16 @@ public class EndState implements State, TimerDebugAble {
         TextComponent.Builder leaderboardPlayersDamage = Component.empty().toBuilder();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
+            int levelForSpec = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
             leaderboardPlayersDamage.append(
                     Component.text(we.getName(), NamedTextColor.AQUA)
                              .append(Component.text(": ", NamedTextColor.GRAY))
                              .append(Component.text(NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getDamage()), NamedTextColor.GOLD))
                              .hoverEvent(HoverEvent.showText(
                                      Component.text("Lv", NamedTextColor.DARK_GRAY)
-                                              .append(Component.text(ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " ",
-                                                      NamedTextColor.GRAY
-                                              ))
+                                              .append(Component.text((levelForSpec < 10 ? "0" : "") + levelForSpec + " ", NamedTextColor.GRAY))
                                               .append(Component.text(we.getSpec().getClassName(), NamedTextColor.GOLD))
-                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")",
-                                                      NamedTextColor.GREEN
-                                              ))
+                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")", NamedTextColor.GREEN))
 
                              )));
 
@@ -414,19 +411,16 @@ public class EndState implements State, TimerDebugAble {
         TextComponent.Builder leaderboardPlayersHealing = Component.empty().toBuilder();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsEntity we = players.get(i);
+            int levelForSpec = ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass());
             leaderboardPlayersHealing.append(
                     Component.text(we.getName(), NamedTextColor.AQUA)
                              .append(Component.text(": ", NamedTextColor.GRAY))
                              .append(Component.text(NumberFormat.getSimplifiedNumber(we.getMinuteStats().total().getHealing()), NamedTextColor.GOLD))
                              .hoverEvent(HoverEvent.showText(
                                      Component.text("Lv", NamedTextColor.DARK_GRAY)
-                                              .append(Component.text(ExperienceManager.getLevelForSpec(we.getUuid(), we.getSpecClass()) + " ",
-                                                      NamedTextColor.GRAY
-                                              ))
+                                              .append(Component.text((levelForSpec < 10 ? "0" : "") + levelForSpec + " ", NamedTextColor.GRAY))
                                               .append(Component.text(we.getSpec().getClassName(), NamedTextColor.GOLD))
-                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")",
-                                                      NamedTextColor.GREEN
-                                              ))
+                                              .append(Component.text(" (" + we.getSpec().getClass().getSimpleName() + ")", NamedTextColor.GREEN))
                              )));
 
             if (i != players.size() - 1 && i != 2) {
@@ -715,42 +709,6 @@ public class EndState implements State, TimerDebugAble {
         }
     }
 
-    private static TextComponent getPouchSummary(Map<Spendable, Long> syntheticPouch) {
-        TextComponent.Builder pouch = Component.empty().toBuilder();
-        List<Map.Entry<Spendable, Long>> toSort = new ArrayList<>(syntheticPouch.entrySet());
-        toSort.sort((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()));
-        for (int i = 0; i < toSort.size(); i++) {
-            Map.Entry<Spendable, Long> entry = toSort.get(i);
-            pouch.append(Component.text(" - ", NamedTextColor.GRAY)
-                                  .append(entry.getKey().getCostColoredName(entry.getValue())));
-            if (i != toSort.size() - 1) {
-                pouch.append(Component.newline());
-            }
-        }
-        return pouch.build();
-    }
-
-
-//    private void showQuestSummary(PveOption pveOption, List<WarlordsPlayer> players) {
-//        for (WarlordsPlayer wp : players) {
-//            Player player = Bukkit.getPlayer(wp.getUuid());
-//            if (player == null) {
-//                continue;
-//            }
-//            List<Quests> quests = Quests.getQuestsFromGameStats(wp, pveOption, false);
-//            if (!quests.isEmpty()) {
-//                player.sendMessage("");
-//                ChatUtils.sendCenteredMessage(player, Component.text("✚ QUESTS SUMMARY ✚", NamedTextColor.AQUA, TextDecoration.BOLD));
-//            }
-//            for (Quests quest : quests) {
-//                ChatUtils.sendCenteredMessage(player,
-//                        Component.text(quest.name, NamedTextColor.GREEN)
-//                                 .hoverEvent(HoverEvent.showText(Component.text(quest.description, NamedTextColor.GREEN)))
-//                );
-//            }
-//        }
-//    }
-
     private void showEventStats(List<WarlordsPlayer> players) {
         sendGlobalMessage(game, Component.empty(), false);
         sendGlobalMessage(game, Component.text("✚ EVENT SUMMARY ✚", NamedTextColor.AQUA, TextDecoration.BOLD), true);
@@ -783,8 +741,44 @@ public class EndState implements State, TimerDebugAble {
         sendGlobalMessage(game, Component.empty(), false);
     }
 
+
+//    private void showQuestSummary(PveOption pveOption, List<WarlordsPlayer> players) {
+//        for (WarlordsPlayer wp : players) {
+//            Player player = Bukkit.getPlayer(wp.getUuid());
+//            if (player == null) {
+//                continue;
+//            }
+//            List<Quests> quests = Quests.getQuestsFromGameStats(wp, pveOption, false);
+//            if (!quests.isEmpty()) {
+//                player.sendMessage("");
+//                ChatUtils.sendCenteredMessage(player, Component.text("✚ QUESTS SUMMARY ✚", NamedTextColor.AQUA, TextDecoration.BOLD));
+//            }
+//            for (Quests quest : quests) {
+//                ChatUtils.sendCenteredMessage(player,
+//                        Component.text(quest.name, NamedTextColor.GREEN)
+//                                 .hoverEvent(HoverEvent.showText(Component.text(quest.description, NamedTextColor.GREEN)))
+//                );
+//            }
+//        }
+//    }
+
     public void sendGlobalEventMessage(Game game, Component component) {
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> ChatUtils.sendCenteredMessage(p, component));
+    }
+
+    private static TextComponent getPouchSummary(Map<Spendable, Long> syntheticPouch) {
+        TextComponent.Builder pouch = Component.empty().toBuilder();
+        List<Map.Entry<Spendable, Long>> toSort = new ArrayList<>(syntheticPouch.entrySet());
+        toSort.sort((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()));
+        for (int i = 0; i < toSort.size(); i++) {
+            Map.Entry<Spendable, Long> entry = toSort.get(i);
+            pouch.append(Component.text(" - ", NamedTextColor.GRAY)
+                                  .append(entry.getKey().getCostColoredName(entry.getValue())));
+            if (i != toSort.size() - 1) {
+                pouch.append(Component.newline());
+            }
+        }
+        return pouch.build();
     }
 
     @Override
