@@ -540,8 +540,8 @@ public abstract class WarlordsEntity {
         if (hasFlag()) {
             ItemStack item = new ItemStack(getTeam() == Team.RED ? Material.RED_BANNER : Material.BLUE_BANNER);
             BannerMeta banner = (BannerMeta) item.getItemMeta();
-            banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
-            banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
+            banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.SKULL));
+            banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_TOP));
             item.setItemMeta(banner);
             player.getInventory().setHelmet(item);
         }

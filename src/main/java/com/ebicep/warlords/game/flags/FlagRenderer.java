@@ -97,8 +97,8 @@ public class FlagRenderer {
                 renderedBlocks.add(block);
                 block.setType(info.getTeam().getColors().banner);
                 org.bukkit.block.Banner banner = (org.bukkit.block.Banner) block.getState();
-                banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
-                banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
+                banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.SKULL));
+                banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_TOP));
                 banner.update();
                 Vector target = this.lastLocation.getLocation().getDirection();
                 Vector toTest = new Vector(0, 0, 0);
@@ -162,8 +162,8 @@ public class FlagRenderer {
                 this.affectedPlayers.add(player);
                 ItemStack item = new ItemStack(info.getTeam().getColors().banner);
                 BannerMeta banner = (BannerMeta) item.getItemMeta();
-                banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
-                banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
+                banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.SKULL));
+                banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_TOP));
                 item.setItemMeta(banner);
                 player.getInventory().setHelmet(item);
                 player.getInventory().setItem(6, new ItemBuilder(Material.BLACK_BANNER, 1).name(Component.text("Drop Flag", NamedTextColor.GREEN)).get());
