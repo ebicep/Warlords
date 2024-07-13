@@ -68,7 +68,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
         info.add(new Pair<>("Players Linked", "" + playersLinked));
-        info.add(new Pair<>("Times Link Broke", "" + numberOfBrokenLinks));
+        info.add(new Pair<>("Times Link Broken", "" + numberOfBrokenLinks));
 
         return info;
     }
