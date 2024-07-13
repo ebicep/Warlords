@@ -363,7 +363,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             } else {
                 getEntity().customName(Component.textOfChildren(
                         Component.text("[", NamedTextColor.DARK_GRAY)
-                                 .append(Component.text(getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                 .append(Component.text(getSpec().getClassNameShort(), getSpecClass().specType.getTextColor()))
                                  .append(Component.text("] ")),
                         getColoredName(),
                         Component.text(" " + Math.round(getCurrentHealth()) + "❤", NamedTextColor.RED)

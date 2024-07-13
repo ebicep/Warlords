@@ -157,7 +157,9 @@ public class PlayingState implements State, TimerDebugAble {
                     String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass()));
                     TextComponent.Builder playerTabName = Component.text()
                                                                    .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text(warlordsPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                                   .append(Component.text(warlordsPlayer.getSpec().getClassNameShort(),
+                                                                           warlordsPlayer.getSpecClass().specType.getTextColor()
+                                                                   ))
                                                                    .append(Component.text("] ", NamedTextColor.DARK_GRAY))
                                                                    .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
                                                                    .append(Component.text(" [", NamedTextColor.DARK_GRAY))
@@ -413,7 +415,7 @@ public class PlayingState implements State, TimerDebugAble {
             if (otherPlayer instanceof WarlordsPlayer) {
                 TextComponent.Builder basePrefix = Component.text()
                                                             .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                            .append(Component.text(otherPlayer.getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                                            .append(Component.text(otherPlayer.getSpec().getClassNameShort(), otherPlayer.getSpecClass().specType.getTextColor()))
                                                             .append(Component.text("] ", NamedTextColor.DARK_GRAY));
                 prefix.append(basePrefix);
             }
