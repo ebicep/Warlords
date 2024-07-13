@@ -234,7 +234,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         if (updateItem && warlordsEntity != null && warlordsEntity.getEntity() instanceof Player player && warlordsEntity.getGame() != null) {
             updateItem = false;
             Integer inventoryIndex = warlordsEntity.getSpec().getInventoryAbilityIndex(this);
-            if (inventoryIndex == null) { // exclude weapon
+            if (inventoryIndex == null || inventoryIndex == -1) { // exclude weapon
                 return;
             }
             if (getCurrentCooldown() > 0) {
