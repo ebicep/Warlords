@@ -268,6 +268,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 int totalReduction = 0;
+                data.hitsTaken++;
                 if (Utils.isProjectile(event.getCause())) {
                     if (!isInsideBubble.contains(event.getSource())) {
                         timesProjectilesReduced++;
