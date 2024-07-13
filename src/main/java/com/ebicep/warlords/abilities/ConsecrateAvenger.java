@@ -83,6 +83,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
+                                                .source(wp)
                                                 .value(damageValues.consecrateDamage)
                                         );
                                     });

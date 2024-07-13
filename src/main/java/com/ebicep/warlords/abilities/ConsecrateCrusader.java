@@ -82,6 +82,7 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
+                                                .source(wp)
                                                 .value(damageValues.consecrateDamage)
                                         );
                                         if (energyGiven.get() < 105) {
