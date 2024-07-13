@@ -43,12 +43,12 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                 "Sentry Beam",
                 "Guardian Beam - Master Upgrade",
                 """
-                        Enemy cooldowns are increased by an additional 3.5s. Additionally, shield health is increased by 25%.
+                        Enemy cooldowns are increased by an additional 3.5s. Additionally, shield health is increased by 100%.
                         """,
                 50000,
                 () -> {
                     ability.setRuneTimerIncrease(ability.getRuneTimerIncrease() + 3.5f);
-                    ability.getShieldPercents().replaceAll(integer -> (int) (integer * 1.25f));
+                    ability.getShieldPercents().replaceAll(integer -> (int) (integer * 2f));
                 }
         );
         masterUpgrade2 = new Upgrade(
