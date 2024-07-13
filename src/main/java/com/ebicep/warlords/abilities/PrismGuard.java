@@ -145,46 +145,48 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     ).playEffects();
 
                     float baseHealing = healingValues.bubbleBaseHealing.getValue();
+                    float additionalHealing = data.hitsTaken * healingValues.bubbleMissingHealthHealing.getMultiplicativePercent();
                     for (WarlordsEntity entity : PlayerFilter
                             .entitiesAround(wp, bubbleRadius + 1, bubbleRadius + 1, bubbleRadius + 1)
                             .aliveTeammatesOf(wp)
                     ) {
-                        float missingHealthHealing = entity.getMaxHealth() - entity.getCurrentHealth() * (data.hitsTaken * healingValues.bubbleMissingHealthHealing.getMultiplicativePercent());
+                        float missingHealth = entity.getMaxHealth() - entity.getCurrentHealth();
                         entity.addInstance(InstanceBuilder
                                 .healing()
                                 .ability(this)
                                 .source(wp)
-                                .value(Math.min(maxHealing, baseHealing + missingHealthHealing))
+                                .value(Math.min(maxHealing, baseHealing + missingHealth * additionalHealing))
                         );
 
-                        if (data.hitsTaken != 0) {
-                            String s = wp == entity ? "Your" : wp.getName() + "'s";
-                            int damageReduction = Math.min(maxDamageReduction, data.hitsTaken * PrismGuard.this.damageReduction);
-                            entity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + s + " Prism Guard granted you ", NamedTextColor.GRAY))
-                                                                              .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
-                                                                              .append(Component.text(" damage reduction for ", NamedTextColor.GRAY))
-                                                                              .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                                                              .append(Component.text(" seconds!", NamedTextColor.GRAY))
-                            );
-                            entity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                    "Prism Guard",
-                                    "GUARD RES",
-                                    PrismGuardData.class,
-                                    data,
-                                    wp,
-                                    CooldownTypes.ABILITY,
-                                    cm -> {
-                                    },
-                                    tickDuration
-                            ) {
-                                @Override
-                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                    float afterReduction = currentDamageValue * convertToDivisionDecimal(damageReduction);
-                                    data.totalDamageReduced += currentDamageValue - afterReduction;
-                                    return afterReduction;
-                                }
-                            });
+                        if (data.hitsTaken == 0) {
+                            continue;
                         }
+                        String s = wp == entity ? "Your" : wp.getName() + "'s";
+                        int damageReduction = Math.min(maxDamageReduction, data.hitsTaken * PrismGuard.this.damageReduction);
+                        entity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + s + " Prism Guard granted you ", NamedTextColor.GRAY))
+                                                                          .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
+                                                                          .append(Component.text(" damage reduction for ", NamedTextColor.GRAY))
+                                                                          .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                                                          .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                        );
+                        entity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                "Prism Guard",
+                                "GUARD RES",
+                                PrismGuardData.class,
+                                data,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cm -> {
+                                },
+                                tickDuration
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                float afterReduction = currentDamageValue * convertToDivisionDecimal(damageReduction);
+                                data.totalDamageReduced += currentDamageValue - afterReduction;
+                                return afterReduction;
+                            }
+                        });
                     }
                 },
                 tickDuration,
