@@ -463,13 +463,13 @@ public enum SkillBoosts {
     GROUND_SLAM_REVENANT("Ground Slam",
             List.of(
                     Component.text("Reduce the cooldown of Ground Slam by "),
-                    Component.text("40%", NamedTextColor.RED),
+                    Component.text("30%", NamedTextColor.RED),
                     Component.text(".")
             ),
             GroundSlamRevenant.class,
             abstractAbility -> {
                 if (abstractAbility instanceof GroundSlamRevenant) {
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
     ),
