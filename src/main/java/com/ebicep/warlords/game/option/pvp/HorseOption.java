@@ -1,7 +1,9 @@
 package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.customentities.nms.CustomHorse;
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerHorseEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -10,6 +12,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import net.citizensnpcs.api.ai.NavigatorParameters;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.trait.trait.Owner;
+import net.citizensnpcs.trait.Controllable;
+import net.citizensnpcs.trait.HorseModifiers;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -17,6 +24,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,6 +38,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class HorseOption implements Option, Listener {
 
@@ -152,27 +161,98 @@ public class HorseOption implements Option, Listener {
 
     public static class WarlordsHorse {
 
+        private static final ItemStack SADDLE = new ItemStack(Material.SADDLE);
         private final int cooldown = 15;
         private final float speed = .32f;
 
         public void spawn(Player player) {
-            CustomHorse customHorse = new CustomHorse(player.getLocation());
-            Horse horse = (Horse) customHorse.getBukkitEntity();
-            horse.setTamed(true);
-            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-            horse.setOwner(player);
-            horse.setJumpStrength(0);
-            horse.setColor(Horse.Color.BROWN);
-            horse.setStyle(Horse.Style.NONE);
-            horse.setAdult();
-            horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
-            ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);
-            horse.addPassenger(player); // not sure if including this in function above will cause issues
+            UUID uuid = player.getUniqueId();
+            if (MountCommand.PLAYER_MOUNT_TYPE.containsKey(uuid)) {
+                EntityType entityType = MountCommand.PLAYER_MOUNT_TYPE.get(uuid);
+                NPC npc = NPCManager.NPC_REGISTRY.createNPC(entityType, "MOUNT");
+                npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
+                npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) n -> 0f);
+                npc.data().set(NPC.Metadata.FLYABLE, false);
+                HorseModifiers horseModifiers = npc.getOrAddTrait(HorseModifiers.class);
+                horseModifiers.setSaddle(SADDLE);
+                horseModifiers.setColor(Horse.Color.BROWN);
+                horseModifiers.setStyle(Horse.Style.NONE);
+                Owner owner = npc.getOrAddTrait(Owner.class);
+                owner.setOwner(player);
+                Controllable controllable = npc.getOrAddTrait(Controllable.class);
+                controllable.setEnabled(true);
+                controllable.setOwnerRequired(true);
+                NavigatorParameters defaultParameters = npc.getNavigator().getDefaultParameters();
+                defaultParameters.speedModifier(MountCommand.getSpeed(entityType));
+
+                npc.spawn(player.getLocation());
+                if (npc.getEntity() instanceof Horse horse) {
+                    horse.setJumpStrength(0);
+                }
+                controllable.mount(player);
+            } else {
+                CustomHorse customHorse = new CustomHorse(player.getLocation());
+                Horse horse = (Horse) customHorse.getBukkitEntity();
+                horse.setTamed(true);
+                horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                horse.setOwner(player);
+                horse.setJumpStrength(0);
+                horse.setColor(Horse.Color.BROWN);
+                horse.setStyle(Horse.Style.NONE);
+                horse.setAdult();
+                horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
+                ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);
+                horse.addPassenger(player); // not sure if including this in function above will cause issues
+            }
         }
 
         public int getCooldown() {
             return cooldown;
         }
+
+//        public class GroundController implements Controllable.MovementController {
+//            private int jumpTicks = 0;
+//            private double speed = 0.07;
+//            private static final float AIR_SPEED = 0.5F;
+//            private static final float GROUND_SPEED = 0.5F;
+//            private static final float JUMP_VELOCITY = 0.5F;
+//            private final Controllable controllable;
+//
+//            public GroundController(Controllable controllable) {
+//                this.controllable = controllable1;
+//            }
+//
+//            public void leftClick(PlayerInteractEvent event) {
+//            }
+//
+//            public void rightClick(PlayerInteractEvent event) {
+//            }
+//
+//            public void rightClickEntity(NPCRightClickEvent event) {
+//                controllable.enterOrLeaveVehicle(event.getClicker());
+//            }
+//
+//            public void run(Player rider) {
+//                boolean onGround = NMS.isOnGround(controllable.getNPC().getEntity());
+//                float speedMod = controllable.getNPC().getNavigator().getDefaultParameters().modifiedSpeed(onGround ? 0.5F : 0.5F);
+//                if (!Util.isHorse(controllable.getNPC().getEntity().getType())) {
+//                    this.speed = controllable.updateHorizontalSpeed(controllable.getNPC().getEntity(), rider, this.speed, speedMod, Settings.Setting.MAX_CONTROLLABLE_GROUND_SPEED.asDouble());
+//                }
+//
+//                boolean shouldJump = NMS.shouldJump(rider);
+//                if (shouldJump) {
+//                    if (onGround && this.jumpTicks == 0) {
+//                        controllable.npc.getEntity().setVelocity(controllable.npc.getEntity().getVelocity().setY(0.5F));
+//                        this.jumpTicks = 10;
+//                    }
+//                } else {
+//                    this.jumpTicks = 0;
+//                }
+//
+//                this.jumpTicks = Math.max(0, this.jumpTicks - 1);
+//                controllable.setMountedYaw(controllable.npc.getEntity());
+//            }
+//        }
 
     }
 

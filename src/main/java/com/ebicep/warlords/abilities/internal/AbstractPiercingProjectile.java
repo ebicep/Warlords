@@ -18,7 +18,6 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
@@ -237,11 +236,8 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     @Nullable
     protected WarlordsEntity getFromEntity(Entity e) {
-        if (e instanceof Horse) {
-            List<Entity> passengers = e.getPassengers();
-            return Warlords.getPlayer(passengers.isEmpty() ? null : passengers.get(0));
-        }
-        return Warlords.getPlayer(e);
+        List<Entity> passengers = e.getPassengers();
+        return Warlords.getPlayer(passengers.isEmpty() ? null : passengers.get(0));
     }
 
     /**

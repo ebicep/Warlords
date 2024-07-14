@@ -10,9 +10,11 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.SanctifiedBeacon;
+import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayServerEntityEquipment;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
@@ -22,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
@@ -90,6 +93,36 @@ public class PacketUtils {
                                 new com.comphenix.protocol.wrappers.Pair<>(EnumWrappers.ItemSlot.HEAD, new ItemStack(Material.BROWN_STAINED_GLASS_PANE))
                         ));
                         event.setPacket(equipmentPacket.getHandle());
+                    }
+                }
+        );
+        PROTOCOL_MANAGER.addPacketListener(
+                new PacketAdapter(instance, ListenerPriority.LOWEST, PacketType.Play.Client.STEER_VEHICLE) {
+                    @Override
+                    public void onPacketReceiving(PacketEvent event) {
+                        if (event.getPacketType() != PacketType.Play.Client.STEER_VEHICLE) {
+                            return;
+                        }
+                        Player player = event.getPlayer();
+                        if (!MountCommand.PLAYER_MOUNT_TYPE.containsKey(player.getUniqueId())) {
+                            return;
+                        }
+                        WrapperPlayClientSteerVehicle steerVehiclePacket = new WrapperPlayClientSteerVehicle(event.getPacket());
+                        steerVehiclePacket.setIsJumping(false);
+                        if (steerVehiclePacket.getIsShiftKeyDown()) {
+                            org.bukkit.entity.Entity vehicle = player.getVehicle();
+                            if (vehicle != null) {
+                                event.setCancelled(true);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        vehicle.remove();
+                                    }
+                                }.runTask(instance);
+                                return;
+                            }
+                        }
+                        event.setPacket(steerVehiclePacket.getHandle());
                     }
                 }
         );

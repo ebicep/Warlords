@@ -621,6 +621,7 @@ public class CommandManager {
         manager.registerCommand(new MuteCommand());
         manager.registerCommand(new PatchCommand());
         manager.registerCommand(new LocationCommand());
+        manager.registerCommand(new MountCommand());
         manager.registerCommand(new PatreonCommand());
         manager.registerCommand(new PvECurrencyCommand());
         manager.registerCommand(new RecordGamesCommand());
