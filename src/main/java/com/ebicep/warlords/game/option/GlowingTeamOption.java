@@ -21,12 +21,11 @@ import java.util.Objects;
 
 public class GlowingTeamOption implements Option {
 
-    private Game game;
+    private PacketAdapter packetListener;
 
     @Override
     public void register(@Nonnull Game game) {
-        this.game = game;
-        PacketUtils.PROTOCOL_MANAGER.addPacketListener(new PacketAdapter(Warlords.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_METADATA) {
+        packetListener = new PacketAdapter(Warlords.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_METADATA) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player playerReceiving = event.getPlayer();
@@ -64,7 +63,14 @@ public class GlowingTeamOption implements Option {
                     event.setPacket(packet);
                 });
             }
-        });
+        };
+        PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);
         //TODO fix changing teams and not moving still showing glow
     }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        PacketUtils.PROTOCOL_MANAGER.removePacketListener(packetListener);
+    }
+
 }
