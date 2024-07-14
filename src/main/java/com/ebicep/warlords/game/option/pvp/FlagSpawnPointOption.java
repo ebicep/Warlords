@@ -301,6 +301,16 @@ public class FlagSpawnPointOption implements Option {
         }.runTaskTimer(0, 1);
     }
 
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        this.renderer.reset();
+    }
+
+    @Override
+    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
+        player.getInventory().setItem(8, COMPASS);
+    }
+
     private boolean flagIsInCaptureZone(PlayerFlagLocation playerFlagLocation) {
         for (FlagCaptureMarker flag : game.getMarkers(FlagCaptureMarker.class)) {
             if (flag.shouldCountAsCapture(playerFlagLocation)) {
@@ -317,16 +327,6 @@ public class FlagSpawnPointOption implements Option {
             }
         }
         return false;
-    }
-
-    @Override
-    public void onGameCleanup(@Nonnull Game game) {
-        this.renderer.reset();
-    }
-
-    @Override
-    public void updateInventory(@Nonnull WarlordsPlayer warlordsPlayer, Player player) {
-        player.getInventory().setItem(8, COMPASS);
     }
 
     @Nonnull

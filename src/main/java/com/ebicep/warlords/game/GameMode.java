@@ -23,6 +23,7 @@ import com.ebicep.warlords.game.option.pve.BountyOption;
 import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
 import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
+import com.ebicep.warlords.game.option.pvp.FlagGlowOption;
 import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
@@ -118,6 +119,7 @@ public enum GameMode {
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+            options.add(new FlagGlowOption());
             return options;
         }
     },
