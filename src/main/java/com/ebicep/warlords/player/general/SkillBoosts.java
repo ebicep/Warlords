@@ -972,7 +972,7 @@ public enum SkillBoosts {
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
             List.of(
-                    Component.text("Increase the proc chance by of Earthliving Weapon by "),
+                    Component.text("Increase the proc chance of Earthliving Weapon by "),
                     Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
             ),
