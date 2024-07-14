@@ -237,7 +237,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     @Nullable
     protected WarlordsEntity getFromEntity(Entity e) {
         List<Entity> passengers = e.getPassengers();
-        return Warlords.getPlayer(passengers.isEmpty() ? null : passengers.get(0));
+        return Warlords.getPlayer(passengers.isEmpty() ? e : passengers.get(0));
     }
 
     /**
