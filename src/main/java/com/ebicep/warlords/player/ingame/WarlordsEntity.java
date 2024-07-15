@@ -542,6 +542,9 @@ public abstract class WarlordsEntity {
             BannerMeta banner = (BannerMeta) item.getItemMeta();
             banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.SKULL));
             banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_TOP));
+            banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_BOTTOM));
+            banner.addPattern(new Pattern(getTeam() == Team.RED ? DyeColor.RED : DyeColor.BLUE, PatternType.TRIANGLES_TOP));
+            banner.addPattern(new Pattern(getTeam() == Team.RED ? DyeColor.RED : DyeColor.BLUE, PatternType.TRIANGLES_BOTTOM));
             item.setItemMeta(banner);
             player.getInventory().setHelmet(item);
         }
