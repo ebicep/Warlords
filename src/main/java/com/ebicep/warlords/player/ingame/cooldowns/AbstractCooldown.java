@@ -2,7 +2,6 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.type.*;
-import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.HandlerList;
@@ -74,11 +73,9 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.activeListener = getListener();
         if (activeListener != null) {
             COOLDOWNS_WITH_LISTENERS.add(this);
-            ChatUtils.MessageType.WARLORDS.sendMessage("*Registering listener " + getName() + " - " + this + " - " + cooldownObject);
             from.getGame().registerEvents(activeListener);
             this.onRemoveForce = cooldownManager -> {
                 COOLDOWNS_WITH_LISTENERS.remove(this);
-                ChatUtils.MessageType.WARLORDS.sendMessage("*Unregistering listener " + getName() + " - " + this + " - " + cooldownObject);
                 HandlerList.unregisterAll(activeListener);
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {

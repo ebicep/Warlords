@@ -228,7 +228,6 @@ public class CooldownManager {
             abstractCooldown.getOnRemoveForce().accept(this);
             Listener activeListener = abstractCooldown.getActiveListener();
             if (activeListener != null) {
-                ChatUtils.MessageType.WARLORDS.sendMessage("Unregistering listener " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
                 HandlerList.unregisterAll(activeListener);
             }
         }
