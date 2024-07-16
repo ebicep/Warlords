@@ -26,10 +26,9 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     public int playersHit = 0;
     public int carrierHit = 0;
     public int warpsKnockbacked = 0;
-
+    protected boolean trueDamage = false;
     private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
-    protected boolean trueDamage = false;
 
     public AbstractGroundSlam(float cooldown, float energyCost) {
         this(cooldown, energyCost, 0);
@@ -140,6 +139,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                     .source(wp)
                                     .min(slamDamage.getMinValue() * damageMultiplier)
                                     .max(slamDamage.getMaxValue() * damageMultiplier)
+                                    .crit(slamDamage)
                                     .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
                                     .uuid(abilityUUID)
                             );
@@ -161,8 +161,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         }.runTaskTimer(0, 2);
     }
 
-    public abstract Value.RangedValueCritable getSlamDamage();
-
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
 
     }
@@ -172,6 +170,8 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         slamSize.tick();
         super.runEveryTick(warlordsEntity);
     }
+
+    public abstract Value.RangedValueCritable getSlamDamage();
 
     public float getVelocity() {
         return velocity;
