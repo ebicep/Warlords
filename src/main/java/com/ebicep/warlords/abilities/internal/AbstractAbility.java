@@ -244,7 +244,7 @@ public abstract class AbstractAbility implements AbilityIcon {
                 }
                 player.getInventory().setItem(inventoryIndex, cooldown.get());
             } else {
-                player.getInventory().setItem(inventoryIndex, getItem());
+                player.getInventory().setItem(inventoryIndex, getItem(warlordsEntity.getWeaponItem()));
             }
         }
     }
@@ -287,11 +287,11 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public ItemStack getItem() {
-        return getItem(getAbilityIcon());
+        return getItem(null);
     }
 
-    public ItemStack getItem(ItemStack item) {
-        ItemBuilder itemBuilder = new ItemBuilder(item)
+    public ItemStack getItem(@Nullable ItemStack item) {
+        ItemBuilder itemBuilder = new ItemBuilder(item == null ? getAbilityIcon() : item)
                 .name(Component.text(getName(), NamedTextColor.GOLD))
                 .unbreakable();
 
