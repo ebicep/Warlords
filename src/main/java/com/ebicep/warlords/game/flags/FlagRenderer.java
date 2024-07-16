@@ -99,6 +99,9 @@ public class FlagRenderer {
                 org.bukkit.block.Banner banner = (org.bukkit.block.Banner) block.getState();
                 banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.SKULL));
                 banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_TOP));
+                banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_BOTTOM));
+                banner.addPattern(new Pattern(info.getTeam() == Team.RED ? DyeColor.RED : DyeColor.BLUE, PatternType.TRIANGLES_TOP));
+                banner.addPattern(new Pattern(info.getTeam() == Team.RED ? DyeColor.RED : DyeColor.BLUE, PatternType.TRIANGLES_BOTTOM));
                 banner.update();
                 Vector target = this.lastLocation.getLocation().getDirection();
                 Vector toTest = new Vector(0, 0, 0);
@@ -164,6 +167,9 @@ public class FlagRenderer {
                 BannerMeta banner = (BannerMeta) item.getItemMeta();
                 banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.SKULL));
                 banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_TOP));
+                banner.addPattern(new Pattern(DyeColor.WHITE, PatternType.TRIANGLES_BOTTOM));
+                banner.addPattern(new Pattern(info.getTeam() == Team.RED ? DyeColor.RED : DyeColor.BLUE, PatternType.TRIANGLES_TOP));
+                banner.addPattern(new Pattern(info.getTeam() == Team.RED ? DyeColor.RED : DyeColor.BLUE, PatternType.TRIANGLES_BOTTOM));
                 item.setItemMeta(banner);
                 player.getInventory().setHelmet(item);
                 player.getInventory().setItem(6, new ItemBuilder(Material.BLACK_BANNER, 1).name(Component.text("Drop Flag", NamedTextColor.GREEN)).get());
