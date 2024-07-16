@@ -9,7 +9,9 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -24,6 +26,13 @@ public class BuilderCommand extends BaseCommand {
     public void gamemode(@Conditions("outsideGame") Player player, GameMode gameMode) {
         player.setGameMode(gameMode);
         ChatChannels.sendDebugMessage(player, Component.text("Set your gamemode to " + gameMode, NamedTextColor.GREEN));
+    }
+
+    @Subcommand("barrier")
+    @Description("Give yourself a barrier block")
+    public void barrier(@Conditions("outsideGame") Player player) {
+        player.getInventory().addItem(new ItemStack(Material.BARRIER));
+        ChatChannels.sendDebugMessage(player, Component.text("Gave yourself a barrier block", NamedTextColor.GREEN));
     }
 
     @Subcommand("togglebuilding")
