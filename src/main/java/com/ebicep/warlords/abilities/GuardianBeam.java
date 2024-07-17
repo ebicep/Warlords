@@ -123,7 +123,9 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                 }
             } else {
                 giveShield(wp, hit);
-                hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+                if (pveMasterUpgrade2) {
+                    hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+                }
             }
             if (projectile.getHit().size() == 1) {
                 giveShield(wp, wp);
