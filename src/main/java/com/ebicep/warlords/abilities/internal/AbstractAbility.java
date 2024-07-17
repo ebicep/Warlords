@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
+import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.towerdefense.towers.TDAbility;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -244,7 +245,7 @@ public abstract class AbstractAbility implements AbilityIcon {
                 }
                 player.getInventory().setItem(inventoryIndex, cooldown.get());
             } else {
-                player.getInventory().setItem(inventoryIndex, getItem(warlordsEntity.getWeaponItem()));
+                player.getInventory().setItem(inventoryIndex, getItem(this instanceof WeaponAbilityIcon ? warlordsEntity.getWeaponItem() : getAbilityIcon()));
             }
         }
     }
