@@ -47,6 +47,7 @@ public class DummySpawnOption implements Option {
                         @Override
                         public void run() {
                             testDummy.respawn();
+                            testDummy.teleport(loc);
                         }
                     }.runTaskLater(10);
                 }
