@@ -28,7 +28,7 @@ public class FloatModifiable {
         refresh();
     }
 
-    private void refresh() {
+    public void refresh() {
         if (!overridingModifiers.isEmpty()) {
             filters.forEach((s, floatModifiableFilter) -> {
                 overridingModifiers.stream()
