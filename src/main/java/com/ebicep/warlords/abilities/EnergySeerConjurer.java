@@ -27,7 +27,6 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
     @Override
     protected void onEnd(WarlordsEntity wp, EnergySeerConjurer.EnergySeerConjurerData data) {
         super.onEnd(wp, data);
-        wp.addEnergy(wp, "Replicating Sight", data.getAllyEnergyUsed());
         EffectUtils.displayParticle(
                 Particle.REDSTONE,
                 wp.getLocation().add(0, 1.2, 0),
@@ -59,9 +58,8 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
         if (warlordsEntity.isEnemy(wp) || warlordsEntity.equals(wp)) {
             return;
         }
-        float amount = event.getEnergyUsed() * .1f;
-        data.setAllyEnergyUsed(data.getAllyEnergyUsed() + amount);
-
+        float amount = event.getEnergyUsed() * .05f;
+        wp.addEnergy(wp, name, amount);
     }
 
     @Override
