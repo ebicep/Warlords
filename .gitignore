@@ -18,6 +18,7 @@
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 .idea/kotlinScripting.xml
+.idea/jarRepositories.xml
 
 # Maven
 .idea/libraries

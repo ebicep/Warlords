@@ -14,6 +14,7 @@ public interface CustomInstanceFlags {
         public enum Flag {
             TD_PHYSICAL_RES_REDUCTION,
             TD_MAGIC_RES_REDUCTION,
+            TD_DEFENDER_ARMOR,
         }
     }
 
