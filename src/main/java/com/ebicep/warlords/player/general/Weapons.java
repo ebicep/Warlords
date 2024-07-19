@@ -95,6 +95,12 @@ public enum Weapons {
     VIRIDIAN_BLADE("Viridian Blade", new ItemStack(Material.COOKIE), LEGENDARY, WeaponsPvE.LEGENDARY),
     SEVENTH("Seventh", new ItemStack(Material.WARPED_FENCE_GATE), LEGENDARY, WeaponsPvE.LEGENDARY),
 
+    SUMSMASH_ACTION_FIGURE("sumSmash Action Figure", new ItemStack(Material.NETHERITE_HOE), LEGENDARY, WeaponsPvE.LEGENDARY, true),
+    SITH_LIGHTSABER("Sith Lightsaber", new ItemStack(Material.NETHERITE_AXE), LEGENDARY, WeaponsPvE.LEGENDARY),
+    JEDI_LIGHTSABER("Jedi Lightsaber", new ItemStack(Material.NETHERITE_PICKAXE), LEGENDARY, WeaponsPvE.LEGENDARY),
+    SOUL_REAVER("Soul Reaver", new ItemStack(Material.NETHERITE_SWORD), LEGENDARY, WeaponsPvE.LEGENDARY),
+    TIDEBREAKER("Tidebreaker", new ItemStack(Material.DRIED_KELP), LEGENDARY, WeaponsPvE.LEGENDARY),
+
     ;
 
     public static final Weapons[] VALUES = values();
@@ -103,6 +109,7 @@ public enum Weapons {
     public final WeaponsRarity rarity;
     public final WeaponsPvE weaponsPvE;
     public boolean isUnlocked;
+    public boolean patreonExclusive = false;
 
     Weapons(String name, ItemStack item, WeaponsRarity rarity, WeaponsPvE weaponsPvE) {
         this.name = name;
@@ -113,6 +120,11 @@ public enum Weapons {
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(itemMeta);
+    }
+
+    Weapons(String name, ItemStack item, WeaponsRarity rarity, WeaponsPvE weaponsPvE, boolean patreonExclusive) {
+        this(name, item, rarity, weaponsPvE);
+        this.patreonExclusive = patreonExclusive;
     }
 
     public WeaponsRarity getRarity() {

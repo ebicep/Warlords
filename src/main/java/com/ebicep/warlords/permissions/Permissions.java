@@ -28,7 +28,7 @@ public enum Permissions {
     CONTENT_CREATOR("CT", NamedTextColor.LIGHT_PURPLE, "group.contentcreator"),
     BUILDER("BUILDER", NamedTextColor.DARK_GREEN, "group.builder"),
     GAME_STARTER("GS", NamedTextColor.YELLOW, "group.gamestarter"),
-    GAME_TESTER("P", NamedTextColor.GREEN, "group.patreon"),
+    PATREON("P", NamedTextColor.GREEN, "group.patreon"),
     DEFAULT("", NamedTextColor.AQUA, "group.default"),
 
     ;
@@ -115,8 +115,8 @@ public enum Permissions {
         return player.hasPermission(GAME_STARTER.permission);
     }
 
-    public static boolean isGameTester(Player player) {
-        return player.hasPermission(GAME_TESTER.permission);
+    public static boolean isPatreon(Player player) {
+        return player.hasPermission(PATREON.permission);
     }
 
     public static boolean isDefault(Player player) {
@@ -137,6 +137,10 @@ public enum Permissions {
         this.prefix = prefix;
         this.prefixColor = prefixColor;
         this.permission = permission;
+    }
+
+    public boolean contains(Player player) {
+        return player.hasPermission(permission);
     }
 
 }

@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
@@ -230,8 +231,7 @@ public class WarlordsShopMenu {
             Weapons weapon = values.get(i);
             ItemBuilder builder;
 
-            if (weapon.isUnlocked) {
-
+            if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
                 builder = new ItemBuilder(weapon.getItem())
                         .name(Component.text(weapon.getName(), NamedTextColor.GREEN));
                 List<Component> lore = new ArrayList<>();
@@ -253,7 +253,7 @@ public class WarlordsShopMenu {
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     builder.get(),
                     (m, e) -> {
-                        if (weapon.isUnlocked) {
+                        if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
                             player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
                                                         .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
                                                         .append(Component.text("'s weapon skin to: "))
