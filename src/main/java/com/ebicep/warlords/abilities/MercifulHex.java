@@ -147,6 +147,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 .source(shooter)
                 .value(healingValues.hexSelfHealing)
         );
+        giveMercifulHex(shooter, shooter);
         return activate;
     }
 
@@ -235,9 +236,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         }
 
         List<WarlordsEntity> hits = projectile.getHit();
-        if (hits.size() == 1) {
-            giveMercifulHex(wp, wp);
-        }
 
         boolean isTeammate = hit.isTeammate(wp);
         if (isTeammate) {
