@@ -127,9 +127,6 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                     hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
                 }
             }
-            if (projectile.getHit().size() == 1) {
-                giveShield(wp, wp);
-            }
         }
     }
 
@@ -226,6 +223,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity shooter) {
         shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
+        giveShield(shooter, shooter);
         return super.onActivate(shooter);
     }
 
