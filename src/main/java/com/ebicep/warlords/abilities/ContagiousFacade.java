@@ -41,6 +41,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private double poisonRadius = 8;
     private int speedIncrease = 40;
     private int speedIncreaseDuration = 100;
+    private int stacksGranted = 2;
+    private int infectedPlayers = 2;
 
     public int timesReactivated = 0;
     public int totalHexesInflicted = 0;
@@ -62,7 +64,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                .append(Component.text(" for "))
                                .append(Component.text(format(speedIncreaseDuration / 20f), NamedTextColor.GOLD))
                                .append(Component.text("seconds and inflict "))
-                               .append(Component.text("3", NamedTextColor.BLUE))
+                               .append(Component.text(stacksGranted, NamedTextColor.BLUE))
                                .append(Component.text(" stacks of Poisonous Hex on "))
                                .append(Component.text("2", NamedTextColor.RED))
                                .append(Component.text(" nearby enemies in an "))
@@ -212,7 +214,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                             .entitiesAround(wp, poisonRadius, poisonRadius, poisonRadius)
                             .aliveEnemiesOf(wp)
                             .closestFirst(wp)
-                            .limit(2)
+                            .limit(infectedPlayers)
                     ) {
                         EffectUtils.playParticleLinkAnimation(
                                 wp.getLocation(),
@@ -222,7 +224,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 0,
                                 2
                         );
-                        for (int i = 0; i < 3; i++) {
+                        for (int i = 0; i < stacksGranted; i++) {
                             PoisonousHex.givePoisonousHex(wp, hexTarget);
                             EffectUtils.displayParticle(
                                     Particle.CRIMSON_SPORE,
@@ -286,4 +288,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     public void setShieldTickDuration(int shieldTickDuration) {
         this.shieldTickDuration = shieldTickDuration;
     }
+
+    public int getStacksGranted() { return stacksGranted; }
+
+    public void setStacksGranted(int stacksGranted) { this.stacksGranted = stacksGranted; }
 }
