@@ -52,6 +52,8 @@ public class Valley extends GameMap {
 
         options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupOption.PowerUp.SPEED));
         options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(-63.5, 34.5, 138.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(64.5, 34.5, -137.5), PowerupOption.PowerUp.SPEED));
 
         options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupOption.PowerUp.HEALING));
         options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupOption.PowerUp.HEALING));
