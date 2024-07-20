@@ -264,7 +264,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     public static class HealingValues implements Value.ValueHolder {
 
-        protected final Value.SetValue seerHealingMultiplier = new Value.SetValue(6);
+        protected final Value.SetValue seerHealingMultiplier = new Value.SetValue(5);
         private final List<Value> values = List.of(seerHealingMultiplier);
 
         public Value.SetValue getSeerHealingMultiplier() {

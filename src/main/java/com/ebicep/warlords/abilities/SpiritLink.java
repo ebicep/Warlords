@@ -129,9 +129,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
     @Override
     protected void onHit(WarlordsEntity we, int hitCounter) {
         we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
-        if (we.isInPve()) {
-            we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, 4);
-        }
+        we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, inPve ? 4 : 1);
         // speed buff
         we.addSpeedModifier(we, "Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
         we.getCooldownManager().addCooldown(new RegularCooldown<>(

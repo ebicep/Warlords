@@ -112,6 +112,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     }
 
     @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        giveFortifyingHex(shooter, shooter);
+        return super.onActivate(shooter);
+    }
+
+    @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
         if (hit != null) {
             return 0;
@@ -274,9 +280,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                         0
                 );
             }
-        }
-        if (hits.size() == 1) {
-            giveFortifyingHex(wp, wp);
         }
         return true;
     }
