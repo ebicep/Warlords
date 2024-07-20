@@ -30,7 +30,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     protected CircleEffect effect; // not static
     protected FloatModifiable radius; // not static
     protected int tickDuration;
-    private int maxBeaconsAtATime = 1;
+    private int maxBeaconsAtATime = 2;
 
     public AbstractBeaconAbility(
             String name,

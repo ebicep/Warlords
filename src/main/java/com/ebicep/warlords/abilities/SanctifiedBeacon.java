@@ -62,7 +62,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                         .append(Component.text("1", NamedTextColor.BLUE))
                         .append(Component.text(" stack of Merciful Hex every "))
                         .append(Component.text(format(hexIntervalTicks / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds within the same radius.\n\nOnly one beacon can be present on the field at once."));
+                        .append(Component.text(" seconds within the same radius.\n\nOnly two beacons can be present on the field at once."));
     }
 
     @Override

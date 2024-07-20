@@ -39,7 +39,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
-    private int bindDuration = 40;
+    private int bindDuration = 60;
     private int radius = 8;
     private int maxAlliesHit = 2;
 

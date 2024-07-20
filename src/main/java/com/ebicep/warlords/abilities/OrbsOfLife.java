@@ -385,7 +385,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.SetValue orbHealing = new Value.SetValue(210);
+        private final Value.SetValue orbHealing = new Value.SetValue(225);
         private final List<Value> values = List.of(orbHealing);
 
         public Value.SetValue getOrbHealing() {

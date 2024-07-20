@@ -52,7 +52,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
     }
 
     public FallenSouls(float cooldown, float startCooldown) {
-        super("Fallen Souls", cooldown, 55, 2, 35, false, startCooldown);
+        super("Fallen Souls", cooldown, 60, 2, 25, false, startCooldown);
         this.shotsFiredAtATime = 3;
         this.maxAngleOfShots = 54;
         this.forwardTeleportAmount = 1.6f;
@@ -302,7 +302,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(164, 212, 20, 180);
+        private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(148, 191, 20, 180);
         private final List<Value> values = List.of(fallenSoulDamage);
 
         public Value.RangedValueCritable getFallenSoulDamage() {

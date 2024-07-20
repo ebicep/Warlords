@@ -44,7 +44,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     private final HealingValues healingValues = new HealingValues();
     private int hexStacksPerHit = 1;
     private int maxAlliesHit = 2;
-    private int subsequentReduction = 40;
+    private int subsequentReduction = 30;
     private int ticksBetweenDot = 40;
     private int maxStacks = 3;
     private int tickDuration = 60;
@@ -59,13 +59,15 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     public void updateDescription(Player player) {
         description = Component.text("Send a wave of energy forward. The first two allies hit heal ")
                                .append(Heals.formatHealing(healingValues.hexHealing))
-                               .append(Component.text(" health (subsequent hit allies are healed for 40%) and receives "))
+                               .append(Component.text(" health and receive "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex. The first enemy hit takes "))
+                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex; subsequent allies are healed for only "))
+                               .append(Component.text(subsequentReduction + "%", NamedTextColor.GREEN))
+                               .append(Component.text(". The first enemy hit takes "))
                                .append(Damages.formatDamage(damageValues.hexDamage))
-                               .append(Component.text(" damage. Also heal yourself for "))
+                               .append(Component.text(" damage. You also heal for "))
                                .append(Heals.formatHealing(healingValues.hexSelfHealing))
-                               .append(Component.text(". If Merciful Hex hits a target, you receive "))
+                               .append(Component.text(" and receive "))
                                .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
                                .append(Component.text(" stack of Merciful Hex.\n\nEach stack of Merciful Hex heals "))
                                .append(Heals.formatHealing(healingValues.hexDOTHealing))
@@ -385,7 +387,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(229, 313, 20, 180);
-        private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(197, 266, 20, 180);
+        private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(160, 219, 20, 180);
         private final Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
         private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
 
