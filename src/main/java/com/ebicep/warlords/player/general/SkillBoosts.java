@@ -79,21 +79,21 @@ public enum SkillBoosts {
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -40);
+                    abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
     ),
     INFERNO("Inferno",
             List.of(
-                    Component.text("Increase the Crit Multiplier bonus of Inferno by "),
-                    Component.text("60%", NamedTextColor.RED),
+                    Component.text("Increase the Crit Chance bonus of Inferno by "),
+                    Component.text("50%", NamedTextColor.RED),
                     Component.text(".")
             ),
             Inferno.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Inferno inferno) {
-                    inferno.setCritMultiplierIncrease(inferno.getCritMultiplierIncrease() + 60);
+                    inferno.setCritChanceIncrease(inferno.getCritChanceIncrease() + 50);
                 }
             }
     ),
@@ -155,7 +155,7 @@ public enum SkillBoosts {
     ICE_BARRIER("Ice Barrier",
             List.of(
                     Component.text("Increase the damage reduction of Ice Barrier by "),
-                    Component.text("5%", NamedTextColor.RED),
+                    Component.text("10%", NamedTextColor.RED),
                     Component.text(" and increase the duration by "),
                     Component.text("2 ", NamedTextColor.RED),
                     Component.text("seconds.")
@@ -163,7 +163,7 @@ public enum SkillBoosts {
             IceBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier iceBarrier) {
-                    iceBarrier.setDamageReductionPercent(iceBarrier.getDamageReductionPercent() + 5);
+                    iceBarrier.setDamageReductionPercent(iceBarrier.getDamageReductionPercent() + 10);
                     iceBarrier.setTickDuration(iceBarrier.getTickDuration() + 40);
                 }
             }
@@ -229,7 +229,7 @@ public enum SkillBoosts {
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -40);
+                    abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
@@ -292,10 +292,8 @@ public enum SkillBoosts {
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
             List.of(
-                    Component.text("Increase the damage of Ground Slam by "),
-                    Component.text("35%", NamedTextColor.RED),
-                    Component.text(" and reduce the cooldown by "),
-                    Component.text("10%", NamedTextColor.RED),
+                    Component.text("Remove the energy cost of Ground Slam and increase the damage by "),
+                    Component.text("40%", NamedTextColor.RED),
                     Component.text(".")
             ),
             GroundSlamBerserker.class,
@@ -304,9 +302,9 @@ public enum SkillBoosts {
                     groundSlamBerserker.getDamageValues()
                                        .getSlamDamage()
                                        .forEachValue(floatModifiable -> {
-                                           floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                           floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .4f);
                                        });
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .9f);
+                    abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
                 }
             }
     ),
@@ -383,14 +381,14 @@ public enum SkillBoosts {
                     Component.text("Increase the knockback of Ground Slam by "),
                     Component.text("10%", NamedTextColor.RED),
                     Component.text(" and reduce the cooldown by "),
-                    Component.text("20%", NamedTextColor.RED),
+                    Component.text("25%", NamedTextColor.RED),
                     Component.text(".")
             ),
             GroundSlamDefender.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractGroundSlam groundSlam) {
                     groundSlam.setVelocity(1.35f);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                 }
             }
     ),
@@ -447,7 +445,7 @@ public enum SkillBoosts {
     RECKLESS_CHARGE("Reckless Charge",
             List.of(
                     Component.text("Increase the immobilize duration of Reckless Charge by "),
-                    Component.text("0.3", NamedTextColor.RED),
+                    Component.text("0.5", NamedTextColor.RED),
                     Component.text(" seconds and reduce the cooldown by "),
                     Component.text("30%", NamedTextColor.RED),
                     Component.text(".")
@@ -455,7 +453,7 @@ public enum SkillBoosts {
             RecklessCharge.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge recklessCharge) {
-                    recklessCharge.setStunTimeInTicks(recklessCharge.getStunTimeInTicks() + 6);
+                    recklessCharge.setStunTimeInTicks(recklessCharge.getStunTimeInTicks() + 10);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                 }
             }
@@ -536,7 +534,7 @@ public enum SkillBoosts {
             ConsecrateAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ConsecrateAvenger consecrateAvenger) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
+                    abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
                     consecrateAvenger.getDamageValues()
                                      .getConsecrateDamage()
                                      .forEachValue(floatModifiable -> {
@@ -564,7 +562,7 @@ public enum SkillBoosts {
     HOLY_RADIANCE_AVENGER("Holy Radiance",
             List.of(
                     Component.text("Reduce the cooldown of Holy Radiance by "),
-                    Component.text("20%", NamedTextColor.RED),
+                    Component.text("25%", NamedTextColor.RED),
                     Component.text(" and increase the energy drain of Avenger's Mark by "),
                     Component.text("50%", NamedTextColor.RED),
                     Component.text(".")
@@ -572,7 +570,7 @@ public enum SkillBoosts {
             HolyRadianceAvenger.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceAvenger holyRadiance) {
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
                     holyRadiance.setEnergyDrainPerSecond(holyRadiance.getEnergyDrainPerSecond() * 1.5f);
                 }
             }
@@ -622,7 +620,7 @@ public enum SkillBoosts {
             ConsecrateCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ConsecrateCrusader consecrateCrusader) {
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -50);
+                    abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
                     consecrateCrusader.getDamageValues()
                                       .getConsecrateDamage()
                                       .forEachValue(floatModifiable -> {
@@ -833,20 +831,13 @@ public enum SkillBoosts {
     CAPACITOR_TOTEM("Capacitor Totem",
             List.of(
                     Component.text("Reduce the cooldown of Capacitor Totem by "),
-                    Component.text("50%", NamedTextColor.RED),
-                    Component.text(" but reduce the damage by "),
-                    Component.text("20%", NamedTextColor.RED),
+                    Component.text("40%", NamedTextColor.RED),
                     Component.text(".")
             ),
             CapacitorTotem.class,
             abstractAbility -> {
-                if (abstractAbility instanceof CapacitorTotem capacitorTotem) {
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
-                    capacitorTotem.getDamageValues()
-                                  .getTotemDamage()
-                                  .forEachValue(floatModifiable -> {
-                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", -.2f);
-                                  });
+                if (abstractAbility instanceof CapacitorTotem) {
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -889,14 +880,23 @@ public enum SkillBoosts {
     ),
     SOULBINDING_WEAPON("Soulbinding Weapon",
             List.of(
-                    Component.text("Increase the duration of binds by "),
-                    Component.text("2", NamedTextColor.RED),
-                    Component.text(" seconds.")
+                    Component.text("Increase the healing of Soulbinding Weapon by "),
+                    Component.text("20%", NamedTextColor.RED),
+                    Component.text(".")
             ),
             Soulbinding.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Soulbinding soulbinding) {
-                    soulbinding.setBindDuration(soulbinding.getBindDuration() + 40);
+                    soulbinding.getHealValues()
+                               .getAllyHealing()
+                               .forEachValue(floatModifiable -> {
+                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                               });
+                    soulbinding.getHealValues()
+                               .getSelfHealing()
+                               .forEachValue(floatModifiable -> {
+                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
+                               });
                 }
             }
     ),
@@ -955,8 +955,8 @@ public enum SkillBoosts {
     ),
     BOULDER("Boulder",
             List.of(
-                    Component.text("Increase the damage you deal with Boulder by "),
-                    Component.text("25%", NamedTextColor.RED),
+                    Component.text("Increase the damage of Boulder by "),
+                    Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
             ),
             Boulder.class,
@@ -965,7 +965,7 @@ public enum SkillBoosts {
                     boulder.getDamageValues()
                            .getBoulderDamage()
                            .forEachValue(floatModifiable -> {
-                               floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
+                               floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
                            });
                 }
             }
@@ -1056,30 +1056,30 @@ public enum SkillBoosts {
     BLINDING_ASSAULT("Shadow Step",
             List.of(
                     Component.text("Reduce the cooldown of Shadow Step by "),
-                    Component.text("40%", NamedTextColor.RED),
+                    Component.text("50%", NamedTextColor.RED),
                     Component.text(" and grant temporary fall damage immunity.")
             ),
             ShadowStep.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ShadowStep shadowStep) {
                     shadowStep.setFallDamageNegation(1000);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
     ),
     SOUL_SWITCH("Soul Switch",
             List.of(
                     Component.text("Reduce the cooldown by Soul Switch by "),
-                    Component.text("50%", NamedTextColor.RED),
+                    Component.text("60%", NamedTextColor.RED),
                     Component.text(" and increase the range by "),
-                    Component.text("2", NamedTextColor.RED),
+                    Component.text("4", NamedTextColor.RED),
                     Component.text(" blocks.")
             ),
             SoulSwitch.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulSwitch soulSwitch) {
-                    soulSwitch.getHitBoxRadius().addAdditiveModifier("Skill Boost", 2);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
+                    soulSwitch.getHitBoxRadius().addAdditiveModifier("Skill Boost", 4);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .4f);
                 }
             }
     ),
@@ -1132,13 +1132,13 @@ public enum SkillBoosts {
     HEART_TO_HEART("Heart to Heart",
             List.of(
                     Component.text("Reduce the cooldown of Heart to Heart by "),
-                    Component.text("15%", NamedTextColor.RED),
+                    Component.text("20%", NamedTextColor.RED),
                     Component.text(".")
             ),
             HeartToHeart.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HeartToHeart) {
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .85f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }
     ),
@@ -1215,15 +1215,15 @@ public enum SkillBoosts {
     ),
     VITALITY_CONCOCTION("Vitality Concoction",
             List.of(
-                    Component.text("Reduce the cooldown of Vitality Concoction by "),
-                    Component.text("20%", NamedTextColor.RED),
-                    Component.text(" and remove the energy cost.")
+                    Component.text("Remove the energy cost of Vitality Concoction and increase the duration by "),
+                    Component.text("0.8s", NamedTextColor.RED),
+                    Component.text(".")
             ),
             VitalityConcoction.class,
             abstractAbility -> {
-                if (abstractAbility instanceof VitalityConcoction) {
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
-                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -20);
+                if (abstractAbility instanceof VitalityConcoction vitalityConcoction) {
+                    abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
+                    vitalityConcoction.setTickDuration(vitalityConcoction.getTickDuration() + 16);
                 }
             }
     ),
@@ -1305,15 +1305,18 @@ public enum SkillBoosts {
             List.of(
                     Component.text("Increased the damage reduction of Contagious Facade by "),
                     Component.text("20%", NamedTextColor.RED),
-                    Component.text(" and reduce the cooldown by "),
-                    Component.text("20%", NamedTextColor.RED),
-                    Component.text(".")
+                    Component.text(", reduce the cooldown by "),
+                    Component.text("30%", NamedTextColor.RED),
+                    Component.text(", and grant "),
+                    Component.text("1", NamedTextColor.RED),
+                    Component.text(" extra Hex stack.")
             ),
             ContagiousFacade.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ContagiousFacade contagiousFacade) {
                     contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 20);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
+                    contagiousFacade.setStacksGranted(contagiousFacade.getStacksGranted() + 1);
                 }
             }
     ),
@@ -1376,11 +1379,13 @@ public enum SkillBoosts {
             List.of(
                     Component.text("Increase the rune timer increase inflicted by Mystical Barrier by "),
                     Component.text("0.5", NamedTextColor.RED),
-                    Component.text(" seconds and increase the base and maximum shield health by "),
+                    Component.text(" seconds, increase the base and maximum shield health by "),
                     Component.text("400", NamedTextColor.RED),
                     Component.text(" and "),
                     Component.text("800", NamedTextColor.RED),
-                    Component.text(".")
+                    Component.text(", and grant"),
+                    Component.text("1", NamedTextColor.RED),
+                    Component.text(" extra Hex stack.")
             ),
             MysticalBarrier.class,
             abstractAbility -> {
@@ -1388,6 +1393,7 @@ public enum SkillBoosts {
                     mysticalBarrier.setRuneTimerIncrease(mysticalBarrier.getRuneTimerIncrease() + 0.5f);
                     mysticalBarrier.setShieldBase(mysticalBarrier.getShieldBase() + 400);
                     mysticalBarrier.setShieldMaxHealth(mysticalBarrier.getShieldMaxHealth() + 800);
+                    mysticalBarrier.setStacksGranted(mysticalBarrier.getStacksGranted() + 1);
                 }
             }
     ),
@@ -1452,17 +1458,15 @@ public enum SkillBoosts {
     ),
     SANCTIFIED_BEACON("Sanctified Beacon",
             List.of(
-                    Component.text("Increase the Crit Multiplier reduction inflicted by Sanctified Beacon by "),
-                    Component.text("20%", NamedTextColor.RED),
-                    Component.text(" and reduce the cooldown by "),
-                    Component.text("25%", NamedTextColor.RED),
+                    Component.text("Remove the energy cost of Sanctified Beacon and reduce the cooldown by "),
+                    Component.text("50%", NamedTextColor.RED),
                     Component.text(".")
             ),
             SanctifiedBeacon.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SanctifiedBeacon sanctifiedBeacon) {
-                    sanctifiedBeacon.setCritMultiplierReducedBy(sanctifiedBeacon.getCritMultiplierReducedBy() + 20);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .75f);
+                    abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
                 }
             }
     ),
