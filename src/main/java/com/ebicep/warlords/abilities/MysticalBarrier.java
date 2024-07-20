@@ -38,6 +38,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int shieldIncrease = 100;
     private int shieldMaxHealth = 1200;
     private int reactivateTickDuration = 100;
+    private int stacksGranted = 2;
 
     public int timesTeammatesShielded = 0;
     public int timesCarrierShielded = 0;
@@ -51,22 +52,22 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     @Override
     public void updateDescription(Player player) {
         description = Component.text("Grant the target ally ")
-                               .append(Component.text("3", NamedTextColor.BLUE))
+                               .append(Component.text(stacksGranted, NamedTextColor.BLUE))
                                .append(Component.text(" stacks of Fortifying Hex and the protection of magical spirits that reduce all melee damage taken by")
-                                                .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
-                                                .append(Component.text("and increase the attacker’s cooldowns by "))
-                                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
-                                                .append(Component.text(" seconds for every instance of damage they deal to the target.\n\nAfter "))
-                                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                                .append(Component.text(" seconds the spirits transform into a shield equal to"))
-                                                .append(Component.text(shieldBase, NamedTextColor.YELLOW))
-                                                .append(Component.text(" + "))
-                                                .append(Component.text(shieldIncrease, NamedTextColor.YELLOW))
-                                                .append(Component.text(" for each instance of damage taken, up to a maximum of "))
-                                                .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
-                                                .append(Component.text(" health, that lasts "))
-                                                .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                                                .append(Component.text(" seconds.\n\nIf no ally is targeted, receive all the effects yourself.")));
+                               .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
+                               .append(Component.text("and increase the attacker’s cooldowns by "))
+                               .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds for every instance of damage they deal to the target.\n\nAfter "))
+                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds the spirits transform into a shield equal to"))
+                               .append(Component.text(shieldBase, NamedTextColor.YELLOW))
+                               .append(Component.text(" + "))
+                               .append(Component.text(shieldIncrease, NamedTextColor.YELLOW))
+                               .append(Component.text(" for each instance of damage taken, up to a maximum of "))
+                               .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
+                               .append(Component.text(" health, that lasts "))
+                               .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
+                               .append(Component.text(" seconds.\n\nIf no ally is targeted, receive all the effects yourself.")));
     }
 
     @Override
@@ -139,7 +140,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             );
         }
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < stacksGranted; i++) {
             FortifyingHex.giveFortifyingHex(wp, target);
         }
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -284,5 +285,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     public void setShieldIncrease(int shieldIncrease) {
         this.shieldIncrease = shieldIncrease;
     }
+
+    public int getStacksGranted() { return stacksGranted; }
+
+    public void setStacksGranted(int stacksGranted) { this.stacksGranted = stacksGranted; }
 
 }
