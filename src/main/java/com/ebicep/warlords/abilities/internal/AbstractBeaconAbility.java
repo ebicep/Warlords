@@ -55,7 +55,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
-        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, BeaconData.class, maxBeaconsAtATime);
+        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, getDataClass(), maxBeaconsAtATime);
         Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
 
         Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 0.3f, 1);
