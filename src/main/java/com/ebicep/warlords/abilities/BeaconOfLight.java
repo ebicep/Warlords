@@ -22,16 +22,12 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implements Heals<BeaconOfLight.HealingValues> {
+public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOfLight.BeaconOfLightData> implements Heals<BeaconOfLight.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
 
     public BeaconOfLight() {
-        this(null, null);
-    }
-
-    public BeaconOfLight(Location location, CircleEffect effect) {
-        super("Beacon of Light", 20, 40, location, 4, 20, effect);
+        super("Beacon of Light", 20, 40, 4, 20);
     }
 
     @Override
@@ -71,24 +67,19 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implemen
     }
 
     @Override
-    public Class<BeaconOfLight> getBeaconClass() {
-        return BeaconOfLight.class;
+    public Class<BeaconOfLightData> getDataClass() {
+        return BeaconOfLightData.class;
     }
 
     @Override
-    public BeaconOfLight getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect) {
-        return new BeaconOfLight(groundLocation, effect);
+    public BeaconOfLightData getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
+        return new BeaconOfLightData(beacon, groundLocation, effect, radius);
     }
 
     @Override
-    public ArmorStand getCrystal() {
-        return null;
-    }
-
-    @Override
-    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfLight> cooldown, Integer ticksLeft, Integer ticksElapsed) {
+    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<BeaconOfLightData> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         if (ticksElapsed % 40 == 0) {
-            BeaconOfLight beacon = cooldown.getCooldownObject();
+            BeaconData beacon = cooldown.getCooldownObject();
             float rad = radius.getCalculatedValue();
             for (WarlordsEntity allyTarget : PlayerFilter
                     .entitiesAround(beacon.getGroundLocation(), rad, rad, rad)
@@ -121,6 +112,14 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight> implemen
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+    }
+
+    public static class BeaconOfLightData extends BeaconData {
+
+        public BeaconOfLightData(ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
+            super(beacon, groundLocation, effect, radius);
         }
 
     }

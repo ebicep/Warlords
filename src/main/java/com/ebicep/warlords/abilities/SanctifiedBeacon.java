@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> implements BlueAbilityIcon {
+public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, SanctifiedBeacon.SanctifiedBeaconData> implements BlueAbilityIcon {
 
     public static final Map<Integer, Team> BEACON_IDS = new HashMap<>();
 
@@ -38,16 +38,12 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
 
     private final int maxAllies = 2;
     private int critMultiplierReducedBy = 25;
-    private ArmorStand crystal;
     private int hexIntervalTicks = 100;
     private float damageReductionPve = 30;
 
-    public SanctifiedBeacon() {
-        this(null, null);
-    }
 
-    public SanctifiedBeacon(Location location, CircleEffect effect) {
-        super("Sanctified Beacon", 20, 40, location, 8, 15, effect);
+    public SanctifiedBeacon() {
+        super("Sanctified Beacon", 20, 40, 8, 15);
     }
 
     @Override
@@ -76,31 +72,24 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     }
 
     @Override
-    public Class<SanctifiedBeacon> getBeaconClass() {
-        return SanctifiedBeacon.class;
+    public Class<SanctifiedBeaconData> getDataClass() {
+        return SanctifiedBeaconData.class;
     }
 
     @Override
-    public SanctifiedBeacon getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect) {
-        crystal = Utils.spawnArmorStand(groundLocation, armorStand -> {
-            BEACON_IDS.put(armorStand.getEntityId(), warlordsEntity.getTeam());
+    public SanctifiedBeaconData getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
+        return new SanctifiedBeaconData(beacon, groundLocation, effect, radius, Utils.spawnArmorStand(groundLocation, armorStand -> {
+            BEACON_IDS.put(armorStand.getEntityId(), wp.getTeam());
             armorStand.setGravity(true);
             armorStand.setMarker(true);
             armorStand.getEquipment().setHelmet(new ItemStack(Material.LIME_STAINED_GLASS));
-        });
-        return new SanctifiedBeacon(groundLocation, effect);
-
+        }));
     }
 
     @Override
-    public ArmorStand getCrystal() {
-        return crystal;
-    }
-
-    @Override
-    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<SanctifiedBeacon> cooldown, Integer ticksLeft, Integer ticksElapsed) {
-        SanctifiedBeacon beacon = cooldown.getCooldownObject();
-        float rad = beacon.getHitBoxRadius().getCalculatedValue();
+    public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<SanctifiedBeaconData> cooldown, Integer ticksLeft, Integer ticksElapsed) {
+        SanctifiedBeaconData beacon = cooldown.getCooldownObject();
+        float rad = beacon.getRadius().getCalculatedValue();
         if (ticksElapsed % 5 == 0) {
             for (WarlordsEntity nearBy : PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad)) {
                 if (nearBy.isTeammate(wp)) {
@@ -111,7 +100,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Shadow Garden",
                             null,
-                            SanctifiedBeacon.class,
+                            SanctifiedBeaconData.class,
                             beacon,
                             wp,
                             CooldownTypes.ABILITY,
@@ -134,7 +123,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
                             null,
-                            SanctifiedBeacon.class,
+                            SanctifiedBeaconData.class,
                             beacon,
                             wp,
                             CooldownTypes.ABILITY,
@@ -177,6 +166,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
             }
         }
 
+        ArmorStand crystal = beacon.getCrystal();
         int yawIncrease = ticksElapsed % hexIntervalTicks == 0 ? 120 : 10;
         if (ticksElapsed % 2 == 0) {
             Location crystalLocation = crystal.getLocation();
@@ -228,8 +218,9 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     }
 
     @Override
-    protected void onRemove() {
-        BEACON_IDS.remove(crystal.getEntityId());
+    protected void onRemove(SanctifiedBeaconData data) {
+        data.getCrystal().remove();
+        BEACON_IDS.remove(data.getCrystal().getEntityId());
     }
 
     @Override
@@ -269,4 +260,20 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon> im
     public void setDamageReductionPve(float damageReductionPve) {
         this.damageReductionPve = damageReductionPve;
     }
+
+    public static class SanctifiedBeaconData extends AbstractBeaconAbility.BeaconData {
+
+        private final ArmorStand crystal;
+
+        public SanctifiedBeaconData(ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius, ArmorStand crystal) {
+            super(beacon, groundLocation, effect, radius);
+            this.crystal = crystal;
+        }
+
+        public ArmorStand getCrystal() {
+            return crystal;
+        }
+
+    }
+
 }
