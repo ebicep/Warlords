@@ -62,8 +62,9 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                                    .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
                                    .append(Component.text(" blocks."));
         } else {
-            description = Component.text(
-                                           "Unleash a concentrated beam of mystical power, piercing all enemies and allies. Any ally hit with stacks of Fortifying Hex is granted a shield with ")
+            description = Component.text("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
+                                   .append(Damages.formatDamage(damageValues.beamDamage))
+                                   .append(Component.text("damage. Any ally hit with stacks of Fortifying Hex is granted a shield with"))
                                    .append(Component.text(format(shieldPercents.get(0)) + "%", NamedTextColor.YELLOW))
                                    .append(Component.text("/"))
                                    .append(Component.text(format(shieldPercents.get(1)) + "%", NamedTextColor.YELLOW))
