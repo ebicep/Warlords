@@ -192,6 +192,10 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 if (event.getFlags().contains(InstanceFlags.DOT)) {
                     return;
                 }
+                String cause = event.getCause();
+                if (cause.equals("Hammer of Light") || cause.equals("Sanctuary")) {
+                    return;
+                }
                 event.getSource().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 damageInstances.getAndIncrement();
                 timesCooldownsIncreased++;
