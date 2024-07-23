@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -76,8 +77,17 @@ public class ComponentBuilder {
         return this;
     }
 
+    public ComponentBuilder newLine() {
+        componentBuilder.append(Component.newline());
+        return this;
+    }
+
     public TextComponent build() {
         return componentBuilder.build();
+    }
+
+    public AbilityDescriptionBuilder abilityDescriptionBuilder() {
+        return new AbilityDescriptionBuilder(this);
     }
 
 }
