@@ -238,6 +238,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 .source(wp)
                 .min(damageValues.hexDamage.getMinValue() * toReduceBy)
                 .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
+                .crit(damageValues.hexDamage)
         );
         givePoisonousHex(wp, hit);
         if (projectile.getHit().size() >= maxEnemiesHit) {
