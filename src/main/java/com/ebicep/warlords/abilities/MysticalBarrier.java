@@ -53,7 +53,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     public void updateDescription(Player player) {
         description = Component.text("Grant the target ally ")
                                .append(Component.text(stacksGranted, NamedTextColor.BLUE))
-                               .append(Component.text(" stacks of Fortifying Hex and the protection of magical spirits that reduce all melee damage taken by")
+                               .append(Component.text(" stacks of Fortifying Hex and the protection of magical spirits that reduce all melee damage taken by"))
                                .append(Component.text(format(meleeDamageReduction) + "%", NamedTextColor.YELLOW))
                                .append(Component.text("and increase the attacker’s cooldowns by "))
                                .append(Component.text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD))
@@ -67,7 +67,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                                .append(Component.text(shieldMaxHealth, NamedTextColor.YELLOW))
                                .append(Component.text(" health, that lasts "))
                                .append(Component.text(format(reactivateTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nIf no ally is targeted, receive all the effects yourself.")));
+                               .append(Component.text(" seconds.\n\nIf no ally is targeted, receive all the effects yourself."));
     }
 
     @Override
