@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -43,20 +40,20 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(Heals.formatHealing(healingValues.radianceHealing))
-                               .append(Component.text(" health."))
-                               .append(Component.newline())
-                               .append(Component.newline())
-                               .append(Component.text("You may look at an ally to mark them for "))
-                               .append(Component.text(markDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Increasing their EPS by "))
-                               .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
-                               .append(Component.text(" and speed by "))
-                               .append(Component.text(markSpeed + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for the duration.\n\nMark has a maximum range of "))
-                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                .heal(healingValues.radianceHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("You may look at an ally to mark them for ")
+                .text(markDuration, NamedTextColor.GOLD)
+                .text(" seconds. Increasing their EPS by ")
+                .text(energyPerSecond, NamedTextColor.YELLOW)
+                .text(" and speed by ")
+                .percent(markSpeed, NamedTextColor.YELLOW)
+                .text(" for the duration.")
+                .maxRange(markRadius)
+                .build();
 
     }
 
@@ -73,6 +70,11 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new HolyRadianceBranchCrusader(abilityTree, this);
+    }
+
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
     }
 
     @Override
@@ -166,11 +168,6 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
         }
 
         return false;
-    }
-
-    @Override
-    public Value.RangedValueCritable getRadianceHealing() {
-        return healingValues.radianceHealing;
     }
 
     public int getMarkDuration() {

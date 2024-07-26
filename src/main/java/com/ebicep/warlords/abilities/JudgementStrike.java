@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -32,15 +31,17 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy, dealing ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text("damage. Every fourth attack is a "))
-                               .append(Component.text("guaranteed", NamedTextColor.RED))
-                               .append(Component.text(" critical strike. Critical strikes temporarily increase your movement speed by "))
-                               .append(Component.text(speedOnCrit + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text(speedOnCritDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy, dealing ")
+                .damage(damageValues.strikeDamage)
+                .text("damage. Every fourth attack is a ")
+                .text("guaranteed", NamedTextColor.RED)
+                .text(" critical strike. Critical strikes temporarily increase your movement speed by ")
+                .percent(speedOnCrit, NamedTextColor.YELLOW)
+                .text(" for ")
+                .text(speedOnCritDuration, NamedTextColor.GOLD)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

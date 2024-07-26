@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -43,15 +40,17 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and "))
-                               .append(Component.text("wounding", NamedTextColor.RED))
-                               .append(Component.text(" them for "))
-                               .append(Component.text(format(woundingTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. A wounded player receives "))
-                               .append(Component.text("40%", NamedTextColor.RED))
-                               .append(Component.text(" less healing for the duration of the effect."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing ")
+                .damage(damageValues.strikeDamage)
+                .text(" damage and ")
+                .text("wounding", NamedTextColor.RED)
+                .text(" them for ")
+                .durationTicks(woundingTickDuration)
+                .text(" seconds. A wounded player receives ")
+                .percent(40, NamedTextColor.RED)
+                .text(" less healing for the duration of the effect.")
+                .build();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
@@ -35,7 +36,6 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     private int maxShieldHealth;
     private int shieldPercentage = 50;
     private int tickDuration = 120;
-    private float shieldHealth = 0;
 
     public ArcaneShield() {
         super("Arcane Shield", 31, 40);
@@ -45,37 +45,27 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         timesBroken++;
     }
 
-    public int getTimesBroken() {
-        return timesBroken;
-    }
-
-    public float getShieldHealth() {
-        return shieldHealth;
-    }
-
-    public void addShieldHealth(float amount) {
-        this.shieldHealth += amount;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = Component.text("Surround yourself with arcane energy, creating a shield that will absorb up to ")
-                               .append(Component.text(maxShieldHealth, NamedTextColor.YELLOW))
-                               .append(Component.text(" ("))
-                               .append(Component.text(shieldPercentage + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of your maximum health) incoming damage. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
     }
 
     @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Surround yourself with arcane energy, creating a shield that will absorb up to ")
+                .text(maxShieldHealth, NamedTextColor.YELLOW)
+                .text(" (")
+                .percent(shieldPercentage, NamedTextColor.YELLOW)
+                .text(" of your maximum health) incoming damage. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .build();
     }
 
 

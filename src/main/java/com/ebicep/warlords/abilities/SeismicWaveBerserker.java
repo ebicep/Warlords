@@ -59,13 +59,13 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SeismicWaveBranchBerserker(abilityTree, this);
+    public Value.RangedValueCritable getWaveDamage() {
+        return damageValues.waveDamage;
     }
 
     @Override
-    public Value.RangedValueCritable getWaveDamage() {
-        return damageValues.waveDamage;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SeismicWaveBranchBerserker(abilityTree, this);
     }
 
     public static class DamageValues implements Value.ValueHolder {

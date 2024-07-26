@@ -20,10 +20,6 @@ import java.util.Optional;
 
 public abstract class AbstractTotem extends AbstractAbility implements OrangeAbilityIcon {
 
-    public ArmorStand getTotem() {
-        return totem;
-    }
-
     public static <T extends TotemData<?>> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
@@ -39,10 +35,8 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
                 .filter(data -> entitiesAround.contains(data.getArmorStand()))
                 .toList();
     }
-
     protected WarlordsEntity owner;
     protected ArmorStand totem;
-
     public AbstractTotem(String name, float cooldown, float energyCost) {
         super(name, cooldown, energyCost);
     }
@@ -57,6 +51,10 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
         super(name, cooldown, energyCost);
         this.totem = totem;
         this.owner = owner;
+    }
+
+    public ArmorStand getTotem() {
+        return totem;
     }
 
     @Override

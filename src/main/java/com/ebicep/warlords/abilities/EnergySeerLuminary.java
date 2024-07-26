@@ -19,11 +19,14 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     private int healingIncrease = 20;
 
     @Override
-    public TextComponent getBonus() {
-        return Component.text("Increase your healing by ")
-                        .append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
+    public EnergySeerData getDataObject() {
+        return new EnergySeerData();
     }
 
+    @Override
+    public Class<EnergySeerData> getDataClass() {
+        return EnergySeerData.class;
+    }
 
     @Override
     protected void onEnd(WarlordsEntity wp, EnergySeerData data) {
@@ -39,13 +42,9 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     }
 
     @Override
-    public EnergySeerData getDataObject() {
-        return new EnergySeerData();
-    }
-
-    @Override
-    public Class<EnergySeerData> getDataClass() {
-        return EnergySeerData.class;
+    public TextComponent getBonus() {
+        return Component.text("Increase your healing by ")
+                        .append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
     }
 
     @Override

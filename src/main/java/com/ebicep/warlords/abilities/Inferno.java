@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -13,7 +14,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.InfernoBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -39,13 +39,15 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Combust into a molten inferno, increasing your Crit Chance by ")
-                               .append(Component.text(critChanceIncrease + "%", NamedTextColor.RED))
-                               .append(Component.text(" and your Crit Multiplier by "))
-                               .append(Component.text(critMultiplierIncrease + "%", NamedTextColor.RED))
-                               .append(Component.text(". Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Combust into a molten inferno, increasing your Crit Chance by ")
+                .percent(critChanceIncrease, NamedTextColor.RED)
+                .text(" and your Crit Multiplier by ")
+                .percent(critMultiplierIncrease, NamedTextColor.RED)
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

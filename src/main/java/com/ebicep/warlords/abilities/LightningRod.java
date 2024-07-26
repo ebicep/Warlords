@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractTotem;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -20,7 +17,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,13 +46,15 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Call down an energizing bolt of lightning upon yourself, restoring ")
-                               .append(Heals.formatHealingPercent(healingValues.healthRestore))
-                               .append(Component.text(" health and "))
-                               .append(Component.text(energyRestore + " ", NamedTextColor.YELLOW))
-                               .append(Component.text("energy and knock all nearby enemies in a "))
-                               .append(Component.text(knockbackRadius + " ", NamedTextColor.YELLOW))
-                               .append(Component.text("block radius back."));
+        description = AbilityDescriptionBuilder
+                .create("Call down an energizing bolt of lightning upon yourself, restoring ")
+                .heal(healingValues.healthRestore)
+                .text(" health and ")
+                .text(energyRestore + " ", NamedTextColor.YELLOW)
+                .text("energy and knock all nearby enemies in a ")
+                .text(knockbackRadius + " ", NamedTextColor.YELLOW)
+                .text("block radius back.")
+                .build();
 
     }
 

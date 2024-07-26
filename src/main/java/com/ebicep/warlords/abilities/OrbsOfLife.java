@@ -55,23 +55,27 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Spawn ")
-                               .append(Component.text("2 ", NamedTextColor.YELLOW))
-                               .append(Component.text("initial orbs on cast."))
-                               .append(Component.text("\n\nStriking and hitting enemies with abilities causes them to drop an orb of life that lasts "))
-                               .append(Component.text("8", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, restoring "))
-                               .append(Heals.formatHealing(healingValues.orbHealing))
-                               .append(Component.text(" health to the ally that picks it up. Other nearby allies recover "))
-                               .append(Heals.formatHealing(healingValues.orbHealing))
-                               .append(Component.text(" health. After 1.5 seconds the healing will increase by "))
-                               .append(Component.text("40%", NamedTextColor.GREEN))
-                               .append(Component.text(" over 6.5 seconds. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
-                               .append(Component.text("seconds."))
-                               .append(Component.text("\n\nRecast to make the orbs levitate towards you or the nearest ally in a "))
-                               .append(Component.text(floatingOrbRadius + " ", NamedTextColor.YELLOW))
-                               .append(Component.text("block radius."));
+        description = AbilityDescriptionBuilder
+                .create("Spawn ")
+                .text("2 ", NamedTextColor.YELLOW)
+                .text("initial orbs on cast.")
+                .emptyLine()
+                .text("Striking and hitting enemies with abilities causes them to drop an orb of life that lasts ")
+                .text("8", NamedTextColor.GOLD)
+                .text(" seconds, restoring ")
+                .heal(healingValues.orbHealing)
+                .text(" health to the ally that picks it up. Other nearby allies recover ")
+                .heal(healingValues.orbHealing)
+                .text(" health. After 1.5 seconds the healing will increase by ")
+                .percent(40, NamedTextColor.GREEN)
+                .text(" over 6.5 seconds. Lasts ")
+                .durationTicks(tickDuration)
+                .text("seconds.")
+                .emptyLine()
+                .text("Recast to make the orbs levitate towards you or the nearest ally in a ")
+                .text(floatingOrbRadius + " ", NamedTextColor.YELLOW)
+                .text("block radius.")
+                .build();
 
     }
 
@@ -333,13 +337,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return false;
     }
 
-    public void setOrbTickMultiplier(int orbTickMultiplier) {
-        this.orbTickMultiplier = orbTickMultiplier;
-    }
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new OrbsOfLifeBranch(abilityTree, this);
+    }
+
+    public void setOrbTickMultiplier(int orbTickMultiplier) {
+        this.orbTickMultiplier = orbTickMultiplier;
     }
 
     @Override

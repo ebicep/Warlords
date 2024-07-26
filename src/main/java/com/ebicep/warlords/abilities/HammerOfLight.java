@@ -22,7 +22,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -84,22 +83,23 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw down a Hammer of Light on the ground, dealing ")
-                               .append(Damages.formatDamage(damageValues.hammerDamage))
-                               .append(Component.text(" damage every second to nearby enemies and healing nearby allies for "))
-                               .append(Heals.formatHealing(healingValues.hammerHealing))
-                               .append(Component.text(" every second in a "))
-                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius. Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."))
-                               .append(Component.newline())
-                               .append(Component.newline())
-                               .append(Component.text("Recast to turn your hammer into Crown of Light. Removing the damage and piercing BUT increasing the healing by "))
-                               .append(Component.text(crownBonusHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" and reducing the energy cost of your Protector's Strike by "))
-                               .append(Component.text("10", NamedTextColor.YELLOW))
-                               .append(Component.text(" energy. You cannot put the Hammer of Light back down after you converted it."));
+        description = AbilityDescriptionBuilder
+                .create("Throw down a Hammer of Light on the ground, dealing ")
+                .damage(damageValues.hammerDamage)
+                .text(" damage every second to nearby enemies and healing nearby allies for ")
+                .heal(healingValues.hammerHealing)
+                .text(" every second in a ")
+                .text(radius, NamedTextColor.YELLOW)
+                .text(" block radius. Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .emptyLine()
+                .text("Recast to turn your hammer into Crown of Light. Removing the damage and piercing BUT increasing the healing by ")
+                .percent(crownBonusHealing, NamedTextColor.GREEN)
+                .text(" and reducing the energy cost of your Protector's Strike by ")
+                .text("10", NamedTextColor.YELLOW)
+                .text(" energy. You cannot put the Hammer of Light back down after you converted it.")
+                .build();
     }
 
     @Override

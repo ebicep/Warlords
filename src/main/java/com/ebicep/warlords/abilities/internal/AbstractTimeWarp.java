@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.util.java.Pair;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
@@ -22,11 +21,13 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Activate to place a time rune on the ground. After ")
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, you will warp back to that location and restore "))
-                               .append(Component.text(warpHealPercentage + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of your health.", NamedTextColor.GRAY));
+        description = AbilityDescriptionBuilder
+                .create("Activate to place a time rune on the ground. After ")
+                .durationTicks(tickDuration)
+                .text(" seconds, you will warp back to that location and restore ")
+                .text(warpHealPercentage + "%", NamedTextColor.GREEN)
+                .text(" of your health.", NamedTextColor.GRAY)
+                .build();
     }
 
     @Override

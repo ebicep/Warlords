@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -48,19 +45,25 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Bind yourself to ")
-                               .append(Component.text(alliesAffected, NamedTextColor.YELLOW))
-                               .append(Component.text(" allies near you, increasing the damage they deal to leeched targets by "))
-                               .append(Component.text(format(allyDamageIncrease) + "%", NamedTextColor.RED))
-                               .append(Component.text(" as long as the link is active. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
-                               .append(Component.text("seconds.\n\nWhen the link expires you and the allies are healed for "))
-                               .append(Heals.formatHealing(healingValues.chainHealing))
-                               .append(Component.text(" health. Breaking the link early will only heal the allies for "))
-                               .append(Component.text(format(healingMultiplier) + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the original amount for each second they have been linked.\n\nThe link will break if you are "))
-                               .append(Component.text(linkBreakRadius + " ", NamedTextColor.YELLOW))
-                               .append(Component.text("blocks apart."));
+        description = AbilityDescriptionBuilder
+                .create("Bind yourself to ")
+                .text(alliesAffected, NamedTextColor.YELLOW)
+                .text(" allies near you, increasing the damage they deal to leeched targets by ")
+                .percent(allyDamageIncrease, NamedTextColor.RED)
+                .text(" as long as the link is active. Lasts ")
+                .durationTicks(tickDuration)
+                .text("seconds.")
+                .emptyLine()
+                .text("When the link expires you and the allies are healed for ")
+                .heal(healingValues.chainHealing)
+                .text(" health. Breaking the link early will only heal the allies for ")
+                .percent(healingMultiplier, NamedTextColor.GREEN)
+                .text(" of the original amount for each second they have been linked.")
+                .emptyLine()
+                .text("The link will break if you are ")
+                .text(linkBreakRadius + " ", NamedTextColor.YELLOW)
+                .text("blocks apart.")
+                .build();
     }
 
     @Override
@@ -285,7 +288,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
-    public float getAllyDamageIncrease() { return allyDamageIncrease; }
+    public float getAllyDamageIncrease() {
+        return allyDamageIncrease;
+    }
 
     public void setAllyDamageIncrease(float allyDamageIncrease) {
         this.allyDamageIncrease = allyDamageIncrease;

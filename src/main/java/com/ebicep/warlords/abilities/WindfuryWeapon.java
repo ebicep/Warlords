@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Duration;
@@ -19,7 +20,6 @@ import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.WindfuryBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -46,15 +46,17 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
-                               .append(Component.text(format(procChance) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" chance to hit "))
-                               .append(Component.text(maxHits, NamedTextColor.YELLOW))
-                               .append(Component.text(" additional times for "))
-                               .append(Component.text(format(weaponDamage) + "%", NamedTextColor.RED))
-                               .append(Component.text(" weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
+                .percent(procChance, NamedTextColor.YELLOW)
+                .text(" chance to hit ")
+                .text(maxHits, NamedTextColor.YELLOW)
+                .text(" additional times for ")
+                .percent(weaponDamage, NamedTextColor.RED)
+                .text(" weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

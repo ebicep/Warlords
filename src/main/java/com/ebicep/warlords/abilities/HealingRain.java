@@ -53,17 +53,21 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Conjure rain at targeted location that will restore ")
-                               .append(Heals.formatHealing(healingValues.rainHealing))
-                               .append(Component.text(" health every 0.5 seconds to allies. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."))
-                               .append(Component.text("\n\nRecast to move Healing Rain to your location."))
-                               .append(Component.text("\n\nHealing Rain can overheal allies for up to "))
-                               .append(Component.text("10%", NamedTextColor.GREEN))
-                               .append(Component.text(" of their max health as bonus health for "))
-                               .append(Component.text(String.valueOf(Overheal.OVERHEAL_DURATION), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Conjure rain at targeted location that will restore ")
+                .heal(healingValues.rainHealing)
+                .text(" health every 0.5 seconds to allies. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .emptyLine()
+                .text("Recast to move Healing Rain to your location.")
+                .emptyLine()
+                .text("Healing Rain can overheal allies for up to ")
+                .percent(10, NamedTextColor.GREEN)
+                .text(" of their max health as bonus health for ")
+                .text(String.valueOf(Overheal.OVERHEAL_DURATION), NamedTextColor.GOLD)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.ebicep.warlords.pve.upgrades.rogue.apothecary.DrainingMiasmaBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
@@ -50,24 +49,27 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
-                               .append(Damages.formatDamage(damageValues.miasmaDamage))
-                               .append(Component.text(" + "))
-                               .append(Component.text(maxHealthDamage + "%", NamedTextColor.RED))
-                               .append(Component.text(" of their max health as damage per second, for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Enemies poisoned by your Draining Miasma are slowed by "))
-                               .append(Component.text("25%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text("3", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds on cast. Has a radius of "))
-                               .append(Component.text(radius, NamedTextColor.GOLD))
-                               .append(Component.text(" blocks."))
-                               .append(Component.text("\n\nEach enemy hit will be afflicted with "))
-                               .append(Component.text("LEECH", NamedTextColor.GREEN))
-                               .append(Component.text(" for "))
-                               .append(Component.text(leechDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
+                .damage(damageValues.miasmaDamage)
+                .text(" + ")
+                .percent(maxHealthDamage, NamedTextColor.RED)
+                .text(" of their max health as damage per second, for ")
+                .durationTicks(tickDuration)
+                .text(" seconds. Enemies poisoned by your Draining Miasma are slowed by ")
+                .percent(25, NamedTextColor.YELLOW)
+                .text(" for ")
+                .text("3", NamedTextColor.GOLD)
+                .text(" seconds on cast. Has a radius of ")
+                .text(radius, NamedTextColor.GOLD)
+                .text(" blocks.")
+                .emptyLine()
+                .text("Each enemy hit will be afflicted with ")
+                .text("LEECH", NamedTextColor.GREEN)
+                .text(" for ")
+                .text(leechDuration, NamedTextColor.GOLD)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

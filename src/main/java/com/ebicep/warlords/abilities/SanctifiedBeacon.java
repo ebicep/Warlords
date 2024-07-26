@@ -62,18 +62,13 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     }
 
     @Override
-    public LineEffect getLineEffect(Location target) {
-        return new LineEffect(target.clone().add(0, 0.5, 0), Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(150, 8, 80), 1));
-    }
-
-    @Override
-    public String getAbbreviation() {
-        return "BEACON";
-    }
-
-    @Override
     public Class<SanctifiedBeaconData> getDataClass() {
         return SanctifiedBeaconData.class;
+    }
+
+    @Override
+    public LineEffect getLineEffect(Location target) {
+        return new LineEffect(target.clone().add(0, 0.5, 0), Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(150, 8, 80), 1));
     }
 
     @Override
@@ -84,6 +79,17 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             armorStand.setMarker(true);
             armorStand.getEquipment().setHelmet(new ItemStack(Material.LIME_STAINED_GLASS));
         }));
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return "BEACON";
+    }
+
+    @Override
+    protected void onRemove(SanctifiedBeaconData data) {
+        data.getCrystal().remove();
+        BEACON_IDS.remove(data.getCrystal().getEntityId());
     }
 
     @Override
@@ -215,12 +221,6 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     3
             );
         }
-    }
-
-    @Override
-    protected void onRemove(SanctifiedBeaconData data) {
-        data.getCrystal().remove();
-        BEACON_IDS.remove(data.getCrystal().getEntityId());
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -22,7 +19,6 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -60,14 +56,14 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Summon a wave of fallen souls, dealing")
-                               .append(Damages.formatDamage(damageValues.fallenSoulDamage))
-                               .append(Component.text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by "))
-                               .append(Component.text("2", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas a maximum range of "))
-                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
-        ;
+        description = AbilityDescriptionBuilder
+                .create("Summon a wave of fallen souls, dealing")
+                .damage(damageValues.fallenSoulDamage)
+                .text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by ")
+                .text("2", NamedTextColor.GOLD)
+                .text(" seconds.")
+                .maxRange(maxDistance)
+                .build();
     }
 
     @Override

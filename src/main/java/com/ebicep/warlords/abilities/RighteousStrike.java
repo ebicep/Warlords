@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -12,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.rogue.vindicator.RighteousStrikeBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -34,16 +34,19 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy for ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage. Each strike reduces the duration of your struck target's active ability timers by "))
-                               .append(Component.text(format(abilityReductionInTicks / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."))
-                               .append(Component.text("\n\nAdditionally, if your struck target is silenced, reduce the cooldown of your Vindicate by "))
-                               .append(Component.text("0.5", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and reduce their active ability timers by "))
-                               .append(Component.text(format((abilityReductionInTicks + 4) / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" second instead."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy for ")
+                .damage(damageValues.strikeDamage)
+                .text(" damage. Each strike reduces the duration of your struck target's active ability timers by ")
+                .durationTicks(abilityReductionInTicks)
+                .text(" seconds.")
+                .emptyLine()
+                .text("Additionally, if your struck target is silenced, reduce the cooldown of your Vindicate by ")
+                .text("0.5", NamedTextColor.GOLD)
+                .text(" seconds and reduce their active ability timers by ")
+                .durationTicks((abilityReductionInTicks + 4))
+                .text(" second instead.")
+                .build();
     }
 
     @Override

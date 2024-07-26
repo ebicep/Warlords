@@ -17,7 +17,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -74,6 +73,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             }
         });
     }
+
     public int numberOfDismounts = 0;
     private final DamageValues damageValues = new DamageValues();
     private float damageReductionPerBounce = 10;
@@ -95,23 +95,24 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Discharge a bolt of lightning at the targeted enemy player that deals ")
-                               .append(Damages.formatDamage(damageValues.chainDamage))
-                               .append(Component.text(" damage and jumps to "))
-                               .append(Component.text(additionalBounces, NamedTextColor.YELLOW))
-                               .append(Component.text(" additional targets within "))
-                               .append(Component.text(bounceRange, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks. Each time the lightning jumps, the damage is decreased by "))
-                               .append(Component.text("15%", NamedTextColor.RED))
-                               .append(Component.text(". You gain "))
-                               .append(Component.text(format(damageReductionPerBounce) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage resistance for each target hit, up to "))
-                               .append(Component.text(format(maxDamageReduction) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage resistance. This buff lasts "))
-                               .append(Component.text(format(damageReductionTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas an initial cast range of "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Discharge a bolt of lightning at the targeted enemy player that deals ")
+                .damage(damageValues.chainDamage)
+                .text(" damage and jumps to ")
+                .text(additionalBounces, NamedTextColor.YELLOW)
+                .text(" additional targets within ")
+                .text(bounceRange, NamedTextColor.YELLOW)
+                .text(" blocks. Each time the lightning jumps, the damage is decreased by ")
+                .percent(15, NamedTextColor.RED)
+                .text(". You gain ")
+                .percent(damageReductionPerBounce, NamedTextColor.YELLOW)
+                .text(" damage resistance for each target hit, up to ")
+                .percent(maxDamageReduction, NamedTextColor.YELLOW)
+                .text(" damage resistance. This buff lasts ")
+                .durationTicks(damageReductionTickDuration)
+                .text(" seconds.")
+                .initialRange(radius)
+                .build();
     }
 
     @Override

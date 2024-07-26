@@ -19,9 +19,13 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
     private int damageIncrease = 10;
 
     @Override
-    public TextComponent getBonus() {
-        return Component.text("Increase your damage by ")
-                        .append(Component.text(damageIncrease + "%", NamedTextColor.RED));
+    public EnergySeerConjurerData getDataObject() {
+        return new EnergySeerConjurerData();
+    }
+
+    @Override
+    public Class<EnergySeerConjurerData> getDataClass() {
+        return EnergySeerConjurerData.class;
     }
 
     @Override
@@ -40,16 +44,6 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
     }
 
     @Override
-    public Class<EnergySeerConjurerData> getDataClass() {
-        return EnergySeerConjurerData.class;
-    }
-
-    @Override
-    public EnergySeerConjurerData getDataObject() {
-        return new EnergySeerConjurerData();
-    }
-
-    @Override
     protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUseEvent.Post event, EnergySeerConjurerData data) {
         if (!pveMasterUpgrade2) {
             return;
@@ -60,6 +54,12 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
         }
         float amount = event.getEnergyUsed() * .05f;
         wp.addEnergy(wp, name, amount);
+    }
+
+    @Override
+    public TextComponent getBonus() {
+        return Component.text("Increase your damage by ")
+                        .append(Component.text(damageIncrease + "%", NamedTextColor.RED));
     }
 
     @Override
@@ -79,12 +79,12 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
 
         private float allyEnergyUsed = 0;
 
-        public void setAllyEnergyUsed(float allyEnergyUsed) {
-            this.allyEnergyUsed = allyEnergyUsed;
-        }
-
         public float getAllyEnergyUsed() {
             return allyEnergyUsed;
+        }
+
+        public void setAllyEnergyUsed(float allyEnergyUsed) {
+            this.allyEnergyUsed = allyEnergyUsed;
         }
 
     }

@@ -874,7 +874,7 @@ public enum SkillBoosts {
                               .forEachValue(floatModifiable -> {
                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .25f);
                               });
-                    spiritLink.setSpeedDuration(spiritLink.getSpeedDuration() + 0.5);
+                    spiritLink.setSpeedDuration(spiritLink.getSpeedDuration() + 0.5f);
                 }
             }
     ),

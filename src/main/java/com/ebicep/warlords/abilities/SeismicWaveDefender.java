@@ -46,13 +46,13 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SeismicWaveBranchDefender(abilityTree, this);
+    public Value.RangedValueCritable getWaveDamage() {
+        return damageValues.waveDamage;
     }
 
     @Override
-    public Value.RangedValueCritable getWaveDamage() {
-        return damageValues.waveDamage;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SeismicWaveBranchDefender(abilityTree, this);
     }
 
     @Override

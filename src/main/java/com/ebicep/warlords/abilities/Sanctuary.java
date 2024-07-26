@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -21,7 +22,6 @@ import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -50,14 +50,17 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Summon your full protective power, increasing Fortifying Hex duration by ")
-                               .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and causing Guardian Beam to not consume Fortifying Hex stacks. " +
-                                       "\n\nAll allies with max stacks of Fortifying Hex gain an additional "))
-                               .append(Component.text(additionalDamageReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction per stack and reflect the reduced damage back to the dealer. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Summon your full protective power, increasing Fortifying Hex duration by ")
+                .durationTicks(hexTickDurationIncrease)
+                .text(" seconds and causing Guardian Beam to not consume Fortifying Hex stacks. ")
+                .emptyLine()
+                .text("All allies with max stacks of Fortifying Hex gain an additional ")
+                .percent(additionalDamageReduction, NamedTextColor.YELLOW)
+                .text(" damage reduction per stack and reflect the reduced damage back to the dealer. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

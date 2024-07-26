@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Splash;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -18,7 +15,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,6 +40,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
     private float directHitMultiplier = 15;
     private FloatModifiable splash = new FloatModifiable(4.125f);
     private int slowness = 30;
+
     public FrostBolt() {
         super("Frostbolt", 0, 70, 2, 300, false);
     }
@@ -55,19 +52,18 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Shoot a frostbolt that will shatter for ")
-                               .append(Damages.formatDamage(damageValues.boltDamage))
-                               .append(Component.text(" damage and slow by "))
-                               .append(Component.text(slowness + "%", NamedTextColor.YELLOW))
-                               .append(Component.text("for "))
-                               .append(Component.text("2", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. A direct hit will cause the enemy to take an additional "))
-                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.RED))
-                               .append(Component.text(" extra damage."))
-                               .append(Component.newline())
-                               .append(Component.text("Has an optimal range of "))
-                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Shoot a frostbolt that will shatter for ")
+                .damage(damageValues.boltDamage)
+                .text(" damage and slow by ")
+                .percent(slowness, NamedTextColor.YELLOW)
+                .text("for ")
+                .text("2", NamedTextColor.GOLD)
+                .text(" seconds. A direct hit will cause the enemy to take an additional ")
+                .percent(directHitMultiplier, NamedTextColor.RED)
+                .text(" extra damage.")
+                .optimalRange(maxFullDistance)
+                .build();
 
     }
 

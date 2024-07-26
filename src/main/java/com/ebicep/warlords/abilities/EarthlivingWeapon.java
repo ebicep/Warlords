@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -21,7 +18,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -48,16 +44,19 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a ")
-                               .append(Component.text(format(procChance) + "% ", NamedTextColor.YELLOW))
-                               .append(Component.text("chance to heal you and "))
-                               .append(Component.text("2", NamedTextColor.YELLOW))
-                               .append(Component.text(" nearby allies for "))
-                               .append(Component.text(weaponDamage + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" weapon damage. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."))
-                               .append(Component.text("\n\nThe first hit is guaranteed to activate Earthliving."));
+        description = AbilityDescriptionBuilder
+                .create("Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a ")
+                .percent(procChance, NamedTextColor.YELLOW)
+                .text("chance to heal you and ")
+                .text("2", NamedTextColor.YELLOW)
+                .text(" nearby allies for ")
+                .percent(weaponDamage, NamedTextColor.GREEN)
+                .text(" weapon damage. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .emptyLine()
+                .text("The first hit is guaranteed to activate Earthliving.")
+                .build();
 
     }
 

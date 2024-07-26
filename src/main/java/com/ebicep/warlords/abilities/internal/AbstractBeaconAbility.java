@@ -12,7 +12,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -44,10 +43,12 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Place a stationary beacon on the ground that lasts ")
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. "))
-                               .append(getBonusDescription());
+        description = AbilityDescriptionBuilder
+                .create("Place a stationary beacon on the ground that lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds. ")
+                .append(getBonusDescription())
+                .build();
     }
 
     public abstract Component getBonusDescription();
@@ -124,13 +125,13 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
         return true;
     }
 
-    public abstract LineEffect getLineEffect(Location target);
-
-    public abstract String getAbbreviation();
-
     public abstract Class<R> getDataClass();
 
+    public abstract LineEffect getLineEffect(Location target);
+
     public abstract R getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius);
+
+    public abstract String getAbbreviation();
 
     protected void onRemove(R data) {
 

@@ -55,34 +55,23 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
     @Override
     public void updateDescription(Player player) {
-        if (inPve) {
-            description = Component.text("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
-                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                                   .append(Component.text(" block radius for "))
-                                   .append(Heals.formatHealing(healingValues.totemHealing))
-                                   .append(Component.text(" health every second. The healing will gradually decrease by "))
-                                   .append(Component.text(format(healingIncrement) + "%", NamedTextColor.GREEN))
-                                   .append(Component.text(" until the final proc which heals for the normal amount once again. "))
-                                   .append(Component.text("Lasts "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(
-                                           " seconds.\n\nPressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for "))
-                                   .append(Component.text(crippleDuration, NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds. Crippled enemies deal "))
-                                   .append(Component.text("25%", NamedTextColor.RED))
-                                   .append(Component.text(" less damage."));
-        } else {
-            description = Component.text("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
-                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                                   .append(Component.text(" block radius for "))
-                                   .append(Heals.formatHealing(healingValues.totemHealing))
-                                   .append(Component.text(" health every second. The healing will gradually decrease by "))
-                                   .append(Component.text(format(healingIncrement) + "%", NamedTextColor.GREEN))
-                                   .append(Component.text(" until the final proc which heals for the normal amount once again. "))
-                                   .append(Component.text("Lasts "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds."));
-        }
+        description = AbilityDescriptionBuilder
+                .create("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
+                .text(radius, NamedTextColor.YELLOW)
+                .text(" block radius for ")
+                .heal(healingValues.totemHealing)
+                .text(" health every second. The healing will gradually decrease by ")
+                .percent(healingIncrement, NamedTextColor.GREEN)
+                .text(" until the final proc which heals for the normal amount once again. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .emptyLine()
+                .text("Pressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for ")
+                .text(crippleDuration, NamedTextColor.GOLD)
+                .text(" seconds. Crippled enemies deal ")
+                .percent(25, NamedTextColor.RED)
+                .text(" less damage.")
+                .build();
 
     }
 

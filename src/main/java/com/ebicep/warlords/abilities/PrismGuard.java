@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -64,26 +61,29 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Create a bubble shield around you that lasts ")
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. All projectiles that pass through the barrier have their damage reduced by "))
-                               .append(Component.text(projectileDamageReduction + "%", NamedTextColor.RED))
-                               .append(Component.text(".\n\nAfter "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds the bubble will burst, healing you and all allies for "))
-                               .append(Heals.formatHealing(healingValues.bubbleBaseHealing))
-                               .append(Component.text(" + "))
-                               .append(Heals.formatHealingPercent(healingValues.bubbleMissingHealthHealing))
-                               .append(Component.text(" missing health and grant "))
-                               .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds based on how many hits you took while Prism Guard was active; up to a maximum of "))
-                               .append(Component.text(maxHealing, NamedTextColor.YELLOW))
-                               .append(Component.text(" health and "))
-                               .append(Component.text(maxDamageReduction + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction."))
-        ;
+        description = AbilityDescriptionBuilder
+                .create("Create a bubble shield around you that lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds. All projectiles that pass through the barrier have their damage reduced by ")
+                .percent(projectileDamageReduction, NamedTextColor.RED)
+                .text(".")
+                .emptyLine()
+                .text("After ")
+                .durationTicks(tickDuration)
+                .text(" seconds the bubble will burst, healing you and all allies for ")
+                .heal(healingValues.bubbleBaseHealing)
+                .text(" + ")
+                .heal(healingValues.bubbleMissingHealthHealing)
+                .text(" missing health and grant ")
+                .percent(damageReduction, NamedTextColor.YELLOW)
+                .text(" damage reduction for ")
+                .durationTicks(tickDuration)
+                .text(" seconds based on how many hits you took while Prism Guard was active; up to a maximum of ")
+                .text(maxHealing, NamedTextColor.YELLOW)
+                .text(" health and ")
+                .percent(maxDamageReduction, NamedTextColor.YELLOW)
+                .text(" damage reduction.")
+                .build();
 
     }
 

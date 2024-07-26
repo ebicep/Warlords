@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.HitBox;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -48,15 +45,16 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Your presence on the battlefield inspires your allies, increasing their energy regeneration by ")
-                               .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
-                               .append(Component.text(" per second and their movement by "))
-                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas a maximum range of "))
-                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Your presence on the battlefield inspires your allies, increasing their energy regeneration by ")
+                .text(energyPerSecond, NamedTextColor.YELLOW)
+                .text(" per second and their movement by ")
+                .percent(speedBuff, NamedTextColor.YELLOW)
+                .text(" for ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .maxRange(radius)
+                .build();
     }
 
     @Override

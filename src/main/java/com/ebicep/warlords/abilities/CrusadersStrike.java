@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -17,7 +18,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -43,20 +43,21 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and restoring "))
-                               .append(Component.text(energyGiven, NamedTextColor.YELLOW))
-                               .append(Component.text(" energy to " + energyMaxAllies + " nearby allies within "))
-                               .append(Component.text(energyRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."))
-                               .append(Component.newline())
-                               .append(Component.newline())
-                               .append(Component.text("MARKED allies get priority in restoring energy and increases their speed by "))
-                               .append(Component.text("40%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text("1", NamedTextColor.GOLD))
-                               .append(Component.text(" second."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing ")
+                .damage(damageValues.strikeDamage)
+                .text(" damage and restoring ")
+                .text(energyGiven, NamedTextColor.YELLOW)
+                .text(" energy to " + energyMaxAllies + " nearby allies within ")
+                .text(energyRadius, NamedTextColor.YELLOW)
+                .text(" blocks.")
+                .emptyLine()
+                .text("MARKED allies get priority in restoring energy and increases their speed by ")
+                .percent(4, NamedTextColor.YELLOW)
+                .text(" for ")
+                .text("1", NamedTextColor.GOLD)
+                .text(" second.")
+                .build();
     }
 
     @Override

@@ -21,7 +21,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -48,15 +47,18 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw a chain towards an ally, grappling the Vindicator towards them. You and the targeted ally gain ")
-                               .append(Component.text("VIND", NamedTextColor.GOLD))
-                               .append(Component.text(" for "))
-                               .append(Component.text(vindDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and "))
-                               .append(Heals.formatHealing(healingValues.heartToHeartHealing))
-                               .append(Component.text(" health. Has a maximum range of"))
-                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks.\n\nHeart to Heart has reduced range when holding a flag.", NamedTextColor.GRAY));
+        description = AbilityDescriptionBuilder
+                .create("Throw a chain towards an ally, grappling the Vindicator towards them. You and the targeted ally gain ")
+                .text("VIND", NamedTextColor.GOLD)
+                .text(" for ")
+                .text(vindDuration, NamedTextColor.GOLD)
+                .text(" seconds and ")
+                .heal(healingValues.heartToHeartHealing)
+                .text(" health.")
+                .maxRange(radius)
+                .emptyLine()
+                .text("Heart to Heart has reduced range when holding a flag.", NamedTextColor.GRAY)
+                .build();
 
     }
 

@@ -16,6 +16,10 @@ public class ComponentBuilder {
         return new ComponentBuilder(text);
     }
 
+    public static ComponentBuilder create(TextComponent component) {
+        return new ComponentBuilder(component);
+    }
+
     public static ComponentBuilder create(String text, TextColor textColor) {
         return new ComponentBuilder(text, textColor);
     }
@@ -32,6 +36,10 @@ public class ComponentBuilder {
 
     public ComponentBuilder(String text) {
         this.componentBuilder = Component.text(text).toBuilder();
+    }
+
+    public ComponentBuilder(TextComponent component) {
+        this.componentBuilder = component.toBuilder();
     }
 
     public ComponentBuilder(String text, TextColor textColor) {

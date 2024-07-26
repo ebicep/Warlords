@@ -15,7 +15,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -43,21 +42,22 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Shoot a bolt of water that will burst for")
-                               .append(Damages.formatDamage(damageValues.boltDamage))
-                               .append(Component.text(" damage and restore"))
-                               .append(Heals.formatHealing(healingValues.boltHealing))
-                               .append(Component.text(" health to allies. A direct hit will cause "))
-                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" increased damage or healing for the target hit."))
-                               .append(Component.text("\n\nHas an optimal range of "))
-                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."))
-                               .append(Component.text("\n\nWater Bolt can overheal allies for up to "))
-                               .append(Component.text("10%", NamedTextColor.GREEN))
-                               .append(Component.text(" of their max health as bonus health for "))
-                               .append(Component.text(Overheal.OVERHEAL_DURATION, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Shoot a bolt of water that will burst for")
+                .damage(damageValues.boltDamage)
+                .text(" damage and restore")
+                .heal(healingValues.boltHealing)
+                .text(" health to allies. A direct hit will cause ")
+                .percent(directHitMultiplier, NamedTextColor.GREEN)
+                .text(" increased damage or healing for the target hit.")
+                .optimalRange(maxFullDistance)
+                .emptyLine()
+                .text("Water Bolt can overheal allies for up to ")
+                .percent(10, NamedTextColor.GREEN)
+                .text(" of their max health as bonus health for ")
+                .text(Overheal.OVERHEAL_DURATION, NamedTextColor.GOLD)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

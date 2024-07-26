@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -38,19 +39,18 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(Heals.formatHealing(healingValues.radianceHealing))
-                               .append(Component.text(" health."))
-                               .append(Component.newline())
-                               .append(Component.newline())
-                               .append(Component.text("You may look at an enemy to mark them for "))
-                               .append(Component.text(markDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Reducing their energy per second by "))
-                               .append(Component.text(format(energyDrainPerSecond), NamedTextColor.YELLOW))
-                               .append(Component.text(" for the duration."))
-                               .append(Component.text("\n\nMark has a maximum range of "))
-                               .append(Component.text(markRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                .heal(healingValues.radianceHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("You may look at an enemy to mark them for ")
+                .text(markDuration, NamedTextColor.GOLD)
+                .text(" seconds. Reducing their energy per second by ")
+                .text(format(energyDrainPerSecond), NamedTextColor.YELLOW)
+                .text(" for the duration.")
+                .maxRange(markRadius)
+                .build();
     }
 
     @Override
@@ -66,6 +66,11 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new HolyRadianceBranchAvenger(abilityTree, this);
+    }
+
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
     }
 
     @Override
@@ -184,11 +189,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 return currentDamageValue;
             }
         });
-    }
-
-    @Override
-    public Value.RangedValueCritable getRadianceHealing() {
-        return healingValues.radianceHealing;
     }
 
     public float getEnergyDrainPerSecond() {

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -37,14 +38,15 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Place a stationary beacon on the ground that lasts ")
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. All allies within a "))
-                               .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius restore "))
-                               .append(Heals.formatHealing(healingValues.beaconHealing))
-                               .append(Component.text(" health every 2 seconds." +
-                                       "Only 2 beacons can be on the field at once (Including both Beacon of Light and Impair)."));
+        description = AbilityDescriptionBuilder
+                .create("Place a stationary beacon on the ground that lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds. All allies within a ")
+                .text(radius.getCalculatedValue(), NamedTextColor.YELLOW)
+                .text(" block radius restore ")
+                .heal(healingValues.beaconHealing)
+                .text(" health every 2 seconds." + "Only 2 beacons can be on the field at once (Including both Beacon of Light and Impair).")
+                .build();
     }
 
     @Override
@@ -57,23 +59,23 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     }
 
     @Override
-    public LineEffect getLineEffect(Location target) {
-        return new LineEffect(target, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 255, 0), 1));
-    }
-
-    @Override
-    public String getAbbreviation() {
-        return "LIGHT BEACON";
-    }
-
-    @Override
     public Class<BeaconOfLightData> getDataClass() {
         return BeaconOfLightData.class;
     }
 
     @Override
+    public LineEffect getLineEffect(Location target) {
+        return new LineEffect(target, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 255, 0), 1));
+    }
+
+    @Override
     public BeaconOfLightData getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
         return new BeaconOfLightData(beacon, groundLocation, effect, radius);
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return "LIGHT BEACON";
     }
 
     @Override

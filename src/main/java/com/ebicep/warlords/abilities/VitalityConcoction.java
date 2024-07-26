@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -19,7 +16,6 @@ import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityConcoctionBranc
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -42,13 +38,17 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Consume a powerful concoction, granting yourself an additional ")
-                               .append(Component.text(speedBoost + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" movement speed, "))
-                                                .append(Component.text(damageResistance + "%", NamedTextColor.YELLOW))
-                                                .append(Component.text(" damage reduction, and an immunity to de-buffs for "))
-                                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nVitality Concoction has reduced effectiveness when holding a flag."));
+        description = AbilityDescriptionBuilder
+                .create("Consume a powerful concoction, granting yourself an additional ")
+                .percent(speedBoost, NamedTextColor.YELLOW)
+                .text(" movement speed, ")
+                .percent(damageResistance, NamedTextColor.YELLOW)
+                .text(" damage reduction, and an immunity to de-buffs for ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .emptyLine()
+                .text("Vitality Concoction has reduced effectiveness when holding a flag.")
+                .build();
 
     }
 

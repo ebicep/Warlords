@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
@@ -15,7 +16,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -40,19 +40,23 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     @Override
     public void updateDescription(Player player) {
         if (inPve) {
-            description = Component.text("You lust for blood, healing yourself for ")
-                                   .append(Component.text(damageConvertPercent + "%", NamedTextColor.GREEN))
-                                   .append(Component.text(" of all the damage you deal. All AOE damage done after the first hit reduces the healing to "))
-                                   .append(Component.text(format(healReductionPercent) + "%", NamedTextColor.GREEN))
-                                   .append(Component.text(". Lasts "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds.", NamedTextColor.GRAY));
+            description = AbilityDescriptionBuilder
+                    .create("You lust for blood, healing yourself for ")
+                    .percent(damageConvertPercent, NamedTextColor.GREEN)
+                    .text(" of all the damage you deal. All AOE damage done after the first hit reduces the healing to ")
+                    .percent(healReductionPercent, NamedTextColor.GREEN)
+                    .text(". Lasts ")
+                    .durationTicks(tickDuration)
+                    .text(" seconds.", NamedTextColor.GRAY)
+                    .build();
         } else {
-            description = Component.text("You lust for blood, healing yourself for ")
-                                   .append(Component.text(damageConvertPercent + "%", NamedTextColor.GREEN))
-                                   .append(Component.text(" of all the damage you deal. Lasts "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds.", NamedTextColor.GRAY));
+            description = AbilityDescriptionBuilder
+                    .create("You lust for blood, healing yourself for ")
+                    .percent(damageConvertPercent, NamedTextColor.GREEN)
+                    .text(" of all the damage you deal. Lasts ")
+                    .durationTicks(tickDuration)
+                    .text(" seconds.", NamedTextColor.GRAY)
+                    .build();
         }
     }
 

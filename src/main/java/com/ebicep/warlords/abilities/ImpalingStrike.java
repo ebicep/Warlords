@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -35,6 +36,7 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
     private int leechDuration = 5;
     private float leechAllyAmount = 25;
     private float leechSelfAmount = 15;
+
     public ImpalingStrike() {
         super("Impaling Strike", 0, 90);
     }
@@ -46,17 +48,19 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Impale an enemy, dealing")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text("damage and afflict them with the "))
-                               .append(Component.text("LEECH", NamedTextColor.GREEN))
-                               .append(Component.text(" effect for "))
-                               .append(Component.text(leechDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Whenever an ally deals damage to a leeched enemy, they heal for "))
-                               .append(Component.text(format(leechAllyAmount) + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the damage dealt. You heal for "))
-                               .append(Component.text(format(leechSelfAmount) + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the damage you deal to a leeched enemy instead."));
+        description = AbilityDescriptionBuilder
+                .create("Impale an enemy, dealing")
+                .damage(damageValues.strikeDamage)
+                .text("damage and afflict them with the ")
+                .text("LEECH", NamedTextColor.GREEN)
+                .text(" effect for ")
+                .text(leechDuration, NamedTextColor.GOLD)
+                .text(" seconds. Whenever an ally deals damage to a leeched enemy, they heal for ")
+                .percent(leechAllyAmount, NamedTextColor.GREEN)
+                .text(" of the damage dealt. You heal for ")
+                .percent(leechSelfAmount, NamedTextColor.GREEN)
+                .text(" of the damage you deal to a leeched enemy instead.")
+                .build();
 
     }
 

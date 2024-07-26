@@ -21,7 +21,6 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -51,16 +50,19 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Breathe water in a cone in front of you, knocking back enemies, cleansing all ")
-                               .append(Component.text("de-buffs", NamedTextColor.YELLOW))
-                               .append(Component.text(" and restoring "))
-                               .append(Heals.formatHealing(healingValues.breathHealing))
-                               .append(Component.text(" health to yourself and all allies hit."))
-                               .append(Component.text("\n\nWater Breath can overheal allies for up to "))
-                               .append(Component.text("10%", NamedTextColor.GREEN))
-                               .append(Component.text(" of their max health as bonus health for "))
-                               .append(Component.text(Overheal.OVERHEAL_DURATION, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Breathe water in a cone in front of you, knocking back enemies, cleansing all ")
+                .text("de-buffs", NamedTextColor.YELLOW)
+                .text(" and restoring ")
+                .heal(healingValues.breathHealing)
+                .text(" health to yourself and all allies hit.")
+                .emptyLine()
+                .text("Water Breath can overheal allies for up to ")
+                .percent(10, NamedTextColor.GREEN)
+                .text(" of their max health as bonus health for ")
+                .text(Overheal.OVERHEAL_DURATION, NamedTextColor.GOLD)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

@@ -41,45 +41,26 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
 
     @Override
     public void updateDescription(Player player) {
-        if (inPve) {
-            description = Component.text("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
-                                   .append(Damages.formatDamage(damageValues.beamDamage))
-                                   .append(Component.text(" damage and have their cooldowns increased by "))
-                                   .append(Component.text(format(runeTimerIncrease), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds. Any ally hit with stacks of Fortifying Hex is granted a shield with "))
-                                   .append(Component.text(format(shieldPercents.get(0)) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text("/"))
-                                   .append(Component.text(format(shieldPercents.get(1)) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text("/"))
-                                   .append(Component.text(format(shieldPercents.get(2)) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text(" of the ally’s maximum health relative to the number of stacks. Shield health on flag carriers is increased by "))
-                                   .append(Component.text(format(carrierBonusMultiplier) + "x", NamedTextColor.YELLOW))
-                                   .append(Component.text(". Lasts "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds and all stacks are removed.\n\n" +
-                                           "If Guardian Beam hits a target, you also receive a shield based on the same percentages."))
-                                   .append(Component.text("\n\nHas a maximum range of "))
-                                   .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                                   .append(Component.text(" blocks."));
-        } else {
-            description = Component.text("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
-                                   .append(Damages.formatDamage(damageValues.beamDamage))
-                                   .append(Component.text("damage. Any ally hit with stacks of Fortifying Hex is granted a shield with"))
-                                   .append(Component.text(format(shieldPercents.get(0)) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text("/"))
-                                   .append(Component.text(format(shieldPercents.get(1)) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text("/"))
-                                   .append(Component.text(format(shieldPercents.get(2)) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text(" of the ally’s maximum health relative to the number of stacks. Shield health on flag carriers is increased by "))
-                                   .append(Component.text(format(carrierBonusMultiplier) + "x", NamedTextColor.YELLOW))
-                                   .append(Component.text(". Lasts "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds and all stacks are removed.\n\n" +
-                                           "If Guardian Beam hits a target, you also receive a shield based on the same percentages."))
-                                   .append(Component.text("\n\nHas a maximum range of "))
-                                   .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                                   .append(Component.text(" blocks."));
-        }
+        description = AbilityDescriptionBuilder
+                .create("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
+                .damage(damageValues.beamDamage)
+                .text(" damage and have their cooldowns increased by ")
+                .text(format(runeTimerIncrease), NamedTextColor.GOLD)
+                .text(" seconds. Any ally hit with stacks of Fortifying Hex is granted a shield with ")
+                .percent(shieldPercents.get(0), NamedTextColor.YELLOW)
+                .text("/")
+                .percent(shieldPercents.get(1), NamedTextColor.YELLOW)
+                .text("/")
+                .percent(shieldPercents.get(2), NamedTextColor.YELLOW)
+                .text(" of the ally’s maximum health relative to the number of stacks. Shield health on flag carriers is increased by ")
+                .text(format(carrierBonusMultiplier) + "x", NamedTextColor.YELLOW)
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds and all stacks are removed.")
+                .emptyLine()
+                .text("If Guardian Beam hits a target, you also receive a shield based on the same percentages.")
+                .maxRange(maxDistance)
+                .build();
     }
 
     @Override

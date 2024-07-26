@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -41,13 +42,15 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Create a crystal of healing that absorbs surrounding light over ")
-                               .append(Component.text(format(duration), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, gradually increasing the amount of health it will restore to one ally when they absorb it, to a maximum of "))
-                               .append(Component.text(format(maxHeal), NamedTextColor.GREEN))
-                               .append(Component.text(" health. Grants 3 stacks of Merciful Hex at maximum charge. The crystal of healing has a lifespan of "))
-                               .append(Component.text(format(lifeSpan), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds after its completion."));
+        description = AbilityDescriptionBuilder
+                .create("Create a crystal of healing that absorbs surrounding light over ")
+                .text(format(duration), NamedTextColor.GOLD)
+                .text(" seconds, gradually increasing the amount of health it will restore to one ally when they absorb it, to a maximum of ")
+                .text(format(maxHeal), NamedTextColor.GREEN)
+                .text(" health. Grants 3 stacks of Merciful Hex at maximum charge. The crystal of healing has a lifespan of ")
+                .text(format(lifeSpan), NamedTextColor.GOLD)
+                .text(" seconds after its completion.")
+                .build();
     }
 
     @Override

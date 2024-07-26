@@ -108,15 +108,15 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
         return true;
     }
 
-    @Override
-    public Value.RangedValueCritable getConsecrateDamage() {
-        return damageValues.consecrateDamage;
-    }
-
     @Nonnull
     @Override
     public String getStrikeName() {
         return "Protector's Strike";
+    }
+
+    @Override
+    public Value.RangedValueCritable getConsecrateDamage() {
+        return damageValues.consecrateDamage;
     }
 
     @Override

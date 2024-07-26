@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengerStrikeBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,11 +40,13 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text("damage and removing "))
-                               .append(Component.text(format(energySteal), NamedTextColor.YELLOW))
-                               .append(Component.text(" energy."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing")
+                .damage(damageValues.strikeDamage)
+                .text("damage and removing ")
+                .text(format(energySteal), NamedTextColor.YELLOW)
+                .text(" energy.")
+                .build();
     }
 
     @Override

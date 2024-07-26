@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -14,7 +15,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,19 +42,20 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Unleash a concentrated beam of holy light, healing ")
-                               .append(Heals.formatHealing(healingValues.rayHealing))
-                               .append(Component.text(" health to all allies hit and cleansing all "))
-                               .append(Component.text("de-buffs", NamedTextColor.YELLOW))
-                               .append(Component.text(". If the target is affected by Merciful Hex the healing given is increased by "))
-                               .append(Component.text("25%", NamedTextColor.GREEN))
-                               .append(Component.text("/"))
-                               .append(Component.text("50%", NamedTextColor.GREEN))
-                               .append(Component.text("/"))
-                               .append(Component.text("100%", NamedTextColor.GREEN))
-                               .append(Component.text(" relative to the number of stacks and all stacks are removed.\n\nHas a maximum range of "))
-                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Unleash a concentrated beam of holy light, healing ")
+                .heal(healingValues.rayHealing)
+                .text(" health to all allies hit and cleansing all ")
+                .text("de-buffs", NamedTextColor.YELLOW)
+                .text(". If the target is affected by Merciful Hex the healing given is increased by ")
+                .percent(25, NamedTextColor.GREEN)
+                .text("/")
+                .percent(50, NamedTextColor.GREEN)
+                .text("/")
+                .percent(100, NamedTextColor.GREEN)
+                .text(" relative to the number of stacks and all stacks are removed.")
+                .maxRange(maxDistance)
+                .build();
     }
 
     @Override

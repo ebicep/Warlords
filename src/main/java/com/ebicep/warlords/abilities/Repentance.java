@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Overheal;
@@ -17,7 +18,6 @@ import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.util.concurrent.AtomicDouble;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
@@ -40,13 +40,15 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
-                               .append(Component.text("10%", NamedTextColor.RED))
-                               .append(Component.text(" + "))
-                               .append(Component.text(format(damageConvertPercent) + "%", NamedTextColor.RED))
-                               .append(Component.text(" of the damage you've recently took. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Taking damage empowers your damaging abilities and melee hits, restoring health and energy based on ")
+                .percent(10, NamedTextColor.RED)
+                .text(" + ")
+                .percent(damageConvertPercent, NamedTextColor.RED)
+                .text(" of the damage you've recently took. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

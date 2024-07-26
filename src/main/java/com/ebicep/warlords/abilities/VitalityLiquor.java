@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -18,7 +19,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -44,19 +44,23 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Discharge a shockwave of special potions around you, healing allies in the range for ")
-                               .append(Heals.formatHealing(healingValues.liquorHealing))
-                               .append(Component.text(" health.\n\nEach enemy afflicted with your "))
-                               .append(Component.text("LEECH", NamedTextColor.GREEN))
-                               .append(Component.text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals "))
-                               .append(Component.text("2", NamedTextColor.YELLOW))
-                               .append(Component.text(" nearby allies for "))
-                               .append(Heals.formatHealing(healingValues.waveHealing))
-                               .append(Component.text(" health and increase their energy regeneration by "))
-                               .append(Component.text(energyPerSecond, NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text(duration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Discharge a shockwave of special potions around you, healing allies in the range for ")
+                .heal(healingValues.liquorHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("Each enemy afflicted with your ")
+                .text("LEECH", NamedTextColor.GREEN)
+                .text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals ")
+                .text("2", NamedTextColor.YELLOW)
+                .text(" nearby allies for ")
+                .heal(healingValues.waveHealing)
+                .text(" health and increase their energy regeneration by ")
+                .text(energyPerSecond, NamedTextColor.YELLOW)
+                .text(" for ")
+                .text(duration, NamedTextColor.GOLD)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

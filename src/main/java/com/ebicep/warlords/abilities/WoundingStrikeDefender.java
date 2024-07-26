@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -44,15 +45,17 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and "))
-                               .append(Component.text("wounding", NamedTextColor.RED))
-                               .append(Component.text(" them for "))
-                               .append(Component.text("3", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. A wounded player receives "))
-                               .append(Component.text(wounding + "%", NamedTextColor.RED))
-                               .append(Component.text(" less healing for the duration of the effect."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing")
+                .damage(damageValues.strikeDamage)
+                .text(" damage and ")
+                .text("wounding", NamedTextColor.RED)
+                .text(" them for ")
+                .text("3", NamedTextColor.GOLD)
+                .text(" seconds. A wounded player receives ")
+                .percent(wounding, NamedTextColor.RED)
+                .text(" less healing for the duration of the effect.")
+                .build();
     }
 
     @Override

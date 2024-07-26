@@ -14,7 +14,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -48,15 +47,17 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
-                               .append(Damages.formatDamage(getConsecrateDamage()))
-                               .append(Component.text(" damage per second and take "))
-                               .append(Component.text(strikeDamageBoost + "%", NamedTextColor.RED))
-                               .append(Component.text(" increased damage from your paladin strikes. Has a radius of "))
-                               .append(Component.text(format(hitBox.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
+                .damage(getConsecrateDamage())
+                .text(" damage per second and take ")
+                .percent(strikeDamageBoost, NamedTextColor.RED)
+                .text(" increased damage from your paladin strikes. Has a radius of ")
+                .text(format(hitBox.getCalculatedValue()), NamedTextColor.YELLOW)
+                .text(" blocks. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .build();
 
     }
 
@@ -135,14 +136,14 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return true;
     }
 
-    public abstract Value.RangedValueCritable getConsecrateDamage();
-
     @Nonnull
     public abstract String getStrikeName();
 
     public void addStrikesBoosted() {
         strikesBoosted++;
     }
+
+    public abstract Value.RangedValueCritable getConsecrateDamage();
 
     @Override
     public FloatModifiable getHitBoxRadius() {

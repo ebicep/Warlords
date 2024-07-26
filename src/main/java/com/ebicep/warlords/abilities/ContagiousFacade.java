@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
@@ -35,6 +36,9 @@ import java.util.List;
 
 public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration {
 
+    public int timesReactivated = 0;
+    public int totalHexesInflicted = 0;
+    public float totalShieldGained = 0;
     private FloatModifiable damageAbsorption = new FloatModifiable(30);
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
@@ -44,35 +48,37 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private int stacksGranted = 2;
     private int infectedPlayers = 2;
 
-    public int timesReactivated = 0;
-    public int totalHexesInflicted = 0;
-    public float totalShieldGained = 0;
-
     public ContagiousFacade() {
         super("Contagious Facade", 30, 20);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Cover yourself in a protective layer that absorbs ")
-                               .append(Component.text(format(damageAbsorption.getCalculatedValue()) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of all incoming damage for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. "))
-                               .append(Component.text("\n\nReactivate the ability to increase your speed by"))
-                               .append(Component.text(speedIncrease + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(speedIncreaseDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text("seconds and inflict "))
-                               .append(Component.text(stacksGranted, NamedTextColor.BLUE))
-                               .append(Component.text(" stacks of Poisonous Hex on "))
-                               .append(Component.text("2", NamedTextColor.RED))
-                               .append(Component.text(" nearby enemies in an "))
-                               .append(Component.text(format(poisonRadius), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks radius."))
-                               .append(Component.text("\n\nNot reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts "))
-                               .append(Component.text(format(shieldTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Cover yourself in a protective layer that absorbs ")
+                .percent(damageAbsorption, NamedTextColor.YELLOW)
+                .text(" of all incoming damage for ")
+                .durationTicks(tickDuration)
+                .text(" seconds. ")
+                .text("")
+                .emptyLine()
+                .text("Reactivate the ability to increase your speed by")
+                .percent(speedIncrease, NamedTextColor.YELLOW)
+                .text(" for ")
+                .durationTicks(speedIncreaseDuration)
+                .text("seconds and inflict ")
+                .text(stacksGranted, NamedTextColor.BLUE)
+                .text(" stacks of Poisonous Hex on ")
+                .text("2", NamedTextColor.RED)
+                .text(" nearby enemies in an ")
+                .text(format(poisonRadius), NamedTextColor.YELLOW)
+                .text(" blocks radius.")
+                .text("")
+                .emptyLine()
+                .text("Not reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts ")
+                .durationTicks(shieldTickDuration)
+                .text(" seconds.")
+                .build();
     }
 
     @Override
@@ -289,7 +295,11 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         this.shieldTickDuration = shieldTickDuration;
     }
 
-    public int getStacksGranted() { return stacksGranted; }
+    public int getStacksGranted() {
+        return stacksGranted;
+    }
 
-    public void setStacksGranted(int stacksGranted) { this.stacksGranted = stacksGranted; }
+    public void setStacksGranted(int stacksGranted) {
+        this.stacksGranted = stacksGranted;
+    }
 }

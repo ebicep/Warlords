@@ -32,11 +32,6 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     }
 
     @Override
-    public Value.RangedValueCritable getSlamDamage() {
-        return damageValues.slamDamage;
-    }
-
-    @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
         if (pveMasterUpgrade2) {
             float damageBoost = 1 + Math.min(5, playersHit.size()) * .05f;
@@ -57,6 +52,11 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
                 }
             });
         }
+    }
+
+    @Override
+    public Value.RangedValueCritable getSlamDamage() {
+        return damageValues.slamDamage;
     }
 
     @Override

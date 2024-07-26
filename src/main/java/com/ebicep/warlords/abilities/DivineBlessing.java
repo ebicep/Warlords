@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -23,7 +20,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -55,19 +51,23 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Imbue yourself with Holy Energy, increasing Merciful Hex duration by ")
-                               .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and causing Ray of Light to not consume Merciful Hex stacks.\n\nAllies with max stacks of Merciful Hex receive "))
-                               .append(Component.text(hexHealingBonus + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" more healing from all sources and heal for "))
-                               .append(Component.text(lethalDamageHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of their maximum health when taking lethal damage for the first time. After "))
-                               .append(Component.text(format(postHealthTickDelay / 20f), NamedTextColor.GOLD))
-                               .append(Component.text("seconds all allies restore "))
-                               .append(Heals.formatHealing(healingValues.divineBlessingPostHeal))
-                               .append(Component.text(" health. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Imbue yourself with Holy Energy, increasing Merciful Hex duration by ")
+                .durationTicks(hexTickDurationIncrease)
+                .text(" seconds and causing Ray of Light to not consume Merciful Hex stacks.")
+                .emptyLine()
+                .text("Allies with max stacks of Merciful Hex receive ")
+                .percent(hexHealingBonus, NamedTextColor.GREEN)
+                .text(" more healing from all sources and heal for ")
+                .percent(lethalDamageHealing, NamedTextColor.GREEN)
+                .text(" of their maximum health when taking lethal damage for the first time. After ")
+                .durationTicks(postHealthTickDelay)
+                .text("seconds all allies restore ")
+                .heal(healingValues.divineBlessingPostHeal)
+                .text(" health. Lasts ")
+                .durationTicks(tickDuration)
+                .text(" seconds.")
+                .build();
     }
 
     @Override

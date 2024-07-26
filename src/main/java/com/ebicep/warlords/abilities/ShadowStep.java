@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -19,7 +20,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
@@ -44,12 +44,13 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Leap forward, dealing ")
-                               .append(Damages.formatDamage(damageValues.shadowStepDamage))
-                               .append(Component.text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping."))
-                               .append(Component.newline())
-                               .append(Component.newline())
-                               .append(Component.text("Shadow Step has reduced range when holding a flag."));
+        description = AbilityDescriptionBuilder
+                .create("Leap forward, dealing ")
+                .damage(damageValues.shadowStepDamage)
+                .text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping.")
+                .emptyLine()
+                .text("Shadow Step has reduced range when holding a flag.")
+                .build();
     }
 
     @Override
