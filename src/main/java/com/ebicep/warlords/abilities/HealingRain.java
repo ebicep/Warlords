@@ -65,7 +65,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 .text("Healing Rain can overheal allies for up to ")
                 .percent(10, NamedTextColor.GREEN)
                 .text(" of their max health as bonus health for ")
-                .text(String.valueOf(Overheal.OVERHEAL_DURATION), NamedTextColor.GOLD)
+                .durationSeconds(Overheal.OVERHEAL_DURATION)
                 .text(" seconds.")
                 .build();
     }

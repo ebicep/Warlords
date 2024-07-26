@@ -51,7 +51,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 .create("Throw a chain towards an ally, grappling the Vindicator towards them. You and the targeted ally gain ")
                 .text("VIND", NamedTextColor.GOLD)
                 .text(" for ")
-                .text(vindDuration, NamedTextColor.GOLD)
+                .durationSeconds(vindDuration)
                 .text(" seconds and ")
                 .heal(healingValues.heartToHeartHealing)
                 .text(" health.")

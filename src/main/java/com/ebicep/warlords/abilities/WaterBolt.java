@@ -55,7 +55,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                 .text("Water Bolt can overheal allies for up to ")
                 .percent(10, NamedTextColor.GREEN)
                 .text(" of their max health as bonus health for ")
-                .text(Overheal.OVERHEAL_DURATION, NamedTextColor.GOLD)
+                .durationSeconds(Overheal.OVERHEAL_DURATION)
                 .text(" seconds.")
                 .build();
     }

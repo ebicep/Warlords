@@ -61,7 +61,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                 .text(" damage to all enemies you pass through. Enemies hit are ")
                 .text("IMMOBILIZED", NamedTextColor.DARK_PURPLE)
                 .text(", preventing movement for ")
-                .text((stunTimeInTicks / 20f), NamedTextColor.GOLD)
+                .durationTicks(stunTimeInTicks)
                 .text(" seconds.")
                 .build();
 

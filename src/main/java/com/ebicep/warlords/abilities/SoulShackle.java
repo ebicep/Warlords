@@ -63,12 +63,10 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                 .text(" seconds, making them unable to use their main attack for the duration. Gain a short burst of ")
                 .percent(40, NamedTextColor.YELLOW)
                 .text(" movement speed for ")
-                .text("1.5", NamedTextColor.GOLD)
+                .durationSeconds(1.5f)
                 .text(" seconds after shackling an enemy.")
                 .emptyLine()
-                .text("Has a range of ")
-                .text(shackleRange, NamedTextColor.YELLOW)
-                .text(" blocks.")
+                .maxRange(shackleRange)
                 .build();
     }
 

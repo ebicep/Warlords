@@ -73,7 +73,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                 .text(" of the damage delayed by ")
                 .text("Spirits’ Respite ", NamedTextColor.DARK_GREEN)
                 .text("over ")
-                .text("6", NamedTextColor.GOLD)
+                .durationSeconds(6)
                 .text(" seconds. The totem will heal nearby allies for ")
                 .percent(15, NamedTextColor.GREEN)
                 .text(" of all damage that you take. If you survive, deal ")

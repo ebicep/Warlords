@@ -91,6 +91,21 @@ public class AbilityDescriptionBuilder {
         return this;
     }
 
+    public AbilityDescriptionBuilder durationSeconds(float seconds) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder energy(int energy) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.GOLD);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder energy(float energy) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.GOLD);
+        return this;
+    }
+
     public AbilityDescriptionBuilder percent(int percent, NamedTextColor color) {
         parentBuilder.text(percent + "%", color);
         return this;

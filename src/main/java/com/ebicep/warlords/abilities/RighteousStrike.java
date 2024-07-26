@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.rogue.vindicator.RighteousStrikeBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -42,7 +41,7 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
                 .text(" seconds.")
                 .emptyLine()
                 .text("Additionally, if your struck target is silenced, reduce the cooldown of your Vindicate by ")
-                .text("0.5", NamedTextColor.GOLD)
+                .durationSeconds(0.5f)
                 .text(" seconds and reduce their active ability timers by ")
                 .durationTicks((abilityReductionInTicks + 4))
                 .text(" second instead.")

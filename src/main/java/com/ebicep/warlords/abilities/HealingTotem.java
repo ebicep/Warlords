@@ -67,7 +67,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                 .text(" seconds.")
                 .emptyLine()
                 .text("Pressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for ")
-                .text(crippleDuration, NamedTextColor.GOLD)
+                .durationSeconds(crippleDuration)
                 .text(" seconds. Crippled enemies deal ")
                 .percent(25, NamedTextColor.RED)
                 .text(" less damage.")

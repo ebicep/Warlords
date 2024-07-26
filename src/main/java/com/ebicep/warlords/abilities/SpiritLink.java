@@ -53,11 +53,11 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
                 .text(" reduced damage. You gain ")
                 .percent(40, NamedTextColor.YELLOW)
                 .text(" speed for ")
-                .text(speedDuration, NamedTextColor.GOLD)
+                .durationSeconds(speedDuration)
                 .text(" seconds, and take ")
                 .percent(15, NamedTextColor.RED)
                 .text(" reduced damage for ")
-                .text(damageReductionDuration, NamedTextColor.GOLD)
+                .durationSeconds(damageReductionDuration)
                 .text(" seconds.")
                 .initialRange(radius)
                 .build();

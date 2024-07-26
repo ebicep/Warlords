@@ -45,7 +45,7 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                 .create("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
                 .damage(damageValues.beamDamage)
                 .text(" damage and have their cooldowns increased by ")
-                .text(format(runeTimerIncrease), NamedTextColor.GOLD)
+                .durationSeconds(runeTimerIncrease)
                 .text(" seconds. Any ally hit with stacks of Fortifying Hex is granted a shield with ")
                 .percent(shieldPercents.get(0), NamedTextColor.YELLOW)
                 .text("/")

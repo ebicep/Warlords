@@ -39,7 +39,7 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
                 .text(" critical strike. Critical strikes temporarily increase your movement speed by ")
                 .percent(speedOnCrit, NamedTextColor.YELLOW)
                 .text(" for ")
-                .text(speedOnCritDuration, NamedTextColor.GOLD)
+                .durationSeconds(speedOnCritDuration)
                 .text(" seconds.")
                 .build();
     }

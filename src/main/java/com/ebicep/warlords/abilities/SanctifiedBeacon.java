@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -48,17 +49,19 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
     @Override
     public Component getBonusDescription() {
-        return Component.text("All enemies within a ")
-                        .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                        .append(Component.text(" block radius have their Crit Multiplier reduced by "))
-                        .append(Component.text(critMultiplierReducedBy + "%", NamedTextColor.RED))
-                        .append(Component.text(". The beacon will emit a wave of energy that grants "))
-                        .append(Component.text(maxAllies, NamedTextColor.YELLOW))
-                        .append(Component.text(" nearby allies "))
-                        .append(Component.text("1", NamedTextColor.BLUE))
-                        .append(Component.text(" stack of Merciful Hex every "))
-                        .append(Component.text(format(hexIntervalTicks / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds within the same radius.\n\nOnly two beacons can be present on the field at once."));
+        return AbilityDescriptionBuilder
+                .create("All enemies within a ")
+                .text(radius, NamedTextColor.YELLOW)
+                .text(" block radius have their Crit Multiplier reduced by ")
+                .percent(critMultiplierReducedBy, NamedTextColor.RED)
+                .text(". The beacon will emit a wave of energy that grants ")
+                .text(maxAllies, NamedTextColor.YELLOW)
+                .text(" nearby allies ")
+                .text("1", NamedTextColor.BLUE)
+                .text(" stack of Merciful Hex every ")
+                .durationTicks(hexIntervalTicks)
+                .text(" seconds within the same radius.")
+                .build();
     }
 
     @Override

@@ -61,7 +61,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 .text("initial orbs on cast.")
                 .emptyLine()
                 .text("Striking and hitting enemies with abilities causes them to drop an orb of life that lasts ")
-                .text("8", NamedTextColor.GOLD)
+                .durationSeconds(8)
                 .text(" seconds, restoring ")
                 .heal(healingValues.orbHealing)
                 .text(" health to the ally that picks it up. Other nearby allies recover ")

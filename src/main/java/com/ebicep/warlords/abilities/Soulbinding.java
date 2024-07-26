@@ -63,9 +63,9 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 .text(" nearby allies for ")
                 .heal(healingValues.allyHealing)
                 .text(". Your next Fallen Souls will reduce the cooldown of all abilities by ")
-                .text(format(selfCooldownReduction), NamedTextColor.GOLD)
+                .durationSeconds(selfCooldownReduction)
                 .text(" seconds. (")
-                .text("1", NamedTextColor.GOLD)
+                .durationSeconds(1)
                 .text(" second for ")
                 .text(maxAlliesHit, NamedTextColor.YELLOW)
                 .text(" nearby allies). Both buffs may be activated for every melee hit. Lasts ")
@@ -75,10 +75,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 .text("Successful soulbind procs will grant you ")
                 .percent(25, NamedTextColor.GOLD)
                 .text(" knockback resistance for ")
-                .text("1.2", NamedTextColor.GOLD)
+                .durationSeconds(1.2f)
                 .text(" seconds (Max ")
-                .text("3.6 ", NamedTextColor.GOLD)
-                .text("seconds).")
+                .durationSeconds(3.6f)
+                .text(" seconds).")
                 .build();
     }
 

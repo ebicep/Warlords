@@ -59,7 +59,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                 .text(" seconds. Enemies poisoned by your Draining Miasma are slowed by ")
                 .percent(25, NamedTextColor.YELLOW)
                 .text(" for ")
-                .text("3", NamedTextColor.GOLD)
+                .durationSeconds(3)
                 .text(" seconds on cast. Has a radius of ")
                 .text(radius, NamedTextColor.GOLD)
                 .text(" blocks.")
@@ -67,7 +67,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                 .text("Each enemy hit will be afflicted with ")
                 .text("LEECH", NamedTextColor.GREEN)
                 .text(" for ")
-                .text(leechDuration, NamedTextColor.GOLD)
+                .durationSeconds(leechDuration)
                 .text(" seconds.")
                 .build();
     }

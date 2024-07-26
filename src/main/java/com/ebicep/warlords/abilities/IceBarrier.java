@@ -54,7 +54,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 .text(", while active, taking melee damage reduces the attacker's movement speed by ")
                 .percent(slownessOnMeleeHit, NamedTextColor.YELLOW)
                 .text(" for ")
-                .text("2", NamedTextColor.GOLD)
+                .durationSeconds(2)
                 .text(" seconds " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts ")
                 .durationTicks(tickDuration)
                 .text(" seconds.")

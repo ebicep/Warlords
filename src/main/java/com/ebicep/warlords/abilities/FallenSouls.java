@@ -19,7 +19,6 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -60,7 +59,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                 .create("Summon a wave of fallen souls, dealing")
                 .damage(damageValues.fallenSoulDamage)
                 .text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by ")
-                .text("2", NamedTextColor.GOLD)
+                .durationSeconds(2)
                 .text(" seconds.")
                 .maxRange(maxDistance)
                 .build();

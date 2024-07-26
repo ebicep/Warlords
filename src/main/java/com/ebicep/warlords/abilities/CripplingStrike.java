@@ -91,7 +91,7 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
                 .text(" damage and ")
                 .text("crippling ", NamedTextColor.RED)
                 .text("them for ")
-                .text(format(crippleDuration), NamedTextColor.GOLD)
+                .durationSeconds(crippleDuration)
                 .text(" seconds. A ")
                 .text("crippled ", NamedTextColor.RED)
                 .text("player deals ")

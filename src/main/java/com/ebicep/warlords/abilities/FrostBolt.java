@@ -58,7 +58,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
                 .text(" damage and slow by ")
                 .percent(slowness, NamedTextColor.YELLOW)
                 .text("for ")
-                .text("2", NamedTextColor.GOLD)
+                .durationSeconds(2)
                 .text(" seconds. A direct hit will cause the enemy to take an additional ")
                 .percent(directHitMultiplier, NamedTextColor.RED)
                 .text(" extra damage.")

@@ -55,7 +55,7 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
                 .text("MARKED allies get priority in restoring energy and increases their speed by ")
                 .percent(4, NamedTextColor.YELLOW)
                 .text(" for ")
-                .text("1", NamedTextColor.GOLD)
+                .durationSeconds(1)
                 .text(" second.")
                 .build();
     }

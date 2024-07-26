@@ -47,7 +47,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
                 .text(" blocks.")
                 .emptyLine()
                 .text("Each ally healed reduces the cooldown of Boulder by ")
-                .text("2.5", NamedTextColor.GOLD)
+                .durationSeconds(2.5f)
                 .text(" seconds.")
                 .initialRange(radius)
                 .build();

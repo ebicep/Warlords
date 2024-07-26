@@ -45,7 +45,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 .text(" health.")
                 .emptyLine()
                 .text("You may look at an enemy to mark them for ")
-                .text(markDuration, NamedTextColor.GOLD)
+                .durationSeconds(markDuration)
                 .text(" seconds. Reducing their energy per second by ")
                 .text(format(energyDrainPerSecond), NamedTextColor.YELLOW)
                 .text(" for the duration.")

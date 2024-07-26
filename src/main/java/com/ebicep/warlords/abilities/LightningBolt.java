@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -53,7 +52,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
                 .create("Hurl a fast, piercing bolt of lightning that deals ")
                 .damage(damageValues.boltDamage)
                 .text(" to all enemies it passes through. Each target hit reduces the cooldown of Chain Lightning by ")
-                .text("2", NamedTextColor.GOLD)
+                .durationSeconds(2)
                 .text(" seconds.")
                 .maxRange(maxDistance)
                 .build();

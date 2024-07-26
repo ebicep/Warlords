@@ -48,6 +48,8 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
                 .durationTicks(tickDuration)
                 .text(" seconds. ")
                 .append(getBonusDescription())
+                .emptyLine()
+                .text("Only two beacons can be present on the field at once.")
                 .build();
     }
 

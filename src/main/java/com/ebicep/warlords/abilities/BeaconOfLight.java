@@ -17,7 +17,6 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -37,25 +36,14 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Place a stationary beacon on the ground that lasts ")
-                .durationTicks(tickDuration)
-                .text(" seconds. All allies within a ")
+    public Component getBonusDescription() {
+        return AbilityDescriptionBuilder
+                .create("All allies within a ")
                 .text(radius.getCalculatedValue(), NamedTextColor.YELLOW)
                 .text(" block radius restore ")
                 .heal(healingValues.beaconHealing)
-                .text(" health every 2 seconds." + "Only 2 beacons can be on the field at once (Including both Beacon of Light and Impair).")
+                .text("  health every 2 seconds.")
                 .build();
-    }
-
-    @Override
-    public Component getBonusDescription() {
-        return Component.text("All allies within a ")
-                        .append(Component.text(radius.getCalculatedValue(), NamedTextColor.YELLOW))
-                        .append(Component.text(" block radius restore "))
-                        .append(Heals.formatHealing(healingValues.beaconHealing))
-                        .append(Component.text("  health every 2 seconds."));
     }
 
     @Override
