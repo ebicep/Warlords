@@ -48,7 +48,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Links your spirit with up to ")
-                .text(additionalBounces + 1, NamedTextColor.RED)
+                .text(additionalBounces + 1, NamedTextColor.YELLOW)
                 .text(" enemy players, dealing ")
                 .damage(damageValues.linkDamage)
                 .text(" damage to the first target hit. Each additional hit deals ")

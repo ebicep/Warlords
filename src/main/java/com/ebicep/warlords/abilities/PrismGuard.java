@@ -62,9 +62,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Create a bubble shield around you that lasts ")
-                .durationTicks(tickDuration)
-                .text(". All projectiles that pass through the barrier have their damage reduced by ")
+                .create("Create a bubble shield around you. All projectiles that pass through the barrier have their damage reduced by ")
                 .percent(projectileDamageReduction, NamedTextColor.YELLOW)
                 .text(".")
                 .emptyLine()

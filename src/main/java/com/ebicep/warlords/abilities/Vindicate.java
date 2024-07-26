@@ -51,7 +51,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         description = AbilityDescriptionBuilder
                 .create("All allies within ")
                 .blocks(radius)
-                .text(" radius gain the status ")
+                .text(" gain the status ")
                 .text("VIND", NamedTextColor.GOLD)
                 .text(" for ")
                 .durationTicks(vindTickDuration)
