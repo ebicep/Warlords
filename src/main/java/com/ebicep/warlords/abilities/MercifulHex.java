@@ -58,7 +58,9 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Send a wave of energy forward. The first two allies hit heal ")
+                .create("Send a wave of energy forward. The first ")
+                .text(maxAlliesHit, NamedTextColor.YELLOW)
+                .text(" allies hit heal ")
                 .heal(healingValues.hexHealing)
                 .text(" health and receive ")
                 .text(hexStacksPerHit, NamedTextColor.BLUE)
@@ -76,9 +78,9 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 .heal(healingValues.hexDOTHealing)
                 .text(" health every ")
                 .durationTicks(ticksBetweenDot)
-                .text("seconds for ")
-                .text(format(tickDuration / 10f), NamedTextColor.GOLD)
-                .text(" seconds. Stacks up to")
+                .text(" for ")
+                .durationTicks(tickDuration * 2)
+                .text(". Stacks up to")
                 .text(maxStacks, NamedTextColor.BLUE)
                 .text(" times.")
                 .maxRange(maxDistance)

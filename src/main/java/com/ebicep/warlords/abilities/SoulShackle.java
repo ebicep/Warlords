@@ -46,6 +46,8 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     private int silenceDurationInTicks = 30;
     private int minSilenceDurationInTicks = 40;
     private int maxSilenceDurationInTicks = 70;
+    private int speedBuff = 40;
+    private float speedDuration = 1.5f;
 
     public SoulShackle() {
         super("Soul Shackle", 9, 40);
@@ -60,12 +62,11 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                 .damage(damageValues.shackleDamage)
                 .text(" damage. Shackled enemies are silenced for ")
                 .durationTicks(silenceDurationInTicks)
-                .text(" seconds, making them unable to use their main attack for the duration. Gain a short burst of ")
-                .percent(40, NamedTextColor.YELLOW)
+                .text(", making them unable to use their main attack for the duration. Gain a short burst of ")
+                .percent(speedBuff, NamedTextColor.YELLOW)
                 .text(" movement speed for ")
-                .durationSeconds(1.5f)
-                .text(" seconds after shackling an enemy.")
-                .emptyLine()
+                .durationSeconds(speedDuration)
+                .text(" after shackling an enemy.")
                 .maxRange(shackleRange)
                 .build();
     }
@@ -144,7 +145,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                 1
         );
 
-        wp.addSpeedModifier(wp, "Shackle Speed", 40, 30, "BASE");
+        wp.addSpeedModifier(wp, "Shackle Speed", speedBuff, (int) speedDuration * 20, "BASE");
 
 //        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
 //        if (silenceDuration > maxSilenceDurationInTicks) {

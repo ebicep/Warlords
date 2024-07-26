@@ -45,11 +45,11 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         description = AbilityDescriptionBuilder
                 .create("Create a crystal of healing that absorbs surrounding light over ")
                 .durationSeconds(duration)
-                .text(" seconds, gradually increasing the amount of health it will restore to one ally when they absorb it, to a maximum of ")
+                .text(", gradually increasing the amount of health it will restore to one ally when they absorb it, to a maximum of ")
                 .text(format(maxHeal), NamedTextColor.GREEN)
                 .text(" health. Grants 3 stacks of Merciful Hex at maximum charge. The crystal of healing has a lifespan of ")
                 .durationSeconds(lifeSpan)
-                .text(" seconds after its completion.")
+                .text(" after its completion.")
                 .build();
     }
 

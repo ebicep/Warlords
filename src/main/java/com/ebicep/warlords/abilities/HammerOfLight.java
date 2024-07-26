@@ -52,6 +52,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     private boolean isCrownOfLight = false;
     private Location location;
     private int tickDuration = 200;
+    private int crownEnergyReduction = 10;
     private float crownBonusHealing = 35;
 
     public HammerOfLight() {
@@ -86,19 +87,19 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         description = AbilityDescriptionBuilder
                 .create("Throw down a Hammer of Light on the ground, dealing ")
                 .damage(damageValues.hammerDamage)
-                .text(" damage every second to nearby enemies and healing nearby allies for ")
+                .text(" damage every second to enemies and healing allies for ")
                 .heal(healingValues.hammerHealing)
-                .text(" every second in a ")
-                .text(radius, NamedTextColor.YELLOW)
-                .text(" block radius. Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts ")
+                .text(" every second within ")
+                .blocks(radius)
+                .text(". Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .emptyLine()
                 .text("Recast to turn your hammer into Crown of Light. Removing the damage and piercing BUT increasing the healing by ")
                 .percent(crownBonusHealing, NamedTextColor.GREEN)
                 .text(" and reducing the energy cost of your Protector's Strike by ")
-                .text("10", NamedTextColor.YELLOW)
-                .text(" energy. You cannot put the Hammer of Light back down after you converted it.")
+                .energy(crownEnergyReduction)
+                .text(". You cannot put the Hammer of Light back down after you converted it.")
                 .build();
     }
 
@@ -327,7 +328,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
                     // prot strike energy reduction
                     for (ProtectorsStrike protectorsStrike : wp.getAbilitiesMatching(ProtectorsStrike.class)) {
-                        protectorsStrike.getEnergyCost().addAdditiveModifier("Hammer of Light", -10);
+                        protectorsStrike.getEnergyCost().addAdditiveModifier("Hammer of Light", -crownEnergyReduction);
                     }
 
                     if (pveMasterUpgrade) {

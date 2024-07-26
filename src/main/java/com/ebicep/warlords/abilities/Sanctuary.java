@@ -53,13 +53,13 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         description = AbilityDescriptionBuilder
                 .create("Summon your full protective power, increasing Fortifying Hex duration by ")
                 .durationTicks(hexTickDurationIncrease)
-                .text(" seconds and causing Guardian Beam to not consume Fortifying Hex stacks. ")
+                .text(" and causing Guardian Beam to not consume Fortifying Hex stacks. ")
                 .emptyLine()
                 .text("All allies with max stacks of Fortifying Hex gain an additional ")
                 .percent(additionalDamageReduction, NamedTextColor.YELLOW)
                 .text(" damage reduction per stack and reflect the reduced damage back to the dealer. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 
@@ -179,7 +179,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                 !event.getWarlordsEntity().equals(wp) &&
                                                 cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield
                                         ) {
-                                            float oldShieldPercent = guardianBeamShield.getShieldPercent() / 100;
+                                            float oldShieldPercent = guardianBeamShield.getShieldPercent() / 100f;
                                             float newShieldPercent = oldShieldPercent + .15f;
                                             float newShieldHealth = guardianBeamShield.getMaxShieldHealth() / oldShieldPercent * newShieldPercent;
                                             guardianBeamShield.setMaxShieldHealth(newShieldHealth);

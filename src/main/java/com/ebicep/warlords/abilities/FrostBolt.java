@@ -39,6 +39,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
     private int maxFullDistance = 30;
     private float directHitMultiplier = 15;
     private FloatModifiable splash = new FloatModifiable(4.125f);
+    private int slowDuration = 2;
     private int slowness = 30;
 
     public FrostBolt() {
@@ -58,8 +59,8 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
                 .text(" damage and slow by ")
                 .percent(slowness, NamedTextColor.YELLOW)
                 .text("for ")
-                .durationSeconds(2)
-                .text(" seconds. A direct hit will cause the enemy to take an additional ")
+                .durationSeconds(slowDuration)
+                .text(". A direct hit will cause the enemy to take an additional ")
                 .percent(directHitMultiplier, NamedTextColor.RED)
                 .text(" extra damage.")
                 .optimalRange(maxFullDistance)
@@ -122,7 +123,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
             if (hit.onHorse()) {
                 numberOfDismounts++;
             }
-            hit.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
+            hit.addSpeedModifier(shooter, "Frostbolt", -slowness, slowDuration * 20);
             hit.addInstance(InstanceBuilder
                     .damage()
                     .ability(this)

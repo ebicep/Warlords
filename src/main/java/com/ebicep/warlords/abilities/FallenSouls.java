@@ -40,7 +40,9 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     public int playersHit = 0;
     public int numberOfDismounts = 0;
+
     private final DamageValues damageValues = new DamageValues();
+    private int cooldownReduction = 2;
 
     public FallenSouls() {
         this(0, 0);
@@ -59,8 +61,8 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                 .create("Summon a wave of fallen souls, dealing")
                 .damage(damageValues.fallenSoulDamage)
                 .text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by ")
-                .durationSeconds(2)
-                .text(" seconds.")
+                .durationSeconds(cooldownReduction)
+                .text(".")
                 .maxRange(maxDistance)
                 .build();
     }
@@ -175,7 +177,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
             hit(wp, hit);
 
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
-                spiritLink.subtractCurrentCooldown(2);
+                spiritLink.subtractCurrentCooldown(cooldownReduction);
             }
 
             reduceCooldowns(wp, hit);

@@ -44,8 +44,8 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
                 .create("Strike the targeted enemy player, causing")
                 .damage(damageValues.strikeDamage)
                 .text("damage and removing ")
-                .text(format(energySteal), NamedTextColor.YELLOW)
-                .text(" energy.")
+                .energy(energySteal)
+                .text(".")
                 .build();
     }
 

@@ -38,6 +38,7 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
 
     private final DamageValues damageValues = new DamageValues();
     private int wounding = 25;
+    private int woundingDurationInTicks = 60;
 
     public WoundingStrikeDefender() {
         super("Wounding Strike", 0, 100);
@@ -51,10 +52,10 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
                 .text(" damage and ")
                 .text("wounding", NamedTextColor.RED)
                 .text(" them for ")
-                .durationSeconds(3)
-                .text(" seconds. A wounded player receives ")
+                .durationTicks(woundingDurationInTicks)
+                .text(", making them receive ")
                 .percent(wounding, NamedTextColor.RED)
-                .text(" less healing for the duration of the effect.")
+                .text(" less healing.")
                 .build();
     }
 
@@ -136,7 +137,7 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
                             );
                         }
                     },
-                    3 * 20
+                    woundingDurationInTicks
             ) {
                 @Override
                 public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {

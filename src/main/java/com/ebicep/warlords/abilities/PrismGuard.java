@@ -64,13 +64,13 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         description = AbilityDescriptionBuilder
                 .create("Create a bubble shield around you that lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds. All projectiles that pass through the barrier have their damage reduced by ")
-                .percent(projectileDamageReduction, NamedTextColor.RED)
+                .text(". All projectiles that pass through the barrier have their damage reduced by ")
+                .percent(projectileDamageReduction, NamedTextColor.YELLOW)
                 .text(".")
                 .emptyLine()
                 .text("After ")
                 .durationTicks(tickDuration)
-                .text(" seconds the bubble will burst, healing you and all allies for ")
+                .text(" the bubble will burst, healing you and all allies for ")
                 .heal(healingValues.bubbleBaseHealing)
                 .text(" + ")
                 .heal(healingValues.bubbleMissingHealthHealing)
@@ -78,7 +78,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 .percent(damageReduction, NamedTextColor.YELLOW)
                 .text(" damage reduction for ")
                 .durationTicks(tickDuration)
-                .text(" seconds based on how many hits you took while Prism Guard was active; up to a maximum of ")
+                .text(" based on how many hits you took while Prism Guard was active; up to a maximum of ")
                 .text(maxHealing, NamedTextColor.YELLOW)
                 .text(" health and ")
                 .percent(maxDamageReduction, NamedTextColor.YELLOW)
@@ -167,7 +167,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                                                           .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
                                                                           .append(Component.text(" damage reduction for ", NamedTextColor.GRAY))
                                                                           .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                                                          .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                                                                          .append(Component.text("!", NamedTextColor.GRAY))
                         );
                         entity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Prism Guard",

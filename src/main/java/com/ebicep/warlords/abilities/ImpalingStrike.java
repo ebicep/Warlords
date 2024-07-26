@@ -55,7 +55,7 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
                 .text("LEECH", NamedTextColor.GREEN)
                 .text(" effect for ")
                 .durationSeconds(leechDuration)
-                .text(" seconds. Whenever an ally deals damage to a leeched enemy, they heal for ")
+                .text(". Whenever an ally deals damage to a leeched enemy, they heal for ")
                 .percent(leechAllyAmount, NamedTextColor.GREEN)
                 .text(" of the damage dealt. You heal for ")
                 .percent(leechSelfAmount, NamedTextColor.GREEN)

@@ -47,7 +47,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                     .percent(healReductionPercent, NamedTextColor.GREEN)
                     .text(". Lasts ")
                     .durationTicks(tickDuration)
-                    .text(" seconds.", NamedTextColor.GRAY)
+                    .text(".")
                     .build();
         } else {
             description = AbilityDescriptionBuilder
@@ -55,7 +55,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                     .percent(damageConvertPercent, NamedTextColor.GREEN)
                     .text(" of all the damage you deal. Lasts ")
                     .durationTicks(tickDuration)
-                    .text(" seconds.", NamedTextColor.GRAY)
+                    .text(".")
                     .build();
         }
     }

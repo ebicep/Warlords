@@ -39,8 +39,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     public Component getBonusDescription() {
         return AbilityDescriptionBuilder
                 .create("All allies within a ")
-                .text(radius.getCalculatedValue(), NamedTextColor.YELLOW)
-                .text(" block radius restore ")
+                .blocks(radius.getCalculatedValue())
+                .text(" radius restore ")
                 .heal(healingValues.beaconHealing)
                 .text("  health every 2 seconds.")
                 .build();

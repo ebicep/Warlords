@@ -50,7 +50,7 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
                 .percent(allyHealing, NamedTextColor.GREEN)
                 .text(" of the damage done. Also heals yourself by ")
                 .percent(selfHealing, NamedTextColor.GREEN)
-                .text(" of the damage done. Based on your current health.")
+                .text(" of the damage done.")
                 .build();
     }
 

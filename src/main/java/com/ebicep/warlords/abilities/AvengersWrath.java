@@ -50,12 +50,12 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 .create("Burst with incredible holy power, causing your Avenger's Strikes to hit up to ")
                 .text(maxTargets, NamedTextColor.YELLOW)
                 .text(" additional enemies that are within ")
-                .text("5", NamedTextColor.YELLOW)
-                .text(" blocks of your target. Your energy per second is increased by ")
+                .blocks(hitRadius)
+                .text(" of your target. Your energy per second is increased by ")
                 .energy(energyPerSecond)
                 .text(" for the duration of the effect. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

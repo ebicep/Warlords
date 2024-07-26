@@ -24,9 +24,9 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
         description = AbilityDescriptionBuilder
                 .create("Activate to place a time rune on the ground. After ")
                 .durationTicks(tickDuration)
-                .text(" seconds, you will warp back to that location and restore ")
-                .text(warpHealPercentage + "%", NamedTextColor.GREEN)
-                .text(" of your health.", NamedTextColor.GRAY)
+                .text(", you will warp back to that location and restore ")
+                .percent(warpHealPercentage, NamedTextColor.GREEN)
+                .text(" of your health.")
                 .build();
     }
 

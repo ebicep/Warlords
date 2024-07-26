@@ -52,12 +52,12 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 .text("VIND", NamedTextColor.GOLD)
                 .text(" for ")
                 .durationSeconds(vindDuration)
-                .text(" seconds and ")
+                .text(" and ")
                 .heal(healingValues.heartToHeartHealing)
                 .text(" health.")
                 .maxRange(radius)
                 .emptyLine()
-                .text("Heart to Heart has reduced range when holding a flag.", NamedTextColor.GRAY)
+                .text("Heart to Heart has reduced range when holding a flag.")
                 .build();
 
     }

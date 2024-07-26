@@ -56,10 +56,12 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         if (inPve) {
             description = AbilityDescriptionBuilder
                     .create("Switch locations with an enemy, stunning them for ")
+                    .durationTicks(blindnessTicks)
+                    .text(". Upon swapping, self heal for ")
                     .heal(healingValues.switchHealing)
                     .text(" health, go invisible for ")
                     .durationTicks(invisTicks)
-                    .text(" seconds, and transform the swapped enemy into your own Animus. " +
+                    .text(", and transform the swapped enemy into your own Animus. " +
                             "The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " +
                             "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " +
                             "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
@@ -68,8 +70,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         } else {
             description = AbilityDescriptionBuilder
                     .create("Switch locations with an enemy, blinding them for ")
-                    .durationSeconds(1.5f)
-                    .text(" seconds.")
+                    .durationTicks(blindnessTicks)
+                    .text(".")
                     .maxRange(radius)
                     .text(" Soul Switch has low vertical range.")
                     .build();

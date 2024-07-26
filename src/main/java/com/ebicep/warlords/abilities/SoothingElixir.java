@@ -57,9 +57,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                 .damage(damageValues.elixirDamage)
                 .text(" damage. The projectile will form a small puddle that heals allies for ")
                 .heal(healingValues.elixirDOTHealing)
-                .text(" health per second. Lasts ")
+                .text(" health every ")
+                .durationSeconds(1)
+                .text(". Lasts ")
                 .durationTicks(puddleTickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
 
     }

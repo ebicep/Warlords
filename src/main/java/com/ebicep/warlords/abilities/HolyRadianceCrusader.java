@@ -47,11 +47,11 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                 .emptyLine()
                 .text("You may look at an ally to mark them for ")
                 .durationSeconds(markDuration)
-                .text(" seconds. Increasing their EPS by ")
-                .text(energyPerSecond, NamedTextColor.YELLOW)
-                .text(" and speed by ")
+                .text(", granting them ")
+                .energy(energyPerSecond)
+                .text(" per second and ")
                 .percent(markSpeed, NamedTextColor.YELLOW)
-                .text(" for the duration.")
+                .text(" extra speed.")
                 .maxRange(markRadius)
                 .build();
 

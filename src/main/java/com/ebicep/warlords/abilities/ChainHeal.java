@@ -30,6 +30,7 @@ import java.util.*;
 public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
+    private float cooldownReductionInSeconds = 2.5f;
 
     public ChainHeal() {
         super("Chain Heal", 8, 40, 15, 10, 1);
@@ -38,17 +39,17 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Discharge a beam of energizing lightning that heals you and a targeted friendly player for ")
+                .create("Discharge a beam of energizing lightning that heals you and a targeted ally for ")
                 .heal(healingValues.chainHealing)
                 .text(" health and jumps to ")
-                .text("1", NamedTextColor.YELLOW)
+                .text(additionalBounces, NamedTextColor.YELLOW)
                 .text(" additional target within ")
-                .text(bounceRange, NamedTextColor.YELLOW)
-                .text(" blocks.")
+                .blocks(bounceRange)
+                .text(".")
                 .emptyLine()
                 .text("Each ally healed reduces the cooldown of Boulder by ")
-                .durationSeconds(2.5f)
-                .text(" seconds.")
+                .durationSeconds(cooldownReductionInSeconds)
+                .text(".")
                 .initialRange(radius)
                 .build();
     }
@@ -157,10 +158,10 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
 
         for (Boulder boulder : wp.getAbilitiesMatching(Boulder.class)) {
             float currentCD = boulder.getCurrentCooldown();
-            if ((hitCounter + 1) * 2.5f > currentCD) {
+            if ((hitCounter + 1) * cooldownReductionInSeconds > currentCD) {
                 boulder.setCurrentCooldown(0);
             } else {
-                boulder.subtractCurrentCooldown((hitCounter + 1) * 2.5f);
+                boulder.subtractCurrentCooldown((hitCounter + 1) * cooldownReductionInSeconds);
             }
         }
     }

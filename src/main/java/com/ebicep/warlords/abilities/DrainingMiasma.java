@@ -42,6 +42,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     private int radius = 8;
     private float leechSelfAmount = 25;
     private float leechAllyAmount = 15;
+    private int slowness = 25;
+    private int slownessDuration = 3;
 
     public DrainingMiasma() {
         super("Draining Miasma", 50, 40);
@@ -56,19 +58,19 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                 .percent(maxHealthDamage, NamedTextColor.RED)
                 .text(" of their max health as damage per second, for ")
                 .durationTicks(tickDuration)
-                .text(" seconds. Enemies poisoned by your Draining Miasma are slowed by ")
-                .percent(25, NamedTextColor.YELLOW)
+                .text(". Enemies poisoned by your Draining Miasma are slowed by ")
+                .percent(slowness, NamedTextColor.YELLOW)
                 .text(" for ")
-                .durationSeconds(3)
-                .text(" seconds on cast. Has a radius of ")
-                .text(radius, NamedTextColor.GOLD)
-                .text(" blocks.")
+                .durationSeconds(slownessDuration)
+                .text(" on cast. Has a radius of ")
+                .blocks(radius)
+                .text(".")
                 .emptyLine()
                 .text("Each enemy hit will be afflicted with ")
                 .text("LEECH", NamedTextColor.GREEN)
                 .text(" for ")
                 .durationSeconds(leechDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 
@@ -116,7 +118,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         ) {
             playersHit++;
             if (miasmaTarget.isEnemy(wp)) {
-                Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -25, 3 * 20, "BASE");
+                Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20, "BASE");
                 miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
                 miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,

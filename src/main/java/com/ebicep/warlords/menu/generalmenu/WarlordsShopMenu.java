@@ -558,11 +558,11 @@ public class WarlordsShopMenu {
                          .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
                 Component.empty(),
                 Component.text("Energy: ", NamedTextColor.GRAY)
-                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.YELLOW))
                          .append(Component.text(" / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.YELLOW))
                          .append(Component.text(" per sec / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.YELLOW))
                          .append(Component.text(" per hit"))
         );
         boolean noDamageResistance = apc.getDamageResistance() == 0;

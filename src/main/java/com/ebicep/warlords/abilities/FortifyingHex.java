@@ -85,7 +85,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                 .emptyLine()
                 .text("Each stack of Fortifying Hex lasts  ")
                 .durationTicks(tickDuration)
-                .text(" seconds and grants")
+                .text(" and grants")
                 .percent(damageReduction, NamedTextColor.YELLOW)
                 .text(" damage reduction. Stacks up to")
                 .text(maxStacks, NamedTextColor.BLUE)

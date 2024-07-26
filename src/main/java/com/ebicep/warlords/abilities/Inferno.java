@@ -46,7 +46,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 .percent(critMultiplierIncrease, NamedTextColor.RED)
                 .text(". Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

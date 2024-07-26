@@ -48,6 +48,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     private int tickDuration = 160;
     private float damageThreshold = 0;
+    private float maxDamageThreshold = 600;
+    private float vulnerableDamageBonus = 20;
+    private float backstabDamageBonus = 10;
     private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
@@ -61,16 +64,16 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 .durationTicks(tickDuration)
                 .text(", granting you ")
                 .percent(40, NamedTextColor.YELLOW)
-                .text(" movement speed and making you ")
-                .text("invisible ", NamedTextColor.YELLOW)
-                .text("to the enemy for the duration. However, taking up to ")
-                .text("600 ", NamedTextColor.RED)
-                .text("fall damage or any type of ability damage will end your invisibility.")
+                .text(" extra movement speed and making you ")
+                .text("invisible", NamedTextColor.YELLOW)
+                .text(" to the enemy for the duration. However, taking up to ")
+                .text(maxDamageThreshold, NamedTextColor.RED)
+                .text(" fall damage or any type of ability damage will end your invisibility.")
                 .emptyLine()
                 .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
-                .percent(20, NamedTextColor.RED)
+                .percent(vulnerableDamageBonus, NamedTextColor.RED)
                 .text(" more damage. Additionally, enemies hit from behind take an additional ")
-                .percent(10, NamedTextColor.RED)
+                .percent(backstabDamageBonus, NamedTextColor.RED)
                 .text(" more damage.")
                 .emptyLine()
                 .text("Successfully killing your mark will ")
@@ -83,13 +86,13 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                          .create("reduce ", NamedTextColor.YELLOW)
                                          .text("your Shadow Step cooldown by ")
                                          .text(2, NamedTextColor.YELLOW)
-                                         .text(" seconds and Order of Eviscerate by ")
+                                         .text(" and Order of Eviscerate by ")
                                          .text(killReduction, NamedTextColor.YELLOW)
                                          .text("seconds. Assisting in killing your mark will ")
                                          .text("reduce", NamedTextColor.YELLOW)
                                          .text(" your Order of Eviscerate cooldown by ")
                                          .text(assistReduction, NamedTextColor.YELLOW)
-                                         .text(" seconds.")
+                                         .text(".")
                                          .build())
                                  .build();
         } else {
@@ -171,9 +174,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())
                 ) {
                     numberOfBackstabs++;
-                    return currentDamageValue * (inPve ? 2 : 1.3f);
+                    return currentDamageValue * (inPve ? 2 : 1 + (vulnerableDamageBonus + backstabDamageBonus) / 100f);
                 } else {
-                    return currentDamageValue * 1.2f;
+                    return currentDamageValue * (1 + vulnerableDamageBonus / 100f);
                 }
             }
 
@@ -314,7 +317,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
         addToDamageThreshold(damageValue);
-        if (getDamageThreshold() >= 600) {
+        if (getDamageThreshold() >= maxDamageThreshold) {
             OrderOfEviscerate.removeCloak(warlordsPlayer, false);
         }
     }

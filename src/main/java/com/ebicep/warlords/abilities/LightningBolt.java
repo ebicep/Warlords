@@ -37,6 +37,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
 
     private final DamageValues damageValues = new DamageValues();
     private double hitbox = 3;
+    private int cooldownReduction = 2;
 
     public LightningBolt() {
         this(0, 0);
@@ -52,8 +53,8 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
                 .create("Hurl a fast, piercing bolt of lightning that deals ")
                 .damage(damageValues.boltDamage)
                 .text(" to all enemies it passes through. Each target hit reduces the cooldown of Chain Lightning by ")
-                .durationSeconds(2)
-                .text(" seconds.")
+                .durationSeconds(cooldownReduction)
+                .text(".")
                 .maxRange(maxDistance)
                 .build();
 
@@ -112,7 +113,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             //reducing chain cooldown
             if (!(wp.isInPve() && projectile.getHit().size() > 2)) {
                 for (ChainLightning chainLightning : wp.getAbilitiesMatching(ChainLightning.class)) {
-                    chainLightning.subtractCurrentCooldown(2);
+                    chainLightning.subtractCurrentCooldown(cooldownReduction);
                 }
             }
         }
