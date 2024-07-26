@@ -57,7 +57,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Shackle up to ")
-                .text(maxShackleTargets, NamedTextColor.GOLD)
+                .text(maxShackleTargets, NamedTextColor.YELLOW)
                 .text(" enemy and deal ")
                 .damage(damageValues.shackleDamage)
                 .text(" damage. Shackled enemies are silenced for ")
