@@ -51,7 +51,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Surround yourself with a layer of cold air, reducing damage taken by ")
-                .percent(damageReductionPercent, NamedTextColor.RED)
+                .percent(damageReductionPercent, NamedTextColor.YELLOW)
                 .text(", while active, taking melee damage reduces the attacker's movement speed by ")
                 .percent(slownessOnMeleeHit, NamedTextColor.YELLOW)
                 .text(" for ")

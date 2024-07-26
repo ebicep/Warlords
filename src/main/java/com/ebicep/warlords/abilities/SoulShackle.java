@@ -67,7 +67,6 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                 .text(" movement speed for ")
                 .durationSeconds(speedDuration)
                 .text(" after shackling an enemy.")
-                .emptyLine()
                 .maxRange(shackleRange)
                 .build();
     }

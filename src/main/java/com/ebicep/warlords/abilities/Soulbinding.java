@@ -73,7 +73,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 .text(".")
                 .emptyLine()
                 .text("Successful soulbind procs will grant you ")
-                .percent(25, NamedTextColor.GOLD)
+                .percent(25, NamedTextColor.YELLOW)
                 .text(" knockback resistance for ")
                 .durationSeconds(1.2f)
                 .text(" (Max ")

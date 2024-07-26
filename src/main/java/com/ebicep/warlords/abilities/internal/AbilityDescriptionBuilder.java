@@ -84,7 +84,7 @@ public class AbilityDescriptionBuilder {
     }
 
     public AbilityDescriptionBuilder durationTicks(int ticks) {
-        return durationSeconds(ticks / 20);
+        return durationSeconds(ticks / 20f);
     }
 
     public AbilityDescriptionBuilder durationSeconds(int seconds) {
@@ -100,13 +100,13 @@ public class AbilityDescriptionBuilder {
     }
 
     public AbilityDescriptionBuilder energy(int energy) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.GOLD);
+        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
         parentBuilder.text(" energy");
         return this;
     }
 
     public AbilityDescriptionBuilder energy(float energy) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.GOLD);
+        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
         parentBuilder.text(" energy");
         return this;
     }

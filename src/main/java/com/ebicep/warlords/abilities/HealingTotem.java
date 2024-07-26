@@ -57,12 +57,12 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     public void updateDescription(Player player) {
         if (inPve) {
             description = AbilityDescriptionBuilder
-                    .create("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
+                    .create("Place a totem on the ground that pulses constantly, healing allies within ")
                     .blocks(radius)
-                    .text(" radius for ")
+                    .text(" for ")
                     .heal(healingValues.totemHealing)
                     .text(" health every second. The healing will gradually decrease by ")
-                    .percent(healingIncrement, NamedTextColor.GREEN)
+                    .percent(healingIncrement, NamedTextColor.YELLOW)
                     .text(" until the final proc which heals for the normal amount once again. Lasts ")
                     .durationTicks(tickDuration)
                     .text(".")

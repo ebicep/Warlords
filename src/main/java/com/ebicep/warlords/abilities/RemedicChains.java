@@ -46,11 +46,11 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Bind yourself to ")
+                .create("Bind yourself to up to ")
                 .text(alliesAffected, NamedTextColor.YELLOW)
                 .text(" allies near you, increasing the damage they deal to leeched targets by ")
                 .percent(allyDamageIncrease, NamedTextColor.RED)
-                .text(" as long as the link is active. Lasts ")
+                .text(" while the link is active. Lasts ")
                 .durationTicks(tickDuration)
                 .text(".")
                 .emptyLine()

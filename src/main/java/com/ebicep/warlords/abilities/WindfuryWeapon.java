@@ -53,9 +53,11 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 .text(maxHits, NamedTextColor.YELLOW)
                 .text(" additional times for ")
                 .percent(weaponDamage, NamedTextColor.RED)
-                .text(" weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts ")
+                .text(" weapon damage. Lasts ")
                 .durationTicks(tickDuration)
                 .text(".")
+                .emptyLine()
+                .text("The first hit is guaranteed to activate Windfury.")
                 .build();
     }
 

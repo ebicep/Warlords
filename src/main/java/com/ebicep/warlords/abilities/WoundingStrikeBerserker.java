@@ -48,9 +48,9 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
                 .text("wounding", NamedTextColor.RED)
                 .text(" them for ")
                 .durationTicks(woundingTickDuration)
-                .text(". A wounded player receives ")
+                .text(", making them receive ")
                 .percent(40, NamedTextColor.RED)
-                .text(" less healing for the duration of the effect.")
+                .text(" less healing.")
                 .build();
     }
 

@@ -46,14 +46,15 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Your presence on the battlefield inspires your allies, granting them ")
+                .create("Your presence on the battlefield inspires your allies within ")
+                .blocks(radius)
+                .text(", granting them ")
                 .energy(energyPerSecond)
                 .text(" per second and ")
                 .percent(speedBuff, NamedTextColor.YELLOW)
                 .text(" extra movement speed for ")
                 .durationTicks(tickDuration)
                 .text(".")
-                .maxRange(radius)
                 .build();
     }
 

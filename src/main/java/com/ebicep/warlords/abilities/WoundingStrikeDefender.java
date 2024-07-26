@@ -53,9 +53,9 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
                 .text("wounding", NamedTextColor.RED)
                 .text(" them for ")
                 .durationTicks(woundingDurationInTicks)
-                .text(". A wounded player receives ")
+                .text(", making them receive ")
                 .percent(wounding, NamedTextColor.RED)
-                .text(" less healing for the duration of the effect.")
+                .text(" less healing.")
                 .build();
     }
 

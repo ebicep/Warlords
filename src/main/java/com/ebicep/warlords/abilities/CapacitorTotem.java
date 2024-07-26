@@ -48,9 +48,9 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         description = AbilityDescriptionBuilder
                 .create("Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing ")
                 .damage(damageValues.totemDamage)
-                .text(" damage to all enemies in a ")
+                .text(" damage to all enemies within ")
                 .blocks(radius)
-                .text(" radius. Lasts ")
+                .text(". Lasts ")
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
