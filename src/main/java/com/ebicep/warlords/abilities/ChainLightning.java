@@ -218,7 +218,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             if (pveMasterUpgrade) {
                 damageDecreasePerBounce = -10;
             }
-            float damageMultiplier = 1 - playersSize * damageDecreasePerBounce;
+            float damageMultiplier = 1 - Math.min(playersSize, 3) * damageDecreasePerBounce / 100f;
 
             playersHit.add(hit);
             if (hit.onHorse()) {
