@@ -96,12 +96,12 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     if (!pveMasterUpgrade2) {
                         continue;
                     }
-                    nearBy.getCooldownManager().removeCooldownByObject(beacon);
+                    nearBy.getCooldownManager().removeCooldownByObject(beacon.getM2Object());
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Shadow Garden",
                             null,
-                            SanctifiedBeaconData.class,
-                            beacon,
+                            Object.class,
+                            beacon.getM2Object(),
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
@@ -264,6 +264,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     public static class SanctifiedBeaconData extends AbstractBeaconAbility.BeaconData {
 
         private final ArmorStand crystal;
+        private final Object m2Object = new Object();
 
         public SanctifiedBeaconData(ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius, ArmorStand crystal) {
             super(beacon, groundLocation, effect, radius);
@@ -274,6 +275,9 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             return crystal;
         }
 
+        public Object getM2Object() {
+            return m2Object;
+        }
     }
 
 }
