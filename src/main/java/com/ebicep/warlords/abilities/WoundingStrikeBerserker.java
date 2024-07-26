@@ -28,6 +28,7 @@ import java.util.List;
 public class WoundingStrikeBerserker extends AbstractStrike implements Damages<WoundingStrikeBerserker.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private int wounding = 40;
     private int woundingTickDuration = 60;
 
     public WoundingStrikeBerserker() {
@@ -47,7 +48,7 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
                 .text("wounding", NamedTextColor.RED)
                 .text(" them for ")
                 .durationTicks(woundingTickDuration)
-                .text(" seconds. A wounded player receives ")
+                .text(". A wounded player receives ")
                 .percent(40, NamedTextColor.RED)
                 .text(" less healing for the duration of the effect.")
                 .build();
@@ -138,7 +139,7 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
         ) {
             @Override
             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .6f;
+                return currentHealValue * (100 - wounding) / 100f;
             }
 
             @Override

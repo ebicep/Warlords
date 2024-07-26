@@ -11,6 +11,7 @@ import java.util.function.UnaryOperator;
 
 public class AbilityDescriptionBuilder {
 
+    //TODO: auto space
     public static AbilityDescriptionBuilder create(String text) {
         return new AbilityDescriptionBuilder(ComponentBuilder.create(text));
     }
@@ -88,21 +89,25 @@ public class AbilityDescriptionBuilder {
 
     public AbilityDescriptionBuilder durationSeconds(int seconds) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
+        parentBuilder.text(seconds == 1 ? " second" : " seconds");
         return this;
     }
 
     public AbilityDescriptionBuilder durationSeconds(float seconds) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
+        parentBuilder.text(seconds == 1 ? " second" : " seconds");
         return this;
     }
 
     public AbilityDescriptionBuilder energy(int energy) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.GOLD);
+        parentBuilder.text(" energy");
         return this;
     }
 
     public AbilityDescriptionBuilder energy(float energy) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.GOLD);
+        parentBuilder.text(" energy");
         return this;
     }
 
@@ -118,6 +123,30 @@ public class AbilityDescriptionBuilder {
 
     public AbilityDescriptionBuilder percent(FloatModifiable percent, NamedTextColor color) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(percent.getCalculatedValue()) + "%", color);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder blocks(int blocks) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.YELLOW);
+        parentBuilder.text(blocks == 1 ? " block" : " blocks");
+        return this;
+    }
+
+    public AbilityDescriptionBuilder blocks(float blocks) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.YELLOW);
+        parentBuilder.text(blocks == 1 ? " block" : " blocks");
+        return this;
+    }
+
+    public AbilityDescriptionBuilder blocks(FloatModifiable blocks) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks.getCalculatedValue()), NamedTextColor.YELLOW);
+        parentBuilder.text(blocks.getCalculatedValue() == 1 ? " block" : " blocks");
+        return this;
+    }
+
+    public AbilityDescriptionBuilder blocks(double blocks) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.YELLOW);
+        parentBuilder.text(blocks == 1 ? " block" : " blocks");
         return this;
     }
 

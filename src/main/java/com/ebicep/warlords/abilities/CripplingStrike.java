@@ -92,13 +92,15 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
                 .text("crippling ", NamedTextColor.RED)
                 .text("them for ")
                 .durationSeconds(crippleDuration)
-                .text(" seconds. A ")
+                .text(". A ")
                 .text("crippled ", NamedTextColor.RED)
                 .text("player deals ")
                 .percent(cripple, NamedTextColor.RED)
                 .text(" less damage for the duration of the effect. Adds ")
                 .percent(cripplePerStrike, NamedTextColor.RED)
-                .text(" less damage dealt per additional strike. (Max " + format(cripple + (cripplePerStrike * 2)) + "%" + ")")
+                .text(" less damage dealt per additional strike (max ")
+                .percent(cripple + (cripplePerStrike * 2), NamedTextColor.RED)
+                .text(").")
                 .build();
     }
 

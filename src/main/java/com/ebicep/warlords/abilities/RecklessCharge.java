@@ -62,7 +62,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                 .text("IMMOBILIZED", NamedTextColor.DARK_PURPLE)
                 .text(", preventing movement for ")
                 .durationTicks(stunTimeInTicks)
-                .text(" seconds.")
+                .text(".")
                 .build();
 
     }

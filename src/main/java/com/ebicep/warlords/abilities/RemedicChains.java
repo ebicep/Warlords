@@ -52,7 +52,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 .percent(allyDamageIncrease, NamedTextColor.RED)
                 .text(" as long as the link is active. Lasts ")
                 .durationTicks(tickDuration)
-                .text("seconds.")
+                .text(".")
                 .emptyLine()
                 .text("When the link expires you and the allies are healed for ")
                 .heal(healingValues.chainHealing)
@@ -60,9 +60,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 .percent(healingMultiplier, NamedTextColor.GREEN)
                 .text(" of the original amount for each second they have been linked.")
                 .emptyLine()
-                .text("The link will break if you are ")
-                .text(linkBreakRadius + " ", NamedTextColor.YELLOW)
-                .text("blocks apart.")
+                .text("The link will break if you are more than ")
+                .blocks(linkBreakRadius)
+                .text(" apart.")
                 .build();
     }
 
@@ -108,7 +108,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     .append(Component.text("damage", NamedTextColor.RED))
                     .append(Component.text(" for ", NamedTextColor.GRAY))
                     .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             if (pveMasterUpgrade) {

@@ -56,9 +56,11 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         description = AbilityDescriptionBuilder
                 .create("Conjure rain at targeted location that will restore ")
                 .heal(healingValues.rainHealing)
-                .text(" health every 0.5 seconds to allies. Lasts ")
+                .text(" health every ")
+                .durationSeconds(0.5f)
+                .text(" to allies. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .emptyLine()
                 .text("Recast to move Healing Rain to your location.")
                 .emptyLine()
@@ -66,7 +68,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 .percent(10, NamedTextColor.GREEN)
                 .text(" of their max health as bonus health for ")
                 .durationSeconds(Overheal.OVERHEAL_DURATION)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

@@ -51,7 +51,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                 .emptyLine()
                 .text("You may look at an ally to mark them for ")
                 .durationSeconds(markDuration)
-                .text("seconds. Marked allies receive ")
+                .text(". Marked allies receive ")
                 .percent(markBonusHealing, NamedTextColor.GREEN)
                 .text(" more healing from all sources.")
                 .maxRange(markRadius)

@@ -40,7 +40,7 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
                 .percent(speedOnCrit, NamedTextColor.YELLOW)
                 .text(" for ")
                 .durationSeconds(speedOnCritDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

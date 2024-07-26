@@ -55,7 +55,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 .percent(weaponDamage, NamedTextColor.RED)
                 .text(" weapon damage. The first melee hit is guaranteed to activate Windfury. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 
@@ -114,7 +114,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade2) {
-                    return currentDamageValue * (100 - Math.min(15, procs.get() * 2.5f)) / 100;
+                    return currentDamageValue * (100 - Math.min(15, procs.get() * 2.5f)) / 100f;
                 }
                 return currentDamageValue;
             }

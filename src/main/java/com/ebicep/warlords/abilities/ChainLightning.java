@@ -79,6 +79,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
+    private float damageDecreasePerBounce = 15;
 
     public ChainLightning() {
         super("Chain Lightning", 9.5f, 40, 20, 10, 3);
@@ -101,16 +102,16 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 .text(" damage and jumps to ")
                 .text(additionalBounces, NamedTextColor.YELLOW)
                 .text(" additional targets within ")
-                .text(bounceRange, NamedTextColor.YELLOW)
-                .text(" blocks. Each time the lightning jumps, the damage is decreased by ")
-                .percent(15, NamedTextColor.RED)
+                .blocks(bounceRange)
+                .text(". Each time the lightning jumps, the damage is decreased by ")
+                .percent(damageDecreasePerBounce, NamedTextColor.RED)
                 .text(". You gain ")
                 .percent(damageReductionPerBounce, NamedTextColor.YELLOW)
                 .text(" damage resistance for each target hit, up to ")
                 .percent(maxDamageReduction, NamedTextColor.YELLOW)
                 .text(" damage resistance. This buff lasts ")
                 .durationTicks(damageReductionTickDuration)
-                .text(" seconds.")
+                .text(".")
                 .initialRange(radius)
                 .build();
     }
@@ -214,11 +215,10 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         if (foundPlayer.isPresent()) {
             WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
-            float damageMultiplier = switch (playersSize) {
-                case 0 -> pveMasterUpgrade ? 1.1f : 1f;
-                case 1 -> pveMasterUpgrade ? 1.2f : .85f;
-                default -> pveMasterUpgrade ? 1.3f : .7f;
-            };
+            if (pveMasterUpgrade) {
+                damageDecreasePerBounce = -10;
+            }
+            float damageMultiplier = 1 - playersSize * damageDecreasePerBounce;
 
             playersHit.add(hit);
             if (hit.onHorse()) {

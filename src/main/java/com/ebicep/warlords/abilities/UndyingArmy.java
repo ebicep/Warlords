@@ -194,15 +194,15 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         description = AbilityDescriptionBuilder
                 .create("You may chain up to ")
                 .text(maxArmyAllies, NamedTextColor.YELLOW)
-                .text(" allies in a ")
-                .text(radius, NamedTextColor.YELLOW)
-                .text(" block radius to heal them for ")
+                .text(" allies within ")
+                .blocks(radius)
+                .text(" to heal them for ")
                 .text(format(flatHealing), NamedTextColor.GREEN)
                 .text(" + ")
                 .percent(missingHealing, NamedTextColor.GREEN)
                 .text(" missing health every second. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .emptyLine()
                 .text("Chained allies that take fatal damage will be revived with ")
                 .percent(100, NamedTextColor.GREEN)
@@ -302,7 +302,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         .append(Component.text("Undying Army", NamedTextColor.YELLOW))
                         .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
                         .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds.", NamedTextColor.GRAY))
+                        .append(Component.text(".", NamedTextColor.GRAY))
                 );
             }
             teammate.getCooldownManager().addRegularCooldown(

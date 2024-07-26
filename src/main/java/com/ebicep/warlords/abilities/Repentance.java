@@ -47,7 +47,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 .percent(damageConvertPercent, NamedTextColor.RED)
                 .text(" of the damage you've recently took. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

@@ -55,24 +55,37 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
-                .text(radius, NamedTextColor.YELLOW)
-                .text(" block radius for ")
-                .heal(healingValues.totemHealing)
-                .text(" health every second. The healing will gradually decrease by ")
-                .percent(healingIncrement, NamedTextColor.GREEN)
-                .text(" until the final proc which heals for the normal amount once again. Lasts ")
-                .durationTicks(tickDuration)
-                .text(" seconds.")
-                .emptyLine()
-                .text("Pressing SHIFT or re-activating the ability causes your totem to pulse with immense force, crippling all enemies for ")
-                .durationSeconds(crippleDuration)
-                .text(" seconds. Crippled enemies deal ")
-                .percent(25, NamedTextColor.RED)
-                .text(" less damage.")
-                .build();
-
+        if (inPve) {
+            description = AbilityDescriptionBuilder
+                    .create("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
+                    .blocks(radius)
+                    .text(" radius for ")
+                    .heal(healingValues.totemHealing)
+                    .text(" health every second. The healing will gradually decrease by ")
+                    .percent(healingIncrement, NamedTextColor.GREEN)
+                    .text(" until the final proc which heals for the normal amount once again. Lasts ")
+                    .durationTicks(tickDuration)
+                    .text(".")
+                    .emptyLine()
+                    .text("Reactivating the ability causes your totem to pulse with immense force, crippling all enemies for ")
+                    .durationSeconds(crippleDuration)
+                    .text(". Crippled enemies deal ")
+                    .percent(25, NamedTextColor.RED)
+                    .text(" less damage.")
+                    .build();
+        } else {
+            description = AbilityDescriptionBuilder
+                    .create("Place a totem on the ground that pulses constantly, healing nearby allies in a ")
+                    .blocks(radius)
+                    .text(" radius for ")
+                    .heal(healingValues.totemHealing)
+                    .text(" health every second. The healing will gradually decrease by ")
+                    .percent(healingIncrement, NamedTextColor.GREEN)
+                    .text(" until the final proc which heals for the normal amount once again. Lasts ")
+                    .durationTicks(tickDuration)
+                    .text(".")
+                    .build();
+        }
     }
 
     @Override

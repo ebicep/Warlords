@@ -65,7 +65,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
                 .percent(slowness, NamedTextColor.YELLOW)
                 .text(" for ")
                 .durationSeconds(slowDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
 
     }

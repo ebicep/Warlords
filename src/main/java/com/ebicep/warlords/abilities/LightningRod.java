@@ -48,12 +48,12 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Call down an energizing bolt of lightning upon yourself, restoring ")
-                .heal(healingValues.healthRestore)
+                .percent(healingValues.healthRestore.getValue(), NamedTextColor.GREEN)
                 .text(" health and ")
-                .text(energyRestore + " ", NamedTextColor.YELLOW)
-                .text("energy and knock all nearby enemies in a ")
-                .text(knockbackRadius + " ", NamedTextColor.YELLOW)
-                .text("block radius back.")
+                .energy(energyRestore)
+                .text(" and knocking all nearby enemies in a ")
+                .blocks(knockbackRadius)
+                .text(" radius back.")
                 .build();
 
     }

@@ -50,7 +50,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 .percent(damageTakenIncrease, NamedTextColor.RED)
                 .text(" more damage. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

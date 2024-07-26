@@ -59,7 +59,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                 .text(energyPerSecond, NamedTextColor.YELLOW)
                 .text(" for ")
                 .durationSeconds(duration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

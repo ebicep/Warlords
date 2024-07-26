@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -46,10 +47,12 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
         description = AbilityDescriptionBuilder
                 .create("Place a stationary beacon on the ground that lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds. ")
+                .text(". ")
                 .append(getBonusDescription())
                 .emptyLine()
-                .text("Only two beacons can be present on the field at once.")
+                .text("Up to ")
+                .text(maxBeaconsAtATime, NamedTextColor.BLUE)
+                .text(" beacons can be present on the field at once.")
                 .build();
     }
 

@@ -45,7 +45,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                 .percent(damageResistance, NamedTextColor.YELLOW)
                 .text(" damage reduction, and an immunity to de-buffs for ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .emptyLine()
                 .text("Vitality Concoction has reduced effectiveness when holding a flag.")
                 .build();

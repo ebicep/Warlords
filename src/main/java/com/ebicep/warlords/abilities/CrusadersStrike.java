@@ -36,6 +36,8 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
     private int energyGiven = 21;
     private int energyRadius = 10;
     private int energyMaxAllies = 2;
+    private int allySpeedBoost = 40;
+    private int allySpeedBoostDurationInTicks = 20;
 
     public CrusadersStrike() {
         super("Crusader's Strike", 0, 90);
@@ -49,14 +51,14 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
                 .text(" damage and restoring ")
                 .text(energyGiven, NamedTextColor.YELLOW)
                 .text(" energy to " + energyMaxAllies + " nearby allies within ")
-                .text(energyRadius, NamedTextColor.YELLOW)
-                .text(" blocks.")
+                .blocks(energyRadius)
+                .text(".")
                 .emptyLine()
-                .text("MARKED allies get priority in restoring energy and increases their speed by ")
-                .percent(4, NamedTextColor.YELLOW)
+                .text("MARKED allies get priority in restoring energy and increases their movement speed by ")
+                .percent(allySpeedBoost, NamedTextColor.YELLOW)
                 .text(" for ")
-                .durationSeconds(1)
-                .text(" second.")
+                .durationTicks(allySpeedBoostDurationInTicks)
+                .text(".")
                 .build();
     }
 
@@ -131,7 +133,7 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
                 .limit(energyMaxAllies)
         ) {
             if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
-                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
+                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks, "BASE"); // 20 ticks
             }
 
             energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));

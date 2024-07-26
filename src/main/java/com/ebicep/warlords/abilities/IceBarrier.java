@@ -36,6 +36,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     private int tickDuration = 120;
     private float damageReductionPercent = 50;
     private int slownessOnMeleeHit = 20;
+    private int slowDuration = 2;
 
     public IceBarrier() {
         super("Ice Barrier", 47, 0);
@@ -54,10 +55,10 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 .text(", while active, taking melee damage reduces the attacker's movement speed by ")
                 .percent(slownessOnMeleeHit, NamedTextColor.YELLOW)
                 .text(" for ")
-                .durationSeconds(2)
-                .text(" seconds " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts ")
+                .durationSeconds(slowDuration)
+                .text(" " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

@@ -40,12 +40,12 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("You become infused with light, restoring ")
-                .text(energyGiven, NamedTextColor.YELLOW)
-                .text(" energy and increasing your movement speed by ")
-                .text(speedBuff + "%", NamedTextColor.YELLOW)
+                .energy(energyGiven)
+                .text(" and increasing your movement speed by ")
+                .percent(speedBuff, NamedTextColor.YELLOW)
                 .text(" for ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

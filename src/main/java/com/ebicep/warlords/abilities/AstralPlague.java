@@ -57,13 +57,11 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         description = AbilityDescriptionBuilder
                 .create("Grant yourself Astral Energy, increasing Poisonous Hex duration by ")
                 .durationTicks(hexTickDurationIncrease)
-                .text(" seconds and causing Soulfire Beam to not consume Poisonous Hex stacks. ")
+                .text(" and causing Soulfire Beam to not consume Poisonous Hex stacks.")
                 .emptyLine()
-                .text("Your attacks pierces shields and defenses of enemies with ")
-                .text("3", NamedTextColor.RED)
-                .text(" stacks of Poisonous Hex. Lasts")
+                .text("Your attacks pierces shields and defenses of enemies with max stacks of Poisonous Hex. Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds. ")
+                .text(".")
                 .build();
     }
 

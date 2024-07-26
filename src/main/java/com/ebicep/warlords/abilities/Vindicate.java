@@ -49,19 +49,19 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("All allies within an ")
-                .text(radius, NamedTextColor.YELLOW)
-                .text(" block radius gain the status ")
+                .create("All allies within ")
+                .blocks(radius)
+                .text(" radius gain the status ")
                 .text("VIND", NamedTextColor.GOLD)
                 .text(" for ")
                 .durationTicks(vindTickDuration)
-                .text(" seconds, granting an immunity to de-buffs and ")
+                .text(", granting an immunity to de-buffs and ")
                 .percent(knockbackResistance, NamedTextColor.YELLOW)
                 .text(" knockback resistance. You gain")
                 .percent(vindicateDamageReduction, NamedTextColor.YELLOW)
                 .text(" damage reduction for ")
                 .durationTicks(damageReductionTickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 
@@ -107,7 +107,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                         .append(Component.text("Vindicate", NamedTextColor.YELLOW))
                         .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
                         .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                        .append(Component.text("!", NamedTextColor.GRAY))
                 );
             }
 

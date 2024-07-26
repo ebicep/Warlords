@@ -61,7 +61,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 .percent(10, NamedTextColor.GREEN)
                 .text(" of their max health as bonus health for ")
                 .durationSeconds(Overheal.OVERHEAL_DURATION)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

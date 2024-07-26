@@ -25,6 +25,8 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
     public int silencedTargetStruck = 0;
     private final DamageValues damageValues = new DamageValues();
     private int abilityReductionInTicks = 16;
+    private int additionalReductionInTicks = 4;
+    private float vindicateCooldownReduction = 0.5f;
     private int targetsStruck = 0;
 
     public RighteousStrike() {
@@ -38,13 +40,13 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
                 .damage(damageValues.strikeDamage)
                 .text(" damage. Each strike reduces the duration of your struck target's active ability timers by ")
                 .durationTicks(abilityReductionInTicks)
-                .text(" seconds.")
+                .text(".")
                 .emptyLine()
-                .text("Additionally, if your struck target is silenced, reduce the cooldown of your Vindicate by ")
-                .durationSeconds(0.5f)
-                .text(" seconds and reduce their active ability timers by ")
-                .durationTicks((abilityReductionInTicks + 4))
-                .text(" second instead.")
+                .text("If your struck target is silenced, reduce the cooldown of your Vindicate by ")
+                .durationSeconds(vindicateCooldownReduction)
+                .text(" and reduce their active ability timers by ")
+                .durationTicks((abilityReductionInTicks + additionalReductionInTicks))
+                .text(" instead.")
                 .build();
     }
 
@@ -81,9 +83,9 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
 
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns((int) (abilityReductionInTicks * 1.6f), CooldownTypes.ABILITY);
+            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns((int) (abilityReductionInTicks + additionalReductionInTicks), CooldownTypes.ABILITY);
             for (Vindicate vindicate : wp.getAbilitiesMatching(Vindicate.class)) {
-                vindicate.subtractCurrentCooldown(0.5f);
+                vindicate.subtractCurrentCooldown(vindicateCooldownReduction);
             }
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);

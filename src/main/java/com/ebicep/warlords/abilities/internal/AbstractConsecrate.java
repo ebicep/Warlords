@@ -53,10 +53,10 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 .text(" damage per second and take ")
                 .percent(strikeDamageBoost, NamedTextColor.RED)
                 .text(" increased damage from your paladin strikes. Has a radius of ")
-                .text(format(hitBox.getCalculatedValue()), NamedTextColor.YELLOW)
-                .text(" blocks. Lasts ")
+                .blocks(hitBox.getCalculatedValue())
+                .text(". Lasts ")
                 .durationTicks(tickDuration)
-                .text(" seconds.")
+                .text(".")
                 .build();
 
     }

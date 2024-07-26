@@ -58,11 +58,11 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 .percent(meleeDamageReduction, NamedTextColor.YELLOW)
                 .text("and increase the attacker’s cooldowns by ")
                 .text(formatHundredths(runeTimerIncrease), NamedTextColor.GOLD)
-                .text(" seconds for every instance of damage they deal to the target.")
+                .text(" for every instance of damage they deal to the target.")
                 .emptyLine()
                 .text("After ")
                 .durationTicks(tickDuration)
-                .text(" seconds the spirits transform into a shield equal to")
+                .text(" the spirits transform into a shield equal to")
                 .text(shieldBase, NamedTextColor.YELLOW)
                 .text(" + ")
                 .text(shieldIncrease, NamedTextColor.YELLOW)
@@ -70,7 +70,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 .text(shieldMaxHealth, NamedTextColor.YELLOW)
                 .text(" health, that lasts ")
                 .durationTicks(reactivateTickDuration)
-                .text(" seconds.")
+                .text(".")
                 .emptyLine()
                 .text("If no ally is targeted, receive all the effects yourself.")
                 .build();
@@ -142,7 +142,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
                     .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
                     .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
         }
 

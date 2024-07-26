@@ -52,7 +52,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 .damage(damageValues.curseDamage)
                 .text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
                 .durationTicks(blindDurationInTicks)
-                .text(" seconds.")
+                .text(".")
                 .build();
     }
 

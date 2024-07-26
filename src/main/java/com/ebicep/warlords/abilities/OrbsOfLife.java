@@ -47,7 +47,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     private final int floatingOrbRadius = 20;
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 280;
+    private int initialOrbs = 2;
     private int orbTickMultiplier = 1;
+    //TODO: Variables for magical numbers in description
 
     public OrbsOfLife() {
         super("Orbs of Life", 19.5f, 20);
@@ -57,12 +59,12 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Spawn ")
-                .text("2 ", NamedTextColor.YELLOW)
-                .text("initial orbs on cast.")
+                .text(initialOrbs, NamedTextColor.YELLOW)
+                .text(" orbs on cast.")
                 .emptyLine()
                 .text("Striking and hitting enemies with abilities causes them to drop an orb of life that lasts ")
                 .durationSeconds(8)
-                .text(" seconds, restoring ")
+                .text(", restoring ")
                 .heal(healingValues.orbHealing)
                 .text(" health to the ally that picks it up. Other nearby allies recover ")
                 .heal(healingValues.orbHealing)
@@ -72,9 +74,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 .durationTicks(tickDuration)
                 .text("seconds.")
                 .emptyLine()
-                .text("Recast to make the orbs levitate towards you or the nearest ally in a ")
-                .text(floatingOrbRadius + " ", NamedTextColor.YELLOW)
-                .text("block radius.")
+                .text("Recast to make the orbs levitate towards you or the nearest ally within ")
+                .blocks(floatingOrbRadius)
+                .text(".")
                 .build();
 
     }
@@ -178,10 +180,8 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         };
         wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);
 
-        spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
-        spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
-        if (pveMasterUpgrade) {
-            spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
+        for (int i = 0; i < initialOrbs; i++) {
+            spawnOrbs(wp, wp, "Orbs of Life", orbsOfLifeCooldown);
         }
 
         addSecondaryAbility(
@@ -355,6 +355,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    public int getInitialOrbs() { return initialOrbs; }
+
+    public void setInitialOrbs(int initialOrbs) { this.initialOrbs = initialOrbs; }
 
     @Override
     public HealingValues getHealValues() {

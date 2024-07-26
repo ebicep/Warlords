@@ -68,11 +68,11 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 .percent(selfDamageReductionPercent, NamedTextColor.RED)
                 .text(" for ")
                 .durationTicks(selfTickDuration)
-                .text(" seconds and also reduces all damage nearby allies take by ")
+                .text(" and also reduces all damage nearby allies take by ")
                 .percent(teammateDamageReductionPercent, NamedTextColor.RED)
                 .text(" for ")
                 .durationTicks(allyTickDuration)
-                .text(" seconds. You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))
+                .text(". You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))
                 .maxRange(radius)
                 .build();
     }
@@ -214,7 +214,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     .append(Component.text("Last Stand", NamedTextColor.YELLOW))
                     .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
                     .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
         }
 

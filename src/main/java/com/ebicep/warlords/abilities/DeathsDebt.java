@@ -64,8 +64,8 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                 .text("after ")
                 .append(formatRange(tickDuration / 20f, (tickDuration / 20f + 2), NamedTextColor.GOLD))
                 .text(" seconds (increases with higher health), or when you exit its ")
-                .text(respiteRadius, NamedTextColor.YELLOW)
-                .text(" block radius.")
+                .blocks(respiteRadius)
+                .text(" radius.")
                 .emptyLine()
                 .text("Death’s Debt", NamedTextColor.LIGHT_PURPLE)
                 .text(": Take ")
@@ -73,14 +73,14 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                 .text(" of the damage delayed by ")
                 .text("Spirits’ Respite ", NamedTextColor.DARK_GREEN)
                 .text("over ")
-                .durationSeconds(6)
-                .text(" seconds. The totem will heal nearby allies for ")
-                .percent(15, NamedTextColor.GREEN)
+                .durationTicks(debtTickDuration)
+                .text(". The totem will heal nearby allies for ")
+                .percent(damagePercent, NamedTextColor.GREEN)
                 .text(" of all damage that you take. If you survive, deal ")
                 .percent(damagePercent, NamedTextColor.RED)
                 .text(" of the damage delayed to nearby enemies in a ")
-                .text(debtRadius, NamedTextColor.YELLOW)
-                .text(" block radius.")
+                .blocks(debtRadius)
+                .text(" radius.")
                 .build();
     }
 
@@ -189,7 +189,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                             .damage()
                                             .ability(this)
                                             .source(wp)
-                                            .value(data.delayedDamage * .15f)
+                                            .value(data.delayedDamage * damagePercent / 100f)
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                         if (warlordsDamageHealingFinalEvent.getValue() > 5000) {
                                             over5000DamageInstances.getAndIncrement();
@@ -287,7 +287,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                                  .append(Component.text(Math.round(data.delayedDamage), NamedTextColor.RED))
                                                  .append(Component.text(" damage. ", NamedTextColor.GRAY))
                                                  .append(Component.text(Math.round(ticksLeft / 20f), NamedTextColor.GOLD))
-                                                 .append(Component.text(" seconds left.", NamedTextColor.GRAY))
+                                                 .append(Component.text(" left.", NamedTextColor.GRAY))
                                 ));
 
                         if (wp.isInPve()) {
