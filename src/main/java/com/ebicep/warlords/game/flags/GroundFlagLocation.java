@@ -31,22 +31,24 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     private int despawnTicks;
     private int repickTickCooldown;
     private final boolean manuallyDropped;
+    private int bonusRepickMultiplier;
 
-    public GroundFlagLocation(Location location, int ticksElapsed, int flagMultiplier, boolean manuallyDropped) {
+    public GroundFlagLocation(Location location, int ticksElapsed, int flagMultiplier, boolean manuallyDropped, int bonusRepickMultiplier) {
         super(location);
         this.ticksElapsed = ticksElapsed;
         this.flagMultiplier = flagMultiplier;
         this.despawnTicks = 15 * 20;
         this.repickTickCooldown = manuallyDropped ? 0 : 10;
         this.manuallyDropped = manuallyDropped;
+        this.bonusRepickMultiplier = bonusRepickMultiplier;
     }
 
     public GroundFlagLocation(PlayerFlagLocation playerFlagLocation, boolean manuallyDropped) {
         this(playerFlagLocation.getLocation(),
                 playerFlagLocation.getTicksElapsed(),
-                playerFlagLocation.getPlayer().isDead() ? (int) (playerFlagLocation.getFlagMultiplier() + 15 * (1 + playerFlagLocation.getFlagMultiplier() / 100f))
-                                                        : playerFlagLocation.getFlagMultiplier(),
-                manuallyDropped
+                playerFlagLocation.getFlagMultiplier(),
+                manuallyDropped,
+                playerFlagLocation.getPlayer().isDead() ? (int) (15 * (1 + playerFlagLocation.getFlagMultiplier() / 100f)) : 0
         );
     }
 
@@ -78,6 +80,10 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
 
     public int getRepickTickCooldown() {
         return repickTickCooldown;
+    }
+
+    public int getBonusRepickMultiplier() {
+        return bonusRepickMultiplier;
     }
 
     @Override
@@ -113,7 +119,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
 
     public static GroundFlagLocation of(@Nonnull FlagLocation flag) {
         return flag instanceof PlayerFlagLocation ? new GroundFlagLocation((PlayerFlagLocation) flag, false)
-                                                  : new GroundFlagLocation(flag.getLocation(), 0, 0, false);
+                                                  : new GroundFlagLocation(flag.getLocation(), 0, 0, false, 0);
     }
 
     @Override
