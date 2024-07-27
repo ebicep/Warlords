@@ -249,7 +249,7 @@ public class ActionBarSettings {
                             new ItemBuilder(Material.CLOCK)
                                     .name(Component.text("Show Cooldowns", NamedTextColor.GREEN))
                                     .lore(Component.empty())
-                                    .lore(WordWrap.wrap(Component.text("Toggles whether or not your cooldowns should be displayed.", NamedTextColor.GRAY), 140)),
+                                    .addLore(WordWrap.wrap(Component.text("Toggles whether or not your cooldowns should be displayed.", NamedTextColor.GRAY), 140)),
                             () -> showCooldowns,
                             b -> showCooldowns = b
                     )
