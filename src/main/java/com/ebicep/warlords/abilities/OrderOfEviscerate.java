@@ -27,7 +27,6 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -352,7 +351,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
                         Entity wpEntity = wp.getEntity();
                         if (wpEntity instanceof Player) {
-                            ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                             PlayerFilter.playingGame(wp.getGame())
                                         .enemiesOf(wp)
                                         .stream().map(WarlordsEntity::getEntity)
