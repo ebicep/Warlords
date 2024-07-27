@@ -502,18 +502,18 @@ public class InstanceManager {
             ) {
                 RegularCooldown cooldown = shieldCooldown.get();
                 Shield shield = (Shield) cooldown.getCooldownObject();
-                debugMessage.appendTitle("Shield" + shield.getName() + ")", NamedTextColor.AQUA);
+                debugMessage.appendTitle("Shield (" + shield.getName() + ")", NamedTextColor.AQUA);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Pre Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(String.valueOf(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
                 );
                 //adding dmg to shield
                 shield.addShieldHealth(-damageValue);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Post Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(String.valueOf(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
                 );
                 //check if broken
                 TextComponent.Builder ownMessage = Component.text();
