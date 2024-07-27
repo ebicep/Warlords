@@ -62,7 +62,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                     .text(" for ")
                     .heal(healingValues.totemHealing)
                     .text(" health every second. The healing will gradually decrease by ")
-                    .percent(healingIncrement, NamedTextColor.YELLOW)
+                    .percent(healingIncrement, NamedTextColor.GREEN)
                     .text(" until the final proc which heals for the normal amount once again. Lasts ")
                     .durationTicks(tickDuration)
                     .text(".")

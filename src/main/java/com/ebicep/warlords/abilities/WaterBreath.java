@@ -52,7 +52,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Breathe water in a cone in front of you, knocking back enemies, cleansing all ")
-                .text("de-buffs", NamedTextColor.YELLOW)
+                .text("de-buffs", NamedTextColor.DARK_RED)
                 .text(" and restoring ")
                 .heal(healingValues.breathHealing)
                 .text(" health to yourself and all allies hit.")

@@ -55,7 +55,7 @@ public class NotAShield extends AbstractPiercingProjectile {
                 .text("After traveling ")
                 .blocks(maxDistance / 2)
                 .text(", the shield returns to the location you threw it at, hitting all possible targets again. If ")
-                .text(maxAlliesHit, NamedTextColor.YELLOW)
+                .text(maxAlliesHit, NamedTextColor.BLUE)
                 .text(" allies are hit with this shield, the shield shatters, ending its trajectory.")
                 .build();
     }

@@ -65,13 +65,13 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Enter a defensive stance, reducing all damage you take by ")
-                .percent(selfDamageReductionPercent, NamedTextColor.YELLOW)
+                .percent(selfDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" for ")
                 .durationTicks(selfTickDuration)
                 .text(" and also reduces all damage allies within")
                 .blocks(radius)
                 .text(" by ")
-                .percent(teammateDamageReductionPercent, NamedTextColor.YELLOW)
+                .percent(teammateDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" for ")
                 .durationTicks(allyTickDuration)
                 .text(". You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))

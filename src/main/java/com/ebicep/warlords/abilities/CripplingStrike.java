@@ -88,9 +88,9 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
         description = AbilityDescriptionBuilder
                 .create("Strike the targeted enemy player, causing ")
                 .damage(damageValues.strikeDamage)
-                .text(" damage and ")
-                .text("crippling ", NamedTextColor.RED)
-                .text("them for ")
+                .text(" damage and inflicting them with ")
+                .text("CRIP", NamedTextColor.DARK_RED)
+                .text(" for ")
                 .durationSeconds(crippleDuration)
                 .text(", reducing their damage by ")
                 .percent(cripple, NamedTextColor.RED)

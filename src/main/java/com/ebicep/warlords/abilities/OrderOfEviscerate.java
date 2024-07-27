@@ -50,6 +50,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private float maxDamageThreshold = 600;
     private float vulnerableDamageBonus = 20;
     private float backstabDamageBonus = 10;
+    private int speedBuff = 40;
     private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
@@ -62,9 +63,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 .create("Cloak yourself for ")
                 .durationTicks(tickDuration)
                 .text(", granting you ")
-                .percent(40, NamedTextColor.YELLOW)
+                .percent(speedBuff, NamedTextColor.WHITE)
                 .text(" extra movement speed and making you ")
-                .text("invisible", NamedTextColor.YELLOW)
+                .text("INVIS", NamedTextColor.DARK_GREEN)
                 .text(" to the enemy for the duration. However, taking up to ")
                 .text(maxDamageThreshold, NamedTextColor.RED)
                 .text(" fall damage or any type of ability damage will end your invisibility.")
@@ -82,16 +83,16 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
             int killReduction = pveMasterUpgrade ? 12 : 8; // 2 for shadow
             int assistReduction = pveMasterUpgrade ? 6 : 4; // 0 for shadow
             description = builder.append(AbilityDescriptionBuilder
-                                         .create("reduce ", NamedTextColor.YELLOW)
-                                         .text("your Shadow Step cooldown by ")
-                                         .text(2, NamedTextColor.YELLOW)
-                                         .text(" and Order of Eviscerate by ")
-                                         .text(killReduction, NamedTextColor.YELLOW)
-                                         .text("seconds. Assisting in killing your mark will ")
+                                         .create("reduce", NamedTextColor.YELLOW)
+                                         .text(" your Shadow Step cooldown by ")
+                                         .text(2, NamedTextColor.GOLD)
+                                         .text(" seconds and Order of Eviscerate by ")
+                                         .text(killReduction, NamedTextColor.GOLD)
+                                         .text(" seconds. Assisting in killing your mark will ")
                                          .text("reduce", NamedTextColor.YELLOW)
                                          .text(" your Order of Eviscerate cooldown by ")
-                                         .text(assistReduction, NamedTextColor.YELLOW)
-                                         .text(".")
+                                         .text(assistReduction, NamedTextColor.GOLD)
+                                         .text(" seconds.")
                                          .build())
                                  .build();
         } else {
@@ -119,7 +120,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", 40, tickDuration, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", speedBuff, tickDuration, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class, false);
         OrderOfEviscerate tempOrderOfEviscerate = new OrderOfEviscerate();

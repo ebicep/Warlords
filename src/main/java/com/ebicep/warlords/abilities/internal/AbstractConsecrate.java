@@ -50,7 +50,9 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         description = AbilityDescriptionBuilder
                 .create("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
                 .damage(getConsecrateDamage())
-                .text(" damage per second and take ")
+                .text(" damage every ")
+                .durationSeconds(1)
+                .text(" and take ")
                 .percent(strikeDamageBoost, NamedTextColor.RED)
                 .text(" increased damage from your paladin strikes. Has a radius of ")
                 .blocks(hitBox.getCalculatedValue())

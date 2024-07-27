@@ -299,7 +299,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         } else {
             if (getCooldownValue() != 0) {
                 lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.AQUA)));
+                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.GOLD)));
             }
             if (getEnergyCostValue() != 0) {
                 lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)

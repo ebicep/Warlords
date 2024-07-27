@@ -42,7 +42,7 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
                 .create("You become infused with light, restoring ")
                 .energy(energyGiven)
                 .text(" and increasing your movement speed by ")
-                .percent(speedBuff, NamedTextColor.YELLOW)
+                .percent(speedBuff, NamedTextColor.WHITE)
                 .text(" for ")
                 .durationTicks(tickDuration)
                 .text(".")

@@ -40,9 +40,9 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Consume a powerful concoction, granting yourself an additional ")
-                .percent(speedBoost, NamedTextColor.YELLOW)
+                .percent(speedBoost, NamedTextColor.WHITE)
                 .text(" movement speed, ")
-                .percent(damageResistance, NamedTextColor.YELLOW)
+                .percent(damageResistance, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" damage reduction, and an immunity to de-buffs for ")
                 .durationTicks(tickDuration)
                 .text(".")

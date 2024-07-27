@@ -52,11 +52,17 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Imbue yourself with Holy Energy, increasing Merciful Hex duration by ")
+                .create("Imbue yourself with Holy Energy, increasing ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" duration by ")
                 .durationTicks(hexTickDurationIncrease)
-                .text(" and causing Ray of Light to not consume Merciful Hex stacks.")
+                .text(" and causing Ray of Light to not consume ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" stacks.")
                 .emptyLine()
-                .text("Allies with max stacks of Merciful Hex receive ")
+                .text("Allies with max stacks of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" receive ")
                 .percent(hexHealingBonus, NamedTextColor.GREEN)
                 .text(" more healing from all sources and heal for ")
                 .percent(lethalDamageHealing, NamedTextColor.GREEN)

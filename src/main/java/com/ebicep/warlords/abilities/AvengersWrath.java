@@ -48,7 +48,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Burst with incredible holy power, causing your Avenger's Strikes to hit up to ")
-                .text(maxTargets, NamedTextColor.YELLOW)
+                .text(maxTargets, NamedTextColor.BLUE)
                 .text(" additional enemies that are within ")
                 .blocks(hitRadius)
                 .text(" of your target. Your energy per second is increased by ")

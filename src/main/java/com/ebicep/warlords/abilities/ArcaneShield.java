@@ -59,7 +59,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Surround yourself with arcane energy, creating a shield that will absorb up to ")
-                .percent(shieldPercentage, NamedTextColor.YELLOW)
+                .percent(shieldPercentage, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" of your maximum health. Lasts ")
                 .durationTicks(tickDuration)
                 .text(".")
