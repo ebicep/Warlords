@@ -48,9 +48,9 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
-                .percent(procChance, NamedTextColor.YELLOW)
+                .percent(procChance, NamedTextColor.BLUE)
                 .text(" chance to hit ")
-                .text(maxHits, NamedTextColor.YELLOW)
+                .text(maxHits, NamedTextColor.BLUE)
                 .text(" additional times for ")
                 .percent(weaponDamage, NamedTextColor.RED)
                 .text(" weapon damage. Lasts ")

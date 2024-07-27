@@ -46,9 +46,9 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Imbue your weapon with the power of the Earth, causing each of your melee attacks to have a ")
-                .percent(procChance, NamedTextColor.YELLOW)
-                .text("chance to heal you and ")
-                .text(maxAllies, NamedTextColor.YELLOW)
+                .percent(procChance, NamedTextColor.BLUE)
+                .text(" chance to heal you and ")
+                .text(maxAllies, NamedTextColor.BLUE)
                 .text(" nearby allies for ")
                 .percent(weaponDamage, NamedTextColor.GREEN)
                 .text(" weapon damage. Lasts ")

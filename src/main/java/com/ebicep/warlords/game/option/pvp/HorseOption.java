@@ -48,7 +48,7 @@ public class HorseOption implements Option, Listener {
                            .append(Component.text("Right-Click!", NamedTextColor.YELLOW))
             )
             .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                           .append(Component.text("15 seconds", NamedTextColor.AQUA)),
+                           .append(Component.text("15 seconds", NamedTextColor.GOLD)),
                     Component.empty(),
                     Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
             )

@@ -42,7 +42,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
                 .create("Discharge a beam of energizing lightning that heals you and a targeted ally for ")
                 .heal(healingValues.chainHealing)
                 .text(" health and jumps to ")
-                .text(additionalBounces, NamedTextColor.YELLOW)
+                .text(additionalBounces, NamedTextColor.BLUE)
                 .text(" additional target within ")
                 .blocks(bounceRange)
                 .text(".")

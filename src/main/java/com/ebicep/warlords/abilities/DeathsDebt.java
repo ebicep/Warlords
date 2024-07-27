@@ -56,9 +56,9 @@ public class DeathsDebt extends AbstractTotem implements Duration {
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
-                .create("Spirits’ Respite", NamedTextColor.DARK_GREEN)
+                .create("Spirits’ Respite", NamedTextColor.DARK_AQUA)
                 .text(": Place down a totem that delays ")
-                .percent(100, NamedTextColor.RED)
+                .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" of incoming damage towards yourself " + (inPve ? " and takes aggro of nearby mobs" + "." : ".") + "Transforms into ")
                 .text("Death’s Debt ", NamedTextColor.LIGHT_PURPLE)
                 .text("after ")
@@ -71,7 +71,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                 .text(": Take ")
                 .percent(delayedDamageTaken, NamedTextColor.RED)
                 .text(" of the damage delayed by ")
-                .text("Spirits’ Respite ", NamedTextColor.DARK_GREEN)
+                .text("Spirits’ Respite ", NamedTextColor.DARK_AQUA)
                 .text("over ")
                 .durationTicks(debtTickDuration)
                 .text(". The totem will heal nearby allies for ")

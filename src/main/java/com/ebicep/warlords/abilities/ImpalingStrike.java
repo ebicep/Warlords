@@ -51,15 +51,17 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
         description = AbilityDescriptionBuilder
                 .create("Impale an enemy, dealing")
                 .damage(damageValues.strikeDamage)
-                .text("damage and afflict them with the ")
-                .text("LEECH", NamedTextColor.GREEN)
-                .text(" effect for ")
+                .text("damage and inflicting them with ")
+                .text("LEECH", NamedTextColor.DARK_GREEN)
+                .text(" for ")
                 .durationSeconds(leechDuration)
-                .text(". Whenever an ally deals damage to a leeched enemy, they heal for ")
+                .text(". Whenever an ally deals damage to an enemy with")
+                .text("LEECH", NamedTextColor.DARK_GREEN)
+                .text(", they heal for ")
                 .percent(leechAllyAmount, NamedTextColor.GREEN)
                 .text(" of the damage dealt. You heal for ")
                 .percent(leechSelfAmount, NamedTextColor.GREEN)
-                .text(" of the damage you deal to a leeched enemy instead.")
+                .text(" of the damage instead.")
                 .build();
 
     }

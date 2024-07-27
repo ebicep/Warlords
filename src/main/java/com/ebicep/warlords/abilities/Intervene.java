@@ -53,11 +53,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         if (inPve) {
             description = AbilityDescriptionBuilder
                     .create("Protect up to 2 target allies, reducing the damage they take by ")
-                    .percent(100, NamedTextColor.YELLOW)
+                    .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
                     .text(" and redirecting ")
-                    .percent(damageReduction, NamedTextColor.YELLOW)
+                    .percent(damageReduction, NamedTextColor.RED)
                     .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
-                    .text(maxDamagePrevented, NamedTextColor.YELLOW)
+                    .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
                     .text(" damage. You must remain within ")
                     .blocks(breakRadius)
                     .text(" of each other. For every 100 damage prevented, increase your damage by 1%. Lasts ")
@@ -68,11 +68,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         } else {
             description = AbilityDescriptionBuilder
                     .create("Protect the target ally, reducing the damage they take by ")
-                    .percent(100, NamedTextColor.YELLOW)
+                    .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
                     .text(" and redirecting ")
-                    .percent(damageReduction, NamedTextColor.YELLOW)
+                    .percent(damageReduction, NamedTextColor.RED)
                     .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
-                    .text(maxDamagePrevented, NamedTextColor.YELLOW)
+                    .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
                     .text(" damage. You must remain within ")
                     .blocks(breakRadius)
                     .text(" of each other. Lasts ")

@@ -46,7 +46,7 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
                 .create("Unleash a concentrated beam of holy light, healing ")
                 .heal(healingValues.rayHealing)
                 .text(" health to all allies hit and cleansing all ")
-                .text("de-buffs", NamedTextColor.YELLOW)
+                .text("de-buffs", NamedTextColor.DARK_RED)
                 .text(". If the target is affected by Merciful Hex the healing given is increased by ")
                 .percent(25, NamedTextColor.GREEN)
                 .text("/")

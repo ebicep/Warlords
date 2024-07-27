@@ -57,7 +57,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                     .text(". When Energy Seer ends, lose ")
                     .energy(epsDecrease)
                     .text(" per second and gain")
-                    .percent(speedBuff, NamedTextColor.YELLOW)
+                    .percent(speedBuff, NamedTextColor.WHITE)
                     .text(" speed for ")
                     .durationTicks(postEffectTickDuration)
                     .text(".")

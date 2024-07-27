@@ -255,7 +255,7 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("SPEED", NamedTextColor.AQUA, TextDecoration.BOLD));
+                armorStand.customName(Component.text("SPEED", NamedTextColor.WHITE, TextDecoration.BOLD));
                 armorStand.getEquipment().setHelmet(new ItemStack(Material.YELLOW_WOOL));
             }
         },

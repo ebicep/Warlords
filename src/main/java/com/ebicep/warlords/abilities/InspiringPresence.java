@@ -51,7 +51,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 .text(", granting them ")
                 .energy(energyPerSecond)
                 .text(" per second and ")
-                .percent(speedBuff, NamedTextColor.YELLOW)
+                .percent(speedBuff, NamedTextColor.WHITE)
                 .text(" extra movement speed for ")
                 .durationTicks(tickDuration)
                 .text(".")

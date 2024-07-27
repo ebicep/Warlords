@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -26,7 +27,7 @@ public class EnergySeerSentinel extends AbstractEnergySeer<AbstractEnergySeer.En
     @Override
     public TextComponent getBonus() {
         return Component.text("Your Fortifying Hexes gain an additional ")
-                        .append(Component.text(damageResistance + "%", NamedTextColor.YELLOW))
+                        .append(Component.text(damageResistance + "%", AbilityDescriptionBuilder.COLOR_BROWN))
                         .append(Component.text(" damage resistance"));
     }
 

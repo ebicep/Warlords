@@ -52,9 +52,9 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Surround yourself with a layer of cold air, reducing damage taken by ")
-                .percent(damageReductionPercent, NamedTextColor.YELLOW)
+                .percent(damageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(", while active, taking melee damage reduces the attacker's movement speed by ")
-                .percent(slownessOnMeleeHit, NamedTextColor.YELLOW)
+                .percent(slownessOnMeleeHit, NamedTextColor.WHITE)
                 .text(" for ")
                 .durationSeconds(slowDuration)
                 .text(" " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts ")
@@ -185,7 +185,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getCause().isEmpty() && !Objects.equals(event.getSource(), event.getWarlordsEntity())) {
-                    event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, 2 * 20);
+                    event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, slowDuration * 20);
                 }
                 return currentDamageValue;
             }

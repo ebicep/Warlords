@@ -193,7 +193,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("You may chain up to ")
-                .text(maxArmyAllies, NamedTextColor.YELLOW)
+                .text(maxArmyAllies, NamedTextColor.BLUE)
                 .text(" allies within ")
                 .blocks(radius)
                 .text(" to heal them for ")

@@ -63,7 +63,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Create a bubble shield around you. All projectiles that pass through the barrier have their damage reduced by ")
-                .percent(projectileDamageReduction, NamedTextColor.YELLOW)
+                .percent(projectileDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(".")
                 .emptyLine()
                 .text("After ")
@@ -73,13 +73,13 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 .text(" + ")
                 .heal(healingValues.bubbleMissingHealthHealing)
                 .text(" missing health and grant ")
-                .percent(damageReduction, NamedTextColor.YELLOW)
+                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" damage reduction for ")
                 .durationTicks(tickDuration)
                 .text(" based on how many hits you took while Prism Guard was active; up to a maximum of ")
-                .text(maxHealing, NamedTextColor.YELLOW)
+                .text(maxHealing, NamedTextColor.GREEN)
                 .text(" health and ")
-                .percent(maxDamageReduction, NamedTextColor.YELLOW)
+                .percent(maxDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                 .text(" damage reduction.")
                 .build();
 

@@ -45,7 +45,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 .create("You go into a berserker rage, increasing your damage by ")
                 .percent(damageIncrease, NamedTextColor.RED)
                 .text(" and movement speed by ")
-                .percent(speedBuff, NamedTextColor.YELLOW)
+                .percent(speedBuff, NamedTextColor.WHITE)
                 .text(". While active, you also take ")
                 .percent(damageTakenIncrease, NamedTextColor.RED)
                 .text(" more damage. Lasts ")

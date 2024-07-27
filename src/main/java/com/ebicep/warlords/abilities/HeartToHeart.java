@@ -49,7 +49,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Throw a chain towards an ally, grappling the Vindicator towards them. You and the targeted ally gain ")
-                .text("VIND", NamedTextColor.GOLD)
+                .text("VIND", NamedTextColor.DARK_GREEN)
                 .text(" for ")
                 .durationSeconds(vindDuration)
                 .text(" and ")

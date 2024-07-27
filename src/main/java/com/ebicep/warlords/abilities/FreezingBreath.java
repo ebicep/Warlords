@@ -62,7 +62,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
                 .create("Breathe cold air in a cone in front of you, dealing ")
                 .damage(damageValues.freezingBreathDamage)
                 .text(" damage to all enemies hit and slowing them by ")
-                .percent(slowness, NamedTextColor.YELLOW)
+                .percent(slowness, NamedTextColor.WHITE)
                 .text(" for ")
                 .durationSeconds(slowDuration)
                 .text(".")
