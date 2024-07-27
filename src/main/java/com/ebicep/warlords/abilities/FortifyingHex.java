@@ -20,6 +20,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -317,6 +318,11 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                         Component.text("FHEX", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, flag),
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL
                 );
+            }
+
+            @Override
+            public TextColor customActionBarColor() {
+                return NamedTextColor.YELLOW;
             }
         });
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);

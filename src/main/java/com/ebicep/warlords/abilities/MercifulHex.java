@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -318,9 +319,14 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             public PlayerNameData addPrefixFromOther() {
                 boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
                 return new PlayerNameData(
-                        Component.text("MHEX", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, flag),
+                        Component.text("MHEX", NamedTextColor.DARK_GREEN).decoration(TextDecoration.BOLD, flag),
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
                 );
+            }
+
+            @Override
+            public TextColor customActionBarColor() {
+                return NamedTextColor.DARK_GREEN;
             }
         });
     }
