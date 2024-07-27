@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FlagMessageMode;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -17,10 +17,10 @@ public class FlagMessageModeCommand extends BaseCommand {
     @Description("Toggles flag message mode")
     public void flagMessage(Player player) {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.setFlagMessageMode(databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.ABSOLUTE ?
-                                              Settings.FlagMessageMode.RELATIVE :
-                                              Settings.FlagMessageMode.ABSOLUTE);
-            if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.ABSOLUTE) {
+            databasePlayer.setFlagMessageMode(databasePlayer.getFlagMessageMode() == FlagMessageMode.ABSOLUTE ?
+                                              FlagMessageMode.RELATIVE :
+                                              FlagMessageMode.ABSOLUTE);
+            if (databasePlayer.getFlagMessageMode() == FlagMessageMode.ABSOLUTE) {
                 player.sendMessage(Component.text("Flag Message Mode ", NamedTextColor.GREEN)
                                             .append(Component.text("ABSOLUTE ", NamedTextColor.YELLOW))
                                             .append(Component.text("enabled."))

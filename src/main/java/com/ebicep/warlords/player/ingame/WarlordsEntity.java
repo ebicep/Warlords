@@ -23,9 +23,10 @@ import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.MinuteStats;
-import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
+import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -111,6 +112,7 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
+    private final List<Component> debugMessageLog = new ArrayList<>();
     private Location deathLocation;
     private Vector currentVector;
     private Team team;
@@ -137,7 +139,6 @@ public abstract class WarlordsEntity {
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
-    private final List<Component> debugMessageLog = new ArrayList<>();
     private float bonusAggroWeight = 0;
 
 
@@ -308,8 +309,8 @@ public abstract class WarlordsEntity {
         //giving out assists
         hitBy.forEach((assisted, value) -> {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(assisted.getUuid(), assisted instanceof WarlordsPlayer && assisted.getEntity() instanceof Player);
-            Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
-            if (killsMode == Settings.ChatSettings.ChatKills.ALL || killsMode == Settings.ChatSettings.ChatKills.ONLY_ASSISTS) {
+            ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+            if (killsMode == ChatSettings.ChatKills.ALL || killsMode == ChatSettings.ChatKills.ONLY_ASSISTS) {
                 if (attacker == assisted || attacker == this) {
                     assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
                                                   .append(getColoredName())
@@ -438,10 +439,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public List<Component> getDebugMessageLog() {
-        return debugMessageLog;
-    }
-
     public String getName() {
         return name;
     }
@@ -464,6 +461,10 @@ public abstract class WarlordsEntity {
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public List<Component> getDebugMessageLog() {
+        return debugMessageLog;
     }
 
     protected boolean shouldCheckForAchievements() {
@@ -685,7 +686,7 @@ public abstract class WarlordsEntity {
         if ((int) energyGiven != 0 && ability != null) {
             DatabasePlayer receiverSettings = DatabaseManager.getPlayer(getUuid(), this instanceof WarlordsPlayer && getEntity() instanceof Player);
             DatabasePlayer giverSettings = DatabaseManager.getPlayer(giver.getUuid(), giver instanceof WarlordsPlayer && giver.getEntity() instanceof Player);
-            if (receiverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+            if (receiverSettings.getChatEnergyMode() == ChatSettings.ChatEnergy.ALL) {
                 if (this == giver) {
                     sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                             .append(Component.text(" Your " + ability + " gave you ", NamedTextColor.GRAY))
@@ -700,7 +701,7 @@ public abstract class WarlordsEntity {
                     );
                 }
             }
-            if (giverSettings.getChatEnergyMode() == Settings.ChatSettings.ChatEnergy.ALL) {
+            if (giverSettings.getChatEnergyMode() == ChatSettings.ChatEnergy.ALL) {
                 if (this != giver) {
                     giver.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                             .append(Component.text(" Your " + ability + " gave " + name + " ", NamedTextColor.GRAY))
@@ -1370,33 +1371,75 @@ public abstract class WarlordsEntity {
     }
 
     public void displayActionBar() {
-        TextComponent.Builder actionBarMessage = Component.text()
-                                                          .append(Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD));
-        TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
-        float healthRatio = currentHealth / getMaxHealth();
-        if (healthRatio > 1) {
-            healthBuilder.color(NamedTextColor.GREEN);
-        } else if (healthRatio >= .75) {
-            healthBuilder.color(NamedTextColor.DARK_GREEN);
-        } else if (healthRatio >= .25) {
-            healthBuilder.color(NamedTextColor.YELLOW);
-        } else {
-            healthBuilder.color(NamedTextColor.RED);
+        DatabaseManager.getPlayer(uuid, databasePlayer -> entity.sendActionBar(getActionBar(databasePlayer)));
+    }
+
+    public TextComponent getActionBar(DatabasePlayer databasePlayer) {
+        ActionBarSettings actionBarSettings = databasePlayer.getActionBarSettings();
+        ActionBarSettings.HealthCategory healthCategory = actionBarSettings.getHealthCategory();
+        ActionBarSettings.GameCategory gameCategory = actionBarSettings.getGameCategory();
+        ActionBarSettings.CooldownCategory cooldownCategory = actionBarSettings.getCooldownCategory();
+
+        TextComponent.Builder actionBarMessage = Component.text();
+        boolean addedAny = false;
+        if (healthCategory.isShowHPText() && (healthCategory.isShowHealth() || healthCategory.isShowMaxHealth())) {
+            if (addedAny) {
+                actionBarMessage.append(Component.text("  "));
+            }
+            addedAny = true;
+            actionBarMessage.append(Component.text("HP: ", NamedTextColor.GOLD, TextDecoration.BOLD));
         }
-        int currentHealthRounded = Math.round(currentHealth);
-        int maxHealthRounded = Math.round(getMaxHealth());
-        int maxBaseHealthRounded = Math.round(getMaxBaseHealth());
-        healthBuilder.append(Component.text(currentHealthRounded))
-                     .append(Component.text("/", NamedTextColor.GOLD))
-                     .append(Component.text(maxHealthRounded + "    ", maxHealthRounded > maxBaseHealthRounded ? NamedTextColor.YELLOW : NamedTextColor.GOLD));
+        TextComponent.Builder healthBuilder = Component.text().decorate(TextDecoration.BOLD);
+        if (healthCategory.isShowHealth()) {
+            if (addedAny && !healthCategory.isShowHPText()) {
+                actionBarMessage.append(Component.text("   "));
+            }
+            addedAny = true;
+            float healthRatio = currentHealth / getMaxHealth();
+            if (healthRatio > 1) {
+                healthBuilder.color(NamedTextColor.GREEN);
+            } else if (healthRatio >= .75) {
+                healthBuilder.color(NamedTextColor.DARK_GREEN);
+            } else if (healthRatio >= .25) {
+                healthBuilder.color(NamedTextColor.YELLOW);
+            } else {
+                healthBuilder.color(NamedTextColor.RED);
+            }
+            int currentHealthRounded = Math.round(currentHealth);
+            healthBuilder.append(Component.text(currentHealthRounded));
+        }
+        if (healthCategory.isShowMaxHealth()) {
+            if (addedAny && !healthCategory.isShowHPText()) {
+                actionBarMessage.append(Component.text("   "));
+            }
+            addedAny = true;
+            int maxHealthRounded = Math.round(getMaxHealth());
+            int maxBaseHealthRounded = Math.round(getMaxBaseHealth());
+            if (healthCategory.isShowHealth()) {
+                healthBuilder.append(Component.text("/", NamedTextColor.GOLD));
+            }
+            healthBuilder.append(Component.text(maxHealthRounded, maxHealthRounded > maxBaseHealthRounded ? NamedTextColor.YELLOW : NamedTextColor.GOLD));
+        }
         actionBarMessage.append(healthBuilder);
-        actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM  ")));
-        for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
-            if (abstractCooldown.getNameAbbreviation() != null) {
-                actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(Component.space());
+        if (gameCategory.isShowTeam()) {
+            if (addedAny) {
+                actionBarMessage.append(Component.text("   "));
+            }
+            addedAny = true;
+            actionBarMessage.append(team.boldColoredPrefix().append(Component.text(" TEAM")));
+        }
+        if (cooldownCategory.isShowCooldowns()) {
+            if (addedAny) {
+                actionBarMessage.append(Component.text("   "));
+            }
+            addedAny = true;
+            for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldowns()) {
+                if (abstractCooldown.getNameAbbreviation() != null) {
+                    actionBarMessage.append(abstractCooldown.getNameAbbreviation()).append(Component.space());
+                }
             }
         }
-        entity.sendActionBar(actionBarMessage.build());
+        return actionBarMessage.build();
     }
 
     @Nullable
@@ -1593,7 +1636,7 @@ public abstract class WarlordsEntity {
         float currencyToAdd = currencyEvent.getCurrencyToAdd();
         this.currency += currencyToAdd;
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, this instanceof WarlordsPlayer && getEntity() instanceof Player);
-        if (!noMessage && databasePlayer.getChatInsigniaMode() == Settings.ChatSettings.ChatInsignia.ALL) {
+        if (!noMessage && databasePlayer.getChatInsigniaMode() == ChatSettings.ChatInsignia.ALL) {
             sendMessage(Component.text("+" + NumberFormat.formatOptionalHundredths(currencyToAdd) + " ❂ Insignia", NamedTextColor.GOLD));
         }
         Bukkit.getPluginManager().callEvent(new WarlordsAddCurrencyFinalEvent(this));

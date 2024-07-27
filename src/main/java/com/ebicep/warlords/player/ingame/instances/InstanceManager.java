@@ -8,7 +8,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -763,8 +763,8 @@ public class InstanceManager {
 
                     warlordsEntity.getGame().forEachOnlinePlayer((p, t) -> {
                         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
-                        Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
-                        if (killsMode != Settings.ChatSettings.ChatKills.ALL && killsMode != Settings.ChatSettings.ChatKills.NO_ASSISTS) {
+                        ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+                        if (killsMode != ChatSettings.ChatKills.ALL && killsMode != ChatSettings.ChatKills.NO_ASSISTS) {
                             return;
                         }
                         if (p == warlordsEntity.getEntity()) {
@@ -818,7 +818,7 @@ public class InstanceManager {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsEntity.getUuid(),
                 warlordsEntity instanceof WarlordsPlayer && warlordsEntity.getEntity() instanceof Player
         );
-        if (databasePlayer.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
+        if (databasePlayer.getChatDamageMode() == ChatSettings.ChatDamage.ALL) {
             Component component = WarlordsEntity.RECEIVE_ARROW_RED
                     .append(Component.text(" You took ", NamedTextColor.GRAY))
                     .append(Component.text(Math.round(damage), NamedTextColor.RED))

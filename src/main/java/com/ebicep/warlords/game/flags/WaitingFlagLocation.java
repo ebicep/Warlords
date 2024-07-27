@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FlagMessageMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -77,7 +77,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
                                                  .append(Component.text(" has captured the "))
                                                  .append(coloredPrefix)
                                                  .append(Component.text(" flag!"));
-                if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                     if (sameTeam) {
                         flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                .append(coloredName)

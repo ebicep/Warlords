@@ -11,7 +11,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FlagMessageMode;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -141,7 +141,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
                                                  .append(Component.text(" has dropped the "))
                                                  .append(coloredPrefix)
                                                  .append(Component.text(" flag!"));
-                if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                     if (t == eventTeam) {
                         flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                .append(coloredName)

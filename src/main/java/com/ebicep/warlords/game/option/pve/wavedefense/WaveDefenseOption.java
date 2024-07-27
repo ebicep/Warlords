@@ -27,7 +27,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FastWaveMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -459,7 +459,7 @@ public class WaveDefenseOption implements PveOption {
             AtomicBoolean fastWave = new AtomicBoolean(true);
             getGame().warlordsPlayers().forEach(warlordsPlayer -> {
                 DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                    if (databasePlayer.getFastWaveMode() == Settings.FastWaveMode.OFF) {
+                    if (databasePlayer.getFastWaveMode() == FastWaveMode.OFF) {
                         fastWave.set(false);
                     }
                 });

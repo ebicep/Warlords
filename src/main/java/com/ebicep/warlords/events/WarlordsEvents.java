@@ -23,7 +23,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.HotkeyMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -418,7 +418,7 @@ public class WarlordsEvents implements Listener {
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                     }
                     default -> DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
                             if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
                                 if (weapon instanceof AbstractLegendaryWeapon) {
@@ -460,7 +460,7 @@ public class WarlordsEvents implements Listener {
         }
         int heldItemSlot = player.getInventory().getHeldItemSlot();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-            if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+            if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
                 if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                     AbstractWeapon weapon = warlordsPlayer.getWeapon();
                     if (weapon instanceof AbstractLegendaryWeapon) {
@@ -500,7 +500,7 @@ public class WarlordsEvents implements Listener {
         }
         List<AbstractAbility> abilities = wp.getAbilities();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-            if (databasePlayer.getHotkeyMode() == Settings.HotkeyMode.NEW_MODE) {
+            if (databasePlayer.getHotkeyMode() == HotkeyMode.NEW_MODE) {
                 if (1 <= slot && slot <= 4 && slot < abilities.size()) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
                 } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
