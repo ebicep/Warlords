@@ -16,6 +16,7 @@ import com.ebicep.warlords.menu.debugmenu.DebugMenuPlayerOptions;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -31,6 +32,24 @@ public class DebugCommand extends BaseCommand {
     @Default
     public void openDebugMenu(Player player) {
         DebugMenu.openDebugMenu(player);
+    }
+
+    @Subcommand("getlog")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Gets the last messages sent to player")
+    public void getLog(Player player, WarlordsPlayer target, @Default("50") @Conditions("limits:min=0,max=100000") Integer amount) {
+        int size = target.getDebugMessageLog().size();
+        int max = Math.max(0, size - amount);
+        sendDebugMessage(player, ComponentBuilder
+                .create("Showing last ", NamedTextColor.GREEN)
+                .text(amount, NamedTextColor.YELLOW)
+                .text(" messages from ")
+                .append(target.getColoredName())
+                .build()
+        );
+        for (int i = max; i < size; i++) {
+            player.sendMessage(target.getDebugMessageLog().get(i));
+        }
     }
 
     @Subcommand("printclassinfo")

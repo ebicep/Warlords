@@ -137,6 +137,7 @@ public abstract class WarlordsEntity {
     private boolean active = true;
     private boolean isInPve = false;
     private boolean showDebugMessage = false;
+    private final List<Component> debugMessageLog = new ArrayList<>();
     private float bonusAggroWeight = 0;
 
 
@@ -421,6 +422,7 @@ public abstract class WarlordsEntity {
         } else {
             this.entity.sendMessage(component);
         }
+        debugMessageLog.add(component);
         if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
             game.spectators()
                 .map(Bukkit::getPlayer)
@@ -434,6 +436,10 @@ public abstract class WarlordsEntity {
                     }
                 });
         }
+    }
+
+    public List<Component> getDebugMessageLog() {
+        return debugMessageLog;
     }
 
     public String getName() {
