@@ -290,7 +290,7 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public ItemStack getItem(@Nullable ItemStack item) {
         ItemBuilder itemBuilder = new ItemBuilder(item == null ? getAbilityIcon() : item)
-                .name(Component.text(getName(), NamedTextColor.GOLD))
+                .name(Component.text(getName(), NamedTextColor.GREEN))
                 .unbreakable();
 
         List<Component> lore = new ArrayList<>();
