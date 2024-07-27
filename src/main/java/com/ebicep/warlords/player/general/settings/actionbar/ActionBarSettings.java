@@ -126,9 +126,7 @@ public class ActionBarSettings {
 
         @Override
         public List<Component> getDescription(DatabasePlayer databasePlayer) {
-            return List.of(
-                    Component.text("Customize how your health is displayed.", NamedTextColor.GRAY)
-            );
+            return WordWrap.wrap(Component.text("Customize how your health is displayed.", NamedTextColor.GRAY), 140);
         }
 
         @Override
@@ -195,9 +193,7 @@ public class ActionBarSettings {
 
         @Override
         public List<Component> getDescription(DatabasePlayer databasePlayer) {
-            return List.of(
-                    Component.text("Customize how your game information is displayed.", NamedTextColor.GRAY)
-            );
+            return WordWrap.wrap(Component.text("Customize how your game information is displayed.", NamedTextColor.GRAY), 140);
         }
 
         @Override
@@ -238,9 +234,7 @@ public class ActionBarSettings {
 
         @Override
         public List<Component> getDescription(DatabasePlayer databasePlayer) {
-            return List.of(
-                    Component.text("", NamedTextColor.GRAY)
-            );
+            return WordWrap.wrap(Component.text("Customize how your cooldowns are displayed.", NamedTextColor.GRAY), 140);
         }
 
         @Override
