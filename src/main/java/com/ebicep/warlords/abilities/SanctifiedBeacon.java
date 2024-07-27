@@ -39,7 +39,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
     private final int maxAllies = 2;
     private int critMultiplierReducedBy = 25;
-    private int hexIntervalTicks = 100;
+    private int hexIntervalTicks = 60;
     private int stacksGranted = 1;
     private float damageReductionPve = 30;
 
@@ -56,7 +56,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                 .text(" radius have their Crit Multiplier reduced by ")
                 .percent(critMultiplierReducedBy, NamedTextColor.RED)
                 .text(". The beacon will emit a wave of energy that grants ")
-                .text(maxAllies, NamedTextColor.YELLOW)
+                .text(maxAllies, NamedTextColor.BLUE)
                 .text(" allies in range ")
                 .text(stacksGranted, NamedTextColor.BLUE)
                 .text(" stack of Merciful Hex every ")
