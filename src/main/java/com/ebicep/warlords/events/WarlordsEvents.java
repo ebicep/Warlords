@@ -2,7 +2,6 @@ package com.ebicep.warlords.events;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.IceBarrier;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
@@ -375,10 +374,6 @@ public class WarlordsEvents implements Listener {
             }
         }
         wpVictim.updateHealth();
-
-        if (wpVictim.getCooldownManager().hasCooldown(IceBarrier.class)) {
-            wpAttacker.addSpeedModifier(wpVictim, "Ice Barrier", -20, 2 * 20);
-        }
     }
 
     @EventHandler

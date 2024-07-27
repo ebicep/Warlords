@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
@@ -178,8 +179,15 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 if (pveMasterUpgrade2) {
                     return currentDamageValue;
                 }
-                float newDamageValue = currentDamageValue * getDamageReduction();
-                return newDamageValue;
+                return currentDamageValue * getDamageReduction();
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getCause().isEmpty() && !Objects.equals(event.getSource(), event.getWarlordsEntity())) {
+                    event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, 2 * 20);
+                }
+                return currentDamageValue;
             }
 
             @Override
