@@ -64,6 +64,9 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
+
+        wp.setFlagPickCooldown(1);
+
         new FallingBlockWaveEffect(wp.getLocation(), 4, 1, Material.BIRCH_SAPLING).play();
 
         List<WarlordsEntity> playersHit = new ArrayList<>();
