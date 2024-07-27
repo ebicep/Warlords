@@ -372,6 +372,7 @@ public class InstanceManager {
                         .source(attacker)
                         .value(overVeneDamage)
                         .showAsCrit(isCrit)
+                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 ).ifPresent(finalEvent::set);
             } else {
                 damageValue *= data.getIntervene().getDamageReduction() / 100f;
