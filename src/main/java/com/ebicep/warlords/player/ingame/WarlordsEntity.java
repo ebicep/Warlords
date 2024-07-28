@@ -22,6 +22,7 @@ import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
@@ -537,6 +538,10 @@ public abstract class WarlordsEntity {
         }
 
         if (!cooldownManager.hasCooldownFromName("Cloaked") || hasFlag()) {
+            if (this instanceof WarlordsPlayer) {
+                ArmorManager.resetArmor(player, (WarlordsPlayer) this);
+            }
+
             player.removePotionEffect(PotionEffectType.INVISIBILITY);
             for (Player otherPlayer : player.getWorld().getPlayers()) {
                 otherPlayer.showPlayer(Warlords.getInstance(), player);
