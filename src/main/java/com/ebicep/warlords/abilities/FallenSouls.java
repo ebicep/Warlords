@@ -260,11 +260,12 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {
         new CooldownFilter<>(wp, PersistentCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                 .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
-                .forEachOrdered(soulbinding -> {
+                .forEachOrdered(data -> {
+                    Soulbinding soulbinding = data.getSoulbinding();
                     boolean masterUpgrade = soulbinding.isPveMasterUpgrade();
-                    wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulProcs);
+                    soulbinding.addSoulProcs();
 
                     for (AbstractAbility ability : wp.getAbilities()) {
                         ability.subtractCurrentCooldownForce(pveMasterUpgrade ? 1.75f : 1.5f);
@@ -278,7 +279,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                             .closestWarlordPlayersFirst(wp.getLocation())
                             .limit(soulbinding.getMaxAlliesHit())
                     ) {
-                        wp.doOnStaticAbility(Soulbinding.class, Soulbinding::addSoulTeammatesCDReductions);
+                        soulbinding.addSoulTeammatesCDReductions();
 
                         float pveCheck = teammate.isInPve() ? 0.5f : 1;
                         if (masterUpgrade) {

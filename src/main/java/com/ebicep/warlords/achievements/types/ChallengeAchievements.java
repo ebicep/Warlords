@@ -408,8 +408,8 @@ public enum ChallengeAchievements implements Achievement {
                                     .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
                                     .filter(PersistentCooldown.class::isInstance)
                                     .map(PersistentCooldown.class::cast)
-                                    .filter(persistentCooldown -> Objects.equals(persistentCooldown.getCooldownClass(), Soulbinding.class))
-                                    .map(persistentCooldown -> ((Soulbinding) persistentCooldown.getCooldownObject()))
+                                    .filter(persistentCooldown -> Objects.equals(persistentCooldown.getCooldownClass(), Soulbinding.SoulbindingData.class))
+                                    .map(persistentCooldown -> ((Soulbinding.SoulbindingData) persistentCooldown.getCooldownObject()))
                                     .anyMatch(soulbinding -> soulbinding.getAllProcedPlayers().stream()
                                                                         .filter(wp -> wp == event.getWarlordsEntity())
                                                                         .count() >= 10

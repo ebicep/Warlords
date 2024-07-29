@@ -295,7 +295,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             //Soulbinding weapon enchant
             ItemStack firstItem = playerInventory.getItem(0);
             if (firstItem != null) {
-                if (getCooldownManager().hasCooldown(Soulbinding.class)) {
+                if (getCooldownManager().hasCooldown(Soulbinding.SoulbindingData.class)) {
                     ItemMeta itemMeta = firstItem.getItemMeta();
                     itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
                     firstItem.setItemMeta(itemMeta);

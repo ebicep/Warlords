@@ -33,9 +33,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     public int linkProcs = 0;
     public int soulTeammatesCDReductions = 0;
     public int linkTeammatesHealed = 0;
-    private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
-    private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
@@ -101,29 +98,24 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         return true;
     }
 
-    public Soulbinding activeSoulbinding(@Nonnull WarlordsEntity wp) {
+    public SoulbindingData activeSoulbinding(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
 
-        Soulbinding tempSoulBinding = new Soulbinding();
-        tempSoulBinding.setMaxAlliesHit(maxAlliesHit);
-        tempSoulBinding.setRadius(radius);
-        tempSoulBinding.setInPve(inPve);
-        tempSoulBinding.setPveMasterUpgrade(pveMasterUpgrade);
-        tempSoulBinding.setPveMasterUpgrade2(pveMasterUpgrade2);
         if (wp.isInPve()) {
-            wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.class, 2);
+            wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, 2);
         }
+        SoulbindingData data = new SoulbindingData(this);
         wp.getCooldownManager().addCooldown(new PersistentCooldown<>(
                 name,
                 "SOUL",
-                Soulbinding.class,
-                tempSoulBinding,
+                SoulbindingData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).stream().count() == 1) {
+                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
                             if (item != null) {
@@ -150,8 +142,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                 true
                         );
                     }
-                    tempSoulBinding.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
-                    tempSoulBinding.getSoulBindedPlayers().removeIf(soulBoundPlayer ->
+                    data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
+                    data.getSoulBindedPlayers().removeIf(soulBoundPlayer ->
                             soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink())
                     );
                 })
@@ -163,14 +155,14 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {
                     return;
                 }
-                tempSoulBinding.bindPlayer(wpAttacker, wpVictim);
+                data.bindPlayer(wpAttacker, wpVictim);
             }
 
             @Override
             public PlayerNameData addSuffixFromSelf() {
                 return new PlayerNameData(
                         Component.text("BOUND", NamedTextColor.LIGHT_PURPLE),
-                        we -> tempSoulBinding.getSoulBindedPlayers().stream().anyMatch(soulBoundPlayer -> soulBoundPlayer.getBoundPlayer() == we)
+                        we -> data.getSoulBindedPlayers().stream().anyMatch(soulBoundPlayer -> soulBoundPlayer.getBoundPlayer() == we)
                 );
             }
         });
@@ -184,51 +176,12 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             }
         }
 
-        return tempSoulBinding;
+        return data;
     }
 
-    public List<SoulBoundPlayer> getSoulBindedPlayers() {
-        return soulBindedPlayers;
-    }
-
-    public void bindPlayer(WarlordsEntity wpAttacker, WarlordsEntity wpVictim) {
-        addPlayersBinded();
-        if (hasBoundPlayer(wpVictim)) {
-            getSoulBindedPlayers()
-                    .stream()
-                    .filter(p -> p.getBoundPlayer() == wpVictim)
-                    .forEach(boundPlayer -> {
-                        boundPlayer.setHitWithSoul(false);
-                        boundPlayer.setHitWithLink(false);
-                        boundPlayer.setTicksLeft(bindDuration);
-                    });
-        } else {
-            wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                    .append(Component.text(" You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
-                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                    .append(Component.text("!", NamedTextColor.GRAY))
-            );
-            wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" Your ", NamedTextColor.GRAY))
-                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                    .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
-            );
-            getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, bindDuration));
-            Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-        }
-    }
 
     public void addPlayersBinded() {
         playersBinded++;
-    }
-
-    public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
-        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
-            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -252,47 +205,12 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         linkTeammatesHealed++;
     }
 
-    public boolean hasBoundPlayerSoul(WarlordsEntity warlordsPlayer) {
-        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
-            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
-                if (!soulBindedPlayer.isHitWithSoul()) {
-                    soulBindedPlayer.setHitWithSoul(true);
-                    playersProcedBySouls.add(warlordsPlayer);
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasBoundPlayerLink(WarlordsEntity warlordsPlayer) {
-        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
-            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
-                if (!soulBindedPlayer.isHitWithLink()) {
-                    soulBindedPlayer.setHitWithLink(true);
-                    playersProcedByLink.add(warlordsPlayer);
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
-    }
-
     public int getBindDuration() {
         return bindDuration;
     }
 
     public void setBindDuration(int bindDuration) {
         this.bindDuration = bindDuration;
-    }
-
-    public List<WarlordsEntity> getAllProcedPlayers() {
-        List<WarlordsEntity> procedPlayers = new ArrayList<>();
-        procedPlayers.addAll(playersProcedBySouls);
-        procedPlayers.addAll(playersProcedByLink);
-        return procedPlayers;
     }
 
     @Override
@@ -332,6 +250,107 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     @Override
     public HealingValues getHealValues() {
         return healingValues;
+    }
+
+    public static class SoulbindingData {
+
+        private final Soulbinding soulbinding;
+        private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
+        private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
+        private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
+
+        public SoulbindingData(Soulbinding soulbinding) {
+            this.soulbinding = soulbinding;
+        }
+
+        public void bindPlayer(WarlordsEntity wpAttacker, WarlordsEntity wpVictim) {
+            soulbinding.addPlayersBinded();
+            if (hasBoundPlayer(wpVictim)) {
+                getSoulBindedPlayers()
+                        .stream()
+                        .filter(p -> p.getBoundPlayer() == wpVictim)
+                        .forEach(boundPlayer -> {
+                            boundPlayer.setHitWithSoul(false);
+                            boundPlayer.setHitWithLink(false);
+                            boundPlayer.setTicksLeft(soulbinding.bindDuration);
+                        });
+            } else {
+                wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                        .append(Component.text(" You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
+                        .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                        .append(Component.text("!", NamedTextColor.GRAY))
+                );
+                wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                        .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                        .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
+                );
+                getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, soulbinding.bindDuration));
+                Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+            }
+        }
+
+        public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
+            for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean hasBoundPlayerSoul(WarlordsEntity warlordsPlayer) {
+            for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                    if (!soulBindedPlayer.isHitWithSoul()) {
+                        soulBindedPlayer.setHitWithSoul(true);
+                        playersProcedBySouls.add(warlordsPlayer);
+                        soulbinding.addSoulProcs();
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        public boolean hasBoundPlayerLink(WarlordsEntity warlordsPlayer) {
+            for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                    if (!soulBindedPlayer.isHitWithLink()) {
+                        soulBindedPlayer.setHitWithLink(true);
+                        playersProcedByLink.add(warlordsPlayer);
+                        soulbinding.addLinkProcs();
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        public List<WarlordsEntity> getAllProcedPlayers() {
+            List<WarlordsEntity> procedPlayers = new ArrayList<>();
+            procedPlayers.addAll(playersProcedBySouls);
+            procedPlayers.addAll(playersProcedByLink);
+            return procedPlayers;
+        }
+
+        public Soulbinding getSoulbinding() {
+            return soulbinding;
+        }
+
+        public List<SoulBoundPlayer> getSoulBindedPlayers() {
+            return soulBindedPlayers;
+        }
+
+        public List<WarlordsEntity> getPlayersProcedBySouls() {
+            return playersProcedBySouls;
+        }
+
+        public List<WarlordsEntity> getPlayersProcedByLink() {
+            return playersProcedByLink;
+        }
     }
 
     public static class SoulBoundPlayer {

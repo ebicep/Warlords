@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class DeathsDebt extends AbstractTotem implements Duration {
 
@@ -203,14 +202,14 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                     if (soulbindings.isEmpty()) {
                                         soulbindings.add(new Soulbinding());
                                     }
-                                    soulbindings = soulbindings
+                                    List<Soulbinding.SoulbindingData> soulbindingData = soulbindings
                                             .stream()
                                             .map(soulbinding -> soulbinding.activeSoulbinding(wp))
-                                            .collect(Collectors.toList());
+                                            .toList();
                                     float damageReduction = 1;
                                     for (int i = 0; i < enemies.size() && i < 6; i++) {
                                         WarlordsEntity enemy = enemies.get(i);
-                                        soulbindings.forEach(soulbinding -> soulbinding.bindPlayer(wp, enemy));
+                                        soulbindingData.forEach(soulbinding -> soulbinding.bindPlayer(wp, enemy));
                                         damageReduction -= .025f;
                                     }
                                     float finalDamageReduction = damageReduction;

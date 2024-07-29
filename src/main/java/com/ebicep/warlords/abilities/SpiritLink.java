@@ -100,9 +100,9 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
                 );
                 hitCounter.add(nearPlayer);
 
-                List<Soulbinding> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
-                for (Soulbinding information : soulbindings) {
-                    healNearPlayers(wp, nearPlayer, information);
+                List<Soulbinding.SoulbindingData> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
+                for (Soulbinding.SoulbindingData data : soulbindings) {
+                    healNearPlayers(wp, nearPlayer, data);
                 }
 
                 additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && !soulbindings.isEmpty() ? -1 : 0);
@@ -182,9 +182,9 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
 
             hitCounter.add(bounceTarget);
 
-            List<Soulbinding> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
-            for (Soulbinding information : soulbindings) {
-                healNearPlayers(wp, bounceTarget, information);
+            List<Soulbinding.SoulbindingData> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(bounceTarget);
+            for (Soulbinding.SoulbindingData data : soulbindings) {
+                healNearPlayers(wp, bounceTarget, data);
             }
 
             toExclude.add(bounceTarget);
@@ -207,7 +207,8 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         }
     }
 
-    private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer, Soulbinding soulbinding) {
+    private void healNearPlayers(WarlordsEntity warlordsPlayer, WarlordsEntity hitPlayer, Soulbinding.SoulbindingData data) {
+        Soulbinding soulbinding = data.getSoulbinding();
         float radius = soulbinding.getRadius();
         int limit = soulbinding.getMaxAlliesHit();
         Soulbinding.HealingValues healValues = soulbinding.getHealValues();
@@ -223,7 +224,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
                 .closestWarlordPlayersFirst(warlordsPlayer.getLocation())
                 .limit(limit)
         ) {
-            warlordsPlayer.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkTeammatesHealed);
+            soulbinding.addLinkTeammatesHealed();
             nearPlayer.addInstance(InstanceBuilder
                     .healing()
                     .ability(soulbinding)
@@ -232,10 +233,10 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
             );
         }
         new CooldownFilter<>(warlordsPlayer, PersistentCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                 .filter(binding -> binding.hasBoundPlayerSoul(hitPlayer))
                 .forEach(binding -> {
-                    if (binding.isPveMasterUpgrade()) {
+                    if (binding.getSoulbinding().isPveMasterUpgrade()) {
                         warlordsPlayer.addEnergy(warlordsPlayer, "Soulbinding Weapon", 1);
                     }
                 });

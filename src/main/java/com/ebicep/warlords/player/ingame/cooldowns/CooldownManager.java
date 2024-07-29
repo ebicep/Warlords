@@ -548,28 +548,32 @@ public class CooldownManager {
     }
 
     public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
-        for (Soulbinding soulbinding : new CooldownFilter<>(this, PersistentCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+        for (Soulbinding.SoulbindingData data : new CooldownFilter<>(this, PersistentCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                 .toList()
         ) {
-            if (soulbinding.hasBoundPlayer(warlordsPlayer)) {
+            if (data.hasBoundPlayer(warlordsPlayer)) {
                 return true;
             }
         }
         return false;
     }
 
-    public List<Soulbinding> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
-        List<Soulbinding> soulbindings = new ArrayList<>();
-        for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+    public List<Soulbinding.SoulbindingData> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
+        List<Soulbinding.SoulbindingData> soulbindings = new ArrayList<>();
+        for (Soulbinding.SoulbindingData data : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                 .toList()
         ) {
-            if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
-                this.warlordsEntity.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
-                soulbindings.add(soulbinding);
+            if (data.hasBoundPlayerLink(warlordsPlayer)) {
+                soulbindings.add(data);
             }
         }
+        new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
+                .forEachOrdered(data -> {
+
+                });
         int counter = soulbindings.size();
         incrementCooldown(
                 new RegularCooldown<Void>("KB Resistance",
