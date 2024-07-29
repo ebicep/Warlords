@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
@@ -13,7 +14,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
@@ -51,35 +51,35 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     @Override
     public void updateDescription(Player player) {
         if (inPve) {
-            description = ComponentBuilder
+            description = AbilityDescriptionBuilder
                     .create("Protect up to 2 target allies, reducing the damage they take by ")
-                    .text("100%", NamedTextColor.YELLOW)
+                    .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
                     .text(" and redirecting ")
-                    .text(damageReduction + "%", NamedTextColor.YELLOW)
+                    .percent(damageReduction, NamedTextColor.RED)
                     .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
-                    .text(format(maxDamagePrevented), NamedTextColor.RED)
+                    .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
                     .text(" damage. You must remain within ")
-                    .text(breakRadius, NamedTextColor.YELLOW)
-                    .text(" blocks of each other. For every 100 damage prevented, increase your damage by 1%. Lasts ")
-                    .text(format(tickDuration / 20f), NamedTextColor.GOLD)
-                    .text(" seconds.\n\nHas an initial cast range of ")
-                    .text(radius, NamedTextColor.YELLOW)
-                    .text(" blocks.")
+                    .blocks(breakRadius)
+                    .text(" of each other. For every 100 damage prevented, increase your damage by 1%. Lasts ")
+                    .durationTicks(tickDuration)
+                    .text(".")
+                    .initialRange(radius)
                     .build();
         } else {
-            description = Component.text("Protect the target ally, reducing the damage they take by ")
-                                   .append(Component.text("100%", NamedTextColor.YELLOW))
-                                   .append(Component.text(" and redirecting "))
-                                   .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text(" of the damage they would have taken back to you. You can protect the target for a maximum of "))
-                                   .append(Component.text(format(maxDamagePrevented), NamedTextColor.RED))
-                                   .append(Component.text(" damage. You must remain within "))
-                                   .append(Component.text(breakRadius, NamedTextColor.YELLOW))
-                                   .append(Component.text(" blocks of each other. Lasts "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds.\n\nHas an initial cast range of "))
-                                   .append(Component.text(radius, NamedTextColor.YELLOW))
-                                   .append(Component.text(" blocks."));
+            description = AbilityDescriptionBuilder
+                    .create("Protect the target ally, reducing the damage they take by ")
+                    .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
+                    .text(" and redirecting ")
+                    .percent(damageReduction, NamedTextColor.RED)
+                    .text(" of the damage they would have taken back to you. You can protect the target for a maximum of ")
+                    .text(maxDamagePrevented, AbilityDescriptionBuilder.COLOR_BROWN)
+                    .text(" damage. You must remain within ")
+                    .blocks(breakRadius)
+                    .text(" of each other. Lasts ")
+                    .durationTicks(tickDuration)
+                    .text(".")
+                    .initialRange(radius)
+                    .build();
         }
 
     }

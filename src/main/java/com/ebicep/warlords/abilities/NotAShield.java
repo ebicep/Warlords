@@ -1,11 +1,11 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,23 +38,26 @@ public class NotAShield extends AbstractPiercingProjectile {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
-//                               .append(Damages.formatDamage(damageValues.))
-                               .append(Component.text(" damage and have their rune timers increase by "))
-                               .append(Component.text(format(runeTickIncrease), NamedTextColor.GOLD))
-                               .append(Component.text(". Allies hit pick up a piece of the shield, reducing its damage by "))
-                               .append(Component.text(allyHitDamageReduction + "%", NamedTextColor.RED))
-                               .append(Component.text(" while giving them "))
-                               .append(Component.text(allyHexStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" stack of Fortifying Hex that lasts "))
-                               .append(Component.text(format(allyHexTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text("seconds. Has a range of "))
-                               .append(Component.text(format(maxDistance / 2), NamedTextColor.YELLOW))
-                               .append(Component.text("blocks.\n\nAfter traveling "))
-                               .append(Component.text(format(maxDistance / 2), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks, the shield returns to the location you threw it at, hitting all possible targets again. If "))
-                               .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
-                               .append(Component.text(" allies are hit with this shield, the shield shatters, ending its trajectory."));
+        description = AbilityDescriptionBuilder
+                .create("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
+//.damage(damageValues.))
+                .text(" damage and have their rune timers increase by ")
+                .text(format(runeTickIncrease), NamedTextColor.GOLD)
+                .text(". Allies hit pick up a piece of the shield, reducing its damage by ")
+                .percent(allyHitDamageReduction, NamedTextColor.RED)
+                .text(" while giving them ")
+                .text(allyHexStacks, NamedTextColor.BLUE)
+                .text(" stack of Fortifying Hex that lasts ")
+                .durationTicks(allyHexTickDuration)
+                .text("seconds.")
+                .maxRange(maxDistance)
+                .emptyLine()
+                .text("After traveling ")
+                .blocks(maxDistance / 2)
+                .text(", the shield returns to the location you threw it at, hitting all possible targets again. If ")
+                .text(maxAlliesHit, NamedTextColor.BLUE)
+                .text(" allies are hit with this shield, the shield shatters, ending its trajectory.")
+                .build();
     }
 
     @Override

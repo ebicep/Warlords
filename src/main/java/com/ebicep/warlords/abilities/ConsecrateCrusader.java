@@ -106,15 +106,15 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         return true;
     }
 
-    @Override
-    public Value.RangedValueCritable getConsecrateDamage() {
-        return damageValues.consecrateDamage;
-    }
-
     @Nonnull
     @Override
     public String getStrikeName() {
         return "Crusader's Strike";
+    }
+
+    @Override
+    public Value.RangedValueCritable getConsecrateDamage() {
+        return damageValues.consecrateDamage;
     }
 
     @Override

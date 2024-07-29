@@ -103,9 +103,9 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         return true;
     }
 
-    public abstract boolean chain(WarlordsEntity wp);
-
     public abstract Value.RangedValueCritable getRadianceHealing();
+
+    public abstract boolean chain(WarlordsEntity wp);
 
     @Override
     public FloatModifiable getHitBoxRadius() {

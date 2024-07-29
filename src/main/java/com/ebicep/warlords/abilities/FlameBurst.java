@@ -14,7 +14,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -50,13 +49,15 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Launch a flame burst that will explode for ")
-                               .append(Damages.formatDamage(damageValues.flameBurstDamage))
-                               .append(Component.text(" damage. The Crit Chance increases by "))
-                               .append(Component.text("1%", NamedTextColor.RED))
-                               .append(Component.text(" for each travelled block. Up to "))
-                               .append(Component.text("100%", NamedTextColor.RED))
-                               .append(Component.text("."));
+        description = AbilityDescriptionBuilder
+                .create("Launch a flame burst that will explode for ")
+                .damage(damageValues.flameBurstDamage)
+                .text(" damage. The Crit Chance increases by ")
+                .percent(1, NamedTextColor.RED)
+                .text(" for each travelled block. Up to ")
+                .percent(100, NamedTextColor.RED)
+                .text(".")
+                .build();
     }
 
     @Override

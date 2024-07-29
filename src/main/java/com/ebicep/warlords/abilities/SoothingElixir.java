@@ -21,8 +21,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -52,15 +50,19 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for ")
-                               .append(Heals.formatHealing(healingValues.elixirHealing))
-                               .append(Component.text(" health and damaging nearby enemies for "))
-                               .append(Damages.formatDamage(damageValues.elixirDamage))
-                               .append(Component.text(" damage. The projectile will form a small puddle that heals allies for "))
-                               .append(Heals.formatHealing(healingValues.elixirDOTHealing))
-                               .append(Component.text(" health per second. Lasts "))
-                               .append(Component.text(format(puddleTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Throw a short range elixir bottle. The bottle will shatter upon impact, healing nearby allies for ")
+                .heal(healingValues.elixirHealing)
+                .text(" health and damaging nearby enemies for ")
+                .damage(damageValues.elixirDamage)
+                .text(" damage. The projectile will form a small puddle that heals allies for ")
+                .heal(healingValues.elixirDOTHealing)
+                .text(" health every ")
+                .durationSeconds(1)
+                .text(". Lasts ")
+                .durationTicks(puddleTickDuration)
+                .text(".")
+                .build();
 
     }
 

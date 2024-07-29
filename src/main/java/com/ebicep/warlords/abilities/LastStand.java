@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -62,19 +63,19 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Enter a defensive stance, reducing all damage you take by ")
-                               .append(Component.text(selfDamageReductionPercent + "%", NamedTextColor.RED))
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(selfTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and also reduces all damage nearby allies take by "))
-                               .append(Component.text(teammateDamageReductionPercent + "%", NamedTextColor.RED))
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. You are healed for the amount of damage prevented on allies." +
-                                       (inPve ? "Additionally, constantly take aggro of nearby mobs." : "")))
-                               .append(Component.text("\n\nHas a maximum range of "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Enter a defensive stance, reducing all damage you take by ")
+                .percent(selfDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" for ")
+                .durationTicks(selfTickDuration)
+                .text(" and also reduces all damage allies within")
+                .blocks(radius)
+                .text(" by ")
+                .percent(teammateDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" for ")
+                .durationTicks(allyTickDuration)
+                .text(". You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))
+                .build();
     }
 
     @Override
@@ -214,7 +215,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     .append(Component.text("Last Stand", NamedTextColor.YELLOW))
                     .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
                     .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                    .append(Component.text("!", NamedTextColor.GRAY))
             );
         }
 
@@ -294,6 +295,12 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
+    public void multiplyTickDuration(float multiplier) {
+        this.selfTickDuration *= multiplier;
+        this.allyTickDuration *= multiplier;
+    }
+
+    @Override
     public int getTickDuration() {
         return selfTickDuration;
     }
@@ -301,12 +308,6 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public void setTickDuration(int tickDuration) {
         this.selfTickDuration = tickDuration;
-    }
-
-    @Override
-    public void multiplyTickDuration(float multiplier) {
-        this.selfTickDuration *= multiplier;
-        this.allyTickDuration *= multiplier;
     }
 
     public int getRadius() {

@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -35,9 +34,11 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of incredible force forward that deals ")
-                               .append(Damages.formatDamage(getWaveDamage()))
-                               .append(Component.text(" damage to all enemies hit and knocks them back slightly."));
+        description = AbilityDescriptionBuilder
+                .create("Send a wave of incredible force forward that deals ")
+                .damage(getWaveDamage())
+                .text(" damage to all enemies hit and knocks them back slightly.")
+                .build();
     }
 
     @Override

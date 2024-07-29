@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -84,19 +85,21 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and "))
-                               .append(Component.text("crippling ", NamedTextColor.RED))
-                               .append(Component.text("them for "))
-                               .append(Component.text(format(crippleDuration), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. A "))
-                               .append(Component.text("crippled ", NamedTextColor.RED))
-                               .append(Component.text("player deals "))
-                               .append(Component.text(format(cripple) + "%", NamedTextColor.RED))
-                               .append(Component.text(" less damage for the duration of the effect. Adds "))
-                               .append(Component.text(format(cripplePerStrike) + "%", NamedTextColor.RED))
-                               .append(Component.text(" less damage dealt per additional strike. (Max " + format(cripple + (cripplePerStrike * 2)) + "%" + ")"));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing ")
+                .damage(damageValues.strikeDamage)
+                .text(" damage and inflicting them with ")
+                .text("CRIP", NamedTextColor.DARK_RED)
+                .text(" for ")
+                .durationSeconds(crippleDuration)
+                .text(", reducing their damage by ")
+                .percent(cripple, NamedTextColor.RED)
+                .text(". Adds ")
+                .percent(cripplePerStrike, NamedTextColor.RED)
+                .text(" less damage dealt per additional strike (max ")
+                .percent(cripple + (cripplePerStrike * 2), NamedTextColor.RED)
+                .text(").")
+                .build();
     }
 
     @Override

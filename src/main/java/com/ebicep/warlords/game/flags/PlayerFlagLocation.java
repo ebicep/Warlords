@@ -6,7 +6,7 @@ import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pvp.FlagSpawnPointOption;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FlagMessageMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -105,7 +105,7 @@ public class PlayerFlagLocation implements FlagLocation {
             int computedHumanMultiplier = getFlagMultiplier();
             if (computedHumanMultiplier % 10 == 0) {
                 game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
-                    if (t != null && databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    if (t != null && databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                         NamedTextColor playerColor = getPlayer().getTeam().getTeamColor();
                         if (t != eventTeam) {
                             p.sendMessage(Component.text("", NamedTextColor.YELLOW)
@@ -145,7 +145,7 @@ public class PlayerFlagLocation implements FlagLocation {
                 if (t != null) {
                     if (t == eventTeam) {
                         p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
-                        if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                        if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                             flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                    .append(playerColoredName)
                                                    .append(Component.text(" picked up "))
@@ -154,7 +154,7 @@ public class PlayerFlagLocation implements FlagLocation {
                         }
                     } else {
                         p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
-                        if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                        if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                             flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                    .append(playerColoredName)
                                                    .append(Component.text(" picked up the "))

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -15,7 +16,6 @@ import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -41,15 +41,17 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("You go into a berserker rage, increasing your damage by ")
-                               .append(Component.text(format(damageIncrease) + "%", NamedTextColor.RED))
-                               .append(Component.text(" and movement speed by "))
-                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(". While active, you also take "))
-                               .append(Component.text(format(damageTakenIncrease) + "%", NamedTextColor.RED))
-                               .append(Component.text(" more damage. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("You go into a berserker rage, increasing your damage by ")
+                .percent(damageIncrease, NamedTextColor.RED)
+                .text(" and movement speed by ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(". While active, you also take ")
+                .percent(damageTakenIncrease, NamedTextColor.RED)
+                .text(" more damage. Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override

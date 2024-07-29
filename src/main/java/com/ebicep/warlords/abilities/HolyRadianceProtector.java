@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -43,17 +44,20 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Radiate with holy energy, healing yourself and all nearby allies for ")
-                               .append(Heals.formatHealing(healingValues.radianceHealing))
-                               .append(Component.text(" health."))
-                               .append(Component.text("\n\nYou may look at an ally to mark them for "))
-                               .append(Component.text(markDuration, NamedTextColor.GOLD))
-                               .append(Component.text("seconds. Marked allies receive "))
-                               .append(Component.text(format(markBonusHealing) + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" more healing from all sources."))
-                               .append(Component.text("\n\nMark has a maximum range of "))
-                               .append(Component.text(format(markRadius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                .heal(healingValues.radianceHealing)
+                .text(" health.")
+                .emptyLine()
+                .text("You may look at an ally to grant them with ")
+                .text("MARK", NamedTextColor.DARK_GREEN)
+                .text(" for ")
+                .durationSeconds(markDuration)
+                .text(". Marked allies receive ")
+                .percent(markBonusHealing, NamedTextColor.GREEN)
+                .text(" more healing from all sources.")
+                .maxRange(markRadius)
+                .build();
     }
 
     @Override
@@ -69,6 +73,11 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new HolyRadianceBranchProtector(abilityTree, this);
+    }
+
+    @Override
+    public Value.RangedValueCritable getRadianceHealing() {
+        return healingValues.radianceHealing;
     }
 
     @Override
@@ -174,11 +183,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                 return currentHealValue * convertToMultiplicationDecimal(markBonusHealing);
             }
         });
-    }
-
-    @Override
-    public Value.RangedValueCritable getRadianceHealing() {
-        return healingValues.radianceHealing;
     }
 
     public FloatModifiable getMarkRadius() {

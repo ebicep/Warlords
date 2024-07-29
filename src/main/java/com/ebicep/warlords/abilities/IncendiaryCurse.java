@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -19,8 +16,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -52,11 +47,13 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Ignite the targeted area with a cross flame, dealing")
-                               .append(Damages.formatDamage(damageValues.curseDamage))
-                               .append(Component.text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for "))
-                               .append(Component.text(format(blindDurationInTicks / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Ignite the targeted area with a cross flame, dealing")
+                .damage(damageValues.curseDamage)
+                .text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
+                .durationTicks(blindDurationInTicks)
+                .text(".")
+                .build();
     }
 
     @Override

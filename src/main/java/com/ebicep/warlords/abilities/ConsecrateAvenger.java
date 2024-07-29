@@ -106,15 +106,15 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
         return true;
     }
 
-    @Override
-    public Value.RangedValueCritable getConsecrateDamage() {
-        return damageValues.consecrateDamage;
-    }
-
     @Nonnull
     @Override
     public String getStrikeName() {
         return "Avenger's Strike";
+    }
+
+    @Override
+    public Value.RangedValueCritable getConsecrateDamage() {
+        return damageValues.consecrateDamage;
     }
 
     @Override

@@ -16,7 +16,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -47,35 +46,38 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
     @Override
     public void updateDescription(Player player) {
         if (inPve) {
-            description = getBonus().append(Component.text(", gain "))
-                                    .append(Component.text(energyRestore, NamedTextColor.YELLOW))
-                                    .append(Component.text(" energy, and heal "))
-                                    .append(Component.text(" for "))
-                                    .append(Heals.formatHealingPercent(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100))
-                                    .append(Component.text(" of the energy expended for the next "))
-                                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                    .append(Component.text(" seconds. When Energy Seer ends, lose "))
-                                    .append(Component.text(epsDecrease, NamedTextColor.YELLOW))
-                                    .append(Component.text(" energy per second and gain"))
-                                    .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                                    .append(Component.text(" speed for "))
-                                    .append(Component.text(format(postEffectTickDuration / 20f), NamedTextColor.GOLD))
-                                    .append(Component.text(" seconds."));
+            description = AbilityDescriptionBuilder
+                    .create(getBonus())
+                    .text(", gain ")
+                    .energy(energyRestore)
+                    .text(" and heal for ")
+                    .heal(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100)
+                    .text(" of the energy expended for the next ")
+                    .durationTicks(tickDuration)
+                    .text(". When Energy Seer ends, lose ")
+                    .energy(epsDecrease)
+                    .text(" per second and gain")
+                    .percent(speedBuff, NamedTextColor.WHITE)
+                    .text(" speed for ")
+                    .durationTicks(postEffectTickDuration)
+                    .text(".")
+                    .build();
         } else {
-            description = Component.text("Gain ")
-                                   .append(Component.text(energyRestore, NamedTextColor.YELLOW))
-                                   .append(Component.text(" energy and heal "))
-                                   .append(Component.text(" for "))
-                                   .append(Heals.formatHealingPercent(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100))
-                                   .append(Component.text(" of the energy expended for the next "))
-                                   .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds. When Energy Seer ends, lose "))
-                                   .append(Component.text(epsDecrease, NamedTextColor.YELLOW))
-                                   .append(Component.text(" energy per second and gain"))
-                                   .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text(" speed for "))
-                                   .append(Component.text(format(postEffectTickDuration / 20f), NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds."));
+            description = AbilityDescriptionBuilder
+                    .create("Gain ")
+                    .energy(energyRestore)
+                    .text(" and heal for ")
+                    .heal(healingValues.seerHealingMultiplier, aFloat -> aFloat * 100)
+                    .text(" of the energy expended for the next ")
+                    .durationTicks(tickDuration)
+                    .text(". When Energy Seer ends, lose ")
+                    .energy(epsDecrease)
+                    .text(" per second and gain")
+                    .percent(speedBuff, NamedTextColor.YELLOW)
+                    .text(" speed for ")
+                    .durationTicks(postEffectTickDuration)
+                    .text(".")
+                    .build();
         }
     }
 
@@ -226,10 +228,10 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         });
     }
 
-    public abstract TextComponent getBonus();
-
     protected void onEnergyUsed(WarlordsEntity wp, WarlordsEnergyUseEvent.Post event, T cooldownObjet) {
     }
+
+    public abstract TextComponent getBonus();
 
     public int getEnergyRestore() {
         return energyRestore;

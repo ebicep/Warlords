@@ -77,6 +77,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     public static float convertToPercent(float input) {
         return input / 100f;
     }
+
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected int timesUsed = 0;
@@ -287,13 +288,9 @@ public abstract class AbstractAbility implements AbilityIcon {
         return secondaryAbilities;
     }
 
-    public ItemStack getItem() {
-        return getItem(null);
-    }
-
     public ItemStack getItem(@Nullable ItemStack item) {
         ItemBuilder itemBuilder = new ItemBuilder(item == null ? getAbilityIcon() : item)
-                .name(Component.text(getName(), NamedTextColor.GOLD))
+                .name(Component.text(getName(), NamedTextColor.GREEN))
                 .unbreakable();
 
         List<Component> lore = new ArrayList<>();
@@ -302,7 +299,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         } else {
             if (getCooldownValue() != 0) {
                 lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.AQUA)));
+                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.GOLD)));
             }
             if (getEnergyCostValue() != 0) {
                 lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)
@@ -359,6 +356,10 @@ public abstract class AbstractAbility implements AbilityIcon {
                 queueUpdateItem();
             }
         }
+    }
+
+    public ItemStack getItem() {
+        return getItem(null);
     }
 
     public void subtractCurrentCooldown(float cooldown) {

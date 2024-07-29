@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractBeam;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -11,7 +12,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
 import com.ebicep.warlords.util.java.Pair;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,10 +28,8 @@ import java.util.Map;
 public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.CRIMSON_FENCE_GATE);
-
-    private final DamageValues damageValues = new DamageValues();
-
     public Map<Integer, Integer> stacksRemoved = new HashMap<>();
+    private final DamageValues damageValues = new DamageValues();
 
     public SoulfireBeam() {
         super("Soulfire Beam", 10, 10, 30, 30, false);
@@ -40,17 +38,18 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Unleash a concentrated beam of demonic power, dealing ")
-                               .append(Damages.formatDamage(damageValues.beamDamage))
-                               .append(Component.text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by "))
-                               .append(Component.text("25%", NamedTextColor.RED))
-                               .append(Component.text("/"))
-                               .append(Component.text("50%", NamedTextColor.RED))
-                               .append(Component.text("/"))
-                               .append(Component.text("100%", NamedTextColor.RED))
-                               .append(Component.text(" relative to the number of stacks and all stacks are removed.\n\nHas a maximum range of"))
-                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Unleash a concentrated beam of demonic power, dealing ")
+                .damage(damageValues.beamDamage)
+                .text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by ")
+                .percent(25, NamedTextColor.RED)
+                .text("/")
+                .percent(50, NamedTextColor.RED)
+                .text("/")
+                .percent(100, NamedTextColor.RED)
+                .text(" relative to the number of stacks and all stacks are removed.")
+                .maxRange(maxDistance)
+                .build();
     }
 
     @Override

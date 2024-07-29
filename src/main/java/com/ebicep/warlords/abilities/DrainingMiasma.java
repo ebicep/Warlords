@@ -20,7 +20,6 @@ import com.ebicep.warlords.pve.upgrades.rogue.apothecary.DrainingMiasmaBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
@@ -43,6 +42,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     private int radius = 8;
     private float leechSelfAmount = 25;
     private float leechAllyAmount = 15;
+    private int slowness = 25;
+    private int slownessDuration = 3;
 
     public DrainingMiasma() {
         super("Draining Miasma", 50, 40);
@@ -50,24 +51,27 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
-                               .append(Damages.formatDamage(damageValues.miasmaDamage))
-                               .append(Component.text(" + "))
-                               .append(Component.text(maxHealthDamage + "%", NamedTextColor.RED))
-                               .append(Component.text(" of their max health as damage per second, for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Enemies poisoned by your Draining Miasma are slowed by "))
-                               .append(Component.text("25%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text("3", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds on cast. Has a radius of "))
-                               .append(Component.text(radius, NamedTextColor.GOLD))
-                               .append(Component.text(" blocks."))
-                               .append(Component.text("\n\nEach enemy hit will be afflicted with "))
-                               .append(Component.text("LEECH", NamedTextColor.GREEN))
-                               .append(Component.text(" for "))
-                               .append(Component.text(leechDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
+                .damage(damageValues.miasmaDamage)
+                .text(" + ")
+                .percent(maxHealthDamage, NamedTextColor.RED)
+                .text(" of their max health as damage per second, for ")
+                .durationTicks(tickDuration)
+                .text(". Enemies poisoned by your Draining Miasma are slowed by ")
+                .percent(slowness, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationSeconds(slownessDuration)
+                .text(" on cast. Has a radius of ")
+                .blocks(radius)
+                .text(".")
+                .emptyLine()
+                .text("Each enemy hit will be afflicted with ")
+                .text("LEECH", NamedTextColor.DARK_GREEN)
+                .text(" for ")
+                .durationSeconds(leechDuration)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -114,7 +118,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         ) {
             playersHit++;
             if (miasmaTarget.isEnemy(wp)) {
-                Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -25, 3 * 20, "BASE");
+                Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20, "BASE");
                 miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
                 miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,

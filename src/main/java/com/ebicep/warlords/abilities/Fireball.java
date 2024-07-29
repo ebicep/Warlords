@@ -16,7 +16,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -50,14 +49,14 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Shoot a fireball that will explode for ")
-                               .append(Damages.formatDamage(damageValues.fireballDamage))
-                               .append(Component.text(" damage. A direct hit will cause the enemy to take an additional "))
-                               .append(Component.text(format(directHitMultiplier) + "%", NamedTextColor.RED))
-                               .append(Component.text(" extra damage."))
-                               .append(Component.text("\n\nHas an optimal range of "))
-                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
-                               .append(Component.text("blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Shoot a fireball that will explode for ")
+                .damage(damageValues.fireballDamage)
+                .text(" damage. A direct hit will cause the enemy to take an additional ")
+                .percent(directHitMultiplier, NamedTextColor.RED)
+                .text(" extra damage.")
+                .optimalRange(maxFullDistance)
+                .build();
     }
 
     @Override

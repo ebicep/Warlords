@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.Shield;
@@ -21,7 +22,6 @@ import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -54,14 +54,21 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Grant yourself Astral Energy, increasing Poisonous Hex duration by ")
-                               .append(Component.text(format(hexTickDurationIncrease / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and causing Soulfire Beam to not consume Poisonous Hex stacks. " +
-                                       "\n\nYour attacks pierces shields and defenses of enemies with "))
-                               .append(Component.text("3", NamedTextColor.RED))
-                               .append(Component.text(" stacks of Poisonous Hex. Lasts"))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. "));
+        description = AbilityDescriptionBuilder
+                .create("Grant yourself Astral Energy, increasing ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(" duration by ")
+                .durationTicks(hexTickDurationIncrease)
+                .text(" and causing Soulfire Beam to not consume ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(" stacks.")
+                .emptyLine()
+                .text("Your attacks pierces shields and defenses of enemies with max stacks of ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override

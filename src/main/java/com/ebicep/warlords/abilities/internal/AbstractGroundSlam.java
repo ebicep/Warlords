@@ -11,7 +11,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -40,9 +39,11 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Slam the ground, creating a shockwave around you that deals ")
-                               .append(Damages.formatDamage(getSlamDamage()))
-                               .append(Component.text(" damage and knocks enemies back slightly."));
+        description = AbilityDescriptionBuilder
+                .create("Slam the ground, creating a shockwave around you that deals ")
+                .damage(getSlamDamage())
+                .text(" damage and knocks enemies back slightly.")
+                .build();
 
     }
 

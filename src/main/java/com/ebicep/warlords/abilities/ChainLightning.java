@@ -17,7 +17,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -74,11 +73,13 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
             }
         });
     }
+
     public int numberOfDismounts = 0;
     private final DamageValues damageValues = new DamageValues();
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
+    private float damageDecreasePerBounce = 15;
 
     public ChainLightning() {
         super("Chain Lightning", 9.5f, 40, 20, 10, 3);
@@ -95,23 +96,24 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Discharge a bolt of lightning at the targeted enemy player that deals ")
-                               .append(Damages.formatDamage(damageValues.chainDamage))
-                               .append(Component.text(" damage and jumps to "))
-                               .append(Component.text(additionalBounces, NamedTextColor.YELLOW))
-                               .append(Component.text(" additional targets within "))
-                               .append(Component.text(bounceRange, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks. Each time the lightning jumps, the damage is decreased by "))
-                               .append(Component.text("15%", NamedTextColor.RED))
-                               .append(Component.text(". You gain "))
-                               .append(Component.text(format(damageReductionPerBounce) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage resistance for each target hit, up to "))
-                               .append(Component.text(format(maxDamageReduction) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage resistance. This buff lasts "))
-                               .append(Component.text(format(damageReductionTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas an initial cast range of "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Discharge a bolt of lightning at the targeted enemy player that deals ")
+                .damage(damageValues.chainDamage)
+                .text(" damage and jumps to ")
+                .text(additionalBounces, NamedTextColor.BLUE)
+                .text(" additional targets within ")
+                .blocks(bounceRange)
+                .text(". Each time the lightning jumps, the damage is decreased by ")
+                .percent(damageDecreasePerBounce, NamedTextColor.RED)
+                .text(". You gain ")
+                .percent(damageReductionPerBounce, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage resistance for each target hit, up to ")
+                .percent(maxDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage resistance. This buff lasts ")
+                .durationTicks(damageReductionTickDuration)
+                .text(".")
+                .initialRange(radius)
+                .build();
     }
 
     @Override
@@ -213,11 +215,10 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         if (foundPlayer.isPresent()) {
             WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
-            float damageMultiplier = switch (playersSize) {
-                case 0 -> pveMasterUpgrade ? 1.1f : 1f;
-                case 1 -> pveMasterUpgrade ? 1.2f : .85f;
-                default -> pveMasterUpgrade ? 1.3f : .7f;
-            };
+            if (pveMasterUpgrade) {
+                damageDecreasePerBounce = -10;
+            }
+            float damageMultiplier = 1 - Math.min(playersSize, 3) * damageDecreasePerBounce / 100f;
 
             playersHit.add(hit);
             if (hit.onHorse()) {

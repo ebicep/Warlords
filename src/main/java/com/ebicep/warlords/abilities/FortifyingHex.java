@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -23,6 +20,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -73,25 +71,34 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Fling a wave of protective energy forward, hitting ")
-                               .append(Component.text(maxEnemiesHit, NamedTextColor.RED))
-                               .append(Component.text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and "))
-                               .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
-                               .append(Component.text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes "))
-                               .append(Damages.formatDamage(damageValues.hexDamage))
-                               .append(Component.text(" damage. The ally receives "))
-                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex. If Fortifying Hex hits a target, you receive "))
-                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Fortifying Hex.\n\nEach stack of Fortifying Hex lasts  "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds and grants"))
-                               .append(Component.text(format(damageReduction.getCalculatedValue()) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction. Stacks up to"))
-                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" times.\n\nHas a maximum range of "))
-                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
-                               .append(Component.text("blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Fling a wave of protective energy forward, hitting ")
+                .text(maxEnemiesHit, NamedTextColor.BLUE)
+                .text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and ")
+                .text(maxAlliesHit, NamedTextColor.BLUE)
+                .text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes ")
+                .damage(damageValues.hexDamage)
+                .text(" damage. The ally receives ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(". If Fortifying Hex hits a target, you receive ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(".")
+                .emptyLine()
+                .text("Each stack of ")
+                .text("FHEX", NamedTextColor.DARK_GREEN)
+                .text(" lasts ")
+                .durationTicks(tickDuration)
+                .text(" and grants")
+                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction. Stacks up to")
+                .text(maxStacks, NamedTextColor.BLUE)
+                .text(" times.")
+                .maxRange(maxFullDistance)
+                .build();
     }
 
     @Override
@@ -109,12 +116,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
 
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        giveFortifyingHex(shooter, shooter);
-        return super.onActivate(shooter);
     }
 
     @Override
@@ -153,6 +154,12 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.63).backward(0f);
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        giveFortifyingHex(shooter, shooter);
+        return super.onActivate(shooter);
     }
 
     @Override
@@ -317,6 +324,11 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                         Component.text("FHEX", NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, flag),
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.SENTINEL
                 );
+            }
+
+            @Override
+            public TextColor customActionBarColor() {
+                return NamedTextColor.YELLOW;
             }
         });
         from.playSound(from.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1, 1);

@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,29 +58,40 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of energy forward. The first two allies hit heal ")
-                               .append(Heals.formatHealing(healingValues.hexHealing))
-                               .append(Component.text(" health and receive "))
-                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Merciful Hex; subsequent allies are healed for only "))
-                               .append(Component.text(subsequentReduction + "%", NamedTextColor.GREEN))
-                               .append(Component.text(". The first enemy hit takes "))
-                               .append(Damages.formatDamage(damageValues.hexDamage))
-                               .append(Component.text(" damage. You also heal for "))
-                               .append(Heals.formatHealing(healingValues.hexSelfHealing))
-                               .append(Component.text(" and receive "))
-                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack of Merciful Hex.\n\nEach stack of Merciful Hex heals "))
-                               .append(Heals.formatHealing(healingValues.hexDOTHealing))
-                               .append(Component.text(" health every "))
-                               .append(Component.text(format(ticksBetweenDot / 20f), NamedTextColor.GOLD))
-                               .append(Component.text("seconds for "))
-                               .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Stacks up to"))
-                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" times.\n\nHas a maximum range of "))
-                               .append(Component.text(format(maxDistance), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Send a wave of energy forward. The first ")
+                .text(maxAlliesHit, NamedTextColor.BLUE)
+                .text(" allies hit heal ")
+                .heal(healingValues.hexHealing)
+                .text(" health and receive ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text("; subsequent allies are healed for only ")
+                .percent(subsequentReduction, NamedTextColor.GREEN)
+                .text(". The first enemy hit takes ")
+                .damage(damageValues.hexDamage)
+                .text(" damage. You also heal for ")
+                .heal(healingValues.hexSelfHealing)
+                .text(" and receive ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(".")
+                .emptyLine()
+                .text("Each stack of ")
+                .text("MHEX", NamedTextColor.DARK_GREEN)
+                .text(" heals ")
+                .heal(healingValues.hexDOTHealing)
+                .text(" health every ")
+                .durationTicks(ticksBetweenDot)
+                .text(" for ")
+                .durationTicks(tickDuration * 2)
+                .text(". Stacks up to")
+                .text(maxStacks, NamedTextColor.BLUE)
+                .text(" times.")
+                .maxRange(maxDistance)
+                .build();
     }
 
     @Override
@@ -313,9 +325,14 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             public PlayerNameData addPrefixFromOther() {
                 boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
                 return new PlayerNameData(
-                        Component.text("MHEX", NamedTextColor.GREEN).decoration(TextDecoration.BOLD, flag),
+                        Component.text("MHEX", NamedTextColor.DARK_GREEN).decoration(TextDecoration.BOLD, flag),
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
                 );
+            }
+
+            @Override
+            public TextColor customActionBarColor() {
+                return NamedTextColor.DARK_GREEN;
             }
         });
     }

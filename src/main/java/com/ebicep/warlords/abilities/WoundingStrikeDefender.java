@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -37,6 +38,7 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
 
     private final DamageValues damageValues = new DamageValues();
     private int wounding = 25;
+    private int woundingDurationInTicks = 60;
 
     public WoundingStrikeDefender() {
         super("Wounding Strike", 0, 100);
@@ -44,15 +46,17 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and "))
-                               .append(Component.text("wounding", NamedTextColor.RED))
-                               .append(Component.text(" them for "))
-                               .append(Component.text("3", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. A wounded player receives "))
-                               .append(Component.text(wounding + "%", NamedTextColor.RED))
-                               .append(Component.text(" less healing for the duration of the effect."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing")
+                .damage(damageValues.strikeDamage)
+                .text(" damage and ")
+                .text("wounding", NamedTextColor.RED)
+                .text(" them for ")
+                .durationTicks(woundingDurationInTicks)
+                .text(", making them receive ")
+                .percent(wounding, NamedTextColor.RED)
+                .text(" less healing.")
+                .build();
     }
 
     @Override
@@ -133,7 +137,7 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
                             );
                         }
                     },
-                    3 * 20
+                    woundingDurationInTicks
             ) {
                 @Override
                 public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {

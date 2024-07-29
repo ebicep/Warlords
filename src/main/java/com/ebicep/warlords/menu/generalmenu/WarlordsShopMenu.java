@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.settings.ParticleQuality;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -33,7 +34,6 @@ import java.util.function.Consumer;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
-import static com.ebicep.warlords.player.general.Settings.ParticleQuality;
 
 public class WarlordsShopMenu {
 
@@ -558,11 +558,11 @@ public class WarlordsShopMenu {
                          .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
                 Component.empty(),
                 Component.text("Energy: ", NamedTextColor.GRAY)
-                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.YELLOW))
                          .append(Component.text(" / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.YELLOW))
                          .append(Component.text(" per sec / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.YELLOW))
                          .append(Component.text(" per hit"))
         );
         boolean noDamageResistance = apc.getDamageResistance() == 0;

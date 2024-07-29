@@ -13,7 +13,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -29,10 +28,10 @@ public class WonderTrap extends AbstractAbility {
         super("Wonder Trap", 10, 40);
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        //description = "PLACEHOLDER";
-    }
+//    @Override
+//    public void updateDescription(Player player) {
+//        //description = "PLACEHOLDER";
+//    }
 
     @Override
     public List<Pair<String, String>> getAbilityInfo() {

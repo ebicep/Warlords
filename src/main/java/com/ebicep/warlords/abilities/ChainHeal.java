@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -17,7 +18,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -30,6 +30,7 @@ import java.util.*;
 public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
+    private float cooldownReductionInSeconds = 2.5f;
 
     public ChainHeal() {
         super("Chain Heal", 8, 40, 15, 10, 1);
@@ -37,18 +38,20 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
 
     @Override
     public void updateDescription(Player player) {
-        description =
-                Component.text("Discharge a beam of energizing lightning that heals you and a targeted friendly player for ")
-                         .append(Heals.formatHealing(healingValues.chainHealing))
-                         .append(Component.text(" health and jumps to "))
-                         .append(Component.text("1", NamedTextColor.YELLOW))
-                         .append(Component.text(" additional target within "))
-                         .append(Component.text(bounceRange, NamedTextColor.YELLOW))
-                         .append(Component.text(" blocks.\n\nEach ally healed reduces the cooldown of Boulder by "))
-                         .append(Component.text("2.5", NamedTextColor.GOLD))
-                         .append(Component.text(" seconds.\n\nHas an initial cast range of "))
-                         .append(Component.text(radius, NamedTextColor.YELLOW))
-                         .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Discharge a beam of energizing lightning that heals you and a targeted ally for ")
+                .heal(healingValues.chainHealing)
+                .text(" health and jumps to ")
+                .text(additionalBounces, NamedTextColor.BLUE)
+                .text(" additional target within ")
+                .blocks(bounceRange)
+                .text(".")
+                .emptyLine()
+                .text("Each ally healed reduces the cooldown of Boulder by ")
+                .durationSeconds(cooldownReductionInSeconds)
+                .text(".")
+                .initialRange(radius)
+                .build();
     }
 
     @Override
@@ -155,10 +158,10 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
 
         for (Boulder boulder : wp.getAbilitiesMatching(Boulder.class)) {
             float currentCD = boulder.getCurrentCooldown();
-            if ((hitCounter + 1) * 2.5f > currentCD) {
+            if ((hitCounter + 1) * cooldownReductionInSeconds > currentCD) {
                 boulder.setCurrentCooldown(0);
             } else {
-                boulder.subtractCurrentCooldown((hitCounter + 1) * 2.5f);
+                boulder.subtractCurrentCooldown((hitCounter + 1) * cooldownReductionInSeconds);
             }
         }
     }

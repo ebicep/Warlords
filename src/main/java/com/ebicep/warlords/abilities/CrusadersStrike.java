@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -17,7 +18,6 @@ import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -36,6 +36,8 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
     private int energyGiven = 21;
     private int energyRadius = 10;
     private int energyMaxAllies = 2;
+    private int allySpeedBoost = 40;
+    private int allySpeedBoostDurationInTicks = 20;
 
     public CrusadersStrike() {
         super("Crusader's Strike", 0, 90);
@@ -43,20 +45,25 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and restoring "))
-                               .append(Component.text(energyGiven, NamedTextColor.YELLOW))
-                               .append(Component.text(" energy to " + energyMaxAllies + " nearby allies within "))
-                               .append(Component.text(energyRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."))
-                               .append(Component.newline())
-                               .append(Component.newline())
-                               .append(Component.text("MARKED allies get priority in restoring energy and increases their speed by "))
-                               .append(Component.text("40%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text("1", NamedTextColor.GOLD))
-                               .append(Component.text(" second."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing ")
+                .damage(damageValues.strikeDamage)
+                .text(" damage and restoring ")
+                .energy(energyGiven)
+                .text(" to ")
+                .text(energyMaxAllies, NamedTextColor.BLUE)
+                .text(" nearby allies within ")
+                .blocks(energyRadius)
+                .text(".")
+                .emptyLine()
+                .text("Allies with ")
+                .text("MARK", NamedTextColor.DARK_GREEN)
+                .text(" get priority in restoring energy and gain ")
+                .percent(allySpeedBoost, NamedTextColor.WHITE)
+                .text(" movement speed for ")
+                .durationTicks(allySpeedBoostDurationInTicks)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -130,7 +137,7 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
                 .limit(energyMaxAllies)
         ) {
             if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
-                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
+                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks, "BASE"); // 20 ticks
             }
 
             energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));

@@ -488,6 +488,12 @@ public class Warlords extends JavaPlugin {
                                 we.displayCompassActionBar(player);
                             } else {
                                 we.displayActionBar();
+                                we.getGame().spectators().forEach(uuid -> {
+                                    Player p = Bukkit.getPlayer(uuid);
+                                    if (p != null) {
+                                        DatabaseManager.getPlayer(uuid, databasePlayer -> p.sendActionBar(we.getActionBar(databasePlayer)));
+                                    }
+                                });
                             }
                         }
                     }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -38,7 +39,8 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
     private final int maxAllies = 2;
     private int critMultiplierReducedBy = 25;
-    private int hexIntervalTicks = 100;
+    private int hexIntervalTicks = 60;
+    private int stacksGranted = 1;
     private float damageReductionPve = 30;
 
 
@@ -48,32 +50,29 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
     @Override
     public Component getBonusDescription() {
-        return Component.text("All enemies within a ")
-                        .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                        .append(Component.text(" block radius have their Crit Multiplier reduced by "))
-                        .append(Component.text(critMultiplierReducedBy + "%", NamedTextColor.RED))
-                        .append(Component.text(". The beacon will emit a wave of energy that grants "))
-                        .append(Component.text(maxAllies, NamedTextColor.YELLOW))
-                        .append(Component.text(" nearby allies "))
-                        .append(Component.text("1", NamedTextColor.BLUE))
-                        .append(Component.text(" stack of Merciful Hex every "))
-                        .append(Component.text(format(hexIntervalTicks / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds within the same radius.\n\nOnly two beacons can be present on the field at once."));
-    }
-
-    @Override
-    public LineEffect getLineEffect(Location target) {
-        return new LineEffect(target.clone().add(0, 0.5, 0), Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(150, 8, 80), 1));
-    }
-
-    @Override
-    public String getAbbreviation() {
-        return "BEACON";
+        return AbilityDescriptionBuilder
+                .create("All enemies within a ")
+                .blocks(radius)
+                .text(" radius have their Crit Multiplier reduced by ")
+                .percent(critMultiplierReducedBy, NamedTextColor.RED)
+                .text(". The beacon will emit a wave of energy that grants ")
+                .text(maxAllies, NamedTextColor.BLUE)
+                .text(" allies in range ")
+                .text(stacksGranted, NamedTextColor.BLUE)
+                .text(" stack of Merciful Hex every ")
+                .durationTicks(hexIntervalTicks)
+                .text(".")
+                .build();
     }
 
     @Override
     public Class<SanctifiedBeaconData> getDataClass() {
         return SanctifiedBeaconData.class;
+    }
+
+    @Override
+    public LineEffect getLineEffect(Location target) {
+        return new LineEffect(target.clone().add(0, 0.5, 0), Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(150, 8, 80), 1));
     }
 
     @Override
@@ -87,6 +86,17 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     }
 
     @Override
+    public String getAbbreviation() {
+        return "BEACON";
+    }
+
+    @Override
+    protected void onRemove(SanctifiedBeaconData data) {
+        data.getCrystal().remove();
+        BEACON_IDS.remove(data.getCrystal().getEntityId());
+    }
+
+    @Override
     public void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<SanctifiedBeaconData> cooldown, Integer ticksLeft, Integer ticksElapsed) {
         SanctifiedBeaconData beacon = cooldown.getCooldownObject();
         float rad = beacon.getRadius().getCalculatedValue();
@@ -96,12 +106,12 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     if (!pveMasterUpgrade2) {
                         continue;
                     }
-                    nearBy.getCooldownManager().removeCooldownByObject(beacon);
+                    nearBy.getCooldownManager().removeCooldownByObject(beacon.getM2Object());
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Shadow Garden",
                             null,
-                            SanctifiedBeaconData.class,
-                            beacon,
+                            Object.class,
+                            beacon.getM2Object(),
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
@@ -218,12 +228,6 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     }
 
     @Override
-    protected void onRemove(SanctifiedBeaconData data) {
-        data.getCrystal().remove();
-        BEACON_IDS.remove(data.getCrystal().getEntityId());
-    }
-
-    @Override
     public List<Pair<String, String>> getAbilityInfo() {
         List<Pair<String, String>> info = new ArrayList<>();
         info.add(new Pair<>("Times Used", "" + timesUsed));
@@ -264,6 +268,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     public static class SanctifiedBeaconData extends AbstractBeaconAbility.BeaconData {
 
         private final ArmorStand crystal;
+        private final Object m2Object = new Object();
 
         public SanctifiedBeaconData(ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius, ArmorStand crystal) {
             super(beacon, groundLocation, effect, radius);
@@ -274,6 +279,9 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             return crystal;
         }
 
+        public Object getM2Object() {
+            return m2Object;
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractTotem;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -53,36 +54,33 @@ public class DeathsDebt extends AbstractTotem implements Duration {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Spirits’ Respite", NamedTextColor.DARK_GREEN)
-                               .append(Component.text(": Place down a totem that delays "))
-                               .append(Component.text("100%", NamedTextColor.RED))
-                               .append(Component.text(" of incoming damage towards yourself " +
-                                       (inPve ? " and takes aggro of nearby mobs" + "." : ".") + "Transforms into "))
-                               .append(Component.text("Death’s Debt ", NamedTextColor.LIGHT_PURPLE))
-                               .append(Component.text("after "))
-                               .append(formatRange(tickDuration / 20f, (tickDuration / 20f + 2), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds (increases with higher health), or when you exit its "))
-                               .append(Component.text(respiteRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius."))
-                               .append(Component.text("\n\nDeath’s Debt", NamedTextColor.LIGHT_PURPLE))
-                               .append(Component.text(": Take "))
-                               .append(Component.text(format(delayedDamageTaken) + "%", NamedTextColor.RED))
-                               .append(Component.text(" of the damage delayed by "))
-                               .append(Component.text("Spirits’ Respite ", NamedTextColor.DARK_GREEN))
-                               .append(Component.text("over "))
-                               .append(Component.text("6", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. The totem will heal nearby allies for "))
-                               .append(Component.text("15%", NamedTextColor.GREEN))
-                               .append(Component.text(" of all damage that you take. If you survive, deal "))
-                               .append(Component.text(format(damagePercent) + "%", NamedTextColor.RED))
-                               .append(Component.text(" of the damage delayed to nearby enemies in a "))
-                               .append(Component.text(debtRadius, NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius."));
-//                               .append(Component.text("\n\nSuccessful Soulbind procs on enemies add "))
-//                               .append(Component.text("0.5", NamedTextColor.GOLD))
-//                               .append(Component.text(" seconds to your totem duration. (Cap of "))
-//                               .append(Component.text("6", NamedTextColor.GOLD))
-//                               .append(Component.text(" seconds)"));
+        description = AbilityDescriptionBuilder
+                .create("Spirits’ Respite", NamedTextColor.DARK_AQUA)
+                .text(": Place down a totem that delays ")
+                .percent(100, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" of incoming damage towards yourself " + (inPve ? " and takes aggro of nearby mobs" + "." : ".") + "Transforms into ")
+                .text("Death’s Debt ", NamedTextColor.LIGHT_PURPLE)
+                .text("after ")
+                .append(formatRange(tickDuration / 20f, (tickDuration / 20f + 2), NamedTextColor.GOLD))
+                .text(" seconds (increases with higher health), or when you exit its ")
+                .blocks(respiteRadius)
+                .text(" radius.")
+                .emptyLine()
+                .text("Death’s Debt", NamedTextColor.LIGHT_PURPLE)
+                .text(": Take ")
+                .percent(delayedDamageTaken, NamedTextColor.RED)
+                .text(" of the damage delayed by ")
+                .text("Spirits’ Respite ", NamedTextColor.DARK_AQUA)
+                .text("over ")
+                .durationTicks(debtTickDuration)
+                .text(". The totem will heal nearby allies for ")
+                .percent(damagePercent, NamedTextColor.GREEN)
+                .text(" of all damage that you take. If you survive, deal ")
+                .percent(damagePercent, NamedTextColor.RED)
+                .text(" of the damage delayed to nearby enemies in a ")
+                .blocks(debtRadius)
+                .text(" radius.")
+                .build();
     }
 
     @Override
@@ -190,7 +188,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                             .damage()
                                             .ability(this)
                                             .source(wp)
-                                            .value(data.delayedDamage * .15f)
+                                            .value(data.delayedDamage * damagePercent / 100f)
                                     ).ifPresent(warlordsDamageHealingFinalEvent -> {
                                         if (warlordsDamageHealingFinalEvent.getValue() > 5000) {
                                             over5000DamageInstances.getAndIncrement();
@@ -288,7 +286,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                                  .append(Component.text(Math.round(data.delayedDamage), NamedTextColor.RED))
                                                  .append(Component.text(" damage. ", NamedTextColor.GRAY))
                                                  .append(Component.text(Math.round(ticksLeft / 20f), NamedTextColor.GOLD))
-                                                 .append(Component.text(" seconds left.", NamedTextColor.GRAY))
+                                                 .append(Component.text(" left.", NamedTextColor.GRAY))
                                 ));
 
                         if (wp.isInPve()) {

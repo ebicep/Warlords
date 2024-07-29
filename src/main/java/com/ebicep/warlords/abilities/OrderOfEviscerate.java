@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -26,7 +27,6 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -47,6 +47,10 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     private int tickDuration = 160;
     private float damageThreshold = 0;
+    private float maxDamageThreshold = 600;
+    private float vulnerableDamageBonus = 20;
+    private float backstabDamageBonus = 10;
+    private int speedBuff = 40;
     private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
@@ -55,42 +59,50 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     @Override
     public void updateDescription(Player player) {
-        TextComponent.Builder builder = Component.text("Cloak yourself for ").
-                                                 append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD)).
-                                                 append(Component.text(" seconds, granting you ")).
-                                                 append(Component.text("40% ", NamedTextColor.YELLOW)).
-                                                 append(Component.text("movement speed and making you ")).
-                                                 append(Component.text("invisible ", NamedTextColor.YELLOW)).
-                                                 append(Component.text("to the enemy for the duration. However, taking up to ")).
-                                                 append(Component.text("600 ", NamedTextColor.RED)).
-                                                 append(Component.text("fall damage or any type of ability damage will end your invisibility.\n\n")).
-                                                 append(Component.text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")).
-                                                 append(Component.text("20% ", NamedTextColor.RED)).
-                                                 append(Component.text("more damage. Additionally, enemies hit from behind take an additional ")).
-                                                 append(Component.text("10% ", NamedTextColor.RED)).
-                                                 append(Component.text("more damage.\n\n")).
-                                                 append(Component.text("Successfully killing your mark will "))
-                                                 .toBuilder();
+        TextComponent.Builder builder = AbilityDescriptionBuilder
+                .create("Cloak yourself for ")
+                .durationTicks(tickDuration)
+                .text(", granting you ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(" extra movement speed and making you ")
+                .text("INVIS", NamedTextColor.DARK_GREEN)
+                .text(" to the enemy for the duration. However, taking up to ")
+                .text(maxDamageThreshold, NamedTextColor.RED)
+                .text(" fall damage or any type of ability damage will end your invisibility.")
+                .emptyLine()
+                .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
+                .percent(vulnerableDamageBonus, NamedTextColor.RED)
+                .text(" more damage. Additionally, enemies hit from behind take an additional ")
+                .percent(backstabDamageBonus, NamedTextColor.RED)
+                .text(" more damage.")
+                .emptyLine()
+                .text("Successfully killing your mark will ")
+                .build()
+                .toBuilder();
         if (inPve) {
             int killReduction = pveMasterUpgrade ? 12 : 8; // 2 for shadow
             int assistReduction = pveMasterUpgrade ? 6 : 4; // 0 for shadow
-            description = builder.append(Component.text("reduce ", NamedTextColor.YELLOW))
-                                 .append(Component.text("your Shadow Step cooldown by "))
-                                 .append(Component.text("2 ", NamedTextColor.YELLOW))
-                                 .append(Component.text("seconds and Order of Eviscerate by "))
-                                 .append(Component.text(killReduction, NamedTextColor.YELLOW))
-                                 .append(Component.text("seconds. Assisting in killing your mark will "))
-                                 .append(Component.text("reduce ", NamedTextColor.YELLOW))
-                                 .append(Component.text("your Order of Eviscerate cooldown by "))
-                                 .append(Component.text(assistReduction, NamedTextColor.YELLOW))
-                                 .append(Component.text(" seconds."))
+            description = builder.append(AbilityDescriptionBuilder
+                                         .create("reduce", NamedTextColor.YELLOW)
+                                         .text(" your Shadow Step cooldown by ")
+                                         .text(2, NamedTextColor.GOLD)
+                                         .text(" seconds and Order of Eviscerate by ")
+                                         .text(killReduction, NamedTextColor.GOLD)
+                                         .text(" seconds. Assisting in killing your mark will ")
+                                         .text("reduce", NamedTextColor.YELLOW)
+                                         .text(" your Order of Eviscerate cooldown by ")
+                                         .text(assistReduction, NamedTextColor.GOLD)
+                                         .text(" seconds.")
+                                         .build())
                                  .build();
         } else {
-            description = builder.append(Component.text("reset ", NamedTextColor.YELLOW))
-                                 .append(Component.text("both your Shadow Step and Order of Eviscerate's cooldown and refund the energy cost. " +
-                                         "Assisting in killing your mark will only refund half the cooldown."))
+            description = builder.append(AbilityDescriptionBuilder
+                                         .create("reset", NamedTextColor.YELLOW)
+                                         .text(" both your Shadow Step and Order of Eviscerate's cooldown and refund the energy cost. Assisting in killing your mark will only refund half the cooldown.")
+                                         .build())
                                  .build();
         }
+
     }
 
     @Override
@@ -108,7 +120,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", 40, tickDuration, "BASE");
+        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", speedBuff, tickDuration, "BASE");
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class, false);
         OrderOfEviscerate tempOrderOfEviscerate = new OrderOfEviscerate();
@@ -162,9 +174,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())
                 ) {
                     numberOfBackstabs++;
-                    return currentDamageValue * (inPve ? 2 : 1.3f);
+                    return currentDamageValue * (inPve ? 2 : 1 + (vulnerableDamageBonus + backstabDamageBonus) / 100f);
                 } else {
-                    return currentDamageValue * 1.2f;
+                    return currentDamageValue * (1 + vulnerableDamageBonus / 100f);
                 }
             }
 
@@ -305,7 +317,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
         addToDamageThreshold(damageValue);
-        if (getDamageThreshold() >= 600) {
+        if (getDamageThreshold() >= maxDamageThreshold) {
             OrderOfEviscerate.removeCloak(warlordsPlayer, false);
         }
     }
@@ -340,7 +352,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
                         Entity wpEntity = wp.getEntity();
                         if (wpEntity instanceof Player) {
-                            ((Player) wpEntity).getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
                             PlayerFilter.playingGame(wp.getGame())
                                         .enemiesOf(wp)
                                         .stream().map(WarlordsEntity::getEntity)

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -17,7 +18,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,12 +30,14 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Duration {
 
     private int tickDuration = 120;
     private float damageReductionPercent = 50;
     private int slownessOnMeleeHit = 20;
+    private int slowDuration = 2;
 
     public IceBarrier() {
         super("Ice Barrier", 47, 0);
@@ -48,15 +50,17 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Surround yourself with a layer of cold air, reducing damage taken by ")
-                               .append(Component.text(format(damageReductionPercent) + "%", NamedTextColor.RED))
-                               .append(Component.text(", while active, taking melee damage reduces the attacker's movement speed by "))
-                               .append(Component.text(slownessOnMeleeHit + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text("2", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Surround yourself with a layer of cold air, reducing damage taken by ")
+                .percent(damageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(", while active, taking melee damage reduces the attacker's movement speed by ")
+                .percent(slownessOnMeleeHit, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationSeconds(slowDuration)
+                .text(" " + (inPve ? " and take aggro of nearby mobs" : "") + ". Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -175,8 +179,15 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 if (pveMasterUpgrade2) {
                     return currentDamageValue;
                 }
-                float newDamageValue = currentDamageValue * getDamageReduction();
-                return newDamageValue;
+                return currentDamageValue * getDamageReduction();
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getCause().isEmpty() && !Objects.equals(event.getSource(), event.getWarlordsEntity())) {
+                    event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, slowDuration * 20);
+                }
+                return currentDamageValue;
             }
 
             @Override

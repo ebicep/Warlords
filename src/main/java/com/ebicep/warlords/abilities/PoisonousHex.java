@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
@@ -62,24 +59,26 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
     @Override
     public void updateDescription(Player player) {
         boolean infiniteHit = maxEnemiesHit >= 200;
-        description = Component.text("Throw Hex Fangs in front of you, dealing ")
-                               .append(Damages.formatDamage(damageValues.hexDamage))
-                               .append(Component.text(" damage " + (infiniteHit ? "" : "to up to "))
-                                                .append(Component.text((infiniteHit ? "infinite" : "" + maxEnemiesHit), NamedTextColor.RED))
-                                                .append(Component.text(" enemies. Additionally, hit targets receive ")))
-                               .append(Component.text(hexStacksPerHit, NamedTextColor.BLUE))
-                               .append(Component.text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.\n\nEach stack of Poisonous Hex deals "))
-                               .append(Damages.formatDamage(damageValues.hexDOTDamage))
-                               .append(Component.text(" damage every "))
-                               .append(Component.text(format(ticksBetweenDot / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds for "))
-                               .append(Component.text(format(tickDuration / 10f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Stacks up to "))
-                               .append(Component.text(maxStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" times."))
-                               .append(Component.text("\n\nHas a maximum range of "))
-                               .append(Component.text(maxFullDistance, NamedTextColor.YELLOW))
-                               .append(Component.text("blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Throw Hex Fangs in front of you, dealing ")
+                .damage(damageValues.hexDamage)
+                .text(" damage " + (infiniteHit ? "" : "to up to "))
+                .text((infiniteHit ? "infinite" : "" + maxEnemiesHit), NamedTextColor.RED)
+                .text(" enemies. Additionally, hit targets receive ")
+                .text(hexStacksPerHit, NamedTextColor.BLUE)
+                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.")
+                .emptyLine()
+                .text("Each stack of Poisonous Hex deals ")
+                .damage(damageValues.hexDOTDamage)
+                .text(" damage every ")
+                .durationTicks(ticksBetweenDot)
+                .text(" for ")
+                .durationTicks(tickDuration * 2)
+                .text(". Stacks up to ")
+                .text(maxStacks, NamedTextColor.BLUE)
+                .text(" times.")
+                .maxRange(maxFullDistance)
+                .build();
     }
 
     @Override
@@ -238,6 +237,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 .source(wp)
                 .min(damageValues.hexDamage.getMinValue() * toReduceBy)
                 .max(damageValues.hexDamage.getMaxValue() * toReduceBy)
+                .crit(damageValues.hexDamage)
         );
         givePoisonousHex(wp, hit);
         if (projectile.getHit().size() >= maxEnemiesHit) {

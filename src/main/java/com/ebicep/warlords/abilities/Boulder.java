@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
@@ -55,9 +52,11 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Launch a giant boulder that shatters and deals")
-                               .append(Damages.formatDamage(damageValues.boulderDamage))
-                               .append(Component.text("damage to all enemies near the impact point and knocks them back slightly."));
+        description = AbilityDescriptionBuilder
+                .create("Launch a giant boulder that shatters and deals")
+                .damage(damageValues.boulderDamage)
+                .text("damage to all enemies near the impact point and knocks them back slightly.")
+                .build();
     }
 
     @Override

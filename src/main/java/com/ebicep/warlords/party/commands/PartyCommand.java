@@ -14,6 +14,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -54,6 +55,10 @@ public class PartyCommand extends BaseCommand {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (onlinePlayer.getUniqueId().equals(player.getUniqueId())) {
                 continue;
+            }
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(onlinePlayer.getUniqueId());
+            if (partyPlayerPair != null) {
+                partyPlayerPair.getA().leave(onlinePlayer.getUniqueId());
             }
             party.join(onlinePlayer.getUniqueId());
         }

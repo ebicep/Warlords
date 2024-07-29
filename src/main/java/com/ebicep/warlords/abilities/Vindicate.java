@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -47,19 +48,21 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("All allies within an ")
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius gain the status "))
-                               .append(Component.text("VIND", NamedTextColor.GOLD))
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, granting an immunity to de-buffs and "))
-                               .append(Component.text(knockbackResistance + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" knockback resistance. You gain"))
-                               .append(Component.text(format(vindicateDamageReduction) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" damage reduction for "))
-                               .append(Component.text(format(damageReductionTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("All allies within ")
+                .blocks(radius)
+                .text(" gain the status ")
+                .text("VIND", NamedTextColor.DARK_GREEN)
+                .text(" for ")
+                .durationTicks(vindTickDuration)
+                .text(", granting an immunity to de-buffs and ")
+                .percent(knockbackResistance, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" knockback resistance. You gain")
+                .percent(vindicateDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction for ")
+                .durationTicks(damageReductionTickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -104,7 +107,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                         .append(Component.text("Vindicate", NamedTextColor.YELLOW))
                         .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
                         .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                        .append(Component.text("!", NamedTextColor.GRAY))
                 );
             }
 
@@ -214,6 +217,11 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         this.vindicateDamageReduction = vindicateDamageReduction;
     }
 
+    @Override
+    public void multiplyTickDuration(float multiplier) {
+        this.vindTickDuration *= multiplier;
+        this.damageReductionTickDuration *= multiplier;
+    }
 
     @Override
     public int getTickDuration() {
@@ -223,12 +231,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public void setTickDuration(int tickDuration) {
         this.vindTickDuration = tickDuration;
-    }
-
-    @Override
-    public void multiplyTickDuration(float multiplier) {
-        this.vindTickDuration *= multiplier;
-        this.damageReductionTickDuration *= multiplier;
     }
 
     public int getDamageReductionTickDuration() {

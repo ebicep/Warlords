@@ -1,10 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -21,8 +18,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -38,14 +33,13 @@ import java.util.*;
 
 public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox, Damages<EarthenSpike.DamageValues> {
 
+    public static final Map<UUID, Long> PLAYER_SPIKE_COOLDOWN = new HashMap<>();
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",
             "shaman.earthenspike.animation.b",
             "shaman.earthenspike.animation.c",
             "shaman.earthenspike.animation.d",
     };
-    public static final Map<UUID, Long> PLAYER_SPIKE_COOLDOWN = new HashMap<>();
-
     public int playersSpiked = 0;
     public int carrierSpiked = 0;
 
@@ -70,13 +64,12 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text(
-                                       "Send forth an underground earth spike that locks onto a targeted enemy player. When the spike reaches its target it emerges from the ground, dealing ")
-                               .append(Damages.formatDamage(damageValues.spikeDamage))
-                               .append(Component.text(" damage to any nearby enemies and launches them up into the air."))
-                               .append(Component.text("\n\nHas an initial cast range of "))
-                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Send forth an underground earth spike that locks onto a targeted enemy player. When the spike reaches its target it emerges from the ground, dealing ")
+                .damage(damageValues.spikeDamage)
+                .text(" damage to any nearby enemies and launches them up into the air.")
+                .initialRange(radius)
+                .build();
 
     }
 

@@ -14,6 +14,9 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
+import com.ebicep.warlords.player.general.settings.ParticleQuality;
+import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -96,11 +99,11 @@ public class WarlordsNewHotbarMenu {
                 Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
                 Component.empty(),
                 Component.text("Energy: ", NamedTextColor.GRAY)
-                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.YELLOW))
                          .append(Component.text(" / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.YELLOW))
                          .append(Component.text(" per sec / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.YELLOW))
                          .append(Component.text(" per hit"))
         );
         boolean noDamageResistance = apc.getDamageResistance() == 0;
@@ -1060,7 +1063,15 @@ public class WarlordsNewHotbarMenu {
                         1,
                         MENU_SETTINGS_CHAT_SETTINGS,
                         (m, e) -> {
-                            Settings.ChatSettings.openChatSettingsMenu(player);
+                            ChatSettings.openChatSettingsMenu(player);
+                        }
+                );
+                menu.setItem(
+                        7,
+                        1,
+                        ActionBarSettings.ITEM,
+                        (m, e) -> {
+                            ActionBarSettings.openMenu(player, databasePlayer);
                         }
                 );
 
@@ -1072,13 +1083,13 @@ public class WarlordsNewHotbarMenu {
 
         public static void openParticleQualityMenu(Player player) {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                Settings.ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
+                ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
 
                 Menu menu = new Menu("Particle Quality", 9 * 4);
 
-                Settings.ParticleQuality[] particleQualities = Settings.ParticleQuality.values();
+                ParticleQuality[] particleQualities = ParticleQuality.values();
                 for (int i = 0; i < particleQualities.length; i++) {
-                    Settings.ParticleQuality particleQuality = particleQualities[i];
+                    ParticleQuality particleQuality = particleQualities[i];
 
                     menu.setItem(
                             i + 3,

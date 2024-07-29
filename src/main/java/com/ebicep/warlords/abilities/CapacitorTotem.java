@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractTotem;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -17,7 +14,6 @@ import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.CapacitorTotemBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,13 +45,15 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing ")
-                               .append(Damages.formatDamage(damageValues.totemDamage))
-                               .append(Component.text(" damage to all enemies in a "))
-                               .append(Component.text(format(radius), NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing ")
+                .damage(damageValues.totemDamage)
+                .text(" damage to all enemies within ")
+                .blocks(radius)
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override

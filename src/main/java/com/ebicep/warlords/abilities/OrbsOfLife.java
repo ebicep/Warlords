@@ -47,7 +47,12 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     private final int floatingOrbRadius = 20;
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 280;
+    private int initialOrbs = 2;
     private int orbTickMultiplier = 1;
+    private float healingIncreaseDelay = 1.5f;
+    private float healingIncreaseTime = 6.5f;
+    private int healingIncrease = 40;
+    //TODO: Variables for magical numbers in description (Duration)
 
     public OrbsOfLife() {
         super("Orbs of Life", 19.5f, 20);
@@ -55,23 +60,31 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Spawn ")
-                               .append(Component.text("2 ", NamedTextColor.YELLOW))
-                               .append(Component.text("initial orbs on cast."))
-                               .append(Component.text("\n\nStriking and hitting enemies with abilities causes them to drop an orb of life that lasts "))
-                               .append(Component.text("8", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, restoring "))
-                               .append(Heals.formatHealing(healingValues.orbHealing))
-                               .append(Component.text(" health to the ally that picks it up. Other nearby allies recover "))
-                               .append(Heals.formatHealing(healingValues.orbHealing))
-                               .append(Component.text(" health. After 1.5 seconds the healing will increase by "))
-                               .append(Component.text("40%", NamedTextColor.GREEN))
-                               .append(Component.text(" over 6.5 seconds. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
-                               .append(Component.text("seconds."))
-                               .append(Component.text("\n\nRecast to make the orbs levitate towards you or the nearest ally in a "))
-                               .append(Component.text(floatingOrbRadius + " ", NamedTextColor.YELLOW))
-                               .append(Component.text("block radius."));
+        description = AbilityDescriptionBuilder
+                .create("Spawn ")
+                .text(initialOrbs, NamedTextColor.BLUE)
+                .text(" orbs on cast.")
+                .emptyLine()
+                .text("Striking and hitting enemies with abilities causes them to drop an orb of life that lasts ")
+                .durationSeconds(8)
+                .text(", restoring ")
+                .heal(healingValues.orbHealing)
+                .text(" health to the ally that picks it up. Other nearby allies recover ")
+                .heal(healingValues.orbHealing)
+                .text(" health. After ")
+                .durationSeconds(healingIncreaseDelay)
+                .text(" the healing will increase by ")
+                .percent(healingIncrease, NamedTextColor.GREEN)
+                .text(" over ")
+                .durationSeconds(healingIncreaseTime)
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text("seconds.")
+                .emptyLine()
+                .text("Recast to make the orbs levitate towards you or the nearest ally within ")
+                .blocks(floatingOrbRadius)
+                .text(".")
+                .build();
 
     }
 
@@ -128,12 +141,12 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             itr.remove();
 
                             float orbHeal = healingValues.orbHealing.getValue();
-                            // Increasing heal for low long orb lived for (up to +25%)
+                            // Increasing heal for low long orb lived for (up to +40%)
                             // 6.5 seconds = 130 ticks
                             // 6.5 seconds = 1 + (130/325) = 1.4
                             // 225 *= 1.4 = 315
                             if (orb.getPlayerToMoveTowards() == null) {
-                                orbHeal *= 1 + orb.getTicksLived() / 325f;
+                                orbHeal *= 1 + orb.getTicksLived() / (healingIncreaseTime * 20 / healingIncrease * 100);
                             }
 
                             healPlayer(teammateToHeal, wp, orbHeal);
@@ -174,10 +187,8 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         };
         wp.getCooldownManager().addCooldown(orbsOfLifeCooldown);
 
-        spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
-        spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
-        if (pveMasterUpgrade) {
-            spawnOrbs(wp, wp, "Orbs Of Life", orbsOfLifeCooldown);
+        for (int i = 0; i < initialOrbs; i++) {
+            spawnOrbs(wp, wp, "Orbs of Life", orbsOfLifeCooldown);
         }
 
         addSecondaryAbility(
@@ -333,13 +344,13 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return false;
     }
 
-    public void setOrbTickMultiplier(int orbTickMultiplier) {
-        this.orbTickMultiplier = orbTickMultiplier;
-    }
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new OrbsOfLifeBranch(abilityTree, this);
+    }
+
+    public void setOrbTickMultiplier(int orbTickMultiplier) {
+        this.orbTickMultiplier = orbTickMultiplier;
     }
 
     @Override
@@ -351,6 +362,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
     }
+
+    public int getInitialOrbs() { return initialOrbs; }
+
+    public void setInitialOrbs(int initialOrbs) { this.initialOrbs = initialOrbs; }
 
     @Override
     public HealingValues getHealValues() {

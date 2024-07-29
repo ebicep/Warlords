@@ -177,7 +177,10 @@ public class FlagSpawnPointOption implements Option {
                             wp.sendMessage(Component.text("You cannot repick the flag yet!", NamedTextColor.RED));
                         } else {
                             // Steal flag
-                            info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getTicksElapsed(), groundFlagLocation.getFlagMultiplier()));
+                            info.setFlag(new PlayerFlagLocation(wp,
+                                    groundFlagLocation.getTicksElapsed(),
+                                    groundFlagLocation.getFlagMultiplier() + groundFlagLocation.getBonusRepickMultiplier()
+                            ));
                             if (wp.getEntity().getVehicle() != null) {
                                 wp.getEntity().getVehicle().remove();
                             }

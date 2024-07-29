@@ -10,8 +10,8 @@ import com.ebicep.warlords.events.player.ingame.pve.WarlordsUpgradeUnlockEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.menu.Menu;
-import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.PvEUtils;
@@ -529,7 +529,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
         Component prefix = autoUpgraded ? AutoUpgradeProfile.AUTO_UPGRADE_PREFIX : Component.empty();
         game.forEachOnlinePlayer((p, t) -> {
             DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
-            if (databasePlayer.getChatUpgradeMode() != Settings.ChatSettings.ChatUpgrade.ALL) {
+            if (databasePlayer.getChatUpgradeMode() != ChatSettings.ChatUpgrade.ALL) {
                 return;
             }
             if (upgrade.equals(masterUpgrade) || upgrade.equals(masterUpgrade2)) {

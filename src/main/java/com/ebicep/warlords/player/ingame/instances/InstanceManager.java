@@ -8,7 +8,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
@@ -372,6 +372,7 @@ public class InstanceManager {
                         .source(attacker)
                         .value(overVeneDamage)
                         .showAsCrit(isCrit)
+                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 ).ifPresent(finalEvent::set);
             } else {
                 damageValue *= data.getIntervene().getDamageReduction() / 100f;
@@ -502,18 +503,18 @@ public class InstanceManager {
             ) {
                 RegularCooldown cooldown = shieldCooldown.get();
                 Shield shield = (Shield) cooldown.getCooldownObject();
-                debugMessage.appendTitle("Shield" + shield.getName() + ")", NamedTextColor.AQUA);
+                debugMessage.appendTitle("Shield (" + shield.getName() + ")", NamedTextColor.AQUA);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Pre Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(String.valueOf(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
                 );
                 //adding dmg to shield
                 shield.addShieldHealth(-damageValue);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Post Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(String.valueOf(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
                 );
                 //check if broken
                 TextComponent.Builder ownMessage = Component.text();
@@ -762,8 +763,8 @@ public class InstanceManager {
 
                     warlordsEntity.getGame().forEachOnlinePlayer((p, t) -> {
                         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
-                        Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
-                        if (killsMode != Settings.ChatSettings.ChatKills.ALL && killsMode != Settings.ChatSettings.ChatKills.NO_ASSISTS) {
+                        ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+                        if (killsMode != ChatSettings.ChatKills.ALL && killsMode != ChatSettings.ChatKills.NO_ASSISTS) {
                             return;
                         }
                         if (p == warlordsEntity.getEntity()) {
@@ -817,7 +818,7 @@ public class InstanceManager {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsEntity.getUuid(),
                 warlordsEntity instanceof WarlordsPlayer && warlordsEntity.getEntity() instanceof Player
         );
-        if (databasePlayer.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
+        if (databasePlayer.getChatDamageMode() == ChatSettings.ChatDamage.ALL) {
             Component component = WarlordsEntity.RECEIVE_ARROW_RED
                     .append(Component.text(" You took ", NamedTextColor.GRAY))
                     .append(Component.text(Math.round(damage), NamedTextColor.RED))

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -45,6 +46,8 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     private int silenceDurationInTicks = 30;
     private int minSilenceDurationInTicks = 40;
     private int maxSilenceDurationInTicks = 70;
+    private int speedBuff = 40;
+    private float speedDuration = 1.5f;
 
     public SoulShackle() {
         super("Soul Shackle", 9, 40);
@@ -52,20 +55,20 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Shackle up to ")
-                               .append(Component.text(maxShackleTargets, NamedTextColor.GOLD))
-                               .append(Component.text(" enemy and deal "))
-                               .append(Damages.formatDamage(damageValues.shackleDamage))
-                               .append(Component.text(" damage. Shackled enemies are silenced for "))
-                               .append(Component.text(format(silenceDurationInTicks / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, making them unable to use their main attack for the duration. Gain a short burst of "))
-                               .append(Component.text("40%", NamedTextColor.YELLOW))
-                               .append(Component.text(" movement speed for "))
-                               .append(Component.text("1.5", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds after shackling an enemy."))
-                               .append(Component.text("\n\nHas a range of "))
-                               .append(Component.text(shackleRange, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Shackle up to ")
+                .text(maxShackleTargets, NamedTextColor.BLUE)
+                .text(" enemy and deal ")
+                .damage(damageValues.shackleDamage)
+                .text(" damage. Shackled enemies are silenced for ")
+                .durationTicks(silenceDurationInTicks)
+                .text(", making them unable to use their main attack for the duration. Gain a short burst of ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(" movement speed for ")
+                .durationSeconds(speedDuration)
+                .text(" after shackling an enemy.")
+                .maxRange(shackleRange)
+                .build();
     }
 
     @Override
@@ -142,7 +145,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                 1
         );
 
-        wp.addSpeedModifier(wp, "Shackle Speed", 40, 30, "BASE");
+        wp.addSpeedModifier(wp, "Shackle Speed", speedBuff, (int) speedDuration * 20, "BASE");
 
 //        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
 //        if (silenceDuration > maxSilenceDurationInTicks) {
@@ -277,7 +280,9 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         this.minSilenceDurationInTicks = minSilenceDurationInTicks;
     }
 
-    public int getSilenceDurationInTicks() { return maxSilenceDurationInTicks; }
+    public int getSilenceDurationInTicks() {
+        return maxSilenceDurationInTicks;
+    }
 
     public void setSilenceDurationInTicks(int maxSilenceDurationInTicks) {
         this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;

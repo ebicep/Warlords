@@ -1,9 +1,9 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.Pair;
-import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -18,7 +18,9 @@ public class Temp extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Placeholder Ability");
+        description = AbilityDescriptionBuilder
+                .create("Placeholder Ability")
+                .build();
     }
 
     @Override

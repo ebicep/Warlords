@@ -44,10 +44,16 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Place a stationary beacon on the ground that lasts ")
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. "))
-                               .append(getBonusDescription());
+        description = AbilityDescriptionBuilder
+                .create("Place a stationary beacon on the ground that lasts ")
+                .durationTicks(tickDuration)
+                .text(". ")
+                .append(getBonusDescription())
+                .emptyLine()
+                .text("Up to ")
+                .text(maxBeaconsAtATime, NamedTextColor.BLUE)
+                .text(" beacons can be present on the field at once.")
+                .build();
     }
 
     public abstract Component getBonusDescription();
@@ -124,13 +130,13 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
         return true;
     }
 
-    public abstract LineEffect getLineEffect(Location target);
-
-    public abstract String getAbbreviation();
-
     public abstract Class<R> getDataClass();
 
+    public abstract LineEffect getLineEffect(Location target);
+
     public abstract R getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius);
+
+    public abstract String getAbbreviation();
 
     protected void onRemove(R data) {
 

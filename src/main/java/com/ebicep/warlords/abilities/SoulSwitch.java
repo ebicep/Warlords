@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -23,7 +20,6 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -58,25 +54,27 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     @Override
     public void updateDescription(Player player) {
         if (inPve) {
-            description = ComponentBuilder.create("Switch locations with an enemy, stunning them for ")
-                                          .text(format(blindnessTicks / 20f), NamedTextColor.GOLD)
-                                          .text(" seconds. Upon swapping, self heal for ")
-                                          .append(Heals.formatHealing(healingValues.switchHealing))
-                                          .text(" health, go invisible for ")
-                                          .text(format(invisTicks / 20f), NamedTextColor.GOLD)
-                                          .text(" seconds, and transform the swapped enemy into your own Animus. " +
-                                                  "The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " +
-                                                  "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " +
-                                                  "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second. Has a range of ")
-                                          .text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW)
-                                          .text("blocks. Soul Switch has low vertical range.")
-                                          .build();
+            description = AbilityDescriptionBuilder
+                    .create("Switch locations with an enemy, stunning them for ")
+                    .durationTicks(blindnessTicks)
+                    .text(". Upon swapping, self heal for ")
+                    .heal(healingValues.switchHealing)
+                    .text(" health, go invisible for ")
+                    .durationTicks(invisTicks)
+                    .text(", and transform the swapped enemy into your own Animus. " +
+                            "The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " +
+                            "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " +
+                            "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
+                    .maxRange(radius)
+                    .build();
         } else {
-            description = Component.text("Switch locations with an enemy, blinding them for ")
-                                   .append(Component.text("1.5 ", NamedTextColor.GOLD))
-                                   .append(Component.text("seconds. Has a range of "))
-                                   .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                                   .append(Component.text("blocks. Soul Switch has low vertical range."));
+            description = AbilityDescriptionBuilder
+                    .create("Switch locations with an enemy, blinding them for ")
+                    .durationTicks(blindnessTicks)
+                    .text(".")
+                    .maxRange(radius)
+                    .text(" Soul Switch has low vertical range.")
+                    .build();
         }
 
     }

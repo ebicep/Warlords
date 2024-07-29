@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Duration;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
@@ -17,7 +18,6 @@ import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengersWrathBranch;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
@@ -46,15 +46,17 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Burst with incredible holy power, causing your Avenger's Strikes to hit up to ")
-                               .append(Component.text(maxTargets, NamedTextColor.YELLOW))
-                               .append(Component.text(" additional enemies that are within "))
-                               .append(Component.text("5", NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks of your target. Your energy per second is increased by "))
-                               .append(Component.text(format(energyPerSecond), NamedTextColor.GOLD))
-                               .append(Component.text(" for the duration of the effect. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Burst with incredible holy power, causing your Avenger's Strikes to hit up to ")
+                .text(maxTargets, NamedTextColor.BLUE)
+                .text(" additional enemies that are within ")
+                .blocks(hitRadius)
+                .text(" of your target. Your energy per second is increased by ")
+                .energy(energyPerSecond)
+                .text(" for the duration of the effect. Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override

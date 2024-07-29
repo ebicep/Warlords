@@ -31,16 +31,16 @@ public interface Value {
     }
 
     /**
-     * @return min/max/set value
-     */
-    List<FloatModifiable> getValues();
-
-    /**
      * @return min/max/set/crit chance/crit multiplier value
      */
     default List<FloatModifiable> getAllValues() {
         return getValues();
     }
+
+    /**
+     * @return min/max/set value
+     */
+    List<FloatModifiable> getValues();
 
     default void forEachValue(Consumer<FloatModifiable> consumer) {
         getValues().forEach(consumer);
@@ -149,12 +149,12 @@ public interface Value {
             return List.of(value);
         }
 
-        public float getValue() {
-            return value.getCalculatedValue();
-        }
-
         public float getMultiplicativePercent() {
             return getValue() / 100f;
+        }
+
+        public float getValue() {
+            return value.getCalculatedValue();
         }
 
     }

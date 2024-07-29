@@ -9,7 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.GlowingMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class GlowingTeamOption implements Option {
                     return;
                 }
                 DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                    if (databasePlayer.getGlowingMode() == Settings.GlowingMode.OFF) {
+                    if (databasePlayer.getGlowingMode() == GlowingMode.OFF) {
                         return;
                     }
 

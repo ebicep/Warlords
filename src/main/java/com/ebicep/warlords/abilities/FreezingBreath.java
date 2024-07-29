@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -18,7 +19,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,6 +46,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
     private int slowness = 40;
     private float hitbox = 10;
     private int maxAnimationTime = 12;
+
     public FreezingBreath() {
         super("Freezing Breath", 9.5f, 60, 1.25, 100, false);
     }
@@ -57,13 +58,15 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Breathe cold air in a cone in front of you, dealing ")
-                               .append(Damages.formatDamage(damageValues.freezingBreathDamage))
-                               .append(Component.text(" damage to all enemies hit and slowing them by "))
-                               .append(Component.text(slowness + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text(slowDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder
+                .create("Breathe cold air in a cone in front of you, dealing ")
+                .damage(damageValues.freezingBreathDamage)
+                .text(" damage to all enemies hit and slowing them by ")
+                .percent(slowness, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationSeconds(slowDuration)
+                .text(".")
+                .build();
 
     }
 

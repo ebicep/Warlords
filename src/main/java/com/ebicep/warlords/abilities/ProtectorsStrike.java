@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -16,7 +17,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -41,15 +41,17 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and healing "))
-                               .append(Component.text(maxAllies, NamedTextColor.GREEN))
-                               .append(Component.text(" nearby allies for "))
-                               .append(Component.text(allyHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the damage done. Also heals yourself by "))
-                               .append(Component.text(selfHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the damage done. Based on your current health."));
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy player, causing ")
+                .damage(damageValues.strikeDamage)
+                .text(" damage and healing ")
+                .text(maxAllies, NamedTextColor.GREEN)
+                .text(" nearby allies for ")
+                .percent(allyHealing, NamedTextColor.GREEN)
+                .text(" of the damage done. Also heals yourself by ")
+                .percent(selfHealing, NamedTextColor.GREEN)
+                .text(" of the damage done.")
+                .build();
     }
 
     @Override

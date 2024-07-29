@@ -510,7 +510,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             final boolean[] add = {false};
             allPlayers.stream()
                       .filter(o -> o.getSpec().name.equalsIgnoreCase(s))
-                      .sorted((o1, o2) -> Integer.compare(getTeam(o2).ordinal(), getTeam(o1).ordinal()))
+                      .sorted((o1, o2) -> Integer.compare(getTeam(o1).ordinal(), getTeam(o2).ordinal()))
                       .forEach(p -> {
                           playerSpecs.append(playerColor.getOrDefault(p, ChatColor.WHITE))
                                      .append(p.getName())

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractChain;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -19,7 +20,6 @@ import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SpiritLinkBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -34,8 +34,11 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.SPRUCE_FENCE_GATE);
     public int numberOfDismounts = 0;
     private final DamageValues damageValues = new DamageValues();
-    private double speedDuration = 1.5;
-    private double damageReductionDuration = 4.5;
+    private float speedBuff = 40;
+    private float speedDuration = 1.5f;
+    private float damageReduction = 15;
+    private float damageReductionDuration = 4.5f;
+    private float damageDecreasePerBounce = 20;
 
     public SpiritLink() {
         super("Spirit Link", 8.5f, 40, 20, 10, 2);
@@ -43,23 +46,24 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Links your spirit with up to ")
-                               .append(Component.text("3", NamedTextColor.RED))
-                               .append(Component.text(" enemy players, dealing "))
-                               .append(Damages.formatDamage(damageValues.linkDamage))
-                               .append(Component.text(" damage to the first target hit. Each additional hit deals "))
-                               .append(Component.text("20%", NamedTextColor.RED))
-                               .append(Component.text(" reduced damage. You gain "))
-                               .append(Component.text("40%", NamedTextColor.YELLOW))
-                               .append(Component.text(" speed for "))
-                               .append(Component.text(speedDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds, and take "))
-                               .append(Component.text("15%", NamedTextColor.RED))
-                               .append(Component.text(" reduced damage for "))
-                               .append(Component.text(damageReductionDuration, NamedTextColor.GOLD))
-                               .append(Component.text(" seconds.\n\nHas an initial cast range of "))
-                               .append(Component.text(radius, NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks."));
+        description = AbilityDescriptionBuilder
+                .create("Links your spirit with up to ")
+                .text(additionalBounces + 1, NamedTextColor.BLUE)
+                .text(" enemy players, dealing ")
+                .damage(damageValues.linkDamage)
+                .text(" damage to the first target hit. Each additional hit deals ")
+                .percent(damageDecreasePerBounce, NamedTextColor.RED)
+                .text(" reduced damage. You gain ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(" speed for ")
+                .durationSeconds(speedDuration)
+                .text(", and take ")
+                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" reduced damage for ")
+                .durationSeconds(damageReductionDuration)
+                .text(".")
+                .initialRange(radius)
+                .build();
     }
 
     @Override
@@ -131,7 +135,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
         we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, inPve ? 4 : 1);
         // speed buff
-        we.addSpeedModifier(we, "Spirit Link", 40, (int) (speedDuration * 20)); // 30 is ticks
+        we.addSpeedModifier(we, "Spirit Link", speedBuff, (int) (speedDuration * 20)); // 30 is ticks
         we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LINK",
@@ -145,7 +149,7 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * .85f;
+                return currentDamageValue * (1 - damageReduction / 100f);
             }
         });
     }
@@ -242,19 +246,19 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
                 });
     }
 
-    public double getSpeedDuration() {
+    public float getSpeedDuration() {
         return speedDuration;
     }
 
-    public void setSpeedDuration(double speedDuration) {
+    public void setSpeedDuration(float speedDuration) {
         this.speedDuration = speedDuration;
     }
 
-    public double getDamageReductionDuration() {
+    public float getDamageReductionDuration() {
         return damageReductionDuration;
     }
 
-    public void setDamageReductionDuration(double damageReductionDuration) {
+    public void setDamageReductionDuration(float damageReductionDuration) {
         this.damageReductionDuration = damageReductionDuration;
     }
 
