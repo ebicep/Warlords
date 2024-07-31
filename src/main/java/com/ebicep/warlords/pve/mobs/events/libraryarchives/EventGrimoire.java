@@ -9,9 +9,9 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class EventGrimoire extends AbstractMob implements BossMinionMob {
@@ -59,10 +59,10 @@ public abstract class EventGrimoire extends AbstractMob implements BossMinionMob
 
     public abstract int getAbilityActivationPeriod();
 
-    public abstract EnumSet<Ability> getAbilities();
+    public abstract Set<Ability<?>> getAbilities();
 
-    public abstract EnumSet<Ability> getAbilitiesM1();
+    public abstract Set<Ability<?>> getAbilitiesM1();
 
-    public abstract EnumSet<Ability> getAbilitiesM2();
+    public abstract Set<Ability<?>> getAbilitiesM2();
 
 }

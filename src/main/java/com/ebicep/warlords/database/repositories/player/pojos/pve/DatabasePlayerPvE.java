@@ -152,7 +152,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
     @Field("alternative_masteries_unlocked")
     private Map<Specializations, Map<Integer, Instant>> alternativeMasteriesUnlocked = new HashMap<>();
     @Transient
-    private EnumSet<Ability> alternativeMasteriesUnlockedAbilities = EnumSet.noneOf(Ability.class);
+    private Set<Ability<?>> alternativeMasteriesUnlockedAbilities = new HashSet<>();
 
     public void loadInCollection(PlayersCollections collection) {
         if (activeBounties.isEmpty()) {
@@ -163,7 +163,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
     public void updateLocalAlternativeMasteriesUnlocked() {
         alternativeMasteriesUnlocked.forEach((specializations, integerInstantMap) -> {
-            Ability[] abilities = Ability.SPEC_ABILITIES.get(specializations);
+            Ability<?>[] abilities = Ability.SPEC_ABILITIES.get(specializations);
             for (int i = 0; i < 5; i++) {
                 if (integerInstantMap.containsKey(i)) {
                     alternativeMasteriesUnlockedAbilities.add(abilities[i]);
@@ -513,7 +513,7 @@ public class DatabasePlayerPvE implements MultiPvEStats<
         return alternativeMasteriesUnlocked;
     }
 
-    public EnumSet<Ability> getAlternativeMasteriesUnlockedAbilities() {
+    public Set<Ability<?>> getAlternativeMasteriesUnlockedAbilities() {
         return alternativeMasteriesUnlockedAbilities;
     }
 

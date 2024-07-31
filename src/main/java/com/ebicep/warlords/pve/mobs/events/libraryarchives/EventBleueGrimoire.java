@@ -6,7 +6,7 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 public class EventBleueGrimoire extends EventGrimoire {
 
@@ -53,8 +53,8 @@ public class EventBleueGrimoire extends EventGrimoire {
     }
 
     @Override
-    public EnumSet<Ability> getAbilities() {
-        return EnumSet.of(
+    public Set<Ability<?>> getAbilities() {
+        return Set.of(
                 Ability.REPENTANCE
         );
     }
@@ -65,8 +65,8 @@ public class EventBleueGrimoire extends EventGrimoire {
     }
 
     @Override
-    public EnumSet<Ability> getAbilitiesM1() {
-        return EnumSet.of(
+    public Set<Ability<?>> getAbilitiesM1() {
+        return Set.of(
                 Ability.ARCANE_SHIELD,
                 Ability.BLOOD_LUST,
                 Ability.LIGHTNING_ROD,
@@ -76,8 +76,8 @@ public class EventBleueGrimoire extends EventGrimoire {
     }
 
     @Override
-    public EnumSet<Ability> getAbilitiesM2() {
-        return EnumSet.of(
+    public Set<Ability<?>> getAbilitiesM2() {
+        return Set.of(
                 Ability.HOLY_RADIANCE_PROTECTOR,
                 Ability.INTERVENE,
                 Ability.ORBS_OF_LIFE,

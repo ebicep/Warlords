@@ -14,112 +14,180 @@ import java.util.function.Supplier;
 /**
  * Enum of all spec abilities (no mob ones)
  */
-public enum Ability {
+public class Ability<T extends AbstractAbility> {
 
-    ARCANE_SHIELD(ArcaneShield.class, ArcaneShield::new),
-    ASTRAL_PLAGUE(AstralPlague.class, AstralPlague::new),
-    AVENGERS_STRIKE(AvengersStrike.class, AvengersStrike::new),
-    AVENGERS_WRATH(AvengersWrath.class, AvengersWrath::new),
-    BEACON_OF_LIGHT(BeaconOfLight.class, BeaconOfLight::new),
-    BERSERK(Berserk.class, Berserk::new),
-    BLOOD_LUST(BloodLust.class, BloodLust::new),
-    BOULDER(Boulder.class, Boulder::new),
-    CAPACITOR_TOTEM(CapacitorTotem.class, CapacitorTotem::new),
-    CHAIN_HEAL(ChainHeal.class, ChainHeal::new),
-    CHAIN_LIGHTNING(ChainLightning.class, ChainLightning::new),
-    CONSECRATE_AVENGER(ConsecrateAvenger.class, ConsecrateAvenger::new),
-    CONSECRATE_CRUSADER(ConsecrateCrusader.class, ConsecrateCrusader::new),
-    CONSECRATE_PROTECTOR(ConsecrateProtector.class, ConsecrateProtector::new),
-    CONTAGIOUS_FACADE(ContagiousFacade.class, ContagiousFacade::new),
-    CRIPPLING_STRIKE(CripplingStrike.class, CripplingStrike::new),
-    CRUSADERS_STRIKE(CrusadersStrike.class, CrusadersStrike::new),
-    CRYSTAL_OF_HEALING(CrystalOfHealing.class, CrystalOfHealing::new),
-    DEATHS_DEBT(DeathsDebt.class, DeathsDebt::new),
-    DIVINE_BLESSING(DivineBlessing.class, DivineBlessing::new),
-    DRAINING_MIASMA(DrainingMiasma.class, DrainingMiasma::new),
-    EARTHEN_SPIKE(EarthenSpike.class, EarthenSpike::new),
-    EARTHLIVING_WEAPON(EarthlivingWeapon.class, EarthlivingWeapon::new),
-    ENERGY_SEER_CONJURER(EnergySeerConjurer.class, EnergySeerConjurer::new),
-    ENERGY_SEER_LUMINARY(EnergySeerLuminary.class, EnergySeerLuminary::new),
-    ENERGY_SEER_SENTINEL(EnergySeerSentinel.class, EnergySeerSentinel::new),
-    FALLEN_SOULS(FallenSouls.class, FallenSouls::new),
-    FIREBALL(Fireball.class, Fireball::new),
-    FLAME_BURST(FlameBurst.class, FlameBurst::new),
-    FORTIFYING_HEX(FortifyingHex.class, FortifyingHex::new),
-    FREEZING_BREATH(FreezingBreath.class, FreezingBreath::new),
-    FROST_BOLT(FrostBolt.class, FrostBolt::new),
-    GROUND_SLAM_BERSERKER(GroundSlamBerserker.class, GroundSlamBerserker::new),
-    GROUND_SLAM_DEFENDER(GroundSlamDefender.class, GroundSlamDefender::new),
-    GROUND_SLAM_REVENANT(GroundSlamRevenant.class, GroundSlamRevenant::new),
-    GUARDIAN_BEAM(GuardianBeam.class, GuardianBeam::new),
-    HAMMER_OF_LIGHT(HammerOfLight.class, HammerOfLight::new),
-    HEALING_RAIN(HealingRain.class, HealingRain::new),
-    HEALING_TOTEM(HealingTotem.class, HealingTotem::new),
-    HEART_TO_HEART(HeartToHeart.class, HeartToHeart::new),
-    HOLY_RADIANCE_AVENGER(HolyRadianceAvenger.class, HolyRadianceAvenger::new),
-    HOLY_RADIANCE_CRUSADER(HolyRadianceCrusader.class, HolyRadianceCrusader::new),
-    HOLY_RADIANCE_PROTECTOR(HolyRadianceProtector.class, HolyRadianceProtector::new),
-    ICE_BARRIER(IceBarrier.class, IceBarrier::new),
-    IMPALING_STRIKE(ImpalingStrike.class, ImpalingStrike::new),
-    INCENDIARY_CURSE(IncendiaryCurse.class, IncendiaryCurse::new),
-    INFERNO(Inferno.class, Inferno::new),
-    INSPIRING_PRESENCE(InspiringPresence.class, InspiringPresence::new),
-    INTERVENE(Intervene.class, Intervene::new),
-    JUDGEMENT_STRIKE(JudgementStrike.class, JudgementStrike::new),
-    LAST_STAND(LastStand.class, LastStand::new),
-    LIGHT_INFUSION_AVENGER(LightInfusionAvenger.class, LightInfusionAvenger::new),
-    LIGHT_INFUSION_CRUSADER(LightInfusionCrusader.class, LightInfusionCrusader::new),
-    LIGHT_INFUSION_PROTECTOR(LightInfusionProtector.class, LightInfusionProtector::new),
-    LIGHTNING_BOLT(LightningBolt.class, LightningBolt::new),
-    LIGHTNING_ROD(LightningRod.class, LightningRod::new),
-    MERCIFUL_HEX(MercifulHex.class, MercifulHex::new),
-    MYSTICAL_BARRIER(MysticalBarrier.class, MysticalBarrier::new),
-    NOT_A_SHIELD(NotAShield.class, NotAShield::new),
-    ORBS_OF_LIFE(OrbsOfLife.class, OrbsOfLife::new),
-    ORDER_OF_EVISCERATE(OrderOfEviscerate.class, OrderOfEviscerate::new),
-    POISONOUS_HEX(PoisonousHex.class, PoisonousHex::new),
-    PRISM_GUARD(PrismGuard.class, PrismGuard::new),
-    PROTECTORS_STRIKE(ProtectorsStrike.class, ProtectorsStrike::new),
-    RAY_OF_LIGHT(RayOfLight.class, RayOfLight::new),
-    RECKLESS_CHARGE(RecklessCharge.class, RecklessCharge::new),
-    REMEDIC_CHAINS(RemedicChains.class, RemedicChains::new),
-    REPENTANCE(Repentance.class, Repentance::new),
-    RIGHTEOUS_STRIKE(RighteousStrike.class, RighteousStrike::new),
-    SANCTIFIED_BEACON(SanctifiedBeacon.class, SanctifiedBeacon::new),
-    SANCTUARY(Sanctuary.class, Sanctuary::new),
-    SEISMIC_WAVE_BERSERKER(SeismicWaveBerserker.class, SeismicWaveBerserker::new),
-    SEISMIC_WAVE_DEFENDER(SeismicWaveDefender.class, SeismicWaveDefender::new),
-    SHADOW_STEP(ShadowStep.class, ShadowStep::new),
-    SOOTHING_ELIXIR(SoothingElixir.class, SoothingElixir::new),
-    SOULBINDING(Soulbinding.class, Soulbinding::new),
-    SOULFIRE_BEAM(SoulfireBeam.class, SoulfireBeam::new),
-    SOUL_SHACKLE(SoulShackle.class, SoulShackle::new),
-    SOUL_SWITCH(SoulSwitch.class, SoulSwitch::new),
-    SPIRIT_LINK(SpiritLink.class, SpiritLink::new),
-    TIME_WARP_AQUAMANCER(TimeWarpAquamancer.class, TimeWarpAquamancer::new),
-    TIME_WARP_CRYOMANCER(TimeWarpCryomancer.class, TimeWarpCryomancer::new),
-    TIME_WARP_PYROMANCER(TimeWarpPyromancer.class, TimeWarpPyromancer::new),
-    UNDYING_ARMY(UndyingArmy.class, UndyingArmy::new),
-    VINDICATE(Vindicate.class, Vindicate::new),
-    VITALITY_LIQUOR(VitalityLiquor.class, VitalityLiquor::new),
-    VITALITY_CONCOCTION(VitalityConcoction.class, VitalityConcoction::new),
-    WATER_BOLT(WaterBolt.class, WaterBolt::new),
-    WATER_BREATH(WaterBreath.class, WaterBreath::new),
-    WINDFURY_WEAPON(WindfuryWeapon.class, WindfuryWeapon::new),
-    WONDER_TRAP(WonderTrap.class, WonderTrap::new),
-    WOUNDING_STRIKE_BERSERKER(WoundingStrikeBerserker.class, WoundingStrikeBerserker::new),
-    WOUNDING_STRIKE_DEFENDER(WoundingStrikeDefender.class, WoundingStrikeDefender::new),
+    public static final Ability<ArcaneShield> ARCANE_SHIELD = new Ability<>(ArcaneShield.class, ArcaneShield::new);
+    public static final Ability<AstralPlague> ASTRAL_PLAGUE = new Ability<>(AstralPlague.class, AstralPlague::new);
+    public static final Ability<AvengersStrike> AVENGERS_STRIKE = new Ability<>(AvengersStrike.class, AvengersStrike::new);
+    public static final Ability<AvengersWrath> AVENGERS_WRATH = new Ability<>(AvengersWrath.class, AvengersWrath::new);
+    public static final Ability<BeaconOfLight> BEACON_OF_LIGHT = new Ability<>(BeaconOfLight.class, BeaconOfLight::new);
+    public static final Ability<Berserk> BERSERK = new Ability<>(Berserk.class, Berserk::new);
+    public static final Ability<BloodLust> BLOOD_LUST = new Ability<>(BloodLust.class, BloodLust::new);
+    public static final Ability<Boulder> BOULDER = new Ability<>(Boulder.class, Boulder::new);
+    public static final Ability<CapacitorTotem> CAPACITOR_TOTEM = new Ability<>(CapacitorTotem.class, CapacitorTotem::new);
+    public static final Ability<ChainHeal> CHAIN_HEAL = new Ability<>(ChainHeal.class, ChainHeal::new);
+    public static final Ability<ChainLightning> CHAIN_LIGHTNING = new Ability<>(ChainLightning.class, ChainLightning::new);
+    public static final Ability<ConsecrateAvenger> CONSECRATE_AVENGER = new Ability<>(ConsecrateAvenger.class, ConsecrateAvenger::new);
+    public static final Ability<ConsecrateCrusader> CONSECRATE_CRUSADER = new Ability<>(ConsecrateCrusader.class, ConsecrateCrusader::new);
+    public static final Ability<ConsecrateProtector> CONSECRATE_PROTECTOR = new Ability<>(ConsecrateProtector.class, ConsecrateProtector::new);
+    public static final Ability<ContagiousFacade> CONTAGIOUS_FACADE = new Ability<>(ContagiousFacade.class, ContagiousFacade::new);
+    public static final Ability<CripplingStrike> CRIPPLING_STRIKE = new Ability<>(CripplingStrike.class, CripplingStrike::new);
+    public static final Ability<CrusadersStrike> CRUSADERS_STRIKE = new Ability<>(CrusadersStrike.class, CrusadersStrike::new);
+    public static final Ability<CrystalOfHealing> CRYSTAL_OF_HEALING = new Ability<>(CrystalOfHealing.class, CrystalOfHealing::new);
+    public static final Ability<DeathsDebt> DEATHS_DEBT = new Ability<>(DeathsDebt.class, DeathsDebt::new);
+    public static final Ability<DivineBlessing> DIVINE_BLESSING = new Ability<>(DivineBlessing.class, DivineBlessing::new);
+    public static final Ability<DrainingMiasma> DRAINING_MIASMA = new Ability<>(DrainingMiasma.class, DrainingMiasma::new);
+    public static final Ability<EarthenSpike> EARTHEN_SPIKE = new Ability<>(EarthenSpike.class, EarthenSpike::new);
+    public static final Ability<EarthlivingWeapon> EARTHLIVING_WEAPON = new Ability<>(EarthlivingWeapon.class, EarthlivingWeapon::new);
+    public static final Ability<EnergySeerConjurer> ENERGY_SEER_CONJURER = new Ability<>(EnergySeerConjurer.class, EnergySeerConjurer::new);
+    public static final Ability<EnergySeerLuminary> ENERGY_SEER_LUMINARY = new Ability<>(EnergySeerLuminary.class, EnergySeerLuminary::new);
+    public static final Ability<EnergySeerSentinel> ENERGY_SEER_SENTINEL = new Ability<>(EnergySeerSentinel.class, EnergySeerSentinel::new);
+    public static final Ability<FallenSouls> FALLEN_SOULS = new Ability<>(FallenSouls.class, FallenSouls::new);
+    public static final Ability<Fireball> FIREBALL = new Ability<>(Fireball.class, Fireball::new);
+    public static final Ability<FlameBurst> FLAME_BURST = new Ability<>(FlameBurst.class, FlameBurst::new);
+    public static final Ability<FortifyingHex> FORTIFYING_HEX = new Ability<>(FortifyingHex.class, FortifyingHex::new);
+    public static final Ability<FreezingBreath> FREEZING_BREATH = new Ability<>(FreezingBreath.class, FreezingBreath::new);
+    public static final Ability<FrostBolt> FROST_BOLT = new Ability<>(FrostBolt.class, FrostBolt::new);
+    public static final Ability<GroundSlamBerserker> GROUND_SLAM_BERSERKER = new Ability<>(GroundSlamBerserker.class, GroundSlamBerserker::new);
+    public static final Ability<GroundSlamDefender> GROUND_SLAM_DEFENDER = new Ability<>(GroundSlamDefender.class, GroundSlamDefender::new);
+    public static final Ability<GroundSlamRevenant> GROUND_SLAM_REVENANT = new Ability<>(GroundSlamRevenant.class, GroundSlamRevenant::new);
+    public static final Ability<GuardianBeam> GUARDIAN_BEAM = new Ability<>(GuardianBeam.class, GuardianBeam::new);
+    public static final Ability<HammerOfLight> HAMMER_OF_LIGHT = new Ability<>(HammerOfLight.class, HammerOfLight::new);
+    public static final Ability<HealingRain> HEALING_RAIN = new Ability<>(HealingRain.class, HealingRain::new);
+    public static final Ability<HealingTotem> HEALING_TOTEM = new Ability<>(HealingTotem.class, HealingTotem::new);
+    public static final Ability<HeartToHeart> HEART_TO_HEART = new Ability<>(HeartToHeart.class, HeartToHeart::new);
+    public static final Ability<HolyRadianceAvenger> HOLY_RADIANCE_AVENGER = new Ability<>(HolyRadianceAvenger.class, HolyRadianceAvenger::new);
+    public static final Ability<HolyRadianceCrusader> HOLY_RADIANCE_CRUSADER = new Ability<>(HolyRadianceCrusader.class, HolyRadianceCrusader::new);
+    public static final Ability<HolyRadianceProtector> HOLY_RADIANCE_PROTECTOR = new Ability<>(HolyRadianceProtector.class, HolyRadianceProtector::new);
+    public static final Ability<IceBarrier> ICE_BARRIER = new Ability<>(IceBarrier.class, IceBarrier::new);
+    public static final Ability<ImpalingStrike> IMPALING_STRIKE = new Ability<>(ImpalingStrike.class, ImpalingStrike::new);
+    public static final Ability<IncendiaryCurse> INCENDIARY_CURSE = new Ability<>(IncendiaryCurse.class, IncendiaryCurse::new);
+    public static final Ability<Inferno> INFERNO = new Ability<>(Inferno.class, Inferno::new);
+    public static final Ability<InspiringPresence> INSPIRING_PRESENCE = new Ability<>(InspiringPresence.class, InspiringPresence::new);
+    public static final Ability<Intervene> INTERVENE = new Ability<>(Intervene.class, Intervene::new);
+    public static final Ability<JudgementStrike> JUDGEMENT_STRIKE = new Ability<>(JudgementStrike.class, JudgementStrike::new);
+    public static final Ability<LastStand> LAST_STAND = new Ability<>(LastStand.class, LastStand::new);
+    public static final Ability<LightInfusionAvenger> LIGHT_INFUSION_AVENGER = new Ability<>(LightInfusionAvenger.class, LightInfusionAvenger::new);
+    public static final Ability<LightInfusionCrusader> LIGHT_INFUSION_CRUSADER = new Ability<>(LightInfusionCrusader.class, LightInfusionCrusader::new);
+    public static final Ability<LightInfusionProtector> LIGHT_INFUSION_PROTECTOR = new Ability<>(LightInfusionProtector.class, LightInfusionProtector::new);
+    public static final Ability<LightningBolt> LIGHTNING_BOLT = new Ability<>(LightningBolt.class, LightningBolt::new);
+    public static final Ability<LightningRod> LIGHTNING_ROD = new Ability<>(LightningRod.class, LightningRod::new);
+    public static final Ability<MercifulHex> MERCIFUL_HEX = new Ability<>(MercifulHex.class, MercifulHex::new);
+    public static final Ability<MysticalBarrier> MYSTICAL_BARRIER = new Ability<>(MysticalBarrier.class, MysticalBarrier::new);
+    public static final Ability<NotAShield> NOT_A_SHIELD = new Ability<>(NotAShield.class, NotAShield::new);
+    public static final Ability<OrbsOfLife> ORBS_OF_LIFE = new Ability<>(OrbsOfLife.class, OrbsOfLife::new);
+    public static final Ability<OrderOfEviscerate> ORDER_OF_EVISCERATE = new Ability<>(OrderOfEviscerate.class, OrderOfEviscerate::new);
+    public static final Ability<PoisonousHex> POISONOUS_HEX = new Ability<>(PoisonousHex.class, PoisonousHex::new);
+    public static final Ability<PrismGuard> PRISM_GUARD = new Ability<>(PrismGuard.class, PrismGuard::new);
+    public static final Ability<ProtectorsStrike> PROTECTORS_STRIKE = new Ability<>(ProtectorsStrike.class, ProtectorsStrike::new);
+    public static final Ability<RayOfLight> RAY_OF_LIGHT = new Ability<>(RayOfLight.class, RayOfLight::new);
+    public static final Ability<RecklessCharge> RECKLESS_CHARGE = new Ability<>(RecklessCharge.class, RecklessCharge::new);
+    public static final Ability<RemedicChains> REMEDIC_CHAINS = new Ability<>(RemedicChains.class, RemedicChains::new);
+    public static final Ability<Repentance> REPENTANCE = new Ability<>(Repentance.class, Repentance::new);
+    public static final Ability<RighteousStrike> RIGHTEOUS_STRIKE = new Ability<>(RighteousStrike.class, RighteousStrike::new);
+    public static final Ability<SanctifiedBeacon> SANCTIFIED_BEACON = new Ability<>(SanctifiedBeacon.class, SanctifiedBeacon::new);
+    public static final Ability<Sanctuary> SANCTUARY = new Ability<>(Sanctuary.class, Sanctuary::new);
+    public static final Ability<SeismicWaveBerserker> SEISMIC_WAVE_BERSERKER = new Ability<>(SeismicWaveBerserker.class, SeismicWaveBerserker::new);
+    public static final Ability<SeismicWaveDefender> SEISMIC_WAVE_DEFENDER = new Ability<>(SeismicWaveDefender.class, SeismicWaveDefender::new);
+    public static final Ability<ShadowStep> SHADOW_STEP = new Ability<>(ShadowStep.class, ShadowStep::new);
+    public static final Ability<SoothingElixir> SOOTHING_ELIXIR = new Ability<>(SoothingElixir.class, SoothingElixir::new);
+    public static final Ability<Soulbinding> SOULBINDING = new Ability<>(Soulbinding.class, Soulbinding::new);
+    public static final Ability<SoulfireBeam> SOULFIRE_BEAM = new Ability<>(SoulfireBeam.class, SoulfireBeam::new);
+    public static final Ability<SoulShackle> SOUL_SHACKLE = new Ability<>(SoulShackle.class, SoulShackle::new);
+    public static final Ability<SoulSwitch> SOUL_SWITCH = new Ability<>(SoulSwitch.class, SoulSwitch::new);
+    public static final Ability<SpiritLink> SPIRIT_LINK = new Ability<>(SpiritLink.class, SpiritLink::new);
+    public static final Ability<TimeWarpAquamancer> TIME_WARP_AQUAMANCER = new Ability<>(TimeWarpAquamancer.class, TimeWarpAquamancer::new);
+    public static final Ability<TimeWarpCryomancer> TIME_WARP_CRYOMANCER = new Ability<>(TimeWarpCryomancer.class, TimeWarpCryomancer::new);
+    public static final Ability<TimeWarpPyromancer> TIME_WARP_PYROMANCER = new Ability<>(TimeWarpPyromancer.class, TimeWarpPyromancer::new);
+    public static final Ability<UndyingArmy> UNDYING_ARMY = new Ability<>(UndyingArmy.class, UndyingArmy::new);
+    public static final Ability<Vindicate> VINDICATE = new Ability<>(Vindicate.class, Vindicate::new);
+    public static final Ability<VitalityLiquor> VITALITY_LIQUOR = new Ability<>(VitalityLiquor.class, VitalityLiquor::new);
+    public static final Ability<VitalityConcoction> VITALITY_CONCOCTION = new Ability<>(VitalityConcoction.class, VitalityConcoction::new);
+    public static final Ability<WaterBolt> WATER_BOLT = new Ability<>(WaterBolt.class, WaterBolt::new);
+    public static final Ability<WaterBreath> WATER_BREATH = new Ability<>(WaterBreath.class, WaterBreath::new);
+    public static final Ability<WindfuryWeapon> WINDFURY_WEAPON = new Ability<>(WindfuryWeapon.class, WindfuryWeapon::new);
+    public static final Ability<WonderTrap> WONDER_TRAP = new Ability<>(WonderTrap.class, WonderTrap::new);
+    public static final Ability<WoundingStrikeBerserker> WOUNDING_STRIKE_BERSERKER = new Ability<>(WoundingStrikeBerserker.class, WoundingStrikeBerserker::new);
+    public static final Ability<WoundingStrikeDefender> WOUNDING_STRIKE_DEFENDER = new Ability<>(WoundingStrikeDefender.class, WoundingStrikeDefender::new);
 
     ;
 
-    public static final Ability[] VALUES = values();
-    public static final Map<Specializations, Ability[]> SPEC_ABILITIES = new HashMap<>() {{
+    public static final Ability<?>[] VALUES = new Ability[]{
+            ARCANE_SHIELD,
+            ASTRAL_PLAGUE,
+            AVENGERS_STRIKE,
+            AVENGERS_WRATH,
+            BEACON_OF_LIGHT,
+            BERSERK,
+            BLOOD_LUST,
+            BOULDER,
+            CAPACITOR_TOTEM,
+            CHAIN_HEAL,
+            CHAIN_LIGHTNING,
+            CONSECRATE_AVENGER,
+            CONSECRATE_CRUSADER,
+            CONSECRATE_PROTECTOR,
+            CONTAGIOUS_FACADE,
+            CRIPPLING_STRIKE,
+            CRUSADERS_STRIKE,
+            CRYSTAL_OF_HEALING,
+            DEATHS_DEBT,
+            DIVINE_BLESSING,
+            DRAINING_MIASMA,
+            EARTHEN_SPIKE,
+            EARTHLIVING_WEAPON,
+            ENERGY_SEER_CONJURER,
+            ENERGY_SEER_LUMINARY,
+            ENERGY_SEER_SENTINEL,
+            FALLEN_SOULS,
+            FIREBALL,
+            FLAME_BURST,
+            FORTIFYING_HEX,
+            FREEZING_BREATH,
+            FROST_BOLT,
+            GROUND_SLAM_BERSERKER,
+            GROUND_SLAM_DEFENDER,
+            GROUND_SLAM_REVENANT,
+            GUARDIAN_BEAM,
+            HAMMER_OF_LIGHT,
+            HEALING_RAIN,
+            HEALING_TOTEM,
+            HEART_TO_HEART,
+            HOLY_RADIANCE_AVENGER,
+            HOLY_RADIANCE_CRUSADER,
+            HOLY_RADIANCE_PROTECTOR,
+            ICE_BARRIER,
+            IMPALING_STRIKE,
+            INCENDIARY_CURSE,
+            INFERNO,
+            INSPIRING_PRESENCE,
+            INTERVENE,
+            JUDGEMENT_STRIKE,
+            LAST_STAND,
+            LIGHT_INFUSION_AVENGER,
+            LIGHT_INFUSION_CRUSADER,
+            LIGHT_INFUSION_PROTECTOR,
+            LIGHTNING_BOLT,
+            LIGHTNING_ROD,
+            MERCIFUL_HEX,
+            MYSTICAL_BARRIER,
+            NOT_A_SHIELD,
+            ORBS_OF_LIFE,
+            ORDER_OF_EVISCERATE,
+            POISONOUS_HEX,
+            PRISM_GUARD,
+            PROTECTORS_STRIKE,
+            RAY_OF_LIGHT,
+            RECKLESS_CHARGE,
+            REMEDIC_CHAINS
+    };
+    public static final Map<Specializations, Ability<?>[]> SPEC_ABILITIES = new HashMap<>() {{
         for (Specializations spec : Specializations.VALUES) {
-            Ability[] abilities = new Ability[5];
+            Ability<?>[] abilities = new Ability[5];
             List<AbstractAbility> abstractAbilities = spec.create.get().getAbilities();
             for (int i = 0; i < abstractAbilities.size(); i++) {
                 AbstractAbility ability = abstractAbilities.get(i);
-                Ability abilityRegistry = getAbility(ability.getClass());
+                Ability<?> abilityRegistry = getAbility(ability.getClass());
                 if (abilityRegistry == null) {
                     ChatUtils.MessageType.WARLORDS.sendErrorMessage("Unknown ability for " + spec.name() + ": " + ability.getClass().getSimpleName());
                     Bukkit.getServer().shutdown();
@@ -132,19 +200,19 @@ public enum Ability {
     }};
 
     @Nullable
-    public static Ability getAbility(Class<?> clazz) {
-        for (Ability ability : VALUES) {
-            if (ability.clazz == clazz) {
-                return ability;
+    public static <T extends AbstractAbility> Ability<T> getAbility(Class<T> clazz) {
+        for (Ability<?> ability : VALUES) {
+            if (ability.clazz.equals(clazz)) {
+                return (Ability<T>) ability;
             }
         }
         return null;
     }
 
-    public final Class<?> clazz;
-    public final Supplier<AbstractAbility> create;
+    public final Class<T> clazz;
+    public final Supplier<T> create;
 
-    Ability(Class<?> clazz, Supplier<AbstractAbility> create) {
+    Ability(Class<T> clazz, Supplier<T> create) {
         this.clazz = clazz;
         this.create = create;
     }

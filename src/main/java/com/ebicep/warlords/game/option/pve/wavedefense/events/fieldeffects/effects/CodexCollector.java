@@ -84,7 +84,7 @@ public class CodexCollector implements FieldEffect {
                 if (stats.getCodexesEarned().getOrDefault(codexForSpec, 0) > 0) {
                     codexesEquipped++;
                     player.getSpec().getAbilities().clear();
-                    for (Ability ability : codexForSpec.abilities) {
+                    for (Ability<?> ability : codexForSpec.abilities) {
                         player.getSpec().getAbilities().add(ability.create.get());
                     }
                     warlordsPlayer.resetAbilityTree();

@@ -1450,7 +1450,7 @@ public enum GameEvents {
                                 Component.text(unlocked ? codexForSpec.name : "???????????", NamedTextColor.GRAY)
                                          .decoration(TextDecoration.OBFUSCATED, !unlocked)
                         ));
-                for (Ability ability : codexForSpec.abilities) {
+                for (Ability<?> ability : codexForSpec.abilities) {
                     itemBuilder.addLore(Component.textOfChildren(
                             Component.text(" - ", NamedTextColor.DARK_GRAY),
                             Component.text(unlocked ? ability.create.get().getName() : "??????????", NamedTextColor.GOLD)

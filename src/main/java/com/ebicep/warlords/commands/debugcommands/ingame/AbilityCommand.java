@@ -13,7 +13,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
@@ -41,7 +40,7 @@ public class AbilityCommand extends BaseCommand {
 
     @Subcommand("useall")
     public void useAll(WarlordsPlayer warlordsPlayer) {
-        for (Ability value : Ability.VALUES) {
+        for (Ability<?> value : Ability.VALUES) {
             AbstractAbility ability = value.create.get();
             ability.onActivate(warlordsPlayer);
         }
