@@ -10,9 +10,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.*;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
@@ -40,9 +38,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer implements MultiStatsGeneral {
+public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStats {
 
     @Id
     private String id;
@@ -490,6 +490,13 @@ public class DatabasePlayer implements MultiStatsGeneral {
 
     public void setExperience(long experience) {
         this.experience = experience;
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return Stream.of(pubStats, compStats, tournamentStats)
+                     .flatMap(s -> s.getAllAbilityStats().stream())
+                     .collect(Collectors.toList());
     }
 
     public enum Patches {

@@ -1,15 +1,21 @@
 package com.ebicep.warlords.database.repositories.player.pojos.siege;
 
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
+import java.util.HashMap;
+import java.util.Map;
+
+public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses, TracksAbilityStats {
 
     private DatabaseMageSiege mage = new DatabaseMageSiege();
     private DatabaseWarriorSiege warrior = new DatabaseWarriorSiege();
@@ -17,6 +23,13 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
     private DatabaseShamanSiege shaman = new DatabaseShamanSiege();
     private DatabaseRogueSiege rogue = new DatabaseRogueSiege();
     private DatabaseArcanistSiege arcanist = new DatabaseArcanistSiege();
+    @Field("ability_stats")
+    private Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<String, AbilityStats<?>> getAbilityStats() {
+        return abilityStats;
+    }
 
     @Override
     public void updateSpecStats(

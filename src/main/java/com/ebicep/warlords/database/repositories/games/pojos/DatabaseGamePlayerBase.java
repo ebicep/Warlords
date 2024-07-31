@@ -1,5 +1,8 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
+import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Stats;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.general.ExperienceManager;
@@ -13,13 +16,13 @@ import org.bukkit.Location;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
 
+    @Id
+    private String id;
     protected UUID uuid;
     protected String name;
     protected Specializations spec;
@@ -53,8 +56,8 @@ public class DatabaseGamePlayerBase {
     protected long experienceEarnedSpec;
     @Field("experience_earned_universal")
     protected long experienceEarnedUniversal;
-    @Id
-    private String id;
+    @Field("ability_stats")
+    protected Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
 
     public DatabaseGamePlayerBase() {
     }
@@ -96,6 +99,15 @@ public class DatabaseGamePlayerBase {
         }
         this.experienceEarnedSpec = experienceEarnedSpec;
         this.experienceEarnedUniversal = experienceEarnedUniversal;
+        for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+            if (ability instanceof Stats<?> stats) {
+                this.abilityStats.merge(
+                        stats.getName(),
+                        stats.getAbilityStats(),
+                        AbilityStats::merge
+                );
+            }
+        }
     }
 
     public UUID getUuid() {

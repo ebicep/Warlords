@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractChain;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -27,8 +24,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues> {
+public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues>, Stats<ChainHeal.ChainHealStats> {
 
+    private final ChainHealStats stats = new ChainHealStats();
     private final HealingValues healingValues = new HealingValues();
     private float cooldownReductionInSeconds = 2.5f;
 
@@ -257,6 +255,11 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
         return healingValues;
     }
 
+    @Override
+    public ChainHealStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);
@@ -273,5 +276,23 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
 
     }
 
+    public static class ChainHealStats extends AbilityStats<ChainHealStats> {
+
+        @Override
+        public ChainHealStats merge(ChainHealStats other) {
+            return null;
+        }
+
+        @Override
+        public ChainHealStats unmerge(ChainHealStats other) {
+            return null;
+        }
+
+        @Override
+        public Class<ChainHealStats> getClazz() {
+            return ChainHealStats.class;
+        }
+
+    }
 
 }
