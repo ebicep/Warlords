@@ -83,7 +83,7 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
 
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             silencedTargetStruck++;
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns((int) (abilityReductionInTicks + additionalReductionInTicks), CooldownTypes.ABILITY);
+            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks + additionalReductionInTicks, CooldownTypes.ABILITY);
             for (Vindicate vindicate : wp.getAbilitiesMatching(Vindicate.class)) {
                 vindicate.subtractCurrentCooldown(vindicateCooldownReduction);
             }

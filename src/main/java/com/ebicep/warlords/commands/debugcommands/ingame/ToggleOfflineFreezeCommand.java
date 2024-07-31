@@ -9,7 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 @CommandAlias("offlinefreeze")
-@CommandPermission("warlords.game.toggleofflinefreeze")
+@CommandPermission("group.gamestarter")
 public class ToggleOfflineFreezeCommand extends BaseCommand {
 
     @Default

@@ -48,7 +48,7 @@ public class PartyCommand extends BaseCommand {
     }
 
     @Subcommand("debugcreate")
-    @CommandPermission("group.administrator")
+    @CommandPermission("group.gamestarter")
     @Description("Creates a party with all players on server")
     public void debugCreate(@Conditions("party:false") Player player) {
         Party party = new Party(player.getUniqueId(), false);

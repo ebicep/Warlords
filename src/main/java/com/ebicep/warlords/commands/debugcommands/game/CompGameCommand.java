@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 @CommandAlias("compgame")
-@CommandPermission("group.administrator")
+@CommandPermission("group.gamestarter")
 public class CompGameCommand extends BaseCommand {
 
     private static final List<GameMap> MAP_ROTATION = new ArrayList<>(List.of(GameMap.RIFT, GameMap.CROSSFIRE, GameMap.APERTURE));
