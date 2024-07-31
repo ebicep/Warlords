@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos.siege;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
@@ -24,10 +24,10 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses, TracksAbi
     private DatabaseRogueSiege rogue = new DatabaseRogueSiege();
     private DatabaseArcanistSiege arcanist = new DatabaseArcanistSiege();
     @Field("ability_stats")
-    private Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
+    private Map<String, AbstractAbilityStats<?>> abilityStats = new HashMap<>();
 
     @Override
-    public Map<String, AbilityStats<?>> getAbilityStats() {
+    public Map<String, AbstractAbilityStats<?>> getAbilityStats() {
         return abilityStats;
     }
 

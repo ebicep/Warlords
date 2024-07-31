@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGameCTF;
 import com.ebicep.warlords.database.repositories.games.pojos.ctf.DatabaseGamePlayerCTF;
@@ -24,10 +24,10 @@ public class DatabasePlayerCTF implements CTFStatsWarlordsClasses, TracksAbility
     private DatabaseRogueCTF rogue = new DatabaseRogueCTF();
     private DatabaseArcanistCTF arcanist = new DatabaseArcanistCTF();
     @Field("ability_stats")
-    private Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
+    private Map<String, AbstractAbilityStats<?>> abilityStats = new HashMap<>();
 
     @Override
-    public Map<String, AbilityStats<?>> getAbilityStats() {
+    public Map<String, AbstractAbilityStats<?>> getAbilityStats() {
         return abilityStats;
     }
 

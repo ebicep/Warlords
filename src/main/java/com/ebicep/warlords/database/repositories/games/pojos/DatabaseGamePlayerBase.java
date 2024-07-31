@@ -2,7 +2,7 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Stats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.general.ExperienceManager;
@@ -57,7 +57,7 @@ public class DatabaseGamePlayerBase {
     @Field("experience_earned_universal")
     protected long experienceEarnedUniversal;
     @Field("ability_stats")
-    protected Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
+    protected Map<String, AbstractAbilityStats<?>> abilityStats = new HashMap<>();
 
     public DatabaseGamePlayerBase() {
     }
@@ -100,11 +100,11 @@ public class DatabaseGamePlayerBase {
         this.experienceEarnedSpec = experienceEarnedSpec;
         this.experienceEarnedUniversal = experienceEarnedUniversal;
         for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-            if (ability instanceof Stats<?> stats) {
+            if (ability instanceof AbilityStats<?> stats) {
                 this.abilityStats.merge(
                         stats.getName(),
                         stats.getAbilityStats(),
-                        AbilityStats::merge
+                        AbstractAbilityStats::merge
                 );
             }
         }

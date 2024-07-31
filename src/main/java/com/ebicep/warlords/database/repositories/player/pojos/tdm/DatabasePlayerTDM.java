@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
@@ -25,10 +25,10 @@ public class DatabasePlayerTDM implements TDMStatsWarlordsClasses, TracksAbility
     private DatabaseRogueTDM rogue = new DatabaseRogueTDM();
     private DatabaseArcanistTDM arcanist = new DatabaseArcanistTDM();
     @Field("ability_stats")
-    private Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
+    private Map<String, AbstractAbilityStats<?>> abilityStats = new HashMap<>();
 
     @Override
-    public Map<String, AbilityStats<?>> getAbilityStats() {
+    public Map<String, AbstractAbilityStats<?>> getAbilityStats() {
         return abilityStats;
     }
 

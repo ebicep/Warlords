@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos.interception;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGameInterception;
 import com.ebicep.warlords.database.repositories.games.pojos.interception.DatabaseGamePlayerInterception;
@@ -25,10 +25,10 @@ public class DatabasePlayerInterception implements InterceptionStatsWarlordsClas
     private DatabaseRogueInterception rogue = new DatabaseRogueInterception();
     private DatabaseArcanistInterception arcanist = new DatabaseArcanistInterception();
     @Field("ability_stats")
-    private Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
+    private Map<String, AbstractAbilityStats<?>> abilityStats = new HashMap<>();
 
     @Override
-    public Map<String, AbilityStats<?>> getAbilityStats() {
+    public Map<String, AbstractAbilityStats<?>> getAbilityStats() {
         return abilityStats;
     }
 

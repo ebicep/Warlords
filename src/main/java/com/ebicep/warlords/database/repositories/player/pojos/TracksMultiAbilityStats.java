@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 
 import java.util.*;
 
@@ -8,8 +8,8 @@ public interface TracksMultiAbilityStats extends TracksAbilityStats {
 
     Collection<TracksAbilityStats> getAllAbilityStats();
 
-    default AbilityStats<?> getStat(String ability) {
-        List<? extends AbilityStats<?>> abilityStats = getAllAbilityStats()
+    default AbstractAbilityStats<?> getStat(String ability) {
+        List<? extends AbstractAbilityStats<?>> abilityStats = getAllAbilityStats()
                 .stream()
                 .flatMap(trackAbilityStats -> trackAbilityStats.getAbilityStats().entrySet().stream())
                 .filter(entry -> entry.getKey().equals(ability))
@@ -21,20 +21,20 @@ public interface TracksMultiAbilityStats extends TracksAbilityStats {
         if (abilityStats.size() == 1) {
             return abilityStats.get(0);
         }
-        AbilityStats<?> merge = AbilityStats.merge(abilityStats.get(0), abilityStats.get(1));
+        AbstractAbilityStats<?> merge = AbstractAbilityStats.merge(abilityStats.get(0), abilityStats.get(1));
         for (int i = 2; i < abilityStats.size(); i++) {
-            merge = AbilityStats.merge(merge, abilityStats.get(i));
+            merge = AbstractAbilityStats.merge(merge, abilityStats.get(i));
         }
         return merge;
     }
 
     @Override
-    default Map<String, AbilityStats<?>> getAbilityStats() {
-        Map<String, AbilityStats<?>> abilityStats = new HashMap<>();
+    default Map<String, AbstractAbilityStats<?>> getAbilityStats() {
+        Map<String, AbstractAbilityStats<?>> abilityStats = new HashMap<>();
         Set<String> keys = new HashSet<>();
         getAllAbilityStats().forEach(trackAbilityStats -> keys.addAll(trackAbilityStats.getAbilityStats().keySet()));
         keys.forEach(s -> {
-            AbilityStats<?> stats = getStat(s);
+            AbstractAbilityStats<?> stats = getStat(s);
             if (stats != null) {
                 abilityStats.put(s, stats);
             }

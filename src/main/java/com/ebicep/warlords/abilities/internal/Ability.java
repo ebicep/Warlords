@@ -110,8 +110,6 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<WoundingStrikeBerserker> WOUNDING_STRIKE_BERSERKER = new Ability<>(WoundingStrikeBerserker.class, WoundingStrikeBerserker::new);
     public static final Ability<WoundingStrikeDefender> WOUNDING_STRIKE_DEFENDER = new Ability<>(WoundingStrikeDefender.class, WoundingStrikeDefender::new);
 
-    ;
-
     public static final Ability<?>[] VALUES = new Ability[]{
             ARCANE_SHIELD,
             ASTRAL_PLAGUE,

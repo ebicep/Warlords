@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 
-public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues>, Stats<ChainHeal.ChainHealStats> {
+public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues>, AbilityStats<ChainHeal.ChainHealStats> {
 
     private final ChainHealStats stats = new ChainHealStats();
     private final HealingValues healingValues = new HealingValues();
@@ -276,7 +276,7 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
 
     }
 
-    public static class ChainHealStats extends AbilityStats<ChainHealStats> {
+    public static class ChainHealStats extends AbstractAbilityStats<ChainHealStats> {
 
         @Override
         public ChainHealStats merge(ChainHealStats other) {
