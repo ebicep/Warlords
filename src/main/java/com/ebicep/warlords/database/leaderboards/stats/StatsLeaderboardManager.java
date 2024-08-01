@@ -60,7 +60,7 @@ public class StatsLeaderboardManager {
 
     public static final Map<PlayersCollections, Long> LAST_BOARD_RESETS = new HashMap<>();
 
-    public static boolean enabled = true;
+    public static boolean enabled = false;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
