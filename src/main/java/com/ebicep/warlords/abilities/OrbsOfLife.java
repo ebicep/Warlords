@@ -47,7 +47,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     private final int floatingOrbRadius = 20;
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 280;
-    private int initialOrbs = 2;
+    private int initialOrbs = 3;
     private int orbTickMultiplier = 1;
     private float healingIncreaseDelay = 1.5f;
     private float healingIncreaseTime = 6.5f;

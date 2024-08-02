@@ -476,8 +476,8 @@ public enum SkillBoosts {
                     Component.text("Increase the healing of Orbs of Life by "),
                     Component.text("20%", NamedTextColor.RED),
                     Component.text(" and spawn an additional "),
-                    Component.text("2", NamedTextColor.RED),
-                    Component.text(" orbs on cast.")
+                    Component.text("1", NamedTextColor.RED),
+                    Component.text(" orb on cast.")
             ),
             OrbsOfLife.class,
             abstractAbility -> {
@@ -487,7 +487,7 @@ public enum SkillBoosts {
                               .forEachValue(floatModifiable -> {
                                   floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .2f);
                               });
-                    orbsOfLife.setInitialOrbs(orbsOfLife.getInitialOrbs() + 2);
+                    orbsOfLife.setInitialOrbs(orbsOfLife.getInitialOrbs() + 1);
                 }
             }
     ),
