@@ -39,6 +39,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -133,6 +134,12 @@ public class DatabaseManager {
                     DatabaseTiming.checkTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
                     GuildManager.reloadPlayerCaches();
+                })
+                .delay(20, TimeUnit.SECONDS)
+                .sync(() -> {
+                    if (!StatsLeaderboardManager.enabled) {
+                        DatabaseTiming.checkLeaderboardResets();
+                    }
                 })
                 .execute();
 
