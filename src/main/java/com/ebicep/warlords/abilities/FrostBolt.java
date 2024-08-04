@@ -10,7 +10,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FrostboltBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -33,9 +32,10 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Splash, Damages<FrostBolt.DamageValues> {
+public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.FrostBoltStats> implements WeaponAbilityIcon, Splash, Damages<FrostBolt.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final FrostBoltStats stats = new FrostBoltStats();
     private int maxFullDistance = 30;
     private float directHitMultiplier = 15;
     private FloatModifiable splash = new FloatModifiable(4.125f);
@@ -66,17 +66,6 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
                 .optimalRange(maxFullDistance)
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Shots Fired", "" + timesUsed));
-        info.add(new Pair<>("Direct Hits", "" + directHits));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
     }
 
     @Override
@@ -121,7 +110,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             hit.addSpeedModifier(shooter, "Frostbolt", -slowness, slowDuration * 20);
             hit.addInstance(InstanceBuilder
@@ -178,7 +167,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         if (projectile.getHit().size() == 0) {
             toReduceBy += .15;
         }
-        hit(projectile, shooter, toReduceBy, playersHit, hit);
+        hit(projectile, shooter, toReduceBy, stats.getPlayersHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
         EffectUtils.displayParticle(
                 Particle.SNOWBALL,
@@ -218,7 +207,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 for (int i = 0; i < icicles.size(); i++) {
                     ArmorStand armorStand = icicles.get(i);
                     LocationBuilder location = new LocationBuilder(projectile.getCurrentLocation().clone().add(0, -1.1, 0));
@@ -228,7 +217,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 icicles.forEach(Entity::remove);
                 EffectUtils.displayParticle(Particle.CLOUD, icicles.get(3).getLocation(), 10, 0.2, 0.2, 0.2, 0);
             }
@@ -276,7 +265,7 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
         playersHit++;
         if (nearEntity.onHorse()) {
-            numberOfDismounts++;
+            stats.addNumberOfDismounts();
         }
         nearEntity.addSpeedModifier(shooter, "Frostbolt", -slowness, 2 * 20);
         nearEntity.addInstance(InstanceBuilder
@@ -311,6 +300,11 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
         return splash;
     }
 
+    @Override
+    public FrostBoltStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(242, 311, 20, 175);
@@ -328,4 +322,28 @@ public class FrostBolt extends AbstractPiercingProjectile implements WeaponAbili
 
     }
 
+    public static class FrostBoltStats extends AbstractPiercingProjectileStats<FrostBolt, FrostBoltStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public FrostBoltStats merge(FrostBoltStats other, int multiplier) {
+            FrostBoltStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<FrostBoltStats> getClazz() {
+            return FrostBoltStats.class;
+        }
+
+        @Override
+        public FrostBoltStats create() {
+            return new FrostBoltStats();
+        }
+    }
 }

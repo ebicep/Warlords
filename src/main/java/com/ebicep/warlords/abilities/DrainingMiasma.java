@@ -17,7 +17,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.DrainingMiasmaBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,17 +24,19 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<DrainingMiasma.DamageValues> {
+public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<DrainingMiasma.DamageValues>, AbilityStats<DrainingMiasma, DrainingMiasma.DrainingMiasmaStats> {
 
-    public int playersHit = 0;
+
     protected int numberOfLeechProcd = 0;
     private final DamageValues damageValues = new DamageValues();
+    private final DrainingMiasmaStats stats = new DrainingMiasmaStats();
     private int maxHealthDamage = 3;
     private int tickDuration = 100;
     private int leechDuration = 5;
@@ -75,15 +76,6 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-
-        return info;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
 
@@ -116,7 +108,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                 .entitiesAround(wp, getRadius(), getRadius(), getRadius())
                 .isAlive()
         ) {
-            playersHit++;
+            stats.playersHit++;
             if (miasmaTarget.isEnemy(wp)) {
                 Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20, "BASE");
                 miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
@@ -319,6 +311,11 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         return damageValues;
     }
 
+    @Override
+    public DrainingMiasmaStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.SetValue miasmaDamage = new Value.SetValue(50);
@@ -335,4 +332,33 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     }
 
+    public static class DrainingMiasmaStats extends AbstractAbilityStats<DrainingMiasma, DrainingMiasmaStats> {
+
+        @Field("players_hit")
+        private int playersHit = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            return statsDisplay;
+        }
+
+        @Override
+        public DrainingMiasmaStats merge(DrainingMiasmaStats other, int multiplier) {
+            DrainingMiasmaStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<DrainingMiasmaStats> getClazz() {
+            return DrainingMiasmaStats.class;
+        }
+
+        @Override
+        public DrainingMiasmaStats create() {
+            return new DrainingMiasmaStats();
+        }
+    }
 }

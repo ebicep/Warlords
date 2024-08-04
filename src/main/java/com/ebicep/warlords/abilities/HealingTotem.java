@@ -15,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.HealingTotemBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -29,28 +28,24 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HealingTotem extends AbstractTotem implements Duration, HitBox, Heals<HealingTotem.HealingValues> {
+public class HealingTotem extends AbstractTotem implements Duration, HitBox, Heals<HealingTotem.HealingValues>, AbilityStats<HealingTotem, HealingTotem.HealingTotemStats> {
 
-    public int playersHealed = 0;
-    public int playersCrippled = 0;
 
     private final HealingValues healingValues = new HealingValues();
+    private final HealingTotemStats stats = new HealingTotemStats();
     private FloatModifiable radius = new FloatModifiable(7);
     private int tickDuration = 100;
     private int crippleDuration = 6;
     private float healingIncrement = 25;
 
     public HealingTotem() {
-        this(null, null);
-    }
-
-    public HealingTotem(ArmorStand totem, WarlordsEntity owner) {
-        super("Healing Totem", 68, 60, totem, owner);
+        super("Healing Totem", 68, 60);
     }
 
     @Override
@@ -86,16 +81,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                     .text(".")
                     .build();
         }
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-        info.add(new Pair<>("Players Crippled", "" + playersCrippled));
-
-        return info;
     }
 
     @Override
@@ -139,7 +124,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                     PlayerFilter.entitiesAround(totemStand, rad, rad, rad)
                                 .aliveTeammatesOf(wp)
                                 .forEach((nearPlayer) -> {
-                                    playersHealed++;
+                                    stats.playersHealed++;
                                     nearPlayer.addInstance(InstanceBuilder
                                             .healing()
                                             .ability(this)
@@ -217,7 +202,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         PlayerFilter.entitiesAround(totemStand, rad, rad, rad)
                                     .aliveTeammatesOf(wp)
                                     .forEach(teammate -> {
-                                        playersHealed++;
+                                        stats.playersHealed++;
                                         teammate.addInstance(InstanceBuilder
                                                 .healing()
                                                 .ability(this)
@@ -273,7 +258,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         PlayerFilter.entitiesAround(totemStand.getLocation(), rad, rad, rad)
                                     .aliveEnemiesOf(wp)
                                     .forEach((p) -> {
-                                        playersCrippled++;
+                                        stats.playersCrippled++;
                                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                                 .append(Component.text(" Your Healing Totem has crippled ", NamedTextColor.GRAY))
                                                 .append(Component.text(p.getName(), NamedTextColor.YELLOW))
@@ -384,6 +369,11 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         return healingValues;
     }
 
+    @Override
+    public HealingTotemStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable totemHealing = new Value.RangedValueCritable(621, 728, 25, 175);
@@ -410,4 +400,38 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
     }
 
+    public static class HealingTotemStats extends AbstractAbilityStats<HealingTotem, HealingTotemStats> {
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+
+        @Field("players_crippled")
+        private int playersCrippled = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Players Crippled", playersCrippled));
+            return statsDisplay;
+        }
+
+        @Override
+        public HealingTotemStats merge(HealingTotemStats other, int multiplier) {
+            HealingTotemStats stats = super.merge(other, multiplier);
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.playersCrippled = this.playersCrippled + other.playersCrippled * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<HealingTotemStats> getClazz() {
+            return HealingTotemStats.class;
+        }
+
+        @Override
+        public HealingTotemStats create() {
+            return new HealingTotemStats();
+        }
+    }
 }

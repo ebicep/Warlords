@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
@@ -15,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.InterveneBranch;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -24,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -31,12 +29,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+public class Intervene extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<Intervene, Intervene.InterveneStats> {
 
-public class Intervene extends AbstractAbility implements BlueAbilityIcon, Duration {
 
-    public int playersIntervened = 0;
-    public int carriersIntervened = 0;
-
+    private final InterveneStats stats = new InterveneStats();
     private int tickDuration = 100;
     private float maxDamagePrevented = 3600;
     private int damageReduction = 50;
@@ -85,16 +81,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Intervened", "" + playersIntervened));
-        info.add(new Pair<>("Carriers Intervened", "" + carriersIntervened));
-
-        return info;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
         List<InterveneData> venes = new ArrayList<>();
@@ -106,9 +92,9 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                 .lookingAtFirst(wp)
                 .limit(maxTargets)
         ) {
-            playersIntervened++;
+            stats.playersIntervened++;
             if (veneTarget.hasFlag()) {
-                carriersIntervened++;
+                stats.carriersIntervened++;
             }
 
             // Green line / Sound
@@ -328,6 +314,11 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         this.maxTargets = maxTargets;
     }
 
+    @Override
+    public InterveneStats getAbilityStats() {
+        return stats;
+    }
+
     public static class InterveneData {
 
         private final Intervene intervene;
@@ -369,4 +360,38 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
     }
 
+    public static class InterveneStats extends AbstractAbilityStats<Intervene, InterveneStats> {
+
+        @Field("players_intervened")
+        private int playersIntervened = 0;
+
+        @Field("carriers_intervened")
+        private int carriersIntervened = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Intervened", playersIntervened));
+            statsDisplay.add(new AbilityStatDisplay("Carriers Intervened", carriersIntervened));
+            return statsDisplay;
+        }
+
+        @Override
+        public InterveneStats merge(InterveneStats other, int multiplier) {
+            InterveneStats stats = super.merge(other, multiplier);
+            stats.playersIntervened = this.playersIntervened + other.playersIntervened * multiplier;
+            stats.carriersIntervened = this.carriersIntervened + other.carriersIntervened * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<InterveneStats> getClazz() {
+            return InterveneStats.class;
+        }
+
+        @Override
+        public InterveneStats create() {
+            return new InterveneStats();
+        }
+    }
 }

@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -17,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.SanctuaryBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -30,16 +27,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Sanctuary, Sanctuary.SanctuaryStats> {
 
-    public int hexesProlonged = 0;
-    public int hexesNotConsumed = 0;
-    public float totalDamageReflected = 0;
-
+    private final SanctuaryStats stats = new SanctuaryStats();
     private int hexTickDurationIncrease = 40;
     private int additionalDamageReduction = 4;
     private int tickDuration = 240;
@@ -70,16 +65,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Total Damage Reflected", "" + Math.round(totalDamageReflected)));
-        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
-
-        return info;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
         Location loc = wp.getLocation();
@@ -106,7 +91,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 .filterCooldownFrom(wp)
                                 .forEach(cd -> {
                                     cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
-                                    hexesProlonged++;
+                                    stats.hexesProlonged++;
                                 });
                         boolean isSelf = wp == teammate;
                         teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -160,7 +145,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
                                         .flag(InstanceFlags.TRUE_DAMAGE, pveMasterUpgrade)
                                 );
-                                totalDamageReflected += damageToReflect;
+                                stats.totalDamageReflected += damageToReflect;
                                 return (float) (currentDamageValue * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
                             }
 
@@ -179,7 +164,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                         Object cdObject = cooldown.getCooldownObject();
                                         if (cdObject instanceof FortifyingHex) {
                                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                                            hexesProlonged++;
+                                            stats.hexesProlonged++;
                                         }
                                         if (pveMasterUpgrade2 &&
                                                 !event.getWarlordsEntity().equals(wp) &&
@@ -230,4 +215,54 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         this.additionalDamageReduction = additionalDamageReduction;
     }
 
+    @Override
+    public SanctuaryStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class SanctuaryStats extends AbstractAbilityStats<Sanctuary, SanctuaryStats> {
+
+        @Field("hexes_prolonged")
+        private int hexesProlonged = 0;
+        @Field("hexes_not_consumed")
+        private int hexesNotConsumed = 0;
+        @Field("total_damage_reflected")
+        private float totalDamageReflected = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
+            statsDisplay.add(new AbilityStatDisplay("Total Damage Reflected", totalDamageReflected));
+            statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
+            return statsDisplay;
+        }
+
+        @Override
+        public SanctuaryStats merge(SanctuaryStats other, int multiplier) {
+            SanctuaryStats stats = super.merge(other, multiplier);
+            stats.hexesProlonged = this.hexesProlonged + other.hexesProlonged * multiplier;
+            stats.hexesNotConsumed = this.hexesNotConsumed + other.hexesNotConsumed * multiplier;
+            stats.totalDamageReflected = this.totalDamageReflected + other.totalDamageReflected * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<SanctuaryStats> getClazz() {
+            return SanctuaryStats.class;
+        }
+
+        @Override
+        public SanctuaryStats create() {
+            return new SanctuaryStats();
+        }
+
+        public int getHexesNotConsumed() {
+            return hexesNotConsumed;
+        }
+
+        public void setHexesNotConsumed(int hexesNotConsumed) {
+            this.hexesNotConsumed = hexesNotConsumed;
+        }
+    }
 }

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
@@ -15,7 +12,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityLiquorBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -25,15 +21,17 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon, Heals<VitalityLiquor.HealingValues> {
+public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon, Heals<VitalityLiquor.HealingValues>, AbilityStats<VitalityLiquor, VitalityLiquor.VitalityLiquorStats> {
 
-    public int numberOfAdditionalWaves = 0;
+
     private final HealingValues healingValues = new HealingValues();
+    private final VitalityLiquorStats stats = new VitalityLiquorStats();
     private int duration = 3;
     private int vitalityRange = 8;
     private int energyPerSecond = 15;
@@ -61,15 +59,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                 .durationSeconds(duration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Number of Additional Waves", "" + numberOfAdditionalWaves));
-
-        return info;
     }
 
     @Override
@@ -129,7 +118,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                         .closestFirst(enemy)
                                         .limit(2)
                                 ) {
-                                    numberOfAdditionalWaves++;
+                                    stats.numberOfAdditionalWaves++;
                                     allyTarget.addInstance(InstanceBuilder
                                             .healing()
                                             .ability(VitalityLiquor.this)
@@ -196,6 +185,11 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         return healingValues;
     }
 
+    @Override
+    public VitalityLiquorStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
@@ -215,5 +209,35 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
             return values;
         }
 
+    }
+
+    public static class VitalityLiquorStats extends AbstractAbilityStats<VitalityLiquor, VitalityLiquorStats> {
+
+        @Field("number_of_additional_waves")
+        private int numberOfAdditionalWaves = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Number of Additional Waves", numberOfAdditionalWaves));
+            return statsDisplay;
+        }
+
+        @Override
+        public VitalityLiquorStats merge(VitalityLiquorStats other, int multiplier) {
+            VitalityLiquorStats stats = super.merge(other, multiplier);
+            stats.numberOfAdditionalWaves = this.numberOfAdditionalWaves + other.numberOfAdditionalWaves * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<VitalityLiquorStats> getClazz() {
+            return VitalityLiquorStats.class;
+        }
+
+        @Override
+        public VitalityLiquorStats create() {
+            return new VitalityLiquorStats();
+        }
     }
 }

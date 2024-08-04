@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.JudgementStrikeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -16,10 +15,11 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JudgementStrike extends AbstractStrike implements Damages<JudgementStrike.DamageValues>, Heals<JudgementStrike.HealingValues> {
+public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementStrike.JudgementStrikeStats> implements Damages<JudgementStrike.DamageValues>, Heals<JudgementStrike.HealingValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private final JudgementStrikeStats stats = new JudgementStrikeStats();
     private int attacksDone = 0;
     private int speedOnCrit = 25; // %
     private int speedOnCritDuration = 2;
@@ -42,14 +42,6 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
                 .durationSeconds(speedOnCritDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Struck", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -110,6 +102,11 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
         return healingValues;
     }
 
+    @Override
+    public JudgementStrikeStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
@@ -140,5 +137,30 @@ public class JudgementStrike extends AbstractStrike implements Damages<Judgement
             return values;
         }
 
+    }
+
+    public static class JudgementStrikeStats extends AbstractStrikeStats<JudgementStrike, JudgementStrikeStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public JudgementStrikeStats merge(JudgementStrikeStats other, int multiplier) {
+            JudgementStrikeStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<JudgementStrikeStats> getClazz() {
+            return JudgementStrikeStats.class;
+        }
+
+        @Override
+        public JudgementStrikeStats create() {
+            return new JudgementStrikeStats();
+        }
     }
 }

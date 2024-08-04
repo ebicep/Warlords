@@ -71,4 +71,5 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
         }
 
     }
+
 }

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -19,7 +16,6 @@ import com.ebicep.warlords.pve.mobs.flags.BossLike;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.WoundingStrikeBranchDefender;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -34,9 +30,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class WoundingStrikeDefender extends AbstractStrike implements Damages<WoundingStrikeDefender.DamageValues> {
+public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefender, WoundingStrikeDefender.WoundingStrikeDefenderStats> implements Damages<WoundingStrikeDefender.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final WoundingStrikeDefenderStats stats = new WoundingStrikeDefenderStats();
     private int wounding = 25;
     private int woundingDurationInTicks = 60;
 
@@ -57,14 +54,6 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
                 .percent(wounding, NamedTextColor.RED)
                 .text(" less healing.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Stuck", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -202,6 +191,11 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
         return damageValues;
     }
 
+    @Override
+    public WoundingStrikeDefenderStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(416, 557, 20, 200);
@@ -216,5 +210,30 @@ public class WoundingStrikeDefender extends AbstractStrike implements Damages<Wo
             return values;
         }
 
+    }
+
+    public static class WoundingStrikeDefenderStats extends AbstractStrikeStats<WoundingStrikeDefender, WoundingStrikeDefenderStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public WoundingStrikeDefenderStats merge(WoundingStrikeDefenderStats other, int multiplier) {
+            WoundingStrikeDefenderStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<WoundingStrikeDefenderStats> getClazz() {
+            return WoundingStrikeDefenderStats.class;
+        }
+
+        @Override
+        public WoundingStrikeDefenderStats create() {
+            return new WoundingStrikeDefenderStats();
+        }
     }
 }

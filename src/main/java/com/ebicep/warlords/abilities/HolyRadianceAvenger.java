@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.HolyRadianceBranchAvenger;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -22,7 +21,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,16 +51,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 .text(" per second.")
                 .maxRange(markRadius)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-        info.add(new Pair<>("Players Marked", "" + playersMarked));
-
-        return info;
     }
 
     @Override
@@ -223,6 +211,5 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         private int timesWrathReduced = 0;
 
     }
-
 
 }

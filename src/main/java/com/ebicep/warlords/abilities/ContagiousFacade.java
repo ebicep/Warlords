@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -16,7 +13,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -27,6 +23,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,11 +31,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<ContagiousFacade, ContagiousFacade.ContagiousFacadeStats> {
 
-    public int timesReactivated = 0;
-    public int totalHexesInflicted = 0;
-    public float totalShieldGained = 0;
+
+    private final ContagiousFacadeStats stats = new ContagiousFacadeStats();
     private FloatModifiable damageAbsorption = new FloatModifiable(30);
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
@@ -82,16 +78,6 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Reactivated", "" + timesReactivated));
-        info.add(new Pair<>("Total Hexes Inflicted", "" + totalHexesInflicted));
-        info.add(new Pair<>("Total Shield Gained", "" + Math.round(totalShieldGained)));
-        return info;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
         Utils.playGlobalSound(wp.getLocation(), "arcanist.contagiousfacade.activation", 2, 1.4f);
@@ -113,7 +99,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
-                    totalShieldGained += shieldHealth;
+                    stats.totalShieldGained += shieldHealth;
                     Shield shield = new Shield(name, shieldHealth);
                     wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name + " Shield",
@@ -252,9 +238,9 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 .append(Component.text(name, NamedTextColor.YELLOW))
                                 .append(Component.text(" has infected you!", NamedTextColor.GRAY))
                         );
-                        totalHexesInflicted++;
+                        stats.totalHexesInflicted++;
                     }
-                    timesReactivated++;
+                    stats.timesReactivated++;
                 },
                 false,
                 secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)
@@ -301,5 +287,50 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
 
     public void setStacksGranted(int stacksGranted) {
         this.stacksGranted = stacksGranted;
+    }
+
+    @Override
+    public ContagiousFacadeStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class ContagiousFacadeStats extends AbstractAbilityStats<ContagiousFacade, ContagiousFacadeStats> {
+
+        @Field("times_reactivated")
+        private int timesReactivated = 0;
+
+        @Field("total_hexes_inflicted")
+        private int totalHexesInflicted = 0;
+
+        @Field("total_shield_gained")
+        private float totalShieldGained = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Reactivated", timesReactivated));
+            statsDisplay.add(new AbilityStatDisplay("Total Hexes Inflicted", totalHexesInflicted));
+            statsDisplay.add(new AbilityStatDisplay("Total Shield Gained", Math.round(totalShieldGained)));
+            return statsDisplay;
+        }
+
+        @Override
+        public ContagiousFacadeStats merge(ContagiousFacadeStats other, int multiplier) {
+            ContagiousFacadeStats stats = super.merge(other, multiplier);
+            stats.timesReactivated = this.timesReactivated + other.timesReactivated * multiplier;
+            stats.totalHexesInflicted = this.totalHexesInflicted + other.totalHexesInflicted * multiplier;
+            stats.totalShieldGained = this.totalShieldGained + other.totalShieldGained * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<ContagiousFacadeStats> getClazz() {
+            return ContagiousFacadeStats.class;
+        }
+
+        @Override
+        public ContagiousFacadeStats create() {
+            return new ContagiousFacadeStats();
+        }
     }
 }

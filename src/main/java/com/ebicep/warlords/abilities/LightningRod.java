@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningRodBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -30,10 +29,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LightningRod extends AbstractAbility implements BlueAbilityIcon, Heals<LightningRod.HealingValues> {
+public class LightningRod extends AbstractAbility implements BlueAbilityIcon, Heals<LightningRod.HealingValues>, AbilityStats<LightningRod, LightningRod.LightningRodStats> {
 
     private final int knockbackRadius = 5;
     private final HealingValues healingValues = new HealingValues();
+    private final LightningRodStats stats = new LightningRodStats();
     private int energyRestore = 160;
 
     public LightningRod() {
@@ -56,14 +56,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                 .text(" radius back.")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -229,6 +221,11 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         return healingValues;
     }
 
+    @Override
+    public LightningRodStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.SetValue healthRestore = new Value.SetValue(30);
@@ -245,4 +242,28 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
     }
 
+    public static class LightningRodStats extends AbstractAbilityStats<LightningRod, LightningRodStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public LightningRodStats merge(LightningRodStats other, int multiplier) {
+            LightningRodStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<LightningRodStats> getClazz() {
+            return LightningRodStats.class;
+        }
+
+        @Override
+        public LightningRodStats create() {
+            return new LightningRodStats();
+        }
+    }
 }

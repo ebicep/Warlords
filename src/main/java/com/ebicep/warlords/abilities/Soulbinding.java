@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SoulbindingWeaponBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,20 +19,18 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues> {
+public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues>, AbilityStats<Soulbinding, Soulbinding.SoulbindingStats> {
 
-    public int playersBinded = 0;
-    public int soulProcs = 0;
-    public int linkProcs = 0;
-    public int soulTeammatesCDReductions = 0;
-    public int linkTeammatesHealed = 0;
+
     private final HealingValues healingValues = new HealingValues();
+    private final SoulbindingStats stats = new SoulbindingStats();
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
     private int bindDuration = 60;
@@ -77,19 +74,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 .durationSeconds(3.6f)
                 .text(").")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Binded", "" + playersBinded));
-        info.add(new Pair<>("Soul Procs", "" + soulProcs));
-        info.add(new Pair<>("Soul Teammates CD Reductions", "" + soulTeammatesCDReductions));
-        info.add(new Pair<>("Link Procs", "" + linkProcs));
-        info.add(new Pair<>("Link Teammates Healed", "" + linkTeammatesHealed));
-
-        return info;
     }
 
     @Override
@@ -181,30 +165,29 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         return data;
     }
 
-
-    public void addPlayersBinded() {
-        playersBinded++;
-    }
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SoulbindingWeaponBranch(abilityTree, this);
     }
 
+    public void addPlayersBinded() {
+        stats.playersBinded++;
+    }
+
     public void addSoulProcs() {
-        soulProcs++;
+        stats.soulProcs++;
     }
 
     public void addLinkProcs() {
-        linkProcs++;
+        stats.linkProcs++;
     }
 
     public void addSoulTeammatesCDReductions() {
-        soulTeammatesCDReductions++;
+        stats.soulTeammatesCDReductions++;
     }
 
     public void addLinkTeammatesHealed() {
-        linkTeammatesHealed++;
+        stats.linkTeammatesHealed++;
     }
 
     public int getBindDuration() {
@@ -254,6 +237,11 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         return healingValues;
     }
 
+    @Override
+    public SoulbindingStats getAbilityStats() {
+        return stats;
+    }
+
     public static class SoulbindingData {
 
         private final Soulbinding soulbinding;
@@ -301,6 +289,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             return false;
         }
 
+        public List<SoulBoundPlayer> getSoulBindedPlayers() {
+            return soulBindedPlayers;
+        }
+
         public boolean hasBoundPlayerSoul(WarlordsEntity warlordsPlayer) {
             for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
                 if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
@@ -340,10 +332,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
         public Soulbinding getSoulbinding() {
             return soulbinding;
-        }
-
-        public List<SoulBoundPlayer> getSoulBindedPlayers() {
-            return soulBindedPlayers;
         }
 
         public List<WarlordsEntity> getPlayersProcedBySouls() {
@@ -422,5 +410,55 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             return values;
         }
 
+    }
+
+    public static class SoulbindingStats extends AbstractAbilityStats<Soulbinding, SoulbindingStats> {
+
+        @Field("players_binded")
+        private int playersBinded = 0;
+
+        @Field("soul_procs")
+        private int soulProcs = 0;
+
+        @Field("link_procs")
+        private int linkProcs = 0;
+
+        @Field("soul_teammates_cd_reductions")
+        private int soulTeammatesCDReductions = 0;
+
+        @Field("link_teammates_healed")
+        private int linkTeammatesHealed = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Binded", playersBinded));
+            statsDisplay.add(new AbilityStatDisplay("Soul Procs", soulProcs));
+            statsDisplay.add(new AbilityStatDisplay("Soul Teammates CD Reductions", soulTeammatesCDReductions));
+            statsDisplay.add(new AbilityStatDisplay("Link Procs", linkProcs));
+            statsDisplay.add(new AbilityStatDisplay("Link Teammates Healed", linkTeammatesHealed));
+            return statsDisplay;
+        }
+
+        @Override
+        public SoulbindingStats merge(SoulbindingStats other, int multiplier) {
+            SoulbindingStats stats = super.merge(other, multiplier);
+            stats.playersBinded = this.playersBinded + other.playersBinded * multiplier;
+            stats.soulProcs = this.soulProcs + other.soulProcs * multiplier;
+            stats.linkProcs = this.linkProcs + other.linkProcs * multiplier;
+            stats.soulTeammatesCDReductions = this.soulTeammatesCDReductions + other.soulTeammatesCDReductions * multiplier;
+            stats.linkTeammatesHealed = this.linkTeammatesHealed + other.linkTeammatesHealed * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<SoulbindingStats> getClazz() {
+            return SoulbindingStats.class;
+        }
+
+        @Override
+        public SoulbindingStats create() {
+            return new SoulbindingStats();
+        }
     }
 }

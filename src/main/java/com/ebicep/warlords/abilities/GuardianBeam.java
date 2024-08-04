@@ -11,7 +11,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.GuardianBeamBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,13 +24,14 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class GuardianBeam extends AbstractBeam implements Duration, Damages<GuardianBeam.DamageValues> {
+public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.GuardianBeamStats> implements Duration, Damages<GuardianBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
     public Map<Integer, Integer> stacksRemoved = new HashMap<>();
     private final DamageValues damageValues = new DamageValues();
     private final List<Integer> shieldPercents = new ArrayList<>(List.of(5, 10, 20));
     private final float carrierBonusMultiplier = 2.4f;
+    private final GuardianBeamStats stats = new GuardianBeamStats();
     private float runeTimerIncrease = 1.5f;
     private int tickDuration = 120;
 
@@ -63,18 +63,6 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
                 .text("If Guardian Beam hits a target, you also receive a shield based on the same percentages.")
                 .maxRange(maxDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        stacksRemoved.entrySet()
-                     .stream()
-                     .forEach(integerIntegerEntry -> {
-                         info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
-                     });
-        return info;
     }
 
     @Override
@@ -126,7 +114,9 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         if (!hasSanctuary) {
             to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
         } else {
-            from.doOnStaticAbility(Sanctuary.class, sanctuary -> sanctuary.hexesNotConsumed += selfHexStacks);
+            from.doOnStaticAbility(Sanctuary.class,
+                    sanctuary -> sanctuary.getAbilityStats().setHexesNotConsumed(sanctuary.getAbilityStats().getHexesNotConsumed() + selfHexStacks)
+            );
         }
         if (from == to) {
             from.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -243,6 +233,11 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
         return damageValues;
     }
 
+    @Override
+    public GuardianBeamStats getAbilityStats() {
+        return stats;
+    }
+
     public static class GuardianBeamShield extends Shield {
         private final float shieldPercent;
 
@@ -270,5 +265,30 @@ public class GuardianBeam extends AbstractBeam implements Duration, Damages<Guar
             return values;
         }
 
+    }
+
+    public static class GuardianBeamStats extends AbstractPiercingProjectileStats<GuardianBeam, GuardianBeamStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public GuardianBeamStats merge(GuardianBeamStats other, int multiplier) {
+            GuardianBeamStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<GuardianBeamStats> getClazz() {
+            return GuardianBeamStats.class;
+        }
+
+        @Override
+        public GuardianBeamStats create() {
+            return new GuardianBeamStats();
+        }
     }
 }

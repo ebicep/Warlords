@@ -1,9 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -16,7 +14,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.OrderOfEviscerateBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -29,6 +26,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -36,15 +34,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats> {
 
-    public int numberOfFullResets = 0;
-    public int numberOfHalfResets = 0;
-    public int numberOfBackstabs = 0;
 
     protected float damageDoneWithOrder = 0;
     protected int mobsKilledWithOrder = 0;
-
+    private final OrderOfEviscerateStats stats = new OrderOfEviscerateStats();
     private int tickDuration = 160;
     private float damageThreshold = 0;
     private float maxDamageThreshold = 600;
@@ -106,17 +101,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Number of Full Resets", "" + numberOfFullResets));
-        info.add(new Pair<>("Number of Half Resets", "" + numberOfHalfResets));
-        info.add(new Pair<>("Number of Backstabs", "" + numberOfBackstabs));
-
-        return info;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
 
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
@@ -173,7 +157,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
                                 !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())
                 ) {
-                    numberOfBackstabs++;
+                    stats.numberOfBackstabs++;
                     return currentDamageValue * (inPve ? 2 : 1 + (vulnerableDamageBonus + backstabDamageBonus) / 100f);
                 } else {
                     return currentDamageValue * (1 + vulnerableDamageBonus / 100f);
@@ -201,7 +185,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     removeCloak(wp, false);
                 }
                 if (isKiller) {
-                    numberOfFullResets++;
+                    stats.numberOfFullResets++;
 
                     if (inPve) {
                         tempOrderOfEviscerate.mobsKilledWithOrder++;
@@ -259,7 +243,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                         }
                     }.runTaskLater(2);
                 } else {
-                    numberOfHalfResets++;
+                    stats.numberOfHalfResets++;
 
                     new GameRunnable(wp.getGame()) {
                         @Override
@@ -393,4 +377,48 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         this.tickDuration = tickDuration;
     }
 
+    @Override
+    public OrderOfEviscerateStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class OrderOfEviscerateStats extends AbstractAbilityStats<OrderOfEviscerate, OrderOfEviscerateStats> {
+
+        @Field("number_of_full_resets")
+        private int numberOfFullResets = 0;
+
+        @Field("number_of_half_resets")
+        private int numberOfHalfResets = 0;
+
+        @Field("number_of_backstabs")
+        private int numberOfBackstabs = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Number of Full Resets", numberOfFullResets));
+            statsDisplay.add(new AbilityStatDisplay("Number of Half Resets", numberOfHalfResets));
+            statsDisplay.add(new AbilityStatDisplay("Number of Backstabs", numberOfBackstabs));
+            return statsDisplay;
+        }
+
+        @Override
+        public OrderOfEviscerateStats merge(OrderOfEviscerateStats other, int multiplier) {
+            OrderOfEviscerateStats stats = super.merge(other, multiplier);
+            stats.numberOfFullResets = this.numberOfFullResets + other.numberOfFullResets * multiplier;
+            stats.numberOfHalfResets = this.numberOfHalfResets + other.numberOfHalfResets * multiplier;
+            stats.numberOfBackstabs = this.numberOfBackstabs + other.numberOfBackstabs * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<OrderOfEviscerateStats> getClazz() {
+            return OrderOfEviscerateStats.class;
+        }
+
+        @Override
+        public OrderOfEviscerateStats create() {
+            return new OrderOfEviscerateStats();
+        }
+    }
 }

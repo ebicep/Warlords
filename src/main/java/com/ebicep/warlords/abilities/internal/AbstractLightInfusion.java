@@ -3,7 +3,6 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -12,7 +11,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractLightInfusion extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public abstract class AbstractLightInfusion extends AbstractAbility implements PurpleAbilityIcon, Duration, AbilityStats<AbstractLightInfusion, AbstractLightInfusion.AbstractLightInfusionStats> {
 
     protected static void playCastEffect(@Nonnull WarlordsEntity wp) {
         for (int i = 0; i < 10; i++) {
@@ -31,6 +30,7 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     protected int tickDuration = 60;
     protected int speedBuff = 40;
     protected int energyGiven = 120;
+    private final AbstractLightInfusionStats stats = new AbstractLightInfusionStats();
 
     public AbstractLightInfusion(float cooldown) {
         super("Light Infusion", cooldown, 0);
@@ -47,14 +47,6 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -83,5 +75,34 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
         this.energyGiven = energyGiven;
     }
 
+    @Override
+    public AbstractLightInfusionStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AbstractLightInfusionStats extends AbstractAbilityStats<AbstractLightInfusion, AbstractLightInfusionStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractLightInfusionStats merge(AbstractLightInfusionStats other, int multiplier) {
+            AbstractLightInfusionStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<AbstractLightInfusionStats> getClazz() {
+            return AbstractLightInfusionStats.class;
+        }
+
+        @Override
+        public AbstractLightInfusionStats create() {
+            return new AbstractLightInfusionStats();
+        }
+    }
 
 }

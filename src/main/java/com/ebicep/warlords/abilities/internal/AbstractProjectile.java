@@ -6,7 +6,7 @@ import org.bukkit.block.Block;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractProjectile extends AbstractPiercingProjectile {
+public abstract class AbstractProjectile<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> {
 
     public AbstractProjectile(
             String name,

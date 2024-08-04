@@ -16,7 +16,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.SoothingElixirBranch;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -27,20 +26,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, Damages<SoothingElixir.DamageValues>, Heals<SoothingElixir.HealingValues> {
+public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, Damages<SoothingElixir.DamageValues>, Heals<SoothingElixir.HealingValues>, AbilityStats<SoothingElixir, SoothingElixir.SoothingElixirStats> {
 
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;
 
-    public int playersHealed = 0;
 
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private final SoothingElixirStats stats = new SoothingElixirStats();
     private FloatModifiable puddleRadius = new FloatModifiable(5);
     private int puddleTickDuration = 80;
 
@@ -64,15 +64,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                 .text(".")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-
-        return info;
     }
 
     @Override
@@ -140,7 +131,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                             .aliveTeammatesOf(wp)
                             .toList();
                     for (WarlordsEntity nearEntity : teammatesHit) {
-                        playersHealed++;
+                        stats.playersHealed++;
                         nearEntity.addInstance(InstanceBuilder
                                 .healing()
                                 .ability(this)
@@ -262,6 +253,11 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         return healingValues;
     }
 
+    @Override
+    public SoothingElixirStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable elixirDamage = new Value.RangedValueCritable(235, 342, 25, 175);
@@ -291,4 +287,33 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
     }
 
+    public static class SoothingElixirStats extends AbstractAbilityStats<SoothingElixir, SoothingElixirStats> {
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            return statsDisplay;
+        }
+
+        @Override
+        public SoothingElixirStats merge(SoothingElixirStats other, int multiplier) {
+            SoothingElixirStats stats = super.merge(other, multiplier);
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<SoothingElixirStats> getClazz() {
+            return SoothingElixirStats.class;
+        }
+
+        @Override
+        public SoothingElixirStats create() {
+            return new SoothingElixirStats();
+        }
+    }
 }

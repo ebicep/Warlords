@@ -79,4 +79,5 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
         }
 
     }
+
 }

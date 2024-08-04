@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes;
 
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -8,11 +9,8 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
@@ -77,30 +75,13 @@ public abstract class AbstractPlayerClass {
     }
 
     public List<Component> getFormattedData() {
-        NamedTextColor[] textColors = {
-                NamedTextColor.GREEN,
-                NamedTextColor.RED,
-                NamedTextColor.LIGHT_PURPLE,
-                NamedTextColor.AQUA,
-                NamedTextColor.GOLD
-        };
         List<Component> components = new ArrayList<>();
-        for (int i = 0; i < abilities.size(); i++) {
-            AbstractAbility ability = abilities.get(i);
-            TextComponent.Builder abilityInfo = Component.text();
-            List<Pair<String, String>> info = ability.getAbilityInfo();
-            if (info != null) {
-                info.forEach(stringStringPair -> {
-                    abilityInfo.append(Component.text(stringStringPair.getA() + ": ", NamedTextColor.WHITE))
-                               .append(Component.text(stringStringPair.getB(), NamedTextColor.GOLD));
-                    abilityInfo.append(Component.newline());
-                });
+        for (AbstractAbility ability : abilities) {
+            if (!(ability instanceof AbilityStats<?, ?> abilityStats)) {
+                continue;
             }
-            components.add(Component.text(ability.getName(), textColors[i])
-                                    .hoverEvent(HoverEvent.showText(abilityInfo))
-            );
+            components.add(abilityStats.getFormattedData(ability.getAbilityColor()));
         }
-
         return components;
     }
 

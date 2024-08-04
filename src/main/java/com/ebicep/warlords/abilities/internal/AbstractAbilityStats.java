@@ -1,8 +1,11 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends AbstractAbilityStats<T, R>> {
@@ -61,11 +64,13 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
 //    }
 
     @Field("times_used")
-    private int timesUsed = 0;
+    protected int timesUsed = 0;
 
-    public abstract List<AbilityStatDisplay> getStatsDisplay();
-
-    public abstract Class<R> getClazz();
+    public List<AbilityStatDisplay> getStatsDisplay() {
+        List<AbilityStatDisplay> stats = new ArrayList<>();
+        stats.add(new AbilityStatDisplay("Times Used", timesUsed));
+        return stats;
+    }
 
     /**
      * Always database ability stats MERGE with the new ability stats
@@ -74,7 +79,15 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
      * @param multiplier multiplier to apply to the other AbilityStats object
      * @return new AbilityStats object with this AbilityStats data merged with other AbilityStats data
      */
-    public abstract R merge(R other, int multiplier);
+    public R merge(R other, int multiplier) {
+        R r = create();
+        r.timesUsed = timesUsed + other.timesUsed * multiplier;
+        return r;
+    }
+
+    public abstract Class<R> getClazz();
+
+    public abstract R create();
 
     public record AbilityStatDisplay(String name, String value) {
 
@@ -84,6 +97,57 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
 
         public AbilityStatDisplay(String name, double value) {
             this(name, NumberFormat.addCommaAndRound(value));
+        }
+    }
+
+    public abstract static class TestAbility extends AbstractAbility {
+
+        public TestAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
+            super(name, cooldown, energyCost, startNoCooldown);
+        }
+
+        @Override
+        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+            return false;
+        }
+    }
+
+    public abstract static class TestStats<T extends TestAbility, R extends TestStats<T, R>> extends AbstractAbilityStats<T, R> {
+        protected int test = 0;
+
+        @Override
+        public R merge(R other, int multiplier) {
+            R merge = super.merge(other, multiplier);
+            merge.test = test + other.test * multiplier;
+            return merge;
+        }
+    }
+
+    public static class TestAbility2 extends TestAbility {
+
+        public TestAbility2(String name, float cooldown, float energyCost, boolean startNoCooldown) {
+            super(name, cooldown, energyCost, startNoCooldown);
+        }
+    }
+
+    public static class TestStats2 extends TestStats<TestAbility2, TestStats2> {
+        protected int test2 = 0;
+
+        @Override
+        public TestStats2 merge(TestStats2 other, int multiplier) {
+            TestStats2 merge = super.merge(other, multiplier);
+            merge.test2 = test2 + other.test2 * multiplier;
+            return merge;
+        }
+
+        @Override
+        public Class<TestStats2> getClazz() {
+            return TestStats2.class;
+        }
+
+        @Override
+        public TestStats2 create() {
+            return new TestStats2();
         }
     }
 

@@ -7,13 +7,15 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractChain extends AbstractAbility {
+public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends AbstractChain.AbstractChainStats<T, R>> extends AbstractAbility implements AbilityStats<T, R> {
 
-    public int playersHit = 0;
     protected int radius;
     protected int bounceRange;
     protected int additionalBounces;
@@ -49,7 +51,7 @@ public abstract class AbstractChain extends AbstractAbility {
         Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {
-            playersHit += hitCounter;
+            getAbilityStats().playersHit += hitCounter;
 
             AbstractPlayerClass.sendRightClickPacket(warlordsPlayer);
 
@@ -91,7 +93,6 @@ public abstract class AbstractChain extends AbstractAbility {
         this.bounceRange = bounceRange;
     }
 
-
     public int getAdditionalBounces() {
         return additionalBounces;
     }
@@ -100,5 +101,29 @@ public abstract class AbstractChain extends AbstractAbility {
         this.additionalBounces = additionalBounces;
     }
 
+    public static abstract class AbstractChainStats<T extends AbstractChain<T, R>, R extends AbstractChainStats<T, R>> extends AbstractAbilityStats<T, R> {
 
+        @Field("players_hit")
+        protected int playersHit;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> list = new ArrayList<>(super.getStatsDisplay());
+            list.add(new AbilityStatDisplay("Players Hit", playersHit));
+            return list;
+
+        }
+
+        @Override
+        public R merge(R other, int multiplier) {
+            R r = super.merge(other, multiplier);
+            r.playersHit = playersHit + other.playersHit * multiplier;
+            return r;
+        }
+
+        public void addPlayersHit() {
+            playersHit++;
+        }
+
+    }
 }

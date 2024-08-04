@@ -17,7 +17,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HammerOfLightBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -35,20 +34,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues> {
+public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues>, AbilityStats<HammerOfLight, HammerOfLight.HammerOfLightStats> {
 
-    public int playersHealed = 0;
-    public int playersDamaged = 0;
+
     protected float amountHealed = 0;
     private final FloatModifiable radius = new FloatModifiable(6);
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private final HammerOfLightStats stats = new HammerOfLightStats();
     private boolean isCrownOfLight = false;
     private Location location;
     private int tickDuration = 200;
@@ -105,16 +105,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 .energy(crownEnergyReduction)
                 .text(". You cannot put the Hammer of Light back down after you converted it.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-        info.add(new Pair<>("Players Damaged", "" + playersDamaged));
-
-        return info;
     }
 
     @Override
@@ -212,7 +202,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 .isAlive()
                         ) {
                             if (wp.isTeammate(crownTarget)) {
-                                playersHealed++;
+                                stats.playersHealed++;
                                 crownTarget.addInstance(InstanceBuilder
                                         .healing()
                                         .cause("Crown of Light")
@@ -235,7 +225,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 .isAlive()
                         ) {
                             if (wp.isTeammate(hammerTarget)) {
-                                playersHealed++;
+                                stats.playersHealed++;
                                 hammerTarget.addInstance(InstanceBuilder
                                         .healing()
                                         .ability(this)
@@ -245,7 +235,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                     tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                 });
                             } else {
-                                playersDamaged++;
+                                stats.playersDamaged++;
                                 hammerTarget.addInstance(InstanceBuilder
                                         .damage()
                                         .ability(this)
@@ -417,7 +407,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         .entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
                         .aliveTeammatesOf(wp)
                 ) {
-                    playersHealed++;
+                    stats.playersHealed++;
                     allyTarget.addInstance(InstanceBuilder
                             .healing()
                             .cause("Hammer of Illusion")
@@ -472,6 +462,11 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         return amountHealed;
     }
 
+    @Override
+    public HammerOfLightStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable hammerDamage = new Value.RangedValueCritable(178, 244, 20, 175);
@@ -504,4 +499,38 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
     }
 
+    public static class HammerOfLightStats extends AbstractAbilityStats<HammerOfLight, HammerOfLightStats> {
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+
+        @Field("players_damaged")
+        private int playersDamaged = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Players Damaged", playersDamaged));
+            return statsDisplay;
+        }
+
+        @Override
+        public HammerOfLightStats merge(HammerOfLightStats other, int multiplier) {
+            HammerOfLightStats stats = super.merge(other, multiplier);
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.playersDamaged = this.playersDamaged + other.playersDamaged * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<HammerOfLightStats> getClazz() {
+            return HammerOfLightStats.class;
+        }
+
+        @Override
+        public HammerOfLightStats create() {
+            return new HammerOfLightStats();
+        }
+    }
 }

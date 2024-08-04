@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.CalculateSpeed;
@@ -17,12 +14,12 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.WindfuryBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -31,10 +28,10 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration, AbilityStats<WindfuryWeapon, WindfuryWeapon.WindfuryWeaponStats> {
 
-    public int timesProcd = 0;
 
+    private final WindfuryWeaponStats stats = new WindfuryWeaponStats();
     private int tickDuration = 160;
     private float procChance = 35;
     private int maxHits = 2;
@@ -59,15 +56,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 .emptyLine()
                 .text("The first hit is guaranteed to activate Windfury.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Proc'd", "" + timesProcd));
-
-        return info;
     }
 
     @Override
@@ -138,7 +126,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                     return;
                 }
                 procs.incrementAndGet();
-                timesProcd++;
+                stats.timesProcd++;
                 new GameRunnable(victim.getGame()) {
                     final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
                                             warlordsPlayer.getWeapon().getMeleeDamageMin() : 132;
@@ -215,7 +203,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         this.weaponDamage = weaponDamage;
     }
 
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -224,5 +211,40 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public WindfuryWeaponStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class WindfuryWeaponStats extends AbstractAbilityStats<WindfuryWeapon, WindfuryWeaponStats> {
+
+        @Field("times_procd")
+        private int timesProcd = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Proc'd", timesProcd));
+            return statsDisplay;
+        }
+
+        @Override
+        public WindfuryWeaponStats merge(WindfuryWeaponStats other, int multiplier) {
+            WindfuryWeaponStats stats = super.merge(other, multiplier);
+            stats.timesProcd = this.timesProcd + other.timesProcd * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<WindfuryWeaponStats> getClazz() {
+            return WindfuryWeaponStats.class;
+        }
+
+        @Override
+        public WindfuryWeaponStats create() {
+            return new WindfuryWeaponStats();
+        }
     }
 }

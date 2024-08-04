@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -15,13 +13,13 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengersWrathBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -29,12 +27,12 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<AvengersWrath, AvengersWrath.AvengersWrathStats> {
 
-    public int extraPlayersStruck = 0;
+
     public int playersStruckDuringWrath = 0;
     public int playersKilledDuringWrath = 0;
-
+    private final AvengersWrathStats stats = new AvengersWrathStats();
     private int tickDuration = 240;
     private float energyPerSecond = 20;
     private int maxTargets = 2;
@@ -57,15 +55,6 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Extra Players Struck", "" + extraPlayersStruck));
-
-        return info;
     }
 
     @Override
@@ -168,7 +157,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     public void addExtraPlayersStruck() {
-        extraPlayersStruck++;
+        stats.extraPlayersStruck++;
     }
 
     public void addPlayersKilledDuringWrath() {
@@ -190,7 +179,6 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     public void setEnergyPerSecond(float energyPerSecond) {
         this.energyPerSecond = energyPerSecond;
     }
-
 
     public int getMaxTargets() {
         return maxTargets;
@@ -216,5 +204,40 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AvengersWrathStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AvengersWrathStats extends AbstractAbilityStats<AvengersWrath, AvengersWrathStats> {
+
+        @Field("extra_players_struck")
+        private int extraPlayersStruck = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Extra Players Struck", extraPlayersStruck));
+            return statsDisplay;
+        }
+
+        @Override
+        public AvengersWrathStats merge(AvengersWrathStats other, int multiplier) {
+            AvengersWrathStats stats = super.merge(other, multiplier);
+            stats.extraPlayersStruck = this.extraPlayersStruck + other.extraPlayersStruck * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AvengersWrathStats> getClazz() {
+            return AvengersWrathStats.class;
+        }
+
+        @Override
+        public AvengersWrathStats create() {
+            return new AvengersWrathStats();
+        }
     }
 }

@@ -8,7 +8,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.EnergySeerBranchSentinel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 public class EnergySeerSentinel extends AbstractEnergySeer<AbstractEnergySeer.EnergySeerData> implements Heals<EnergySeerSentinel.HealingValues> {
 

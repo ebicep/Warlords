@@ -21,18 +21,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
+public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractAbility implements
+        ProjectileAbility,
+        HitBox,
+        AbilityStats<T, R> {
 
-public abstract class AbstractPiercingProjectile extends AbstractAbility implements ProjectileAbility, HitBox {
-
-    public int playersHit = 0;
-    public int playersHitBySplash = 0;
-    public int directHits = 0;
-    public int numberOfDismounts = 0;
     protected final boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected int maxTicks;
@@ -366,10 +365,6 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         super.runEveryTick(warlordsEntity);
     }
 
-    public int getDirectHits() {
-        return directHits;
-    }
-
     public void setShotsFiredAtATime(int shotsFiredAtATime) {
         this.shotsFiredAtATime = shotsFiredAtATime;
     }
@@ -412,9 +407,9 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
     }
 
     public interface InternalProjectileTask {
-        void run(InternalProjectile projectile);
+        void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile);
 
-        default void onDestroy(InternalProjectile projectile) {
+        default void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
         }
     }
 
@@ -435,6 +430,57 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         }
     }
 
+    public static abstract class AbstractPiercingProjectileStats<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectileStats<T, R>> extends AbstractAbilityStats<T, R> {
+
+        @Field("players_hit")
+        protected int playersHit = 0;
+        @Field("players_hit_by_splash")
+        protected int playersHitBySplash = 0;
+        @Field("direct_hits")
+        protected int directHits = 0;
+        @Field("number_of_dismounts")
+        protected int numberOfDismounts = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Players Hit By Splash", playersHitBySplash));
+            statsDisplay.add(new AbilityStatDisplay("Direct Hits", directHits));
+            statsDisplay.add(new AbilityStatDisplay("Number of Dismounts", numberOfDismounts));
+            return statsDisplay;
+        }
+
+        @Override
+        public R merge(R other, int multiplier) {
+            R stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.playersHitBySplash = this.playersHitBySplash + other.playersHitBySplash * multiplier;
+            stats.directHits = this.directHits + other.directHits * multiplier;
+            stats.numberOfDismounts = this.numberOfDismounts + other.numberOfDismounts * multiplier;
+            return stats;
+        }
+
+        public int getPlayersHit() {
+            return playersHit;
+        }
+
+        public void addPlayersHit() {
+            this.playersHit++;
+        }
+
+        public void addPlayersHitBySplash() {
+            this.playersHitBySplash++;
+        }
+
+        public void addDirectHits() {
+            this.directHits++;
+        }
+
+        public void addNumberOfDismounts() {
+            this.numberOfDismounts++;
+        }
+    }
     public class InternalProjectile extends BukkitRunnable {
         private final List<WarlordsEntity> hit = new ArrayList<>();
         private final List<InternalProjectileTask> tasks = new ArrayList<>();
@@ -500,11 +546,11 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
                                                   null
                     );
                     if (hitResult.getType() == HitResult.Type.ENTITY) {
-                        directHits++;
+                        getAbilityStats().directHits++;
                     }
                     if (hitBySplash > 0) {
-                        playersHit++;
-                        playersHitBySplash += hitBySplash;
+                        getAbilityStats().playersHit++;
+                        getAbilityStats().playersHitBySplash += hitBySplash;
                     }
                     cancel();
                 } else if (ticksLived >= maxTicks) {

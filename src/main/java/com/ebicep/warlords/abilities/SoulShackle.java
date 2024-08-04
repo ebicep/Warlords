@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -16,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.SoulShackleBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -37,10 +33,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Damages<SoulShackle.DamageValues> {
+public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Damages<SoulShackle.DamageValues>, AbilityStats<SoulShackle, SoulShackle.SoulShackleStats> {
 
     private final int shackleRange = 15;
     private final DamageValues damageValues = new DamageValues();
+    private final SoulShackleStats stats = new SoulShackleStats();
     private float shacklePool = 0;
     private int maxShackleTargets = 1;
     private int silenceDurationInTicks = 30;
@@ -69,14 +66,6 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                 .text(" after shackling an enemy.")
                 .maxRange(shackleRange)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -293,6 +282,11 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         return damageValues;
     }
 
+    @Override
+    public SoulShackleStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable shackleDamage = new Value.RangedValueCritable(446, 589, 20, 175);
@@ -307,5 +301,30 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
             return values;
         }
 
+    }
+
+    public static class SoulShackleStats extends AbstractAbilityStats<SoulShackle, SoulShackleStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public SoulShackleStats merge(SoulShackleStats other, int multiplier) {
+            SoulShackleStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<SoulShackleStats> getClazz() {
+            return SoulShackleStats.class;
+        }
+
+        @Override
+        public SoulShackleStats create() {
+            return new SoulShackleStats();
+        }
     }
 }

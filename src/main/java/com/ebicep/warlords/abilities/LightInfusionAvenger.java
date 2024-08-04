@@ -113,7 +113,6 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
         return true;
     }
 
-
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new LightInfusionBranchAvenger(abilityTree, this);

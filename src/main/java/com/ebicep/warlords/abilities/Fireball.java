@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FireballBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -27,9 +26,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, Splash, Damages<Fireball.DamageValues> {
+public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStats> implements WeaponAbilityIcon, Splash, Damages<Fireball.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final FireballStats stats = new FireballStats();
     private int maxFullDistance = 50;
     private float directHitMultiplier = 15;
     private FloatModifiable splashRadius = new FloatModifiable(4.125f);
@@ -57,17 +57,6 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
                 .text(" extra damage.")
                 .optimalRange(maxFullDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Shots Fired", "" + timesUsed));
-        info.add(new Pair<>("Direct Hits", "" + directHits));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
     }
 
     @Override
@@ -104,7 +93,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             if (hit.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             hit.addInstance(InstanceBuilder
                     .damage()
@@ -132,7 +121,7 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
             getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
             if (nearEntity.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             nearEntity.addInstance(InstanceBuilder
                     .damage()
@@ -242,6 +231,11 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
         return splashRadius;
     }
 
+    @Override
+    public FireballStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable fireballDamage = new Value.RangedValueCritable(334, 433, 20, 175);
@@ -259,4 +253,28 @@ public class Fireball extends AbstractProjectile implements WeaponAbilityIcon, S
 
     }
 
+    public static class FireballStats extends AbstractPiercingProjectileStats<Fireball, FireballStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public FireballStats merge(FireballStats other, int multiplier) {
+            FireballStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<FireballStats> getClazz() {
+            return FireballStats.class;
+        }
+
+        @Override
+        public FireballStats create() {
+            return new FireballStats();
+        }
+    }
 }

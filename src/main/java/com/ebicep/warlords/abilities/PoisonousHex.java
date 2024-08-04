@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.PoisonousHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -38,9 +37,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration, Damages<PoisonousHex.DamageValues> {
+public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, PoisonousHex.PoisonousHexStats> implements WeaponAbilityIcon, Duration, Damages<PoisonousHex.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final PoisonousHexStats stats = new PoisonousHexStats();
     private int maxFullDistance = 40;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
@@ -79,13 +79,6 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
                 .text(" times.")
                 .maxRange(maxFullDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
     }
 
     @Override
@@ -159,7 +152,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 Location currentLocation = projectile.getCurrentLocation();
                 LocationBuilder location = new LocationBuilder(currentLocation)
                         .pitch(0)
@@ -176,7 +169,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 0.2f, 2);
                 EffectUtils.displayParticle(
@@ -229,7 +222,7 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         }
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
-            numberOfDismounts++;
+            stats.addNumberOfDismounts();
         }
         hit.addInstance(InstanceBuilder
                 .damage()
@@ -341,6 +334,11 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
         return damageValues;
     }
 
+    @Override
+    public PoisonousHexStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(263, 356, 20, 175);
@@ -362,4 +360,28 @@ public class PoisonousHex extends AbstractPiercingProjectile implements WeaponAb
 
     }
 
+    public static class PoisonousHexStats extends AbstractPiercingProjectileStats<PoisonousHex, PoisonousHexStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public PoisonousHexStats merge(PoisonousHexStats other, int multiplier) {
+            PoisonousHexStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<PoisonousHexStats> getClazz() {
+            return PoisonousHexStats.class;
+        }
+
+        @Override
+        public PoisonousHexStats create() {
+            return new PoisonousHexStats();
+        }
+    }
 }

@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthenSpikeBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -27,11 +26,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox, Damages<EarthenSpike.DamageValues> {
+public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, HitBox, Damages<EarthenSpike.DamageValues>, AbilityStats<EarthenSpike, EarthenSpike.EarthenSpikeStats> {
 
     public static final Map<UUID, Long> PLAYER_SPIKE_COOLDOWN = new HashMap<>();
     private static final String[] REPEATING_SOUND = new String[]{
@@ -40,10 +40,10 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
             "shaman.earthenspike.animation.c",
             "shaman.earthenspike.animation.d",
     };
-    public int playersSpiked = 0;
-    public int carrierSpiked = 0;
+
 
     private final DamageValues damageValues = new DamageValues();
+    private final EarthenSpikeStats stats = new EarthenSpikeStats();
     private FloatModifiable radius = new FloatModifiable(10);
     private float speed = 1;
     private double spikeHitbox = 2.5;
@@ -71,16 +71,6 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                 .initialRange(radius)
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Spiked", "" + playersSpiked));
-        info.add(new Pair<>("Times Carrier Spiked", "" + carrierSpiked));
-
-        return info;
     }
 
     @Override
@@ -194,9 +184,9 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     }
 
     protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
-        playersSpiked++;
+        stats.playersSpiked++;
         if (spikeTarget.hasFlag()) {
-            carrierSpiked++;
+            stats.carrierSpiked++;
         }
         spikeTarget.addInstance(InstanceBuilder
                 .damage()
@@ -261,6 +251,11 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         return radius;
     }
 
+    @Override
+    public EarthenSpikeStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable spikeDamage = new Value.RangedValueCritable(404, 562, 15, 175);
@@ -278,5 +273,38 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
     }
 
+    public static class EarthenSpikeStats extends AbstractAbilityStats<EarthenSpike, EarthenSpikeStats> {
 
+        @Field("players_spiked")
+        private int playersSpiked = 0;
+
+        @Field("carrier_spiked")
+        private int carrierSpiked = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Spiked", playersSpiked));
+            statsDisplay.add(new AbilityStatDisplay("Times Carrier Spiked", carrierSpiked));
+            return statsDisplay;
+        }
+
+        @Override
+        public EarthenSpikeStats merge(EarthenSpikeStats other, int multiplier) {
+            EarthenSpikeStats stats = super.merge(other, multiplier);
+            stats.playersSpiked = this.playersSpiked + other.playersSpiked * multiplier;
+            stats.carrierSpiked = this.carrierSpiked + other.carrierSpiked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<EarthenSpikeStats> getClazz() {
+            return EarthenSpikeStats.class;
+        }
+
+        @Override
+        public EarthenSpikeStats create() {
+            return new EarthenSpikeStats();
+        }
+    }
 }

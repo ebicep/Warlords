@@ -14,7 +14,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.FortifyingHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -42,11 +41,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class FortifyingHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
+public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, FortifyingHex.FortifyingHexStats> implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
 
     protected FloatModifiable damageReduction = new FloatModifiable(4);
 
     private final DamageValues damageValues = new DamageValues();
+    private final FortifyingHexStats stats = new FortifyingHexStats();
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 2;
     private int maxFullDistance = 40;
@@ -99,13 +99,6 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
                 .text(" times.")
                 .maxRange(maxFullDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
     }
 
     @Override
@@ -183,7 +176,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 Location currentLocation = projectile.getCurrentLocation();
                 LocationBuilder location = new LocationBuilder(currentLocation)
                         .pitch(0);
@@ -203,7 +196,7 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
                 EffectUtils.displayParticle(
@@ -430,6 +423,11 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
         this.maxAlliesHit = maxAlliesHit;
     }
 
+    @Override
+    public FortifyingHexStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(271, 365, 20, 175);
@@ -455,6 +453,31 @@ public class FortifyingHex extends AbstractPiercingProjectile implements WeaponA
 
         public void setStacks(int stacks) {
             this.stacks = stacks;
+        }
+    }
+
+    public static class FortifyingHexStats extends AbstractPiercingProjectileStats<FortifyingHex, FortifyingHexStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public FortifyingHexStats merge(FortifyingHexStats other, int multiplier) {
+            FortifyingHexStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<FortifyingHexStats> getClazz() {
+            return FortifyingHexStats.class;
+        }
+
+        @Override
+        public FortifyingHexStats create() {
+            return new FortifyingHexStats();
         }
     }
 }

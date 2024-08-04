@@ -79,7 +79,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                         PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
-                                        playersHit++;
+                                        getAbilityStats().addPlayersHit();
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
@@ -145,4 +145,5 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
         }
 
     }
+
 }

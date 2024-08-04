@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -16,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.ShadowStepBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -25,6 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -32,10 +29,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Damages<ShadowStep.DamageValues> {
+public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Damages<ShadowStep.DamageValues>, AbilityStats<ShadowStep, ShadowStep.ShadowStepStats> {
 
-    public int totalPlayersHit = 0;
+
     private final DamageValues damageValues = new DamageValues();
+    private final ShadowStepStats stats = new ShadowStepStats();
     private int fallDamageNegation = 10;
 
     public ShadowStep() {
@@ -51,15 +49,6 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                 .emptyLine()
                 .text("Shadow Step has reduced range when holding a flag.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + totalPlayersHit));
-
-        return info;
     }
 
     @Override
@@ -188,7 +177,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                 .entitiesAround(wp, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
-            totalPlayersHit++;
+            stats.totalPlayersHit++;
             assaultTarget.addInstance(InstanceBuilder
                     .damage()
                     .ability(this)
@@ -228,7 +217,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)
                     ) {
-                        totalPlayersHit++;
+                        stats.totalPlayersHit++;
                         landingTarget.addInstance(InstanceBuilder
                                 .damage()
                                 .ability(ShadowStep.this)
@@ -287,6 +276,11 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         return damageValues;
     }
 
+    @Override
+    public ShadowStepStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable shadowStepDamage = new Value.RangedValueCritable(466, 598, 15, 175);
@@ -303,4 +297,33 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
     }
 
+    public static class ShadowStepStats extends AbstractAbilityStats<ShadowStep, ShadowStepStats> {
+
+        @Field("total_players_hit")
+        private int totalPlayersHit = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", totalPlayersHit));
+            return statsDisplay;
+        }
+
+        @Override
+        public ShadowStepStats merge(ShadowStepStats other, int multiplier) {
+            ShadowStepStats stats = super.merge(other, multiplier);
+            stats.totalPlayersHit = this.totalPlayersHit + other.totalPlayersHit * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<ShadowStepStats> getClazz() {
+            return ShadowStepStats.class;
+        }
+
+        @Override
+        public ShadowStepStats create() {
+            return new ShadowStepStats();
+        }
+    }
 }

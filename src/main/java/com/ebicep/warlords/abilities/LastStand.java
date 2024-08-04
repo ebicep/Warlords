@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -17,7 +15,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.defender.LastStandBranch;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -28,19 +25,18 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<LastStand, LastStand.LastStandStats> {
 
-public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Duration {
-
-    public int playersLastStanded = 0;
 
     protected float amountPrevented = 0;
-
+    private final LastStandStats stats = new LastStandStats();
     private int radius = 7;
     private int selfTickDuration = 240;
     private int allyTickDuration = 120;
@@ -76,15 +72,6 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 .durationTicks(allyTickDuration)
                 .text(". You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Last Standed", "" + playersLastStanded));
-
-        return info;
     }
 
     @Override
@@ -153,7 +140,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 .aliveTeammatesOf(wp)
                 .excluding(wp)
         ) {
-            playersLastStanded++;
+            stats.playersLastStanded++;
 
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.VILLAGER_HAPPY);
             standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -316,5 +303,40 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    @Override
+    public LastStandStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class LastStandStats extends AbstractAbilityStats<LastStand, LastStandStats> {
+
+        @Field("players_last_standed")
+        private int playersLastStanded = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Last Standed", playersLastStanded));
+            return statsDisplay;
+        }
+
+        @Override
+        public LastStandStats merge(LastStandStats other, int multiplier) {
+            LastStandStats stats = super.merge(other, multiplier);
+            stats.playersLastStanded = this.playersLastStanded + other.playersLastStanded * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<LastStandStats> getClazz() {
+            return LastStandStats.class;
+        }
+
+        @Override
+        public LastStandStats create() {
+            return new LastStandStats();
+        }
     }
 }

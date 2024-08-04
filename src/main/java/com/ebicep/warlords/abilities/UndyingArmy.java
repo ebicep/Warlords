@@ -20,7 +20,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.UndyingArmyBranch;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -28,6 +27,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -35,8 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-
-public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<UndyingArmy.DamageValues> {
+public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<UndyingArmy.DamageValues>, AbilityStats<UndyingArmy, UndyingArmy.UndyingArmyStats> {
 
     public static final ItemStack BONE = new ItemBuilder(Material.BONE)
             .name(Component.text("Instant Kill", NamedTextColor.RED))
@@ -166,9 +165,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         this.maxHealthDamage = maxHealthDamage;
     }
 
-    public int playersArmied = 0;
+
     private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
     private final DamageValues damageValues = new DamageValues();
+    private final UndyingArmyStats stats = new UndyingArmyStats();
     private int radius = 12;
     private int tickDuration = 200;
     private int maxArmyAllies = 6;
@@ -212,15 +212,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 .percent(maxHealthDamage, NamedTextColor.RED)
                 .text(" of their max health as damage every second.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Armied", "" + playersArmied));
-
-        return info;
     }
 
     @Override
@@ -291,7 +282,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
-                playersArmied++;
+                stats.playersArmied++;
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                         .append(Component.text(" Your ", NamedTextColor.GRAY))
                         .append(Component.text("Undying Army", NamedTextColor.YELLOW))
@@ -489,6 +480,11 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         return damageValues;
     }
 
+    @Override
+    public UndyingArmyStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValue relentlessArmy = new Value.RangedValue(458, 612);
@@ -501,5 +497,33 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     }
 
+    public static class UndyingArmyStats extends AbstractAbilityStats<UndyingArmy, UndyingArmyStats> {
 
+        @Field("players_armied")
+        private int playersArmied = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Armied", playersArmied));
+            return statsDisplay;
+        }
+
+        @Override
+        public UndyingArmyStats merge(UndyingArmyStats other, int multiplier) {
+            UndyingArmyStats stats = super.merge(other, multiplier);
+            stats.playersArmied = this.playersArmied + other.playersArmied * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<UndyingArmyStats> getClazz() {
+            return UndyingArmyStats.class;
+        }
+
+        @Override
+        public UndyingArmyStats create() {
+            return new UndyingArmyStats();
+        }
+    }
 }

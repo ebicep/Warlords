@@ -1,6 +1,8 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -14,7 +16,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.SanctifiedBeaconBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -23,6 +24,7 @@ import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -30,19 +32,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, SanctifiedBeacon.SanctifiedBeaconData> implements BlueAbilityIcon {
+public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, SanctifiedBeacon.SanctifiedBeaconData> implements BlueAbilityIcon, AbilityStats<SanctifiedBeacon, SanctifiedBeacon.SanctifiedBeaconStats> {
 
     public static final Map<Integer, Team> BEACON_IDS = new HashMap<>();
 
-    public int hexesGiven = 0;
-    public int critsReduced = 0;
-
     private final int maxAllies = 2;
+    private final SanctifiedBeaconStats stats = new SanctifiedBeaconStats();
     private int critMultiplierReducedBy = 25;
     private int hexIntervalTicks = 60;
     private int stacksGranted = 1;
     private float damageReductionPve = 30;
-
 
     public SanctifiedBeacon() {
         super("Sanctified Beacon", 20, 40, 8, 15);
@@ -156,7 +155,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                                 float critMultiplier
                         ) {
                             if (isCrit) {
-                                critsReduced++;
+                                stats.critsReduced++;
                             }
                         }
 
@@ -198,7 +197,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         2
                 );
                 MercifulHex.giveMercifulHex(wp, ally);
-                hexesGiven++;
+                stats.hexesGiven++;
             }
 
             Utils.playGlobalSound(crystal.getLocation(), Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM, 1, 2);
@@ -225,15 +224,6 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     3
             );
         }
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Hexes Given", "" + hexesGiven));
-        info.add(new Pair<>("Crits Reduced", "" + critsReduced));
-        return info;
     }
 
     @Override
@@ -265,6 +255,11 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
         this.damageReductionPve = damageReductionPve;
     }
 
+    @Override
+    public SanctifiedBeaconStats getAbilityStats() {
+        return stats;
+    }
+
     public static class SanctifiedBeaconData extends AbstractBeaconAbility.BeaconData {
 
         private final ArmorStand crystal;
@@ -281,6 +276,40 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
         public Object getM2Object() {
             return m2Object;
+        }
+    }
+
+    public static class SanctifiedBeaconStats extends AbstractAbilityStats<SanctifiedBeacon, SanctifiedBeaconStats> {
+
+        @Field("hexes_given")
+        private int hexesGiven = 0;
+        @Field("crits_reduced")
+        private int critsReduced = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Hexes Given", hexesGiven));
+            statsDisplay.add(new AbilityStatDisplay("Crits Reduced", critsReduced));
+            return statsDisplay;
+        }
+
+        @Override
+        public SanctifiedBeaconStats merge(SanctifiedBeaconStats other, int multiplier) {
+            SanctifiedBeaconStats stats = super.merge(other, multiplier);
+            stats.hexesGiven = this.hexesGiven + other.hexesGiven * multiplier;
+            stats.critsReduced = this.critsReduced + other.critsReduced * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<SanctifiedBeaconStats> getClazz() {
+            return SanctifiedBeaconStats.class;
+        }
+
+        @Override
+        public SanctifiedBeaconStats create() {
+            return new SanctifiedBeaconStats();
         }
     }
 

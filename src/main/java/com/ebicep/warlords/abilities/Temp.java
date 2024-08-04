@@ -1,16 +1,19 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.java.Pair;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Temp extends AbstractAbility {
+public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.TempStats> {
+
+    private final TempStats stats = new TempStats();
 
     public Temp() {
         super("Placeholder Ability", 0, 0);
@@ -24,15 +27,37 @@ public class Temp extends AbstractAbility {
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         return true;
     }
 
+    @Override
+    public TempStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class TempStats extends AbstractAbilityStats<Temp, TempStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public TempStats merge(TempStats other, int multiplier) {
+            TempStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<TempStats> getClazz() {
+            return TempStats.class;
+        }
+
+        @Override
+        public TempStats create() {
+            return new TempStats();
+        }
+    }
 }

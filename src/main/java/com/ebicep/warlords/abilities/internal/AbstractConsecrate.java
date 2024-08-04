@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -18,20 +17,19 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractConsecrate extends AbstractAbility implements RedAbilityIcon, Duration, HitBox {
-
-    public int strikesBoosted = 0;
-    public int playersHit = 0;
+public abstract class AbstractConsecrate extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, AbilityStats<AbstractConsecrate, AbstractConsecrate.AbstractConsecrateStats> {
 
     protected int strikeDamageBoost;
     protected FloatModifiable hitBox;
     protected int tickDuration;
+    private final AbstractConsecrateStats stats = new AbstractConsecrateStats();
 
     public AbstractConsecrate(
             float energyCost,
@@ -61,15 +59,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 .text(".")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Strikes Boosted", "" + strikesBoosted));
-        return info;
     }
 
     @Override
@@ -108,7 +97,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
-                                        playersHit++;
+                                        stats.playersHit++;
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
@@ -142,7 +131,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     public abstract String getStrikeName();
 
     public void addStrikesBoosted() {
-        strikesBoosted++;
+        stats.strikesBoosted++;
     }
 
     public abstract Value.RangedValueCritable getConsecrateDamage();
@@ -168,6 +157,50 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AbstractConsecrateStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AbstractConsecrateStats extends AbstractAbilityStats<AbstractConsecrate, AbstractConsecrateStats> {
+
+        @Field("strikes_boosted")
+        private int strikesBoosted = 0;
+        @Field("players_hit")
+        private int playersHit = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Strikes Boosted", strikesBoosted));
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractConsecrateStats merge(AbstractConsecrateStats other, int multiplier) {
+            AbstractConsecrateStats stats = super.merge(other, multiplier);
+            stats.strikesBoosted = this.strikesBoosted + other.strikesBoosted * multiplier;
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AbstractConsecrateStats> getClazz() {
+            return AbstractConsecrateStats.class;
+        }
+
+        @Override
+        public AbstractConsecrateStats create() {
+            return new AbstractConsecrateStats();
+        }
+
+        public void addPlayersHit() {
+            playersHit++;
+        }
+
     }
 
 }

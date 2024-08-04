@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -16,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.FreezingBreathBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -31,18 +27,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon, Damages<FreezingBreath.DamageValues> {
+public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingBreath.FreezingBreathStats> implements RedAbilityIcon, Damages<FreezingBreath.DamageValues> {
 
-    public int playersHit = 0;
 
     private final DamageValues damageValues = new DamageValues();
     private final int slowDuration = 4;
+    private final FreezingBreathStats stats = new FreezingBreathStats();
     private int slowness = 40;
     private float hitbox = 10;
     private int maxAnimationTime = 12;
@@ -68,15 +65,6 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
                 .text(".")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-
-        return info;
     }
 
     @Override
@@ -110,7 +98,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
             getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
             if (nearEntity.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             nearEntity.addSpeedModifier(shooter, name, -50, 4 * 20);
             float damageIncrease = (float) Math.min(1 + projectile.getBlocksTravelled() * .08, 2);
@@ -185,7 +173,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
                 .aliveEnemiesOf(wp)
         ) {
             counter++;
-            playersHit++;
+            stats.playersHit++;
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (viewDirection.dot(direction) > .68) {
                 breathTarget.addInstance(InstanceBuilder
@@ -241,7 +229,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
         }
         projectile.addTask(new InternalProjectileTask() {
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 Vector vector = new LocationBuilder(startingLocation).getVectorTowards(projectile.getCurrentLocation());
                 for (ArmorStand armorStand : ball) {
                     Location currentLoc = armorStand.getLocation();
@@ -250,7 +238,7 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 ball.forEach(Entity::remove);
                 LocationBuilder impactLocation = new LocationBuilder(projectile.getCurrentLocation()).backward(1.5f);
                 Utils.spawnFallingBlocks(
@@ -312,7 +300,6 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
         this.hitbox = hitbox;
     }
 
-
     public int getMaxAnimationTime() {
         return maxAnimationTime;
     }
@@ -327,6 +314,11 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
 
     public void setSlowness(int slowness) {
         this.slowness = slowness;
+    }
+
+    @Override
+    public FreezingBreathStats getAbilityStats() {
+        return stats;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -345,4 +337,33 @@ public class FreezingBreath extends AbstractProjectile implements RedAbilityIcon
 
     }
 
+    public static class FreezingBreathStats extends AbstractPiercingProjectileStats<FreezingBreath, FreezingBreathStats> {
+
+        @Field("players_hit")
+        private int playersHit = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            return statsDisplay;
+        }
+
+        @Override
+        public FreezingBreathStats merge(FreezingBreathStats other, int multiplier) {
+            FreezingBreathStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<FreezingBreathStats> getClazz() {
+            return FreezingBreathStats.class;
+        }
+
+        @Override
+        public FreezingBreathStats create() {
+            return new FreezingBreathStats();
+        }
+    }
 }

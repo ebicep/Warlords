@@ -1,7 +1,9 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -12,7 +14,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -29,9 +30,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIcon {
+public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIcon, AbilityStats<CrystalOfHealing, CrystalOfHealing.CrystalOfHealingStats> {
 
     private static final float RADIUS = 1.5f;
+    private final CrystalOfHealingStats stats = new CrystalOfHealingStats();
     private int duration = 15; // seconds
     private float maxHeal = 1500;
     private int lifeSpan = 45; // seconds
@@ -51,13 +53,6 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                 .durationSeconds(lifeSpan)
                 .text(" after its completion.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
     }
 
     @Override
@@ -220,5 +215,35 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    @Override
+    public CrystalOfHealingStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class CrystalOfHealingStats extends AbstractAbilityStats<CrystalOfHealing, CrystalOfHealingStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public CrystalOfHealingStats merge(CrystalOfHealingStats other, int multiplier) {
+            CrystalOfHealingStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<CrystalOfHealingStats> getClazz() {
+            return CrystalOfHealingStats.class;
+        }
+
+        @Override
+        public CrystalOfHealingStats create() {
+            return new CrystalOfHealingStats();
+        }
     }
 }

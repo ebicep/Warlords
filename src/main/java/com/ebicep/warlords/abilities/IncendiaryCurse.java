@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -22,18 +21,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, HitBox, Damages<IncendiaryCurse.DamageValues> {
+public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, HitBox, Damages<IncendiaryCurse.DamageValues>, AbilityStats<IncendiaryCurse, IncendiaryCurse.IncendiaryCurseStats> {
 
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
 
-    public int playersHit = 0;
+
     private final DamageValues damageValues = new DamageValues();
+    private final IncendiaryCurseStats stats = new IncendiaryCurseStats();
     private FloatModifiable hitbox = new FloatModifiable(5);
     private int blindDurationInTicks = 30;
 
@@ -54,15 +55,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 .durationTicks(blindDurationInTicks)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-
-        return info;
     }
 
     @Override
@@ -116,7 +108,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 .aliveEnemiesOf(wp)
                 .toList();
         for (WarlordsEntity nearEntity : enemies) {
-            playersHit++;
+            stats.playersHit++;
 
             nearEntity.addInstance(InstanceBuilder
                     .damage()
@@ -200,6 +192,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         return damageValues;
     }
 
+    @Override
+    public IncendiaryCurseStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
@@ -214,5 +211,35 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             return values;
         }
 
+    }
+
+    public static class IncendiaryCurseStats extends AbstractAbilityStats<IncendiaryCurse, IncendiaryCurseStats> {
+
+        @Field("players_hit")
+        private int playersHit = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            return statsDisplay;
+        }
+
+        @Override
+        public IncendiaryCurseStats merge(IncendiaryCurseStats other, int multiplier) {
+            IncendiaryCurseStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<IncendiaryCurseStats> getClazz() {
+            return IncendiaryCurseStats.class;
+        }
+
+        @Override
+        public IncendiaryCurseStats create() {
+            return new IncendiaryCurseStats();
+        }
     }
 }

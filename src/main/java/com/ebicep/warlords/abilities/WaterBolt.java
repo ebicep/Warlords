@@ -11,7 +11,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBoltBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -21,17 +20,17 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, Splash, Damages<WaterBolt.DamageValues>, Heals<WaterBolt.HealingValues> {
+public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBoltStats> implements WeaponAbilityIcon, Splash, Damages<WaterBolt.DamageValues>, Heals<WaterBolt.HealingValues> {
 
-    public int teammatesHit = 0;
-    public int enemiesHit = 0;
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private final WaterBoltStats stats = new WaterBoltStats();
     private int maxFullDistance = 40;
     private float directHitMultiplier = 15;
     private FloatModifiable splashRadius = new FloatModifiable(4.125f);
@@ -58,19 +57,6 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                 .durationSeconds(Overheal.OVERHEAL_DURATION)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Shots Fired", "" + timesUsed));
-        info.add(new Pair<>("Direct Hits", "" + directHits));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Teammates Hit", "" + teammatesHit));
-        info.add(new Pair<>("Enemies Hit", "" + enemiesHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
     }
 
     @Override
@@ -110,7 +96,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             float cc = pveMasterUpgrade2 ? 100 : healingValues.boltHealing.getCritChanceValue();
             if (hit.isTeammate(shooter)) {
-                teammatesHit++;
+                stats.teammatesHit++;
                 hit.addInstance(InstanceBuilder
                         .healing()
                         .ability(this)
@@ -128,9 +114,9 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                     increaseDamageOnHit(shooter, hit);
                 }
             } else {
-                enemiesHit++;
+                stats.enemiesHit++;
                 if (hit.onHorse()) {
-                    numberOfDismounts++;
+                    stats.addNumberOfDismounts();
                 }
                 hit.addInstance(InstanceBuilder
                         .damage()
@@ -154,7 +140,7 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
             getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
             if (nearEntity.isTeammate(shooter)) {
-                teammatesHit++;
+                stats.teammatesHit++;
                 nearEntity.addInstance(InstanceBuilder
                         .healing()
                         .ability(this)
@@ -171,9 +157,9 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
                     increaseDamageOnHit(shooter, nearEntity);
                 }
             } else {
-                enemiesHit++;
+                stats.enemiesHit++;
                 if (nearEntity.onHorse()) {
-                    numberOfDismounts++;
+                    stats.addNumberOfDismounts();
                 }
                 nearEntity.addInstance(InstanceBuilder
                         .damage()
@@ -253,6 +239,11 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
         return healingValues;
     }
 
+    @Override
+    public WaterBoltStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(231, 299, 20, 175);
@@ -285,4 +276,38 @@ public class WaterBolt extends AbstractProjectile implements WeaponAbilityIcon, 
 
     }
 
+    public static class WaterBoltStats extends AbstractPiercingProjectileStats<WaterBolt, WaterBoltStats> {
+
+        @Field("teammates_hit")
+        private int teammatesHit = 0;
+        @Field("enemies_hit")
+        private int enemiesHit = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Teammates Hit", teammatesHit));
+            statsDisplay.add(new AbilityStatDisplay("Enemies Hit", enemiesHit));
+            return statsDisplay;
+        }
+
+        @Override
+        public WaterBoltStats merge(WaterBoltStats other, int multiplier) {
+            WaterBoltStats stats = super.merge(other, multiplier);
+            stats.teammatesHit = this.teammatesHit + other.teammatesHit * multiplier;
+            stats.enemiesHit = this.enemiesHit + other.enemiesHit * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<WaterBoltStats> getClazz() {
+            return WaterBoltStats.class;
+        }
+
+        @Override
+        public WaterBoltStats create() {
+            return new WaterBoltStats();
+        }
+    }
 }

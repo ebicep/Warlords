@@ -10,23 +10,22 @@ import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.AvengerStrikeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AvengersStrike extends AbstractStrike implements Damages<AvengersStrike.DamageValues> {
+public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrike.AvengersStrikeStats> implements Damages<AvengersStrike.DamageValues> {
 
-    public float energyStole = 0;
     private final DamageValues damageValues = new DamageValues();
+    private final AvengersStrikeStats stats = new AvengersStrikeStats();
     private float energySteal = 10;
 
     public AvengersStrike() {
@@ -47,15 +46,6 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
                 .energy(energySteal)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Struck", "" + timesUsed));
-        info.add(new Pair<>("Energy Removed", "" + Math.round(energyStole)));
-
-        return info;
     }
 
     @Override
@@ -130,7 +120,7 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
             }
         }
 
-        energyStole += nearPlayer.subtractEnergy(name, energySteal, true);
+        stats.energyStole += nearPlayer.subtractEnergy(name, energySteal, true);
         return true;
     }
 
@@ -140,6 +130,11 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
 
     public void setEnergySteal(float energySteal) {
         this.energySteal = energySteal;
+    }
+
+    @Override
+    public AvengersStrikeStats getAbilityStats() {
+        return stats;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -158,4 +153,33 @@ public class AvengersStrike extends AbstractStrike implements Damages<AvengersSt
 
     }
 
+    public static class AvengersStrikeStats extends AbstractStrikeStats<AvengersStrike, AvengersStrikeStats> {
+
+        @Field("energy_stole")
+        private float energyStole = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Energy Removed", Math.round(energyStole)));
+            return statsDisplay;
+        }
+
+        @Override
+        public AvengersStrikeStats merge(AvengersStrikeStats other, int multiplier) {
+            AvengersStrikeStats stats = super.merge(other, multiplier);
+            stats.energyStole = this.energyStole + other.energyStole * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AvengersStrikeStats> getClazz() {
+            return AvengersStrikeStats.class;
+        }
+
+        @Override
+        public AvengersStrikeStats create() {
+            return new AvengersStrikeStats();
+        }
+    }
 }

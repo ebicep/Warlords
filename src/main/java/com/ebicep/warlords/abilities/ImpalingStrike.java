@@ -15,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.ImpalingStrikeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -29,10 +28,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingStrike.DamageValues> {
+public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrike.ImpalingStrikeStats> implements Damages<ImpalingStrike.DamageValues> {
 
     protected float healingDoneFromEnemyCarrier = 0;
     private final DamageValues damageValues = new DamageValues();
+    private final ImpalingStrikeStats stats = new ImpalingStrikeStats();
     private int leechDuration = 5;
     private float leechAllyAmount = 25;
     private float leechSelfAmount = 15;
@@ -64,14 +64,6 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
                 .text(" of the damage instead.")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Struck", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -231,6 +223,11 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
         this.leechAllyAmount = leechAllyAmount;
     }
 
+    @Override
+    public ImpalingStrikeStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(323, 427, 20, 175);
@@ -247,5 +244,28 @@ public class ImpalingStrike extends AbstractStrike implements Damages<ImpalingSt
 
     }
 
+    public static class ImpalingStrikeStats extends AbstractStrikeStats<ImpalingStrike, ImpalingStrikeStats> {
 
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public ImpalingStrikeStats merge(ImpalingStrikeStats other, int multiplier) {
+            ImpalingStrikeStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<ImpalingStrikeStats> getClazz() {
+            return ImpalingStrikeStats.class;
+        }
+
+        @Override
+        public ImpalingStrikeStats create() {
+            return new ImpalingStrikeStats();
+        }
+    }
 }

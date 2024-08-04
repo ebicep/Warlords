@@ -5,26 +5,23 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon {
-
-    public int playersHit = 0;
-    public int carrierHit = 0;
-    public int warpsKnockbacked = 0;
+public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon, AbilityStats<AbstractSeismicWave, AbstractSeismicWave.AbstractSeismicWaveStats> {
 
     protected float velocity = 1.25f;
+    private final AbstractSeismicWaveStats stats = new AbstractSeismicWaveStats();
     private int waveLength = 8; // foward amount
     private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
@@ -39,17 +36,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                 .damage(getWaveDamage())
                 .text(" damage to all enemies hit and knocks them back slightly.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Carriers Hit", "" + carrierHit));
-        info.add(new Pair<>("Warps Knockbacked", "" + warpsKnockbacked));
-
-        return info;
     }
 
     @Override
@@ -75,12 +61,12 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                         .excluding(playersHit)
                         .closestFirst(wp)
                 ) {
-                    this.playersHit++;
+                    stats.playersHit++;
                     if (waveTarget.hasFlag()) {
-                        carrierHit++;
+                        stats.carrierHit++;
                     }
                     if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(waveTarget)) {
-                        warpsKnockbacked++;
+                        stats.warpsKnockbacked++;
                     }
 
                     playersHit.add(waveTarget);
@@ -150,5 +136,48 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     public void setWaveWidth(int waveWidth) {
         this.waveWidth = waveWidth;
+    }
+
+    @Override
+    public AbstractSeismicWaveStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AbstractSeismicWaveStats extends AbstractAbilityStats<AbstractSeismicWave, AbstractSeismicWaveStats> {
+
+        @Field("players_hit")
+        private int playersHit = 0;
+        @Field("carrier_hit")
+        private int carrierHit = 0;
+        @Field("warps_knockbacked")
+        private int warpsKnockbacked = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Carriers Hit", carrierHit));
+            statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractSeismicWaveStats merge(AbstractSeismicWaveStats other, int multiplier) {
+            AbstractSeismicWaveStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.carrierHit = this.carrierHit + other.carrierHit * multiplier;
+            stats.warpsKnockbacked = this.warpsKnockbacked + other.warpsKnockbacked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AbstractSeismicWaveStats> getClazz() {
+            return AbstractSeismicWaveStats.class;
+        }
+
+        @Override
+        public AbstractSeismicWaveStats create() {
+            return new AbstractSeismicWaveStats();
+        }
     }
 }

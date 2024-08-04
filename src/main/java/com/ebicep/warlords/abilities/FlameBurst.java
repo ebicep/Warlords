@@ -10,7 +10,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.FlameburstBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -27,9 +26,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlameBurst extends AbstractPiercingProjectile implements RedAbilityIcon, Splash, Damages<FlameBurst.DamageValues> {
+public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurst.FlameBurstStats> implements RedAbilityIcon, Splash, Damages<FlameBurst.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final FlameBurstStats stats = new FlameBurstStats();
     private FloatModifiable splash = new FloatModifiable(5.125f);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;
@@ -58,16 +58,6 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
                 .percent(100, NamedTextColor.RED)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
     }
 
     @Override
@@ -141,7 +131,7 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
         getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
         if (nearEntity.onHorse()) {
-            numberOfDismounts++;
+            stats.addNumberOfDismounts();
         }
 
         if (pveMasterUpgrade) {
@@ -286,6 +276,11 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
         return splash;
     }
 
+    @Override
+    public FlameBurstStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
@@ -302,5 +297,28 @@ public class FlameBurst extends AbstractPiercingProjectile implements RedAbility
 
     }
 
+    public static class FlameBurstStats extends AbstractPiercingProjectileStats<FlameBurst, FlameBurstStats> {
 
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public FlameBurstStats merge(FlameBurstStats other, int multiplier) {
+            FlameBurstStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<FlameBurstStats> getClazz() {
+            return FlameBurstStats.class;
+        }
+
+        @Override
+        public FlameBurstStats create() {
+            return new FlameBurstStats();
+        }
+    }
 }

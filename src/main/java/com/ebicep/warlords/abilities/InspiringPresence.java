@@ -11,7 +11,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.InspiringPresenceBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -20,20 +19,19 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, CanReduceCooldowns, AbilityStats<InspiringPresence, InspiringPresence.InspiringPresenceStats> {
 
-public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, CanReduceCooldowns {
-
-    public int playersHit = 0;
 
     protected List<WarlordsEntity> playersAffected = new ArrayList<>();
     protected double energyGivenFromStrikeAndPresence = 0;
-
+    private final InspiringPresenceStats stats = new InspiringPresenceStats();
     private int speedBuff = 30;
     private FloatModifiable radius = new FloatModifiable(10);
     private int tickDuration = 240;
@@ -56,15 +54,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-
-        return info;
     }
 
     @Override
@@ -123,7 +112,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         }
 
         for (WarlordsEntity presenceTarget : teammatesNear) {
-            playersHit++;
+            stats.playersHit++;
             tempPresence.getPlayersAffected().add(presenceTarget);
             if (pveMasterUpgrade) {
                 resetCooldowns(presenceTarget);
@@ -238,5 +227,40 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
+    }
+
+    @Override
+    public InspiringPresenceStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class InspiringPresenceStats extends AbstractAbilityStats<InspiringPresence, InspiringPresenceStats> {
+
+        @Field("players_hit")
+        private int playersHit = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            return statsDisplay;
+        }
+
+        @Override
+        public InspiringPresenceStats merge(InspiringPresenceStats other, int multiplier) {
+            InspiringPresenceStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<InspiringPresenceStats> getClazz() {
+            return InspiringPresenceStats.class;
+        }
+
+        @Override
+        public InspiringPresenceStats create() {
+            return new InspiringPresenceStats();
+        }
     }
 }

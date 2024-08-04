@@ -71,4 +71,5 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
         }
 
     }
+
 }

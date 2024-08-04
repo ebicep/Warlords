@@ -16,7 +16,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.FallenSoulsBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -36,12 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbilityIcon, Damages<FallenSouls.DamageValues> {
-
-    public int playersHit = 0;
-    public int numberOfDismounts = 0;
+public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenSouls.FallenSoulsStats> implements WeaponAbilityIcon, Damages<FallenSouls.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final FallenSoulsStats stats = new FallenSoulsStats();
     private int cooldownReduction = 2;
 
     public FallenSouls() {
@@ -65,16 +62,6 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
                 .text(".")
                 .maxRange(maxDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
     }
 
     @Override
@@ -108,7 +95,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
             getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
             playersHit++;
             if (enemy.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             hit(wp, enemy);
 
@@ -168,9 +155,9 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            playersHit++;
+            stats.addPlayersHit();
             if (hit.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
 
@@ -209,8 +196,9 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
         });
 
         projectile.addTask(new InternalProjectileTask() {
+
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 Location currentLocation = projectile.getCurrentLocation();
                 LocationBuilder location = new LocationBuilder(currentLocation)
                         .pitch(0);
@@ -225,7 +213,7 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 display.remove();
                 EffectUtils.displayParticle(
                         Particle.SPELL_WITCH,
@@ -298,6 +286,11 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
         return damageValues;
     }
 
+    @Override
+    public FallenSoulsStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(148, 191, 20, 180);
@@ -314,4 +307,29 @@ public class FallenSouls extends AbstractPiercingProjectile implements WeaponAbi
 
     }
 
+    public static class FallenSoulsStats extends AbstractPiercingProjectileStats<FallenSouls, FallenSoulsStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public FallenSoulsStats merge(FallenSoulsStats other, int multiplier) {
+            FallenSoulsStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<FallenSoulsStats> getClazz() {
+            return FallenSoulsStats.class;
+        }
+
+        @Override
+        public FallenSoulsStats create() {
+            return new FallenSoulsStats();
+        }
+
+    }
 }

@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -23,8 +22,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotAShield extends AbstractPiercingProjectile {
+public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShield.NotAShieldStats> {
 
+    private final NotAShieldStats stats = new NotAShieldStats();
     private double hitBox = 3;
     private float runeTickIncrease = 1.5f;
     private int allyHitDamageReduction = 10;
@@ -58,13 +58,6 @@ public class NotAShield extends AbstractPiercingProjectile {
                 .text(maxAlliesHit, NamedTextColor.BLUE)
                 .text(" allies are hit with this shield, the shield shatters, ending its trajectory.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
     }
 
     @Override
@@ -105,7 +98,7 @@ public class NotAShield extends AbstractPiercingProjectile {
 
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
-            numberOfDismounts++;
+            stats.addNumberOfDismounts();
         }
         List<WarlordsEntity> hits = projectile.getHit();
         boolean isTeammate = hit.isTeammate(wp);
@@ -146,7 +139,7 @@ public class NotAShield extends AbstractPiercingProjectile {
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 projectile.getCurrentLocation().getWorld().spawnParticle(
                         Particle.CRIT,
@@ -162,7 +155,7 @@ public class NotAShield extends AbstractPiercingProjectile {
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 fallenSoul.remove();
                 projectile.getCurrentLocation().getWorld().spawnParticle(
                         Particle.CRIT_MAGIC,
@@ -193,5 +186,35 @@ public class NotAShield extends AbstractPiercingProjectile {
     @Override
     protected float getSoundPitch() {
         return 0;
+    }
+
+    @Override
+    public NotAShieldStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class NotAShieldStats extends AbstractPiercingProjectileStats<NotAShield, NotAShieldStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public NotAShieldStats merge(NotAShieldStats other, int multiplier) {
+            NotAShieldStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<NotAShieldStats> getClazz() {
+            return NotAShieldStats.class;
+        }
+
+        @Override
+        public NotAShieldStats create() {
+            return new NotAShieldStats();
+        }
     }
 }

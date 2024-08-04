@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractBeam;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -11,7 +8,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
-import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,11 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.DamageValues> {
+public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.SoulfireBeamStats> implements Damages<SoulfireBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.CRIMSON_FENCE_GATE);
     public Map<Integer, Integer> stacksRemoved = new HashMap<>();
     private final DamageValues damageValues = new DamageValues();
+    private final SoulfireBeamStats stats = new SoulfireBeamStats();
 
     public SoulfireBeam() {
         super("Soulfire Beam", 10, 10, 30, 30, false);
@@ -50,18 +47,6 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
                 .text(" relative to the number of stacks and all stacks are removed.")
                 .maxRange(maxDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        stacksRemoved.entrySet()
-                     .stream()
-                     .forEach(integerIntegerEntry -> {
-                         info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
-                     });
-        return info;
     }
 
     @Override
@@ -87,7 +72,9 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
             if (!hasAstral) {
                 hit.getCooldownManager().removeCooldown(PoisonousHex.class, false);
             } else {
-                wp.doOnStaticAbility(AstralPlague.class, astralPlague -> astralPlague.hexesNotConsumed += hexStacks);
+                wp.doOnStaticAbility(AstralPlague.class,
+                        astralPlague -> astralPlague.getAbilityStats().setHexesNotConsumed(astralPlague.getAbilityStats().getHexesNotConsumed() + hexStacks)
+                );
             }
             float multiplier = switch (hexStacks) {
                 case 0 -> 1f;
@@ -142,6 +129,11 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
         return damageValues;
     }
 
+    @Override
+    public SoulfireBeamStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(376, 508, 20, 175);
@@ -158,4 +150,28 @@ public class SoulfireBeam extends AbstractBeam implements Damages<SoulfireBeam.D
 
     }
 
+    public static class SoulfireBeamStats extends AbstractPiercingProjectileStats<SoulfireBeam, SoulfireBeamStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public SoulfireBeamStats merge(SoulfireBeamStats other, int multiplier) {
+            SoulfireBeamStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<SoulfireBeamStats> getClazz() {
+            return SoulfireBeamStats.class;
+        }
+
+        @Override
+        public SoulfireBeamStats create() {
+            return new SoulfireBeamStats();
+        }
+    }
 }

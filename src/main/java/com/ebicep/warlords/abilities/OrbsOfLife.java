@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.OrbsOfLifeBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -27,6 +26,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -35,24 +35,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<OrbsOfLife.HealingValues> {
+public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<OrbsOfLife.HealingValues>, AbilityStats<OrbsOfLife, OrbsOfLife.OrbsOfLifeStats> {
 
     public static final double SPAWN_RADIUS = 1.15;
     public static final double ORB_HITBOX = 1.35;
     public static final double ORB_HITBOX_SQUARED = ORB_HITBOX * ORB_HITBOX;
     public static final int MAX_ALLIES = 2;
 
-    public int orbsProduced = 0;
-
     private final int floatingOrbRadius = 20;
     private final HealingValues healingValues = new HealingValues();
+    private final OrbsOfLifeStats stats = new OrbsOfLifeStats();
     private int tickDuration = 280;
     private int initialOrbs = 3;
     private int orbTickMultiplier = 1;
     private float healingIncreaseDelay = 1.5f;
     private float healingIncreaseTime = 6.5f;
-    private int healingIncrease = 40;
     //TODO: Variables for magical numbers in description (Duration)
+    private int healingIncrease = 40;
 
     public OrbsOfLife() {
         super("Orbs of Life", 19.5f, 20);
@@ -86,15 +85,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 .text(".")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Orbs Produced", "" + orbsProduced));
-
-        return info;
     }
 
     @Override
@@ -309,7 +299,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), data.getOrbTickMultiplier(), data);
         data.getSpawnedOrbs().add(orb);
-        data.getOrbsOfLife().orbsProduced++;
+        data.getOrbsOfLife().getAbilityStats().orbsProduced++;
         if (++data.orbsProduced >= 50) {
             ChallengeAchievements.checkForAchievement(owner, ChallengeAchievements.ORBIFICATION);
         }
@@ -363,13 +353,22 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         this.tickDuration = tickDuration;
     }
 
-    public int getInitialOrbs() { return initialOrbs; }
+    public int getInitialOrbs() {
+        return initialOrbs;
+    }
 
-    public void setInitialOrbs(int initialOrbs) { this.initialOrbs = initialOrbs; }
+    public void setInitialOrbs(int initialOrbs) {
+        this.initialOrbs = initialOrbs;
+    }
 
     @Override
     public HealingValues getHealValues() {
         return healingValues;
+    }
+
+    @Override
+    public OrbsOfLifeStats getAbilityStats() {
+        return stats;
     }
 
     public static class OrbOfLife extends OrbPassenger {
@@ -436,6 +435,36 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         public int getOrbTickMultiplier() {
             return orbTickMultiplier;
+        }
+    }
+
+    public static class OrbsOfLifeStats extends AbstractAbilityStats<OrbsOfLife, OrbsOfLifeStats> {
+
+        @Field("orbs_produced")
+        private int orbsProduced = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Orbs Produced", orbsProduced));
+            return statsDisplay;
+        }
+
+        @Override
+        public OrbsOfLifeStats merge(OrbsOfLifeStats other, int multiplier) {
+            OrbsOfLifeStats stats = super.merge(other, multiplier);
+            stats.orbsProduced = this.orbsProduced + other.orbsProduced * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<OrbsOfLifeStats> getClazz() {
+            return OrbsOfLifeStats.class;
+        }
+
+        @Override
+        public OrbsOfLifeStats create() {
+            return new OrbsOfLifeStats();
         }
     }
 

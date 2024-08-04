@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityConcoctionBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,9 +24,10 @@ import org.bukkit.event.Listener;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, Damages<VitalityConcoction.DamageValues> {
+public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, Damages<VitalityConcoction.DamageValues>, AbilityStats<VitalityConcoction, VitalityConcoction.VitalityConcoctionStats> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final VitalityConcoctionStats stats = new VitalityConcoctionStats();
     private int tickDuration = 15;
     private int damageResistance = 80;
     private int speedBoost = 150;
@@ -50,14 +50,6 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                 .text("Vitality Concoction has reduced effectiveness when holding a flag.")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -151,6 +143,11 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         return damageValues;
     }
 
+    @Override
+    public VitalityConcoctionStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValue concoctionZoneDamage = new Value.RangedValue(1245, 1625);
@@ -163,4 +160,28 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
 
     }
 
+    public static class VitalityConcoctionStats extends AbstractAbilityStats<VitalityConcoction, VitalityConcoctionStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public VitalityConcoctionStats merge(VitalityConcoctionStats other, int multiplier) {
+            VitalityConcoctionStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<VitalityConcoctionStats> getClazz() {
+            return VitalityConcoctionStats.class;
+        }
+
+        @Override
+        public VitalityConcoctionStats create() {
+            return new VitalityConcoctionStats();
+        }
+    }
 }

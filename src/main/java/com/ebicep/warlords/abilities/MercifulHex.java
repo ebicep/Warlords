@@ -14,7 +14,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.MercifulHexBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -39,10 +38,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbilityIcon, Duration, Damages<MercifulHex.DamageValues> {
+public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, MercifulHex.MercifulHexStats> implements WeaponAbilityIcon, Duration, Damages<MercifulHex.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private final MercifulHexStats stats = new MercifulHexStats();
     private int hexStacksPerHit = 1;
     private int maxAlliesHit = 2;
     private int subsequentReduction = 30;
@@ -92,13 +92,6 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
                 .text(" times.")
                 .maxRange(maxDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
     }
 
     @Override
@@ -186,7 +179,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 Location currentLocation = projectile.getCurrentLocation();
                 LocationBuilder location = new LocationBuilder(currentLocation)
                         .pitch(0);
@@ -206,7 +199,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
                 EffectUtils.displayParticle(
@@ -246,7 +239,7 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         WarlordsEntity wp = projectile.getShooter();
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
-            numberOfDismounts++;
+            stats.addNumberOfDismounts();
         }
 
         List<WarlordsEntity> hits = projectile.getHit();
@@ -385,6 +378,11 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
         return healingValues;
     }
 
+    @Override
+    public MercifulHexStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(186, 250, 20, 180);
@@ -427,4 +425,28 @@ public class MercifulHex extends AbstractPiercingProjectile implements WeaponAbi
 
     }
 
+    public static class MercifulHexStats extends AbstractPiercingProjectileStats<MercifulHex, MercifulHexStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public MercifulHexStats merge(MercifulHexStats other, int multiplier) {
+            MercifulHexStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<MercifulHexStats> getClazz() {
+            return MercifulHexStats.class;
+        }
+
+        @Override
+        public MercifulHexStats create() {
+            return new MercifulHexStats();
+        }
+    }
 }

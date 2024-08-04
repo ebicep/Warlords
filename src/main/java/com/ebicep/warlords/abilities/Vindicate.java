@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -17,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.VindicateBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -26,6 +23,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -33,11 +31,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Vindicate, Vindicate.VindicateStats> {
 
     private static int knockbackResistance = 50;
-    public int debuffsRemovedOnCast = 0;
+
     private final int radius = 8;
+    private final VindicateStats stats = new VindicateStats();
     private int vindTickDuration = 240;
     private int damageReductionTickDuration = 160;
     private float vindicateDamageReduction = 30;
@@ -63,15 +62,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 .durationTicks(damageReductionTickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Debuffs Removed On Cast", "" + debuffsRemovedOnCast));
-
-        return info;
     }
 
     @Override
@@ -113,7 +103,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
             // Vindicate Immunity
             vindicateTarget.getSpeed().removeSlownessModifiers();
-            debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
+            stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
             giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, tempVindicate, vindTickDuration);
         }
 
@@ -239,5 +229,40 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public void setDamageReductionTickDuration(int damageReductionTickDuration) {
         this.damageReductionTickDuration = damageReductionTickDuration;
+    }
+
+    @Override
+    public VindicateStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class VindicateStats extends AbstractAbilityStats<Vindicate, VindicateStats> {
+
+        @Field("debuffs_removed_on_cast")
+        private int debuffsRemovedOnCast = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Debuffs Removed On Cast", debuffsRemovedOnCast));
+            return statsDisplay;
+        }
+
+        @Override
+        public VindicateStats merge(VindicateStats other, int multiplier) {
+            VindicateStats stats = super.merge(other, multiplier);
+            stats.debuffsRemovedOnCast = this.debuffsRemovedOnCast + other.debuffsRemovedOnCast * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<VindicateStats> getClazz() {
+            return VindicateStats.class;
+        }
+
+        @Override
+        public VindicateStats create() {
+            return new VindicateStats();
+        }
     }
 }

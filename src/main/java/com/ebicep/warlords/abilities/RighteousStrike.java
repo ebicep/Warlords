@@ -1,29 +1,27 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.RighteousStrikeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RighteousStrike extends AbstractStrike implements Damages<RighteousStrike.DamageValues> {
+public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousStrike.RighteousStrikeStats> implements Damages<RighteousStrike.DamageValues> {
 
-    public int silencedTargetStruck = 0;
+
     private final DamageValues damageValues = new DamageValues();
+    private final RighteousStrikeStats stats = new RighteousStrikeStats();
     private int abilityReductionInTicks = 16;
     private int additionalReductionInTicks = 4;
     private float vindicateCooldownReduction = 0.5f;
@@ -51,15 +49,6 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Silenced Target Struck", "" + silencedTargetStruck));
-
-        return info;
-    }
-
-    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new RighteousStrikeBranch(abilityTree, this);
     }
@@ -82,7 +71,7 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
         );
 
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
-            silencedTargetStruck++;
+            stats.silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks + additionalReductionInTicks, CooldownTypes.ABILITY);
             for (Vindicate vindicate : wp.getAbilitiesMatching(Vindicate.class)) {
                 vindicate.subtractCurrentCooldown(vindicateCooldownReduction);
@@ -127,6 +116,11 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
         return damageValues;
     }
 
+    @Override
+    public RighteousStrikeStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(334, 425, 20, 175);
@@ -143,4 +137,33 @@ public class RighteousStrike extends AbstractStrike implements Damages<Righteous
 
     }
 
+    public static class RighteousStrikeStats extends AbstractStrikeStats<RighteousStrike, RighteousStrikeStats> {
+
+        @Field("silenced_target_struck")
+        private int silencedTargetStruck = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Silenced Target Struck", silencedTargetStruck));
+            return statsDisplay;
+        }
+
+        @Override
+        public RighteousStrikeStats merge(RighteousStrikeStats other, int multiplier) {
+            RighteousStrikeStats stats = super.merge(other, multiplier);
+            stats.silencedTargetStruck = this.silencedTargetStruck + other.silencedTargetStruck * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<RighteousStrikeStats> getClazz() {
+            return RighteousStrikeStats.class;
+        }
+
+        @Override
+        public RighteousStrikeStats create() {
+            return new RighteousStrikeStats();
+        }
+    }
 }

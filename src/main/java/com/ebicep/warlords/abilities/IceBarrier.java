@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -15,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.cryomancer.IceBarrierBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,8 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<IceBarrier, IceBarrier.IceBarrierStats> {
 
+    private final IceBarrierStats stats = new IceBarrierStats();
     private int tickDuration = 120;
     private float damageReductionPercent = 50;
     private int slownessOnMeleeHit = 20;
@@ -61,14 +59,6 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -175,19 +165,19 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 })
         ) {
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2) {
-                    return currentDamageValue;
-                }
-                return currentDamageValue * getDamageReduction();
-            }
-
-            @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getCause().isEmpty() && !Objects.equals(event.getSource(), event.getWarlordsEntity())) {
                     event.getSource().addSpeedModifier(event.getWarlordsEntity(), "Ice Barrier", -slownessOnMeleeHit, slowDuration * 20);
                 }
                 return currentDamageValue;
+            }
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade2) {
+                    return currentDamageValue;
+                }
+                return currentDamageValue * getDamageReduction();
             }
 
             @Override
@@ -228,12 +218,41 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
         this.tickDuration = tickDuration;
     }
 
-
     public int getSlownessOnMeleeHit() {
         return slownessOnMeleeHit;
     }
 
     public void setSlownessOnMeleeHit(int slownessOnMeleeHit) {
         this.slownessOnMeleeHit = slownessOnMeleeHit;
+    }
+
+    @Override
+    public IceBarrierStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class IceBarrierStats extends AbstractAbilityStats<IceBarrier, IceBarrierStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public IceBarrierStats merge(IceBarrierStats other, int multiplier) {
+            IceBarrierStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<IceBarrierStats> getClazz() {
+            return IceBarrierStats.class;
+        }
+
+        @Override
+        public IceBarrierStats create() {
+            return new IceBarrierStats();
+        }
     }
 }

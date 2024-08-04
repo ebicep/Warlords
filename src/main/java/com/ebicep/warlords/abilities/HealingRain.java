@@ -27,6 +27,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -34,12 +35,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, Damages<HealingRain.DamageValues>, Heals<HealingRain.HealingValues>, AbilityStats<HealingRain, HealingRain.HealingRainStats> {
 
-public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, Damages<HealingRain.DamageValues>, Heals<HealingRain.HealingValues> {
 
-    public int playersHealed = 0;
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private final HealingRainStats stats = new HealingRainStats();
     private int tickDuration = 200;
     private FloatModifiable radius = new FloatModifiable(8);
 
@@ -70,15 +71,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                 .durationSeconds(Overheal.OVERHEAL_DURATION)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-
-        return info;
     }
 
     @Override
@@ -266,7 +258,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {
-        playersHealed++;
+        stats.playersHealed++;
         teammateInRain.addInstance(InstanceBuilder
                 .healing()
                 .ability(this)
@@ -309,6 +301,11 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         return healingValues;
     }
 
+    @Override
+    public HealingRainStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
@@ -337,4 +334,33 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     }
 
+    public static class HealingRainStats extends AbstractAbilityStats<HealingRain, HealingRainStats> {
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            return statsDisplay;
+        }
+
+        @Override
+        public HealingRainStats merge(HealingRainStats other, int multiplier) {
+            HealingRainStats stats = super.merge(other, multiplier);
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<HealingRainStats> getClazz() {
+            return HealingRainStats.class;
+        }
+
+        @Override
+        public HealingRainStats create() {
+            return new HealingRainStats();
+        }
+    }
 }

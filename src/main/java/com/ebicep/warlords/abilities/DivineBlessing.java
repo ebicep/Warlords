@@ -15,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.DivineBlessingBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -27,18 +26,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues> {
-
-    public int hexesProlonged = 0;
-    public int hexesNotConsumed = 0;
-    public float healingIncreased = 0;
-    public int lethalDamgeHealed = 0;
+public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues>, AbilityStats<DivineBlessing, DivineBlessing.DivineBlessingStats> {
 
     private final HealingValues healingValues = new HealingValues();
+    private final DivineBlessingStats stats = new DivineBlessingStats();
     private int hexTickDurationIncrease = 40;
     private int hexHealingBonus = 30;
     private int lethalDamageHealing = 15;
@@ -74,18 +70,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Hexes Prolonged", "" + hexesProlonged));
-        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
-        info.add(new Pair<>("Healing Increased", "" + Math.round(healingIncreased)));
-        info.add(new Pair<>("Lethal Damage Healed", "" + lethalDamgeHealed));
-
-        return info;
     }
 
     @Override
@@ -180,7 +164,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                             @Override
                                             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                                 float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
-                                                healingIncreased += newValue - currentHealValue;
+                                                stats.healingIncreased += newValue - currentHealValue;
                                                 return newValue;
                                             }
 
@@ -196,7 +180,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                             .value(healAmount)
                                                     );
                                                     teammate.playSound(teammate.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
-                                                    lethalDamgeHealed++;
+                                                    stats.lethalDamgeHealed++;
                                                 }
                                                 return currentDamageValue;
                                             }
@@ -210,7 +194,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 if (hasMaxStacks()) {
                     float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
-                    healingIncreased += newValue - currentHealValue;
+                    stats.healingIncreased += newValue - currentHealValue;
                     return newValue;
                 } else {
                     return currentHealValue;
@@ -238,7 +222,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 .value(healAmount)
                         );
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
-                        lethalDamgeHealed++;
+                        stats.lethalDamgeHealed++;
                     }
                 }
                 return currentDamageValue;
@@ -255,7 +239,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 cooldown.getCooldownObject() instanceof MercifulHex
                         ) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                            hexesProlonged++;
+                            stats.hexesProlonged++;
                         }
                     }
                 };
@@ -269,7 +253,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                 .filterCooldownFrom(wp)
                                 .forEach(cd -> {
                                     cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
-                                    hexesProlonged++;
+                                    stats.hexesProlonged++;
                                 });
                     });
         new GameRunnable(game) {
@@ -288,7 +272,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                     .filterCooldownClass(MercifulHex.class)
                                     .forEach(regularCooldown -> {
                                         regularCooldown.setTicksLeft(regularCooldown.getStartingTicks() + hexTickDurationIncrease);
-                                        hexesProlonged++;
+                                        stats.hexesProlonged++;
                                     });
                         });
         }
@@ -339,6 +323,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         return healingValues;
     }
 
+    @Override
+    public DivineBlessingStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.SetValue divineBlessingPostHeal = new Value.SetValue(800);
@@ -349,5 +338,55 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             return values;
         }
 
+    }
+
+    public static class DivineBlessingStats extends AbstractAbilityStats<DivineBlessing, DivineBlessingStats> {
+
+        @Field("hexes_prolonged")
+        private int hexesProlonged = 0;
+        @Field("hexes_not_consumed")
+        private int hexesNotConsumed = 0;
+        @Field("healing_increased")
+        private float healingIncreased = 0;
+        @Field("lethal_damge_healed")
+        private int lethalDamgeHealed = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
+            statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
+            statsDisplay.add(new AbilityStatDisplay("Healing Increased", Math.round(healingIncreased)));
+            statsDisplay.add(new AbilityStatDisplay("Lethal Damage Healed", lethalDamgeHealed));
+            return statsDisplay;
+        }
+
+        @Override
+        public DivineBlessingStats merge(DivineBlessingStats other, int multiplier) {
+            DivineBlessingStats stats = super.merge(other, multiplier);
+            stats.hexesProlonged = this.hexesProlonged + other.hexesProlonged * multiplier;
+            stats.hexesNotConsumed = this.hexesNotConsumed + other.hexesNotConsumed * multiplier;
+            stats.healingIncreased = this.healingIncreased + other.healingIncreased * multiplier;
+            stats.lethalDamgeHealed = this.lethalDamgeHealed + other.lethalDamgeHealed * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<DivineBlessingStats> getClazz() {
+            return DivineBlessingStats.class;
+        }
+
+        @Override
+        public DivineBlessingStats create() {
+            return new DivineBlessingStats();
+        }
+
+        public int getHexesNotConsumed() {
+            return hexesNotConsumed;
+        }
+
+        public void setHexesNotConsumed(int hexesNotConsumed) {
+            this.hexesNotConsumed = hexesNotConsumed;
+        }
     }
 }

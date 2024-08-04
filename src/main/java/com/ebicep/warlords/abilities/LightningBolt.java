@@ -13,7 +13,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningBoltBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -33,9 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LightningBolt extends AbstractPiercingProjectile implements WeaponAbilityIcon, Damages<LightningBolt.DamageValues> {
+public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, LightningBolt.LightningBoltStats> implements WeaponAbilityIcon, Damages<LightningBolt.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final LightningBoltStats stats = new LightningBoltStats();
     private double hitbox = 3;
     private int cooldownReduction = 2;
 
@@ -58,16 +58,6 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
                 .maxRange(maxDistance)
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Shots Fired", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
     }
 
     @Override
@@ -103,7 +93,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
             playersHit++;
             if (enemy.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             Utils.playGlobalSound(enemy.getLocation(), "shaman.lightningbolt.impact", 2, 1);
 
@@ -136,9 +126,9 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
         WarlordsEntity wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            playersHit++;
+            stats.addPlayersHit();
             if (hit.onHorse()) {
-                numberOfDismounts++;
+                stats.addNumberOfDismounts();
             }
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
 
@@ -179,7 +169,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
-            public void run(InternalProjectile projectile) {
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 Location currentLocation = projectile.getCurrentLocation();
                 LocationBuilder location = new LocationBuilder(currentLocation)
                         .pitch(0)
@@ -188,7 +178,7 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             }
 
             @Override
-            public void onDestroy(InternalProjectile projectile) {
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 display.remove();
             }
         });
@@ -249,6 +239,11 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
         return damageValues;
     }
 
+    @Override
+    public LightningBoltStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(252, 340, 25, 180);
@@ -263,5 +258,30 @@ public class LightningBolt extends AbstractPiercingProjectile implements WeaponA
             return values;
         }
 
+    }
+
+    public static class LightningBoltStats extends AbstractPiercingProjectileStats<LightningBolt, LightningBoltStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public LightningBoltStats merge(LightningBoltStats other, int multiplier) {
+            LightningBoltStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<LightningBoltStats> getClazz() {
+            return LightningBoltStats.class;
+        }
+
+        @Override
+        public LightningBoltStats create() {
+            return new LightningBoltStats();
+        }
     }
 }

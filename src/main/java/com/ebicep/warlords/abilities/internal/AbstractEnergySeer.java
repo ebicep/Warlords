@@ -14,7 +14,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -30,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeerData> extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<AbstractEnergySeer.HealingValues> {
+public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeerData> extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<AbstractEnergySeer.HealingValues>, AbilityStats<AbstractEnergySeer, AbstractEnergySeer.AbstractEnergySeerStats> {
 
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 100;
@@ -79,14 +78,6 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                     .text(".")
                     .build();
         }
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -294,4 +285,35 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     }
 
+    private final AbstractEnergySeerStats stats = new AbstractEnergySeerStats();
+
+    @Override
+    public AbstractEnergySeerStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AbstractEnergySeerStats extends AbstractAbilityStats<AbstractEnergySeer, AbstractEnergySeerStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public Class<AbstractEnergySeerStats> getClazz() {
+            return AbstractEnergySeerStats.class;
+        }
+
+        @Override
+        public AbstractEnergySeerStats merge(AbstractEnergySeerStats other, int multiplier) {
+            AbstractEnergySeerStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public AbstractEnergySeerStats create() {
+            return new AbstractEnergySeerStats();
+        }
+    }
 }

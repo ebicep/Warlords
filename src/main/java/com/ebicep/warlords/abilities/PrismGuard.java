@@ -15,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.PrismGuardBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -28,19 +27,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
 import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
-public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<PrismGuard.HealingValues> {
+public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<PrismGuard.HealingValues>, AbilityStats<PrismGuard, PrismGuard.PrismGuardStats> {
 
-    public int timesProjectilesReduced = 0;
-    public int timesOtherReduced = 0;
 
     private final int damageReduction = 3;
     private final HealingValues healingValues = new HealingValues();
+    private final PrismGuardStats stats = new PrismGuardStats();
     private int bubbleRadius = 4;
     private int tickDuration = 100;
     private int projectileDamageReduction = 40;
@@ -83,16 +82,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 .text(" damage reduction.")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Projectiles Damage Reduced", "" + timesProjectilesReduced));
-        info.add(new Pair<>("Times Other Damage Reduced", "" + timesOtherReduced));
-
-        return info;
     }
 
     @Override
@@ -235,7 +224,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                         if (isInsideBubble.contains(event.getSource())) {
                                             afterReduction = currentDamageValue;
                                         } else {
-                                            timesProjectilesReduced++;
+                                            stats.timesProjectilesReduced++;
                                             afterReduction = currentDamageValue * (100 - projectileDamageReduction) / 100f;
                                         }
                                     } else {
@@ -269,7 +258,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 data.hitsTaken++;
                 if (Utils.isProjectile(event.getCause())) {
                     if (!isInsideBubble.contains(event.getSource())) {
-                        timesProjectilesReduced++;
+                        stats.timesProjectilesReduced++;
                         totalReduction += projectileDamageReduction;
                     }
                 }
@@ -359,6 +348,11 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         return healingValues;
     }
 
+    @Override
+    public PrismGuardStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.SetValue bubbleBaseHealing = new Value.SetValue(200);
@@ -385,5 +379,40 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         private int hitsTaken = 0;
         private float totalDamageReduced = 0;
 
+    }
+
+    public static class PrismGuardStats extends AbstractAbilityStats<PrismGuard, PrismGuardStats> {
+
+        @Field("times_projectiles_reduced")
+        private int timesProjectilesReduced = 0;
+
+        @Field("times_other_reduced")
+        private int timesOtherReduced = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Projectiles Damage Reduced", timesProjectilesReduced));
+            statsDisplay.add(new AbilityStatDisplay("Times Other Damage Reduced", timesOtherReduced));
+            return statsDisplay;
+        }
+
+        @Override
+        public PrismGuardStats merge(PrismGuardStats other, int multiplier) {
+            PrismGuardStats stats = super.merge(other, multiplier);
+            stats.timesProjectilesReduced = this.timesProjectilesReduced + other.timesProjectilesReduced * multiplier;
+            stats.timesOtherReduced = this.timesOtherReduced + other.timesOtherReduced * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<PrismGuardStats> getClazz() {
+            return PrismGuardStats.class;
+        }
+
+        @Override
+        public PrismGuardStats create() {
+            return new PrismGuardStats();
+        }
     }
 }

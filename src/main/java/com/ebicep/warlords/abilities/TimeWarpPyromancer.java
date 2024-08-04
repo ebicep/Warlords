@@ -1,5 +1,7 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -33,6 +35,7 @@ import static java.lang.Math.sin;
 
 public class TimeWarpPyromancer extends AbstractTimeWarp {
 
+
     public TimeWarpPyromancer() {
         super();
     }
@@ -60,7 +63,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                         return;
                     }
 
-                    timesSuccessful++;
+                    getAbilityStats().addTimesSuccessful();
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
 
                     wp.addInstance(InstanceBuilder

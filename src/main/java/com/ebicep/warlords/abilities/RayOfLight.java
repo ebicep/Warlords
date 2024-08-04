@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.luminary.RayOfLightBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -28,13 +27,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.HealingValues> {
+public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightStats> implements Heals<RayOfLight.HealingValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
 
     public Map<Integer, Integer> stacksRemoved = new HashMap<>();
 
     private final HealingValues healingValues = new HealingValues();
+    private final RayOfLightStats stats = new RayOfLightStats();
 
     public RayOfLight() {
         super("Ray of Light", 10, 10, 30, 30, true);
@@ -56,18 +56,6 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
                 .text(" relative to the number of stacks and all stacks are removed.")
                 .maxRange(maxDistance)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        stacksRemoved.entrySet()
-                     .stream()
-                     .forEach(integerIntegerEntry -> {
-                         info.add(new Pair<>("Stacks Removed (" + integerIntegerEntry.getKey() + ")", "" + integerIntegerEntry.getValue()));
-                     });
-        return info;
     }
 
     @Override
@@ -105,7 +93,9 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
         if (!hasDivineBlessing) {
             hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
         } else {
-            wp.doOnStaticAbility(DivineBlessing.class, divineBlessing -> divineBlessing.hexesNotConsumed += hexStacks);
+            wp.doOnStaticAbility(DivineBlessing.class,
+                    divineBlessing -> divineBlessing.getAbilityStats().setHexesNotConsumed(divineBlessing.getAbilityStats().getHexesNotConsumed() + hexStacks)
+            );
         }
         boolean maxStacks = hexStacks >= 3;
         float multiplier = switch (hexStacks) {
@@ -178,6 +168,11 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
         return healingValues;
     }
 
+    @Override
+    public RayOfLightStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(389, 523, 20, 150);
@@ -192,5 +187,30 @@ public class RayOfLight extends AbstractBeam implements Heals<RayOfLight.Healing
             return values;
         }
 
+    }
+
+    public static class RayOfLightStats extends AbstractPiercingProjectileStats<RayOfLight, RayOfLightStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public RayOfLightStats merge(RayOfLightStats other, int multiplier) {
+            RayOfLightStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<RayOfLightStats> getClazz() {
+            return RayOfLightStats.class;
+        }
+
+        @Override
+        public RayOfLightStats create() {
+            return new RayOfLightStats();
+        }
     }
 }

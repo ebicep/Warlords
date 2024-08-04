@@ -14,7 +14,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -24,10 +23,11 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-public class ChainLightning extends AbstractChain implements RedAbilityIcon, Duration, Damages<ChainLightning.DamageValues> {
+public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning.ChainLightningStats> implements RedAbilityIcon, Duration, Damages<ChainLightning.DamageValues> {
 
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
 
@@ -74,8 +74,9 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         });
     }
 
-    public int numberOfDismounts = 0;
+
     private final DamageValues damageValues = new DamageValues();
+    private final ChainLightningStats stats = new ChainLightningStats();
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
@@ -114,16 +115,6 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
                 .text(".")
                 .initialRange(radius)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
     }
 
     @Override
@@ -222,7 +213,7 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
             playersHit.add(hit);
             if (hit.onHorse()) {
-                numberOfDismounts++;
+                stats.numberOfDismounts++;
             }
 
             hit.addInstance(InstanceBuilder
@@ -278,6 +269,11 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
         this.damageReductionTickDuration = tickDuration;
     }
 
+    @Override
+    public ChainLightningStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
@@ -294,4 +290,33 @@ public class ChainLightning extends AbstractChain implements RedAbilityIcon, Dur
 
     }
 
+    public static class ChainLightningStats extends AbstractChainStats<ChainLightning, ChainLightningStats> {
+
+        @Field("number_of_dismounts")
+        private int numberOfDismounts = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Dismounts", numberOfDismounts));
+            return statsDisplay;
+        }
+
+        @Override
+        public ChainLightningStats merge(ChainLightningStats other, int multiplier) {
+            ChainLightningStats stats = super.merge(other, multiplier);
+            stats.numberOfDismounts = this.numberOfDismounts + other.numberOfDismounts * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<ChainLightningStats> getClazz() {
+            return ChainLightningStats.class;
+        }
+
+        @Override
+        public ChainLightningStats create() {
+            return new ChainLightningStats();
+        }
+    }
 }

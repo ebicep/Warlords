@@ -122,4 +122,5 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
     public boolean canReduceCooldowns() {
         return pveMasterUpgrade2;
     }
+
 }

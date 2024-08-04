@@ -9,7 +9,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.BoulderBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -20,19 +19,18 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<Boulder.DamageValues> {
+public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<Boulder.DamageValues>, AbilityStats<Boulder, Boulder.BoulderStats> {
 
-    public int playersHit = 0;
-    public int carrierHit = 0;
-    public int warpsKnockbacked = 0;
 
     private final DamageValues damageValues = new DamageValues();
     private final double boulderGravity = -0.0059;
+    private final BoulderStats stats = new BoulderStats();
     private double boulderSpeed = 0.290;
     private double hitbox = 5.5;
     private double velocity = 1.15;
@@ -57,17 +55,6 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                 .damage(damageValues.boulderDamage)
                 .text("damage to all enemies near the impact point and knocks them back slightly.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Carriers Hit", "" + carrierHit));
-        info.add(new Pair<>("Warps Knockbacked", "" + warpsKnockbacked));
-
-        return info;
     }
 
     @Override
@@ -113,12 +100,12 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                             .entitiesAround(newLoc, hitbox, hitbox, hitbox)
                             .aliveEnemiesOf(wp)
                     ) {
-                        playersHit++;
+                        stats.playersHit++;
                         if (p.hasFlag()) {
-                            carrierHit++;
+                            stats.carrierHit++;
                         }
                         if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
-                            warpsKnockbacked++;
+                            stats.warpsKnockbacked++;
                         }
                         Vector v;
                         if (p == directHit) {
@@ -211,6 +198,11 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         this.hitbox = hitbox;
     }
 
+    @Override
+    public BoulderStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable boulderDamage = new Value.RangedValueCritable(509, 686, 15, 175);
@@ -228,4 +220,43 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
 
     }
 
+    public static class BoulderStats extends AbstractAbilityStats<Boulder, BoulderStats> {
+
+        @Field("players_hit")
+        private int playersHit = 0;
+
+        @Field("carrier_hit")
+        private int carrierHit = 0;
+
+        @Field("warps_knockbacked")
+        private int warpsKnockbacked = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Carriers Hit", carrierHit));
+            statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
+            return statsDisplay;
+        }
+
+        @Override
+        public BoulderStats merge(BoulderStats other, int multiplier) {
+            BoulderStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.carrierHit = this.carrierHit + other.carrierHit * multiplier;
+            stats.warpsKnockbacked = this.warpsKnockbacked + other.warpsKnockbacked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<BoulderStats> getClazz() {
+            return BoulderStats.class;
+        }
+
+        @Override
+        public BoulderStats create() {
+            return new BoulderStats();
+        }
+    }
 }

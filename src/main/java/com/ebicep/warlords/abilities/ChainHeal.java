@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.ChainHealBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,10 +25,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-
-public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<ChainHeal.HealingValues> {
+public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats> implements BlueAbilityIcon, Heals<ChainHeal.HealingValues> {
 
     private final HealingValues healingValues = new HealingValues();
+    private final ChainHealStats stats = new ChainHealStats();
     private float cooldownReductionInSeconds = 2.5f;
 
     public ChainHeal() {
@@ -52,15 +51,6 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
                 .text(".")
                 .initialRange(radius)
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHit));
-
-        return info;
     }
 
     @Override
@@ -257,6 +247,10 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
         return healingValues;
     }
 
+    @Override
+    public ChainHealStats getAbilityStats() {
+        return stats;
+    }
 
     public static class HealingValues implements Value.ValueHolder {
 
@@ -274,4 +268,28 @@ public class ChainHeal extends AbstractChain implements BlueAbilityIcon, Heals<C
 
     }
 
+    public static class ChainHealStats extends AbstractChainStats<ChainHeal, ChainHealStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public ChainHealStats merge(ChainHealStats other, int multiplier) {
+            ChainHealStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<ChainHealStats> getClazz() {
+            return ChainHealStats.class;
+        }
+
+        @Override
+        public ChainHealStats create() {
+            return new ChainHealStats();
+        }
+    }
 }

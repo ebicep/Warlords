@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -12,22 +10,22 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.InfernoBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Inferno, Inferno.InfernoStats> {
 
-    public int hitsAmplified = 0;
 
+    private final InfernoStats stats = new InfernoStats();
     private int maxHits = 40;
     private int tickDuration = 360;
     private int critChanceIncrease = 30;
@@ -48,15 +46,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Hits Amplified", "" + hitsAmplified));
-
-        return info;
     }
 
     @Override
@@ -106,7 +95,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 if (event.getCause().isEmpty()) {
                     return currentCritChance;
                 }
-                hitsAmplified++;
+                stats.hitsAmplified++;
                 return currentCritChance + critChanceIncrease;
             }
 
@@ -154,7 +143,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     }
 
     public int getHitsAmplified() {
-        return hitsAmplified;
+        return stats.hitsAmplified;
     }
 
     public int getCritChanceIncrease() {
@@ -173,7 +162,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         this.critMultiplierIncrease = critMultiplierIncrease;
     }
 
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -190,5 +178,40 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
 
     public void setMaxHits(int maxHits) {
         this.maxHits = maxHits;
+    }
+
+    @Override
+    public InfernoStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class InfernoStats extends AbstractAbilityStats<Inferno, InfernoStats> {
+
+        @Field("hits_amplified")
+        private int hitsAmplified = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Hits Amplified", hitsAmplified));
+            return statsDisplay;
+        }
+
+        @Override
+        public InfernoStats merge(InfernoStats other, int multiplier) {
+            InfernoStats stats = super.merge(other, multiplier);
+            stats.hitsAmplified = this.hitsAmplified + other.hitsAmplified * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<InfernoStats> getClazz() {
+            return InfernoStats.class;
+        }
+
+        @Override
+        public InfernoStats create() {
+            return new InfernoStats();
+        }
     }
 }

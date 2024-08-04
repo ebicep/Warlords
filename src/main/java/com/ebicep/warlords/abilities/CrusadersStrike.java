@@ -15,13 +15,13 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.crusader.CrusadersStrikeBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -29,10 +29,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class CrusadersStrike extends AbstractStrike implements Damages<CrusadersStrike.DamageValues> {
+public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersStrike.CrusadersStrikeStats> implements Damages<CrusadersStrike.DamageValues> {
 
-    public float energyGivenToPlayers = 0;
     private final DamageValues damageValues = new DamageValues();
+    private final CrusadersStrikeStats stats = new CrusadersStrikeStats();
     private int energyGiven = 21;
     private int energyRadius = 10;
     private int energyMaxAllies = 2;
@@ -64,15 +64,6 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
                 .durationTicks(allySpeedBoostDurationInTicks)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Struck", "" + timesUsed));
-        info.add(new Pair<>("Energy Given", NumberFormat.addCommaAndRound(energyGivenToPlayers)));
-
-        return info;
     }
 
     @Override
@@ -126,7 +117,7 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
                         });
         }
 
-        float previousEnergyGiven = energyGivenToPlayers;
+        float previousEnergyGiven = stats.energyGivenToPlayers;
         // Give energy to nearby allies and check if they have mark active
         for (WarlordsEntity energyTarget : PlayerFilter
                 .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
@@ -140,13 +131,13 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
                 energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks, "BASE"); // 20 ticks
             }
 
-            energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
+            stats.energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
         }
 
         new CooldownFilter<>(wp, RegularCooldown.class)
                 .filterCooldownFrom(wp)
                 .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
-                .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(energyGivenToPlayers - previousEnergyGiven));
+                .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(stats.energyGivenToPlayers - previousEnergyGiven));
 
         return true;
     }
@@ -172,6 +163,11 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
         return damageValues;
     }
 
+    @Override
+    public CrusadersStrikeStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 175);
@@ -186,5 +182,35 @@ public class CrusadersStrike extends AbstractStrike implements Damages<Crusaders
             return values;
         }
 
+    }
+
+    public static class CrusadersStrikeStats extends AbstractStrikeStats<CrusadersStrike, CrusadersStrikeStats> {
+
+        @Field("energy_given_to_players")
+        private float energyGivenToPlayers = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Energy Given", NumberFormat.addCommaAndRound(energyGivenToPlayers)));
+            return statsDisplay;
+        }
+
+        @Override
+        public CrusadersStrikeStats merge(CrusadersStrikeStats other, int multiplier) {
+            CrusadersStrikeStats stats = super.merge(other, multiplier);
+            stats.energyGivenToPlayers = this.energyGivenToPlayers + other.energyGivenToPlayers * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<CrusadersStrikeStats> getClazz() {
+            return CrusadersStrikeStats.class;
+        }
+
+        @Override
+        public CrusadersStrikeStats create() {
+            return new CrusadersStrikeStats();
+        }
     }
 }

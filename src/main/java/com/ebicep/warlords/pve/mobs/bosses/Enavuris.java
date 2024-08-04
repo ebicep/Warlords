@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.customentities.nms.pve.CustomBat;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.abilities.internal.AbstractProjectile;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -289,7 +290,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         return leashHolder;
     }
 
-    public static class EnderStones extends AbstractProjectile implements PvEAbility, Damages<EnderStones.DamageValues> {
+    public static class EnderStones extends AbstractProjectile<EnderStones, EnderStones.EnderStonesStats> implements PvEAbility, Damages<EnderStones.DamageValues> {
 
         private final int radius = 3;
         private PveOption pveOption;
@@ -419,7 +420,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             });
             projectile.addTask(new InternalProjectileTask() {
                 @Override
-                public void run(InternalProjectile projectile) {
+                public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                     armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
                             PlayerTeleportEvent.TeleportCause.PLUGIN,
                             TeleportFlag.EntityState.RETAIN_PASSENGERS
@@ -427,7 +428,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 }
 
                 @Override
-                public void onDestroy(InternalProjectile projectile) {
+                public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                     armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
                             PlayerTeleportEvent.TeleportCause.PLUGIN,
                             TeleportFlag.EntityState.RETAIN_PASSENGERS
@@ -481,13 +482,33 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue enderStonesDamage = new Value.RangedValue(500, 600);
-            private final List<Value> values = List.of(enderStonesDamage);
 
+            private final List<Value> values = List.of(enderStonesDamage);
             @Override
             public List<Value> getValues() {
                 return values;
             }
 
+        }
+
+        private final EnderStonesStats stats = new EnderStonesStats();
+
+        @Override
+        public EnderStonesStats getAbilityStats() {
+            return stats;
+        }
+
+        public static class EnderStonesStats extends AbstractPiercingProjectileStats<EnderStones, EnderStonesStats> {
+
+            @Override
+            public Class<EnderStonesStats> getClazz() {
+                return EnderStonesStats.class;
+            }
+
+            @Override
+            public EnderStonesStats create() {
+                return new EnderStonesStats();
+            }
         }
     }
 

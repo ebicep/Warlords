@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Overheal;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -15,7 +12,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.RepentanceBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.google.common.util.concurrent.AtomicDouble;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,8 +22,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Repentance extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class Repentance extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<Repentance, Repentance.RepentanceStats> {
 
+    private final RepentanceStats stats = new RepentanceStats();
     private float pool = 0;
     private int tickDuration = 240;
     private int poolDecay = 60;
@@ -49,14 +46,6 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -176,5 +165,35 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
 
     public void setEnergyConvertPercent(float energyConvertPercent) {
         this.energyConvertPercent = energyConvertPercent;
+    }
+
+    @Override
+    public RepentanceStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class RepentanceStats extends AbstractAbilityStats<Repentance, RepentanceStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public RepentanceStats merge(RepentanceStats other, int multiplier) {
+            RepentanceStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<RepentanceStats> getClazz() {
+            return RepentanceStats.class;
+        }
+
+        @Override
+        public RepentanceStats create() {
+            return new RepentanceStats();
+        }
     }
 }

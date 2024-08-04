@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractTotem;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -17,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.DeathsDebtBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -29,6 +26,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,11 +34,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DeathsDebt extends AbstractTotem implements Duration {
+public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<DeathsDebt, DeathsDebt.DeathsDebtStats> {
 
-    public int playersDamaged = 0;
-    public int playersHealed = 0;
-
+    private final DeathsDebtStats stats = new DeathsDebtStats();
     private int tickDuration = 120;
     private int respiteRadius = 10;
     private int debtRadius = 8;
@@ -81,16 +77,6 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                 .blocks(debtRadius)
                 .text(" radius.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Damaged", "" + playersDamaged));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-
-        return info;
     }
 
     @Override
@@ -183,7 +169,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                                         .aliveEnemiesOf(wp)
                                         .toList();
                                 for (WarlordsEntity totemTarget : enemies) {
-                                    playersDamaged++;
+                                    stats.playersDamaged++;
                                     totemTarget.addInstance(InstanceBuilder
                                             .damage()
                                             .ability(this)
@@ -363,6 +349,11 @@ public class DeathsDebt extends AbstractTotem implements Duration {
         this.tickDuration = tickDuration;
     }
 
+    @Override
+    public DeathsDebtStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DeathsDebtData extends TotemData<DeathsDebt> {
 
         private boolean inDebt = false;
@@ -391,7 +382,7 @@ public class DeathsDebt extends AbstractTotem implements Duration {
                     .entitiesAround(armorStand, totem.debtRadius, totem.debtRadius - 1, totem.debtRadius)
                     .aliveTeammatesOf(owner)
             ) {
-                totem.playersHealed++;
+                totem.stats.playersHealed++;
                 allyTarget.addInstance(InstanceBuilder
                         .healing()
                         .ability(totem)
@@ -407,5 +398,40 @@ public class DeathsDebt extends AbstractTotem implements Duration {
             }
         }
 
+    }
+
+    public static class DeathsDebtStats extends AbstractAbilityStats<DeathsDebt, DeathsDebtStats> {
+
+        @Field("players_damaged")
+        private int playersDamaged = 0;
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Damaged", playersDamaged));
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            return statsDisplay;
+        }
+
+        @Override
+        public DeathsDebtStats merge(DeathsDebtStats other, int multiplier) {
+            DeathsDebtStats stats = super.merge(other, multiplier);
+            stats.playersDamaged = this.playersDamaged + other.playersDamaged * multiplier;
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<DeathsDebtStats> getClazz() {
+            return DeathsDebtStats.class;
+        }
+
+        @Override
+        public DeathsDebtStats create() {
+            return new DeathsDebtStats();
+        }
     }
 }

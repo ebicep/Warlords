@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -15,17 +14,16 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon, HitBox {
+public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon, HitBox, AbilityStats<AbstractGroundSlam, AbstractGroundSlam.AbstractGroundSlamStats> {
 
-    public int playersHit = 0;
-    public int carrierHit = 0;
-    public int warpsKnockbacked = 0;
     protected boolean trueDamage = false;
+    private final AbstractGroundSlamStats stats = new AbstractGroundSlamStats();
     private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
 
@@ -45,14 +43,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                 .text(" damage and knocks enemies back slightly.")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -120,13 +110,13 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                 .aliveEnemiesOf(wp)
                                 .excluding(currentPlayersHit)
                         ) {
-                            playersHit++;
+                            stats.playersHit++;
                             if (slamTarget.hasFlag()) {
-                                carrierHit++;
+                                stats.carrierHit++;
                             }
 
                             if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(slamTarget)) {
-                                warpsKnockbacked++;
+                                stats.warpsKnockbacked++;
                             }
 
                             currentPlayersHit.add(slamTarget);
@@ -190,5 +180,48 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     public FloatModifiable getHitBoxRadius() {
         return slamSize;
     }
-}
 
+    @Override
+    public AbstractGroundSlamStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AbstractGroundSlamStats extends AbstractAbilityStats<AbstractGroundSlam, AbstractGroundSlamStats> {
+
+        @Field("players_hit")
+        private int playersHit = 0;
+        @Field("carrier_hit")
+        private int carrierHit = 0;
+        @Field("warps_knockbacked")
+        private int warpsKnockbacked = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Carrier Hit", carrierHit));
+            statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractGroundSlamStats merge(AbstractGroundSlamStats other, int multiplier) {
+            AbstractGroundSlamStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.carrierHit = this.carrierHit + other.carrierHit * multiplier;
+            stats.warpsKnockbacked = this.warpsKnockbacked + other.warpsKnockbacked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AbstractGroundSlamStats> getClazz() {
+            return AbstractGroundSlamStats.class;
+        }
+
+        @Override
+        public AbstractGroundSlamStats create() {
+            return new AbstractGroundSlamStats();
+        }
+    }
+
+}

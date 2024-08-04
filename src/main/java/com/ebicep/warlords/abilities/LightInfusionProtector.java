@@ -155,4 +155,3 @@ public class LightInfusionProtector extends AbstractLightInfusion {
     }
 
 }
-

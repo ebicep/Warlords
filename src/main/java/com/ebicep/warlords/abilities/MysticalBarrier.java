@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -14,7 +11,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.MysticalBarrierBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -22,6 +18,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -29,12 +26,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<MysticalBarrier, MysticalBarrier.MysticalBarrierStats> {
 
-    public int timesTeammatesShielded = 0;
-    public int timesCarrierShielded = 0;
-    public int meleesReduced = 0;
-    public int timesCooldownsIncreased = 0;
+
+    private final MysticalBarrierStats stats = new MysticalBarrierStats();
     private float runeTimerIncrease = 0.5f;
     private int tickDuration = 100;
     private float meleeDamageReduction = 80;
@@ -79,17 +74,6 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Melees Reduced", "" + meleesReduced));
-        info.add(new Pair<>("Times Cooldowns Increased", "" + timesCooldownsIncreased));
-        info.add(new Pair<>("Times Teammates Shielded", "" + timesTeammatesShielded));
-        info.add(new Pair<>("Times Carrier Shielded", "" + timesCarrierShielded));
-        return info;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ITEM_ARMOR_EQUIP_DIAMOND, 2, 0.4f);
         Utils.playGlobalSound(wp.getLocation(), "arcanist.mysticalbarrier.activation", 2, 1);
@@ -123,9 +107,9 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
 
     private void giveBarrier(@Nonnull WarlordsEntity wp, WarlordsEntity target) {
         if (wp != target) {
-            timesTeammatesShielded++;
+            stats.timesTeammatesShielded++;
             if (target.hasFlag()) {
-                timesCarrierShielded++;
+                stats.timesCarrierShielded++;
             }
         }
         AtomicInteger damageInstances = new AtomicInteger();
@@ -189,7 +173,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getCause().isEmpty()) {
-                    meleesReduced++;
+                    stats.meleesReduced++;
                     return currentDamageValue * convertToDivisionDecimal(meleeDamageReduction);
                 }
                 return currentDamageValue;
@@ -206,7 +190,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                 }
                 event.getSource().getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
                 damageInstances.getAndIncrement();
-                timesCooldownsIncreased++;
+                stats.timesCooldownsIncreased++;
             }
         });
     }
@@ -310,4 +294,53 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
         this.stacksGranted = stacksGranted;
     }
 
+    @Override
+    public MysticalBarrierStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class MysticalBarrierStats extends AbstractAbilityStats<MysticalBarrier, MysticalBarrierStats> {
+
+        @Field("times_teammates_shielded")
+        private int timesTeammatesShielded = 0;
+
+        @Field("times_carrier_shielded")
+        private int timesCarrierShielded = 0;
+
+        @Field("melees_reduced")
+        private int meleesReduced = 0;
+
+        @Field("times_cooldowns_increased")
+        private int timesCooldownsIncreased = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Melees Reduced", meleesReduced));
+            statsDisplay.add(new AbilityStatDisplay("Times Cooldowns Increased", timesCooldownsIncreased));
+            statsDisplay.add(new AbilityStatDisplay("Times Teammates Shielded", timesTeammatesShielded));
+            statsDisplay.add(new AbilityStatDisplay("Times Carrier Shielded", timesCarrierShielded));
+            return statsDisplay;
+        }
+
+        @Override
+        public MysticalBarrierStats merge(MysticalBarrierStats other, int multiplier) {
+            MysticalBarrierStats stats = super.merge(other, multiplier);
+            stats.timesTeammatesShielded = this.timesTeammatesShielded + other.timesTeammatesShielded * multiplier;
+            stats.timesCarrierShielded = this.timesCarrierShielded + other.timesCarrierShielded * multiplier;
+            stats.meleesReduced = this.meleesReduced + other.meleesReduced * multiplier;
+            stats.timesCooldownsIncreased = this.timesCooldownsIncreased + other.timesCooldownsIncreased * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<MysticalBarrierStats> getClazz() {
+            return MysticalBarrierStats.class;
+        }
+
+        @Override
+        public MysticalBarrierStats create() {
+            return new MysticalBarrierStats();
+        }
+    }
 }

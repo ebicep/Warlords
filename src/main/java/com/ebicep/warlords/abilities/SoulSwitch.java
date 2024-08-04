@@ -20,7 +20,6 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.assassin.SoulSwitchBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -38,9 +37,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox, Heals<SoulSwitch.HealingValues> {
+public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitBox, Heals<SoulSwitch.HealingValues>, AbilityStats<SoulSwitch, SoulSwitch.SoulSwitchStats> {
 
     private final HealingValues healingValues = new HealingValues();
+    private final SoulSwitchStats stats = new SoulSwitchStats();
     private FloatModifiable radius = new FloatModifiable(13);
     private int blindnessTicks = 30;
     private int decoyMaxTicksLived = 60;
@@ -77,14 +77,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     .build();
         }
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -293,6 +285,11 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         return healingValues;
     }
 
+    @Override
+    public SoulSwitchStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable switchHealing = new Value.RangedValueCritable(300, 500, 15, 175);
@@ -307,5 +304,30 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             return values;
         }
 
+    }
+
+    public static class SoulSwitchStats extends AbstractAbilityStats<SoulSwitch, SoulSwitchStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public SoulSwitchStats merge(SoulSwitchStats other, int multiplier) {
+            SoulSwitchStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<SoulSwitchStats> getClazz() {
+            return SoulSwitchStats.class;
+        }
+
+        @Override
+        public SoulSwitchStats create() {
+            return new SoulSwitchStats();
+        }
     }
 }

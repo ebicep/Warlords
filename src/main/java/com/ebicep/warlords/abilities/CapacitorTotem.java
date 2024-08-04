@@ -11,36 +11,30 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.CapacitorTotemBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+public class CapacitorTotem extends AbstractTotem implements Duration, Damages<CapacitorTotem.DamageValues>, AbilityStats<CapacitorTotem, CapacitorTotem.CapacitorTotemStats> {
 
-public class CapacitorTotem extends AbstractTotem implements Duration, Damages<CapacitorTotem.DamageValues> {
-
-    public int numberOfProcs = 0;
 
     private final DamageValues damageValues = new DamageValues();
+    private final CapacitorTotemStats stats = new CapacitorTotemStats();
     private int tickDuration = 160;
     private double radius = 6;
     private int playersHit = 0;
 
     public CapacitorTotem() {
         super("Capacitor Totem", 63, 20);
-    }
-
-    public CapacitorTotem(ArmorStand totem, WarlordsEntity owner) {
-        super("Capacitor Totem", 63, 20, totem, owner);
     }
 
     @Override
@@ -54,15 +48,6 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Proc'd", "" + numberOfProcs));
-
-        return info;
     }
 
     @Override
@@ -161,7 +146,6 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         wp.getCooldownManager().addCooldown(totemCooldown);
     }
 
-
     public double getRadius() {
         return radius;
     }
@@ -191,6 +175,11 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
+    }
+
+    @Override
+    public CapacitorTotemStats getAbilityStats() {
+        return stats;
     }
 
     public static class DamageValues implements Value.ValueHolder {
@@ -224,7 +213,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         }
 
         public void proc() {
-            totem.numberOfProcs++;
+            totem.stats.numberOfProcs++;
             pulseDamage.run();
             if (teamCarrierPassedThrough) {
                 numberOfProcsAfterCarrierPassed++;
@@ -244,4 +233,33 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         }
     }
 
+    public static class CapacitorTotemStats extends AbstractAbilityStats<CapacitorTotem, CapacitorTotemStats> {
+
+        @Field("number_of_procs")
+        private int numberOfProcs = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Proc'd", numberOfProcs));
+            return statsDisplay;
+        }
+
+        @Override
+        public CapacitorTotemStats merge(CapacitorTotemStats other, int multiplier) {
+            CapacitorTotemStats stats = super.merge(other, multiplier);
+            stats.numberOfProcs = this.numberOfProcs + other.numberOfProcs * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<CapacitorTotemStats> getClazz() {
+            return CapacitorTotemStats.class;
+        }
+
+        @Override
+        public CapacitorTotemStats create() {
+            return new CapacitorTotemStats();
+        }
+    }
 }

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -18,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.AstralPlagueBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -29,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -37,14 +34,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<AstralPlague, AstralPlague.AstralPlagueStats> {
 
-    public int hexesProlonged = 0;
-    public int hexesNotConsumed = 0;
-    public int tripleStackBeams = 0;
-    public int shieldsPierced = 0;
-    public int intervenesPierced = 0;
-
+    private final AstralPlagueStats stats = new AstralPlagueStats();
     private int tickDuration = 240;
     private int hexTickDurationIncrease = 40;
 
@@ -69,18 +61,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Hexes Prolonged", "" + hexesProlonged));
-        info.add(new Pair<>("Hexes Not Consumed", "" + hexesNotConsumed));
-        info.add(new Pair<>("Triple Stack Beams", "" + tripleStackBeams));
-        info.add(new Pair<>("Shields Pierced", "" + shieldsPierced));
-        info.add(new Pair<>("Intervenes Pierced", "" + intervenesPierced));
-        return info;
     }
 
     @Override
@@ -142,7 +122,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                                 cooldown.getCooldownObject() instanceof PoisonousHex
                         ) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                            hexesProlonged++;
+                            stats.hexesProlonged++;
                         }
                     }
 
@@ -174,7 +154,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             event.setCritChance(100);
                         }
                         if (event.getCause().equals("Soulfire Beam")) {
-                            tripleStackBeams++;
+                            stats.tripleStackBeams++;
                         }
                     }
 
@@ -198,7 +178,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                                 .findAny()
                                 .isPresent()
                         ) {
-                            intervenesPierced++;
+                            stats.intervenesPierced++;
                         }
                         if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
                                 .filterCooldownClass(Shield.class)
@@ -206,7 +186,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                                 .findAny()
                                 .isPresent()
                         ) {
-                            shieldsPierced++;
+                            stats.shieldsPierced++;
                         }
                     }
 
@@ -221,7 +201,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                                 .filterCooldownFrom(wp)
                                 .forEach(cd -> {
                                     cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
-                                    hexesProlonged++;
+                                    stats.hexesProlonged++;
                                 });
                     });
         return true;
@@ -240,5 +220,64 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AstralPlagueStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AstralPlagueStats extends AbstractAbilityStats<AstralPlague, AstralPlagueStats> {
+
+        @Field("hexes_prolonged")
+        private int hexesProlonged = 0;
+        @Field("hexes_not_consumed")
+        private int hexesNotConsumed = 0;
+        @Field("triple_stack_beams")
+        private int tripleStackBeams = 0;
+        @Field("shields_pierced")
+        private int shieldsPierced = 0;
+        @Field("intervenes_pierced")
+        private int intervenesPierced = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Hexes Prolonged", hexesProlonged));
+            statsDisplay.add(new AbilityStatDisplay("Hexes Not Consumed", hexesNotConsumed));
+            statsDisplay.add(new AbilityStatDisplay("Triple Stack Beams", tripleStackBeams));
+            statsDisplay.add(new AbilityStatDisplay("Shields Pierced", shieldsPierced));
+            statsDisplay.add(new AbilityStatDisplay("Intervenes Pierced", intervenesPierced));
+            return statsDisplay;
+        }
+
+        @Override
+        public AstralPlagueStats merge(AstralPlagueStats other, int multiplier) {
+            AstralPlagueStats stats = super.merge(other, multiplier);
+            stats.hexesProlonged = this.hexesProlonged + other.hexesProlonged * multiplier;
+            stats.hexesNotConsumed = this.hexesNotConsumed + other.hexesNotConsumed * multiplier;
+            stats.tripleStackBeams = this.tripleStackBeams + other.tripleStackBeams * multiplier;
+            stats.shieldsPierced = this.shieldsPierced + other.shieldsPierced * multiplier;
+            stats.intervenesPierced = this.intervenesPierced + other.intervenesPierced * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AstralPlagueStats> getClazz() {
+            return AstralPlagueStats.class;
+        }
+
+        @Override
+        public AstralPlagueStats create() {
+            return new AstralPlagueStats();
+        }
+
+        public int getHexesNotConsumed() {
+            return hexesNotConsumed;
+        }
+
+        public void setHexesNotConsumed(int hexesNotConsumed) {
+            this.hexesNotConsumed = hexesNotConsumed;
+        }
     }
 }

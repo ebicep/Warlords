@@ -1,18 +1,13 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -22,9 +17,10 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOfLight.BeaconOfLightData> implements Heals<BeaconOfLight.HealingValues> {
+public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOfLight.BeaconOfLightData> implements Heals<BeaconOfLight.HealingValues>, AbilityStats<BeaconOfLight, BeaconOfLight.BeaconOfLightStats> {
 
     private final HealingValues healingValues = new HealingValues();
+    private final BeaconOfLightStats stats = new BeaconOfLightStats();
 
     public BeaconOfLight() {
         super("Beacon of Light", 20, 40, 4, 20);
@@ -88,10 +84,8 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
+    public BeaconOfLightStats getAbilityStats() {
+        return stats;
     }
 
     public static class HealingValues implements Value.ValueHolder {
@@ -114,4 +108,28 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
 
     }
 
+    public static class BeaconOfLightStats extends AbstractAbilityStats<BeaconOfLight, BeaconOfLightStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public BeaconOfLightStats merge(BeaconOfLightStats other, int multiplier) {
+            BeaconOfLightStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<BeaconOfLightStats> getClazz() {
+            return BeaconOfLightStats.class;
+        }
+
+        @Override
+        public BeaconOfLightStats create() {
+            return new BeaconOfLightStats();
+        }
+    }
 }

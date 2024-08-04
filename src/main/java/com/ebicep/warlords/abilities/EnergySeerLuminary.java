@@ -60,5 +60,4 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
         this.healingIncrease = healingIncrease;
     }
 
-
 }

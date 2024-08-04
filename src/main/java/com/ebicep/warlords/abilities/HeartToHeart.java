@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.vindicator.HeartToHeartBranch;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.MathUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
@@ -28,16 +27,18 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox, Damages<HeartToHeart.DamageValues>, Heals<HeartToHeart.HealingValues> {
+public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox, Damages<HeartToHeart.DamageValues>, Heals<HeartToHeart.HealingValues>, AbilityStats<HeartToHeart, HeartToHeart.HeartToHeartStats> {
 
-    public int timesUsedWithFlag = 0;
+
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private final HeartToHeartStats stats = new HeartToHeartStats();
     private FloatModifiable radius = new FloatModifiable(15);
     private int vindDuration = 6;
 
@@ -60,15 +61,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 .text("Heart to Heart has reduced range when holding a flag.")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Used With Flag", "" + timesUsedWithFlag));
-
-        return info;
     }
 
     @Override
@@ -120,7 +112,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
         if (wp.hasFlag()) {
-            timesUsedWithFlag++;
+            stats.timesUsedWithFlag++;
         }
 
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 1);
@@ -242,6 +234,11 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         return healingValues;
     }
 
+    @Override
+    public HeartToHeartStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValue heartOfHeartsDamage = new Value.RangedValue(1635, 2096);
@@ -270,4 +267,32 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
     }
 
+    public static class HeartToHeartStats extends AbstractAbilityStats<HeartToHeart, HeartToHeartStats> {
+
+        @Field("times_used_with_flag")
+        private int timesUsedWithFlag = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public HeartToHeartStats merge(HeartToHeartStats other, int multiplier) {
+            HeartToHeartStats stats = super.merge(other, multiplier);
+            stats.timesUsedWithFlag = this.timesUsedWithFlag + other.timesUsedWithFlag * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<HeartToHeartStats> getClazz() {
+            return HeartToHeartStats.class;
+        }
+
+        @Override
+        public HeartToHeartStats create() {
+            return new HeartToHeartStats();
+        }
+    }
 }

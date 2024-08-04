@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -14,7 +11,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -23,16 +19,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<ArcaneShield, ArcaneShield.ArcaneShieldStats> {
 
-    public int timesBroken = 0;
 
+    private final ArcaneShieldStats stats = new ArcaneShieldStats();
     private int maxShieldHealth;
     private int shieldPercentage = 50;
     private int tickDuration = 120;
@@ -42,7 +39,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     }
 
     public void addTimesBroken() {
-        timesBroken++;
+        stats.timesBroken++;
     }
 
     @Override
@@ -66,16 +63,10 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                 .build();
     }
 
-
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Broken", "" + timesBroken));
-
-        return info;
+    public ArcaneShieldStats getAbilityStats() {
+        return stats;
     }
-
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
@@ -166,6 +157,36 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         });
 
         return true;
+    }
+
+    public static class ArcaneShieldStats extends AbstractAbilityStats<ArcaneShield, ArcaneShieldStats> {
+
+        @Field("times_broken")
+        private int timesBroken = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Broken", timesBroken));
+            return statsDisplay;
+        }
+
+        @Override
+        public ArcaneShieldStats merge(ArcaneShieldStats other, int multiplier) {
+            ArcaneShieldStats stats = super.merge(other, multiplier);
+            stats.timesBroken = this.timesBroken + other.timesBroken * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<ArcaneShieldStats> getClazz() {
+            return ArcaneShieldStats.class;
+        }
+
+        @Override
+        public ArcaneShieldStats create() {
+            return new ArcaneShieldStats();
+        }
     }
 
     @Override

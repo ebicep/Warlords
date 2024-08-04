@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.WoundingStrikeBranchBerserker;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -25,9 +24,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WoundingStrikeBerserker extends AbstractStrike implements Damages<WoundingStrikeBerserker.DamageValues> {
+public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerserker, WoundingStrikeBerserker.WoundingStrikeBerserkerStats> implements Damages<WoundingStrikeBerserker.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final WoundingStrikeBerserkerStats stats = new WoundingStrikeBerserkerStats();
     private int wounding = 40;
     private int woundingTickDuration = 60;
 
@@ -52,14 +52,6 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
                 .percent(40, NamedTextColor.RED)
                 .text(" less healing.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Struck", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -197,6 +189,11 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
         return damageValues;
     }
 
+    @Override
+    public WoundingStrikeBerserkerStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(497, 632, 20, 175);
@@ -213,4 +210,28 @@ public class WoundingStrikeBerserker extends AbstractStrike implements Damages<W
 
     }
 
+    public static class WoundingStrikeBerserkerStats extends AbstractStrikeStats<WoundingStrikeBerserker, WoundingStrikeBerserkerStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public WoundingStrikeBerserkerStats merge(WoundingStrikeBerserkerStats other, int multiplier) {
+            WoundingStrikeBerserkerStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<WoundingStrikeBerserkerStats> getClazz() {
+            return WoundingStrikeBerserkerStats.class;
+        }
+
+        @Override
+        public WoundingStrikeBerserkerStats create() {
+            return new WoundingStrikeBerserkerStats();
+        }
+    }
 }

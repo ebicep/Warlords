@@ -1,12 +1,13 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.TextCooldown;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -20,26 +21,20 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WonderTrap extends AbstractAbility {
+public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTrap, WonderTrap.WonderTrapStats> {
 
     // CURRENTLY UNUSED CONTENT
+
+    private final WonderTrapStats stats = new WonderTrapStats();
 
     public WonderTrap() {
         super("Wonder Trap", 10, 40);
     }
 
-//    @Override
+    //    @Override
 //    public void updateDescription(Player player) {
 //        //description = "PLACEHOLDER";
 //    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
-    }
-
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         WonderTrap tempTrap = new WonderTrap();
@@ -80,6 +75,36 @@ public class WonderTrap extends AbstractAbility {
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
 
         return true;
+    }
+
+    @Override
+    public WonderTrapStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class WonderTrapStats extends AbstractAbilityStats<WonderTrap, WonderTrapStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public WonderTrapStats merge(WonderTrapStats other, int multiplier) {
+            WonderTrapStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<WonderTrapStats> getClazz() {
+            return WonderTrapStats.class;
+        }
+
+        @Override
+        public WonderTrapStats create() {
+            return new WonderTrapStats();
+        }
     }
 
     private class Trap extends BukkitRunnable {

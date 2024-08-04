@@ -1,19 +1,18 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
-import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractTimeWarp extends AbstractAbility implements PurpleAbilityIcon {
-
-    protected int timesSuccessful = 0;
+public abstract class AbstractTimeWarp extends AbstractAbility implements PurpleAbilityIcon, AbilityStats<AbstractTimeWarp, AbstractTimeWarp.AbstractTimeWarpStats> {
 
     protected int tickDuration = 100;
     protected int warpHealPercentage = 30; //TODO
+    private final AbstractTimeWarpStats stats = new AbstractTimeWarpStats();
 
     public AbstractTimeWarp() {
         super("Time Warp", 28, 30);
@@ -30,17 +29,8 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
                 .build();
     }
 
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Successful", "" + timesSuccessful));
-
-        return info;
-    }
-
     public int getTimesSuccessful() {
-        return timesSuccessful;
+        return stats.timesSuccessful;
     }
 
     public int getWarpHealPercentage() {
@@ -57,5 +47,44 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
 
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AbstractTimeWarpStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AbstractTimeWarpStats extends AbstractAbilityStats<AbstractTimeWarp, AbstractTimeWarpStats> {
+
+        @Field("times_successful")
+        private int timesSuccessful = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Successful", timesSuccessful));
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractTimeWarpStats merge(AbstractTimeWarpStats other, int multiplier) {
+            AbstractTimeWarpStats stats = super.merge(other, multiplier);
+            stats.timesSuccessful = this.timesSuccessful + other.timesSuccessful * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AbstractTimeWarpStats> getClazz() {
+            return AbstractTimeWarpStats.class;
+        }
+
+        @Override
+        public AbstractTimeWarpStats create() {
+            return new AbstractTimeWarpStats();
+        }
+
+        public void addTimesSuccessful() {
+            timesSuccessful++;
+        }
     }
 }

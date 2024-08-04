@@ -14,7 +14,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.ProtectorStrikeBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -27,9 +26,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class ProtectorsStrike extends AbstractStrike implements Damages<ProtectorsStrike.DamageValues> {
+public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, ProtectorsStrike.ProtectorsStrikeStats> implements Damages<ProtectorsStrike.DamageValues> {
 
     private final DamageValues damageValues = new DamageValues();
+    private final ProtectorsStrikeStats stats = new ProtectorsStrikeStats();
     private int allyHealing = 90; // %
     private int selfHealing = 60; // %
     private int maxAllies = 2;
@@ -52,14 +52,6 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
                 .percent(selfHealing, NamedTextColor.GREEN)
                 .text(" of the damage done.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Struck", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -195,6 +187,11 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
         return damageValues;
     }
 
+    @Override
+    public ProtectorsStrikeStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(261, 352, 20, 175);
@@ -209,5 +206,30 @@ public class ProtectorsStrike extends AbstractStrike implements Damages<Protecto
             return values;
         }
 
+    }
+
+    public static class ProtectorsStrikeStats extends AbstractStrikeStats<ProtectorsStrike, ProtectorsStrikeStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public ProtectorsStrikeStats merge(ProtectorsStrikeStats other, int multiplier) {
+            ProtectorsStrikeStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<ProtectorsStrikeStats> getClazz() {
+            return ProtectorsStrikeStats.class;
+        }
+
+        @Override
+        public ProtectorsStrikeStats create() {
+            return new ProtectorsStrikeStats();
+        }
     }
 }

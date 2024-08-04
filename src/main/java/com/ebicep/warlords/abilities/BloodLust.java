@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -14,7 +12,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BloodlustBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
@@ -24,18 +21,18 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<BloodLust, BloodLust.BloodLustStats> {
 
     public float amountHealed = 0;
-
+    private final BloodLustStats stats = new BloodLustStats();
     private int tickDuration = 300;
     private int damageConvertPercent = 65;
     private float healReductionPercent = 10;
 
+
     public BloodLust() {
         super("Blood Lust", 31.5f, 20);
     }
-
 
     @Override
     public void updateDescription(Player player) {
@@ -58,14 +55,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                     .text(".")
                     .build();
         }
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -192,5 +181,35 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public void setHealReductionPercent(float healReductionPercent) {
         this.healReductionPercent = healReductionPercent;
+    }
+
+    @Override
+    public BloodLustStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class BloodLustStats extends AbstractAbilityStats<BloodLust, BloodLustStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public BloodLustStats merge(BloodLustStats other, int multiplier) {
+            BloodLustStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<BloodLustStats> getClazz() {
+            return BloodLustStats.class;
+        }
+
+        @Override
+        public BloodLustStats create() {
+            return new BloodLustStats();
+        }
     }
 }

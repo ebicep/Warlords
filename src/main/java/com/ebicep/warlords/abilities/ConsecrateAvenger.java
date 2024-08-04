@@ -79,7 +79,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
                                         hit.add(enemy);
-                                        playersHit++;
+                                        getAbilityStats().addPlayersHit();
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
@@ -142,4 +142,5 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
         }
 
     }
+
 }

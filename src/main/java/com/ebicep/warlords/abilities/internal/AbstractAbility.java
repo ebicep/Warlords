@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
@@ -110,11 +109,6 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void updateDescription(Player player) {
 
-    }
-
-    @Nullable
-    public List<Pair<String, String>> getAbilityInfo() {
-        return null;
     }
 
     /**

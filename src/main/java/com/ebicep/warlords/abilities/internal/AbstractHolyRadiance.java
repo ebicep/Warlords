@@ -17,17 +17,18 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon, HitBox {
-
-    public int playersHealed = 0;
-    public int playersMarked = 0;
+public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon, HitBox, AbilityStats<AbstractHolyRadiance, AbstractHolyRadiance.AbstractHolyRadianceStats> {
 
     private final FloatModifiable radius;
+    private final AbstractHolyRadianceStats stats = new AbstractHolyRadianceStats();
 
     public AbstractHolyRadiance(
             String name,
@@ -50,7 +51,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         );
 
         if (chain(wp)) {
-            playersMarked++;
+            stats.playersMarked++;
         }
 
         float rad = radius.getCalculatedValue();
@@ -112,6 +113,45 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         return radius;
     }
 
+    @Override
+    public AbstractHolyRadianceStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class AbstractHolyRadianceStats extends AbstractAbilityStats<AbstractHolyRadiance, AbstractHolyRadianceStats> {
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+        @Field("players_marked")
+        private int playersMarked = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", String.valueOf(playersHealed)));
+            statsDisplay.add(new AbilityStatDisplay("Players Marked", String.valueOf(playersMarked)));
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractHolyRadianceStats merge(AbstractHolyRadianceStats other, int multiplier) {
+            AbstractHolyRadianceStats stats = super.merge(other, multiplier);
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.playersMarked = this.playersMarked + other.playersMarked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<AbstractHolyRadianceStats> getClazz() {
+            return AbstractHolyRadianceStats.class;
+        }
+
+        @Override
+        public AbstractHolyRadianceStats create() {
+            return new AbstractHolyRadianceStats();
+        }
+    }
+
     public class FlyingArmorStand extends BukkitRunnable {
 
         private final WarlordsEntity target;
@@ -147,7 +187,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 double distance = targetLocation.distanceSquared(armorStandLocation);
 
                 if (distance < speed * speed) {
-                    playersHealed++;
+                    stats.playersHealed++;
 
                     target.addInstance(InstanceBuilder
                             .healing()

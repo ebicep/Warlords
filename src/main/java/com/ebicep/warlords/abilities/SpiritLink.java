@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractChain;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -18,22 +15,22 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SpiritLinkBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
-
-public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages<SpiritLink.DamageValues> {
+public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkStats> implements RedAbilityIcon, Damages<SpiritLink.DamageValues> {
 
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.SPRUCE_FENCE_GATE);
-    public int numberOfDismounts = 0;
+
     private final DamageValues damageValues = new DamageValues();
+    private final SpiritLinkStats stats = new SpiritLinkStats();
     private float speedBuff = 40;
     private float speedDuration = 1.5f;
     private float damageReduction = 15;
@@ -67,16 +64,6 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Dismounts", "" + numberOfDismounts));
-
-        return info;
-    }
-
-    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SpiritLinkBranch(abilityTree, this);
     }
@@ -91,9 +78,9 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
                 .soulBindedFirst(wp)
         ) {
             if (LocationUtils.isLookingAtChain(wp, nearPlayer) && LocationUtils.hasLineOfSight(wp, nearPlayer)) {
-                playersHit++;
+                stats.addPlayersHit();
                 if (nearPlayer.onHorse()) {
-                    numberOfDismounts++;
+                    stats.numberOfDismounts++;
                 }
                 chain(wp.getLocation(), nearPlayer.getLocation());
                 nearPlayer.addInstance(InstanceBuilder
@@ -170,9 +157,9 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
                 .excluding(toExclude)
                 .soulBindedFirst(wp)
         ) {
-            playersHit++;
+            stats.addPlayersHit();
             if (bounceTarget.onHorse()) {
-                numberOfDismounts++;
+                stats.numberOfDismounts++;
             }
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
             bounceTarget.addInstance(InstanceBuilder
@@ -267,6 +254,11 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
         return damageValues;
     }
 
+    @Override
+    public SpiritLinkStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable linkDamage = new Value.RangedValueCritable(290, 392, 20, 175);
@@ -283,4 +275,33 @@ public class SpiritLink extends AbstractChain implements RedAbilityIcon, Damages
 
     }
 
+    public static class SpiritLinkStats extends AbstractChainStats<SpiritLink, SpiritLinkStats> {
+
+        @Field("number_of_dismounts")
+        private int numberOfDismounts = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Dismounts", numberOfDismounts));
+            return statsDisplay;
+        }
+
+        @Override
+        public SpiritLinkStats merge(SpiritLinkStats other, int multiplier) {
+            SpiritLinkStats stats = super.merge(other, multiplier);
+            stats.numberOfDismounts = this.numberOfDismounts + other.numberOfDismounts * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<SpiritLinkStats> getClazz() {
+            return SpiritLinkStats.class;
+        }
+
+        @Override
+        public SpiritLinkStats create() {
+            return new SpiritLinkStats();
+        }
+    }
 }

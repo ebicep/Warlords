@@ -14,7 +14,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthlivingWeaponBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -22,16 +21,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<EarthlivingWeapon.HealingValues> {
+public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<EarthlivingWeapon.HealingValues>, AbilityStats<EarthlivingWeapon, EarthlivingWeapon.EarthlivingWeaponStats> {
 
-    public int timesProcd = 0;
-    public int playersHealed = 0;
+
     private final HealingValues healingValues = new HealingValues();
+    private final EarthlivingWeaponStats stats = new EarthlivingWeaponStats();
     private int tickDuration = 160;
     private float procChance = 40;
     private int maxAllies = 2;
@@ -58,16 +58,6 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 .text("The first hit is guaranteed to activate Earthliving.")
                 .build();
 
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Proc'd", "" + timesProcd));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-
-        return info;
     }
 
     @Override
@@ -145,7 +135,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
             @Override
             public void run() {
-                timesProcd++;
+                stats.timesProcd++;
                 Utils.playGlobalSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
 
                 float cc = pveMasterUpgrade2 && !previosulyProcd ? 100 : healingValues.earthlivingHealing.getCritChanceValue();
@@ -164,7 +154,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                         .aliveTeammatesOfExcludingSelf(attacker)
                         .limit(maxAllies)
                 ) {
-                    playersHealed++;
+                    stats.playersHealed++;
                     nearPlayer.addInstance(InstanceBuilder
                             .healing()
                             .ability(EarthlivingWeapon.this)
@@ -274,6 +264,11 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         return healingValues;
     }
 
+    @Override
+    public EarthlivingWeaponStats getAbilityStats() {
+        return stats;
+    }
+
     public static class Data {
 
         private final Set<WarlordsEntity> alreadyProcd = new HashSet<>();
@@ -293,6 +288,38 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
     }
 
+    public static class EarthlivingWeaponStats extends AbstractAbilityStats<EarthlivingWeapon, EarthlivingWeaponStats> {
+
+        @Field("times_procd")
+        private int timesProcd = 0;
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Proc'd", timesProcd));
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            return statsDisplay;
+        }
+
+        @Override
+        public EarthlivingWeaponStats merge(EarthlivingWeaponStats other, int multiplier) {
+            EarthlivingWeaponStats stats = super.merge(other, multiplier);
+            stats.timesProcd = this.timesProcd + other.timesProcd * multiplier;
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<EarthlivingWeaponStats> getClazz() {
+            return EarthlivingWeaponStats.class;
+        }
+
+        @Override
+        public EarthlivingWeaponStats create() {
+            return new EarthlivingWeaponStats();
+        }
+    }
 }
-
-

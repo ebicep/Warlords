@@ -15,7 +15,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.CripplingStrikeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CripplingStrike extends AbstractStrike implements Damages<CripplingStrike.DamageValues> {
+public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingStrike.CripplingStrikeStats> implements Damages<CripplingStrike.DamageValues> {
 
     public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration) {
         cripple(from, target, name, 0, tickDuration, .9f);
@@ -76,6 +75,7 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
 
     private final int crippleDuration = 3;
     private final DamageValues damageValues = new DamageValues();
+    private final CripplingStrikeStats stats = new CripplingStrikeStats();
     private int cripple = 10;
     private int cripplePerStrike = 5;
 
@@ -100,14 +100,6 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
                 .percent(cripple + (cripplePerStrike * 2), NamedTextColor.RED)
                 .text(").")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Struck", "" + timesUsed));
-
-        return info;
     }
 
     @Override
@@ -206,6 +198,11 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
         return damageValues;
     }
 
+    @Override
+    public CripplingStrikeStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362, 498, 20, 175);
@@ -226,4 +223,28 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
 
     }
 
+    public static class CripplingStrikeStats extends AbstractStrikeStats<CripplingStrike, CripplingStrikeStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public CripplingStrikeStats merge(CripplingStrikeStats other, int multiplier) {
+            CripplingStrikeStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<CripplingStrikeStats> getClazz() {
+            return CripplingStrikeStats.class;
+        }
+
+        @Override
+        public CripplingStrikeStats create() {
+            return new CripplingStrikeStats();
+        }
+    }
 }

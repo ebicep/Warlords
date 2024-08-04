@@ -18,7 +18,6 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.WaterBreathBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -28,17 +27,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanReduceCooldowns, Heals<WaterBreath.HealingValues> {
+public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanReduceCooldowns, Heals<WaterBreath.HealingValues>, AbilityStats<WaterBreath, WaterBreath.WaterBreathStats> {
 
-    public int playersHealed = 0;
-    public int debuffsRemoved = 0;
+
     private final HealingValues healingValues = new HealingValues();
+    private final WaterBreathStats stats = new WaterBreathStats();
     private int maxAnimationTime = 12;
     private int maxAnimationEffects = 4;
     private float hitbox = 10;
@@ -63,16 +63,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 .durationSeconds(Overheal.OVERHEAL_DURATION)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-        info.add(new Pair<>("Debuffs Removed", "" + debuffsRemoved));
-
-        return info;
     }
 
     @Override
@@ -103,8 +93,8 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 Particle.DRIP_WATER, Particle.ENCHANTMENT_TABLE, Particle.VILLAGER_HAPPY
         );
 
-        int previousDebuffsRemoved = debuffsRemoved;
-        debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
+        int previousDebuffsRemoved = stats.debuffsRemoved;
+        stats.debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
         wp.addInstance(InstanceBuilder
                 .healing()
@@ -127,8 +117,8 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
             }
             CooldownManager breathTargetCooldownManager = breathTarget.getCooldownManager();
             if (wp.isTeammate(breathTarget)) {
-                playersHealed++;
-                debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
+                stats.playersHealed++;
+                stats.debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
                 breathTarget.getSpeed().removeSlownessModifiers();
                 breathTarget.addInstance(InstanceBuilder
                         .healing()
@@ -151,7 +141,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 }
             }
         }
-        int totalDebuffsRemoved = debuffsRemoved - previousDebuffsRemoved;
+        int totalDebuffsRemoved = stats.debuffsRemoved - previousDebuffsRemoved;
         if (totalDebuffsRemoved >= 7) {
             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.CLEANSING_RITUAL);
         }
@@ -285,6 +275,11 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         return healingValues;
     }
 
+    @Override
+    public WaterBreathStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(536, 743, 25, 175);
@@ -299,5 +294,40 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
             return values;
         }
 
+    }
+
+    public static class WaterBreathStats extends AbstractAbilityStats<WaterBreath, WaterBreathStats> {
+
+        @Field("players_healed")
+        private int playersHealed = 0;
+
+        @Field("debuffs_removed")
+        private int debuffsRemoved = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Debuffs Removed", debuffsRemoved));
+            return statsDisplay;
+        }
+
+        @Override
+        public WaterBreathStats merge(WaterBreathStats other, int multiplier) {
+            WaterBreathStats stats = super.merge(other, multiplier);
+            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.debuffsRemoved = this.debuffsRemoved + other.debuffsRemoved * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<WaterBreathStats> getClazz() {
+            return WaterBreathStats.class;
+        }
+
+        @Override
+        public WaterBreathStats create() {
+            return new WaterBreathStats();
+        }
     }
 }

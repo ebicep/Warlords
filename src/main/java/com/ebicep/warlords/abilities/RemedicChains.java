@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.RemedicChainsBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -22,16 +21,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues> {
+public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues>, AbilityStats<RemedicChains, RemedicChains.RemedicChainsStats> {
 
-    public int playersLinked = 0;
-    public int numberOfBrokenLinks = 0;
+
     private final HealingValues healingValues = new HealingValues();
+    private final RemedicChainsStats stats = new RemedicChainsStats();
     private float healingMultiplier = 12.5f; // %
     private float allyDamageIncrease = 12; // %
     private int tickDuration = 160;
@@ -64,16 +64,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 .blocks(linkBreakRadius)
                 .text(" apart.")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Linked", "" + playersLinked));
-        info.add(new Pair<>("Times Link Broken", "" + numberOfBrokenLinks));
-
-        return info;
     }
 
     @Override
@@ -185,7 +175,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                                     true
                             );
                             // Ally is out of range, break link
-                            numberOfBrokenLinks++;
+                            stats.numberOfBrokenLinks++;
 
                             float totalHealingMultiplier = ((healingMultiplier / 100f) * (ticksElapsed / 20f));
                             linked.addInstance(InstanceBuilder
@@ -301,6 +291,11 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         return healingValues;
     }
 
+    @Override
+    public RemedicChainsStats getAbilityStats() {
+        return stats;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
@@ -317,4 +312,38 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
     }
 
+    public static class RemedicChainsStats extends AbstractAbilityStats<RemedicChains, RemedicChainsStats> {
+
+        @Field("players_linked")
+        private int playersLinked = 0;
+
+        @Field("number_of_broken_links")
+        private int numberOfBrokenLinks = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Linked", playersLinked));
+            statsDisplay.add(new AbilityStatDisplay("Times Link Broken", numberOfBrokenLinks));
+            return statsDisplay;
+        }
+
+        @Override
+        public RemedicChainsStats merge(RemedicChainsStats other, int multiplier) {
+            RemedicChainsStats stats = super.merge(other, multiplier);
+            stats.playersLinked = this.playersLinked + other.playersLinked * multiplier;
+            stats.numberOfBrokenLinks = this.numberOfBrokenLinks + other.numberOfBrokenLinks * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<RemedicChainsStats> getClazz() {
+            return RemedicChainsStats.class;
+        }
+
+        @Override
+        public RemedicChainsStats create() {
+            return new RemedicChainsStats();
+        }
+    }
 }

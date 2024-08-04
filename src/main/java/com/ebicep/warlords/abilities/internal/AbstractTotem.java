@@ -35,26 +35,9 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
                 .filter(data -> entitiesAround.contains(data.getArmorStand()))
                 .toList();
     }
-    protected WarlordsEntity owner;
-    protected ArmorStand totem;
+
     public AbstractTotem(String name, float cooldown, float energyCost) {
         super(name, cooldown, energyCost);
-    }
-
-    public AbstractTotem(
-            String name,
-            float cooldown,
-            float energyCost,
-            ArmorStand totem,
-            WarlordsEntity owner
-    ) {
-        super(name, cooldown, energyCost);
-        this.totem = totem;
-        this.owner = owner;
-    }
-
-    public ArmorStand getTotem() {
-        return totem;
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class AbstractBeam extends AbstractPiercingProjectile implements RedAbilityIcon {
+public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> implements RedAbilityIcon {
 
     public AbstractBeam(
             String name,

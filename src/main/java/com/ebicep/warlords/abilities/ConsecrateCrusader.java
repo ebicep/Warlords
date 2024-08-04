@@ -78,7 +78,7 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
                         PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
-                                        playersHit++;
+                                        getAbilityStats().addPlayersHit();
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
@@ -142,4 +142,5 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         }
 
     }
+
 }

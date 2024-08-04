@@ -11,12 +11,15 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-public abstract class AbstractStrike extends AbstractAbility implements WeaponAbilityIcon, HitBox {
+public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends AbstractStrike.AbstractStrikeStats<T, R>> extends AbstractAbility implements WeaponAbilityIcon, HitBox, AbilityStats<T, R> {
 
     private final FloatModifiable hitbox = new FloatModifiable(4.8f);
 
@@ -41,6 +44,9 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                         boolean successfulStrike = onHit(wp, nearPlayer);
                         Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, nearPlayer));
                         hitPlayer.set(successfulStrike);
+                        if (successfulStrike) {
+                            getAbilityStats().playersStruck++;
+                        }
                     });
 
         return hitPlayer.get();
@@ -67,7 +73,10 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
                     .closestFirst(initialTarget)
                     .excluding(initialTarget)
                     .limit(additionalHitAmount)
-                    .forEach(onHit);
+                    .forEach(warlordsEntity -> {
+                        onHit.accept(warlordsEntity);
+                        getAbilityStats().playersStruck++;
+                    });
     }
 
     protected void randomHitEffect(Location location, int particleAmount, int red, int green, int blue) {
@@ -89,5 +98,26 @@ public abstract class AbstractStrike extends AbstractAbility implements WeaponAb
     @Override
     public FloatModifiable getHitBoxRadius() {
         return hitbox;
+    }
+
+    public static abstract class AbstractStrikeStats<T extends AbstractStrike<T, R>, R extends AbstractStrikeStats<T, R>> extends AbstractAbilityStats<T, R> {
+
+        @Field("players_struck")
+        protected int playersStruck = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Players Struck", playersStruck));
+            return statsDisplay;
+        }
+
+        @Override
+        public R merge(R other, int multiplier) {
+            R r = super.merge(other, multiplier);
+            r.playersStruck += other.playersStruck * multiplier;
+            return r;
+        }
+
     }
 }

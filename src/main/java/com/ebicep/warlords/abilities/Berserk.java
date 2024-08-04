@@ -1,8 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -13,23 +11,22 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.BerserkBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Duration {
+public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Berserk, Berserk.BerserkStats> {
 
-    public int hitsDoneAmplified = 0;
-    public int hitsTakenAmplified = 0;
 
+    private final BerserkStats stats = new BerserkStats();
     private int tickDuration = 360;
     private int speedBuff = 30;
     private float damageIncrease = 30;
@@ -52,16 +49,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Hits Done Amplified", "" + hitsDoneAmplified));
-        info.add(new Pair<>("Hits Taken Amplified", "" + hitsTakenAmplified));
-
-        return info;
     }
 
     @Override
@@ -145,13 +132,13 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
 
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsTakenAmplified++;
+                stats.hitsTakenAmplified++;
                 return currentDamageValue * convertToMultiplicationDecimal(damageTakenIncrease);
             }
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                hitsDoneAmplified++;
+                stats.hitsDoneAmplified++;
                 multiplier++;
                 float increase = damageIncrease;
                 if (pveMasterUpgrade2) {
@@ -196,7 +183,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         this.speedBuff = speedBuff;
     }
 
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -205,5 +191,45 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public BerserkStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class BerserkStats extends AbstractAbilityStats<Berserk, BerserkStats> {
+
+        @Field("hits_done_amplified")
+        private int hitsDoneAmplified = 0;
+
+        @Field("hits_taken_amplified")
+        private int hitsTakenAmplified = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Hits Done Amplified", hitsDoneAmplified));
+            statsDisplay.add(new AbilityStatDisplay("Hits Taken Amplified", hitsTakenAmplified));
+            return statsDisplay;
+        }
+
+        @Override
+        public BerserkStats merge(BerserkStats other, int multiplier) {
+            BerserkStats stats = super.merge(other, multiplier);
+            stats.hitsDoneAmplified = this.hitsDoneAmplified + other.hitsDoneAmplified * multiplier;
+            stats.hitsTakenAmplified = this.hitsTakenAmplified + other.hitsTakenAmplified * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<BerserkStats> getClazz() {
+            return BerserkStats.class;
+        }
+
+        @Override
+        public BerserkStats create() {
+            return new BerserkStats();
+        }
     }
 }
