@@ -6,9 +6,11 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -205,7 +207,23 @@ public class Ability<T extends AbstractAbility> {
             WOUNDING_STRIKE_BERSERKER,
             WOUNDING_STRIKE_DEFENDER,
     };
-    public static final Map<Specializations, Ability<?>[]> SPEC_ABILITIES = new HashMap<>() {{
+
+    @Nullable
+    public static <T extends AbstractAbility> Ability<T> getAbility(Class<T> clazz) {
+        return (Ability<T>) ABILITY_MAP.get(clazz);
+    }
+
+    public static final Map<Class<?>, Ability<?>> ABILITY_MAP = new HashMap<>();
+    public static final Map<String, Ability<?>> ABILITY_DATABASE_MAP = new HashMap<>();
+    public static final Map<Specializations, Ability<?>[]> SPEC_ABILITIES = new HashMap<>();
+
+    static {
+        for (Ability<?> ability : VALUES) {
+            ABILITY_MAP.put(ability.clazz, ability);
+        }
+        for (Ability<?> value : VALUES) {
+            ABILITY_DATABASE_MAP.put(value.getDatabaseName(), value);
+        }
         for (Specializations spec : Specializations.VALUES) {
             Ability<?>[] abilities = new Ability[5];
             List<AbstractAbility> abstractAbilities = spec.create.get().getAbilities();
@@ -219,18 +237,8 @@ public class Ability<T extends AbstractAbility> {
                 }
                 abilities[i] = abilityRegistry;
             }
-            put(spec, abilities);
+            SPEC_ABILITIES.put(spec, abilities);
         }
-    }};
-
-    @Nullable
-    public static <T extends AbstractAbility> Ability<T> getAbility(Class<T> clazz) {
-        for (Ability<?> ability : VALUES) {
-            if (ability.clazz.equals(clazz)) {
-                return (Ability<T>) ability;
-            }
-        }
-        return null;
     }
 
     public final Class<T> clazz;
@@ -240,4 +248,36 @@ public class Ability<T extends AbstractAbility> {
         this.clazz = clazz;
         this.create = create;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Ability<?> ability = (Ability<?>) o;
+        return Objects.equals(clazz, ability.clazz);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(clazz);
+    }
+
+    public String getDatabaseName() {
+        Field[] fields = Ability.class.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                if (field.get(null) == this) {
+                    return field.getName();
+                }
+            } catch (IllegalAccessException e) {
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+            }
+        }
+        return null;
+    }
+
 }

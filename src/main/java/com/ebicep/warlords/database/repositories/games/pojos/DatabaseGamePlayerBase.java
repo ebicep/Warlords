@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
+import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
@@ -57,7 +58,7 @@ public class DatabaseGamePlayerBase {
     @Field("experience_earned_universal")
     protected long experienceEarnedUniversal;
     @Field("ability_stats")
-    protected Map<String, AbstractAbilityStats<?>> abilityStats = new HashMap<>();
+    protected Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
 
     public DatabaseGamePlayerBase() {
     }
@@ -100,9 +101,9 @@ public class DatabaseGamePlayerBase {
         this.experienceEarnedSpec = experienceEarnedSpec;
         this.experienceEarnedUniversal = experienceEarnedUniversal;
         for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
-            if (ability instanceof AbilityStats<?> stats) {
+            if (ability instanceof AbilityStats<?, ?> stats) {
                 this.abilityStats.merge(
-                        stats.getName(),
+                        Ability.getAbility(ability.getClass()),
                         stats.getAbilityStats(),
                         AbstractAbilityStats::merge
                 );

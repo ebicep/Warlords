@@ -61,11 +61,6 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
         return "Warlords";
     }
 
-    @Override
-    public boolean autoIndexCreation() {
-        return true;
-    }
-
     @Nonnull
     @Override
     public MongoCustomConversions customConversions() {
@@ -73,7 +68,14 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
                 new StringToSpendableConverter(),
                 new GameMapConverter.StringToGameMapConverter(),
                 new GameMapConverter.GameMapToStringConverter(),
-                new StringToSkillBoostConverter()
+                new StringToSkillBoostConverter(),
+                new AbilityConverter.StringToAbilityConverter(),
+                new AbilityConverter.AbilityToStringConverter()
         ));
+    }
+
+    @Override
+    public boolean autoIndexCreation() {
+        return true;
     }
 }
