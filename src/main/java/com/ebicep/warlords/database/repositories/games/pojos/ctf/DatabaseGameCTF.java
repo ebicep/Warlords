@@ -165,13 +165,6 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     }
 
     @Override
-    public Set<DatabaseGamePlayerCTF> getBasePlayers() {
-        return players.values().stream()
-                      .flatMap(Collection::stream)
-                      .collect(Collectors.toSet());
-    }
-
-    @Override
     public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
         assert player instanceof DatabaseGamePlayerCTF;
 
@@ -184,6 +177,13 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
             }
         }
         return DatabaseGamePlayerResult.NONE;
+    }
+
+    @Override
+    public Set<DatabaseGamePlayerCTF> getBasePlayers() {
+        return players.values().stream()
+                      .flatMap(Collection::stream)
+                      .collect(Collectors.toSet());
     }
 
     @Override
@@ -253,7 +253,6 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
         topDamageOnCarrierPlayers.forEach(s -> topDamageOnCarrier.getLines().appendText(s));
         topHealingOnCarrierPlayers.forEach(s -> topHealingOnCarrier.getLines().appendText(s));
     }
-
 
     @Override
     public String getGameLabel() {

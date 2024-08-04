@@ -17,7 +17,10 @@ import org.bukkit.Location;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
@@ -58,7 +61,7 @@ public class DatabaseGamePlayerBase {
     @Field("experience_earned_universal")
     protected long experienceEarnedUniversal;
     @Field("ability_stats")
-    protected Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+    protected Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new LinkedHashMap<>();
 
     public DatabaseGamePlayerBase() {
     }
@@ -201,5 +204,9 @@ public class DatabaseGamePlayerBase {
 
     public long getExperienceEarnedUniversal() {
         return experienceEarnedUniversal;
+    }
+
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
     }
 }

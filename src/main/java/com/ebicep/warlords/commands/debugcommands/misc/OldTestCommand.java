@@ -1,5 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.abilities.ChainHeal;
+import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -118,7 +120,7 @@ public class OldTestCommand implements CommandExecutor {
         if (commandSender instanceof Player player) {
 //            player.setHealth(0);
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-//                databasePlayer.getCompStats().getCtfStats().putAbilityStats(Ability.CHAIN_HEAL, new ChainHeal.ChainHealStats());
+                databasePlayer.getCompStats().getCtfStats().putAbilityStats(Ability.CHAIN_HEAL, new ChainHeal.ChainHealStats());
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
             });
 //            player.setPose(Pose.DYING);

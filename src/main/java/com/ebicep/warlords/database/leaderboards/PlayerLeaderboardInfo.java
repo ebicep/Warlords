@@ -8,11 +8,14 @@ import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerLeaderboardInfo {
 
     private int gameHologram = 0;
+    private Map<Integer, Integer> gameHologramPlayerAbilityStats = new HashMap<>();
     @Nonnull
     private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.PVE;
     private int statsCategory = 0;
@@ -27,6 +30,14 @@ public class PlayerLeaderboardInfo {
 
     public void setGameHologram(int gameHologram) {
         this.gameHologram = gameHologram;
+    }
+
+    public int getGameHologramPlayerAbilityStats() {
+        return gameHologramPlayerAbilityStats.getOrDefault(gameHologram, 0);
+    }
+
+    public void setGameHologramPlayerAbilityStats(int abilityStats) {
+        gameHologramPlayerAbilityStats.put(gameHologram, abilityStats);
     }
 
     public void resetGameHologram() {
