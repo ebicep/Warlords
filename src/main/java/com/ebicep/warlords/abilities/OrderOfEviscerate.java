@@ -240,6 +240,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue());
                             }
+                            wp.getSpec().resetAbilityCD(wp);
                         }
                     }.runTaskLater(2);
                 } else {
@@ -265,13 +266,14 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                         .append(Component.text("!", NamedTextColor.GRAY))
                                 );
                                 for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
-                                    shadowStep.setCurrentCooldown(shadowStep.getCooldownValue() / 2);
+                                    shadowStep.subtractCurrentCooldown(shadowStep.getCurrentCooldown() / 2);
                                 }
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.setCurrentCooldown(orderOfEviscerate.getCooldownValue() / 2);
+                                    orderOfEviscerate.subtractCurrentCooldown(orderOfEviscerate.getCooldownValue() / 2);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue() / 2f);
                             }
+                            wp.getSpec().resetAbilityCD(wp);
                         }
                     }.runTaskLater(2);
                 }
