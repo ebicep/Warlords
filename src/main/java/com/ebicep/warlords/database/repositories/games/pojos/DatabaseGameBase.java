@@ -25,7 +25,6 @@ import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.NumberFormat;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.TriFunction;
 import com.ebicep.warlords.util.warlords.Utils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -648,7 +647,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
         int currentPlayerIndex = playerLeaderboardInfo.getGameHologramPlayerAbilityStats(this);
 
-        List<Pair<String, Team>> playerNames = new ArrayList<>();
+        List<T> orderedPlayers = new ArrayList<>();
         getBasePlayers()
                 .stream()
                 .sorted((o1, o2) -> {
@@ -658,25 +657,26 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                     }
                     return teamCompare;
                 })
-                .forEachOrdered(p -> {
-                    playerNames.add(new Pair<>(p.getName(), getTeam(p)));
-                });
+                .forEachOrdered(orderedPlayers::add);
 
-        if (playerNames.size() > 1) {
-            int playerBefore = currentPlayerIndex - 1 < 0 ? playerNames.size() - 1 : currentPlayerIndex - 1;
-            Pair<String, Team> beforePair = playerNames.get(playerBefore);
-            ClickableHologramLine beforeLine = playerSwitcher.getLines().appendText(beforePair.getB().getChatColor() + beforePair.getA());
+        if (orderedPlayers.size() > 1) {
+            int playerBefore = currentPlayerIndex - 1 < 0 ? orderedPlayers.size() - 1 : currentPlayerIndex - 1;
+            T beforePair = orderedPlayers.get(playerBefore);
+            ClickableHologramLine beforeLine = playerSwitcher.getLines()
+                                                             .appendText(ChatColor.AQUA + beforePair.getSpec().name + ": " + getTeam(beforePair).getChatColor() + beforePair.getName());
             beforeLine.setClickListener((clicker) -> {
                 playerLeaderboardInfo.setGameHologramPlayerAbilityStats(playerBefore);
                 refreshHolograms(player);
             });
         }
-        Pair<String, Team> currentPai = playerNames.get(currentPlayerIndex);
-        playerSwitcher.getLines().appendText("" + currentPai.getB().getChatColor() + ChatColor.UNDERLINE + currentPai.getA());
-        if (playerNames.size() > 2) {
-            int playerAfter = currentPlayerIndex + 1 >= playerNames.size() ? 0 : currentPlayerIndex + 1;
-            Pair<String, Team> afterPair = playerNames.get(playerAfter);
-            ClickableHologramLine afterLine = playerSwitcher.getLines().appendText(afterPair.getB().getChatColor() + afterPair.getA());
+        T currentPair = orderedPlayers.get(currentPlayerIndex);
+        playerSwitcher.getLines()
+                      .appendText(ChatColor.AQUA + currentPair.getSpec().name + ": " + getTeam(currentPair).getChatColor() + ChatColor.UNDERLINE + currentPair.getName());
+        if (orderedPlayers.size() > 2) {
+            int playerAfter = currentPlayerIndex + 1 >= orderedPlayers.size() ? 0 : currentPlayerIndex + 1;
+            T afterPair = orderedPlayers.get(playerAfter);
+            ClickableHologramLine afterLine = playerSwitcher.getLines()
+                                                            .appendText(ChatColor.AQUA + afterPair.getSpec().name + ": " + getTeam(afterPair).getChatColor() + afterPair.getName());
             afterLine.setClickListener((clicker) -> {
                 playerLeaderboardInfo.setGameHologramPlayerAbilityStats(playerAfter);
                 refreshHolograms(player);
