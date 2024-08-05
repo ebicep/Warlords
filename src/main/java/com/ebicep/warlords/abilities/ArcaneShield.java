@@ -133,6 +133,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                     if (shield.isBroken()) {
                         stats.timesBroken++;
                     }
+                    stats.totalAbsorbed += shield.getMaxShieldHealth() - Math.max(0, shield.getShieldHealth());
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -166,11 +167,14 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
         @Field("times_broken")
         private int timesBroken = 0;
+        @Field("total_absorbed")
+        private float totalAbsorbed = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Times Broken", timesBroken));
+            statsDisplay.add(new AbilityStatDisplay("Total Absorbed", totalAbsorbed));
             return statsDisplay;
         }
 
@@ -178,6 +182,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         public ArcaneShieldStats merge(ArcaneShieldStats other, int multiplier) {
             ArcaneShieldStats stats = super.merge(other, multiplier);
             stats.timesBroken = this.timesBroken + other.timesBroken * multiplier;
+            stats.totalAbsorbed = this.totalAbsorbed + other.totalAbsorbed * multiplier;
             return stats;
         }
 
