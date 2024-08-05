@@ -17,18 +17,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
 public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<BloodLust, BloodLust.BloodLustStats> {
 
-    public float amountHealed = 0;
     private final BloodLustStats stats = new BloodLustStats();
     private int tickDuration = 300;
     private int damageConvertPercent = 65;
     private float healReductionPercent = 10;
-
 
     public BloodLust() {
         super("Blood Lust", 31.5f, 20);
@@ -128,7 +127,9 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         .source(attacker)
                         .value(healAmount)
                         .flags(InstanceFlags.NO_HIT_SOUND)
-                );
+                ).ifPresent(finalEvent -> {
+                    stats.amountHealed += finalEvent.getValue();
+                });
             }
 
             @Override
@@ -157,14 +158,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         this.damageConvertPercent = damageConvertPercent;
     }
 
-    public float getAmountHealed() {
-        return amountHealed;
-    }
-
-    public void addAmountHealed(float amountHealed) {
-        this.amountHealed += amountHealed;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -190,15 +183,20 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public static class BloodLustStats extends AbstractAbilityStats<BloodLust, BloodLustStats> {
 
+        @Field("amount_healed")
+        private float amountHealed = 0;
+
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Amount Healed", amountHealed));
             return statsDisplay;
         }
 
         @Override
         public BloodLustStats merge(BloodLustStats other, int multiplier) {
             BloodLustStats stats = super.merge(other, multiplier);
+            stats.amountHealed = this.amountHealed + other.amountHealed * multiplier;
             return stats;
         }
 
@@ -210,6 +208,10 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         @Override
         public BloodLustStats create() {
             return new BloodLustStats();
+        }
+
+        public float getAmountHealed() {
+            return amountHealed;
         }
     }
 }

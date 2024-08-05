@@ -647,7 +647,7 @@ public enum ChallengeAchievements implements Achievement {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
                         .filterCooldownClassAndMapToObjectsOfClass(BloodLust.class)
-                        .anyMatch(bloodLust -> bloodLust.getAmountHealed() >= 18000);
+                        .anyMatch(bloodLust -> bloodLust.getAbilityStats().getAmountHealed() >= 18000);
             }
     ),
     HARDENED_SCALES("Hardened Scales",

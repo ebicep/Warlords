@@ -25,7 +25,6 @@ import java.util.List;
 
 public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Berserk, Berserk.BerserkStats> {
 
-
     private final BerserkStats stats = new BerserkStats();
     private int tickDuration = 360;
     private int speedBuff = 30;
@@ -202,7 +201,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
 
         @Field("hits_done_amplified")
         private int hitsDoneAmplified = 0;
-
         @Field("hits_taken_amplified")
         private int hitsTakenAmplified = 0;
 
