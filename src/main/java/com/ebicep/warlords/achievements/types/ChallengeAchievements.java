@@ -607,7 +607,8 @@ public enum ChallengeAchievements implements Achievement {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
                         .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.class)
-                        .anyMatch(avengersWrath -> avengersWrath.getPlayersStruckDuringWrath() >= 40 && avengersWrath.getPlayersKilledDuringWrath() >= 12);
+                        .anyMatch(avengersWrath -> avengersWrath.getAbilityStats().getTargetsStruckDuringWrath() >= 40 && avengersWrath.getAbilityStats()
+                                                                                                                                       .getTargetsKilledDuringWrath() >= 12);
             }
     ),
     PORTABLE_ENERGIZER("Portable Energizer",

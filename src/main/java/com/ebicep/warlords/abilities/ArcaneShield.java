@@ -28,7 +28,6 @@ import java.util.List;
 
 public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<ArcaneShield, ArcaneShield.ArcaneShieldStats> {
 
-
     private final ArcaneShieldStats stats = new ArcaneShieldStats();
     private int maxShieldHealth;
     private int shieldPercentage = 50;
@@ -36,10 +35,6 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
     public ArcaneShield() {
         super("Arcane Shield", 31, 40);
-    }
-
-    public void addTimesBroken() {
-        stats.timesBroken++;
     }
 
     @Override

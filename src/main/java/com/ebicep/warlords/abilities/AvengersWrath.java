@@ -29,9 +29,6 @@ import java.util.List;
 
 public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<AvengersWrath, AvengersWrath.AvengersWrathStats> {
 
-
-    public int playersStruckDuringWrath = 0;
-    public int playersKilledDuringWrath = 0;
     private final AvengersWrathStats stats = new AvengersWrathStats();
     private int tickDuration = 240;
     private float energyPerSecond = 20;
@@ -93,7 +90,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                tempAvengersWrath.addPlayersStruckDuringWrath();
+                tempAvengersWrath.getAbilityStats().targetsStruckDuringWrath++;
                 EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE);
                 if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     flags.add(InstanceFlags.STRIKE_IN_CONS);
@@ -106,7 +103,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                             .value(event)
                             .flags(flags)
                     );
-                    tempAvengersWrath.addPlayersStruckDuringWrath();
+                    tempAvengersWrath.getAbilityStats().extraTargetsStruck++;
                 }
                 for (WarlordsEntity wrathTarget : PlayerFilter
                         .entitiesAround(warlordsEntity, hitRadius, hitRadius, hitRadius)
@@ -115,8 +112,8 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                         .excluding(warlordsEntity)
                         .limit(maxTargets)
                 ) {
-                    addExtraPlayersStruck();
-                    tempAvengersWrath.addPlayersStruckDuringWrath();
+                    stats.extraTargetsStruck++;
+                    tempAvengersWrath.getAbilityStats().targetsStruckDuringWrath++;
 
                     wrathTarget.addInstance(InstanceBuilder
                             .damage()
@@ -134,7 +131,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (isKiller) {
-                    tempAvengersWrath.addPlayersKilledDuringWrath();
+                    tempAvengersWrath.getAbilityStats().targetsKilledDuringWrath++;
                 }
             }
 
@@ -150,26 +147,6 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new AvengersWrathBranch(abilityTree, this);
-    }
-
-    public void addPlayersStruckDuringWrath() {
-        playersStruckDuringWrath++;
-    }
-
-    public void addExtraPlayersStruck() {
-        stats.extraPlayersStruck++;
-    }
-
-    public void addPlayersKilledDuringWrath() {
-        playersKilledDuringWrath++;
-    }
-
-    public int getPlayersStruckDuringWrath() {
-        return playersStruckDuringWrath;
-    }
-
-    public int getPlayersKilledDuringWrath() {
-        return playersKilledDuringWrath;
     }
 
     public float getEnergyPerSecond() {
@@ -213,20 +190,28 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
 
     public static class AvengersWrathStats extends AbstractAbilityStats<AvengersWrath, AvengersWrathStats> {
 
-        @Field("extra_players_struck")
-        private int extraPlayersStruck = 0;
+        @Field("extra_targets_struck")
+        private int extraTargetsStruck = 0;
+        @Field("targets_struck_during_wrath")
+        private int targetsStruckDuringWrath = 0;
+        @Field("targets_killed_during_wrath")
+        private int targetsKilledDuringWrath = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Extra Players Struck", extraPlayersStruck));
+            statsDisplay.add(new AbilityStatDisplay("Extra Players Struck", extraTargetsStruck));
+            statsDisplay.add(new AbilityStatDisplay("Targets Struck During Wrath", targetsStruckDuringWrath));
+            statsDisplay.add(new AbilityStatDisplay("Targets Killed During Wrath", targetsKilledDuringWrath));
             return statsDisplay;
         }
 
         @Override
         public AvengersWrathStats merge(AvengersWrathStats other, int multiplier) {
             AvengersWrathStats stats = super.merge(other, multiplier);
-            stats.extraPlayersStruck = this.extraPlayersStruck + other.extraPlayersStruck * multiplier;
+            stats.extraTargetsStruck = this.extraTargetsStruck + other.extraTargetsStruck * multiplier;
+            stats.targetsStruckDuringWrath = this.targetsStruckDuringWrath + other.targetsStruckDuringWrath * multiplier;
+            stats.targetsKilledDuringWrath = this.targetsKilledDuringWrath + other.targetsKilledDuringWrath * multiplier;
             return stats;
         }
 
@@ -238,6 +223,14 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         @Override
         public AvengersWrathStats create() {
             return new AvengersWrathStats();
+        }
+
+        public int getTargetsStruckDuringWrath() {
+            return targetsStruckDuringWrath;
+        }
+
+        public int getTargetsKilledDuringWrath() {
+            return targetsKilledDuringWrath;
         }
     }
 }
