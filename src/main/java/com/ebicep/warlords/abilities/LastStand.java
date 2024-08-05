@@ -140,7 +140,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 .aliveTeammatesOf(wp)
                 .excluding(wp)
         ) {
-            stats.playersLastStanded++;
+            stats.targetsLastStanded++;
 
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.VILLAGER_HAPPY);
             standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -312,20 +312,20 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public static class LastStandStats extends AbstractAbilityStats<LastStand, LastStandStats> {
 
-        @Field("players_last_standed")
-        private int playersLastStanded = 0;
+        @Field("targets_last_standed")
+        private int targetsLastStanded = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Last Standed", playersLastStanded));
+            statsDisplay.add(new AbilityStatDisplay("Targets Last Standed", targetsLastStanded));
             return statsDisplay;
         }
 
         @Override
         public LastStandStats merge(LastStandStats other, int multiplier) {
             LastStandStats stats = super.merge(other, multiplier);
-            stats.playersLastStanded = this.playersLastStanded + other.playersLastStanded * multiplier;
+            stats.targetsLastStanded = this.targetsLastStanded + other.targetsLastStanded * multiplier;
             return stats;
         }
 

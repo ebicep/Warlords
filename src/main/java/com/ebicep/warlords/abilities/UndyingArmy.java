@@ -282,7 +282,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate, false);
             if (teammate != wp) {
-                stats.playersArmied++;
+                stats.targetsArmied++;
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                         .append(Component.text(" Your ", NamedTextColor.GRAY))
                         .append(Component.text("Undying Army", NamedTextColor.YELLOW))
@@ -499,20 +499,20 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     public static class UndyingArmyStats extends AbstractAbilityStats<UndyingArmy, UndyingArmyStats> {
 
-        @Field("players_armied")
-        private int playersArmied = 0;
+        @Field("targets_armied")
+        private int targetsArmied = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Armied", playersArmied));
+            statsDisplay.add(new AbilityStatDisplay("Targets Armied", targetsArmied));
             return statsDisplay;
         }
 
         @Override
         public UndyingArmyStats merge(UndyingArmyStats other, int multiplier) {
             UndyingArmyStats stats = super.merge(other, multiplier);
-            stats.playersArmied = this.playersArmied + other.playersArmied * multiplier;
+            stats.targetsArmied = this.targetsArmied + other.targetsArmied * multiplier;
             return stats;
         }
 

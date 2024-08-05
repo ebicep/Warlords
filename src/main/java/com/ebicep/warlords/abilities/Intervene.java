@@ -362,7 +362,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public static class InterveneStats extends AbstractAbilityStats<Intervene, InterveneStats> {
 
-        @Field("players_intervened")
+        @Field("targets_intervened")
         private int playersIntervened = 0;
 
         @Field("carriers_intervened")
@@ -371,7 +371,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Intervened", playersIntervened));
+            statsDisplay.add(new AbilityStatDisplay("Targets Intervened", playersIntervened));
             statsDisplay.add(new AbilityStatDisplay("Carriers Intervened", carriersIntervened));
             return statsDisplay;
         }

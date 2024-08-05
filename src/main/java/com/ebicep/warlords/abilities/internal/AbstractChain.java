@@ -103,14 +103,14 @@ public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends Abs
 
     public static abstract class AbstractChainStats<T extends AbstractChain<T, R>, R extends AbstractChainStats<T, R>> extends AbstractAbilityStats<T, R> {
 
-        @Field("players_hit")
+        @Field("targets_hit")
         protected int playersHit;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
-            List<AbilityStatDisplay> list = new ArrayList<>(super.getStatsDisplay());
-            list.add(new AbilityStatDisplay("Players Hit", playersHit));
-            return list;
+            List<AbilityStatDisplay> statDisplay = new ArrayList<>(super.getStatsDisplay());
+            statDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
+            return statDisplay;
 
         }
 

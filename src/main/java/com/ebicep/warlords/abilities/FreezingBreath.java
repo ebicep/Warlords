@@ -342,7 +342,6 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>();
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
             return statsDisplay;
         }
 

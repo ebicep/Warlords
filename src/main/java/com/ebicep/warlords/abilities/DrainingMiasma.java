@@ -33,7 +33,6 @@ import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<DrainingMiasma.DamageValues>, AbilityStats<DrainingMiasma, DrainingMiasma.DrainingMiasmaStats> {
 
-
     protected int numberOfLeechProcd = 0;
     private final DamageValues damageValues = new DamageValues();
     private final DrainingMiasmaStats stats = new DrainingMiasmaStats();
@@ -108,7 +107,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                 .entitiesAround(wp, getRadius(), getRadius(), getRadius())
                 .isAlive()
         ) {
-            stats.playersHit++;
+            stats.targetsHit++;
             if (miasmaTarget.isEnemy(wp)) {
                 Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20, "BASE");
                 miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
@@ -334,20 +333,20 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     public static class DrainingMiasmaStats extends AbstractAbilityStats<DrainingMiasma, DrainingMiasmaStats> {
 
-        @Field("players_hit")
-        private int playersHit = 0;
+        @Field("targets_hit")
+        private int targetsHit = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", targetsHit));
             return statsDisplay;
         }
 
         @Override
         public DrainingMiasmaStats merge(DrainingMiasmaStats other, int multiplier) {
             DrainingMiasmaStats stats = super.merge(other, multiplier);
-            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.targetsHit = this.targetsHit + other.targetsHit * multiplier;
             return stats;
         }
 

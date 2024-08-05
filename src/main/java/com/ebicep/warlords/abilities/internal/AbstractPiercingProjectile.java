@@ -432,10 +432,10 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
     public static abstract class AbstractPiercingProjectileStats<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectileStats<T, R>> extends AbstractAbilityStats<T, R> {
 
-        @Field("players_hit")
-        protected int playersHit = 0;
-        @Field("players_hit_by_splash")
-        protected int playersHitBySplash = 0;
+        @Field("targets_hit")
+        protected int targetsHit = 0;
+        @Field("targets_hit_by_splash")
+        protected int targetsHitBySplash = 0;
         @Field("direct_hits")
         protected int directHits = 0;
         @Field("number_of_dismounts")
@@ -444,8 +444,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
-            statsDisplay.add(new AbilityStatDisplay("Players Hit By Splash", playersHitBySplash));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", targetsHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit By Splash", targetsHitBySplash));
             statsDisplay.add(new AbilityStatDisplay("Direct Hits", directHits));
             statsDisplay.add(new AbilityStatDisplay("Number of Dismounts", numberOfDismounts));
             return statsDisplay;
@@ -454,23 +454,23 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         @Override
         public R merge(R other, int multiplier) {
             R stats = super.merge(other, multiplier);
-            stats.playersHit = this.playersHit + other.playersHit * multiplier;
-            stats.playersHitBySplash = this.playersHitBySplash + other.playersHitBySplash * multiplier;
+            stats.targetsHit = this.targetsHit + other.targetsHit * multiplier;
+            stats.targetsHitBySplash = this.targetsHitBySplash + other.targetsHitBySplash * multiplier;
             stats.directHits = this.directHits + other.directHits * multiplier;
             stats.numberOfDismounts = this.numberOfDismounts + other.numberOfDismounts * multiplier;
             return stats;
         }
 
-        public int getPlayersHit() {
-            return playersHit;
+        public int getTargetsHit() {
+            return targetsHit;
         }
 
         public void addPlayersHit() {
-            this.playersHit++;
+            this.targetsHit++;
         }
 
         public void addPlayersHitBySplash() {
-            this.playersHitBySplash++;
+            this.targetsHitBySplash++;
         }
 
         public void addDirectHits() {
@@ -549,8 +549,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
                         getAbilityStats().directHits++;
                     }
                     if (hitBySplash > 0) {
-                        getAbilityStats().playersHit++;
-                        getAbilityStats().playersHitBySplash += hitBySplash;
+                        getAbilityStats().targetsHit++;
+                        getAbilityStats().targetsHitBySplash += hitBySplash;
                     }
                     cancel();
                 } else if (ticksLived >= maxTicks) {

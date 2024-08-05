@@ -258,7 +258,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {
-        stats.playersHealed++;
+        stats.targetsHealed++;
         teammateInRain.addInstance(InstanceBuilder
                 .healing()
                 .ability(this)
@@ -336,20 +336,20 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     public static class HealingRainStats extends AbstractAbilityStats<HealingRain, HealingRainStats> {
 
-        @Field("players_healed")
-        private int playersHealed = 0;
+        @Field("targets_healed")
+        private int targetsHealed = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
             return statsDisplay;
         }
 
         @Override
         public HealingRainStats merge(HealingRainStats other, int multiplier) {
             HealingRainStats stats = super.merge(other, multiplier);
-            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
             return stats;
         }
 

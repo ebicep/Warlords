@@ -135,11 +135,11 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         return false;
     }
 
-    static boolean playerTryingToPick(WarlordsEntity player) {
+    static boolean playerNearFlag(WarlordsEntity player) {
         for (FlagHolder flagHolder : player.getGame().getMarkers(FlagHolder.class)) {
             FlagInfo flagInfo = flagHolder.getInfo();
             if (flagInfo.getFlag() instanceof SpawnFlagLocation && flagInfo.getTeam() != player.getTeam()) {
-                if (flagInfo.getFlag().getLocation().distanceSquared(player.getLocation()) < 12 * 12) {
+                if (flagInfo.getFlag().getLocation().distanceSquared(player.getLocation()) < 15 * 15) {
                     return true;
                 }
             }

@@ -103,7 +103,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                             int newCrippleCounter = Math.min(data.consecutiveStrikeCounter() + 1, 2);
                             CripplingStrike.cripple(caster,
                                     spikeTarget,
-                                    name,
+                                    null, name,
                                     newCrippleCounter,
                                     2 * 20,
                                     convertToDivisionDecimal(10) - newCrippleCounter * convertToPercent(5)

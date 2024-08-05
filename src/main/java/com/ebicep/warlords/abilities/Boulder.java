@@ -27,7 +27,6 @@ import java.util.List;
 
 public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<Boulder.DamageValues>, AbilityStats<Boulder, Boulder.BoulderStats> {
 
-
     private final DamageValues damageValues = new DamageValues();
     private final double boulderGravity = -0.0059;
     private final BoulderStats stats = new BoulderStats();
@@ -100,11 +99,11 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                             .entitiesAround(newLoc, hitbox, hitbox, hitbox)
                             .aliveEnemiesOf(wp)
                     ) {
-                        stats.playersHit++;
+                        stats.targetsHit++;
                         if (p.hasFlag()) {
                             stats.carrierHit++;
                         }
-                        if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
+                        if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(p)) {
                             stats.warpsKnockbacked++;
                         }
                         Vector v;
@@ -222,19 +221,17 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
 
     public static class BoulderStats extends AbstractAbilityStats<Boulder, BoulderStats> {
 
-        @Field("players_hit")
-        private int playersHit = 0;
-
+        @Field("targets_hit")
+        private int targetsHit = 0;
         @Field("carrier_hit")
         private int carrierHit = 0;
-
         @Field("warps_knockbacked")
         private int warpsKnockbacked = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", targetsHit));
             statsDisplay.add(new AbilityStatDisplay("Carriers Hit", carrierHit));
             statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
             return statsDisplay;
@@ -243,7 +240,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         @Override
         public BoulderStats merge(BoulderStats other, int multiplier) {
             BoulderStats stats = super.merge(other, multiplier);
-            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.targetsHit = this.targetsHit + other.targetsHit * multiplier;
             stats.carrierHit = this.carrierHit + other.carrierHit * multiplier;
             stats.warpsKnockbacked = this.warpsKnockbacked + other.warpsKnockbacked * multiplier;
             return stats;

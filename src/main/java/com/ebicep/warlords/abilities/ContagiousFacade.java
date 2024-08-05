@@ -33,7 +33,6 @@ import java.util.List;
 
 public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<ContagiousFacade, ContagiousFacade.ContagiousFacadeStats> {
 
-
     private final ContagiousFacadeStats stats = new ContagiousFacadeStats();
     private FloatModifiable damageAbsorption = new FloatModifiable(30);
     private int tickDuration = 100;
@@ -298,10 +297,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
 
         @Field("times_reactivated")
         private int timesReactivated = 0;
-
         @Field("total_hexes_inflicted")
         private int totalHexesInflicted = 0;
-
         @Field("total_shield_gained")
         private float totalShieldGained = 0;
 

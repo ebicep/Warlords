@@ -131,7 +131,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                             .aliveTeammatesOf(wp)
                             .toList();
                     for (WarlordsEntity nearEntity : teammatesHit) {
-                        stats.playersHealed++;
+                        stats.targetsHealed++;
                         nearEntity.addInstance(InstanceBuilder
                                 .healing()
                                 .ability(this)
@@ -289,20 +289,20 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
     public static class SoothingElixirStats extends AbstractAbilityStats<SoothingElixir, SoothingElixirStats> {
 
-        @Field("players_healed")
-        private int playersHealed = 0;
+        @Field("targets_healed")
+        private int targetsHealed = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
             return statsDisplay;
         }
 
         @Override
         public SoothingElixirStats merge(SoothingElixirStats other, int multiplier) {
             SoothingElixirStats stats = super.merge(other, multiplier);
-            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
             return stats;
         }
 

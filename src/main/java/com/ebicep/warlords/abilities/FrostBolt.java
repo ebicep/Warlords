@@ -167,7 +167,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         if (projectile.getHit().size() == 0) {
             toReduceBy += .15;
         }
-        hit(projectile, shooter, toReduceBy, stats.getPlayersHit(), hit);
+        hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
         EffectUtils.displayParticle(
                 Particle.SNOWBALL,

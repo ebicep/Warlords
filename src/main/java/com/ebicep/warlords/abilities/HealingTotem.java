@@ -297,8 +297,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                             warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                     earthlivingWeapon.getName(),
                                     null,
-                                    EarthlivingWeapon.Data.class,
-                                    new EarthlivingWeapon.Data(),
+                                    EarthlivingWeapon.EarthlivingData.class,
+                                    new EarthlivingWeapon.EarthlivingData(),
                                     wp,
                                     CooldownTypes.ABILITY,
                                     cooldownManager -> {
@@ -402,17 +402,17 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
     public static class HealingTotemStats extends AbstractAbilityStats<HealingTotem, HealingTotemStats> {
 
-        @Field("players_healed")
+        @Field("targets_healed")
         private int playersHealed = 0;
 
-        @Field("players_crippled")
+        @Field("targets_crippled")
         private int playersCrippled = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
-            statsDisplay.add(new AbilityStatDisplay("Players Crippled", playersCrippled));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Crippled", playersCrippled));
             return statsDisplay;
         }
 

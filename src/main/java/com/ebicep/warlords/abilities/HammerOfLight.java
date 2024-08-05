@@ -7,7 +7,10 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -40,9 +43,10 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues>, AbilityStats<HammerOfLight, HammerOfLight.HammerOfLightStats> {
-
 
     protected float amountHealed = 0;
     private final FloatModifiable radius = new FloatModifiable(6);
@@ -202,7 +206,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 .isAlive()
                         ) {
                             if (wp.isTeammate(crownTarget)) {
-                                stats.playersHealed++;
+                                stats.targetsHealed++;
                                 crownTarget.addInstance(InstanceBuilder
                                         .healing()
                                         .cause("Crown of Light")
@@ -225,7 +229,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 .isAlive()
                         ) {
                             if (wp.isTeammate(hammerTarget)) {
-                                stats.playersHealed++;
+                                stats.targetsHealed++;
                                 hammerTarget.addInstance(InstanceBuilder
                                         .healing()
                                         .ability(this)
@@ -235,7 +239,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                     tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                 });
                             } else {
-                                stats.playersDamaged++;
+                                stats.targetsDamaged++;
                                 hammerTarget.addInstance(InstanceBuilder
                                         .damage()
                                         .ability(this)
@@ -262,7 +266,42 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         if (tempHammerOfLight.isCrownOfLight) {
                             return;
                         }
+                        if (event.getWarlordsEntity().getLocation().distanceSquared(location) > rad * rad) {
+                            return;
+                        }
                         event.getFlags().add(InstanceFlags.PIERCE);
+                    }
+
+                    @EventHandler
+                    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+                        if (event.getAttacker() != wp) {
+                            return;
+                        }
+                        if (!event.getInstanceFlags().contains(InstanceFlags.PIERCE)) {
+                            return;
+                        }
+                        WarlordsEntity target = event.getWarlordsEntity();
+                        List<AbstractCooldown<?>> cooldowns = event
+                                .getPlayerCooldowns()
+                                .stream()
+                                .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                .collect(Collectors.toList());
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
+                                .filterCooldownClass(Intervene.class)
+                                .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
+                                .findAny()
+                                .isPresent()
+                        ) {
+                            stats.intervenesPierced++;
+                        }
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
+                                .filterCooldownClass(Shield.class)
+                                .filter(RegularCooldown::hasTicksLeft)
+                                .findAny()
+                                .isPresent()
+                        ) {
+                            stats.shieldsPierced++;
+                        }
                     }
                 };
             }
@@ -407,7 +446,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         .entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
                         .aliveTeammatesOf(wp)
                 ) {
-                    stats.playersHealed++;
+                    stats.targetsHealed++;
                     allyTarget.addInstance(InstanceBuilder
                             .healing()
                             .cause("Hammer of Illusion")
@@ -501,25 +540,36 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
     public static class HammerOfLightStats extends AbstractAbilityStats<HammerOfLight, HammerOfLightStats> {
 
-        @Field("players_healed")
-        private int playersHealed = 0;
-
-        @Field("players_damaged")
-        private int playersDamaged = 0;
+        @Field("times_crowned")
+        private int timesCrowned = 0;
+        @Field("targets_healed")
+        private int targetsHealed = 0;
+        @Field("targets_damaged")
+        private int targetsDamaged = 0;
+        @Field("shields_pierced")
+        private int shieldsPierced = 0;
+        @Field("intervenes_pierced")
+        private int intervenesPierced = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
-            statsDisplay.add(new AbilityStatDisplay("Players Damaged", playersDamaged));
+            statsDisplay.add(new AbilityStatDisplay("Times Crowned", timesCrowned));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Damaged", targetsDamaged));
+            statsDisplay.add(new AbilityStatDisplay("Shields Pierced", shieldsPierced));
+            statsDisplay.add(new AbilityStatDisplay("Intervenes Pierced", intervenesPierced));
             return statsDisplay;
         }
 
         @Override
         public HammerOfLightStats merge(HammerOfLightStats other, int multiplier) {
             HammerOfLightStats stats = super.merge(other, multiplier);
-            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
-            stats.playersDamaged = this.playersDamaged + other.playersDamaged * multiplier;
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
+            stats.targetsDamaged = this.targetsDamaged + other.targetsDamaged * multiplier;
+            stats.timesCrowned = this.timesCrowned + other.timesCrowned * multiplier;
+            stats.shieldsPierced = this.shieldsPierced + other.shieldsPierced * multiplier;
+            stats.intervenesPierced = this.intervenesPierced + other.intervenesPierced * multiplier;
             return stats;
         }
 

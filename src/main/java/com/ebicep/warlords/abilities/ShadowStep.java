@@ -177,7 +177,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                 .entitiesAround(wp, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
-            stats.totalPlayersHit++;
+            stats.totalTargetsHit++;
             assaultTarget.addInstance(InstanceBuilder
                     .damage()
                     .ability(this)
@@ -217,7 +217,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                             .aliveEnemiesOf(wp)
                             .excluding(playersHit)
                     ) {
-                        stats.totalPlayersHit++;
+                        stats.totalTargetsHit++;
                         landingTarget.addInstance(InstanceBuilder
                                 .damage()
                                 .ability(ShadowStep.this)
@@ -299,20 +299,20 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
     public static class ShadowStepStats extends AbstractAbilityStats<ShadowStep, ShadowStepStats> {
 
-        @Field("total_players_hit")
-        private int totalPlayersHit = 0;
+        @Field("total_targets_hit")
+        private int totalTargetsHit = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", totalPlayersHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", totalTargetsHit));
             return statsDisplay;
         }
 
         @Override
         public ShadowStepStats merge(ShadowStepStats other, int multiplier) {
             ShadowStepStats stats = super.merge(other, multiplier);
-            stats.totalPlayersHit = this.totalPlayersHit + other.totalPlayersHit * multiplier;
+            stats.totalTargetsHit = this.totalTargetsHit + other.totalTargetsHit * multiplier;
             return stats;
         }
 

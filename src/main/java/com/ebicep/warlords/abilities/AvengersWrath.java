@@ -200,7 +200,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Extra Players Struck", extraTargetsStruck));
+            statsDisplay.add(new AbilityStatDisplay("Extra Targets Struck", extraTargetsStruck));
             statsDisplay.add(new AbilityStatDisplay("Targets Struck During Wrath", targetsStruckDuringWrath));
             statsDisplay.add(new AbilityStatDisplay("Targets Killed During Wrath", targetsKilledDuringWrath));
             return statsDisplay;

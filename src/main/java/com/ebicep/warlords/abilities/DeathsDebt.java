@@ -148,6 +148,8 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                         );
                     }
 
+                    stats.totalDelayed += data.delayedDamage;
+
                     //beginning debt
                     wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
@@ -169,16 +171,17 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                         .aliveEnemiesOf(wp)
                                         .toList();
                                 for (WarlordsEntity totemTarget : enemies) {
-                                    stats.playersDamaged++;
+                                    stats.targetsDamaged++;
                                     totemTarget.addInstance(InstanceBuilder
                                             .damage()
                                             .ability(this)
                                             .source(wp)
                                             .value(data.delayedDamage * damagePercent / 100f)
-                                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                        if (warlordsDamageHealingFinalEvent.getValue() > 5000) {
+                                    ).ifPresent(finalEvent -> {
+                                        if (finalEvent.getValue() > 5000) {
                                             over5000DamageInstances.getAndIncrement();
                                         }
+                                        stats.totalDebtDamage += finalEvent.getValue();
                                     });
                                 }
                                 if (pveMasterUpgrade2) {
@@ -382,7 +385,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                     .entitiesAround(armorStand, totem.debtRadius, totem.debtRadius - 1, totem.debtRadius)
                     .aliveTeammatesOf(owner)
             ) {
-                totem.stats.playersHealed++;
+                totem.stats.targetsHealed++;
                 allyTarget.addInstance(InstanceBuilder
                         .healing()
                         .ability(totem)
@@ -402,25 +405,32 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
 
     public static class DeathsDebtStats extends AbstractAbilityStats<DeathsDebt, DeathsDebtStats> {
 
-        @Field("players_damaged")
-        private int playersDamaged = 0;
-
-        @Field("players_healed")
-        private int playersHealed = 0;
+        @Field("targets_damaged")
+        private int targetsDamaged = 0;
+        @Field("targets_healed")
+        private int targetsHealed = 0;
+        @Field("total_delayed")
+        private float totalDelayed = 0;
+        @Field("total_debt_damage")
+        private float totalDebtDamage = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Damaged", playersDamaged));
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Damaged", targetsDamaged));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
+            statsDisplay.add(new AbilityStatDisplay("Total Delayed", totalDelayed));
+            statsDisplay.add(new AbilityStatDisplay("Total Debt Damage", totalDebtDamage));
             return statsDisplay;
         }
 
         @Override
         public DeathsDebtStats merge(DeathsDebtStats other, int multiplier) {
             DeathsDebtStats stats = super.merge(other, multiplier);
-            stats.playersDamaged = this.playersDamaged + other.playersDamaged * multiplier;
-            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.targetsDamaged = this.targetsDamaged + other.targetsDamaged * multiplier;
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
+            stats.totalDelayed = this.totalDelayed + other.totalDelayed * multiplier;
+            stats.totalDebtDamage = this.totalDebtDamage + other.totalDebtDamage * multiplier;
             return stats;
         }
 

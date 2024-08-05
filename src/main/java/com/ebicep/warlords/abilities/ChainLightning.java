@@ -212,6 +212,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
             float damageMultiplier = 1 - Math.min(playersSize, 3) * damageDecreasePerBounce / 100f;
 
             playersHit.add(hit);
+            stats.targetsHit++;
             if (hit.onHorse()) {
                 stats.numberOfDismounts++;
             }
@@ -292,12 +293,15 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
 
     public static class ChainLightningStats extends AbstractChainStats<ChainLightning, ChainLightningStats> {
 
+        @Field("targets_hit")
+        private int targetsHit = 0;
         @Field("number_of_dismounts")
         private int numberOfDismounts = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", targetsHit));
             statsDisplay.add(new AbilityStatDisplay("Dismounts", numberOfDismounts));
             return statsDisplay;
         }
@@ -305,6 +309,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         @Override
         public ChainLightningStats merge(ChainLightningStats other, int multiplier) {
             ChainLightningStats stats = super.merge(other, multiplier);
+            stats.targetsHit = this.targetsHit + other.targetsHit * multiplier;
             stats.numberOfDismounts = this.numberOfDismounts + other.numberOfDismounts * multiplier;
             return stats;
         }

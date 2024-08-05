@@ -101,13 +101,13 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
 
     public static abstract class AbstractStrikeStats<T extends AbstractStrike<T, R>, R extends AbstractStrikeStats<T, R>> extends AbstractAbilityStats<T, R> {
 
-        @Field("players_struck")
+        @Field("targets_struck")
         protected int playersStruck = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Struck", playersStruck));
+            statsDisplay.add(new AbilityStatDisplay("Targets Struck", playersStruck));
             return statsDisplay;
         }
 

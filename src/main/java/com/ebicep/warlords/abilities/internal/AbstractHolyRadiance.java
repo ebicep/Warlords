@@ -120,16 +120,16 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     public static class AbstractHolyRadianceStats extends AbstractAbilityStats<AbstractHolyRadiance, AbstractHolyRadianceStats> {
 
-        @Field("players_healed")
+        @Field("targets_healed")
         private int playersHealed = 0;
-        @Field("players_marked")
+        @Field("targets_marked")
         private int playersMarked = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", String.valueOf(playersHealed)));
-            statsDisplay.add(new AbilityStatDisplay("Players Marked", String.valueOf(playersMarked)));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", String.valueOf(playersHealed)));
+            statsDisplay.add(new AbilityStatDisplay("Targets Marked", String.valueOf(playersMarked)));
             return statsDisplay;
         }
 

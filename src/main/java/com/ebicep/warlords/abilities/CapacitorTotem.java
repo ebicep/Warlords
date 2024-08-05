@@ -26,7 +26,6 @@ import java.util.List;
 
 public class CapacitorTotem extends AbstractTotem implements Duration, Damages<CapacitorTotem.DamageValues>, AbilityStats<CapacitorTotem, CapacitorTotem.CapacitorTotemStats> {
 
-
     private final DamageValues damageValues = new DamageValues();
     private final CapacitorTotemStats stats = new CapacitorTotemStats();
     private int tickDuration = 160;

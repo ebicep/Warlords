@@ -117,7 +117,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
                         });
         }
 
-        float previousEnergyGiven = stats.energyGivenToPlayers;
+        float previousEnergyGiven = stats.totalEnergyGiven;
         // Give energy to nearby allies and check if they have mark active
         for (WarlordsEntity energyTarget : PlayerFilter
                 .entitiesAround(wp, energyRadius, energyRadius, energyRadius)
@@ -131,13 +131,13 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
                 energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks, "BASE"); // 20 ticks
             }
 
-            stats.energyGivenToPlayers += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
+            stats.totalEnergyGiven += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
         }
 
         new CooldownFilter<>(wp, RegularCooldown.class)
                 .filterCooldownFrom(wp)
                 .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
-                .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(stats.energyGivenToPlayers - previousEnergyGiven));
+                .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(stats.totalEnergyGiven - previousEnergyGiven));
 
         return true;
     }
@@ -186,20 +186,20 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
 
     public static class CrusadersStrikeStats extends AbstractStrikeStats<CrusadersStrike, CrusadersStrikeStats> {
 
-        @Field("energy_given_to_players")
-        private float energyGivenToPlayers = 0;
+        @Field("total_energy_given")
+        private float totalEnergyGiven = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Energy Given", NumberFormat.addCommaAndRound(energyGivenToPlayers)));
+            statsDisplay.add(new AbilityStatDisplay("Total Energy Given", NumberFormat.addCommaAndRound(totalEnergyGiven)));
             return statsDisplay;
         }
 
         @Override
         public CrusadersStrikeStats merge(CrusadersStrikeStats other, int multiplier) {
             CrusadersStrikeStats stats = super.merge(other, multiplier);
-            stats.energyGivenToPlayers = this.energyGivenToPlayers + other.energyGivenToPlayers * multiplier;
+            stats.totalEnergyGiven = this.totalEnergyGiven + other.totalEnergyGiven * multiplier;
             return stats;
         }
 

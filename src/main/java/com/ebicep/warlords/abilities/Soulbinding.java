@@ -414,7 +414,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public static class SoulbindingStats extends AbstractAbilityStats<Soulbinding, SoulbindingStats> {
 
-        @Field("players_binded")
+        @Field("targets_binded")
         private int playersBinded = 0;
 
         @Field("soul_procs")
@@ -432,7 +432,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Binded", playersBinded));
+            statsDisplay.add(new AbilityStatDisplay("Targets Binded", playersBinded));
             statsDisplay.add(new AbilityStatDisplay("Soul Procs", soulProcs));
             statsDisplay.add(new AbilityStatDisplay("Soul Teammates CD Reductions", soulTeammatesCDReductions));
             statsDisplay.add(new AbilityStatDisplay("Link Procs", linkProcs));

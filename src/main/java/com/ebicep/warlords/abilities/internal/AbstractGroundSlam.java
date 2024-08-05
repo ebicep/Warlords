@@ -115,7 +115,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                 stats.carrierHit++;
                             }
 
-                            if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(slamTarget)) {
+                            if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(slamTarget)) {
                                 stats.warpsKnockbacked++;
                             }
 
@@ -188,7 +188,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     public static class AbstractGroundSlamStats extends AbstractAbilityStats<AbstractGroundSlam, AbstractGroundSlamStats> {
 
-        @Field("players_hit")
+        @Field("targets_hit")
         private int playersHit = 0;
         @Field("carrier_hit")
         private int carrierHit = 0;
@@ -198,7 +198,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
             statsDisplay.add(new AbilityStatDisplay("Carrier Hit", carrierHit));
             statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
             return statsDisplay;

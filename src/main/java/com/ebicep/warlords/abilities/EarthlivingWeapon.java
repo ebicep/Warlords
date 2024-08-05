@@ -29,7 +29,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<EarthlivingWeapon.HealingValues>, AbilityStats<EarthlivingWeapon, EarthlivingWeapon.EarthlivingWeaponStats> {
 
-
     private final HealingValues healingValues = new HealingValues();
     private final EarthlivingWeaponStats stats = new EarthlivingWeaponStats();
     private int tickDuration = 160;
@@ -67,8 +66,8 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "EARTH",
-                Data.class,
-                new Data(),
+                EarthlivingData.class,
+                new EarthlivingData(),
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -109,7 +108,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         return true;
     }
 
-    public void activateEarthliving(WarlordsEntity victim, WarlordsEntity attacker, Data data) {
+    public void activateEarthliving(WarlordsEntity victim, WarlordsEntity attacker, EarthlivingData data) {
         double earthlivingActivate = ThreadLocalRandom.current().nextDouble(100);
         if (data.firstProc) {
             data.firstProc = false;
@@ -154,7 +153,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                         .aliveTeammatesOfExcludingSelf(attacker)
                         .limit(maxAllies)
                 ) {
-                    stats.playersHealed++;
+                    stats.targetsHealed++;
                     nearPlayer.addInstance(InstanceBuilder
                             .healing()
                             .ability(EarthlivingWeapon.this)
@@ -269,7 +268,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         return stats;
     }
 
-    public static class Data {
+    public static class EarthlivingData {
 
         private final Set<WarlordsEntity> alreadyProcd = new HashSet<>();
         private boolean firstProc = true;
@@ -292,15 +291,14 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
         @Field("times_procd")
         private int timesProcd = 0;
-
-        @Field("players_healed")
-        private int playersHealed = 0;
+        @Field("targets_healed")
+        private int targetsHealed = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Times Proc'd", timesProcd));
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
             return statsDisplay;
         }
 
@@ -308,7 +306,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         public EarthlivingWeaponStats merge(EarthlivingWeaponStats other, int multiplier) {
             EarthlivingWeaponStats stats = super.merge(other, multiplier);
             stats.timesProcd = this.timesProcd + other.timesProcd * multiplier;
-            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
             return stats;
         }
 

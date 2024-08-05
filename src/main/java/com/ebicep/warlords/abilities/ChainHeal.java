@@ -22,6 +22,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
 
@@ -69,6 +70,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
             if (!LocationUtils.isLookingAtChain(wp, chainTarget)) {
                 continue;
             }
+            stats.targetsHealed++;
             wp.addInstance(InstanceBuilder
                     .healing()
                     .ability(this)
@@ -171,6 +173,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                 .excluding(toExclude)
                 .warlordPlayersFirst()
         ) {
+            stats.targetsHealed++;
             chain(chainTarget.getLocation(), bounceTarget.getLocation());
             bounceTarget.addInstance(InstanceBuilder
                     .healing()
@@ -270,15 +273,20 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
 
     public static class ChainHealStats extends AbstractChainStats<ChainHeal, ChainHealStats> {
 
+        @Field("targets_healed")
+        private int targetsHealed = 0;
+
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
             return statsDisplay;
         }
 
         @Override
         public ChainHealStats merge(ChainHealStats other, int multiplier) {
             ChainHealStats stats = super.merge(other, multiplier);
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
             return stats;
         }
 

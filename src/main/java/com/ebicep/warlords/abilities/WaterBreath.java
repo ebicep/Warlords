@@ -117,7 +117,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
             }
             CooldownManager breathTargetCooldownManager = breathTarget.getCooldownManager();
             if (wp.isTeammate(breathTarget)) {
-                stats.playersHealed++;
+                stats.targetsHealed++;
                 stats.debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
                 breathTarget.getSpeed().removeSlownessModifiers();
                 breathTarget.addInstance(InstanceBuilder
@@ -298,8 +298,8 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
     public static class WaterBreathStats extends AbstractAbilityStats<WaterBreath, WaterBreathStats> {
 
-        @Field("players_healed")
-        private int playersHealed = 0;
+        @Field("targets_healed")
+        private int targetsHealed = 0;
 
         @Field("debuffs_removed")
         private int debuffsRemoved = 0;
@@ -307,7 +307,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Healed", playersHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
             statsDisplay.add(new AbilityStatDisplay("Debuffs Removed", debuffsRemoved));
             return statsDisplay;
         }
@@ -315,7 +315,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         @Override
         public WaterBreathStats merge(WaterBreathStats other, int multiplier) {
             WaterBreathStats stats = super.merge(other, multiplier);
-            stats.playersHealed = this.playersHealed + other.playersHealed * multiplier;
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
             stats.debuffsRemoved = this.debuffsRemoved + other.debuffsRemoved * multiplier;
             return stats;
         }

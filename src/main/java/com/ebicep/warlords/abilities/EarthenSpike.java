@@ -184,7 +184,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     }
 
     protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
-        stats.playersSpiked++;
+        stats.targetsSpiked++;
         if (spikeTarget.hasFlag()) {
             stats.carrierSpiked++;
         }
@@ -275,16 +275,15 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
     public static class EarthenSpikeStats extends AbstractAbilityStats<EarthenSpike, EarthenSpikeStats> {
 
-        @Field("players_spiked")
-        private int playersSpiked = 0;
-
+        @Field("targets_spiked")
+        private int targetsSpiked = 0;
         @Field("carrier_spiked")
         private int carrierSpiked = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Spiked", playersSpiked));
+            statsDisplay.add(new AbilityStatDisplay("Targets Spiked", targetsSpiked));
             statsDisplay.add(new AbilityStatDisplay("Times Carrier Spiked", carrierSpiked));
             return statsDisplay;
         }
@@ -292,7 +291,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         @Override
         public EarthenSpikeStats merge(EarthenSpikeStats other, int multiplier) {
             EarthenSpikeStats stats = super.merge(other, multiplier);
-            stats.playersSpiked = this.playersSpiked + other.playersSpiked * multiplier;
+            stats.targetsSpiked = this.targetsSpiked + other.targetsSpiked * multiplier;
             stats.carrierSpiked = this.carrierSpiked + other.carrierSpiked * multiplier;
             return stats;
         }

@@ -65,7 +65,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                     if (waveTarget.hasFlag()) {
                         stats.carrierHit++;
                     }
-                    if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(waveTarget)) {
+                    if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(waveTarget)) {
                         stats.warpsKnockbacked++;
                     }
 
@@ -145,7 +145,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     public static class AbstractSeismicWaveStats extends AbstractAbilityStats<AbstractSeismicWave, AbstractSeismicWaveStats> {
 
-        @Field("players_hit")
+        @Field("targets_hit")
         private int playersHit = 0;
         @Field("carrier_hit")
         private int carrierHit = 0;
@@ -155,7 +155,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
             statsDisplay.add(new AbilityStatDisplay("Carriers Hit", carrierHit));
             statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
             return statsDisplay;

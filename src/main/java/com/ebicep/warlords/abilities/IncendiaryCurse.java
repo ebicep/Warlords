@@ -215,13 +215,13 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
     public static class IncendiaryCurseStats extends AbstractAbilityStats<IncendiaryCurse, IncendiaryCurseStats> {
 
-        @Field("players_hit")
+        @Field("targets_hit")
         private int playersHit = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
             return statsDisplay;
         }
 

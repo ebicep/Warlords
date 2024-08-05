@@ -22,6 +22,7 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -155,6 +156,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                                 .source(wp)
                                 .value(energyUsed * healingValues.seerHealingMultiplier.getValue())
                         );
+                        stats.timesHealed++;
                     }
 
                     @EventHandler
@@ -294,9 +296,13 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     public static class AbstractEnergySeerStats extends AbstractAbilityStats<AbstractEnergySeer, AbstractEnergySeerStats> {
 
+        @Field("times_healed")
+        private int timesHealed = 0;
+
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Healed", timesHealed));
             return statsDisplay;
         }
 
@@ -308,6 +314,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         @Override
         public AbstractEnergySeerStats merge(AbstractEnergySeerStats other, int multiplier) {
             AbstractEnergySeerStats stats = super.merge(other, multiplier);
+            stats.timesHealed = this.timesHealed + other.timesHealed * multiplier;
             return stats;
         }
 

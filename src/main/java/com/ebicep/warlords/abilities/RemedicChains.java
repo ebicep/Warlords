@@ -80,7 +80,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
             return false;
         }
 
-        stats.playersLinked += teammatesNear.size();
+        stats.targetsLinked += teammatesNear.size();
 
         Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
@@ -314,15 +314,15 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
     public static class RemedicChainsStats extends AbstractAbilityStats<RemedicChains, RemedicChainsStats> {
 
-        @Field("players_linked")
-        private int playersLinked = 0;
+        @Field("targets_linked")
+        private int targetsLinked = 0;
         @Field("number_of_broken_links")
         private int numberOfBrokenLinks = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Linked", playersLinked));
+            statsDisplay.add(new AbilityStatDisplay("Targets Linked", targetsLinked));
             statsDisplay.add(new AbilityStatDisplay("Times Link Broken", numberOfBrokenLinks));
             return statsDisplay;
         }
@@ -330,7 +330,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         @Override
         public RemedicChainsStats merge(RemedicChainsStats other, int multiplier) {
             RemedicChainsStats stats = super.merge(other, multiplier);
-            stats.playersLinked = this.playersLinked + other.playersLinked * multiplier;
+            stats.targetsLinked = this.targetsLinked + other.targetsLinked * multiplier;
             stats.numberOfBrokenLinks = this.numberOfBrokenLinks + other.numberOfBrokenLinks * multiplier;
             return stats;
         }

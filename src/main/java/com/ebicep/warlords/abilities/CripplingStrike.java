@@ -20,21 +20,21 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingStrike.CripplingStrikeStats> implements Damages<CripplingStrike.DamageValues> {
 
     public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration) {
-        cripple(from, target, name, 0, tickDuration, .9f);
+        cripple(from, target, null, name, 0, tickDuration, .9f);
     }
 
     public static void cripple(
             WarlordsEntity from,
             WarlordsEntity target,
+            CripplingStrike cripplingStrike,
             String name,
             int consecutiveStrikeCounter,
             int tickDuration,
@@ -61,7 +61,11 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * crippleAmount;
+                float afterValue = currentDamageValue * crippleAmount;
+                if (cripplingStrike != null) {
+                    cripplingStrike.stats.damageReduced += currentDamageValue - afterValue;
+                }
+                return afterValue;
             }
 
             @Override
@@ -71,6 +75,9 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
                 );
             }
         });
+        if (cripplingStrike != null) {
+            cripplingStrike.stats.crippleStacks.merge(0, 1, Integer::sum);
+        }
     }
 
     private final int crippleDuration = 3;
@@ -154,6 +161,7 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
             int newCrippleCounter = Math.min(data.consecutiveStrikeCounter + 1, 2);
             cripple(wp,
                     nearPlayer,
+                    null,
                     name,
                     newCrippleCounter,
                     crippleDuration * 20,
@@ -174,7 +182,7 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
             int tickDuration,
             float crippleAmount
     ) {
-        cripple(from, target, name, 0, tickDuration, crippleAmount);
+        cripple(from, target, null, name, 0, tickDuration, crippleAmount);
     }
 
     public int getCripple() {
@@ -225,15 +233,26 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
 
     public static class CripplingStrikeStats extends AbstractStrikeStats<CripplingStrike, CripplingStrikeStats> {
 
+        @Field("damage_reduced")
+        private float damageReduced = 0;
+        @Field("cripple_stacks")
+        private Map<Integer, Integer> crippleStacks = new HashMap<>();
+
+
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
+            crippleStacks.forEach((key, value) -> statsDisplay.add(new AbilityStatDisplay("Cripple Stacks (" + key + ")", value)));
             return statsDisplay;
         }
 
         @Override
         public CripplingStrikeStats merge(CripplingStrikeStats other, int multiplier) {
             CripplingStrikeStats stats = super.merge(other, multiplier);
+            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
+            this.crippleStacks.forEach((key, value) -> stats.crippleStacks.merge(key, value * multiplier, Integer::sum));
+            other.crippleStacks.forEach((key, value) -> stats.crippleStacks.merge(key, value * multiplier, Integer::sum));
             return stats;
         }
 

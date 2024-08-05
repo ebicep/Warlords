@@ -131,7 +131,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                 playersHit.add(otherPlayer);
 
                                 if (otherPlayer.isEnemyAlive(wp)) {
-                                    stats.playersCharged++;
+                                    stats.targetsCharged++;
                                     float damageMultiplier = pveMasterUpgrade2 && otherPlayer.getCooldownManager().hasCooldown(CripplingStrike.class) ? 1.75f : 1;
                                     otherPlayer.addInstance(InstanceBuilder
                                             .damage()
@@ -237,20 +237,20 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
     public static class RecklessChargeStats extends AbstractAbilityStats<RecklessCharge, RecklessChargeStats> {
 
-        @Field("players_charged")
-        private int playersCharged = 0;
+        @Field("targets_charged")
+        private int targetsCharged = 0;
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Charged", playersCharged));
+            statsDisplay.add(new AbilityStatDisplay("Targets Charged", targetsCharged));
             return statsDisplay;
         }
 
         @Override
         public RecklessChargeStats merge(RecklessChargeStats other, int multiplier) {
             RecklessChargeStats stats = super.merge(other, multiplier);
-            stats.playersCharged = this.playersCharged + other.playersCharged * multiplier;
+            stats.targetsCharged = this.targetsCharged + other.targetsCharged * multiplier;
             return stats;
         }
 
