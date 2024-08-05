@@ -23,15 +23,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightStats> implements Heals<RayOfLight.HealingValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
-
-    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
 
     private final HealingValues healingValues = new HealingValues();
     private final RayOfLightStats stats = new RayOfLightStats();
@@ -104,7 +100,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
             case 2 -> 1.5f;
             default -> 2f;
         };
-        stacksRemoved.merge(hexStacks, 1, Integer::sum);
+        getAbilityStats().getStacksRemoved().merge(hexStacks, 1, Integer::sum);
         if (pveMasterUpgrade) {
             hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
@@ -189,7 +185,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
 
     }
 
-    public static class RayOfLightStats extends AbstractPiercingProjectileStats<RayOfLight, RayOfLightStats> {
+    public static class RayOfLightStats extends AbstractBeamStats<RayOfLight, RayOfLightStats> {
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {

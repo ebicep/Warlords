@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.DatabaseGamePlayerPvEEventMithra;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.DatabaseGamePvEEventMithra;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,7 +24,8 @@ public class DatabasePlayerPvEEventMithraStats implements MultiPvEEventMithraSta
         DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>,
         DatabaseGamePlayerPvEEventMithra,
         PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>,
-        PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>> {
+        PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra, PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>,
+        TracksMultiAbilityStats {
 
 
     @Field("events")
@@ -55,5 +58,10 @@ public class DatabasePlayerPvEEventMithraStats implements MultiPvEEventMithraSta
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())
                          .toList();
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return eventStats.values().stream().flatMap(stats -> stats.getAllAbilityStats().stream()).toList();
     }
 }

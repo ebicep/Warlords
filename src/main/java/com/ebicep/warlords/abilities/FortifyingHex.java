@@ -461,6 +461,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
             return statsDisplay;
         }
 

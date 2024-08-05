@@ -8,6 +8,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePlayerPvEEventBoltarosLair;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltaroslair.DatabaseGamePvEEventBoltaroLair;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.boltaro.boltarobonanza.DatabasePlayerPvEEventBoltaroBonanzaStats;
@@ -31,7 +33,8 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats implements MultiPvEEve
         DatabaseGamePlayerPvEEventBoltaro,
         PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>,
         PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>>,
-        EventMode {
+        EventMode,
+        TracksMultiAbilityStats {
 
     @Field("bonanza_stats")
     private DatabasePlayerPvEEventBoltaroBonanzaStats bonanzaStats = new DatabasePlayerPvEEventBoltaroBonanzaStats();
@@ -133,5 +136,10 @@ public class DatabasePlayerPvEEventBoltaroDifficultyStats implements MultiPvEEve
 
     public DatabasePlayerPvEEventBoltaroLairStats getLairStats() {
         return lairStats;
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return List.of(bonanzaStats, lairStats);
     }
 }

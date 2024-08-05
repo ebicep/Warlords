@@ -7,6 +7,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.theborderlineofillusion.DatabaseGamePlayerPvEEventTheBorderlineOfIllusion;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.illumina.theborderlineofillusion.DatabaseGamePvEEventTheBorderlineOfIllusion;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.illumina.theborderlineofillusion.DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats;
@@ -29,7 +31,8 @@ public class DatabasePlayerPvEEventIlluminaDifficultyStats implements MultiPvEEv
         PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>,
         PvEEventIlluminaStatsWarlordsSpecs<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>,
                 DatabaseGamePlayerPvEEventIllumina, PvEEventIlluminaStats<DatabaseGamePvEEventIllumina<DatabaseGamePlayerPvEEventIllumina>, DatabaseGamePlayerPvEEventIllumina>>>,
-        EventMode {
+        EventMode,
+        TracksMultiAbilityStats {
 
     @Field("the_borderline_of_illusion_stats")
     private DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats borderLineOfIllusionStats = new DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats();
@@ -128,5 +131,10 @@ public class DatabasePlayerPvEEventIlluminaDifficultyStats implements MultiPvEEv
     @Override
     public long getEventPointsCumulative() {
         return MultiPvEEventIlluminaStats.super.getEventPointsCumulative();
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return List.of(borderLineOfIllusionStats);
     }
 }

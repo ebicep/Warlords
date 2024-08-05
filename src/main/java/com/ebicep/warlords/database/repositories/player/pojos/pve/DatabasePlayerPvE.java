@@ -538,6 +538,6 @@ public class DatabasePlayerPvE implements MultiPvEStats<
 
     @Override
     public Collection<TracksAbilityStats> getAllAbilityStats() {
-        return Collections.emptyList();// TODO
+        return List.of(waveDefenseStats, onslaughtStats, eventStats);
     }
 }

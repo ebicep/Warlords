@@ -130,6 +130,9 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                     }
                 },
                 cooldownManager -> {
+                    if (shield.isBroken()) {
+                        stats.timesBroken++;
+                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {

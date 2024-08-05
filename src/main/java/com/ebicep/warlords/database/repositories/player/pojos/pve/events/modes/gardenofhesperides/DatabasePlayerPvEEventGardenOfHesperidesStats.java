@@ -6,6 +6,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.DatabaseGamePlayerPvEEventGardenOfHesperides;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.DatabaseGamePvEEventGardenOfHesperides;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -23,7 +25,8 @@ public class DatabasePlayerPvEEventGardenOfHesperidesStats implements MultiPvEEv
         DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>,
         DatabaseGamePlayerPvEEventGardenOfHesperides,
         PvEEventGardenOfHesperidesStats<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>, DatabaseGamePlayerPvEEventGardenOfHesperides>,
-        PvEEventGardenOfHesperidesStatsWarlordsSpecs<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>, DatabaseGamePlayerPvEEventGardenOfHesperides, PvEEventGardenOfHesperidesStats<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>, DatabaseGamePlayerPvEEventGardenOfHesperides>>> {
+        PvEEventGardenOfHesperidesStatsWarlordsSpecs<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>, DatabaseGamePlayerPvEEventGardenOfHesperides, PvEEventGardenOfHesperidesStats<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>, DatabaseGamePlayerPvEEventGardenOfHesperides>>>,
+        TracksMultiAbilityStats {
 
     @Field("events")
     private Map<Long, DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats> eventStats = new LinkedHashMap<>();
@@ -65,5 +68,10 @@ public class DatabasePlayerPvEEventGardenOfHesperidesStats implements MultiPvEEv
 
     public Map<Long, DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats> getEventStats() {
         return eventStats;
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return eventStats.values().stream().flatMap(stats -> stats.getAllAbilityStats().stream()).toList();
     }
 }

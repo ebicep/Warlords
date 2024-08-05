@@ -22,12 +22,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.GuardianBeamStats> implements Duration, Damages<GuardianBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.WARPED_SLAB);
-    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
     private final DamageValues damageValues = new DamageValues();
     private final List<Integer> shieldPercents = new ArrayList<>(List.of(5, 10, 20));
     private final float carrierBonusMultiplier = 2.4f;
@@ -137,7 +138,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
             );
         }
         Utils.playGlobalSound(to.getLocation(), "arcanist.guardianbeam.giveshield", 1, 1.7f);
-        stacksRemoved.merge(selfHexStacks, 1, Integer::sum);
+        getAbilityStats().getStacksRemoved().merge(selfHexStacks, 1, Integer::sum);
         float percent = shieldPercents.get(Math.min(selfHexStacks, 3) - 1) * (to.hasFlag() ? carrierBonusMultiplier : 1);
         GuardianBeamShield shield = new GuardianBeamShield(to.getMaxHealth() * convertToPercent(percent), percent);
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -267,7 +268,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
     }
 
-    public static class GuardianBeamStats extends AbstractPiercingProjectileStats<GuardianBeam, GuardianBeamStats> {
+    public static class GuardianBeamStats extends AbstractBeamStats<GuardianBeam, GuardianBeamStats> {
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {

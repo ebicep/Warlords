@@ -36,7 +36,6 @@ import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 
 public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<PrismGuard.HealingValues>, AbilityStats<PrismGuard, PrismGuard.PrismGuardStats> {
 
-
     private final int damageReduction = 3;
     private final HealingValues healingValues = new HealingValues();
     private final PrismGuardStats stats = new PrismGuardStats();
@@ -386,14 +385,10 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         @Field("times_projectiles_reduced")
         private int timesProjectilesReduced = 0;
 
-        @Field("times_other_reduced")
-        private int timesOtherReduced = 0;
-
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Times Projectiles Damage Reduced", timesProjectilesReduced));
-            statsDisplay.add(new AbilityStatDisplay("Times Other Damage Reduced", timesOtherReduced));
             return statsDisplay;
         }
 
@@ -401,7 +396,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         public PrismGuardStats merge(PrismGuardStats other, int multiplier) {
             PrismGuardStats stats = super.merge(other, multiplier);
             stats.timesProjectilesReduced = this.timesProjectilesReduced + other.timesProjectilesReduced * multiplier;
-            stats.timesOtherReduced = this.timesOtherReduced + other.timesOtherReduced * multiplier;
             return stats;
         }
 

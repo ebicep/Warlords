@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.pvp.siege;
 
 public final class SiegeStats {
+
     private int pointsCaptured = 0; //
     private int pointsCapturedFail = 0;
     private long timeOnPointTicks = 0; //

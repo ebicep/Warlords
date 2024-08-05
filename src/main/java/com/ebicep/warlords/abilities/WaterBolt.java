@@ -95,6 +95,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         if (hit != null && !projectile.getHit().contains(hit)) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             float cc = pveMasterUpgrade2 ? 100 : healingValues.boltHealing.getCritChanceValue();
+            stats.addPlayersHit();
             if (hit.isTeammate(shooter)) {
                 stats.teammatesHit++;
                 hit.addInstance(InstanceBuilder
@@ -139,6 +140,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         ) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
             playersHit++;
+            stats.addPlayersHit();
             if (nearEntity.isTeammate(shooter)) {
                 stats.teammatesHit++;
                 nearEntity.addInstance(InstanceBuilder
@@ -286,7 +288,6 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
             statsDisplay.add(new AbilityStatDisplay("Teammates Hit", teammatesHit));
             statsDisplay.add(new AbilityStatDisplay("Enemies Hit", enemiesHit));
             return statsDisplay;

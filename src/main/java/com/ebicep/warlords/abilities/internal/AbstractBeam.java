@@ -9,11 +9,15 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> implements RedAbilityIcon {
+public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> implements RedAbilityIcon, AbilityStats<T, R> {
 
     public AbstractBeam(
             String name,
@@ -59,4 +63,25 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
     }
 
     public abstract ItemStack getBeamItem();
+
+
+    public static abstract class AbstractBeamStats<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectileStats<T, R> {
+
+        @Field("stacks_removed")
+        private Map<Integer, Integer> stacksRemoved = new HashMap<>();
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>();
+            statsDisplay.add(new AbilityStatDisplay("Times Used", timesUsed));
+            stacksRemoved.forEach((key, value) -> statsDisplay.add(new AbilityStatDisplay("Stacks Removed (" + key + ")", value)));
+            return statsDisplay;
+        }
+
+        public Map<Integer, Integer> getStacksRemoved() {
+            return stacksRemoved;
+        }
+
+    }
+
 }

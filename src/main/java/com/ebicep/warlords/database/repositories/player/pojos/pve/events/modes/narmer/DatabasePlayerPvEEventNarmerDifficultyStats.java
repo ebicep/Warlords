@@ -6,6 +6,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.D
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePlayerPvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.narmerstomb.DatabaseGamePvEEventNarmersTomb;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.narmer.narmerstomb.DatabasePlayerPvEEventNarmerNarmersTombDifficultyStats;
@@ -28,7 +30,8 @@ public class DatabasePlayerPvEEventNarmerDifficultyStats implements MultiPvEEven
         PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>,
         PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer,
                 PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>,
-        EventMode {
+        EventMode,
+        TracksMultiAbilityStats {
 
     @Field("tomb_stats")
     private DatabasePlayerPvEEventNarmerNarmersTombDifficultyStats tombStats = new DatabasePlayerPvEEventNarmerNarmersTombDifficultyStats();
@@ -128,5 +131,10 @@ public class DatabasePlayerPvEEventNarmerDifficultyStats implements MultiPvEEven
     @Override
     public long getEventPointsCumulative() {
         return MultiPvEEventNarmerStats.super.getEventPointsCumulative();
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return List.of(tombStats);
     }
 }

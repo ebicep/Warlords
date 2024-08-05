@@ -8,6 +8,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenof
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePlayerPvEEventTheAcropolis;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.theacropolis.DatabaseGamePvEEventTheAcropolis;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus.DatabasePlayerPvEEventGardenOfHesperidesTartarusStats;
@@ -32,7 +34,8 @@ public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats implements 
         PvEEventGardenOfHesperidesStats<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>, DatabaseGamePlayerPvEEventGardenOfHesperides>,
         PvEEventGardenOfHesperidesStatsWarlordsSpecs<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>
                 , DatabaseGamePlayerPvEEventGardenOfHesperides, PvEEventGardenOfHesperidesStats<DatabaseGamePvEEventGardenOfHesperides<DatabaseGamePlayerPvEEventGardenOfHesperides>, DatabaseGamePlayerPvEEventGardenOfHesperides>>>,
-        EventMode {
+        EventMode,
+        TracksMultiAbilityStats {
 
     @Field("acropolis_stats")
     private DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats acropolisStats = new DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats();
@@ -130,5 +133,10 @@ public class DatabasePlayerPvEEventGardenOfHesperidesDifficultyStats implements 
 
     public DatabasePlayerPvEEventGardenOfHesperidesTartarusStats getTartarusStats() {
         return tartarusStats;
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return List.of(acropolisStats, tartarusStats);
     }
 }

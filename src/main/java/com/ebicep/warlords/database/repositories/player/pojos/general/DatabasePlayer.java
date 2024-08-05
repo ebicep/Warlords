@@ -183,6 +183,28 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         }
     }
 
+    public DatabaseSpecialization getSpec(Specializations specializations) {
+        return switch (specializations) {
+            case PYROMANCER -> mage.getPyromancer();
+            case CRYOMANCER -> mage.getCryomancer();
+            case AQUAMANCER -> mage.getAquamancer();
+            case BERSERKER -> warrior.getBerserker();
+            case DEFENDER -> warrior.getDefender();
+            case REVENANT -> warrior.getRevenant();
+            case AVENGER -> paladin.getAvenger();
+            case CRUSADER -> paladin.getCrusader();
+            case PROTECTOR -> paladin.getProtector();
+            case THUNDERLORD -> shaman.getThunderlord();
+            case SPIRITGUARD -> shaman.getSpiritguard();
+            case EARTHWARDEN -> shaman.getEarthwarden();
+            case ASSASSIN -> rogue.getAssassin();
+            case VINDICATOR -> rogue.getVindicator();
+            case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case LUMINARY -> arcanist.getLuminary();
+        };
+    }
 
     public String getName() {
         if (name == null) {
@@ -243,29 +265,6 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
         } else {
             this.futureMessages.add(futureMessage);
         }
-    }
-
-    public DatabaseSpecialization getSpec(Specializations specializations) {
-        return switch (specializations) {
-            case PYROMANCER -> mage.getPyromancer();
-            case CRYOMANCER -> mage.getCryomancer();
-            case AQUAMANCER -> mage.getAquamancer();
-            case BERSERKER -> warrior.getBerserker();
-            case DEFENDER -> warrior.getDefender();
-            case REVENANT -> warrior.getRevenant();
-            case AVENGER -> paladin.getAvenger();
-            case CRUSADER -> paladin.getCrusader();
-            case PROTECTOR -> paladin.getProtector();
-            case THUNDERLORD -> shaman.getThunderlord();
-            case SPIRITGUARD -> shaman.getSpiritguard();
-            case EARTHWARDEN -> shaman.getEarthwarden();
-            case ASSASSIN -> rogue.getAssassin();
-            case VINDICATOR -> rogue.getVindicator();
-            case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> arcanist.getConjurer();
-            case SENTINEL -> arcanist.getSentinel();
-            case LUMINARY -> arcanist.getLuminary();
-        };
     }
 
     public DatabaseBaseGeneral getClass(Classes classes) {
@@ -494,7 +493,7 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
     @Override
     public Collection<TracksAbilityStats> getAllAbilityStats() {
-        return Stream.of(pubStats, compStats, tournamentStats)
+        return Stream.of(pubStats, compStats, tournamentStats, pveStats)
                      .flatMap(s -> s.getAllAbilityStats().stream())
                      .collect(Collectors.toList());
     }

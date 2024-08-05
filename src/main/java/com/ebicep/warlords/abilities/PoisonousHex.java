@@ -365,6 +365,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.removeIf(abilityStatDisplay -> abilityStatDisplay.name().equals("Direct Hits"));
             return statsDisplay;
         }
 

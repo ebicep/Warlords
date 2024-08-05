@@ -52,6 +52,7 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses, TracksAbi
                           multiplier,
                           playersCollection
                   ));
+        updateAbilityStats(gamePlayer);
     }
 
     @Override

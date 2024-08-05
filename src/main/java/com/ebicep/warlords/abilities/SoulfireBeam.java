@@ -1,6 +1,9 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractBeam;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -17,14 +20,12 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.SoulfireBeamStats> implements Damages<SoulfireBeam.DamageValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.CRIMSON_FENCE_GATE);
-    public Map<Integer, Integer> stacksRemoved = new HashMap<>();
+
     private final DamageValues damageValues = new DamageValues();
     private final SoulfireBeamStats stats = new SoulfireBeamStats();
 
@@ -82,7 +83,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
                 case 2 -> 1.5f;
                 default -> 2f;
             };
-            stacksRemoved.merge(hexStacks, 1, Integer::sum);
+            getAbilityStats().getStacksRemoved().merge(hexStacks, 1, Integer::sum);
             if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks() && projectile.getHit().size() <= 4 && pveMasterUpgrade) {
                 multiplier += 5;
             }
@@ -150,7 +151,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
     }
 
-    public static class SoulfireBeamStats extends AbstractPiercingProjectileStats<SoulfireBeam, SoulfireBeamStats> {
+    public static class SoulfireBeamStats extends AbstractBeamStats<SoulfireBeam, SoulfireBeamStats> {
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {

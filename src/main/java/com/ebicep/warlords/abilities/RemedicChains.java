@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues>, AbilityStats<RemedicChains, RemedicChains.RemedicChainsStats> {
 
-
     private final HealingValues healingValues = new HealingValues();
     private final RemedicChainsStats stats = new RemedicChainsStats();
     private float healingMultiplier = 12.5f; // %
@@ -76,11 +75,12 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 .stream()
                 .collect(Collectors.toSet());
 
-        if (teammatesNear.size() < 1) {
+        if (teammatesNear.isEmpty()) {
             wp.sendMessage(Component.text("There are no allies nearby to link!", NamedTextColor.RED));
             return false;
         }
 
+        stats.playersLinked += teammatesNear.size();
 
         Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
 
@@ -316,7 +316,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
         @Field("players_linked")
         private int playersLinked = 0;
-
         @Field("number_of_broken_links")
         private int numberOfBrokenLinks = 0;
 

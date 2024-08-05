@@ -1,6 +1,9 @@
 package com.ebicep.warlords.player.ingame.instances;
 
-import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.Intervene;
+import com.ebicep.warlords.abilities.OrderOfEviscerate;
+import com.ebicep.warlords.abilities.Repentance;
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -522,7 +525,7 @@ public class InstanceManager {
                 if (shield.getShieldHealth() <= 0) {
                     cooldown.setTicksLeft(0);
                 }
-                if (shield.getShieldHealth() < 0) {
+                if (shield.isBroken()) {
                     float newDamage = -shield.getShieldHealth();
                     addDamageInstance(warlordsEntity, new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
                             warlordsEntity,
@@ -539,7 +542,6 @@ public class InstanceManager {
 
                     cooldown.getFrom().addAbsorbed(-(shield.getShieldHealth()));
 
-                    warlordsEntity.doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
                 } else {
                     double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)

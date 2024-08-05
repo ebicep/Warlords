@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePlayerPvEEventBoltaro;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.DatabaseGamePvEEventBoltaro;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,7 +24,8 @@ public class DatabasePlayerPvEEventBoltaroStats implements MultiPvEEventBoltaroS
         DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>,
         DatabaseGamePlayerPvEEventBoltaro,
         PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>,
-        PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>> {
+        PvEEventBoltaroStatsWarlordsSpecs<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro, PvEEventBoltaroStats<DatabaseGamePvEEventBoltaro<DatabaseGamePlayerPvEEventBoltaro>, DatabaseGamePlayerPvEEventBoltaro>>>,
+        TracksMultiAbilityStats {
 
     @Field("events")
     private Map<Long, DatabasePlayerPvEEventBoltaroDifficultyStats> eventStats = new LinkedHashMap<>();
@@ -57,4 +60,8 @@ public class DatabasePlayerPvEEventBoltaroStats implements MultiPvEEventBoltaroS
         getEvent(DatabaseGameEvent.currentGameEvent.getStartDateSecond()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
     }
 
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return eventStats.values().stream().flatMap(stats -> stats.getAllAbilityStats().stream()).toList();
+    }
 }

@@ -171,18 +171,19 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                 .entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5)
                 .aliveEnemiesOf(wp)
         ) {
-            counter++;
-            stats.playersHit++;
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
-            if (viewDirection.dot(direction) > .68) {
-                breathTarget.addInstance(InstanceBuilder
-                        .damage()
-                        .ability(this)
-                        .source(wp)
-                        .value(damageValues.freezingBreathDamage)
-                );
-                breathTarget.addSpeedModifier(wp, "Freezing Breath", -slowness, slowDuration * 20);
+            if (!(viewDirection.dot(direction) > .68)) {
+                continue;
             }
+            stats.addPlayersHit();
+            counter++;
+            breathTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damageValues.freezingBreathDamage)
+            );
+            breathTarget.addSpeedModifier(wp, "Freezing Breath", -slowness, slowDuration * 20);
         }
 
         if (pveMasterUpgrade) {
@@ -340,7 +341,8 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
-            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>();
+            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
             return statsDisplay;
         }
 

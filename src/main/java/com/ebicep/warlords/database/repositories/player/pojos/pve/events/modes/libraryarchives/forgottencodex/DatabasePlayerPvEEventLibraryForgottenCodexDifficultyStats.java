@@ -1,19 +1,23 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.libraryarchives.forgottencodex;
 
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.forgottencodex.DatabaseGamePlayerPvEEventForgottenCodex;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.libraryarchives.forgottencodex.DatabaseGamePvEEventForgottenCodex;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats implements MultiPvEEventLibraryArchivesForgottenCodexStats {
+public class DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats implements MultiPvEEventLibraryArchivesForgottenCodexStats, TracksAbilityStats {
 
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventLibraryForgottenCodexPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
@@ -22,6 +26,13 @@ public class DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats implemen
         put(3, new DatabasePlayerPvEEventLibraryForgottenCodexPlayerCountStats());
         put(4, new DatabasePlayerPvEEventLibraryForgottenCodexPlayerCountStats());
     }};
+    @Field("ability_stats")
+    private Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
+    }
 
     public DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats() {
     }
@@ -43,6 +54,7 @@ public class DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats implemen
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
+        updateAbilityStats(gamePlayer);
     }
 
     public DatabasePlayerPvEEventLibraryForgottenCodexPlayerCountStats getPlayerCountStats(int playerCount) {
