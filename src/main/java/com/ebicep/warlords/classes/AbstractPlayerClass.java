@@ -188,7 +188,7 @@ public abstract class AbstractPlayerClass {
         PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
     }
 
-    private void resetAbilityCD(WarlordsEntity we) {
+    public void resetAbilityCD(WarlordsEntity we) {
         abilityCD = false;
         new GameRunnable(we.getGame()) {
 
