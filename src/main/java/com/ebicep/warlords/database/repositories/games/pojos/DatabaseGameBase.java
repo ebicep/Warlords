@@ -646,7 +646,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         playerSwitcher.getLines().appendText("");
 
         PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
-        int currentPlayerIndex = playerLeaderboardInfo.getGameHologramPlayerAbilityStats();
+        int currentPlayerIndex = playerLeaderboardInfo.getGameHologramPlayerAbilityStats(this);
 
         List<Pair<String, Team>> playerNames = new ArrayList<>();
         getBasePlayers()

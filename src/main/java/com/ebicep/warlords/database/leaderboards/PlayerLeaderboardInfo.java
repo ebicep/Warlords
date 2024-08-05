@@ -15,7 +15,7 @@ import java.util.Map;
 public class PlayerLeaderboardInfo {
 
     private int gameHologram = 0;
-    private Map<Integer, Integer> gameHologramPlayerAbilityStats = new HashMap<>();
+    private Map<DatabaseGameBase, Integer> gameHologramPlayerAbilityStats = new HashMap<>();
     @Nonnull
     private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.PVE;
     private int statsCategory = 0;
@@ -32,12 +32,12 @@ public class PlayerLeaderboardInfo {
         this.gameHologram = gameHologram;
     }
 
-    public int getGameHologramPlayerAbilityStats() {
-        return gameHologramPlayerAbilityStats.getOrDefault(gameHologram, 0);
+    public int getGameHologramPlayerAbilityStats(DatabaseGameBase databaseGameBase) {
+        return gameHologramPlayerAbilityStats.getOrDefault(databaseGameBase, 0);
     }
 
     public void setGameHologramPlayerAbilityStats(int abilityStats) {
-        gameHologramPlayerAbilityStats.put(gameHologram, abilityStats);
+        gameHologramPlayerAbilityStats.put(DatabaseGameBase.previousGames.get(gameHologram), abilityStats);
     }
 
     public void resetGameHologram() {

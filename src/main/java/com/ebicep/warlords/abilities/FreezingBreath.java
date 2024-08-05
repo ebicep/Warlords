@@ -27,7 +27,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -339,20 +338,15 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
 
     public static class FreezingBreathStats extends AbstractPiercingProjectileStats<FreezingBreath, FreezingBreathStats> {
 
-        @Field("players_hit")
-        private int playersHit = 0;
-
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
-            statsDisplay.add(new AbilityStatDisplay("Players Hit", playersHit));
             return statsDisplay;
         }
 
         @Override
         public FreezingBreathStats merge(FreezingBreathStats other, int multiplier) {
             FreezingBreathStats stats = super.merge(other, multiplier);
-            stats.playersHit = this.playersHit + other.playersHit * multiplier;
             return stats;
         }
 

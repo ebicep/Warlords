@@ -22,8 +22,8 @@ public class AbilityConverter {
                     return ability;
                 }
             }
-            ChatChannels.sendDebugMessage((CommandIssuer) null, "Could not convert " + source + " to GameMap");
-            throw new IllegalArgumentException("Could not convert " + source + " to GameMap");
+            ChatChannels.sendDebugMessage((CommandIssuer) null, "Could not convert " + source + " to Ability");
+            throw new IllegalArgumentException("Could not convert " + source + " to Ability");
         }
     }
 
