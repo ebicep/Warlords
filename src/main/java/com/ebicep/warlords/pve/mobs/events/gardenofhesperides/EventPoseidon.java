@@ -79,7 +79,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                             spikeTarget(wp, spikeTarget);
 
                             if (spiked.size() >= 3) {
-                                addTimesUsed();
+                                getAbilityStats().addTimesUsed();
                                 break;
                             }
                         }

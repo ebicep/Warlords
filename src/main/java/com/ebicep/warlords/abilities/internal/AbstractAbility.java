@@ -79,7 +79,6 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
-    protected int timesUsed = 0;
     protected String name;
     protected float currentCooldown;
     protected FloatModifiable cooldown;
@@ -134,18 +133,6 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void queueUpdateItem() {
         this.updateItem = true;
-    }
-
-    public void addTimesUsed() {
-        this.timesUsed++;
-    }
-
-    public int getTimesUsed() {
-        return timesUsed;
-    }
-
-    public void setTimesUsed(int timesUsed) {
-        this.timesUsed = timesUsed;
     }
 
     public void addCurrentCooldown(float cooldown) {

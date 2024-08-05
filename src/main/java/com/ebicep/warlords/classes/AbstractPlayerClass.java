@@ -150,7 +150,9 @@ public abstract class AbstractPlayerClass {
                 Bukkit.getPluginManager().callEvent(post);
 
                 wp.subtractEnergy(ability.getName(), ability.getEnergyCost(), false);
-                ability.addTimesUsed();
+                if (ability instanceof AbilityStats<?, ?> abilityStats) {
+                    abilityStats.getAbilityStats().addTimesUsed();
+                }
                 if (!wp.isDisableCooldowns()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());
                 }

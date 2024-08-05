@@ -37,7 +37,6 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
                     .requireLineOfSight(wp)
                     .lookingAtFirst(wp)
                     .first(nearPlayer -> {
-                        addTimesUsed();
                         AbstractPlayerClass.sendRightClickPacket(wp);
                         playSoundAndEffect(nearPlayer.getLocation());
 

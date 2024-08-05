@@ -500,6 +500,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         private final int hitbox;
         private float damageIncrese = 1;
+        private int timesUsed = 0;
 
         public HeatAura(float startDamage, int hitbox) {
             super("Heat Aura", startDamage, startDamage, 2, 50, 25, 175);

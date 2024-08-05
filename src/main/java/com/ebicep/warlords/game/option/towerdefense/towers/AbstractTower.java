@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.game.Game;
@@ -191,7 +192,9 @@ public abstract class AbstractTower {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsTower, null, ability, -1);
                 Bukkit.getPluginManager().callEvent(post);
 
-                ability.addTimesUsed();
+                if (ability instanceof AbilityStats<?, ?> abilityStats) {
+                    abilityStats.getAbilityStats().addTimesUsed();
+                }
                 if (!warlordsTower.isDisableCooldowns()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());
                 }

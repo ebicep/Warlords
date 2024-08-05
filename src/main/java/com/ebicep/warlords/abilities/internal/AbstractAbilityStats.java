@@ -66,6 +66,10 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
     @Field("times_used")
     protected int timesUsed = 0;
 
+    public void addTimesUsed() {
+        timesUsed++;
+    }
+
     public List<AbilityStatDisplay> getStatsDisplay() {
         List<AbilityStatDisplay> stats = new ArrayList<>();
         stats.add(new AbilityStatDisplay("Times Used", timesUsed));

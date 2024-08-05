@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
 import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -336,7 +337,9 @@ public abstract class AbstractMob implements Mob {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsNPC, null, ability, -1);
                 Bukkit.getPluginManager().callEvent(post);
 
-                ability.addTimesUsed();
+                if (ability instanceof AbilityStats<?, ?> abilityStats) {
+                    abilityStats.getAbilityStats().addTimesUsed();
+                }
                 if (!warlordsNPC.isDisableCooldowns()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());
                 }
