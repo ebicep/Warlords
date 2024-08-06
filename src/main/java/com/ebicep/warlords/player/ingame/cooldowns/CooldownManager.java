@@ -407,7 +407,6 @@ public class CooldownManager {
         WarlordsAddCooldownEvent event = new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            ChatUtils.MessageType.WARLORDS.sendMessage("****CD SKIP " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
             abstractCooldown.getOnRemoveForce().accept(this);
             return;
         }
