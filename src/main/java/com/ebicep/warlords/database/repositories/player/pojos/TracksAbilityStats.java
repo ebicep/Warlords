@@ -21,7 +21,14 @@ public interface TracksAbilityStats {
 
     default void updateAbilityStats(DatabaseGamePlayerBase gamePlayerBase) {
         gamePlayerBase.getAbilityStats()
-                      .forEach((ability, abstractAbilityStats) -> getAbilityStats().put(ability, AbstractAbilityStats.merge(getAbilityStats(ability), abstractAbilityStats)));
+                      .forEach((ability, abstractAbilityStats) -> {
+                          AbstractAbilityStats<?, ?> abilityStats = getAbilityStats(ability);
+                          if (abilityStats == null) {
+                              getAbilityStats().put(ability, abstractAbilityStats);
+                          } else {
+                              getAbilityStats().put(ability, AbstractAbilityStats.merge(abilityStats, abstractAbilityStats));
+                          }
+                      });
     }
 
 }

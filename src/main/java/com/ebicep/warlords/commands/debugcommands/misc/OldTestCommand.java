@@ -124,7 +124,9 @@ public class OldTestCommand implements CommandExecutor {
                 for (Ability<?> value : Ability.VALUES) {
                     AbstractAbility abstractAbility = value.create.get();
                     if (abstractAbility instanceof AbilityStats<?, ?> abilityStats) {
-                        databasePlayer.getCompStats().getCtfStats().getAbilityStats().put(value, abilityStats.getAbilityStats());
+                        if (abstractAbility.getClass() == null) {
+                            System.out.println("NULL: " + abilityStats.getName());
+                        }
                     }
                 }
                 DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
