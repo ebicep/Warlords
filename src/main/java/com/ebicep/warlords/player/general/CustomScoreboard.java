@@ -242,10 +242,6 @@ public class CustomScoreboard {
         }
 
         if (StatsLeaderboardManager.loaded) {
-            StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
-            if (statsLeaderboardCategory == null) {
-                return;
-            }
             validatePlayerHolograms(uuid);
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(uuid);
             GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
@@ -256,6 +252,14 @@ public class CustomScoreboard {
             PlayersCollections selectedCollection = playerLeaderboardInfo.getStatsTime();
             int statsCategory = playerLeaderboardInfo.getStatsCategory();
 
+            StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(uuid);
+            if (statsLeaderboardCategory == null) {
+                DatabaseManager.getPlayer(uuid,
+                        databasePlayer -> givePvPSidebar("Lifetime", databasePlayer),
+                        () -> giveNASidebar("Lifetime")
+                );
+                return;
+            }
             StatsLeaderboard statsLeaderboard = statsLeaderboardCategory.getStatsLeaderboards().get(0);
             List<DatabasePlayer> databasePlayerList = statsLeaderboard.getSortedPlayers(playerLeaderboardInfo.getStatsTime());
 
