@@ -18,7 +18,7 @@ public class AbilityConverter {
         @Override
         public Ability<?> convert(@Nonnull String source) {
             for (Ability<?> ability : Ability.VALUES) {
-                if (ability.getDatabaseName().equalsIgnoreCase(source)) {
+                if (ability.getDatabaseName().equalsIgnoreCase(source) || ability.getDatabaseName().equalsIgnoreCase(source.replaceAll(" ", "_"))) {
                     return ability;
                 }
             }
