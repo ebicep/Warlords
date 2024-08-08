@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Shield;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -111,7 +110,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.abilityTree.getUpgradeBranches().clear();
         this.abilityTree.setMaxMasterUpgrades(3);
         this.spec.setUpgradeBranches(this);
-        DatabaseManager.getPlayer(uuid, this.abilityTree::resetAutoUpgradeProfile);
+        this.abilityTree.resetAutoUpgradeProfile(getDatabasePlayer());
     }
 
     public WarlordsPlayer(

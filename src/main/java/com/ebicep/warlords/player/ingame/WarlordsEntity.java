@@ -90,6 +90,8 @@ public abstract class WarlordsEntity {
     public static final Component GIVE_ARROW_GREEN = Component.text("»", NamedTextColor.GREEN);
     private static final int MINUTE_STATS_SPLITS = 35;
     protected final Game game;
+    protected final List<Component> debugMessageLog = new ArrayList<>();
+    protected DatabasePlayer cachedDatabasePlayer;
     protected boolean spawnGrave = true;
     protected CalculateSpeed speed;
     protected String name;
@@ -113,7 +115,6 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
-    protected final List<Component> debugMessageLog = new ArrayList<>();
     private Location deathLocation;
     private Vector currentVector;
     private Team team;
@@ -237,7 +238,6 @@ public abstract class WarlordsEntity {
         }
     }
 
-
     @Nonnull
     public Location getLocation() {
         return this.entity.getLocation();
@@ -309,8 +309,8 @@ public abstract class WarlordsEntity {
 
         //giving out assists
         hitBy.forEach((assisted, value) -> {
-            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(assisted.getUuid(), assisted instanceof WarlordsPlayer && assisted.getEntity() instanceof Player);
-            ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+            DatabasePlayer assistedDatabasePlayer = assisted.getDatabasePlayer();
+            ChatSettings.ChatKills killsMode = assistedDatabasePlayer.getChatKillsMode();
             if (killsMode == ChatSettings.ChatKills.ALL || killsMode == ChatSettings.ChatKills.ONLY_ASSISTS) {
                 if (attacker == assisted || attacker == this) {
                     assisted.sendMessage(Component.text("You assisted in killing ", NamedTextColor.GRAY)
@@ -382,17 +382,11 @@ public abstract class WarlordsEntity {
         }
     }
 
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    @Nonnull
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
+    public DatabasePlayer getDatabasePlayer() {
+        if (cachedDatabasePlayer == null) {
+            cachedDatabasePlayer = DatabaseManager.getPlayer(uuid, entity instanceof Player);
+        }
+        return cachedDatabasePlayer;
     }
 
     public void sendMessage(Component component) {
@@ -457,6 +451,10 @@ public abstract class WarlordsEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public void setUuid(UUID uuid) {
@@ -688,8 +686,8 @@ public abstract class WarlordsEntity {
             this.energy = 1;
         }
         if ((int) energyGiven != 0 && ability != null) {
-            DatabasePlayer receiverSettings = DatabaseManager.getPlayer(getUuid(), this instanceof WarlordsPlayer && getEntity() instanceof Player);
-            DatabasePlayer giverSettings = DatabaseManager.getPlayer(giver.getUuid(), giver instanceof WarlordsPlayer && giver.getEntity() instanceof Player);
+            DatabasePlayer receiverSettings = this.getDatabasePlayer();
+            DatabasePlayer giverSettings = giver.getDatabasePlayer();
             if (receiverSettings.getChatEnergyMode() == ChatSettings.ChatEnergy.ALL) {
                 if (this == giver) {
                     sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
@@ -1245,14 +1243,12 @@ public abstract class WarlordsEntity {
     public void unlockAchievement(ChallengeAchievements achievement) {
         achievementsUnlocked.add(new ChallengeAchievements.ChallengeAchievementRecord(achievement));
         if (entity instanceof Player) {
-            DatabaseManager.getPlayer(uuid, databasePlayer -> {
-                //only display achievement if they have never got it before
-                if (!databasePlayer.hasAchievement(achievement)) {
-                    achievement.sendAchievementUnlockMessage((Player) entity);
-                    achievement.sendAchievementUnlockMessageToOthers(this);
-                    //System.out.println(name + " unlocked achievement: " + achievement.name);
-                }
-            });
+            //only display achievement if they have never got it before
+            if (!getDatabasePlayer().hasAchievement(achievement)) {
+                achievement.sendAchievementUnlockMessage((Player) entity);
+                achievement.sendAchievementUnlockMessageToOthers(this);
+                //System.out.println(name + " unlocked achievement: " + achievement.name);
+            }
         }
     }
 
@@ -1375,7 +1371,7 @@ public abstract class WarlordsEntity {
     }
 
     public void displayActionBar() {
-        DatabaseManager.getPlayer(uuid, databasePlayer -> entity.sendActionBar(getActionBar(databasePlayer)));
+        entity.sendActionBar(getActionBar(getDatabasePlayer()));
     }
 
     public TextComponent getActionBar(DatabasePlayer databasePlayer) {
@@ -1602,6 +1598,15 @@ public abstract class WarlordsEntity {
         getCooldownManager().clearAllCooldowns();
     }
 
+    @Nonnull
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
     public PlayerStatisticsSecond getSecondStats() {
         return secondStats;
     }
@@ -1639,7 +1644,7 @@ public abstract class WarlordsEntity {
         Bukkit.getPluginManager().callEvent(currencyEvent);
         float currencyToAdd = currencyEvent.getCurrencyToAdd();
         this.currency += currencyToAdd;
-        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(uuid, this instanceof WarlordsPlayer && getEntity() instanceof Player);
+        DatabasePlayer databasePlayer = this.getDatabasePlayer();
         if (!noMessage && databasePlayer.getChatInsigniaMode() == ChatSettings.ChatInsignia.ALL) {
             sendMessage(Component.text("+" + NumberFormat.formatOptionalHundredths(currencyToAdd) + " ❂ Insignia", NamedTextColor.GOLD));
         }
