@@ -53,14 +53,14 @@ public class StatsLeaderboardManager {
     public static final Location MAIN_LOBBY_SPAWN = new Location(MAIN_LOBBY, 11.5, 81, 149.5, 0, 0);
     public static final HashMap<UUID, PlayerLeaderboardInfo> PLAYER_LEADERBOARD_INFOS = new HashMap<>();
     public static final HashMap<GameType, AbstractStatsLeaderboardGameType<?, ?, ?, ?>> STATS_LEADERBOARDS = new HashMap<>() {{
-        for (GameType value : GameType.values()) {
+        for (GameType value : GameType.ACTIVE_LEADERBOARDS) {
             put(value, value.createStatsLeaderboardGameType.get());
         }
     }};
 
     public static final Map<PlayersCollections, Long> LAST_BOARD_RESETS = new HashMap<>();
 
-    public static boolean enabled = false;
+    public static boolean enabled = true;
     public static boolean loaded = false;
 
     public static void validatePlayerHolograms(Player player) {
@@ -225,7 +225,11 @@ public class StatsLeaderboardManager {
         GameType selectedGameType = playerLeaderboardInfo.getStatsGameType();
         int selectedCategory = playerLeaderboardInfo.getStatsCategory();
 
-        List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = STATS_LEADERBOARDS.get(selectedGameType).getCategories();
+        AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedGameType);
+        if (leaderboardGameType == null) {
+            return null;
+        }
+        List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
         if (selectedCategory >= categories.size()) {
             selectedCategory = 0;
             playerLeaderboardInfo.setStatsCategory(selectedCategory);
@@ -318,8 +322,22 @@ public class StatsLeaderboardManager {
         DatabaseGameBase.setGameHologramVisibility(player);
         PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
 
+        //PAGE
+        createLeaderboardSwitcherHologram(player,
+                StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION,
+                playerLeaderboardInfo.getPage(),
+                playerLeaderboardInfo.getPageBefore(),
+                playerLeaderboardInfo.getPageAfter(),
+                playerLeaderboardInfo::getPageRange,
+                playerLeaderboardInfo::setPage
+        );
+
         //GAME TYPE
         GameType selectedType = playerLeaderboardInfo.getStatsGameType();
+        AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
+        if (leaderboardGameType == null) {
+            return;
+        }
         createLeaderboardSwitcherHologram(player,
                 StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION,
                 selectedType,
@@ -329,7 +347,7 @@ public class StatsLeaderboardManager {
                 playerLeaderboardInfo::setStatsGameType
         );
         //CATEGORY
-        List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = STATS_LEADERBOARDS.get(selectedType).getCategories();
+        List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
         int selectedCategory = playerLeaderboardInfo.getStatsCategory();
         createLeaderboardSwitcherHologram(player,
                 StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION,
@@ -348,15 +366,6 @@ public class StatsLeaderboardManager {
                 PlayersCollections.getAfterCollection(selectedTime),
                 playersCollections -> playersCollections.name,
                 playerLeaderboardInfo::setStatsTime
-        );
-        //PAGE
-        createLeaderboardSwitcherHologram(player,
-                StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION,
-                playerLeaderboardInfo.getPage(),
-                playerLeaderboardInfo.getPageBefore(),
-                playerLeaderboardInfo.getPageAfter(),
-                playerLeaderboardInfo::getPageRange,
-                playerLeaderboardInfo::setPage
         );
     }
 
@@ -378,47 +387,46 @@ public class StatsLeaderboardManager {
             validatePlayerHolograms(player);
             PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
             PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
-            StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
-            if (statsLeaderboardCategory == null) {
-                return;
-            }
             List<Hologram> playerHolograms = new ArrayList<>();
-            for (StatsLeaderboard statsLeaderboard : statsLeaderboardCategory.getStatsLeaderboards()) {
-                if (statsLeaderboard.isHidden()) {
-                    continue;
-                }
-                Location location = statsLeaderboard.getLocation().clone().add(0, -3.5, 0);
-
-                Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
-
-                List<DatabasePlayer> databasePlayers = statsLeaderboard.getSortedPlayers(selectedTime);
-                for (int i = 0; i < databasePlayers.size(); i++) {
-                    DatabasePlayer databasePlayer = databasePlayers.get(i);
-                    if (databasePlayer.getUuid().equals(player.getUniqueId())) {
-                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
-                        Component guildTag = Component.empty();
-                        if (guildPlayerPair != null) {
-                            GuildTag tag = guildPlayerPair.getA().getTag();
-                            if (tag != null) {
-                                guildTag = tag.getTag(true);
-                            }
-                        }
-                        hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
-                                Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
-                                         .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
-                                         .append(Component.space())
-                                         .append(guildTag)
-                                         .append(Component.text(" - ", NamedTextColor.GRAY))
-                                         .append(Component.text(statsLeaderboard.getStringFunction().apply(databasePlayer)))
-                        ));
-                        break;
+            StatsLeaderboardCategory<?, ?, ?> statsLeaderboardCategory = getLeaderboardCategoryFromUUID(player.getUniqueId());
+            if (statsLeaderboardCategory != null) {
+                for (StatsLeaderboard statsLeaderboard : statsLeaderboardCategory.getStatsLeaderboards()) {
+                    if (statsLeaderboard.isHidden()) {
+                        continue;
                     }
+                    Location location = statsLeaderboard.getLocation().clone().add(0, -3.5, 0);
+
+                    Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
+
+                    List<DatabasePlayer> databasePlayers = statsLeaderboard.getSortedPlayers(selectedTime);
+                    for (int i = 0; i < databasePlayers.size(); i++) {
+                        DatabasePlayer databasePlayer = databasePlayers.get(i);
+                        if (databasePlayer.getUuid().equals(player.getUniqueId())) {
+                            Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+                            Component guildTag = Component.empty();
+                            if (guildPlayerPair != null) {
+                                GuildTag tag = guildPlayerPair.getA().getTag();
+                                if (tag != null) {
+                                    guildTag = tag.getTag(true);
+                                }
+                            }
+                            hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                                    Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                             .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
+                                             .append(Component.space())
+                                             .append(guildTag)
+                                             .append(Component.text(" - ", NamedTextColor.GRAY))
+                                             .append(Component.text(statsLeaderboard.getStringFunction().apply(databasePlayer)))
+                            ));
+                            break;
+                        }
+                    }
+
+                    hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+                    hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+
+                    playerHolograms.add(hologram);
                 }
-
-                hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-                hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
-
-                playerHolograms.add(hologram);
             }
 
             for (EventLeaderboard eventLeaderboard : EventsLeaderboardManager.EVENT_LEADERBOARDS.keySet()) {
@@ -523,13 +531,16 @@ public class StatsLeaderboardManager {
 
         ;
 
-        public static final List<GameType> ACTIVE_LEADERBOARDS = Arrays.asList(ALL, CTF, PVE);
+        public static final List<GameType> ACTIVE_LEADERBOARDS = Arrays.asList();//ALL, CTF, PVE);
 
         public static boolean isPve(GameType gameType) {
             return gameType == PVE || gameType == WAVE_DEFENSE || gameType == ONSLAUGHT;
         }
 
         public static GameType getAfter(GameType gameType) {
+            if (ACTIVE_LEADERBOARDS.size() <= 1) {
+                return gameType;
+            }
             int index = ACTIVE_LEADERBOARDS.indexOf(gameType);
             if (index == ACTIVE_LEADERBOARDS.size() - 1) {
                 return ACTIVE_LEADERBOARDS.get(0);
@@ -539,6 +550,9 @@ public class StatsLeaderboardManager {
         }
 
         public static GameType getBefore(GameType gameType) {
+            if (ACTIVE_LEADERBOARDS.size() <= 1) {
+                return gameType;
+            }
             int index = ACTIVE_LEADERBOARDS.indexOf(gameType);
             if (index == 0) {
                 return ACTIVE_LEADERBOARDS.get(ACTIVE_LEADERBOARDS.size() - 1);
