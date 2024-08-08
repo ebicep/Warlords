@@ -471,6 +471,15 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         }
     }
 
+    @Override
+    public void sendMessage(Component component, boolean isDamageHealMessage) {
+        super.sendMessage(component, isDamageHealMessage);
+        debugMessageLog.add(component);
+        if (isInPve() && debugMessageLog.size() > 200) {
+            debugMessageLog.subList(0, 100).clear();
+        }
+    }
+
     public AbilityTree getAbilityTree() {
         return abilityTree;
     }

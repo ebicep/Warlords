@@ -113,7 +113,7 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
-    private final List<Component> debugMessageLog = new ArrayList<>();
+    protected final List<Component> debugMessageLog = new ArrayList<>();
     private Location deathLocation;
     private Vector currentVector;
     private Team team;
@@ -424,7 +424,6 @@ public abstract class WarlordsEntity {
         } else {
             this.entity.sendMessage(component);
         }
-        debugMessageLog.add(component);
         if (!AdminCommand.DISABLE_SPECTATOR_MESSAGES && game != null) {
             game.spectators()
                 .map(Bukkit::getPlayer)
