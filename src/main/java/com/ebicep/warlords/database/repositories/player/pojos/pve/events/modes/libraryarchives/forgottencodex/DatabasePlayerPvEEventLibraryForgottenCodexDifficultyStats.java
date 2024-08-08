@@ -54,7 +54,7 @@ public class DatabasePlayerPvEEventLibraryForgottenCodexDifficultyStats implemen
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventLibraryForgottenCodexPlayerCountStats getPlayerCountStats(int playerCount) {

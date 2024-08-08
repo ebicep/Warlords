@@ -108,7 +108,7 @@ public class DatabaseGamePlayerBase {
                 this.abilityStats.merge(
                         Ability.getAbility(ability.getClass()),
                         stats.getAbilityStats(),
-                        AbstractAbilityStats::merge
+                        (abstractAbilityStats, abstractAbilityStats2) -> AbstractAbilityStats.merge(abstractAbilityStats, abstractAbilityStats2, 1)
                 );
             }
         }

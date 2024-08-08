@@ -54,7 +54,7 @@ public class DatabasePlayerPvEEventBoltaroBonanzaStats implements MultiPvEEventB
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventBoltaroBonanzaPlayerCountStats getPlayerCountStats(int playerCount) {

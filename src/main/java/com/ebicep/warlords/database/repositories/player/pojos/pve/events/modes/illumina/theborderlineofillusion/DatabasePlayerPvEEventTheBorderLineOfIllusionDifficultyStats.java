@@ -55,7 +55,7 @@ public class DatabasePlayerPvEEventTheBorderLineOfIllusionDifficultyStats implem
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventTheBorderLineOfIllusionPlayerCountStats getPlayerCountStats(int playerCount) {

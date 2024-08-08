@@ -54,7 +54,7 @@ public class DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardDifficultySt
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventLibraryArchivesGrimoiresGraveyardPlayerCountStats getPlayerCountStats(int playerCount) {

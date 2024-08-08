@@ -56,6 +56,6 @@ public class DatabasePlayerInterception implements InterceptionStatsWarlordsClas
             PlayersCollections playersCollection
     ) {
         updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 }

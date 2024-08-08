@@ -55,7 +55,7 @@ public class DatabasePlayerPvEEventGardenOfHesperidesTartarusStats implements Mu
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventGardenOfHesperidesTartarusPlayerCountStats getPlayerCountStats(int playerCount) {

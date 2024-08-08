@@ -79,7 +79,7 @@ public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats, Tra
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEOnslaughtPlayerCountStats getPlayerCountStats(int playerCount) {

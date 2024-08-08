@@ -23,9 +23,9 @@ public interface TracksMultiAbilityStats extends TracksAbilityStats {
         if (abilityStats.size() == 1) {
             return (AbstractAbilityStats<T, R>) abilityStats.get(0);
         }
-        AbstractAbilityStats<?, ?> merge = AbstractAbilityStats.merge(abilityStats.get(0), abilityStats.get(1));
+        AbstractAbilityStats<?, ?> merge = AbstractAbilityStats.merge(abilityStats.get(0), abilityStats.get(1), 1);
         for (int i = 2; i < abilityStats.size(); i++) {
-            merge = AbstractAbilityStats.merge(merge, abilityStats.get(i));
+            merge = AbstractAbilityStats.merge(merge, abilityStats.get(i), 1);
         }
         return (AbstractAbilityStats<T, R>) merge;
     }

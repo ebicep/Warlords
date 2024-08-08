@@ -55,7 +55,7 @@ public class DatabasePlayerPvEEventMithraSpidersDwellingDifficultyStats implemen
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventMithraSpidersDwellingPlayerCountStats getPlayerCountStats(int playerCount) {

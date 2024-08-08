@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -8,17 +9,19 @@ import java.util.List;
 
 public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends AbstractAbilityStats<T, R>> {
 
-    public static AbstractAbilityStats<?, ?> merge(AbstractAbilityStats<?, ?> ability1, AbstractAbilityStats<?, ?> ability2) {
+    public static AbstractAbilityStats<?, ?> merge(AbstractAbilityStats<?, ?> ability1, AbstractAbilityStats<?, ?> ability2, int multiplier) {
         if (ability1.getClazz().equals(ability1.getClazz())) {
             try {
                 return (AbstractAbilityStats<?, ?>) ability1
                         .getClazz()
-                        .getMethod("merge", ability1.getClazz())
-                        .invoke(ability1, ability1.getClazz().cast(ability2));
+                        .getMethod("merge", ability1.getClazz(), int.class)
+                        .invoke(ability1, ability1.getClazz().cast(ability2), multiplier);
             } catch (Exception e) {
-                throw new IllegalArgumentException("Cannot merge two different AbilityStats classes");
+                ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem merging: " + ability1.getClass().getSimpleName() + " and " + ability2.getClass().getSimpleName());
+                throw new IllegalArgumentException(e);
             }
         }
+        ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem merging: " + ability1.getClass().getSimpleName() + " and " + ability2.getClass().getSimpleName());
         throw new IllegalArgumentException("Cannot merge two different AbilityStats classes");
     }
 

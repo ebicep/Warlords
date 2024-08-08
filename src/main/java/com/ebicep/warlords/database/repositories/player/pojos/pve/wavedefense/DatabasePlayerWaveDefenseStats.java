@@ -60,7 +60,7 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats,
         } else {
             ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Error: Difficulty stats is null", NamedTextColor.GREEN));
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEWaveDefenseDifficultyStats getDifficultyStats(DifficultyIndex difficultyIndex) {

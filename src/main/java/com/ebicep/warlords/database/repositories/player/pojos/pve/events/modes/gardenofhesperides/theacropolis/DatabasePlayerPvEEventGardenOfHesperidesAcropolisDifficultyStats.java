@@ -55,7 +55,7 @@ public class DatabasePlayerPvEEventGardenOfHesperidesAcropolisDifficultyStats im
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventGardenOfHesperidesAcropolisPlayerCountStats getPlayerCountStats(int playerCount) {

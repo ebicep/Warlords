@@ -19,14 +19,14 @@ public interface TracksAbilityStats {
         return (AbstractAbilityStats<T, R>) getAbilityStats().get(key);
     }
 
-    default void updateAbilityStats(DatabaseGamePlayerBase gamePlayerBase) {
+    default void updateAbilityStats(DatabaseGamePlayerBase gamePlayerBase, int multiplier) {
         gamePlayerBase.getAbilityStats()
                       .forEach((ability, abstractAbilityStats) -> {
                           AbstractAbilityStats<?, ?> abilityStats = getAbilityStats(ability);
                           if (abilityStats == null) {
                               getAbilityStats().put(ability, abstractAbilityStats);
                           } else {
-                              getAbilityStats().put(ability, AbstractAbilityStats.merge(abilityStats, abstractAbilityStats));
+                              getAbilityStats().put(ability, AbstractAbilityStats.merge(abilityStats, abstractAbilityStats, multiplier));
                           }
                       });
     }

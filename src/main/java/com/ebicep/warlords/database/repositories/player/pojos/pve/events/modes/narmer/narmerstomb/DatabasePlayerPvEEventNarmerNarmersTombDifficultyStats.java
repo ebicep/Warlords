@@ -54,7 +54,7 @@ public class DatabasePlayerPvEEventNarmerNarmersTombDifficultyStats implements M
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
-        updateAbilityStats(gamePlayer);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventNarmerNarmersTombPlayerCountStats getPlayerCountStats(int playerCount) {
