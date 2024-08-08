@@ -127,7 +127,7 @@ public class AdminCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(target, Component.text("Disabled Bypassing Interact Cancel for " + target.getName(), NamedTextColor.GREEN));
         } else {
             BYPASS_INTERACT_CANCEL.add(target.getUniqueId());
-            ChatChannels.sendDebugMessage(target, Component.text("Enabled Bypassing Interact Cancel" + target.getName(), NamedTextColor.GREEN));
+            ChatChannels.sendDebugMessage(target, Component.text("Enabled Bypassing Interact Cancel for " + target.getName(), NamedTextColor.GREEN));
         }
     }
 
