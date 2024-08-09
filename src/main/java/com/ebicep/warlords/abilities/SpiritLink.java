@@ -1,6 +1,9 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractChain;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -261,7 +264,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable linkDamage = new Value.RangedValueCritable(290, 392, 20, 175);
+        private final Value.RangedValueCritable linkDamage = new Value.RangedValueCritable(276, 372, 20, 175);
         private final List<Value> values = List.of(linkDamage);
 
         public Value.RangedValueCritable getLinkDamage() {
