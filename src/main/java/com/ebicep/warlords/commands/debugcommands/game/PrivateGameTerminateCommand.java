@@ -8,6 +8,7 @@ import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager;
+import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.game.state.PreLobbyState;
@@ -40,7 +41,7 @@ public class PrivateGameTerminateCommand extends BaseCommand {
             // check if all players in the game are in the party and the party leader is the one who is terminating the game
             if (partyPlayerPair != null && game.warlordsPlayers().allMatch(uuidTeamEntry -> partyPlayerPair.getA().hasUUID(uuidTeamEntry.getUuid()))) {
                 if (partyPlayerPair.getA().getPartyLeader().getUUID().equals(player.getUniqueId())) {
-                    endGameInstance(player, gameHolder, game);
+                    endGameInstance(player, game);
                     player.sendMessage(Component.text("Game has been terminated. Warping back to lobby...", NamedTextColor.GREEN));
                 } else {
                     player.sendMessage(Component.text("You are not the party leader, unable to terminate game.", NamedTextColor.RED));
@@ -49,7 +50,7 @@ public class PrivateGameTerminateCommand extends BaseCommand {
                 if (game.warlordsPlayers().count() > 1) {
                     player.sendMessage(Component.text("You are not the only player in the game, unable to terminate game.", NamedTextColor.RED));
                 } else {
-                    endGameInstance(player, gameHolder, game);
+                    endGameInstance(player, game);
                 }
             }
 
@@ -57,13 +58,18 @@ public class PrivateGameTerminateCommand extends BaseCommand {
         }
     }
 
-    private static void endGameInstance(Player player, GameManager.GameHolder holder, Game game) {
-        if (holder.getGame() == null) {
+    private static void endGameInstance(Player player, Game game) {
+        if (game == null) {
             return;
         }
-        if (holder.getGame().isFrozen()) {
-            holder.getGame().clearFrozenCauses();
-        }
+        game.getOption(GameFreezeOption.class)
+            .stream()
+            .findFirst()
+            .ifPresent(gameFreezeOption -> {
+                if (game.isFrozen()) {
+                    gameFreezeOption.clearFrozenCauses();
+                }
+            });
         State state = game.getState();
         if (state instanceof PreLobbyState || state instanceof PlayingState) {
             game.setNextState(new EndState(game, null));

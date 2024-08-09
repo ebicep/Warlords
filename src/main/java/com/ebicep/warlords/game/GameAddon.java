@@ -32,11 +32,11 @@ public enum GameAddon {
         public void modifyGame(@Nonnull Game game) {
             switch (game.getGameMode()) {
                 case CAPTURE_THE_FLAG, INTERCEPTION, TEAM_DEATHMATCH, DEBUG, SIMULATION_TRIAL -> {
-                    game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
+                    game.addOption(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                             .name(Component.text("Team Selector ", NamedTextColor.GREEN).append(Component.text("(Right-Click)", NamedTextColor.GRAY)))
                             .lore(Component.text("Click to select your team!", NamedTextColor.YELLOW))
                             .get(), (g, p) -> openTeamMenu(p)));
-                    game.getOptions().add(new AFKDetectionOption());
+                    game.addOption(new AFKDetectionOption());
                 }
             }
             game.setMinPlayers(1);
@@ -68,7 +68,7 @@ public enum GameAddon {
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
-            game.getOptions().add(new GameFreezeWhenOfflineOption());
+            game.addOption(new GameFreezeWhenOfflineOption());
         }
     },
     IMPOSTER_MODE(
@@ -78,7 +78,7 @@ public enum GameAddon {
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
-            game.getOptions().add(new ImposterModeOption());
+            game.addOption(new ImposterModeOption());
         }
 
         @Override
@@ -143,8 +143,8 @@ public enum GameAddon {
     ) {
         @Override
         public void modifyGame(@Nonnull Game game) {
-            game.getOptions().add(new InterchangeModeOption());
-            game.getOptions().add(new GameFreezeWhenOfflineOption());
+            game.addOption(new InterchangeModeOption());
+            game.addOption(new GameFreezeWhenOfflineOption());
         }
 
     },

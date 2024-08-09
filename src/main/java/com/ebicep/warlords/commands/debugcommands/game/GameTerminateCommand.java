@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
+import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.util.chat.ChatChannels;
@@ -35,9 +36,14 @@ public class GameTerminateCommand extends BaseCommand {
                 inactiveGames.add(gameHolder);
                 continue;
             }
-            if (game.isFrozen()) {
-                game.clearFrozenCauses();
-            }
+            game.getOption(GameFreezeOption.class)
+                .stream()
+                .findFirst()
+                .ifPresent(gameFreezeOption -> {
+                    if (game.isFrozen()) {
+                        gameFreezeOption.clearFrozenCauses();
+                    }
+                });
             Optional<PlayingState> state = game.getState(PlayingState.class);
             if (state.isEmpty()) {
                 otherStateGames.add(gameHolder);

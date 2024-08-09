@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.TimerDebugAble;
@@ -278,12 +279,17 @@ public class DebugMenuGameOptions {
                             .name(Component.text("Freeze Game", NamedTextColor.GREEN))
                             .get(),
                     (m, e) -> {
-                        if (game.isFrozen()) {
-                            game.removeFrozenCause(Component.text("Debug"));
-                        } else {
-                            game.addFrozenCause(Component.text("Debug"));
-                        }
-                        sendDebugMessage(player, player.getName() + " froze game " + game.getGameId());
+                        game.getOption(GameFreezeOption.class)
+                            .stream()
+                            .findFirst()
+                            .ifPresentOrElse(gameFreezeOption -> {
+                                if (game.isFrozen()) {
+                                    gameFreezeOption.removeFrozenCause(Component.text("Debug"));
+                                } else {
+                                    gameFreezeOption.addFrozenCause(Component.text("Debug"));
+                                }
+                                sendDebugMessage(player, player.getName() + " froze game " + game.getGameId());
+                            }, () -> sendDebugMessage(player, Component.text("GameFreezeOption is not enabled!", NamedTextColor.RED)));
                     }
             );
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(player);

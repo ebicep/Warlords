@@ -7,6 +7,7 @@ import co.aikar.commands.HelpEntry;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.pvp.ImposterModeOption;
 import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -83,8 +84,11 @@ public class ImposterCommand extends BaseCommand {
             if (votesNeeded <= imposterModeOption.getVoters().get(warlordsPlayer.getTeam()).size()) {
                 Team team = warlordsPlayer.getTeam();
                 imposterModeOption.sendPoll(team);
-                warlordsPlayer.getGame().addFrozenCause(Component.text(team.name, team.getTeamColor())
-                                                                 .append(Component.text(" is voting!", NamedTextColor.GREEN)));
+                GameFreezeOption freezeOption = imposterModeOption.getGameFreezeOption();
+                if (freezeOption != null && freezeOption.isFrozen()) {
+                    freezeOption.addFrozenCause(Component.text(team.name, team.getTeamColor())
+                                                         .append(Component.text(" is voting!", NamedTextColor.GREEN)));
+                }
             } else {
                 String votesNeededString = imposterModeOption.getVoters()
                                                              .get(warlordsPlayer.getTeam())

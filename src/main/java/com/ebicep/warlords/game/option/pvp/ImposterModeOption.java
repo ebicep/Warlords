@@ -4,6 +4,7 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
@@ -38,10 +39,16 @@ public class ImposterModeOption implements Option, EventGameEndOption {
     private Game game;
     private GamePoll poll;
     private boolean forceEnd = false;
+    @Nullable
+    private GameFreezeOption gameFreezeOption = null;
 
     @Override
     public void register(@Nonnull Game game) {
         this.game = game;
+        this.gameFreezeOption = game.getOption(GameFreezeOption.class)
+                                    .stream()
+                                    .findFirst()
+                                    .orElse(null);
 
         for (Team team : TeamMarker.getTeams(game)) {
             imposters.put(team, new ArrayList<>());
@@ -88,49 +95,50 @@ public class ImposterModeOption implements Option, EventGameEndOption {
 
     @Override
     public void onGameEnding(@Nonnull Game game) {
-        if (!forceEnd) {
-            game.getState(EndState.class).ifPresent(endState -> {
-                WarlordsGameTriggerWinEvent winEvent = endState.getWinEvent();
-                if (winEvent == null) {
-                    return;
-                }
-                Team winner = winEvent.getDeclaredWinner();
-                if (winner != null) {
-                    game.onlinePlayersWithoutSpectators().forEach(playerTeamEntry -> {
-                        Player player = playerTeamEntry.getKey();
-                        Team team = playerTeamEntry.getValue();
-                        //winners - imposter lose
-                        //losers - imposter win
-                        if (team == winner) {
-                            if (imposters.get(team).stream().anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
-                                sendResultMessage(player, NamedTextColor.RED, "YOU LOST!", "You lost!");
-                            } else {
-                                sendResultMessage(player, NamedTextColor.GREEN, "YOU WON!", "You won!");
-                            }
+        if (forceEnd) {
+            return;
+        }
+        game.getState(EndState.class).ifPresent(endState -> {
+            WarlordsGameTriggerWinEvent winEvent = endState.getWinEvent();
+            if (winEvent == null) {
+                return;
+            }
+            Team winner = winEvent.getDeclaredWinner();
+            if (winner != null) {
+                game.onlinePlayersWithoutSpectators().forEach(playerTeamEntry -> {
+                    Player player = playerTeamEntry.getKey();
+                    Team team = playerTeamEntry.getValue();
+                    //winners - imposter lose
+                    //losers - imposter win
+                    if (team == winner) {
+                        if (imposters.get(team).stream().anyMatch(uuid -> uuid.equals(player.getUniqueId()))) {
+                            sendResultMessage(player, NamedTextColor.RED, "YOU LOST!", "You lost!");
                         } else {
-                            boolean isAnImposterOnOtherTeam = false;
-                            for (Map.Entry<Team, List<UUID>> teamListEntry : imposters.entrySet().stream()
-                                                                                      .filter(teamListEntry -> teamListEntry.getKey() != winner)
-                                                                                      .toList()
-                            ) {
-                                for (UUID uuid : teamListEntry.getValue()) {
-                                    if (uuid.equals(player.getUniqueId())) {
-                                        isAnImposterOnOtherTeam = true;
-                                        break;
-                                    }
+                            sendResultMessage(player, NamedTextColor.GREEN, "YOU WON!", "You won!");
+                        }
+                    } else {
+                        boolean isAnImposterOnOtherTeam = false;
+                        for (Map.Entry<Team, List<UUID>> teamListEntry : imposters.entrySet().stream()
+                                                                                  .filter(teamListEntry -> teamListEntry.getKey() != winner)
+                                                                                  .toList()
+                        ) {
+                            for (UUID uuid : teamListEntry.getValue()) {
+                                if (uuid.equals(player.getUniqueId())) {
+                                    isAnImposterOnOtherTeam = true;
+                                    break;
                                 }
                             }
-                            if (isAnImposterOnOtherTeam) {
-                                sendResultMessage(player, NamedTextColor.GREEN, "YOU WON!", "You won!");
-                            } else {
-                                sendResultMessage(player, NamedTextColor.RED, "YOU LOST!", "You lost!");
-                            }
                         }
-                        sendImpostorResult(player);
-                    });
-                }
-            });
-        }
+                        if (isAnImposterOnOtherTeam) {
+                            sendResultMessage(player, NamedTextColor.GREEN, "YOU WON!", "You won!");
+                        } else {
+                            sendResultMessage(player, NamedTextColor.RED, "YOU LOST!", "You lost!");
+                        }
+                    }
+                    sendImpostorResult(player);
+                });
+            }
+        });
     }
 
     private static void sendResultMessage(Player player, NamedTextColor red, String resultTitle, String resultChat) {
@@ -227,7 +235,7 @@ public class ImposterModeOption implements Option, EventGameEndOption {
             List<WarlordsEntity> teamPlayers = game.warlordsPlayers()
                                                    .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                                                    .collect(Collectors.toList());
-            if (teamPlayers.size() == 0) {
+            if (teamPlayers.isEmpty()) {
                 continue;
             }
             Collections.shuffle(teamPlayers);
@@ -249,6 +257,10 @@ public class ImposterModeOption implements Option, EventGameEndOption {
     }
 
     public void sendPoll(Team team) {
+        if (gameFreezeOption == null) {
+            ChatUtils.MessageType.GAME.sendErrorMessage("GameFreezeOption not found in ImposterModeOption");
+            return;
+        }
         poll = new GamePoll.Builder(game)
                 .setQuestion("Who is the most SUS on your team?")
                 .setTimeLeft(60)
@@ -311,7 +323,7 @@ public class ImposterModeOption implements Option, EventGameEndOption {
                                         );
                                     });
                             } else if (counter == 9) {
-                                game.removeFrozenCause(Component.text(team.name, team.getTeamColor())
+                                gameFreezeOption.removeFrozenCause(Component.text(team.name, team.getTeamColor())
                                                                 .append(Component.text(" is voting!", NamedTextColor.GREEN)));
                                 int scoreNeededToEndGame = game.getOptions()
                                                                .stream()
@@ -408,5 +420,10 @@ public class ImposterModeOption implements Option, EventGameEndOption {
 
     public void setPoll(GamePoll poll) {
         this.poll = poll;
+    }
+
+    @Nullable
+    public GameFreezeOption getGameFreezeOption() {
+        return gameFreezeOption;
     }
 }

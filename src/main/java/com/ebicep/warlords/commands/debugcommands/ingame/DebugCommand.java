@@ -89,21 +89,25 @@ public class DebugCommand extends BaseCommand {
             sendDebugMessage(player, Component.text("Cannot freeze game in end state", NamedTextColor.RED));
             return;
         }
-        if (!game.isUnfreezeCooldown()) {
-            if (game.isFrozen()) {
-                GameFreezeOption.resumeGame(game);
-            } else {
-                if (message != null) {
-                    message = message.replaceAll("&", "§");
-                    game.addFrozenCause(Component.text(message, NamedTextColor.GOLD));
+        game.getOption(GameFreezeOption.class)
+            .stream()
+            .findFirst()
+            .ifPresentOrElse(gameFreezeOption -> {
+                if (!gameFreezeOption.isUnfreezeCooldown()) {
+                    if (gameFreezeOption.isFrozen()) {
+                        GameFreezeOption.resumeGame(game);
+                    } else {
+                        if (message != null) {
+                            gameFreezeOption.addFrozenCause(Component.text(message.replaceAll("&", "§"), NamedTextColor.GOLD));
+                        } else {
+                            gameFreezeOption.addFrozenCause(Component.text("Manually paused by §c" + player.getName(), NamedTextColor.GOLD));
+                        }
+                        sendDebugMessage(player, Component.text("The game has been frozen!", NamedTextColor.GREEN));
+                    }
                 } else {
-                    game.addFrozenCause(Component.text("Manually paused by §c" + player.getName(), NamedTextColor.GOLD));
+                    sendDebugMessage(player, Component.text("The game is currently unfreezing!", NamedTextColor.RED));
                 }
-                sendDebugMessage(player, Component.text("The game has been frozen!", NamedTextColor.GREEN));
-            }
-        } else {
-            sendDebugMessage(player, Component.text("The game is currently unfreezing!", NamedTextColor.RED));
-        }
+            }, () -> sendDebugMessage(player, Component.text("GameFreezeOption is not enabled!", NamedTextColor.RED)));
     }
 
     @Subcommand("timer")

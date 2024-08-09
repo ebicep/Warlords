@@ -1,13 +1,14 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
+import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -16,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -61,15 +61,14 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 .stream()
                 .collect(Collectors.toSet());
         for (WarlordsEntity radianceTarget : warlordsEntities) {
-            wp.getGame().registerGameTask(
-                    new FlyingArmorStand(
-                            wp.getLocation(),
-                            radianceTarget,
-                            wp,
-                            1.1,
-                            radianceHealing
-                    ).runTaskTimer(Warlords.getInstance(), 1, 1)
-            );
+            new FlyingArmorStand(
+                    wp.getGame(),
+                    wp.getLocation(),
+                    radianceTarget,
+                    wp,
+                    1.1,
+                    radianceHealing
+            ).runTaskTimer(1, 1);
         }
         Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, warlordsEntities));
 
@@ -152,7 +151,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         }
     }
 
-    public class FlyingArmorStand extends BukkitRunnable {
+    public class FlyingArmorStand extends GameRunnable {
 
         private final WarlordsEntity target;
         private final WarlordsEntity owner;
@@ -160,7 +159,8 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         private final ArmorStand armorStand;
         private final Value.RangedValueCritable radianceHealing;
 
-        public FlyingArmorStand(Location location, WarlordsEntity target, WarlordsEntity owner, double speed, Value.RangedValueCritable radianceHealing) {
+        public FlyingArmorStand(Game game, Location location, WarlordsEntity target, WarlordsEntity owner, double speed, Value.RangedValueCritable radianceHealing) {
+            super(game);
             this.armorStand = Utils.spawnArmorStand(location);
             this.target = target;
             this.speed = speed;
@@ -170,60 +170,56 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
         @Override
         public void run() {
-            if (!owner.getGame().isFrozen()) {
-
-                if (this.target.isDead()) {
-                    this.cancel();
-                    return;
-                }
-
-                if (target.getWorld() != armorStand.getWorld()) {
-                    this.cancel();
-                    return;
-                }
-
-                Location targetLocation = target.getLocation();
-                Location armorStandLocation = armorStand.getLocation();
-                double distance = targetLocation.distanceSquared(armorStandLocation);
-
-                if (distance < speed * speed) {
-                    stats.playersHealed++;
-
-                    target.addInstance(InstanceBuilder
-                            .healing()
-                            .cause("Holy Radiance")
-                            .source(owner)
-                            .value(radianceHealing)
-                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                        new CooldownFilter<>(owner, RegularCooldown.class)
-                                .filterCooldownFrom(owner)
-                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
-                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
-                    });
-                    this.cancel();
-                    return;
-                }
-
-                targetLocation.subtract(armorStandLocation);
-                //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
-                targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
-
-                armorStandLocation.add(targetLocation);
-                this.armorStand.teleport(armorStandLocation);
-
-                armorStandLocation.getWorld().spawnParticle(
-                        Particle.SPELL,
-                        armorStandLocation.add(0, 1.75, 0),
-                        2,
-                        0.01,
-                        0,
-                        0.01,
-                        0.1,
-                        null,
-                        true
-                );
-
+            if (this.target.isDead()) {
+                this.cancel();
+                return;
             }
+
+            if (target.getWorld() != armorStand.getWorld()) {
+                this.cancel();
+                return;
+            }
+
+            Location targetLocation = target.getLocation();
+            Location armorStandLocation = armorStand.getLocation();
+            double distance = targetLocation.distanceSquared(armorStandLocation);
+
+            if (distance < speed * speed) {
+                stats.playersHealed++;
+
+                target.addInstance(InstanceBuilder
+                        .healing()
+                        .cause("Holy Radiance")
+                        .source(owner)
+                        .value(radianceHealing)
+                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    new CooldownFilter<>(owner, RegularCooldown.class)
+                            .filterCooldownFrom(owner)
+                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                            .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
+                });
+                this.cancel();
+                return;
+            }
+
+            targetLocation.subtract(armorStandLocation);
+            //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+            targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+
+            armorStandLocation.add(targetLocation);
+            this.armorStand.teleport(armorStandLocation);
+
+            armorStandLocation.getWorld().spawnParticle(
+                    Particle.SPELL,
+                    armorStandLocation.add(0, 1.75, 0),
+                    2,
+                    0.01,
+                    0,
+                    0.01,
+                    0.1,
+                    null,
+                    true
+            );
         }
 
         @Override
