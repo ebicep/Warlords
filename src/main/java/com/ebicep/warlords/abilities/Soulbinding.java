@@ -33,6 +33,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private final SoulbindingStats stats = new SoulbindingStats();
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
+    private float allyCooldownReduction = .75f;
     private int bindDuration = 60;
     private int radius = 8;
     private int maxAlliesHit = 2;
@@ -59,7 +60,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 .text(". Your next Fallen Souls will reduce the cooldown of all abilities by ")
                 .durationSeconds(selfCooldownReduction)
                 .text(". (")
-                .durationSeconds(1)
+                .durationSeconds(allyCooldownReduction)
                 .text(" for ")
                 .text(maxAlliesHit, NamedTextColor.BLUE)
                 .text(" nearby allies). Both buffs may be activated for every melee hit. Lasts ")
@@ -214,6 +215,14 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public void setSelfCooldownReduction(float selfCooldownReduction) {
         this.selfCooldownReduction = selfCooldownReduction;
+    }
+
+    public float getAllyCooldownReduction() {
+        return allyCooldownReduction;
+    }
+
+    public void setAllyCooldownReduction(float allyCooldownReduction) {
+        this.allyCooldownReduction = allyCooldownReduction;
     }
 
     public int getRadius() {

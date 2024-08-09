@@ -5,6 +5,10 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> {
 
+    @Override
+    public void runOnce() {
+        ability.setAllyCooldownReduction(.5f);
+    }
 
     public SoulbindingWeaponBranch(AbilityTree abilityTree, Soulbinding ability) {
         super(abilityTree, ability);
@@ -36,6 +40,7 @@ public class SoulbindingWeaponBranch extends AbstractUpgradeBranch<Soulbinding> 
                 50000,
                 () -> {
                     ability.setSelfCooldownReduction(ability.getSelfCooldownReduction() + 0.25f);
+                    ability.setAllyCooldownReduction(ability.getAllyCooldownReduction() + 0.25f);
                 }
         );
         masterUpgrade2 = new Upgrade(

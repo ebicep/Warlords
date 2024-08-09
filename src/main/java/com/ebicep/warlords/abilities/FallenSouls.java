@@ -249,13 +249,10 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                 .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
                 .forEachOrdered(data -> {
                     Soulbinding soulbinding = data.getSoulbinding();
-                    boolean masterUpgrade = soulbinding.isPveMasterUpgrade();
                     soulbinding.addSoulProcs();
-
                     for (AbstractAbility ability : wp.getAbilities()) {
-                        ability.subtractCurrentCooldownForce(pveMasterUpgrade ? 1.75f : 1.5f);
+                        ability.subtractCurrentCooldownForce(soulbinding.getSelfCooldownReduction());
                     }
-
                     int radius = soulbinding.getRadius();
                     for (WarlordsEntity teammate : PlayerFilter
                             .entitiesAround(wp.getLocation(), radius, radius, radius)
@@ -265,17 +262,11 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                             .limit(soulbinding.getMaxAlliesHit())
                     ) {
                         soulbinding.addSoulTeammatesCDReductions();
-
-                        float pveCheck = teammate.isInPve() ? 0.5f : 1;
-                        if (masterUpgrade) {
-                            pveCheck += 0.25f;
-                        }
                         for (AbstractAbility ability : teammate.getAbilities()) {
-                            ability.subtractCurrentCooldown(pveCheck);
+                            ability.subtractCurrentCooldown(soulbinding.getAllyCooldownReduction());
                         }
                     }
-
-                    if (masterUpgrade) {
+                    if (soulbinding.isPveMasterUpgrade()) {
                         wp.addEnergy(wp, "Soulbinding Weapon", 1);
                     }
                 });
