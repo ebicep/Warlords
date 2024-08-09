@@ -393,8 +393,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.SetValue allyHealing = new Value.SetValue(300);
-        private final Value.SetValue selfHealing = new Value.SetValue(400);
+        private final Value.SetValue allyHealing = new Value.SetValue(200);
+        private final Value.SetValue selfHealing = new Value.SetValue(300);
         private final List<Value> values = List.of(allyHealing, selfHealing);
 
         public Value.SetValue getAllyHealing() {
