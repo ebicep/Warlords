@@ -284,7 +284,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(148, 191, 20, 180);
+        private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(140, 181, 20, 180);
         private final List<Value> values = List.of(fallenSoulDamage);
 
         public Value.RangedValueCritable getFallenSoulDamage() {

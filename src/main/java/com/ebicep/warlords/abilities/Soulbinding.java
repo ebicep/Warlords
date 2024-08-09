@@ -28,7 +28,6 @@ import java.util.List;
 
 public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues>, AbilityStats<Soulbinding, Soulbinding.SoulbindingStats> {
 
-
     private final HealingValues healingValues = new HealingValues();
     private final SoulbindingStats stats = new SoulbindingStats();
     private int tickDuration = 240;
