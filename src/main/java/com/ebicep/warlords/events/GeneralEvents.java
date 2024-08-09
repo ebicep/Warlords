@@ -2,6 +2,7 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.permissions.Permissions;
 import org.bukkit.GameMode;
+import org.bukkit.GameRule;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.*;
 import org.bukkit.entity.*;
@@ -18,6 +19,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -156,6 +158,12 @@ public class GeneralEvents implements Listener {
         if (Permissions.isAdmin(player) && event.getClickedBlock() != null && event.getClickedBlock().getState() instanceof Sign sign) {
             player.openSign(sign, sign.getInteractableSideFor(player));
         }
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent event) {
+        event.getWorld().setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+        event.getWorld().setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
     }
 
 }
