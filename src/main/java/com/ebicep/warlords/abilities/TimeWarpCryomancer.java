@@ -1,7 +1,5 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -48,10 +46,8 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
         Game game = wp.getGame();
         PveOption pveOption = game
-                .getOptions()
+                .getOption(PveOption.class)
                 .stream()
-                .filter(PveOption.class::isInstance)
-                .map(PveOption.class::cast)
                 .findFirst()
                 .orElse(null);
         CryoPod cryoPod;

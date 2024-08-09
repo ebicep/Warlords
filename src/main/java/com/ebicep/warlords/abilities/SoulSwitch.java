@@ -143,10 +143,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
             if (swapTarget instanceof WarlordsNPC npc) {
                 PveOption pveOption = wp.getGame()
-                                        .getOptions()
+                                        .getOption(PveOption.class)
                                         .stream()
-                                        .filter(PveOption.class::isInstance)
-                                        .map(PveOption.class::cast)
                                         .findFirst()
                                         .orElse(null);
                 if (pveOption != null) {

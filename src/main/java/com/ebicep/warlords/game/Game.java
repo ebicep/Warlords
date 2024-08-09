@@ -577,6 +577,17 @@ public final class Game implements Runnable, AutoCloseable {
     // TODO convert option calls to use this
     @Nonnull
     public <T extends Option> List<T> getOption(@Nonnull Class<T> clazz) {
+        if (!cachedOptions.containsKey(clazz)) {
+            List<Option> newList = new ArrayList<>();
+            for (Option option : options) {
+                if (clazz.isInstance(option)) {
+                    newList.add(option);
+                }
+            }
+            if (newList.size() > 0) {
+                cachedOptions.put(clazz, newList);
+            }
+        }
         return (List<T>) cachedOptions.getOrDefault(clazz, Collections.emptyList());
     }
 

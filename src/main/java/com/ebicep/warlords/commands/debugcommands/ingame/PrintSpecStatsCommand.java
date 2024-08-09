@@ -3,7 +3,6 @@ package com.ebicep.warlords.commands.debugcommands.ingame;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeStats;
 import com.ebicep.warlords.player.general.Specializations;
@@ -50,27 +49,34 @@ public class PrintSpecStatsCommand extends BaseCommand {
             ChatChannels.sendDebugMessage(issuer, Component.text("No target", NamedTextColor.RED));
             return;
         }
-        for (Option option : target.getGame().getOptions()) {
-            if (option instanceof SiegeOption siegeOption) {
-                Map<Specializations, SiegeStats> siegeStatsMap = siegeOption.getPlayerSiegeStats().get(target.getUuid());
-                if (siegeStatsMap == null) {
-                    ChatChannels.sendDebugMessage(issuer, Component.text("No siege stats", NamedTextColor.RED));
-                    return;
-                }
-                siegeStatsMap.forEach((specializations, siegeStats) -> {
-                    ChatChannels.sendDebugMessage(issuer, Component.text("Spec: " + specializations.name, NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Points captured: " + siegeStats.getPointsCaptured(), NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Points captured fail: " + siegeStats.getPointsCapturedFail(), NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Time on point: " + siegeStats.getTimeOnPointTicks() / 20, NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads escorted: " + siegeStats.getPayloadsEscorted(), NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads escorted fail: " + siegeStats.getPayloadsEscortedFail(), NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads defended: " + siegeStats.getPayloadsDefended(), NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads defended fail: " + siegeStats.getPayloadsDefendedFail(), NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Time on payload escorting: " + siegeStats.getTimeOnPayloadEscortingTicks() / 20, NamedTextColor.GOLD));
-                    ChatChannels.sendDebugMessage(issuer, Component.text("  Time on payload defending: " + siegeStats.getTimeOnPayloadDefendingTicks() / 20, NamedTextColor.GOLD));
-                });
-            }
-        }
+        target.getGame()
+              .getOption(SiegeOption.class)
+              .stream()
+              .findFirst()
+              .ifPresent(siegeOption -> {
+                  Map<Specializations, SiegeStats> siegeStatsMap = siegeOption.getPlayerSiegeStats().get(target.getUuid());
+                  if (siegeStatsMap == null) {
+                      ChatChannels.sendDebugMessage(issuer, Component.text("No siege stats", NamedTextColor.RED));
+                      return;
+                  }
+                  siegeStatsMap.forEach((specializations, siegeStats) -> {
+                      ChatChannels.sendDebugMessage(issuer, Component.text("Spec: " + specializations.name, NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer, Component.text("  Points captured: " + siegeStats.getPointsCaptured(), NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer, Component.text("  Points captured fail: " + siegeStats.getPointsCapturedFail(), NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer, Component.text("  Time on point: " + siegeStats.getTimeOnPointTicks() / 20, NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads escorted: " + siegeStats.getPayloadsEscorted(), NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads escorted fail: " + siegeStats.getPayloadsEscortedFail(), NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads defended: " + siegeStats.getPayloadsDefended(), NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer, Component.text("  Payloads defended fail: " + siegeStats.getPayloadsDefendedFail(), NamedTextColor.GOLD));
+                      ChatChannels.sendDebugMessage(issuer,
+                              Component.text("  Time on payload escorting: " + siegeStats.getTimeOnPayloadEscortingTicks() / 20, NamedTextColor.GOLD)
+                      );
+                      ChatChannels.sendDebugMessage(issuer,
+                              Component.text("  Time on payload defending: " + siegeStats.getTimeOnPayloadDefendingTicks() / 20, NamedTextColor.GOLD)
+                      );
+                  });
+              });
     }
+}
 
 }
