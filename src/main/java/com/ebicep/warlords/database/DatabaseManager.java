@@ -51,6 +51,7 @@ public class DatabaseManager {
             put(value, new ConcurrentHashMap<>());
         }
     }};
+    public static final DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
     private static final AtomicInteger UPDATE_COOLDOWN = new AtomicInteger(0);
     private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE = new ConcurrentHashMap<>() {{
         for (PlayersCollections value : PlayersCollections.VALUES) {
@@ -81,7 +82,6 @@ public class DatabaseManager {
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
     public static boolean enabled = true;
-    private static DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
 
     public static void init() {
         if (!enabled) {

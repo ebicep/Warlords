@@ -34,6 +34,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.TeleportUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
@@ -384,7 +385,11 @@ public abstract class WarlordsEntity {
 
     public DatabasePlayer getDatabasePlayer() {
         if (cachedDatabasePlayer == null) {
-            cachedDatabasePlayer = DatabaseManager.getPlayer(uuid, entity instanceof Player);
+            cachedDatabasePlayer = DatabaseManager.getPlayer(uuid, this instanceof WarlordsPlayer);
+        }
+        if (cachedDatabasePlayer == null) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Problem caching player " + name + " with uuid " + uuid + " - " + this + " - " + entity);
+            cachedDatabasePlayer = DatabaseManager.CACHED_MOB_DATABASEPLAYER;
         }
         return cachedDatabasePlayer;
     }
