@@ -1042,7 +1042,7 @@ public enum SkillBoosts {
     INCENDIARY_CURSE("Incendiary Curse",
             List.of(
                     Component.text("Reduce the cooldown of Incendiary Curse by "),
-                    Component.text("35%", NamedTextColor.RED),
+                    Component.text("40%", NamedTextColor.RED),
                     Component.text(" and increase the blind duration by "),
                     Component.text("0.5", NamedTextColor.RED),
                     Component.text(" seconds.")
@@ -1051,7 +1051,7 @@ public enum SkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof IncendiaryCurse incendiaryCurse) {
                     incendiaryCurse.setBlindDurationInTicks(incendiaryCurse.getBlindDurationInTicks() + 10);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -1074,13 +1074,13 @@ public enum SkillBoosts {
                     Component.text("Reduce the cooldown by Soul Switch by "),
                     Component.text("60%", NamedTextColor.RED),
                     Component.text(" and increase the range by "),
-                    Component.text("4", NamedTextColor.RED),
+                    Component.text("6", NamedTextColor.RED),
                     Component.text(" blocks.")
             ),
             SoulSwitch.class,
             abstractAbility -> {
                 if (abstractAbility instanceof SoulSwitch soulSwitch) {
-                    soulSwitch.getHitBoxRadius().addAdditiveModifier("Skill Boost", 4);
+                    soulSwitch.getHitBoxRadius().addAdditiveModifier("Skill Boost", 6);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .4f);
                 }
             }
