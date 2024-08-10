@@ -700,14 +700,14 @@ public enum SkillBoosts {
                     Component.text("Increase the range of Consecrate by "),
                     Component.text("2", NamedTextColor.RED),
                     Component.text(" blocks and reduce the cooldown by "),
-                    Component.text("35%", NamedTextColor.RED),
+                    Component.text("40%", NamedTextColor.RED),
                     Component.text(".")
             ),
             ConsecrateProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AbstractConsecrate consecrate) {
                     consecrate.getHitBoxRadius().addAdditiveModifier("Skill Boost", 2);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
                 }
             }
     ),
@@ -716,14 +716,14 @@ public enum SkillBoosts {
                     Component.text("Reduce the cooldown of Light Infusion by "),
                     Component.text("35%", NamedTextColor.RED),
                     Component.text(" and increase the speed duration by "),
-                    Component.text("3", NamedTextColor.RED),
+                    Component.text("4", NamedTextColor.RED),
                     Component.text(" seconds.")
             ),
             LightInfusionProtector.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionProtector lightInfusion) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
-                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
+                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 80);
                 }
             }
     ),
