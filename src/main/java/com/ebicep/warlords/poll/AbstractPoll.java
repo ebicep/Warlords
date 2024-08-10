@@ -151,7 +151,7 @@ public abstract class AbstractPoll<T extends AbstractPoll<T>> {
                                                                        .map(uuid -> Component.text(Bukkit.getOfflinePlayer(uuid).getName(), NamedTextColor.AQUA))
                                                                        .collect(Component.toComponent(Component.text(", ", NamedTextColor.GRAY))));
             if (sendNonVoterMessage(player)) {
-                player.sendMessage(playersThatDidntVote.toString());
+                player.sendMessage(playersThatDidntVote);
             }
             player.sendMessage(Component.text("------------------------------------------", NamedTextColor.BLUE, TextDecoration.BOLD));
         });
