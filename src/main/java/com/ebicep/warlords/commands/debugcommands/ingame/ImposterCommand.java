@@ -23,6 +23,14 @@ import java.util.Comparator;
 @CommandAlias("imposter|impostor")
 public class ImposterCommand extends BaseCommand {
 
+    @Subcommand("setmaximposters")
+    @CommandPermission("warlords.game.impostertoggle")
+    @Description("Set the maximum amount of imposters")
+    public void setMaxImposters(CommandIssuer issuer, @Conditions("limits:min=1") int maxImposters) {
+        ImposterModeOption.NUMBER_OF_IMPOSTERS_PER_TEAM = maxImposters;
+        ChatChannels.sendDebugMessage(issuer, Component.text("Max imposters set to " + maxImposters, NamedTextColor.GREEN));
+    }
+
     @Subcommand("assign")
     @CommandPermission("warlords.game.impostertoggle")
     @Description("Assign/Reassign the imposters in the game")
