@@ -1,5 +1,7 @@
 package com.ebicep.warlords.game.option;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -20,10 +22,12 @@ import java.util.function.Consumer;
 
 public class DummySpawnOption implements Option {
 
+    private Game game;
     private final Location loc;
     private final Team team;
     private final Consumer<WarlordsNPC> onTestDummyCreate;
     private WarlordsNPC testDummy;
+    private boolean resetToHalfHealth = true;
 
     public DummySpawnOption(Location loc, Team team) {
         this(loc, team, warlordsNPC -> {});
@@ -37,19 +41,29 @@ public class DummySpawnOption implements Option {
 
     @Override
     public void register(@Nonnull Game game) {
+        this.game = game;
         game.registerEvents(new Listener() {
             @EventHandler
             public void onDummyDeath(WarlordsDeathEvent event) {
                 WarlordsEntity dead = event.getWarlordsEntity();
                 if (Objects.equals(dead, testDummy)) {
+                    game.getPlayers().remove(testDummy.getUuid());
+                    Warlords.removePlayer(testDummy.getUuid());
                     new GameRunnable(game) {
-
                         @Override
                         public void run() {
-                            testDummy.respawn();
-                            testDummy.teleport(loc);
+                            spawnTestDummy();
                         }
-                    }.runTaskLater(10);
+                    }.runTaskLater(100);
+                }
+            }
+
+            @EventHandler
+            public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                if (Objects.equals(event.getWarlordsEntity(), testDummy)) {
+                    if (resetToHalfHealth && testDummy.getCurrentHealth() == testDummy.getMaxHealth()) {
+                        testDummy.setCurrentHealth(testDummy.getMaxHealth() / 2);
+                    }
                 }
             }
         });
@@ -66,17 +80,21 @@ public class DummySpawnOption implements Option {
                     return;
                 }
 
-                WarlordsNPC dummyNPC = Mob.TEST_DUMMY.createMob(loc).toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null));
-                dummyNPC.setNameColor(team.getTeamColor());
-                onTestDummyCreate.accept(dummyNPC);
-                testDummy = game.addNPC(dummyNPC);
-                if (testDummy.getEntity() instanceof LivingEntity livingEntity) {
-                    livingEntity.setRemoveWhenFarAway(false);
-                }
-                testDummy.teleport(loc);
-                testDummy.setTakeDamage(true);
-                testDummy.updateHealth();
+                spawnTestDummy();
             }
         }.runTaskLater(100);
+    }
+
+    private void spawnTestDummy() {
+        WarlordsNPC dummyNPC = Mob.TEST_DUMMY.createMob(loc).toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null));
+        dummyNPC.setNameColor(team.getTeamColor());
+        onTestDummyCreate.accept(dummyNPC);
+        testDummy = game.addNPC(dummyNPC);
+        if (testDummy.getEntity() instanceof LivingEntity livingEntity) {
+            livingEntity.setRemoveWhenFarAway(false);
+        }
+        testDummy.teleport(loc);
+        testDummy.setTakeDamage(true);
+        testDummy.updateHealth();
     }
 }
