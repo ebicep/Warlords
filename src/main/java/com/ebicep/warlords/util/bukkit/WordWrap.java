@@ -94,9 +94,10 @@ public class WordWrap {
             int wordLength = DefaultFontInfo.getStringLength(word);
             String spacer = !word.equals("(") &&
                                     (i < words.size() - 1 &&
-                                            !words.get(i + 1).word().equals(".") &&
-                                            !words.get(i + 1).word().equals(",") &&
-                                            !words.get(i + 1).word().equals(":"))
+                                            !words.get(i + 1).word().startsWith(".") &&
+                                            !words.get(i + 1).word().startsWith(",") &&
+                                            !words.get(i + 1).word().startsWith(")") &&
+                                            !words.get(i + 1).word().startsWith(":"))
                             ? " " : ""; //TODO TEMP SOLUTION (fix for period/comma being spaced)
             wordLength += DefaultFontInfo.getStringLength(spacer);
             if (currentWidth + wordLength <= width) {
