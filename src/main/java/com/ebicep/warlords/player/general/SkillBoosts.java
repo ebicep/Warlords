@@ -1088,16 +1088,16 @@ public enum SkillBoosts {
     ORDER_OF_EVISCERATE("Order of Eviscerate",
             List.of(
                     Component.text("Increase the duration of Order of Eviscerate by "),
-                    Component.text("4", NamedTextColor.RED),
+                    Component.text("6", NamedTextColor.RED),
                     Component.text(" seconds and reduce the cooldown by "),
-                    Component.text("30%", NamedTextColor.RED),
+                    Component.text("35%", NamedTextColor.RED),
                     Component.text(".")
             ),
             OrderOfEviscerate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof OrderOfEviscerate orderOfEviscerate) {
-                    orderOfEviscerate.setTickDuration(orderOfEviscerate.getTickDuration() + 80);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
+                    orderOfEviscerate.setTickDuration(orderOfEviscerate.getTickDuration() + 120);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
                 }
             }
     ),
