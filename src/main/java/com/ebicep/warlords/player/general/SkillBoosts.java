@@ -1179,7 +1179,7 @@ public enum SkillBoosts {
     IMPALING_STRIKE("Impaling Strike",
             List.of(
                     Component.text("Increase the damage of Impaling Strike by "),
-                    Component.text("10%", NamedTextColor.RED),
+                    Component.text("12.5%", NamedTextColor.RED),
                     Component.text(" and increase the leech duration by "),
                     Component.text("5", NamedTextColor.RED),
                     Component.text(" seconds.")
@@ -1191,7 +1191,7 @@ public enum SkillBoosts {
                     impalingStrike.getDamageValues()
                                   .getStrikeDamage()
                                   .forEachValue(floatModifiable -> {
-                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
+                                      floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .125f);
                                   });
                 }
             }
