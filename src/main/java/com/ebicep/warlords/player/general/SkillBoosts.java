@@ -530,7 +530,7 @@ public enum SkillBoosts {
     CONSECRATE_AVENGER("Consecrate",
             List.of(
                     Component.text("Increase the damage of Consecrate by "),
-                    Component.text("35%", NamedTextColor.RED),
+                    Component.text("40%", NamedTextColor.RED),
                     Component.text(" and remove the energy cost.")
             ),
             ConsecrateAvenger.class,
@@ -540,7 +540,7 @@ public enum SkillBoosts {
                     consecrateAvenger.getDamageValues()
                                      .getConsecrateDamage()
                                      .forEachValue(floatModifiable -> {
-                                         floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .35f);
+                                         floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .4f);
                                      });
                 }
             }
