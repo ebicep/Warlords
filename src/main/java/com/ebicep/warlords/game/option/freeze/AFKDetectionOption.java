@@ -67,7 +67,7 @@ public class AFKDetectionOption implements Option {
     @Override
     public void start(@Nonnull Game game) {
         if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || GameMode.isPvE(game.getGameMode())) {
-            return;
+//            return;
         }
         new GameRunnable(game) {
 
@@ -100,7 +100,7 @@ public class AFKDetectionOption implements Option {
                         List<Location> locations = playerLocations.get(we);
                         List<Location> lastLocations = locations.subList(Math.max(locations.size() - COUNTER_CHECK, 0), locations.size());
                         int counter = 0;
-                        for (int i = 1; i < lastLocations.size(); i++) {
+                        for (int i = lastLocations.size() - 1; i >= 1; i--) {
                             if (lastLocations.get(i).equals(lastLocations.get(i - 1))) {
                                 counter++;
                             } else {
