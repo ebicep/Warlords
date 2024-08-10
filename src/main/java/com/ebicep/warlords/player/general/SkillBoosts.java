@@ -636,14 +636,14 @@ public enum SkillBoosts {
                     Component.text("Reduce the cooldown of Light Infusion by "),
                     Component.text("35%", NamedTextColor.RED),
                     Component.text(" and increase the speed duration by "),
-                    Component.text("3", NamedTextColor.RED),
+                    Component.text("4", NamedTextColor.RED),
                     Component.text(" seconds.")
             ),
             LightInfusionCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusionCrusader lightInfusion) {
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
-                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 60);
+                    lightInfusion.setTickDuration(lightInfusion.getTickDuration() + 80);
                 }
             }
     ),
