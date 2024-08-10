@@ -1230,7 +1230,7 @@ public enum SkillBoosts {
     REMEDIC_CHAINS("Remedic Chains",
             List.of(
                     Component.text("Increase the damage bonus of Remedic Chains by "),
-                    Component.text("6%", NamedTextColor.RED),
+                    Component.text("10%", NamedTextColor.RED),
                     Component.text(" and increase the link break range by "),
                     Component.text("10", NamedTextColor.RED),
                     Component.text(" blocks.")
@@ -1238,7 +1238,7 @@ public enum SkillBoosts {
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains remedicChains) {
-                    remedicChains.setAllyDamageIncrease(remedicChains.getAllyDamageIncrease() + 6);
+                    remedicChains.setAllyDamageIncrease(remedicChains.getAllyDamageIncrease() + 10);
                     remedicChains.setLinkBreakRadius(remedicChains.getLinkBreakRadius() + 10);
                 }
             }
