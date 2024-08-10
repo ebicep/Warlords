@@ -97,7 +97,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                         .append(Component.text("Vindicate", NamedTextColor.YELLOW))
                         .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
                         .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text("!", NamedTextColor.GRAY))
+                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
                 );
             }
 

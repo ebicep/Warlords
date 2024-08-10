@@ -98,7 +98,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     .append(Component.text("damage", NamedTextColor.RED))
                     .append(Component.text(" for ", NamedTextColor.GRAY))
                     .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
             );
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             if (pveMasterUpgrade) {

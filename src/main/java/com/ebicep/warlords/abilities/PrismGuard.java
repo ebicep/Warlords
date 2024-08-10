@@ -153,7 +153,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                                                           .append(Component.text(damageReduction + "%", NamedTextColor.YELLOW))
                                                                           .append(Component.text(" damage reduction for ", NamedTextColor.GRAY))
                                                                           .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                                                          .append(Component.text("!", NamedTextColor.GRAY))
+                                                                          .append(Component.text(" seconds!", NamedTextColor.GRAY))
                         );
                         entity.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Prism Guard",

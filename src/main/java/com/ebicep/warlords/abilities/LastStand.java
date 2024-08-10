@@ -202,7 +202,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                     .append(Component.text("Last Stand", NamedTextColor.YELLOW))
                     .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
                     .append(Component.text(format(allyTickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
             );
         }
 

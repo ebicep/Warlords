@@ -293,7 +293,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                         .append(Component.text("Undying Army", NamedTextColor.YELLOW))
                         .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
                         .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                        .append(Component.text(".", NamedTextColor.GRAY))
+                        .append(Component.text(" seconds.", NamedTextColor.GRAY))
                 );
             }
             teammate.getCooldownManager().addRegularCooldown(

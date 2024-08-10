@@ -128,7 +128,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     .append(Component.text("Mystical Barrier", NamedTextColor.YELLOW))
                     .append(Component.text(" is now protecting you for ", NamedTextColor.GRAY))
                     .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text("!", NamedTextColor.GRAY))
+                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
             );
         }
 

@@ -275,7 +275,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                                  .append(Component.text(Math.round(data.delayedDamage), NamedTextColor.RED))
                                                  .append(Component.text(" damage. ", NamedTextColor.GRAY))
                                                  .append(Component.text(Math.round(ticksLeft / 20f), NamedTextColor.GOLD))
-                                                 .append(Component.text(" left.", NamedTextColor.GRAY))
+                                                 .append(Component.text(" seconds left.", NamedTextColor.GRAY))
                                 ));
 
                         if (wp.isInPve()) {
