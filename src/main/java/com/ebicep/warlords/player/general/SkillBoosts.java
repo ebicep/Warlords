@@ -103,13 +103,13 @@ public enum SkillBoosts {
     FROST_BOLT("Frostbolt",
             List.of(
                     Component.text("Increase the direct hit damage bonus of Frostbolt by "),
-                    Component.text("40%", NamedTextColor.RED),
+                    Component.text("35%", NamedTextColor.RED),
                     Component.text(".")
             ),
             FrostBolt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof FrostBolt frostBolt) {
-                    frostBolt.setDirectHitMultiplier(frostBolt.getDirectHitMultiplier() + 40);
+                    frostBolt.setDirectHitMultiplier(frostBolt.getDirectHitMultiplier() + 35);
                 }
             }
     ),
