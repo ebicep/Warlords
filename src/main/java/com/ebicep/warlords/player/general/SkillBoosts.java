@@ -430,8 +430,10 @@ public enum SkillBoosts {
             List.of(
                     Component.text("Increase crippling by "),
                     Component.text("10%", NamedTextColor.RED),
-                    Component.text(" and increase the additional reduction per strike by "),
+                    Component.text(", increase the additional reduction per strike by "),
                     Component.text("5%", NamedTextColor.RED),
+                    Component.text(", and reduce the energy cost by "),
+                    Component.text("10", NamedTextColor.RED),
                     Component.text(".")
             ),
             CripplingStrike.class,
@@ -439,6 +441,7 @@ public enum SkillBoosts {
                 if (abstractAbility instanceof CripplingStrike cripplingStrike) {
                     cripplingStrike.setCripple(cripplingStrike.getCripple() + 10);
                     cripplingStrike.setCripplePerStrike(cripplingStrike.getCripplePerStrike() + 5);
+                    abstractAbility.getEnergyCost().addAdditiveModifier("Skill Boost", -10);
                 }
             }
     ),
