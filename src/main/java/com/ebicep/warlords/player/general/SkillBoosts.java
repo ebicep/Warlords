@@ -1291,13 +1291,13 @@ public enum SkillBoosts {
     ENERGY_SEER_CONJURER("Energy Seer",
             List.of(
                     Component.text("Reduce the cooldown of Energy Seer by "),
-                    Component.text("40%", NamedTextColor.RED),
+                    Component.text("45%", NamedTextColor.RED),
                     Component.text(".")
             ),
             EnergySeerConjurer.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerConjurer) {
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .6f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .55f);
                 }
             }
     ),
