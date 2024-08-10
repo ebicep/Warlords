@@ -1,5 +1,6 @@
 package com.ebicep.warlords.party;
 
+import com.ebicep.jda.queuesystem.QueueManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -99,6 +100,8 @@ public class Party {
             promote(uuid);
         }
         Bukkit.getPlayer(uuid).sendMessage(getPartyList());
+        QueueManager.removePlayerFromQueue(uuid);
+        QueueManager.removePlayerFromFutureQueue(uuid);
     }
 
     public void leave(UUID uuid) {
