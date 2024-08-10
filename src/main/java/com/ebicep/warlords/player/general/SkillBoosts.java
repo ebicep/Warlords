@@ -1443,13 +1443,13 @@ public enum SkillBoosts {
     ENERGY_SEER_LUMINARY("Energy Seer",
             List.of(
                     Component.text("Increase the energy restored by Energy Seer by "),
-                    Component.text("120", NamedTextColor.RED),
+                    Component.text("140", NamedTextColor.RED),
                     Component.text(".")
             ),
             EnergySeerLuminary.class,
             abstractAbility -> {
                 if (abstractAbility instanceof EnergySeerLuminary energySeerLuminary) {
-                    energySeerLuminary.setEnergyRestore(energySeerLuminary.getEnergyRestore() + 120);
+                    energySeerLuminary.setEnergyRestore(energySeerLuminary.getEnergyRestore() + 140);
                 }
             }
     ),
