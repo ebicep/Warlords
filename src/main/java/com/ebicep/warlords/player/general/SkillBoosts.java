@@ -1216,14 +1216,14 @@ public enum SkillBoosts {
     VITALITY_CONCOCTION("Vitality Concoction",
             List.of(
                     Component.text("Remove the energy cost of Vitality Concoction and increase the duration by "),
-                    Component.text("0.8s", NamedTextColor.RED),
+                    Component.text("1s", NamedTextColor.RED),
                     Component.text(".")
             ),
             VitalityConcoction.class,
             abstractAbility -> {
                 if (abstractAbility instanceof VitalityConcoction vitalityConcoction) {
                     abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
-                    vitalityConcoction.setTickDuration(vitalityConcoction.getTickDuration() + 16);
+                    vitalityConcoction.setTickDuration(vitalityConcoction.getTickDuration() + 20);
                 }
             }
     ),
