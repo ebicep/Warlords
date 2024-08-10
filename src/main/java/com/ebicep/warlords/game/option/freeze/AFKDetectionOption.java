@@ -67,7 +67,7 @@ public class AFKDetectionOption implements Option {
     @Override
     public void start(@Nonnull Game game) {
         if (game.getPlayers().size() < 14 || game.getAddons().contains(GameAddon.CUSTOM_GAME) || GameMode.isPvE(game.getGameMode())) {
-//            return;
+            return;
         }
         new GameRunnable(game) {
 
