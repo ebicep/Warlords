@@ -493,13 +493,13 @@ public enum SkillBoosts {
                     Component.text("Reduce the damage of Undying Army after dying by "),
                     Component.text("5%", NamedTextColor.RED),
                     Component.text(" and increase the duration by "),
-                    Component.text("5", NamedTextColor.RED),
+                    Component.text("7", NamedTextColor.RED),
                     Component.text(" seconds.")
             ),
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy undyingArmy) {
-                    undyingArmy.setTickDuration(undyingArmy.getTickDuration() + 100);
+                    undyingArmy.setTickDuration(undyingArmy.getTickDuration() + 140);
                     undyingArmy.setMaxHealthDamage(undyingArmy.getMaxHealthDamage() - 5);
                 }
             }
