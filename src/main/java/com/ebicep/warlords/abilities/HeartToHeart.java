@@ -214,7 +214,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                             .value(healingValues.heartToHeartHealing)
                     );
                     heartTarget.addInstance(InstanceBuilder
-                            .create(heartTarget.isTeammateAlive(wp) ? InstanceBuilder.InstanceType.HEALING : InstanceBuilder.InstanceType.DAMAGE)
+                            .create(heartTarget.isTeammate(wp) ? InstanceBuilder.InstanceType.HEALING : InstanceBuilder.InstanceType.DAMAGE)
                             .ability(HeartToHeart.this)
                             .source(wp)
                             .value(healingValues.heartToHeartHealing)
