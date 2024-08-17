@@ -48,7 +48,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
                 playerFlagLocation.getTicksElapsed(),
                 playerFlagLocation.getFlagMultiplier(),
                 manuallyDropped,
-                playerFlagLocation.getPlayer().isDead() ? (int) (15 * (1 + playerFlagLocation.getFlagMultiplier() / 100f)) : 0
+                playerFlagLocation.getPlayer().isDead() ? (int) (20 * (1 + playerFlagLocation.getFlagMultiplier() / 100f)) : 0
         );
     }
 
