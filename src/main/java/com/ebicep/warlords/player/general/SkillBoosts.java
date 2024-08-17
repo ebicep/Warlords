@@ -1307,9 +1307,11 @@ public enum SkillBoosts {
                     Component.text("20%", NamedTextColor.RED),
                     Component.text(", reduce the cooldown by "),
                     Component.text("30%", NamedTextColor.RED),
-                    Component.text(", and grant "),
+                    Component.text(", grant "),
                     Component.text("1", NamedTextColor.RED),
-                    Component.text(" extra Hex stack.")
+                    Component.text(" extra Hex stack, and infect "),
+                    Component.text("1", NamedTextColor.RED),
+                    Component.text(" extra player.")
             ),
             ContagiousFacade.class,
             abstractAbility -> {
@@ -1317,6 +1319,7 @@ public enum SkillBoosts {
                     contagiousFacade.getDamageAbsorption().addAdditiveModifier("Skill Boost", 20);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .7f);
                     contagiousFacade.setStacksGranted(contagiousFacade.getStacksGranted() + 1);
+                    contagiousFacade.setInfectedPlayers(contagiousFacade.getInfectedPlayers() + 1);
                 }
             }
     ),
