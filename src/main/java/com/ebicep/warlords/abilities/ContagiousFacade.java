@@ -288,6 +288,14 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         this.stacksGranted = stacksGranted;
     }
 
+    public int getInfectedPlayers() {
+        return infectedPlayers;
+    }
+
+    public void setInfectedPlayers(int infectedPlayers) {
+        this.infectedPlayers = infectedPlayers;
+    }
+
     @Override
     public ContagiousFacadeStats getAbilityStats() {
         return stats;
