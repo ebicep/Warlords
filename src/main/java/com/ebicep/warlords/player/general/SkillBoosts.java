@@ -1323,13 +1323,16 @@ public enum SkillBoosts {
     ASTRAL_PLAGUE("Astral Plague",
             List.of(
                     Component.text("Reduce the cooldown of Astral Plague by "),
-                    Component.text("35%", NamedTextColor.RED),
-                    Component.text(".")
+                    Component.text("20%", NamedTextColor.RED),
+                    Component.text(" and increase the duration by "),
+                    Component.text("12", NamedTextColor.RED),
+                    Component.text(" seconds.")
             ),
             AstralPlague.class,
             abstractAbility -> {
-                if (abstractAbility instanceof AstralPlague) {
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .65f);
+                if (abstractAbility instanceof AstralPlague astralPlague) {
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
+                    astralPlague.setTickDuration(astralPlague.getTickDuration() + 240);
                 }
             }
     ),
