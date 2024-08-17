@@ -73,14 +73,14 @@ public enum SkillBoosts {
     ARCANE_SHIELD_PYROMANCER("Arcane Shield",
             List.of(
                     Component.text("Remove the energy cost of Arcane Shield and reduce the cooldown by "),
-                    Component.text("50%", NamedTextColor.RED),
+                    Component.text("55%", NamedTextColor.RED),
                     Component.text(".")
             ),
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     abstractAbility.getEnergyCost().addMultiplicativeModifierMult("Skill Boost", 0);
-                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .5f);
+                    abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .45f);
                 }
             }
     ),
