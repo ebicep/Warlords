@@ -798,6 +798,7 @@ public enum GameMode {
         options.add(new KillDamage());
         options.add(new VoidDamage());
         options.add(new FlyOption());
+        options.add(new PlayerCooldownDisplayOption());
 
         return options;
     }

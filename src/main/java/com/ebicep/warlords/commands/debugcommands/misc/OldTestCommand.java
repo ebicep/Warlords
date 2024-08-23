@@ -1,12 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.abilities.internal.Ability;
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -14,10 +13,19 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Transformation;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -120,17 +128,17 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 //            player.setHealth(0);
-            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                for (Ability<?> value : Ability.VALUES) {
-                    AbstractAbility abstractAbility = value.create.get();
-                    if (abstractAbility instanceof AbilityStats<?, ?> abilityStats) {
-                        if (abstractAbility.getClass() == null) {
-                            System.out.println("NULL: " + abilityStats.getName());
-                        }
-                    }
-                }
-                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-            });
+//            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+//                for (Ability<?> value : Ability.VALUES) {
+//                    AbstractAbility abstractAbility = value.create.get();
+//                    if (abstractAbility instanceof AbilityStats<?, ?> abilityStats) {
+//                        if (abstractAbility.getClass() == null) {
+//                            System.out.println("NULL: " + abilityStats.getName());
+//                        }
+//                    }
+//                }
+//                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//            });
 //            player.setPose(Pose.DYING);
 //            player.playHurtAnimation(270);
 //            ServerLevel serverLevel = ((CraftWorld) player.getWorld()).getHandle();
@@ -172,28 +180,29 @@ public class OldTestCommand implements CommandExecutor {
 //                }
 //            }
 
-//            Location location = player.getLocation();
-//            Display display = location.getWorld().spawn(
-//                    new LocationBuilder(location)
-//                            .pitch(0)
-//                    ,
-//                    ItemDisplay.class,
-//                    d -> {
-//                        d.setTransformation(new Transformation(
-//                                new Vector3f(0, 2, 0),
-//                                new AxisAngle4f(),
-//                                new Vector3f(1.5f),
-//                                new AxisAngle4f()
-//                        ));
-//                        d.setItemStack(new ItemStack(Material.BROWN_MUSHROOM));
-//                    }
-//            );
-//            new BukkitRunnable() {
-//                @Override
-//                public void run() {
-//                    display.remove();
-//                }
-//            }.runTaskLater(Warlords.getInstance(), 10 * 20);
+            Location location = player.getLocation();
+            Display display = location.getWorld().spawn(
+                    new LocationBuilder(location)
+                            .pitch(0)
+                    ,
+                    ItemDisplay.class,
+                    d -> {
+                        d.setTransformation(new Transformation(
+                                new Vector3f(0, 0, 0),
+                                new AxisAngle4f(),
+                                new Vector3f(1),
+                                new AxisAngle4f()
+                        ));
+                        d.setItemStack(new ItemStack(Material.GLOWSTONE_DUST));
+                        d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.GUI);
+                    }
+            );
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    display.remove();
+                }
+            }.runTaskLater(Warlords.getInstance(), 10 * 20);
 
 //            LocationBuilder locationBuilder = new LocationBuilder(player.getLocation())
 //                    .pitch(0)

@@ -598,6 +598,7 @@ public class CommandManager {
         manager.registerCommand(new AbilityCommand());
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
+        manager.registerCommand(new PlayerCooldownDisplayCommand());
         manager.registerCommand(new PrintFloatModifiableCommand());
         manager.registerCommand(new PrintSpecStatsCommand());
         manager.registerCommand(new StunClearCommand());
