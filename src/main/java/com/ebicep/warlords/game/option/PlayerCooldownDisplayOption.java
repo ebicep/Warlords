@@ -46,6 +46,9 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
             @Override
             public void run() {
+                if (!enabled) {
+                    return;
+                }
                 playerSettings.forEach((warlordsEntity, cooldownData) -> {
                     if (ticksElapsed % 10 == 0) {
                         cooldownData.cooldowns.update(warlordsEntity);
@@ -70,14 +73,14 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                                 }
                                 boolean samePlayer = warlordsEntity == we;
                                 otherData.cooldowns.cooldownEntities.forEach(cooldownEntities -> {
-                                    if (!samePlayer && shouldSee && !player.canSee(cooldownEntities.itemDisplay)) {
+                                    if (enabled && !samePlayer && shouldSee && !player.canSee(cooldownEntities.itemDisplay)) {
                                         player.showEntity(Warlords.getInstance(), cooldownEntities.itemDisplay);
-                                    } else if (samePlayer || !shouldSee && player.canSee(cooldownEntities.itemDisplay)) {
+                                    } else if (!enabled || samePlayer || !shouldSee && player.canSee(cooldownEntities.itemDisplay)) {
                                         player.hideEntity(Warlords.getInstance(), cooldownEntities.itemDisplay);
                                     }
-                                    if (!samePlayer && shouldSee && !player.canSee(cooldownEntities.textDisplay)) {
+                                    if (enabled && !samePlayer && shouldSee && !player.canSee(cooldownEntities.textDisplay)) {
                                         player.showEntity(Warlords.getInstance(), cooldownEntities.textDisplay);
-                                    } else if (samePlayer || !shouldSee && player.canSee(cooldownEntities.textDisplay)) {
+                                    } else if (!enabled || samePlayer || !shouldSee && player.canSee(cooldownEntities.textDisplay)) {
                                         player.hideEntity(Warlords.getInstance(), cooldownEntities.textDisplay);
                                     }
                                 });
