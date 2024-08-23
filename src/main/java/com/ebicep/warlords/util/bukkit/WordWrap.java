@@ -94,6 +94,7 @@ public class WordWrap {
             int wordLength = DefaultFontInfo.getStringLength(word);
             String spacer = !word.equals("(") &&
                                     (i < words.size() - 1 &&
+                                            !words.get(i + 1).word().startsWith(";") &&
                                             !words.get(i + 1).word().startsWith(".") &&
                                             !words.get(i + 1).word().startsWith(",") &&
                                             !words.get(i + 1).word().startsWith(")") &&
