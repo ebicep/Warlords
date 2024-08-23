@@ -147,7 +147,7 @@ public abstract class AbstractMob implements Mob {
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         defaultParameters.attackRange(getDefaultAttackRange())
                          .stuckAction(null) // disable tping to player if too far away
-                         .updatePathRate(5)
+                         .updatePathRate(6)
                          .distanceMargin(.5)
                          .speedModifier(.9f)
                          .range(100);
