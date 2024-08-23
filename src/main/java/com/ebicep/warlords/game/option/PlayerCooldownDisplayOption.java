@@ -92,6 +92,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
     @Override
     public void onGameCleanup(@Nonnull Game game) {
+        playerSettings.forEach((warlordsEntity, cooldownData) -> cooldownData.cooldowns.cooldownEntities.forEach(Cooldowns.CooldownEntities::remove));
         playerSettings.clear();
     }
 
