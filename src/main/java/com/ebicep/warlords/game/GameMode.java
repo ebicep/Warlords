@@ -79,6 +79,7 @@ public enum GameMode {
 
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -120,6 +121,8 @@ public enum GameMode {
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
             options.add(new FlagGlowOption());
+            options.add(new PlayerCooldownDisplayOption());
+
             return options;
         }
     },
@@ -188,6 +191,8 @@ public enum GameMode {
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
+            options.add(new PlayerCooldownDisplayOption());
+
             return options;
         }
     },
@@ -223,6 +228,8 @@ public enum GameMode {
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+            options.add(new PlayerCooldownDisplayOption());
+
             return options;
         }
     },
@@ -254,6 +261,8 @@ public enum GameMode {
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+            options.add(new PlayerCooldownDisplayOption());
+
             return options;
         }
     },
@@ -287,6 +296,8 @@ public enum GameMode {
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+            options.add(new PlayerCooldownDisplayOption());
+
             return options;
         }
     },
@@ -324,6 +335,7 @@ public enum GameMode {
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
             options.add(new BountyOption());
+            options.add(new PlayerCooldownDisplayOption());
             return options;
         }
     },
@@ -362,6 +374,7 @@ public enum GameMode {
             options.add(new GameFreezeOption());
             options.add(new BasicScoreboardOption());
             options.add(new BountyOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -404,6 +417,7 @@ public enum GameMode {
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
             options.add(new BasicScoreboardOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -440,6 +454,7 @@ public enum GameMode {
             options.add(new WinByAllDeathOption(Team.BLUE));
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -476,6 +491,7 @@ public enum GameMode {
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WinByAllDeathOption(Team.BLUE));
             options.add(new DieOnLogoutOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -501,6 +517,8 @@ public enum GameMode {
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+            options.add(new PlayerCooldownDisplayOption());
+
             return options;
         }
     },
@@ -550,6 +568,7 @@ public enum GameMode {
             options.add(new DieOnLogoutOption());
             options.add(new GameFreezeOption());
             options.add(new BountyOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -586,6 +605,7 @@ public enum GameMode {
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -634,6 +654,7 @@ public enum GameMode {
 
             options.add(new GlowingTeamOption());
             options.add(new SwapSpecOption());
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -677,6 +698,7 @@ public enum GameMode {
                 }
             }
 
+            options.add(new PlayerCooldownDisplayOption());
 
             return options;
         }
@@ -798,7 +820,6 @@ public enum GameMode {
         options.add(new KillDamage());
         options.add(new VoidDamage());
         options.add(new FlyOption());
-        options.add(new PlayerCooldownDisplayOption());
 
         return options;
     }
