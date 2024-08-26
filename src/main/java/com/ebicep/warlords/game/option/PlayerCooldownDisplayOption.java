@@ -2,9 +2,11 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.general.settings.CooldownDisplayMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -63,9 +65,12 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                         if (!(warlordsEntity.getEntity() instanceof Player player)) {
                             return;
                         }
+                        DatabasePlayer databasePlayer = warlordsEntity.getDatabasePlayer();
+                        CooldownDisplayMode cooldownDisplayMode = databasePlayer.getCooldownDisplayMode();
                         warlordsEntityByTeam.forEach((team, warlordsEntities) -> {
                             boolean sameTeam = team == warlordsEntity.getTeam();
-                            boolean shouldSee = sameTeam && cooldownData.seeTeammates || !sameTeam && cooldownData.seeEnemies;
+                            boolean shouldSee = cooldownDisplayMode == CooldownDisplayMode.ON &&
+                                    (sameTeam && cooldownData.seeTeammates || !sameTeam && cooldownData.seeEnemies);
                             warlordsEntities.forEach(we -> {
                                 CooldownData otherData = playerSettings.get(we);
                                 if (otherData == null) {

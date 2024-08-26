@@ -1015,7 +1015,7 @@ public class WarlordsNewHotbarMenu {
         @Default
         public static void openSettingsMenu(Player player) {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                Menu menu = new Menu("Settings", 9 * 4);
+                Menu menu = new Menu("Settings", 9 * 5);
                 menu.setItem(
                         1,
                         1,
@@ -1069,14 +1069,23 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(
                         7,
                         1,
+                        databasePlayer.getCooldownDisplayMode().item,
+                        (m, e) -> {
+                            player.performCommand("cooldowndisplaymode");
+                            openSettingsMenu(player);
+                        }
+                );
+                menu.setItem(
+                        1,
+                        2,
                         ActionBarSettings.ITEM,
                         (m, e) -> {
                             ActionBarSettings.openMenu(player, databasePlayer);
                         }
                 );
 
-                menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
-                menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
+                menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
                 menu.openForPlayer(player);
             });
         }

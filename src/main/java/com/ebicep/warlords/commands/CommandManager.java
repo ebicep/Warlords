@@ -636,6 +636,7 @@ public class CommandManager {
         manager.registerCommand(new AchievementsCommand(), true);
         manager.registerCommand(new ChatCommand());
         manager.registerCommand(new ClassCommand());
+        manager.registerCommand(new CooldownDisplayModeCommand());
         manager.registerCommand(new DiscordCommand());
         manager.registerCommand(new FastWaveModeCommand());
         manager.registerCommand(new FlagMessageModeCommand());

@@ -103,6 +103,8 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
     private ChatSettings.ChatEventPoints chatEventPointsMode = ChatSettings.ChatEventPoints.ALL;
     @Field("chat_upgrade")
     private ChatSettings.ChatUpgrade chatUpgradeMode = ChatSettings.ChatUpgrade.ALL;
+    @Field("cooldown_display_mode")
+    private CooldownDisplayMode cooldownDisplayMode = CooldownDisplayMode.ON;
     @Field("action_bar_settings")
     private ActionBarSettings actionBarSettings = new ActionBarSettings();
 
@@ -436,6 +438,14 @@ public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStat
 
     public void setChatUpgradeMode(ChatSettings.ChatUpgrade chatUpgradeMode) {
         this.chatUpgradeMode = chatUpgradeMode;
+    }
+
+    public CooldownDisplayMode getCooldownDisplayMode() {
+        return cooldownDisplayMode;
+    }
+
+    public void setCooldownDisplayMode(CooldownDisplayMode cooldownDisplayMode) {
+        this.cooldownDisplayMode = cooldownDisplayMode;
     }
 
     public ActionBarSettings getActionBarSettings() {
