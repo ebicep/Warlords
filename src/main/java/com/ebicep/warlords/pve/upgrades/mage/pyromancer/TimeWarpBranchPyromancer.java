@@ -28,8 +28,9 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
         masterUpgrade = new Upgrade(
                 "Infernal Leap",
                 "Time Warp - Master Upgrade",
-                "Time Warp can now be re-activated to teleport you back early. Additionally, gain 1% Crit Chance and Crit" +
-                        " Multiplier for each block travelled while Time Warp is active and double the duration of Time Warp.",
+                """
+                        Time Warp can now be re-activated to teleport you back early.
+                        Additionally, gain 1% damage for each block travelled while Time Warp is active and double the duration of Time Warp.""",
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
@@ -40,9 +41,8 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
                 "Accursed Leap",
                 "Time Warp - Master Upgrade",
                 """
-                        While Time Warp is active, enemies you run into will become linked.
-                        When warping back, all linked enemies will combust dealing 5% of their max hp as damage.
-                        For every linked enemy that dies prior to completing the warp will reduce Time Warp cooldown by .75s.
+                        After warping back, enemies within 8 blocks will combust dealing 5% of their max hp as damage.
+                        The cooldown of Time Warp is reduced by .75s for each enemy killed.
                         """,
                 50000,
                 () -> {
