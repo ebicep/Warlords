@@ -288,6 +288,12 @@ public class CooldownManager {
                                 .toList();
     }
 
+    public List<AbstractCooldown<?>> getNonDebuffCooldowns() {
+        return abstractCooldowns.stream()
+                                .filter(cooldown -> cooldown.getCooldownType() != CooldownTypes.DEBUFF)
+                                .toList();
+    }
+
     public void removeAbilityCooldowns() {
         List<AbstractCooldown<?>> removed = new ArrayList<>();
         abstractCooldowns.removeIf(cd -> {

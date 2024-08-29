@@ -23,7 +23,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                     public void run(float value) {
                         ability.setFlatHealing(flatHealing + value);
                     }
-                }, 25f)
+                }, 50f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

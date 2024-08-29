@@ -13,7 +13,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability.getHealValues().getOrbHealing(), 12.5f)
+                .addUpgradeHealing(ability.getHealValues().getOrbHealing(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
