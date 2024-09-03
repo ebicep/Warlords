@@ -135,8 +135,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             // 6.5 seconds = 130 ticks
                             // 6.5 seconds = 1 + (130/325) = 1.4
                             // 225 *= 1.4 = 315
-                            if (orb.getPlayerToMoveTowards() == null && ticksLived > healingIncreaseTickDelay) {
-                                orbHeal *= 1 + ticksLived / ((float) healingIncreaseTickTime / healingIncrease * 100);
+                            int healingIncreaseTicksLived = ticksLived - healingIncreaseTickDelay;
+                            if ((pveMasterUpgrade2 || orb.getPlayerToMoveTowards() == null) && healingIncreaseTicksLived > 0) {
+                                orbHeal *= 1 + healingIncreaseTicksLived / ((float) healingIncreaseTickTime / healingIncrease * 100);
                             }
 
                             healPlayer(teammateToHeal, wp, orbHeal);
@@ -171,6 +172,14 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 if (ability.equals("Crippling Strike")) {
                     spawnOrbs(wp, event.getWarlordsEntity(), ability, this);
                 }
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade) {
+                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(25f, .5f * data.spawnedOrbs.size()));
+                }
+                return currentDamageValue;
             }
 
         };
