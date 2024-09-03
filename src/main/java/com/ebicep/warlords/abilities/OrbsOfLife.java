@@ -47,10 +47,9 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     private final OrbsOfLifeStats stats = new OrbsOfLifeStats();
     private int tickDuration = 280;
     private int initialOrbs = 3;
-    private int orbTickMultiplier = 1;
-    private float healingIncreaseDelay = 1.5f;
-    private float healingIncreaseTime = 6.5f;
-    //TODO: Variables for magical numbers in description (Duration)
+    private int orbTickDuration = 160;
+    private int healingIncreaseTickDelay = 30;
+    private int healingIncreaseTickTime = 130;
     private int healingIncrease = 40;
 
     public OrbsOfLife() {
@@ -71,11 +70,11 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                 .text(" health to the ally that picks it up. Other nearby allies recover ")
                 .heal(healingValues.orbHealing)
                 .text(" health. After ")
-                .durationSeconds(healingIncreaseDelay)
+                .durationTicks(healingIncreaseTickDelay)
                 .text(" the healing will increase by ")
                 .percent(healingIncrease, NamedTextColor.GREEN)
                 .text(" over ")
-                .durationSeconds(healingIncreaseTime)
+                .durationTicks(healingIncreaseTickTime)
                 .text(". Lasts ")
                 .durationTicks(tickDuration)
                 .text("seconds.")
@@ -126,6 +125,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                             .closestFirst(orbPosition)
                                             .findFirst()
                                             .orElse(null);
+                        int ticksLived = orb.getArmorStand().getTicksLived();
                         if (teammateToHeal != null) {
                             orb.remove();
                             itr.remove();
@@ -135,8 +135,8 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                             // 6.5 seconds = 130 ticks
                             // 6.5 seconds = 1 + (130/325) = 1.4
                             // 225 *= 1.4 = 315
-                            if (orb.getPlayerToMoveTowards() == null) {
-                                orbHeal *= 1 + orb.getTicksLived() / (healingIncreaseTime * 20 / healingIncrease * 100);
+                            if (orb.getPlayerToMoveTowards() == null && ticksLived > healingIncreaseTickDelay) {
+                                orbHeal *= 1 + ticksLived / ((float) healingIncreaseTickTime / healingIncrease * 100);
                             }
 
                             healPlayer(teammateToHeal, wp, orbHeal);
@@ -152,8 +152,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 Utils.playGlobalSound(teammateToHeal.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.2f, 1);
                             }
                         } else {
-                            // Checks whether the Orb of Life has lived for 8 seconds.
-                            if (orb.getTicksLived() > orb.getTicksToLive() || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
+                            if (ticksLived > orbTickDuration || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDead())) {
                                 orb.remove();
                                 itr.remove();
                             }
@@ -297,7 +296,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         Location location = victim.getLocation();
         Location spawnLocation = generateSpawnLocation(location, data.getSpawnedOrbs().stream().map(orb -> orb.getArmorStand().getLocation()).toList());
 
-        OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), data.getOrbTickMultiplier(), data);
+        OrbOfLife orb = new OrbOfLife(spawnLocation, cooldown.getFrom(), data);
         data.getSpawnedOrbs().add(orb);
         data.getOrbsOfLife().getAbilityStats().orbsProduced++;
         if (++data.orbsProduced >= 50) {
@@ -339,10 +338,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return new OrbsOfLifeBranch(abilityTree, this);
     }
 
-    public void setOrbTickMultiplier(int orbTickMultiplier) {
-        this.orbTickMultiplier = orbTickMultiplier;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -371,13 +366,29 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return stats;
     }
 
+    public int getHealingIncrease() {
+        return healingIncrease;
+    }
+
+    public void setHealingIncrease(int healingIncrease) {
+        this.healingIncrease = healingIncrease;
+    }
+
+    public int getOrbTickDuration() {
+        return orbTickDuration;
+    }
+
+    public void setOrbTickDuration(int orbTickDuration) {
+        this.orbTickDuration = orbTickDuration;
+    }
+
     public static class OrbOfLife extends OrbPassenger {
 
         private final OrbsOfLifeData data;
         private WarlordsEntity playerToMoveTowards = null;
 
-        public OrbOfLife(Location location, WarlordsEntity owner, int tickMultiplier, OrbsOfLifeData data) {
-            super(location, owner, tickMultiplier);
+        public OrbOfLife(Location location, WarlordsEntity owner, OrbsOfLifeData data) {
+            super(location, owner);
             this.data = data;
         }
 
@@ -417,12 +428,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         private final OrbsOfLife orbsOfLife;
         private final List<OrbOfLife> spawnedOrbs = new ArrayList<>();
-        private final int orbTickMultiplier;
         private int orbsProduced;
 
         public OrbsOfLifeData(OrbsOfLife orbsOfLife) {
             this.orbsOfLife = orbsOfLife;
-            this.orbTickMultiplier = orbsOfLife.orbTickMultiplier;
         }
 
         public OrbsOfLife getOrbsOfLife() {
@@ -433,9 +442,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
             return spawnedOrbs;
         }
 
-        public int getOrbTickMultiplier() {
-            return orbTickMultiplier;
-        }
     }
 
     public static class OrbsOfLifeStats extends AbstractAbilityStats<OrbsOfLife, OrbsOfLifeStats> {

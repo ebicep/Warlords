@@ -28,7 +28,8 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                 50000,
                 () -> {
                     ability.setInitialOrbs(ability.getInitialOrbs() + 1);
-                    ability.setOrbTickMultiplier(2);
+                    ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
+                    ability.setHealingIncrease(ability.getHealingIncrease() * 2);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -39,7 +40,8 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
                         """,
                 50000,
                 () -> {
-                    ability.setOrbTickMultiplier(2);
+                    ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
+                    ability.setHealingIncrease(ability.getHealingIncrease() * 2);
                 }
         );
     }
