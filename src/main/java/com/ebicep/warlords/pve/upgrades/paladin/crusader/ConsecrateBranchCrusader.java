@@ -14,12 +14,12 @@ public class ConsecrateBranchCrusader extends AbstractConsecrateBranch<Consecrat
                 "Sanctifying Ring",
                 "Consecrate - Master Upgrade",
                 """
-                        Transform consecrate into a mobile ring that travels with you, damaging nearby enemies every 1.5s in a 4 block radius.
-                        Enemies hit by Sanctifying Ring will grant the you 15 energy, max 100 per proc.
+                        Transform consecrate into a mobile ring that travels with you, damaging nearby enemies every 1.5s in a 5 block radius.
+                        Enemies hit by Sanctifying Ring will grant the you 10 energy, max 100 per proc.
                         """,
                 50000,
                 () -> {
-
+                    ability.getHitBoxRadius().setBaseValue(5);
                 }
         );
     }
