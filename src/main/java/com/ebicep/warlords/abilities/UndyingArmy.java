@@ -22,6 +22,7 @@ import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -52,15 +53,16 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             return false;
         }
         for (RegularCooldown<?> undyingArmyCooldown : new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                .filterCooldownClass(UndyingArmy.class)
+                .filterCooldownClass(UndyingArmy.UndyingArmyData.class)
                 .stream()
                 .toList()
         ) {
-            UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
-            if (undyingArmy.isArmyDead(warlordsEntity)) {
+            UndyingArmy.UndyingArmyData data = (UndyingArmy.UndyingArmyData) undyingArmyCooldown.getCooldownObject();
+            if (data.isArmyDead(warlordsEntity)) {
                 continue;
             }
-            undyingArmy.pop(warlordsEntity);
+            UndyingArmy undyingArmy = data.getUndyingArmy();
+            data.pop(warlordsEntity);
 
             // Drops the flag when popped.
             FlagHolder.dropFlagForPlayer(warlordsEntity, false);
@@ -143,18 +145,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                     }
                 }
             });
-            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(warlordsEntity, undyingArmy));
+            Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(warlordsEntity, data));
             return true;
         }
         return false;
-    }
-
-    public boolean isArmyDead(WarlordsEntity warlordsPlayer) {
-        return playersPopped.get(warlordsPlayer);
-    }
-
-    public void pop(WarlordsEntity warlordsPlayer) {
-        playersPopped.put(warlordsPlayer, true);
     }
 
     public int getMaxHealthDamage() {
@@ -165,8 +159,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         this.maxHealthDamage = maxHealthDamage;
     }
 
-
-    private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
     private final DamageValues damageValues = new DamageValues();
     private final UndyingArmyStats stats = new UndyingArmyStats();
     private int radius = 12;
@@ -175,6 +167,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     private int maxHealthDamage = 10;
     private float flatHealing = 50;
     private float missingHealing = 3.5f; // %
+    private int healPeriod = 20;
 
     public UndyingArmy(int maxHealthDamage) {
         this();
@@ -271,17 +264,21 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(2)
         ).playEffects();
 
-        UndyingArmy tempUndyingArmy = new UndyingArmy(maxHealthDamage);
-        tempUndyingArmy.setInPve(inPve);
-        tempUndyingArmy.setPveMasterUpgrade(pveMasterUpgrade);
+        UndyingArmyData data = new UndyingArmyData(this);
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        if (pveMasterUpgrade) {
+            wp.doOnStaticAbility(RecklessCharge.class, ability -> ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f));
+            wp.doOnStaticAbility(GroundSlamRevenant.class, ability -> ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f));
+        }
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
                 .closestWarlordPlayersFirst(wp.getLocation())
         ) {
-            tempUndyingArmy.getPlayersPopped().put(teammate, false);
-            if (teammate != wp) {
+            data.getPlayersPopped().put(teammate, false);
+            boolean isCaster = teammate != wp;
+            if (isCaster) {
                 stats.targetsArmied++;
                 wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                         .append(Component.text(" Your ", NamedTextColor.GRAY))
@@ -299,15 +296,20 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             teammate.getCooldownManager().addRegularCooldown(
                     name,
                     "ARMY",
-                    UndyingArmy.class,
-                    tempUndyingArmy,
+                    UndyingArmyData.class,
+                    data,
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
+                    cooldownManager -> {
+                        if (isCaster) {
+                            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                        }
+                    },
                     tickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 20 != 0) {
+                        if (ticksElapsed % healPeriod != 0) {
                             return;
                         }
                         if (cooldown.getCooldownObject().isArmyDead(teammate)) {
@@ -374,7 +376,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                 if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                     healthDamage = DamageCheck.clamp(healthDamage);
                                 }
-                                float damage = 1000 + healthDamage;
+                                float damage = 2000 + healthDamage;
                                 enemy.addInstance(InstanceBuilder
                                         .damage()
                                         .cause("Vengeful Army")
@@ -433,10 +435,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         return new UndyingArmyBranch(abilityTree, this);
     }
 
-    public HashMap<WarlordsEntity, Boolean> getPlayersPopped() {
-        return playersPopped;
-    }
-
     public void setMaxArmyAllies(int maxArmyAllies) {
         this.maxArmyAllies = maxArmyAllies;
     }
@@ -483,6 +481,41 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     @Override
     public UndyingArmyStats getAbilityStats() {
         return stats;
+    }
+
+    public int getHealPeriod() {
+        return healPeriod;
+    }
+
+    public void setHealPeriod(int healPeriod) {
+        this.healPeriod = healPeriod;
+    }
+
+    public static class UndyingArmyData {
+
+        private final UndyingArmy undyingArmy;
+        private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
+
+        public UndyingArmyData(UndyingArmy undyingArmy) {
+            this.undyingArmy = undyingArmy;
+        }
+
+        public UndyingArmy getUndyingArmy() {
+            return undyingArmy;
+        }
+
+        public HashMap<WarlordsEntity, Boolean> getPlayersPopped() {
+            return playersPopped;
+        }
+
+        public boolean isArmyDead(WarlordsEntity warlordsPlayer) {
+            return playersPopped.get(warlordsPlayer);
+        }
+
+        public void pop(WarlordsEntity warlordsPlayer) {
+            playersPopped.put(warlordsPlayer, true);
+        }
+
     }
 
     public static class DamageValues implements Value.ValueHolder {

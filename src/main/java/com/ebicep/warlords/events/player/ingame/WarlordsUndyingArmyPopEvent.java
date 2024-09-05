@@ -14,15 +14,15 @@ public class WarlordsUndyingArmyPopEvent extends AbstractWarlordsEntityEvent {
         return handlers;
     }
 
-    private final UndyingArmy undyingArmy;
+    private final UndyingArmy.UndyingArmyData undyingArmyData;
 
-    public WarlordsUndyingArmyPopEvent(@Nonnull WarlordsEntity player, UndyingArmy undyingArmy) {
+    public WarlordsUndyingArmyPopEvent(@Nonnull WarlordsEntity player, UndyingArmy.UndyingArmyData data) {
         super(player);
-        this.undyingArmy = undyingArmy;
+        this.undyingArmyData = data;
     }
 
-    public UndyingArmy getUndyingArmy() {
-        return undyingArmy;
+    public UndyingArmy.UndyingArmyData getUndyingArmyData() {
+        return undyingArmyData;
     }
 
     @Nonnull
