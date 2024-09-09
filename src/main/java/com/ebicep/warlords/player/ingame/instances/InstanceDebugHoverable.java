@@ -51,6 +51,9 @@ public class InstanceDebugHoverable {
     }
 
     public void namedValue(String title, String value) {
+        if (value == null) {
+            value = "ERROR";
+        }
         debugMessage.append(Component.text(title + ": ", NamedTextColor.GREEN))
                     .append(Component.text(value, NamedTextColor.GOLD));
     }

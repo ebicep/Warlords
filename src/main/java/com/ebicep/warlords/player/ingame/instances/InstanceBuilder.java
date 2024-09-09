@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import com.ebicep.warlords.util.chat.ChatUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -51,6 +52,24 @@ public class InstanceBuilder {
 
     public InstanceBuilder(InstanceType instanceType) {
         this.instanceType = instanceType;
+    }
+
+    @Override
+    public String toString() {
+        return "InstanceBuilder{" +
+                "instanceType=" + instanceType +
+                ", target=" + target +
+                ", source=" + source +
+                ", ability=" + ability +
+                ", cause='" + cause + '\'' +
+                ", min=" + min +
+                ", max=" + max +
+                ", critChance=" + critChance +
+                ", critMultiplier=" + critMultiplier +
+                ", flags=" + flags +
+                ", customFlags=" + customFlags +
+                ", uuid=" + uuid +
+                '}';
     }
 
     public InstanceBuilder target(WarlordsEntity target) {
@@ -186,6 +205,10 @@ public class InstanceBuilder {
     }
 
     public WarlordsDamageHealingEvent build() {
+        if (cause == null) {
+            cause = "ERROR";
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("null cause : " + this);
+        }
         return new WarlordsDamageHealingEvent(
                 instanceType,
                 target,

@@ -231,6 +231,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                 float healing = miasmaTarget.getMaxHealth() * .02f;
                                 miasmaTarget.addInstance(InstanceBuilder
                                         .healing()
+                                        .ability(this)
                                         .source(wp)
                                         .value(healing)
                                         .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)

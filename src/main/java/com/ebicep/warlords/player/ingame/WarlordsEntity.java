@@ -220,9 +220,10 @@ public abstract class WarlordsEntity {
 
     @Override
     public String toString() {
-        return "WarlordsPlayer{" +
+        return "WarlordsEntity{" +
                 "name='" + name + '\'' +
                 ", uuid=" + uuid +
+                ", specClass=" + specClass +
                 '}';
     }
 
