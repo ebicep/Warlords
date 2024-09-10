@@ -32,7 +32,6 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                     @Override
                     public void run(float value) {
                         ability.setSelfDamageReductionPercent((int) (selfDamageReduction + value));
-                        ability.setTeammateDamageReductionPercent((int) (allyDamageReduction + value));
                     }
                 }, 5f)
                 .addTo(treeA);
