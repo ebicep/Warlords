@@ -25,8 +25,8 @@ public class OnslaughtRewards extends PveRewards<OnslaughtOption> {
             .add(10, new Pair<>(Currencies.LEGEND_FRAGMENTS, 30L))
             .add(.1, new Pair<>(MobDrop.ZENITH_STAR, 1L));
     public static final RandomCollection<Pair<Spendable, Long>> ASPIRANT_POUCH_LOOT_POOL = new RandomCollection<Pair<Spendable, Long>>()
-            .add(65, new Pair<>(Currencies.LEGEND_FRAGMENTS, 100L))
-            .add(25, new Pair<>(Currencies.SUPPLY_DROP_TOKEN, 10L))
+            .add(65, new Pair<>(Currencies.LEGEND_FRAGMENTS, 200L))
+            .add(25, new Pair<>(Currencies.SUPPLY_DROP_TOKEN, 20L))
             .add(5, new Pair<>(MobDrop.ZENITH_STAR, 1L))
             .add(5, new Pair<>(Currencies.LEGENDARY_STAR_PIECE, 1L));
 
