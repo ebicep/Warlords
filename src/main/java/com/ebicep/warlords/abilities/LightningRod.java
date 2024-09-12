@@ -130,7 +130,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
-        we.addSpeedModifier(we, "Rod Speed", 40, 12 * 20, "BASE");
+        we.addSpeedModifier(we, "Rod Speed", 20, 12 * 20, "BASE");
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -145,7 +145,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.4f;
+                return currentDamageValue * 1.2f;
             }
         });
     }
@@ -180,7 +180,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 1.25f;
+                    return currentDamageValue * 1.2f;
                 }
             });
         }
