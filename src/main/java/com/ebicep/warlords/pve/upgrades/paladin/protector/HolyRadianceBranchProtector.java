@@ -35,10 +35,10 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
         masterUpgrade = new Upgrade(
                 "Edifying Radiance",
                 "Holy Radiance - Master Upgrade",
-                "Protector's Mark is now AoE with a 15 block radius and has no target limit. Additionally, the mark duration is reduced by 3 seconds.",
+                "Protector's Mark is now AoE with a 15 block radius and has no target limit. Additionally, the mark duration is increased by 2 seconds.",
                 50000,
                 () -> {
-                    ability.setMarkDuration((int) (ability.getMarkDuration() * 0.5f));
+                    ability.setMarkDuration(ability.getMarkDuration() + 2);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -46,7 +46,7 @@ public class HolyRadianceBranchProtector extends AbstractUpgradeBranch<HolyRadia
                 "Holy Radiance - Master Upgrade",
                 """
                         +12 Block Radius
-                                                
+                        
                         Marked players will now emit healing to any player within 10 blocks for 150-350 health every 1s for 3s.
                         """,
                 50000,

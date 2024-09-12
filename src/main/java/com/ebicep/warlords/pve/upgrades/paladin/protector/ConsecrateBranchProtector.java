@@ -14,12 +14,12 @@ public class ConsecrateBranchProtector extends AbstractConsecrateBranch<Consecra
                 "Sanctifying Ring",
                 "Consecrate - Master Upgrade",
                 """
-                        Transform consecrate into a mobile ring that travels with you, damaging nearby enemies every 1.5s in a 4 block radius.
+                        Transform consecrate into a mobile ring that travels with you, damaging nearby enemies every 1.5s in a 5 block radius.
                         Every enemy hit will reduce the cooldown of Holy Radiance by 0.2s.
                         """,
                 50000,
                 () -> {
-
+                    ability.getHitBoxRadius().setBaseValue(5);
                 }
         );
     }

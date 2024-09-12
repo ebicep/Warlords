@@ -633,7 +633,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                         .anyMatch(hammerOfLight -> hammerOfLight.getAmountHealed() >= 15000);
             }
     ),
