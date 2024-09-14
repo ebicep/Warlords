@@ -83,7 +83,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                                 .aliveEnemiesOf(wp)
                                 .toList()
                         ) {
-                            float healthDamage = enemy.getMaxBaseHealth() * .05f;
+                            float healthDamage = enemy.getMaxBaseHealth() * .075f;
                             if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                 healthDamage = DamageCheck.clamp(healthDamage);
                             }

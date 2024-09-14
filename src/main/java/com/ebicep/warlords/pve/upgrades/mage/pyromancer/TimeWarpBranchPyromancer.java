@@ -30,7 +30,7 @@ public class TimeWarpBranchPyromancer extends AbstractUpgradeBranch<TimeWarpPyro
                 "Time Warp - Master Upgrade",
                 """
                         Time Warp can now be re-activated to teleport you back early.
-                        Additionally, gain 1% damage for each block travelled while Time Warp is active and double the duration of Time Warp.""",
+                        Additionally, gain 0.75% damage for each block travelled while Time Warp is active and double the duration of Time Warp.""",
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() * 2);
