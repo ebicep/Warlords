@@ -278,7 +278,7 @@ public enum ChallengeAchievements implements Achievement {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent != null && lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
                     return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.UndyingArmyData.class)
                             .anyMatch(undyingArmy -> undyingArmy.getPlayersPopped().getOrDefault(warlordsEntity, false));
                 }
                 return false;
@@ -633,7 +633,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                         .anyMatch(hammerOfLight -> hammerOfLight.getAmountHealed() >= 15000);
             }
     ),

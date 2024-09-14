@@ -104,7 +104,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
             ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class)
                         .filterCooldownFrom(wp)
-                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                         .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
             });
             // Ally Heal
@@ -127,7 +127,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
-                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                                 .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
                     });
                 }
@@ -149,7 +149,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
-                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                                 .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
                     });
                 }

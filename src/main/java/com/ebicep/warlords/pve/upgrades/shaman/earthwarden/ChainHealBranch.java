@@ -26,22 +26,32 @@ public class ChainHealBranch extends AbstractUpgradeBranch<ChainHeal> {
         masterUpgrade = new Upgrade(
                 "Chain of Eradication",
                 "Chain Heal - Master Upgrade",
-                "+5 Blocks cast and bounce range.\n\nIncrease the Crit Chance by 20% and Crit Multiplier by 40% of all healed allies for 8 seconds.",
+                """
+                        +5 Blocks cast and bounce range.
+                        +1 Ally hit
+                        
+                        Increase the Crit Chance by 20% and Crit Multiplier by 40% of all healed allies for 8 seconds.""",
                 50000,
                 () -> {
-
                     ability.setBounceRange(ability.getBounceRange() + 5);
                     ability.setRadius(ability.getRadius() + 5);
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() + 1);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Chains of Blessings",
                 "Chain Heal - Master Upgrade",
                 """
+                        +5 Blocks cast and bounce range.
+                        +2 Ally hit
+                        
                         Allies healed by chain will be connected to the caster for 5 seconds. All connected players gain 10 energy per second and are healed every second for 2.5% of the caster max HP.
                         """,
                 50000,
                 () -> {
+                    ability.setBounceRange(ability.getBounceRange() + 5);
+                    ability.setRadius(ability.getRadius() + 5);
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() + 2);
                 }
         );
     }

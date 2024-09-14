@@ -15,6 +15,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityConcoctionBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -22,11 +23,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, Damages<VitalityConcoction.DamageValues>, AbilityStats<VitalityConcoction, VitalityConcoction.VitalityConcoctionStats> {
+public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, AbilityStats<VitalityConcoction, VitalityConcoction.VitalityConcoctionStats> {
 
-    private final DamageValues damageValues = new DamageValues();
     private final VitalityConcoctionStats stats = new VitalityConcoctionStats();
     private int tickDuration = 15;
     private int damageResistance = 80;
@@ -61,63 +62,53 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
 
         new FallingBlockWaveEffect(wp.getLocation(), 4, 1, Material.BIRCH_SAPLING).play();
 
-        List<WarlordsEntity> playersHit = new ArrayList<>();
-        Set<WarlordsEntity> targets = new HashSet<>();
-        targets.add(wp);
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
-            targets.addAll(PlayerFilterGeneric
-                    .entitiesAround(wp, 5, 5, 5)
-                    .aliveTeammatesOfExcludingSelf(wp)
-                    .toList()
-            );
-        }
-        for (WarlordsEntity target : targets) {
-            target.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
-            target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "STIM",
-                    VitalityConcoction.class,
-                    new VitalityConcoction(),
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-
-                    },
-                    tickDuration,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (!pveMasterUpgrade) {
-                            return;
-                        }
-                        if (ticksElapsed % 5 != 0) {
-                            return;
-                        }
-                        for (WarlordsNPC we : PlayerFilterGeneric
-                                .entitiesAround(wp, 3, 3, 3)
-                                .aliveEnemiesOf(wp)
-                                .excluding(playersHit)
-                                .warlordsNPCs()
-                        ) {
-                            playersHit.add(we);
-                            we.addInstance(InstanceBuilder
-                                    .damage()
-                                    .ability(this)
-                                    .source(wp)
-                                    .value(damageValues.concoctionZoneDamage)
-                            );
-                        }
-                    })
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * convertToDivisionDecimal(damageResistance);
-                }
-
-                @Override
-                protected Listener getListener() {
-                    return CooldownManager.getDefaultDebuffImmunityListener(target);
-                }
-
+            wp.doOnStaticAbility(ImpalingStrike.class, impalingStrike -> {
+                modifiers.add(impalingStrike.getEnergyCost().addMultiplicativeModifierAdd("Concoction Party", -.75f));
             });
+        }
+
+        wp.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "STIM",
+                VitalityConcoction.class,
+                new VitalityConcoction(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+
+                },
+                cooldownManager -> {
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                },
+                tickDuration
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * convertToDivisionDecimal(damageResistance);
+            }
+
+            @Override
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener(wp);
+            }
+
+        });
+
+        for (WarlordsNPC we : PlayerFilterGeneric
+                .entitiesAround(wp, 5, 5, 5)
+                .aliveTeammatesOfExcludingSelf(wp)
+                .warlordsNPCs()
+        ) {
+            we.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(1045)
+                    .max(1425)
+            );
         }
 
         return true;
@@ -139,25 +130,8 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
     public VitalityConcoctionStats getAbilityStats() {
         return stats;
-    }
-
-    public static class DamageValues implements Value.ValueHolder {
-
-        private final Value.RangedValue concoctionZoneDamage = new Value.RangedValue(1245, 1625);
-        private final List<Value> values = List.of(concoctionZoneDamage);
-
-        @Override
-        public List<Value> getValues() {
-            return values;
-        }
-
     }
 
     public static class VitalityConcoctionStats extends AbstractAbilityStats<VitalityConcoction, VitalityConcoctionStats> {

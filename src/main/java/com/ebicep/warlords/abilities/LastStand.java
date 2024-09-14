@@ -261,7 +261,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         this.amountPrevented += amountPrevented;
     }
 
-    public float getSelfDamageReduction() {
+    public int getSelfDamageReduction() {
         return selfDamageReductionPercent;
     }
 
@@ -269,7 +269,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         this.selfDamageReductionPercent = selfDamageReductionPercent;
     }
 
-    public float getTeammateDamageReduction() {
+    public int getTeammateDamageReduction() {
         return teammateDamageReductionPercent;
     }
 

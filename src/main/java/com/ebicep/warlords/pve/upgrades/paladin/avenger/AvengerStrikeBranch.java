@@ -53,12 +53,14 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 "Avenger's Strike - Master Upgrade",
                 """
                         -5 Additional energy cost.
-
-                        Avenger's Strike hits 2 additional enemies for 50% of the original strike damage.
-
+                        +1 Block Radius.
+                        
+                        Avenger's Strike hits 2 additional enemies for 75% of the original strike damage.
+                        
                         Deal 40% more damage against level 3 enemies or below and deal 0.5% max health damage against level 4 and 5 enemies.""",
                 50000,
                 () -> {
+                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
                 }
         );
@@ -66,14 +68,17 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                 "Avenging Strike",
                 "Avenger's Strike - Master Upgrade",
                 """
+                        +1 Block Radius.
+                        
                         Strike crit chance is increased by 15%.
-                                                
-                        If there are at least 2 enemies within 20 blocks, strike damage is increased by 25% and movement speed is increased by 20%.
-                                                
+                        
+                        If there are at least 7 enemies within 10 blocks, strike damage is increased by 25% and movement speed is increased by 20%.
+                        
                         If there are fewer, strike damage is further increased by 50%.
                         """,
                 50000,
                 () -> {
+                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 1);
                     ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 15);
                     CalculateSpeed calculateSpeed = warlordsPlayer.getSpeed();
                     CalculateSpeed.Modifier modifier = new CalculateSpeed.Modifier(
@@ -97,12 +102,12 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
                             false,
                             (cooldown, ticksElapsed) -> {
                                 if (ticksElapsed % 20 == 0) {
-                                    long enemiesNearBy = PlayerFilter.entitiesAround(warlordsPlayer, 20, 20, 20)
+                                    long enemiesNearBy = PlayerFilter.entitiesAround(warlordsPlayer, 10, 10, 10)
                                                                      .aliveEnemiesOf(warlordsPlayer)
                                                                      .stream()
                                                                      .count();
                                     float oldModifier = modifier.getModifier();
-                                    if (enemiesNearBy >= 2 && oldModifier != 20) {
+                                    if (enemiesNearBy >= 7 && oldModifier != 20) {
                                         modifier.setModifier(20);
                                         calculateSpeed.setChanged(true);
                                     } else if (oldModifier != 0) {

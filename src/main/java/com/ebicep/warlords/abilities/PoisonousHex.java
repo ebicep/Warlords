@@ -329,6 +329,10 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         this.maxEnemiesHit = maxEnemiesHit;
     }
 
+    public int getMaxEnemiesHit() {
+        return maxEnemiesHit;
+    }
+
     @Override
     public DamageValues getDamageValues() {
         return damageValues;

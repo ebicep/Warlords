@@ -25,10 +25,12 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                 "Energizing Oracle",
                 "Energy Seer - Master Upgrade",
                 """
+                        Remove energy loss.
                         Add an additional 20% healing bonus and double energy restored.
                         """,
                 50000,
                 () -> {
+                    ability.setEpsDecrease(0);
                     ability.setHealingIncrease(ability.getHealingIncrease() + 20);
                     ability.setEnergyRestore(ability.getEnergyRestore() * 2);
                 }
@@ -37,13 +39,15 @@ public class EnergySeerBranchLuminary extends AbstractUpgradeBranch<EnergySeerLu
                 "Benevolent Gaze",
                 "Energy Seer - Master Upgrade",
                 """
+                        Remove energy loss.
+                        +5s duration.
                         +20% Additional Cooldown Reduction
-                        -5 Post effect EPS decrease
                         """,
                 50000,
                 () -> {
+                    ability.setEpsDecrease(0);
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                     ability.getCooldown().addMultiplicativeModifierMult("Benevolent Gaze", 0.8f);
-                    ability.setEpsDecrease(ability.getEpsDecrease() - 5);
                 }
         );
     }

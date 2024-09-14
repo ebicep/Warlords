@@ -48,8 +48,8 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 "Wounding Strike - Master Upgrade",
                 """
                         -20 Energy cost
-                         
-                        Wounding Strike now hits up to 2 enemies. Strikes deal 20% more damage while Blood Lust is active.
+                        
+                        Wounding Strike now hits up to 3 enemies. Strikes deal 20% more damage while Blood Lust is active.
                         """,
                 50000,
                 () -> {

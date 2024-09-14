@@ -27,7 +27,7 @@ public class VitalityConcoctionBranch extends AbstractUpgradeBranch<VitalityConc
                 "Concoction Zone",
                 "Vitality Concoction - Master Upgrade",
                 """
-                        Vitality Concoction now deals 1245 - 1625 damage to all enemies you pass through.
+                        Vitality Concoction now heals 1045 - 1425 to all allies in a 5 block radius.
                         """,
                 50000,
                 () -> {
@@ -35,10 +35,10 @@ public class VitalityConcoctionBranch extends AbstractUpgradeBranch<VitalityConc
                 }
         );
         masterUpgrade2 = new Upgrade(
-                "Concoction Zone",
+                "Concoction Party",
                 "Vitality Concoction - Master Upgrade",
                 """
-                        Vitality Concoction now splashes on the ground, affecting all nearby allies.
+                        During the duration of Vitality concoction reduce the energy cost of Impaling strike by 75%.
                         """,
                 50000,
                 () -> {

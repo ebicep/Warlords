@@ -2,7 +2,10 @@ package com.ebicep.warlords.pve.upgrades.rogue.apothecary;
 
 import com.ebicep.warlords.abilities.DrainingMiasma;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.pve.upgrades.AbilityTree;
+import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
+import com.ebicep.warlords.pve.upgrades.Upgrade;
+import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
 
 public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> {
 
@@ -14,24 +17,7 @@ public class DrainingMiasmaBranch extends AbstractUpgradeBranch<DrainingMiasma> 
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgrade(new UpgradeTypes.NamedUpgradeType() {
-
-                    @Override
-                    public String getName() {
-                        return "Alleviate";
-                    }
-
-                    @Override
-                    public String getDescription0(String value) {
-                        return "+" + value + "% Leech Heal";
-                    }
-
-                    @Override
-                    public void run(float value) {
-                        ability.setLeechSelfAmount(selfLeech + value);
-                        ability.setLeechAllyAmount(allyLeech + value);
-                    }
-                }, 1f)
+                .addUpgradeDuration(ability, 10f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder

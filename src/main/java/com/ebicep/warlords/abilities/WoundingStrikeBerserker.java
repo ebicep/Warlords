@@ -78,7 +78,7 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
         ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
 
         if (pveMasterUpgrade2) {
-            additionalHit(1, wp, nearPlayer, warlordsEntity -> {
+            additionalHit(2, wp, nearPlayer, warlordsEntity -> {
                 warlordsEntity.addInstance(InstanceBuilder
                         .damage()
                         .ability(this)

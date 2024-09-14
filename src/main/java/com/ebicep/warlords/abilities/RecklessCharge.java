@@ -7,6 +7,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -35,12 +36,13 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, Listener, Damages<RecklessCharge.DamageValues>, AbilityStats<RecklessCharge, RecklessCharge.RecklessChargeStats> {
+public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, Listener, Damages<RecklessCharge.DamageValues>, AbilityStats<RecklessCharge, RecklessCharge.RecklessChargeStats>, CanReduceCooldowns {
 
 
     private final DamageValues damageValues = new DamageValues();
     private final RecklessChargeStats stats = new RecklessChargeStats();
     private int stunTimeInTicks = 10;
+    private int additionalBlocks = 0;
 
     public RecklessCharge() {
         super("Reckless Charge", 9.5f, 60);
@@ -70,6 +72,25 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    name,
+                    pveMasterUpgrade ? "Reckless Rampage" : "Reverberation",
+                    RecklessCharge.class,
+                    null,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> {
+                    },
+                    2 * 20
+            ) {
+                @Override
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * 0.2f;
+                }
+            });
+        }
+
         Location location = wp.getLocation();
         location.setPitch(0);
         Location chargeLocation = location.clone();
@@ -86,6 +107,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
             //travels 7 at peak jump
             chargeDistance = Math.max(Math.min(LocationUtils.getDistance(wp, .1) * 5, 7.2), 6.3);
         }
+        chargeDistance += additionalBlocks;
 
         boolean finalInAir = inAir;
         double finalChargeDistance = chargeDistance;
@@ -93,7 +115,6 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         new GameRunnable(wp.getGame()) {
             //safety precaution
             int maxChargeDuration = 5;
-            int timesArmyReduced = 0;
 
             @Override
             public void run() {
@@ -140,13 +161,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                             .min(damageValues.chargeDamage.getMinValue() * damageMultiplier)
                                             .max(damageValues.chargeDamage.getMaxValue() * damageMultiplier)
                                             .crit(damageValues.chargeDamage)
-                                    ).ifPresent(finalEvent -> {
-                                        if (pveMasterUpgrade2 && finalEvent.isDead() && timesArmyReduced < 5) {
-                                            timesArmyReduced++;
-                                            wp.getAbilitiesMatching(UndyingArmy.class).forEach(ability -> ability.subtractCurrentCooldown(1f));
-                                            playCooldownReductionEffect(otherPlayer);
-                                        }
-                                    });
+                                    );
 
                                     if (otherPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof Unimmobilizable)) {
                                         warlordsNPC.setStunTicks(getStunTimeInTicks());
@@ -164,7 +179,26 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                                 Title.Times.times(Ticks.duration(0), Ticks.duration(stunTimeInTicks), Ticks.duration(0))
                                         ));
                                     }
-                                } else if ((pveMasterUpgrade || pveMasterUpgrade2) && otherPlayer.isTeammateAlive(wp)) {
+                                    otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                            "Reckless Rampage",
+                                            "RECK",
+                                            RecklessCharge.class,
+                                            null,
+                                            wp,
+                                            CooldownTypes.ABILITY,
+                                            cooldownManager -> {
+                                            },
+                                            getStunTimeInTicks()
+                                    ) {
+                                        @Override
+                                        public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                            if (event.getCause().contains("Strike")) {
+                                                return currentDamageValue * 1.15f;
+                                            }
+                                            return currentDamageValue;
+                                        }
+                                    });
+                                } else if (pveMasterUpgrade2 && otherPlayer.isTeammateAlive(wp)) {
                                     otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
                                             "Probiotic",
                                             "PROBIO",
@@ -181,6 +215,9 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                             return currentHealValue * 2;
                                         }
                                     });
+                                    new CooldownFilter<>(otherPlayer, RegularCooldown.class)
+                                            .filter(cd -> cd.getCooldownType() != CooldownTypes.DEBUFF)
+                                            .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + 40));
                                     EffectUtils.displayParticle(
                                             Particle.HEART,
                                             otherPlayer.getLocation().add(0, 2, 0),
@@ -202,6 +239,11 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     }
 
     @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
+    }
+
+    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new RecklessChargeBranch(abilityTree, this);
     }
@@ -217,6 +259,14 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     @Override
     public RecklessChargeStats getAbilityStats() {
         return stats;
+    }
+
+    public int getAdditionalBlocks() {
+        return additionalBlocks;
+    }
+
+    public void setAdditionalBlocks(int additionalBlocks) {
+        this.additionalBlocks = additionalBlocks;
     }
 
     public static class DamageValues implements Value.ValueHolder {

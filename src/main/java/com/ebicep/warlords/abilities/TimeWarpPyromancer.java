@@ -1,11 +1,10 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -29,6 +28,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -78,21 +78,26 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
 
                     if (pveMasterUpgrade2) {
                         float cooldownReduction = 0;
-                        for (WarlordsEntity linkedPlayer : linkedPlayers) {
-                            if (linkedPlayer.isDead()) {
-                                cooldownReduction += .75f;
-                                continue;
-                            }
-                            float healthDamage = linkedPlayer.getMaxBaseHealth() * .05f;
-                            if (linkedPlayer instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
+                        for (WarlordsEntity enemy : PlayerFilter
+                                .entitiesAround(wp, 8, 8, 8)
+                                .aliveEnemiesOf(wp)
+                                .toList()
+                        ) {
+                            float healthDamage = enemy.getMaxBaseHealth() * .05f;
+                            if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                 healthDamage = DamageCheck.clamp(healthDamage);
                             }
-                            linkedPlayer.addInstance(InstanceBuilder
+                            Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder
                                     .damage()
                                     .cause("Accursed Leap")
                                     .source(wp)
                                     .value(healthDamage)
                             );
+                            if (finalEventOptional.isPresent()) {
+                                if (finalEventOptional.get().isDead()) {
+                                    cooldownReduction += .75f;
+                                }
+                            }
                         }
                         subtractCurrentCooldown(cooldownReduction);
                     }
@@ -198,19 +203,11 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                 })
         ) {
             @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (pveMasterUpgrade) {
-                    return currentCritChance + (wp.getBlocksTravelled() - startingBlocksTravelled);
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade2) {
+                    return currentDamageValue * convertToMultiplicationDecimal(wp.getBlocksTravelled() - startingBlocksTravelled);
                 }
-                return currentCritChance;
-            }
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (pveMasterUpgrade) {
-                    return currentCritMultiplier + (wp.getBlocksTravelled() - startingBlocksTravelled);
-                }
-                return currentCritMultiplier;
+                return currentDamageValue;
             }
         };
         wp.getCooldownManager().addCooldown(timeWarpCooldown);

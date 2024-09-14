@@ -27,7 +27,7 @@ public class FrostboltBranch extends AbstractUpgradeBranch<FrostBolt> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeEnergy(ability, 2.5f)
+                .addUpgradeEnergy(ability, 3.75f)
                 .addUpgradeSplash(ability, .5f)
                 .addTo(treeB);
 

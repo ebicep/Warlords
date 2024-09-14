@@ -195,7 +195,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 ).ifPresent(warlordsDamageHealingFinalEvent -> {
                     new CooldownFilter<>(owner, RegularCooldown.class)
                             .filterCooldownFrom(owner)
-                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                             .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue()));
                 });
                 this.cancel();

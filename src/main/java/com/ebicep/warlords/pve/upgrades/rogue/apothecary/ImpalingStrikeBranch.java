@@ -38,16 +38,19 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                         ability.setLeechSelfAmount(selfLeech + value);
                         ability.setLeechAllyAmount(allyLeech + value);
                     }
-                }, 1f)
+                }, 1.5f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Impaling Slash",
                 "Impaling Strike - Master Upgrade",
-                "-20 Additional energy cost\n\nYour Impaling Strikes deals triple the damage to enemies afflicted by LEECH",
+                """
+                        -10 Additional energy cost
+                        
+                        Your Impaling strikes now hit 2 additional targets and triple the damage to enemies afflicted by LEECH""",
                 50000,
                 () -> {
-                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -55,8 +58,8 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
                 "Impaling Strike - Master Upgrade",
                 """
                         -20 Energy cost
-                                                
-                        Impaling Strike now hits 2 additional targets.
+                        
+                        Impaling Strike now hits 5 additional targets.
                         """,
                 50000,
                 () -> {

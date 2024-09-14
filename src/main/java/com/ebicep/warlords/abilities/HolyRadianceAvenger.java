@@ -178,6 +178,14 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 }
                 return currentDamageValue;
             }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade) {
+                    return currentDamageValue * .9f;
+                }
+                return currentDamageValue;
+            }
         });
     }
 

@@ -32,7 +32,10 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
         masterUpgrade = new Upgrade(
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
-                "+100% Critical Chance.\n\nCritical Strikes grant you and nearby allies 30% damage reduction for 5 seconds.",
+                """
+                        +100% Critical Chance.
+                        
+                        Critical Strikes grant you and nearby allies 30% damage reduction for 5 seconds.""",
                 50000,
                 () -> {
                     ability.getDamageValues().getStrikeDamage().critChance().addAdditiveModifier("Master Upgrade Branch", 100);
@@ -43,8 +46,8 @@ public class WoundingStrikeBranchDefender extends AbstractUpgradeBranch<Wounding
                 "Wounding Strike - Master Upgrade",
                 """
                         -20 Energy cost
-                                                
-                        Wounding Strike now hits up to 2 enemies. Strikes will ignore 100% of enemies resistance (except for bosses).
+                        
+                        Wounding Strike now hits up to 3 enemies. Strikes will ignore 100% of enemies resistance (except for bosses).
                         """,
                 50000,
                 () -> {

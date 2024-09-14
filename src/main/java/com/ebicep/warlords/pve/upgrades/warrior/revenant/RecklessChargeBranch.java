@@ -42,12 +42,16 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
         masterUpgrade = new Upgrade(
                 "Reckless Rampage",
                 "Reckless Charge - Master Upgrade",
-                "+50% Additional damage\n\nReckless Charge stuns enemies for 3 seconds. Additionally, allies you charge through will receive 100% more healing for 8 seconds.",
+                """
+                        +80% damage reduction on cast.
+                        +150% Damage.
+                        
+                        Reckless Charge stuns enemies for 3 seconds. Additionally, stunned enemies take 15% more damage from all strikes.""",
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getChargeDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.5f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.5f);
                     ability.setStunTimeInTicks(60);
                 }
         );
@@ -55,12 +59,14 @@ public class RecklessChargeBranch extends AbstractUpgradeBranch<RecklessCharge> 
                 "Reverberation",
                 "Reckless Charge - Master Upgrade",
                 """
-                        +75% Additional damage to CRIPPLED enemies.
-                                                
-                        Reduce the cooldown of Undying Army by 1s for each enemy killed with Reckless Charge, max 5s. Additionally, allies you charge through receive 100% more healing for 8 seconds.
+                        +80% damage reduction on cast.
+                        +3 Block distance.
+                        
+                        Additionally, allies you charge through receive 100% more healing for 8 seconds and have their active timers increased by 2 seconds.
                         """,
                 50000,
                 () -> {
+                    ability.setAdditionalBlocks(3);
                 }
         );
     }

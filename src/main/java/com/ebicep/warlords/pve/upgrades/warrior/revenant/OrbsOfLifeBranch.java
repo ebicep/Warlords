@@ -13,7 +13,7 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability.getHealValues().getOrbHealing(), 12.5f)
+                .addUpgradeHealing(ability.getHealValues().getOrbHealing(), 15f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -24,22 +24,31 @@ public class OrbsOfLifeBranch extends AbstractUpgradeBranch<OrbsOfLife> {
         masterUpgrade = new Upgrade(
                 "Orbs of Relics",
                 "Orbs of Life - Master Upgrade",
-                "Spawn 1 additional orb on active, double orbs healing increase over time, and orbs last twice as long.",
+                """
+                        Double orbs healing increase over time, and orbs last twice as long.
+                        
+                        For each active orb, increase your damage by 0.5% (max 25%).""",
                 50000,
                 () -> {
-                    ability.setInitialOrbs(ability.getInitialOrbs() + 1);
-                    ability.setOrbTickMultiplier(2);
+                    ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
+                    ability.setHealingIncrease(ability.getHealingIncrease() * 2);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Orbs of Time",
                 "Orbs of Life - Master Upgrade",
                 """
-                        Orbs of Life can now Overheal, double orbs healing increase over time, and orbs last twice as long.
+                        Double orbs healing increase over time, and orbs last twice as long.
+                        
+                        +30% Healing
+                        Orbs of Life can now Overheal.
+                        Upon reactivation, orbs will now retain its healing increase.
                         """,
                 50000,
                 () -> {
-                    ability.setOrbTickMultiplier(2);
+                    ability.getHealValues().getOrbHealing().value().addMultiplicativeModifierAdd("Orbs of Time", .3f);
+                    ability.setOrbTickDuration(ability.getOrbTickDuration() * 2);
+                    ability.setHealingIncrease(ability.getHealingIncrease() * 2);
                 }
         );
     }

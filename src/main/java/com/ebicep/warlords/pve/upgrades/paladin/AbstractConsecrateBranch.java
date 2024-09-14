@@ -13,7 +13,7 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeHealing(ability.getConsecrateDamage(), 10f)
+                .addUpgradeDamage(ability.getConsecrateDamage(), 10f)
                 .addUpgradeCooldown(ability, 0.15f, 4)
                 .addTo(treeA);
 

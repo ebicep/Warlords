@@ -29,11 +29,13 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 "Energizing Clairvoyant",
                 "Energy Seer - Master Upgrade",
                 """
-                        Increase damage reduction by 5% and double the energy restored.
+                        Remove energy loss.
+                        Increase damage reduction by 3% and double the energy restored.
                         """,
                 50000,
                 () -> {
-                    ability.setDamageResistance(ability.getDamageResistance() + 5);
+                    ability.setEpsDecrease(0);
+                    ability.setDamageResistance(ability.getDamageResistance() + 3);
                     ability.setEnergyRestore(ability.getEnergyRestore() * 2);
                 }
         );
@@ -41,13 +43,15 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
                 "Collective Vaticinator",
                 "Energy Seer - Master Upgrade",
                 """
+                        Remove energy loss.
+                        +5s duration.
                         +20% Additional Cooldown Reduction
-                        -5 Post effect EPS decrease
                         """,
                 50000,
                 () -> {
+                    ability.setEpsDecrease(0);
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                     ability.getCooldown().addMultiplicativeModifierMult("Collective Vaticinator", 0.8f);
-                    ability.setEpsDecrease(ability.getEpsDecrease() - 5);
                 }
         );
     }

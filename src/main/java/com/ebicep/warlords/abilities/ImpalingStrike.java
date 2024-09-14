@@ -101,8 +101,8 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         });
 
 
-        if (pveMasterUpgrade2) {
-            additionalHit(2, wp, nearPlayer, warlordsEntity -> {
+        if (pveMasterUpgrade || pveMasterUpgrade2) {
+            additionalHit(pveMasterUpgrade ? 2 : 5, wp, nearPlayer, warlordsEntity -> {
                 warlordsEntity.addInstance(InstanceBuilder
                         .damage()
                         .ability(this)

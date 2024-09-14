@@ -1,6 +1,9 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractStrike;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -78,7 +81,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         ).ifPresent(event -> onFinalEvent(wp, nearPlayer, event));
 
         if (pveMasterUpgrade2) {
-            additionalHit(1, wp, nearPlayer, warlordsEntity -> {
+            additionalHit(2, wp, nearPlayer, warlordsEntity -> {
                 warlordsEntity.addInstance(InstanceBuilder
                         .damage()
                         .ability(this)
