@@ -50,7 +50,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                 """
                         Upon casting, enemies within the radius are marked for the duration of Undying Army.
                         Marked enemies build up stacks of Vengeance that accrue every second, each stack equals 200hp.
-                        After 10s marked enemies pop taking damage based on stacks accrued as well as 12.5% of their max hp.
+                        After 10s marked enemies pop taking damage based on stacks accrued as well as 10% of their max hp.
                         If Orbs of Life is active, marked enemies that are killed will produce an orb.
                         """,
                 50000,
