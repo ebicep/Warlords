@@ -28,7 +28,7 @@ public class AvengerStrikeBranch extends AbstractUpgradeBranch<AvengersStrike> {
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 5f)
+                .addUpgradeDamage(ability.getDamageValues().getStrikeDamage(), 7.5f)
                 .addUpgrade(new UpgradeTypes.UpgradeType() {
                     @Override
                     public String getDescription0(String value) {
