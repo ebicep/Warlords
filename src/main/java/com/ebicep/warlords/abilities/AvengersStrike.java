@@ -82,8 +82,8 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
                     healthDamage = nearPlayer.getMaxHealth() * 0.01f;
                 }
             } else if (pveMasterUpgrade2) {
-                int enemiesNearBy = Math.toIntExact(PlayerFilter.entitiesAround(wp, 20, 20, 20).aliveEnemiesOf(wp).stream().count());
-                if (enemiesNearBy >= 2) {
+                int enemiesNearBy = Math.toIntExact(PlayerFilter.entitiesAround(wp, 10, 10, 10).aliveEnemiesOf(wp).stream().count());
+                if (enemiesNearBy >= 7) {
                     multiplier += 0.25f;
                 } else {
                     multiplier += 0.5f;
