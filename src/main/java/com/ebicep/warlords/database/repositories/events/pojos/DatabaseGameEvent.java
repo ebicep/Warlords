@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -73,6 +74,9 @@ public class DatabaseGameEvent implements Listener {
                                 ChatUtils.MessageType.GAME_EVENTS.sendMessage("New Event Detected! Starting...");
                                 gameEvent.setStarted(true);
                                 Warlords.newChain().async(() -> DatabaseManager.gameEventsService.update(gameEvent)).execute();
+                                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                    DatabaseManager.getPlayer(onlinePlayer.getUniqueId(), DatabaseGameEvent::checkPlayerEventCurrency);
+                                }
                             }
                             gameEvent.start();
                             if (eventChecker != null) {
@@ -120,6 +124,10 @@ public class DatabaseGameEvent implements Listener {
             return;
         }
         DatabasePlayer databasePlayer = event.getDatabasePlayer();
+        checkPlayerEventCurrency(databasePlayer);
+    }
+
+    private static void checkPlayerEventCurrency(DatabasePlayer databasePlayer) {
         GameEvents gameEvent = currentGameEvent.getEvent();
         EventMode eventMode = gameEvent.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
         if (eventMode != null && eventMode.getEventPlays() != 0) {
@@ -132,7 +140,7 @@ public class DatabaseGameEvent implements Listener {
         }
         databasePlayer.getPveStats().subtractCurrency(currency, currencyValue);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        ChatUtils.MessageType.GAME_EVENTS.sendMessage("New event, cleared " + event.getPlayer().getName() + " " + currency.name + " currency.");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("New event, cleared " + databasePlayer.getName() + " " + currency.name + " currency.");
     }
 
     public GameEvents getEvent() {
