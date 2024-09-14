@@ -38,7 +38,7 @@ public class SanctifiedBeaconBranch extends AbstractUpgradeBranch<SanctifiedBeac
                 "Shadow Garden",
                 "Sanctified Beacon - Master Upgrade",
                 """
-                        Sanctified Beacon's radius is doubled. Additionally, allies will have their crit multiplier increased by 25% and knockback resistance by 15%.
+                        Sanctified Beacon's radius is doubled. Additionally, allies will have their crit multiplier increased by 15% and knockback resistance by 15%.
                         """,
                 50000,
                 () -> {

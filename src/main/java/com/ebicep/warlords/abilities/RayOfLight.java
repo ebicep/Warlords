@@ -117,7 +117,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * (maxStacks ? 1.35f : 1.15f);
+                    return currentDamageValue * (maxStacks ? 1.15f : 1.05f);
                 }
             });
         }

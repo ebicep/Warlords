@@ -119,7 +119,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     ) {
                         @Override
                         public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                            return currentCritMultiplier + 25;
+                            return currentCritMultiplier + 15;
                         }
 
                         @Override
