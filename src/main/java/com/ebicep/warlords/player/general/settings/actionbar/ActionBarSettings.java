@@ -140,7 +140,7 @@ public class ActionBarSettings {
                     .name(Component.text("Show Health Text", NamedTextColor.GREEN))
                     .lore(Component.empty())
                     .addLore(WordWrap.wrap(Component.text("Toggles whether or not 'HP:' should be displayed.", NamedTextColor.GRAY), 140));
-            if (showHPText && (!showHealth || !showMaxHealth)) {
+            if (showHPText && (!showHealth && !showMaxHealth)) {
                 showHealthText.addLore(
                         Component.empty(),
                         Component.text("OVERRIDEN", NamedTextColor.RED)
