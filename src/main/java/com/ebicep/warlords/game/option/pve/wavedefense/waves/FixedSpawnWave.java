@@ -67,7 +67,7 @@ public class FixedSpawnWave implements Wave {
 
     @Override
     public int getSpawnTickPeriod() {
-        return 0;
+        return spawnTickPeriod;
     }
 
     @Override
