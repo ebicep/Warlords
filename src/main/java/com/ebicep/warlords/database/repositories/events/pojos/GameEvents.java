@@ -1261,6 +1261,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 1_000L);
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
                     put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
                 }};
             }
