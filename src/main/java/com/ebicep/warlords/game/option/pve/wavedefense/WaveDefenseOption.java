@@ -404,14 +404,12 @@ public class WaveDefenseOption implements PveOption {
                     return;
                 }
 
-                if (spawnTaskTicksElapsed++ % spawnTickPeriod == 0) {
-                    if (spawnTickPeriod < 0) {
-                        for (int i = 0; i < spawnCount; i++) {
-                            spawnMob();
-                        }
-                    } else {
+                if (spawnTickPeriod < 0) {
+                    for (int i = 0; i < spawnCount; i++) {
                         spawnMob();
                     }
+                } else if (spawnTaskTicksElapsed++ % spawnTickPeriod == 0) {
+                    spawnMob();
                 }
 
                 currentWave.tick(WaveDefenseOption.this, spawnTaskTicksElapsed);
