@@ -113,7 +113,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
                         .aliveTeammatesOfExcludingSelf(wp)
                         .limit(2)
                         .forEach(teammate -> {
-                            teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40);
+                            teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40, "BASE");
                         });
         }
 
