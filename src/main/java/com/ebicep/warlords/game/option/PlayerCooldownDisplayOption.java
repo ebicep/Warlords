@@ -6,10 +6,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.player.general.settings.CooldownDisplayMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -48,6 +50,10 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
             @Override
             public void run() {
+                if (game.isState(EndState.class)) {
+                    this.cancel();
+                    return;
+                }
                 if (!enabled) {
                     return;
                 }
@@ -100,6 +106,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
     @Override
     public void onGameCleanup(@Nonnull Game game) {
+        ChatUtils.MessageType.GAME.sendMessage("Cleaning up cooldown display entities");
         playerSettings.forEach((warlordsEntity, cooldownData) -> cooldownData.cooldowns.cooldownEntities.forEach(Cooldowns.CooldownEntities::remove));
         playerSettings.clear();
     }
