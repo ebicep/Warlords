@@ -148,7 +148,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 ) {
                     @Override
                     public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.5f;
+                        return currentDamageValue * 1.3f;
                     }
                 });
             } else if (pveMasterUpgrade2) {

@@ -30,7 +30,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
         masterUpgrade = new Upgrade(
                 "Blazing Curse",
                 "Incendiary Curse - Master Upgrade",
-                "All enemies hit become disoriented. Increase the damage they take by 50% for 5 seconds.",
+                "All enemies hit become disoriented. Increase the damage they take by 30% for 5 seconds.",
                 50000,
                 () -> {
 
