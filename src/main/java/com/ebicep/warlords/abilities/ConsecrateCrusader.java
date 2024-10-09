@@ -85,9 +85,9 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
                                                 .source(wp)
                                                 .value(damageValues.consecrateDamage)
                                         );
-                                        if (energyGiven.get() < 105) {
+                                        if (energyGiven.get() < 100) {
                                             energyGiven.addAndGet(15);
-                                            wp.addEnergy(wp, "Sanctifying Ring", 15);
+                                            wp.addEnergy(wp, "Sanctifying Ring", 10);
                                         }
                                     });
                     }
