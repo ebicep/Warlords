@@ -170,7 +170,12 @@ public class WarlordsNPC extends WarlordsEntity {
         if (playerHealthDisplay != null) {
             playerHealthDisplay.remove();
         }
-        mobHologram.getCustomHologramLines().forEach(customHologramLine -> customHologramLine.getEntity().remove());
+        mobHologram.getCustomHologramLines().forEach(customHologramLine -> {
+            Entity lineEntity = customHologramLine.getEntity();
+            if (lineEntity != null) {
+                lineEntity.remove();
+            }
+        });
     }
 
     @Override
