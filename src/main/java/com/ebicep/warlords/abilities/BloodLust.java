@@ -75,7 +75,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 3 == 0) {
                                 EffectUtils.displayParticle(
-                                        Particle.REDSTONE,
+                                        Particle.DUST,
                                         wp.getLocation().add(
                                                 (Math.random() - 0.5) * 1,
                                                 1.2,

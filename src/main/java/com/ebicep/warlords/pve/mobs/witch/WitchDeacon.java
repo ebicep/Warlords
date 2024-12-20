@@ -75,8 +75,8 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     9,
-                    new CircumferenceEffect(Particle.SPELL_WITCH, Particle.REDSTONE).particlesPerCircumference(1),
-                    new DoubleLineEffect(Particle.SPELL)
+                    new CircumferenceEffect(Particle.WITCH, Particle.DUST).particlesPerCircumference(1),
+                    new DoubleLineEffect(Particle.EFFECT)
             ).playEffects();
         }
     }

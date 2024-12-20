@@ -198,7 +198,7 @@ public class ItemFilterMenu {
                     .name(Component.text(stat.name, NamedTextColor.GREEN));
             boolean filtered = statPoolFilter.contains(stat);
             if (filtered) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
             menu.setItem(i % 7 + 1, i / 7 + 1,
                     itemBuilder

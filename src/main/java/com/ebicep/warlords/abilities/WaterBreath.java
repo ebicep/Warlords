@@ -90,7 +90,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 maxAnimationEffects,
                 maxAnimationTime,
                 (center, animationTimer) -> {},
-                Particle.DRIP_WATER, Particle.ENCHANTMENT_TABLE, Particle.VILLAGER_HAPPY
+                Particle.DRIPPING_WATER, Particle.ENCHANT, Particle.HAPPY_VILLAGER
         );
 
         int previousDebuffsRemoved = stats.debuffsRemoved;
@@ -200,7 +200,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 5 == 0) {
                         EffectUtils.displayParticle(
-                                Particle.WATER_SPLASH,
+                                Particle.SPLASH,
                                 breathTarget.getLocation().add(0, 1.25, 0),
                                 10,
                                 0.4f,

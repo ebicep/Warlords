@@ -49,7 +49,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
 
     @Override
     public LineEffect getLineEffect(Location target) {
-        return new LineEffect(target, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 255, 0), 1));
+        return new LineEffect(target, Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 255, 0), 1));
     }
 
     @Override

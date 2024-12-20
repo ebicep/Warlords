@@ -136,7 +136,7 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
 
                 Utils.playGlobalSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
 
-                EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, Particle.FIREWORKS_SPARK);
+                EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, Particle.FIREWORK);
 
                 PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
                             .aliveEnemiesOf(trapOwner)

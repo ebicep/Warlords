@@ -78,7 +78,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         Location particleLoc = wp.getLocation().add(0, 1.2, 0);
 
         particleLoc.getWorld().spawnParticle(
-                Particle.VILLAGER_HAPPY,
+                Particle.HAPPY_VILLAGER,
                 particleLoc,
                 2,
                 1,
@@ -89,7 +89,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
                 true
         );
         particleLoc.getWorld().spawnParticle(
-                Particle.SPELL,
+                Particle.EFFECT,
                 particleLoc,
                 12,
                 1,
@@ -210,7 +210,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             this.armorStand.teleport(armorStandLocation);
 
             armorStandLocation.getWorld().spawnParticle(
-                    Particle.SPELL,
+                    Particle.EFFECT,
                     armorStandLocation.add(0, 1.75, 0),
                     2,
                     0.01,

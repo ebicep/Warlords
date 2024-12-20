@@ -158,7 +158,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
                         Location location = to.getLocation();
                         location.add(0, 1.5, 0);
                         EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15F, 0.3F, 0.15F, 0.01);
-                        EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
+                        EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3F, 0.3F, 0.3F, 0.0001);
                         EffectUtils.displayParticle(Particle.CRIMSON_SPORE, location, 1, 0.3F, 0.3F, 0.3F, 0);
                     }
                 })

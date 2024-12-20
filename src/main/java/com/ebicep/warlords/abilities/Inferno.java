@@ -69,7 +69,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         Location loc = wp.getLocation().add(0, 1.2, 0);
-                        EffectUtils.displayParticle(Particle.DRIP_LAVA, loc, 1, 0.5, 0.3, 0.5, 0.4);
+                        EffectUtils.displayParticle(Particle.DRIPPING_LAVA, loc, 1, 0.5, 0.3, 0.5, 0.4);
                         EffectUtils.displayParticle(Particle.FLAME, loc, 1, 0.5, 0.3, 0.5, 0.0001);
                         EffectUtils.displayParticle(Particle.CRIT, loc, 1, 0.5, 0.3, 0.5, 0.0001);
                     }

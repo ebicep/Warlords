@@ -118,7 +118,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
             wp.getCooldownManager().removeCooldown(LastStand.class, false);
 
             Location loc = wp.getLocation();
-            EffectUtils.playSphereAnimation(loc, 9, Particle.SPELL, 1);
+            EffectUtils.playSphereAnimation(loc, 9, Particle.EFFECT, 1);
             Utils.playGlobalSound(loc, "warrior.laststand.activation", 2, 0.6f);
             for (WarlordsEntity ally : PlayerFilter
                     .entitiesAround(wp, 9, 9, 9)

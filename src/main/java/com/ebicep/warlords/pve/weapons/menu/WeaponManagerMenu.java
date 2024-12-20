@@ -350,7 +350,7 @@ public class WeaponManagerMenu {
                         180
                 ));
         if (isBound) {
-            bindWeapon.enchant(Enchantment.OXYGEN, 1);
+            bindWeapon.enchant(Enchantment.RESPIRATION, 1);
         }
         weaponOptions.add(new Pair<>(
                 bindWeapon.get(),

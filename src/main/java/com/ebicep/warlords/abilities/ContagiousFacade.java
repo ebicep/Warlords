@@ -117,8 +117,8 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                     Location location = wp.getLocation();
                                     location.add(0, 1.5, 0);
                                     EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
-                                    EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3, 0.3, 0.3, 0.0001);
-                                    EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3, 0.3, 0.3, 0);
+                                    EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3, 0.3, 0.3, 0.0001);
+                                    EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.3, 0.3, 0.3, 0);
                                 }
                             })
                     ) {
@@ -199,7 +199,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                             wp.getTeam(),
                             wp.getLocation(),
                             poisonRadius,
-                            new CircumferenceEffect(Particle.REDSTONE, Particle.REDSTONE).particlesPerCircumference(1)
+                            new CircumferenceEffect(Particle.DUST, Particle.DUST).particlesPerCircumference(1)
                     ).playEffects();
                     for (WarlordsEntity hexTarget : PlayerFilter
                             .entitiesAround(wp, poisonRadius, poisonRadius, poisonRadius)

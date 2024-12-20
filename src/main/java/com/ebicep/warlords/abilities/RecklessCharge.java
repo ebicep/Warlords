@@ -135,7 +135,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                 }
                 for (int i = 0; i < 4; i++) {
                     wp.getLocation().getWorld().spawnParticle(
-                            Particle.REDSTONE,
+                            Particle.DUST,
                             wp.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
                             1,
                             0,

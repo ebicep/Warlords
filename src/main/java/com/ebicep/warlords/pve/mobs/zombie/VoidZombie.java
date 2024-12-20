@@ -76,8 +76,8 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     voidRadius,
-                    new CircumferenceEffect(Particle.FIREWORKS_SPARK, Particle.FIREWORKS_SPARK).particlesPerCircumference(0.6),
-                    new DoubleLineEffect(Particle.SPELL)
+                    new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(0.6),
+                    new DoubleLineEffect(Particle.EFFECT)
             ).playEffects();
         }
     }

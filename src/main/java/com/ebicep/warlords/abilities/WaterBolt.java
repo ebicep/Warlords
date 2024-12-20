@@ -67,9 +67,9 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
         World world = currentLocation.getWorld();
-        world.spawnParticle(Particle.DRIP_WATER, currentLocation, 2, 0.3, 0.3, 0.3, 0.1, null, true);
-        world.spawnParticle(Particle.ENCHANTMENT_TABLE, currentLocation, 1, 0, 0, 0, 0.1, null, true);
-        world.spawnParticle(Particle.VILLAGER_HAPPY, currentLocation, 1, 0, 0, 0, 0.1, null, true);
+        world.spawnParticle(Particle.DRIPPING_WATER, currentLocation, 2, 0.3, 0.3, 0.3, 0.1, null, true);
+        world.spawnParticle(Particle.ENCHANT, currentLocation, 1, 0, 0, 0, 0.1, null, true);
+        world.spawnParticle(Particle.HAPPY_VILLAGER, currentLocation, 1, 0, 0, 0, 0.1, null, true);
         world.spawnParticle(Particle.CLOUD, currentLocation, 1, 0, 0, 0, 0, null, true);
     }
 
@@ -82,7 +82,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         Location effectLocation = hit != null ? hit.getEyeLocation() : currentLocation;
 
         world.spawnParticle(Particle.HEART, effectLocation, 3, 1, 1, 1, 0.2, null, true);
-        world.spawnParticle(Particle.VILLAGER_HAPPY, effectLocation, 5, 1, 1, 1, 0.2, null, true);
+        world.spawnParticle(Particle.HAPPY_VILLAGER, effectLocation, 5, 1, 1, 1, 0.2, null, true);
 
         Utils.playGlobalSound(effectLocation, "mage.waterbolt.impact", 2, 1);
 

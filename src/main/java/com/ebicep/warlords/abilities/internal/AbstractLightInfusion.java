@@ -16,7 +16,7 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     protected static void playCastEffect(@Nonnull WarlordsEntity wp) {
         for (int i = 0; i < 10; i++) {
             EffectUtils.displayParticle(
-                    Particle.SPELL,
+                    Particle.EFFECT,
                     wp.getLocation().add(0, 1.5, 0),
                     3,
                     1,

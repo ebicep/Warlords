@@ -87,8 +87,8 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.5, 0);
-                        EffectUtils.displayParticle(Particle.SMOKE_NORMAL, location, 1, 0.3, 0.3, 0.3, 0.02);
-                        EffectUtils.displayParticle(Particle.SPELL, location, 2, 0.3, 0.3, 0.3, 0.5);
+                        EffectUtils.displayParticle(Particle.SMOKE, location, 1, 0.3, 0.3, 0.3, 0.02);
+                        EffectUtils.displayParticle(Particle.EFFECT, location, 2, 0.3, 0.3, 0.3, 0.5);
                     }
                 })
         ) {

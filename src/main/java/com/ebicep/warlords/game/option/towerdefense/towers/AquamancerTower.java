@@ -120,7 +120,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
 //                Location effectLocation = warlordsNPC.getLocation().add(0, npcEntity.getHeight(), 0);
 //                Utils.playGlobalSound(effectLocation, "mage.waterbolt.impact", 2, 1);
 //                EffectUtils.playCircularEffectAround(
-//                        Particle.DRIP_WATER,
+//                        Particle.DRIPPING_WATER,
 //                        effectLocation,
 //                        npcEntity.getBoundingBox().getWidthX()
 //                );

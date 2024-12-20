@@ -8,7 +8,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 import java.util.List;

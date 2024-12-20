@@ -50,9 +50,9 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(10, 120, 100), 1))
+                new CircumferenceEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(10, 120, 100), 1))
                         .particlesPerCircumference(.25),
-                new DoubleLineEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(170, 225, 175), 1))
+                new DoubleLineEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(170, 225, 175), 1))
         );
 
         AtomicInteger timesReduced = new AtomicInteger();

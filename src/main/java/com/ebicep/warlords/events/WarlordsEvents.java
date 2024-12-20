@@ -165,11 +165,11 @@ public class WarlordsEvents implements Listener {
 
     public static void joinInteraction(Player player, boolean fromGame) {
         player.playerListName(null);
-        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+        AttributeInstance attribute = player.getAttribute(Attribute.ATTACK_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(1024); // remove attack charge up / recoil
         }
-        attribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
+        attribute = player.getAttribute(Attribute.MAX_ABSORPTION);
         if (attribute != null) {
             attribute.setBaseValue(Integer.MAX_VALUE); // give absorption capability
         }
@@ -188,7 +188,7 @@ public class WarlordsEvents implements Listener {
         }
         if (isSpawnWorld) {
             player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.removePotionEffect(PotionEffectType.SLOW);
+            player.removePotionEffect(PotionEffectType.SLOWNESS);
             player.removePotionEffect(PotionEffectType.ABSORPTION);
 
             List<BossBar> bossBars = new ArrayList<>();

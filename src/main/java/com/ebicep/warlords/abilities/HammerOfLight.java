@@ -123,8 +123,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 wp.getTeam(),
                 location,
                 rad,
-                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
-                new LineEffect(location.clone().add(0, 2.3, 0), Particle.SPELL)
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST),
+                new LineEffect(location.clone().add(0, 2.3, 0), Particle.EFFECT)
         );
         BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
         ArmorStand hammer = spawnHammer(location);
@@ -318,7 +318,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 Vector v = new Vector(x, 2, z);
                                 Location loc = wp.getLocation().clone().add(v);
                                 loc.getWorld().spawnParticle(
-                                        Particle.SPELL,
+                                        Particle.EFFECT,
                                         loc,
                                         1,
                                         0,
@@ -335,7 +335,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                     wp.getTeam(),
                                     wp.getLocation().add(0, 0.75f, 0),
                                     rad / 2f,
-                                    new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(0.5f)
+                                    new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(0.5f)
                             ).playEffects();
                         }
                     });
@@ -405,13 +405,13 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.4f);
                 EffectUtils.strikeLightning(wp.getLocation(), false, delay / 10);
                 float rad = radius.getCalculatedValue();
-                EffectUtils.playHelixAnimation(wp.getLocation(), rad * radiusMultiplier, Particle.SPELL_WITCH, 1, 20);
+                EffectUtils.playHelixAnimation(wp.getLocation(), rad * radiusMultiplier, Particle.WITCH, 1, 20);
                 new CircleEffect(
                         wp.getGame(),
                         wp.getTeam(),
                         wp.getLocation().add(0, 0.75f, 0),
                         rad * radiusMultiplier,
-                        new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(1)
+                        new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(1)
                 ).playEffects();
 
                 for (WarlordsEntity allyTarget : PlayerFilter

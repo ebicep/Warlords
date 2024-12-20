@@ -50,7 +50,7 @@ import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;

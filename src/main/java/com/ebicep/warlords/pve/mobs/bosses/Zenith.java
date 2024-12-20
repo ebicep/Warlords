@@ -311,7 +311,7 @@ public class Zenith extends AbstractMob implements BossMob {
                 default -> 0.75f;
             };
 
-            EffectUtils.playSphereAnimation(loc, 4, Particle.SPELL_WITCH, 2);
+            EffectUtils.playSphereAnimation(loc, 4, Particle.WITCH, 2);
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(loc, 4, 4, 4)
                     .aliveEnemiesOf(wp)

@@ -268,7 +268,7 @@ public enum Quests {
                 );
         rewards.forEach((currencies, aLong) -> itemBuilder.addLore(Component.text(" +", NamedTextColor.DARK_GRAY).append(currencies.getCostColoredName(aLong))));
         if (!completed) {
-            itemBuilder.enchant(Enchantment.OXYGEN, 1);
+            itemBuilder.enchant(Enchantment.RESPIRATION, 1);
         }
         return itemBuilder.get();
 

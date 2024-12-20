@@ -153,7 +153,7 @@ public class AchievementsMenu {
                     }
                 }
                 if (hasAchievement) {
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                 }
                 menu.setItem(
                         x,
@@ -236,7 +236,7 @@ public class AchievementsMenu {
                 }
             }
             if (hasAchievement) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
             menu.setItem(
                     x,

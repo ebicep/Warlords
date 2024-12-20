@@ -85,10 +85,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
 
         List<EffectPlayer<? super CircleEffect>> effects = new ArrayList<>();
-        effects.add(new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE));
+        effects.add(new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST));
         if (!pveMasterUpgrade2) {
             effects.add(new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.025));
-            effects.add(new AreaEffect(5, Particle.DRIP_WATER).particlesPerSurface(0.025));
+            effects.add(new AreaEffect(5, Particle.DRIPPING_WATER).particlesPerSurface(0.025));
         }
         float rad = radius.getCalculatedValue();
         CircleEffect circleEffect = new CircleEffect(
@@ -162,7 +162,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                             teammateInRain.getLocation().clone(),
                                             2,
                                             new AreaEffect(4, Particle.CLOUD).particlesPerSurface(0.1),
-                                            new AreaEffect(4, Particle.DRIP_WATER).particlesPerSurface(0.1)
+                                            new AreaEffect(4, Particle.DRIPPING_WATER).particlesPerSurface(0.1)
                                     )));
                                 }
                             }

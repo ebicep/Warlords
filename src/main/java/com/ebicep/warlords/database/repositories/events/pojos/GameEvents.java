@@ -1460,7 +1460,7 @@ public enum GameEvents {
                     ));
                 }
                 if (unlocked) {
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                 }
                 menu.setItem(x, y, itemBuilder.get(), (m, e) -> {});
                 y++;

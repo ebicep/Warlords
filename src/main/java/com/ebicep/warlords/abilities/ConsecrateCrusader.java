@@ -49,9 +49,9 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1))
+                new CircumferenceEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1))
                         .particlesPerCircumference(.25),
-                new DoubleLineEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 255, 100), 1))
+                new DoubleLineEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 255, 100), 1))
         );
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

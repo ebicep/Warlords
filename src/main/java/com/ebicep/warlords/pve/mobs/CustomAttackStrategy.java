@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 
 public class CustomAttackStrategy {
 
@@ -20,7 +20,7 @@ public class CustomAttackStrategy {
         }
         if (source instanceof net.minecraft.world.entity.Mob mob) {
             mob.swing(InteractionHand.MAIN_HAND);
-            mob.doHurtTarget(target);
+            mob.doHurtTarget(mob.level().getMinecraftWorld(), target);
             return true;
         }
         target.hurt(target.damageSources().mobAttack(source), 1);

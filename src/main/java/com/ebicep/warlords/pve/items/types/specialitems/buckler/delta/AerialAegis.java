@@ -31,7 +31,7 @@ public class AerialAegis extends SpecialDeltaBuckler implements CraftsInto {
 
             @Override
             public void run() {
-                warlordsPlayer.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 120, 1, true, false));
+                warlordsPlayer.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 120, 1, true, false));
             }
         }.runTaskTimer(0, 100);
         warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(

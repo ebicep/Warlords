@@ -71,7 +71,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
     @Override
     public LineEffect getLineEffect(Location target) {
-        return new LineEffect(target.clone().add(0, 0.5, 0), Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(150, 8, 80), 1));
+        return new LineEffect(target.clone().add(0, 0.5, 0), Particle.DUST, new Particle.DustOptions(Color.fromRGB(150, 8, 80), 1));
     }
 
     @Override
@@ -204,7 +204,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             EffectUtils.playCircularEffectAround(
                     wp.getGame(),
                     crystal.getLocation(),
-                    Particle.TOTEM,
+                    Particle.TOTEM_OF_UNDYING,
                     3,
                     1,
                     0.15,
@@ -215,7 +215,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             EffectUtils.playCircularEffectAround(
                     wp.getGame(),
                     crystal.getLocation(),
-                    Particle.VILLAGER_HAPPY,
+                    Particle.HAPPY_VILLAGER,
                     1,
                     1,
                     0.1,

@@ -175,7 +175,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                     double angle = Math.toRadians(i * 90) + timer * 0.6;
                     double width = 1.5D;
                     playerLoc.getWorld().spawnParticle(
-                            Particle.SPELL_WITCH,
+                            Particle.WITCH,
                             center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
                             1,
                             0,

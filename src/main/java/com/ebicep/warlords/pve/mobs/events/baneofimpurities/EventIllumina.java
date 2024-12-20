@@ -252,7 +252,7 @@ public class EventIllumina extends AbstractMob implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
-                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
+                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.HAPPY_VILLAGER);
                         we.addInstance(InstanceBuilder
                                 .damage()
                                 .cause("Death Ray")

@@ -51,7 +51,7 @@ public class WeaponSkillBoostMenu {
             boolean selected = skillBoost == weapon.getSelectedSkillBoost();
             if (selected) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
                 if (!weapon.getUnlockedSkillBoosts().contains(skillBoost)) {

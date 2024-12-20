@@ -7,7 +7,7 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import javax.annotation.Nonnull;
 import java.util.Map;

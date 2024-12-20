@@ -76,7 +76,7 @@ public class WeaponBindMenu {
                                 column + i,
                                 row + 1,
                                 boundWeapon.generateItemStackInLore(Component.text("Click to replace binding", NamedTextColor.GREEN))
-                                           .enchant(Enchantment.OXYGEN, 1)
+                                           .enchant(Enchantment.RESPIRATION, 1)
                                            .get(),
                                 (m, e) -> {
                                     boundWeapon.setBound(false);

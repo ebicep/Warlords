@@ -134,8 +134,8 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORK, 2, 40);
             List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric
                     .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(wp)

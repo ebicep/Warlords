@@ -92,7 +92,7 @@ public abstract class AbstractBounty implements Listener, RewardSpendable, Bount
         }
 
         if (started && progress == null) {
-            itemBuilder.enchant(Enchantment.OXYGEN, 1);
+            itemBuilder.enchant(Enchantment.RESPIRATION, 1);
         }
         return itemBuilder;
     }

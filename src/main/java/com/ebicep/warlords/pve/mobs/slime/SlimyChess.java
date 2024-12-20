@@ -95,7 +95,7 @@ public class SlimyChess extends AbstractMob implements AdvancedMob {
                     .closestFirst(wp)
                     .limit(1)
             ) {
-                EffectUtils.playParticleLinkAnimation(wp.getLocation(), we.getLocation(), Particle.DRIP_LAVA);
+                EffectUtils.playParticleLinkAnimation(wp.getLocation(), we.getLocation(), Particle.DRIPPING_LAVA);
                 we.subtractEnergy(name, 5, true);
                 we.addSpeedModifier(wp, "Blob Slowness", -20, 20);
             }

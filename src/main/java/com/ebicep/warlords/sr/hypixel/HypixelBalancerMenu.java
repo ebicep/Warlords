@@ -3,8 +3,10 @@ package com.ebicep.warlords.sr.hypixel;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.Utils;
-import io.github.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.exception.SignGUIVersionException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -152,26 +154,30 @@ public class HypixelBalancerMenu {
                         .lore(Component.text("Current: ").append(Component.text(menuData.getPlayerCount(), NamedTextColor.GREEN)))
                         .get(),
                 (m, e) -> {
-                    SignGUI.builder()
-                           .setLines("", "^^^^^^", "Enter", "Player Count")
-                           .setHandler((p, lines) -> {
-                               String amount = lines.getLine(0);
-                               try {
-                                   int amountInt = Integer.parseInt(amount);
-                                   menuData.setPlayerCount(amountInt);
-                               } catch (Exception exception) {
-                                   p.sendMessage(Component.text("Invalid Amount", NamedTextColor.RED));
-                               }
-                               new BukkitRunnable() {
-                                   @Override
-                                   public void run() {
-                                       openMenu(p);
+                    try {
+                        SignGUI.builder()
+                               .setLines("", "^^^^^^", "Enter", "Player Count")
+                               .setHandler((p, lines) -> {
+                                   String amount = lines.getLine(0);
+                                   try {
+                                       int amountInt = Integer.parseInt(amount);
+                                       menuData.setPlayerCount(amountInt);
+                                   } catch (Exception exception) {
+                                       p.sendMessage(Component.text("Invalid Amount", NamedTextColor.RED));
                                    }
-                               }.runTaskLater(Warlords.getInstance(), 1);
-                               return null;
-                           })
-                           .build()
-                           .open(player);
+                                   new BukkitRunnable() {
+                                       @Override
+                                       public void run() {
+                                           openMenu(p);
+                                       }
+                                   }.runTaskLater(Warlords.getInstance(), 1);
+                                   return null;
+                               })
+                               .build()
+                               .open(player);
+                    } catch (SignGUIVersionException ex) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
+                    }
                 }
         );
         addSettingToMenu(2, 1, player, menu,
@@ -194,7 +200,7 @@ public class HypixelBalancerMenu {
             ItemBuilder itemBuilder = new ItemBuilder(Utils.getWoolFromIndex(i))
                     .name(Component.text(balanceFeature.getClass().getSimpleName(), NamedTextColor.AQUA));
             if (menuData.getExtraBalanceFeatures().contains(balanceFeature)) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
             menu.setItem(i + 1, 2, itemBuilder.get(), (m, e) -> {
                 if (menuData.getExtraBalanceFeatures().contains(balanceFeature)) {

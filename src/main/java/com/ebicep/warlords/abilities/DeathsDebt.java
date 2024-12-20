@@ -103,8 +103,8 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                 wp,
                 totemStand.getLocation().clone().add(0, 1.25, 0),
                 respiteRadius,
-                new CircumferenceEffect(Particle.SPELL),
-                new DoubleLineEffect(Particle.REDSTONE)
+                new CircumferenceEffect(Particle.EFFECT),
+                new DoubleLineEffect(Particle.DUST)
         );
 
         if (wp.isInPve()) {
@@ -234,7 +234,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                                 }
                             })
                     ));
-                    circleEffect.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.SPELL_WITCH));
+                    circleEffect.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.WITCH));
                     circleEffect.setRadius(debtRadius);
 
                     //blue to purple totem

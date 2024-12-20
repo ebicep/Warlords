@@ -175,7 +175,7 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                     return;
                 }
                 EffectUtils.displayParticle(
-                        Particle.BLOCK_CRACK,
+                        Particle.BLOCK,
                         spawnLocation,
                         6,
                         .25,

@@ -122,7 +122,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                                     particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                     particleLoc.getWorld().spawnParticle(
-                                            Particle.REDSTONE,
+                                            Particle.DUST,
                                             particleLoc,
                                             1,
                                             0,

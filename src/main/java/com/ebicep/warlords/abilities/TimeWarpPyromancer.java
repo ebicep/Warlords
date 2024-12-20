@@ -107,7 +107,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
                             location.getWorld().spawnParticle(
-                                    Particle.SPELL_WITCH,
+                                    Particle.WITCH,
                                     location,
                                     1,
                                     0.01,
@@ -121,7 +121,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
 
                         warpTrail.add(wp.getLocation());
                         warpLocation.getWorld().spawnParticle(
-                                Particle.SPELL_WITCH,
+                                Particle.WITCH,
                                 warpLocation,
                                 4,
                                 0.1,
@@ -180,7 +180,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                                         .clone()
                                         .add(x, 0, z);
                                 EffectUtils.displayParticle(
-                                        Particle.SPELL_WITCH,
+                                        Particle.WITCH,
                                         location,
                                         1
                                 );
@@ -194,7 +194,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                                                           .forward(rad),
                                         linkedLocation.faceTowards(linkedNextLocation)
                                                       .forward(rad),
-                                        Particle.SPELL_WITCH,
+                                        Particle.WITCH,
                                         0
                                 );
                             }

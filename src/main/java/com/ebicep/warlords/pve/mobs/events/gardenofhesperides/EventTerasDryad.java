@@ -78,7 +78,7 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
                                 return;
                             }
                             EffectUtils.displayParticle(
-                                    Particle.VILLAGER_HAPPY,
+                                    Particle.HAPPY_VILLAGER,
                                     warlordsEntity.getLocation().add(0, 1.25, 0),
                                     10,
                                     .5,

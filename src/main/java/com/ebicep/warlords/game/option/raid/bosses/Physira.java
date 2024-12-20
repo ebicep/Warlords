@@ -227,8 +227,8 @@ public class Physira extends AbstractMob implements BossMob {
                                     we.getTeam(),
                                     we.getLocation().clone().add(0, 0.25, 0),
                                     8,
-                                    new CircumferenceEffect(Particle.FIREWORKS_SPARK, Particle.FIREWORKS_SPARK).particlesPerCircumference(1),
-                                    new DoubleLineEffect(Particle.SPELL)
+                                    new CircumferenceEffect(Particle.FIREWORK, Particle.FIREWORK).particlesPerCircumference(1),
+                                    new DoubleLineEffect(Particle.EFFECT)
                             ).playEffects();
                             if (ticksLeft % 2 == 0) {
                                 for (WarlordsEntity ally : PlayerFilter

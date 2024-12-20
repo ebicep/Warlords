@@ -158,7 +158,7 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
             public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 fallenSoul.remove();
                 projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.CRIT_MAGIC,
+                        Particle.ENCHANTED_HIT,
                         projectile.getCurrentLocation(),
                         1,
                         0,

@@ -11,9 +11,11 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyMode;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.chat.DefaultFontInfo;
 import com.ebicep.warlords.util.java.NumberFormat;
-import io.github.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.exception.SignGUIVersionException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -224,7 +226,9 @@ public class AbilityTree {
                     (m, e) -> {
                         if (autoUpgradeProfiles.size() >= 8) {
                             warlordsPlayer.sendMessage(Component.text("You can only have up to 8 profiles per spec!", NamedTextColor.RED));
-                        } else {
+                            return;
+                        }
+                        try {
                             SignGUI.builder()
                                    .setLines("", "Enter", "Profile Name", "")
                                    .setHandler((p, lines) -> {
@@ -246,6 +250,8 @@ public class AbilityTree {
                                        openAbilityTreeAfterTick();
                                        return null;
                                    }).build().open(player);
+                        } catch (SignGUIVersionException ex) {
+                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
                         }
                     }
             );
@@ -255,25 +261,29 @@ public class AbilityTree {
                             .lore(WordWrap.wrap(Component.text("Rename the current profile.", NamedTextColor.GRAY), 150))
                             .get(),
                     (m, e) -> {
-                        SignGUI.builder()
-                               .setLines("", "Enter", "Profile Name", "")
-                               .setHandler((p, lines) -> {
-                                   String name = lines.getLine(0);
-                                   if (!name.matches("[a-zA-Z0-9 ]+")) {
-                                       player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
-                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                        try {
+                            SignGUI.builder()
+                                   .setLines("", "Enter", "Profile Name", "")
+                                   .setHandler((p, lines) -> {
+                                       String name = lines.getLine(0);
+                                       if (!name.matches("[a-zA-Z0-9 ]+")) {
+                                           player.sendMessage(Component.text("Invalid name!", NamedTextColor.RED));
+                                           player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                           return null;
+                                       }
+                                       if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
+                                           player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
+                                           player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
+                                           return null;
+                                       }
+                                       autoUpgradeProfile.setName(name);
+                                       DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                       openAbilityTreeAfterTick();
                                        return null;
-                                   }
-                                   if (autoUpgradeProfiles.stream().anyMatch(l -> l.getName().equalsIgnoreCase(name))) {
-                                       player.sendMessage(Component.text("You already have a profile with that name!", NamedTextColor.RED));
-                                       player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 2, 0.5f);
-                                       return null;
-                                   }
-                                   autoUpgradeProfile.setName(name);
-                                   DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                   openAbilityTreeAfterTick();
-                                   return null;
-                               }).build().open(player);
+                                   }).build().open(player);
+                        } catch (SignGUIVersionException ex) {
+                            ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
+                        }
                     }
             );
             menu.setItem(5, 4,

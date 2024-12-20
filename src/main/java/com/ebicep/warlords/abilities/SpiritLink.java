@@ -104,7 +104,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
                 if (pveMasterUpgrade2 && nearPlayer instanceof WarlordsNPC warlordsNPC) {
                     warlordsNPC.getMob().setTarget(wp);
                     EffectUtils.displayParticle(
-                            Particle.SPELL_INSTANT,
+                            Particle.INSTANT_EFFECT,
                             warlordsNPC.getLocation().add(0, 1.2, 0),
                             5,
                             .25,
@@ -187,7 +187,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
             if (pveMasterUpgrade2 && bounceTarget instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.getMob().setTarget(wp);
                 EffectUtils.displayParticle(
-                        Particle.SPELL_INSTANT,
+                        Particle.INSTANT_EFFECT,
                         warlordsNPC.getLocation().add(0, 1.2, 0),
                         5,
                         .25,

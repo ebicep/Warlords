@@ -48,7 +48,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         wp.getWorld().spawnParticle(
-                                Particle.SPELL,
+                                Particle.EFFECT,
                                 wp.getLocation().add(0, 1.2, 0),
                                 2,
                                 0.3,
@@ -84,7 +84,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 4 == 0) {
                                 wp.getWorld().spawnParticle(
-                                        Particle.SPELL,
+                                        Particle.EFFECT,
                                         wp.getLocation().add(0, 1.2, 0),
                                         2,
                                         0.3,

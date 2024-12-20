@@ -171,7 +171,7 @@ public class OldTestCommand implements CommandExecutor {
 //                                    EffectUtils.playParticleLinkAnimation(
 //                                            storedLocation,
 //                                            location,
-//                                            Particle.VILLAGER_HAPPY
+//                                            Particle.HAPPY_VILLAGER
 //                                    );
 //                                }
 //                            }
@@ -259,7 +259,7 @@ public class OldTestCommand implements CommandExecutor {
                 d.setTeleportDuration(maxTicks - 2);
             });
 
-            EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, locationBuilder, 20);
+            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, locationBuilder, 20);
 
 
 
@@ -299,7 +299,7 @@ public class OldTestCommand implements CommandExecutor {
 
                     if (tpCounter < quarterCircle.size()) {
                         Location loc = quarterCircle.get(tpCounter++);
-                        EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, loc, 1);
+                        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, loc, 1);
 //                        display.teleport(loc);
                     }
 
@@ -389,7 +389,7 @@ public class OldTestCommand implements CommandExecutor {
 //                        if (mob instanceof Chessking) {
 //                            Entity entity = mob.getWarlordsNPC().getEntity();
 //                            if (entity instanceof LivingEntity living) {
-//                                living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1);
+//                                living.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.1);
 //                            }
 //                        }
 //                    }
@@ -559,7 +559,7 @@ public class OldTestCommand implements CommandExecutor {
 //            }
 //
 //            EffectUtils.displayParticle(
-//                    Particle.SPELL_WITCH,
+//                    Particle.WITCH,
 //                    player.getLocation().subtract(0, 3, 0),
 //                    1000,
 //                    10,

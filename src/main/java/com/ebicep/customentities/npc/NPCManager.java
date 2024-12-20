@@ -240,7 +240,7 @@ public class NPCManager {
     public static void createStarPieceSynthesizerNPC() {
         registerTrait(StarPieceSynthesizerTrait.class, "StarPieceSynthesizerTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.ENDER_CRYSTAL, "star-piece-synthesizer");
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.END_CRYSTAL, "star-piece-synthesizer");
         npc.addTrait(StarPieceSynthesizerTrait.class);
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
@@ -254,7 +254,7 @@ public class NPCManager {
         npc.data().set("swim", false);
         npc.addTrait(ItemEnyaTrait.class);
         npc.getOrAddTrait(Gravity.class)
-           .gravitate(true);
+           .setHasGravity(false);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();

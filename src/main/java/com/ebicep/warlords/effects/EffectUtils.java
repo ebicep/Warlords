@@ -46,7 +46,7 @@ public class EffectUtils {
 
                 loc.add(x, y, z);
                 Particle.DustOptions data = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.REDSTONE, loc, 1, data);
+                displayParticle(Particle.DUST, loc, 1, data);
                 loc.subtract(x, y, z);
             }
         }
@@ -126,7 +126,7 @@ public class EffectUtils {
                 double z = Math.sin(angle) * ratio * helixRadius;
                 loc.add(x, 0, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.REDSTONE, loc, 1, dustOptions);
+                displayParticle(Particle.DUST, loc, 1, dustOptions);
                 loc.subtract(x, 0, z);
             }
         }
@@ -171,7 +171,7 @@ public class EffectUtils {
                 particleLoc.setY(loc.getY() + i / 5D);
                 particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.REDSTONE, particleLoc, 1, dustOptions);
+                displayParticle(Particle.DUST, particleLoc, 1, dustOptions);
             }
         }
     }
@@ -185,7 +185,7 @@ public class EffectUtils {
                 particleLoc.setY(loc.getY() + i / 5D);
                 particleLoc.setZ(loc.getZ() + cos(angle) * cylinderRadius);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
-                displayParticle(Particle.REDSTONE, particleLoc, 1, dustOptions);
+                displayParticle(Particle.DUST, particleLoc, 1, dustOptions);
             }
         }
     }
@@ -410,7 +410,7 @@ public class EffectUtils {
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
             for (int i1 = 0; i1 < amount; i1++) {
                 Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), size);
-                displayParticle(Particle.REDSTONE, lineLocation, amount, dustOptions);
+                displayParticle(Particle.DUST, lineLocation, amount, dustOptions);
             }
             lineLocation.add(lineLocation.getDirection().multiply(.5));
         }
@@ -420,7 +420,7 @@ public class EffectUtils {
         for (int i = 0; i < amount; i++) {
             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.fromRGB(red, green, blue), 1);
             displayParticle(
-                    Particle.REDSTONE,
+                    Particle.DUST,
                     loc.clone().add(
                             (Math.random() * 2) - 1,
                             1.2 + (Math.random() * 2) - 1,
@@ -453,7 +453,7 @@ public class EffectUtils {
     }
 
     public static void strikeLightningTicks(Location location, boolean isSilent, int ticksLived) {
-        LightningStrike lightningStrike = (LightningStrike) location.getWorld().spawnEntity(location, EntityType.LIGHTNING);
+        LightningStrike lightningStrike = (LightningStrike) location.getWorld().spawnEntity(location, EntityType.LIGHTNING_BOLT);
         lightningStrike.setSilent(isSilent);
         lightningStrike.setTicksLived(ticksLived);
     }
@@ -739,7 +739,7 @@ public class EffectUtils {
      * @param fe  which effects should the firework have.
      */
     public static void playFirework(Location loc, FireworkEffect fe) {
-        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK_ROCKET);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         fireworkMeta.addEffect(fe);
         fireworkMeta.setPower(1);
@@ -753,7 +753,7 @@ public class EffectUtils {
      * @param flightTime 1 = 0.5 seconds of flight time.
      */
     public static void playFirework(Location loc, FireworkEffect fe, int flightTime) {
-        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK_ROCKET);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         fireworkMeta.addEffect(fe);
         fireworkMeta.setPower(flightTime);

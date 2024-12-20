@@ -157,7 +157,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                             0.6f
                     );
                 },
-                Particle.FIREWORKS_SPARK
+                Particle.FIREWORK
         );
 
         Location playerEyeLoc = new LocationBuilder(wp.getLocation())

@@ -88,7 +88,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                         List<Location> verticalRectangle = LocationUtils.getVerticalRectangle(locationBuilder, 4, 5);
                         for (Location location : verticalRectangle) {
                             EffectUtils.displayParticle(
-                                    Particle.BLOCK_DUST,
+                                    Particle.BLOCK,
                                     location,
                                     10,
                                     .1,
@@ -125,14 +125,14 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                         Location particleLoc = wp.getLocation().add(0, 1.5, 0);
 
                         particleLoc.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0.2, 0.2, 0.2, 0.001, null, true);
-                        particleLoc.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, particleLoc, 1, 0.3, 0.2, 0.3, 0.0001, null, true);
+                        particleLoc.getWorld().spawnParticle(Particle.FIREWORK, particleLoc, 1, 0.3, 0.2, 0.3, 0.0001, null, true);
 
                         if (pveMasterUpgrade) {
                             Utils.playGlobalSound(particleLoc, Sound.BLOCK_GLASS_BREAK, 1, 1.35f);
                             EffectUtils.playHelixAnimation(
                                     particleLoc.add(0, -1.25, 0),
                                     6,
-                                    Particle.FIREWORKS_SPARK,
+                                    Particle.FIREWORK,
                                     1,
                                     8
                             );

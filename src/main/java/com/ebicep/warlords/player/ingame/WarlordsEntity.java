@@ -57,10 +57,10 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -300,7 +300,7 @@ public abstract class WarlordsEntity {
             ItemStack item = player.getInventory().getItem(0);
             //removing sg shiny weapon
             if (item != null) {
-                item.removeEnchantment(Enchantment.OXYGEN);
+                item.removeEnchantment(Enchantment.RESPIRATION);
             }
             //removing boner
             player.getInventory().remove(UndyingArmy.BONE);
@@ -588,7 +588,7 @@ public abstract class WarlordsEntity {
         if (ability.getCurrentCooldown() > 0) {
             ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
             if (!ability.getSecondaryAbilities().isEmpty()) {
-                cooldown.enchant(Enchantment.OXYGEN, 1);
+                cooldown.enchant(Enchantment.RESPIRATION, 1);
             }
             player.getInventory().setItem(slot, cooldown.get());
         } else {
@@ -1206,7 +1206,7 @@ public abstract class WarlordsEntity {
         if (player != null) {
             player.setWalkSpeed(MathUtils.clamp(this.walkSpeed, -1f, 1f));
         } else if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
+            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
         }
     }
 

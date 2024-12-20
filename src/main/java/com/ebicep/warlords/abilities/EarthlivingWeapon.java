@@ -76,7 +76,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         EffectUtils.displayParticle(
-                                Particle.VILLAGER_HAPPY,
+                                Particle.HAPPY_VILLAGER,
                                 wp.getLocation().add(0, 1.2, 0),
                                 2,
                                 0.3,
@@ -209,7 +209,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                     }
 
                     if (ticksElapsed % 5 == 0) {
-                        EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);
+                        EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, Particle.HAPPY_VILLAGER, 1);
                     }
                 })
         );
