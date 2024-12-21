@@ -21,6 +21,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -335,10 +336,14 @@ public class InstanceManager {
                 .filterCooldownClass(Intervene.InterveneData.class)
                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                 .findFirst();
-        if (!trueDamage && !pierceDamage &&
+        boolean intervened = !trueDamage && !pierceDamage &&
                 optionalInterveneCooldown.isPresent() && optionalInterveneCooldown.get().getTicksLeft() > 0 &&
-                warlordsEntity.isEnemy(attacker)
-        ) {
+                warlordsEntity.isEnemy(attacker);
+        if (intervened && optionalInterveneCooldown.get().getFrom() == attacker) {
+            ChatUtils.MessageType.GAME.sendErrorMessage("Intervene Overflow? " + warlordsEntity.getName() + " intervened from " + attacker.getName() + " - " + event);
+            intervened = false;
+        }
+        if (intervened) {
             debugMessage.appendTitle("Intervene", NamedTextColor.AQUA);
 
             Intervene.InterveneData data = (Intervene.InterveneData) optionalInterveneCooldown.get().getCooldownObject();
