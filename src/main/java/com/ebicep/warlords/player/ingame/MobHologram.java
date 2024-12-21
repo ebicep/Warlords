@@ -131,6 +131,16 @@ public abstract class MobHologram {
             this.textSupplier = textSupplier;
         }
 
+        @Override
+        public String toString() {
+            return "CustomHologramLine{" +
+                    "text=" + text +
+                    ", textSupplier=" + textSupplier.get().toString() +
+                    ", delete=" + delete +
+                    ", entity=" + entity +
+                    '}';
+        }
+
         public Component getText() {
             if (textSupplier != null) {
                 return textSupplier.get();
