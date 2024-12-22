@@ -40,8 +40,8 @@ import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.FancyHologramsPlugin;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
@@ -82,7 +82,7 @@ public class Warlords extends JavaPlugin {
     public static String VERSION = "";
     public static NamedTextColor VERSION_COLOR = NamedTextColor.RED;
     public static String serverIP;
-    public static boolean holographicDisplaysEnabled;
+    public static boolean hologramsEnabled;
     public static boolean citizensEnabled;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
@@ -294,9 +294,9 @@ public class Warlords extends JavaPlugin {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
-            if (holographicDisplaysEnabled) {
+            if (hologramsEnabled) {
                 ChatUtils.MessageType.WARLORDS.sendMessage("Deleting holograms...");
-                HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
+                FancyHologramsPlugin.get().getHologramManager().getHolograms().forEach(Hologram::deleteHologram);
             }
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
@@ -395,8 +395,8 @@ public class Warlords extends JavaPlugin {
         ConfigUtil.loadConfigs(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-
-        holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
+        hologramsEnabled = Bukkit.getPluginManager().isPluginEnabled("FancyHolograms");
+        ChatUtils.MessageType.WARLORDS.sendMessage("hologramsEnabled: " + hologramsEnabled);
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);

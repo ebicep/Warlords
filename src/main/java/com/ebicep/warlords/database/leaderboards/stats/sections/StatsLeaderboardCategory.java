@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerB
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 
 import java.util.ArrayList;
 import java.util.Collection;

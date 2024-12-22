@@ -1,7 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 
 import com.ebicep.jda.BotManager;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -14,11 +13,13 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.FancyHologramsPlugin;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Display;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -156,27 +157,10 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerCTF> databaseGame, int multiplier) {
-        for (List<DatabaseGamePlayerCTF> gamePlayerCTFList : players.values()) {
-            for (DatabaseGamePlayerCTF gamePlayerCTF : gamePlayerCTFList) {
-                DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
-            }
-        }
-    }
-
-    @Override
-    public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
-        assert player instanceof DatabaseGamePlayerCTF;
-
-        if (winner == null) {
-            return DatabaseGamePlayerResult.DRAW;
-        }
-        for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
-            if (teamListEntry.getValue().contains(player)) {
-                return teamListEntry.getKey() == winner ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
-            }
-        }
-        return DatabaseGamePlayerResult.NONE;
+    public void appendLastGameStats(TextHologramData hologramData) {
+        hologramData.addLine(ChatColor.GRAY + date);
+        hologramData.addLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        hologramData.addLine(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
     }
 
     @Override
@@ -187,26 +171,34 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        hologram.getLines().appendText(ChatColor.GRAY + date);
-        hologram.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
-        hologram.getLines().appendText(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
+    public Team getTeam(DatabaseGamePlayerBase player) {
+        return players.entrySet()
+                      .stream()
+                      .filter(teamListEntry -> teamListEntry.getValue()
+                                                            .stream()
+                                                            .anyMatch(databaseGamePlayerCTF -> databaseGamePlayerCTF.getUuid().equals(player.getUuid())))
+                      .map(Map.Entry::getKey)
+                      .findFirst()
+                      .orElse(null);
     }
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-        Hologram topDHPPerMinute = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
-        holograms.add(topDHPPerMinute);
-        topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+        TextHologramData topDHPPerMinuteData = new TextHologramData("topDHPPerMinute_" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
+        topDHPPerMinuteData.setPersistent(false);
+        topDHPPerMinuteData.removeLine(0);
+        topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+        topDHPPerMinuteData.setBillboard(Display.Billboard.CENTER);
 
-        Hologram topDamageOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
-        holograms.add(topDamageOnCarrier);
-        topDamageOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
+        TextHologramData topDamageOnCarrierData = new TextHologramData("topDamageOnCarrier_" + exactDate, DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
+        topDamageOnCarrierData.setPersistent(false);
+        topDamageOnCarrierData.removeLine(0);
+        topDamageOnCarrierData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
 
-        Hologram topHealingOnCarrier = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
-        holograms.add(topHealingOnCarrier);
-        topHealingOnCarrier.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
+        TextHologramData topHealingOnCarrierData = new TextHologramData("topHealingOnCarrier_" + exactDate, DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
+        topHealingOnCarrierData.setPersistent(false);
+        topHealingOnCarrierData.removeLine(0);
+        topHealingOnCarrierData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
 
         List<String> topDHPPerGamePlayers = new ArrayList<>();
         List<String> topDamageOnCarrierPlayers = new ArrayList<>();
@@ -249,9 +241,40 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
                               ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
                   });
 
-        topDHPPerGamePlayers.forEach(s -> topDHPPerMinute.getLines().appendText(s));
-        topDamageOnCarrierPlayers.forEach(s -> topDamageOnCarrier.getLines().appendText(s));
-        topHealingOnCarrierPlayers.forEach(s -> topHealingOnCarrier.getLines().appendText(s));
+        topDHPPerGamePlayers.forEach(s -> topDHPPerMinuteData.addLine(s));
+        topDamageOnCarrierPlayers.forEach(s -> topDamageOnCarrierData.addLine(s));
+        topHealingOnCarrierPlayers.forEach(s -> topHealingOnCarrierData.addLine(s));
+
+        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
+        holograms.add(topDHPPerMinute);
+        Hologram topDamageOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topDamageOnCarrierData);
+        holograms.add(topDamageOnCarrier);
+        Hologram topHealingOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topHealingOnCarrierData);
+        holograms.add(topHealingOnCarrier);
+    }
+
+    @Override
+    public void updatePlayerStatsFromGame(DatabaseGameBase<DatabaseGamePlayerCTF> databaseGame, int multiplier) {
+        for (List<DatabaseGamePlayerCTF> gamePlayerCTFList : players.values()) {
+            for (DatabaseGamePlayerCTF gamePlayerCTF : gamePlayerCTFList) {
+                DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame, gamePlayerCTF, multiplier);
+            }
+        }
+    }
+
+    @Override
+    public DatabaseGamePlayerResult getPlayerGameResult(DatabaseGamePlayerBase player) {
+        assert player instanceof DatabaseGamePlayerCTF;
+
+        if (winner == null) {
+            return DatabaseGamePlayerResult.DRAW;
+        }
+        for (Map.Entry<Team, List<DatabaseGamePlayerCTF>> teamListEntry : players.entrySet()) {
+            if (teamListEntry.getValue().contains(player)) {
+                return teamListEntry.getKey() == winner ? DatabaseGamePlayerResult.WON : DatabaseGamePlayerResult.LOST;
+            }
+        }
+        return DatabaseGamePlayerResult.NONE;
     }
 
     @Override
@@ -259,18 +282,6 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
         return ChatColor.GRAY + date + ChatColor.DARK_GRAY + " - " +
                 ChatColor.GREEN + map + ChatColor.DARK_GRAY + " - " +
                 ChatColor.GRAY + "(" + ChatColor.BLUE + bluePoints + ChatColor.GRAY + ":" + ChatColor.RED + redPoints + ChatColor.GRAY + ")" + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
-    }
-
-    @Override
-    public Team getTeam(DatabaseGamePlayerBase player) {
-        return players.entrySet()
-                      .stream()
-                      .filter(teamListEntry -> teamListEntry.getValue()
-                                                            .stream()
-                                                            .anyMatch(databaseGamePlayerCTF -> databaseGamePlayerCTF.getUuid().equals(player.getUuid())))
-                      .map(Map.Entry::getKey)
-                      .findFirst()
-                      .orElse(null);
     }
 
     @Override

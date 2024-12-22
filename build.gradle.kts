@@ -73,6 +73,10 @@ repositories {
     maven {
         url = uri("https://maven.enginehub.org/repo")
     }
+
+    maven {
+        url = uri("https://repo.fancyplugins.de/releases")
+    }
 }
 
 dependencies {
@@ -109,6 +113,8 @@ dependencies {
     compileOnlyApi("LibsDisguises:LibsDisguises:10.0.44") {
         exclude("org.spigotmc", "spigot")
     }
+
+    compileOnly("de.oliver:FancyHolograms:2.4.1")
 }
 
 publishing {
@@ -187,7 +193,7 @@ bukkit {
     main = "com.ebicep.warlords.Warlords"
     apiVersion = "1.21.4"
     authors = listOf("ebicep", "Plikie")
-    depend = listOf("ProtocolLib", "Citizens", "Multiverse-Core")
+    depend = listOf("ProtocolLib", "FancyHolograms", "Citizens", "Multiverse-Core")
     commands {
         register("oldtest") {
             description = "Old test command"

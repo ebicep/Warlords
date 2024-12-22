@@ -8,7 +8,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -34,7 +34,7 @@ public abstract class AbstractStatsLeaderboardGameType<
 
     public void addLeaderboards() {
         for (CategoryT category : gameTypeCategories) {
-            category.getAllHolograms().forEach(Hologram::delete);
+            category.getAllHolograms().forEach(Hologram::deleteHologram);
             addBaseLeaderboards(category);
             this.addExtraLeaderboards(category);
         }

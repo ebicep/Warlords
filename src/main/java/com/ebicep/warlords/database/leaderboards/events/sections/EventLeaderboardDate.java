@@ -6,7 +6,7 @@
 //import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventDatabaseStatInformation;
 //import com.ebicep.warlords.util.bukkit.LocationBuilder;
 //import com.ebicep.warlords.util.java.NumberFormat;
-//import me.filoghost.holographicdisplays.api.hologram.Hologram;
+//import de.oliver.fancyholograms.api.hologram.Hologram;
 //
 //import java.util.List;
 //
@@ -34,7 +34,7 @@
 //    public abstract void addExtraLeaderboards(EventLeaderboardCategory<T> eventLeaderboardCategory);
 //
 //    public void addBaseLeaderboards(EventLeaderboardCategory<T> eventLeaderboardCategory) {
-//        eventLeaderboardCategory.getAllHolograms().forEach(Hologram::delete);
+//        eventLeaderboardCategory.getAllHolograms().forEach(Hologram::deleteHologram);
 //
 //        List<EventLeaderboard> eventLeaderboards = eventLeaderboardCategory.getEventLeaderboards();
 //        eventLeaderboards.clear();

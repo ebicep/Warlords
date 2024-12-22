@@ -11,7 +11,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -84,9 +85,9 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBolt
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        super.appendLastGameStats(hologram);
-        hologram.getLines().appendText(ChatColor.YELLOW + "Highest Split: " + highestSplit);
+    public void appendLastGameStats(TextHologramData hologramData) {
+        super.appendLastGameStats(hologramData);
+        hologramData.addLine(ChatColor.YELLOW + "Highest Split: " + highestSplit);
     }
 
     @Override

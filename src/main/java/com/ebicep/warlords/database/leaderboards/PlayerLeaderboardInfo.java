@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class PlayerLeaderboardInfo {
     }
 
     public void clearHolograms() {
-        this.holograms.forEach(Hologram::delete);
+        this.holograms.forEach(Hologram::deleteHologram);
         this.holograms.clear();
     }
 

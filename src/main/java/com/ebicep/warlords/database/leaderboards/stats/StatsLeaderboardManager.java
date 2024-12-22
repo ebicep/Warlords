@@ -27,14 +27,18 @@ import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import de.oliver.fancyholograms.api.FancyHologramsPlugin;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.data.property.Visibility;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -74,13 +78,16 @@ public class StatsLeaderboardManager {
     }
 
     public static void addHologramLeaderboards(boolean init) {
-        if (!Warlords.holographicDisplaysEnabled) {
+        if (!Warlords.hologramsEnabled) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Not adding hologram leaderboards - holograms are disabled");
             return;
         }
         if (!DatabaseManager.enabled) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Not adding hologram leaderboards - database is disabled");
             return;
         }
         if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage("Not adding hologram leaderboards - database services are null");
             return;
         }
 
@@ -155,6 +162,8 @@ public class StatsLeaderboardManager {
                         ChatUtils.MessageType.LEADERBOARDS.sendMessage("Set Leaderboard Hologram Visibility");
 
                         if (init) {
+                            ChatUtils.MessageType.LEADERBOARDS.sendMessage("init Running");
+
                             DatabaseTiming.checkLeaderboardResets();
                             NPCManager.createGameJoinNPCs();
                             DatabaseGameEvent.startGameEvent();
@@ -177,7 +186,7 @@ public class StatsLeaderboardManager {
      * @param gameMode
      */
     public static void resetLeaderboards(PlayersCollections playersCollections, @Nullable GameMode gameMode) {
-        if (!Warlords.holographicDisplaysEnabled) {
+        if (!Warlords.hologramsEnabled) {
             return;
         }
         if (!DatabaseManager.enabled || !enabled) {
@@ -216,7 +225,7 @@ public class StatsLeaderboardManager {
     }
 
     public static StatsLeaderboardCategory<?, ?, ?> getLeaderboardCategoryFromUUID(UUID uuid) {
-        if (!Warlords.holographicDisplaysEnabled) {
+        if (!Warlords.hologramsEnabled) {
             return null;
         }
         validatePlayerHolograms(uuid);
@@ -239,7 +248,7 @@ public class StatsLeaderboardManager {
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) {
+        if (!Warlords.hologramsEnabled) {
             return;
         }
         validatePlayerHolograms(player);
@@ -251,13 +260,14 @@ public class StatsLeaderboardManager {
 
         getAllLeaderboardCategories().forEach(category -> {
             category.getAllHolograms()
-                    .forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+                    .forEach(hologram -> Visibility.ManualVisibility.removeDistantViewer(hologram, player.getUniqueId()));
         });
         if (statsLeaderboardCategory != null) {
             statsLeaderboardCategory.getCollectionHologramPaged(selectedTime)
-                                    .forEach(holograms -> holograms.get(page)
-                                                                   .getVisibilitySettings()
-                                                                   .setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+                                    .forEach(holograms -> {
+                                        Hologram hologram = holograms.get(page);
+                                        Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
+                                    });
         }
 
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
@@ -268,18 +278,21 @@ public class StatsLeaderboardManager {
                             .getSortedHolograms()
                             .stream()
                             .flatMap(Collection::stream)
-                            .forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN)));
+                            .forEach(hologram -> Visibility.ManualVisibility.removeDistantViewer(hologram, player.getUniqueId())));
             EventsLeaderboardManager.EVENT_LEADERBOARDS
                     .keySet()
-                    .forEach(eventLeaderboard -> eventLeaderboard
-                            .getSortedHolograms()
-                            .get(0)
-                            .get(page).getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+                    .forEach(eventLeaderboard -> {
+                        Hologram hologram = eventLeaderboard
+                                .getSortedHolograms()
+                                .get(0)
+                                .get(page);
+                        Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
+                    });
         }
 
         CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
         createLeaderboardSwitcherHologram(player);
-        addPlayerPositionLeaderboards(player);
+//        addPlayerPositionLeaderboards(player); TODO
     }
 
     public static void setLeaderboardHologramVisibilityToAll() {
@@ -295,27 +308,27 @@ public class StatsLeaderboardManager {
             Function<T, String> getName,
             Consumer<T> set
     ) {
-        Hologram switchHologram = createSwitchHologram(location);
-        if (selected != before) {
-            switchHologram.getLines().appendText(ChatColor.GRAY + getName.apply(before)).setClickListener(p -> {
-                set.accept(before);
-                setLeaderboardHologramVisibility(player);
-            });
-        }
-        switchHologram.getLines().appendText(ChatColor.GREEN + getName.apply(selected));
-        if (selected != after) {
-            switchHologram.getLines().appendText(ChatColor.GRAY + getName.apply(after)).setClickListener(p -> {
-                set.accept(after);
-                setLeaderboardHologramVisibility(player);
-            });
-        }
-
-        switchHologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-        switchHologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+//        Hologram switchHologram = createSwitchHologram(location);
+//        if (selected != before) {
+//            hologramData.addLine(ChatColor.GRAY + getName.apply(before)).setClickListener(p -> {
+//                set.accept(before);
+//                setLeaderboardHologramVisibility(player);
+//            });
+//        }
+//        hologramData.addLine(ChatColor.GREEN + getName.apply(selected));
+//        if (selected != after) {
+//            hologramData.addLine(ChatColor.GRAY + getName.apply(after)).setClickListener(p -> {
+//                set.accept(after);
+//                setLeaderboardHologramVisibility(player);
+//            });
+//        }
+//
+//        hologramData.setVisibility(Visibility.ALL);
+//        switchHologram.showHologram(player);
     }
 
     private static void createLeaderboardSwitcherHologram(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) {
+        if (!Warlords.hologramsEnabled) {
             return;
         }
         removePlayerSpecificHolograms(player);
@@ -369,16 +382,16 @@ public class StatsLeaderboardManager {
         );
     }
 
-    private static Hologram createSwitchHologram(Location location) {
-        Hologram switchHologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
-        switchHologram.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Click to Toggle");
-        switchHologram.getLines().appendText("");
-
-        return switchHologram;
-    }
+//    private static Hologram createSwitchHologram(Location location) {
+//        Hologram switchHologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
+//        hologramData.addLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Click to Toggle");
+//        hologramData.addLine("");
+//
+//        return switchHologram;
+//    }
 
     public static void addPlayerPositionLeaderboards(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) {
+        if (!Warlords.hologramsEnabled) {
             return;
         }
         if (enabled) {
@@ -395,8 +408,13 @@ public class StatsLeaderboardManager {
                         continue;
                     }
                     Location location = statsLeaderboard.getLocation().clone().add(0, -3.5, 0);
-
-                    Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
+                    TextHologramData hologramData = new TextHologramData("player_position_" +
+                            statsLeaderboardCategory.getShortName() + "_" +
+                            statsLeaderboard.getTitle() + "_" +
+                            player.getName(),
+                            location
+                    );
+                    hologramData.removeLine(0);
 
                     List<DatabasePlayer> databasePlayers = statsLeaderboard.getSortedPlayers(selectedTime);
                     for (int i = 0; i < databasePlayers.size(); i++) {
@@ -410,7 +428,7 @@ public class StatsLeaderboardManager {
                                     guildTag = tag.getTag(true);
                                 }
                             }
-                            hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                            hologramData.addLine(LegacyComponentSerializer.legacySection().serialize(
                                     Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
                                              .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
                                              .append(Component.space())
@@ -422,9 +440,11 @@ public class StatsLeaderboardManager {
                         }
                     }
 
-                    hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-                    hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+                    hologramData.setVisibility(Visibility.ALL);
 
+                    Hologram hologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
+                    Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
+                    FancyHologramsPlugin.get().getHologramManager().addHologram(hologram);
                     playerHolograms.add(hologram);
                 }
             }
@@ -434,8 +454,12 @@ public class StatsLeaderboardManager {
                     continue;
                 }
                 Location location = eventLeaderboard.getLocation().clone().add(0, -3.5, 0);
-
-                Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
+                TextHologramData hologramData = new TextHologramData("player_position_" +
+                        eventLeaderboard.getTitle() + "_" +
+                        player.getName(),
+                        location
+                );
+                hologramData.removeLine(0);
 
                 List<DatabasePlayer> databasePlayers = eventLeaderboard.getSortedPlayers();
                 for (int i = 0; i < databasePlayers.size(); i++) {
@@ -449,7 +473,7 @@ public class StatsLeaderboardManager {
                                 guildTag = tag.getTag(true);
                             }
                         }
-                        hologram.getLines().appendText(LegacyComponentSerializer.legacySection().serialize(
+                        hologramData.addLine(LegacyComponentSerializer.legacySection().serialize(
                                 Component.text((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
                                          .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
                                          .append(Component.space())
@@ -461,9 +485,11 @@ public class StatsLeaderboardManager {
                     }
                 }
 
-                hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-                hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+                hologramData.setVisibility(Visibility.ALL);
 
+                Hologram hologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
+                FancyHologramsPlugin.get().getHologramManager().addHologram(hologram);
+                Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
                 playerHolograms.add(hologram);
             }
 
@@ -472,18 +498,18 @@ public class StatsLeaderboardManager {
     }
 
     public static void removePlayerSpecificHolograms(Player player) {
-        if (!Warlords.holographicDisplaysEnabled) {
+        if (!Warlords.hologramsEnabled) {
             return;
         }
         removeLeaderboardPlayerSpecificHolograms(player);
-        HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                              .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
-                                      (h.getPosition().toLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION) ||
-                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION) ||
-                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION) ||
-                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION) ||
-                                              h.getPosition().toLocation().equals(StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION)))
-                              .forEach(Hologram::delete);
+        FancyHologramsPlugin.get().getHologramManager().getHolograms().stream()
+                            .filter(h -> h.isViewer(player) &&
+                                    (h.getData().getLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION) ||
+                                            h.getData().getLocation().equals(StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION) ||
+                                            h.getData().getLocation().equals(StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION) ||
+                                            h.getData().getLocation().equals(StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION) ||
+                                            h.getData().getLocation().equals(StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION)))
+                            .forEach(Hologram::deleteHologram);
     }
 
     private static void removeLeaderboardPlayerSpecificHolograms(Player player) {

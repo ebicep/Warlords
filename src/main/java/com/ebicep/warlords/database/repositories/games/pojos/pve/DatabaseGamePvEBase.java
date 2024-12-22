@@ -1,6 +1,5 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -13,9 +12,9 @@ import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.HologramLines;
+import de.oliver.fancyholograms.api.FancyHologramsPlugin;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -49,39 +48,35 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
     }
 
     @Override
-    public void updatePlayerStatsFromGame(DatabaseGameBase<T> databaseGame, int multiplier) {
-        getBasePlayers().forEach(databaseGamePlayerPvE -> {
-            DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
-                    databaseGamePlayerPvE,
-                    multiplier
-            );
-            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvE.getName());
-        });
+    public void appendLastGameStats(TextHologramData hologramData) {
+        hologramData.addLine(ChatColor.GRAY + date);
+        hologramData.addLine(ChatColor.GREEN + map.getMapName() + " - " + StringUtils.formatTimeLeft(timeElapsed / 20));
     }
 
     @Override
     public abstract Set<T> getBasePlayers();
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        HologramLines hologramLines = hologram.getLines();
-        hologramLines.appendText(ChatColor.GRAY + date);
-        hologramLines.appendText(ChatColor.GREEN + map.getMapName() + " - " + StringUtils.formatTimeLeft(timeElapsed / 20));
+    public Team getTeam(DatabaseGamePlayerBase player) {
+        return Team.BLUE;
     }
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-        Hologram topDHPPerMinute = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
-        holograms.add(topDHPPerMinute);
-        topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+        TextHologramData topDHPPerMinuteData = new TextHologramData("topDHPPerMinute_" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
+        topDHPPerMinuteData.setPersistent(false);
+        topDHPPerMinuteData.removeLine(0);
+        topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 
-        Hologram mobKills = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
-        holograms.add(mobKills);
-        mobKills.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Kills");
+        TextHologramData mobKillsData = new TextHologramData("mobKills" + exactDate, DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
+        mobKillsData.setPersistent(false);
+        mobKillsData.removeLine(0);
+        mobKillsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Kills");
 
-        Hologram mobDeaths = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
-        holograms.add(mobDeaths);
-        mobDeaths.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Deaths");
+        TextHologramData mobDeathsData = new TextHologramData("mobDeaths" + exactDate, DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
+        mobDeathsData.setPersistent(false);
+        mobDeathsData.removeLine(0);
+        mobDeathsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Deaths");
 
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
 
@@ -97,7 +92,7 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
             topDHPPerGamePlayers.add(ChatColor.BLUE + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
         });
 
-        topDHPPerGamePlayers.forEach(s -> topDHPPerMinute.getLines().appendText(s));
+        topDHPPerGamePlayers.forEach(s -> topDHPPerMinuteData.addLine(s));
 
         LinkedHashMap<String, Long> mobKillsMap = new LinkedHashMap<>();
         LinkedHashMap<String, Long> mobDeathsMap = new LinkedHashMap<>();
@@ -106,21 +101,32 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
             playerPvE.getMobDeaths().forEach((s, aLong) -> mobDeathsMap.merge(s, aLong, Long::sum));
         }
 
-        mobKillsMap.forEach((mob, aLong) -> mobKills.getLines()
-                                                    .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
-        mobDeathsMap.forEach((mob, aLong) -> mobDeaths.getLines()
-                                                      .appendText(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        mobKillsMap.forEach((mob, aLong) -> mobKillsData.addLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        mobDeathsMap.forEach((mob, aLong) -> mobDeathsData.addLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+
+        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
+        holograms.add(topDHPPerMinute);
+        Hologram mobKills = FancyHologramsPlugin.get().getHologramManager().create(mobKillsData);
+        holograms.add(mobKills);
+        Hologram mobDeaths = FancyHologramsPlugin.get().getHologramManager().create(mobDeathsData);
+        holograms.add(mobDeaths);
+    }
+
+    @Override
+    public void updatePlayerStatsFromGame(DatabaseGameBase<T> databaseGame, int multiplier) {
+        getBasePlayers().forEach(databaseGamePlayerPvE -> {
+            DatabaseGameBase.updatePlayerStatsFromTeam(databaseGame,
+                    databaseGamePlayerPvE,
+                    multiplier
+            );
+            GamesCommand.PLAYER_NAMES.add(databaseGamePlayerPvE.getName());
+        });
     }
 
     @Override
     public String getGameLabel() {
         return ChatColor.GRAY + date + ChatColor.DARK_GRAY + " - " +
                 ChatColor.GREEN + map + ChatColor.DARK_GRAY;
-    }
-
-    @Override
-    public Team getTeam(DatabaseGamePlayerBase player) {
-        return Team.BLUE;
     }
 
     @Override

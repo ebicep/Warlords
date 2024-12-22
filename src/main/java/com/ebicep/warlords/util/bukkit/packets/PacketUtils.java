@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.SanctifiedBeacon;
@@ -16,9 +17,9 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayClientSteerVehicle;
 import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayServerEntityEquipment;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -62,7 +63,12 @@ public class PacketUtils {
                 new PacketAdapter(instance, PacketType.Play.Server.NAMED_SOUND_EFFECT) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        Sound sound = event.getPacket().getSoundEffects().getValues().get(0);
+                        StructureModifier<Sound> soundEffects = event.getPacket().getSoundEffects();
+                        ClientboundSoundPacket target = (ClientboundSoundPacket) soundEffects.getTarget();
+                        if (target.getSound().getRegisteredName().equals("[unregistered]")) {
+                            return;
+                        }
+                        Sound sound = soundEffects.getValues().get(0);
                         if (sound != null && blockedSounds.contains(sound)) {
                             event.setCancelled(true);
                         }
@@ -132,9 +138,9 @@ public class PacketUtils {
         PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(entityId)));
     }
 
-    public static void spawnEntityForPlayer(Player player, Entity entity) {
-        PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundAddEntityPacket(entity)));
-    }
+//    public static void spawnEntityForPlayer(Player player, Entity entity) {
+//        PROTOCOL_MANAGER.sendServerPacket(player, PacketContainer.fromPacket(new ClientboundAddEntityPacket(entity)));
+//    }
 
     public static void playRightClickAnimationForPlayer(Entity swinger, Player... players) {
         for (Player player : players) {

@@ -136,5 +136,15 @@
       <option name="name" value="Google" />
       <option name="url" value="https://dl.google.com/dl/android/maven2/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="MavenLocal" />
+      <option name="name" value="MavenLocal" />
+      <option name="url" value="file:/$USER_HOME$/.m2/repository/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven12" />
+      <option name="name" value="maven12" />
+      <option name="url" value="https://repo.fancyplugins.de/releases" />
+    </remote-repository>
   </component>
 </project>
