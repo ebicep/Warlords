@@ -34,6 +34,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -50,19 +51,19 @@ import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
 
-    public static final Location LAST_GAME_STATS_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 26.5, 83, 184.5);
-    public static final Location TOP_DAMAGE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 37.5, 82, 181.5);
-    public static final Location TOP_HEALING_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 32.5, 82, 188.5);
-    public static final Location TOP_ABSORBED_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 25.5, 82, 193.5);
-    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -3.5, 82, 184.5);
-    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -14.5, 83, 181.5);
-    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -9.5, 83, 188.5);
-    public static final Location PLAYER_ABILITY_STATS_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2.5, 83, 193.5);
+    public static final Location LAST_GAME_STATS_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 26.5, 83, 184.5, 150, 0);
+    public static final Location TOP_DAMAGE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 37.5, 82, 181.5, 90, 0);
+    public static final Location TOP_HEALING_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 32.5, 82, 188.5, 135, 0);
+    public static final Location TOP_ABSORBED_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 25.5, 82, 193.5, 180, 0);
+    public static final Location TOP_DHP_PER_MINUTE_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -3.5, 82, 184.5, -150, 0);
+    public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -14.5, 83, 181.5, -90, 0);
+    public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -9.5, 83, 188.5, -135, 0);
+    public static final Location PLAYER_ABILITY_STATS_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2.5, 83, 193.5, 180, 0);
     public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 16.5, 83, 184.55);
     public static final Location PLAYER_ABILITY_STATS_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 6.5, 83, 184.55);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
-    protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
     public static final int MAX_GAMES = 1;
+    protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
@@ -143,7 +144,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 return false;
             }
 
-            if (previousGames.size() > MAX_GAMES) {
+            if (previousGames.size() >= MAX_GAMES) {
                 previousGames.get(0).deleteHolograms();
                 previousGames.remove(0);
             }
@@ -204,21 +205,25 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         lastGameStatsData.setPersistent(false);
         lastGameStatsData.removeLine(0);
         lastGameStatsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last " + (isPrivate() ? "Private" : "Pub") + " Game Stats");
+        lastGameStatsData.setBillboard(Display.Billboard.FIXED);
 
         TextHologramData topDamageData = new TextHologramData("game_stats_damage" + exactDate, DatabaseGameBase.TOP_DAMAGE_LOCATION);
         topDamageData.setPersistent(false);
         topDamageData.removeLine(0);
         topDamageData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage");
+        topDamageData.setBillboard(Display.Billboard.FIXED);
 
         TextHologramData topHealingData = new TextHologramData("game_stats_healing" + exactDate, DatabaseGameBase.TOP_HEALING_LOCATION);
         topHealingData.setPersistent(false);
         topHealingData.removeLine(0);
         topHealingData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing");
+        topHealingData.setBillboard(Display.Billboard.FIXED);
 
         TextHologramData topAbsorbedData = new TextHologramData("game_stats_absorbed" + exactDate, DatabaseGameBase.TOP_ABSORBED_LOCATION);
         topAbsorbedData.setPersistent(false);
         topAbsorbedData.removeLine(0);
         topAbsorbedData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Absorbed");
+        topAbsorbedData.setBillboard(Display.Billboard.FIXED);
 
 //        TextHologramData topDHPPerMinuteData = new TextHologramData("game_stats_dhp" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
 //        topDHPPerMinuteData.setPersistent(false);
@@ -573,6 +578,10 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         FancyHologramsPlugin.get().getHologramManager().addHologram(playerSwitcher);
     }
 
+    public void setCounted(boolean counted) {
+        this.counted = counted;
+    }
+
     private static void createGameSwitcherHologram(Player player) {
         FancyHologramsPlugin.get().getHologramManager().getHolograms().stream()
                             .filter(h -> h.isViewer(player) && h.getData().getLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION))
@@ -642,10 +651,6 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             return 0;
         }
         return currentGame + 1;
-    }
-
-    public void setCounted(boolean counted) {
-        this.counted = counted;
     }
 
     public static void removeGameFromDatabase(DatabaseGameBase databaseGame, Player player) {

@@ -125,21 +125,23 @@ public class OldTestCommand implements CommandExecutor {
 
             HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
 
-            TextHologramData hologramData = new TextHologramData("TESTING2", player.getLocation());
+            String name = "testhologram2";
+            TextHologramData hologramData = new TextHologramData(name, player.getLocation());
             hologramData.setPersistent(false);
             hologramData.removeLine(0);
-            hologramData.addLine("TEdwadawdwaST");
-            hologramData.addLine("12");
-            hologramData.addLine("TE3231dwadawdwaST");
-            hologramData.addLine("TEdwa54545dawdwaST");
-            hologramData.addLine("312213");
-            hologramData.addLine("TEdw545454adawdwaST");
-            hologramData.setVisibility(Visibility.ALL);
+            hologramData.addLine("Hello World");
+            hologramData.setVisibility(Visibility.MANUAL);
 
             Hologram hologram = manager.create(hologramData);
-//            hologram.showHologram(player);
-            Visibility.ManualVisibility.addDistantViewer("TESTING2", player.getUniqueId());
+            hologram.showHologram(player);
+            Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
             manager.addHologram(hologram);
+
+            FancyHologramsPlugin.get().getHologramManager().getHologram(name).ifPresent(h -> {
+                h.showHologram(player);
+                Visibility.ManualVisibility.addDistantViewer(h, player.getUniqueId());
+                System.out.println(Visibility.ManualVisibility.canSee(player, h));
+            });
 
 
 //            player.setHealth(0);

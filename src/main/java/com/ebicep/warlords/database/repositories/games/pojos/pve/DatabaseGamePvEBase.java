@@ -18,6 +18,7 @@ import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Display;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -67,16 +68,19 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
         topDHPPerMinuteData.setPersistent(false);
         topDHPPerMinuteData.removeLine(0);
         topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+        topDHPPerMinuteData.setBillboard(Display.Billboard.FIXED);
 
         TextHologramData mobKillsData = new TextHologramData("mobKills" + exactDate, DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
         mobKillsData.setPersistent(false);
         mobKillsData.removeLine(0);
         mobKillsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Kills");
+        mobKillsData.setBillboard(Display.Billboard.FIXED);
 
         TextHologramData mobDeathsData = new TextHologramData("mobDeaths" + exactDate, DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
         mobDeathsData.setPersistent(false);
         mobDeathsData.removeLine(0);
         mobDeathsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Deaths");
+        mobDeathsData.setBillboard(Display.Billboard.FIXED);
 
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
 

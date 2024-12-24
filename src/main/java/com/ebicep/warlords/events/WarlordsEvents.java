@@ -59,6 +59,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -235,8 +236,13 @@ public class WarlordsEvents implements Listener {
                 CustomScoreboard.updateLobbyPlayerNames();
                 ExperienceManager.giveExperienceBar(player);
                 if (StatsLeaderboardManager.loaded) {
-                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
-                    DatabaseGameBase.setGameHologramVisibility(player);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                            DatabaseGameBase.setGameHologramVisibility(player);
+                        }
+                    }.runTaskLater(Warlords.getInstance(), 20);
                 }
             }, () -> {
                 if (!fromGame) {

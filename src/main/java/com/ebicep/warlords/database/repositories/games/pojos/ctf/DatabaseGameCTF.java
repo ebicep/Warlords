@@ -188,17 +188,19 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
         topDHPPerMinuteData.setPersistent(false);
         topDHPPerMinuteData.removeLine(0);
         topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
-        topDHPPerMinuteData.setBillboard(Display.Billboard.CENTER);
+        topDHPPerMinuteData.setBillboard(Display.Billboard.FIXED);
 
         TextHologramData topDamageOnCarrierData = new TextHologramData("topDamageOnCarrier_" + exactDate, DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
         topDamageOnCarrierData.setPersistent(false);
         topDamageOnCarrierData.removeLine(0);
         topDamageOnCarrierData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
+        topDamageOnCarrierData.setBillboard(Display.Billboard.FIXED);
 
         TextHologramData topHealingOnCarrierData = new TextHologramData("topHealingOnCarrier_" + exactDate, DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
         topHealingOnCarrierData.setPersistent(false);
         topHealingOnCarrierData.removeLine(0);
         topHealingOnCarrierData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
+        topHealingOnCarrierData.setBillboard(Display.Billboard.FIXED);
 
         List<String> topDHPPerGamePlayers = new ArrayList<>();
         List<String> topDamageOnCarrierPlayers = new ArrayList<>();
