@@ -4,22 +4,24 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Hologram {
 
-    private static int entityId = Integer.MAX_VALUE / 8;
-    private int id = entityId++;
-    private String name;
-    private Location location;
-    //    private Map<UUID, Data> playerData;
-    private Function<Player, HologramData> playerDataFunction;
-    private VisibilityManager visibilityManager = new VisibilityManager(VisibilityType.MANUAL);
+    private final int id = HologramManager.entityId++;
+    private final String name;
+    private final Location location;
+    private final Function<Player, HologramData> playerDataFunction;
+    private final InteractManager interactManager;
+    private final VisibilityManager visibilityManager;
 
-    public Hologram(String name, Location location, Function<Player, HologramData> playerDataFunction) {
+    private Hologram(String name, Location location, Function<Player, HologramData> playerDataFunction, InteractManager interactManager, VisibilityManager visibilityManager) {
         this.name = name;
         this.location = location;
         this.playerDataFunction = playerDataFunction;
+        this.interactManager = interactManager;
+        this.visibilityManager = visibilityManager;
     }
 
     public int getId() {
@@ -35,7 +37,6 @@ public class Hologram {
         if (!Objects.equals(playerLocation.getWorld(), location.getWorld())) {
             return false;
         }
-//        Data data = playerData.get(player.getUniqueId());
         HologramData data = getDataForPlayer(player);
         return playerLocation.distanceSquared(location) < data.getViewRange() * data.getViewRange();
     }
@@ -48,11 +49,45 @@ public class Hologram {
         return location;
     }
 
-//    public Map<UUID, Data> getPlayerData() {
-//        return playerData;
-//    }
+    public InteractManager getInteractManager() {
+        return interactManager;
+    }
 
     public VisibilityManager getVisibilityManager() {
         return visibilityManager;
+    }
+
+    public static class Builder {
+
+        private final String name;
+        private final Location location;
+        private final Function<Player, HologramData> playerDataFunction;
+        private InteractManager interactManager = null;
+        private VisibilityManager visibilityManager = new VisibilityManager(VisibilityType.MANUAL);
+
+        public Builder(String name, Location location, Function<Player, HologramData> playerDataFunction) {
+            this.name = name;
+            this.location = location;
+            this.playerDataFunction = playerDataFunction;
+        }
+
+        public Builder setInteract(Consumer<Player> onClick) {
+            this.interactManager = new InteractManager(onClick, player -> new InteractData.Builder().build());
+            return this;
+        }
+
+        public Builder setInteract(Consumer<Player> onClick, Function<Player, InteractData> playerDataFunction) {
+            this.interactManager = new InteractManager(onClick, playerDataFunction);
+            return this;
+        }
+
+        public Builder setVisibilityManager(VisibilityManager visibilityManager) {
+            this.visibilityManager = visibilityManager;
+            return this;
+        }
+
+        public Hologram createHologram() {
+            return new Hologram(name, location, playerDataFunction, interactManager, visibilityManager);
+        }
     }
 }

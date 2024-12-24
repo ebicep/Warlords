@@ -124,13 +124,15 @@ public class OldTestCommand implements CommandExecutor {
         if (commandSender instanceof Player player) {
 
 
-            Hologram hologram = new Hologram("test", player.getLocation(), p -> {
-                HologramDataText hologramData = new HologramDataText(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN).build());
-                hologramData.setViewRange(20);
-                hologramData.setScale(new Vector3f(2, 2, 2));
-
-                return hologramData;
-            });
+            Hologram hologram = new Hologram.Builder("test",
+                    player.getLocation(),
+                    p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN).build())
+                            .setViewRange(20)
+                            .setScale(new Vector3f(2, 2, 2))
+                            .build()
+            ).setInteract(p -> {
+                p.sendMessage(ComponentBuilder.create("Interacted with hologram", NamedTextColor.GREEN).build());
+            }).createHologram();
             hologram.getVisibilityManager().addViewer(player.getUniqueId());
             HologramManager.addHologram("test", hologram);
 

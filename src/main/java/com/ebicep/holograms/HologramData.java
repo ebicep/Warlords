@@ -1,7 +1,6 @@
 package com.ebicep.holograms;
 
 import com.ebicep.warlords.util.chat.ChatUtils;
-import com.ebicep.warlords.util.java.ReflectionUtils;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -16,51 +15,63 @@ import java.util.Optional;
 
 public abstract class HologramData {
 
-    private final EntityType<?> entityType;
-    private Vector3f translation = new Vector3f(0, 0, 0);
-    private Vector3f scale = new Vector3f(1, 1, 1);
-    private Quaternionf rightRotation = new Quaternionf();
-    private Quaternionf leftRotation = new Quaternionf();
-    private Display.Billboard billboard = Display.Billboard.CENTER;
-    private Display.Brightness brightness = new Display.Brightness(15, 15);
-    private float viewRange = 50;
-    private float width = 0;
-    private float height = 0;
-    private int glowColor = -1;
-    protected HologramData(EntityType<?> entityType) {
-        this.entityType = entityType;
+    protected final EntityType<?> entityType;
+    protected Vector3f translation;
+    protected Vector3f scale;
+    protected Quaternionf rightRotation;
+    protected Quaternionf leftRotation;
+    protected Display.Billboard billboard;
+    protected Display.Brightness brightness;
+    protected float viewRange;
+    protected float width;
+    protected float height;
+    protected int glowColor;
+
+    protected HologramData(Builder<?> builder) {
+        this.entityType = builder.entityType;
+        this.translation = builder.translation;
+        this.scale = builder.scale;
+        this.rightRotation = builder.rightRotation;
+        this.leftRotation = builder.leftRotation;
+        this.billboard = builder.billboard;
+        this.brightness = builder.brightness;
+        this.viewRange = builder.viewRange;
+        this.width = builder.width;
+        this.height = builder.height;
+        this.glowColor = builder.glowColor;
     }
+
+    public abstract InteractData.AutoData getAutoInteractData();
 
     protected List<SynchedEntityData.DataValue<?>> getData() {
         List<SynchedEntityData.DataValue<?>> data = new ArrayList<>();
         try {
-            data.add(createDataValue(Entity.class, "DATA_SHARED_FLAGS_ID", (byte) 0));
-            data.add(createDataValue(Entity.class, "DATA_AIR_SUPPLY_ID", 0));
-            data.add(createDataValue(Entity.class, "DATA_CUSTOM_NAME_VISIBLE", false));
-            data.add(createDataValue(Entity.class, "DATA_CUSTOM_NAME", Optional.empty()));
-            data.add(createDataValue(Entity.class, "DATA_SILENT", false));
-            data.add(createDataValue(Entity.class, "DATA_NO_GRAVITY", false));
-            data.add(createDataValue(Entity.class, "DATA_POSE", Pose.STANDING));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_SHARED_FLAGS_ID", (byte) 0));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_AIR_SUPPLY_ID", 0));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_CUSTOM_NAME_VISIBLE", false));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_CUSTOM_NAME", Optional.empty()));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_SILENT", false));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_NO_GRAVITY", false));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_POSE", Pose.STANDING));
 
-            data.add(createDataValue(Entity.class, "DATA_TICKS_FROZEN", 0));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_TRANSLATION_ID", translation));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_SCALE_ID", scale));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_RIGHT_ROTATION_ID", rightRotation));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_LEFT_ROTATION_ID", leftRotation));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_BILLBOARD_RENDER_CONSTRAINTS_ID", (byte) billboard.ordinal()));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_BRIGHTNESS_OVERRIDE_ID", brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_VIEW_RANGE_ID", viewRange));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_WIDTH_ID", width));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_HEIGHT_ID", height));
-            data.add(createDataValue(net.minecraft.world.entity.Display.class, "DATA_GLOW_COLOR_OVERRIDE_ID", glowColor));
+            data.add(HologramManager.createDataValue(Entity.class, "DATA_TICKS_FROZEN", 0));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_TRANSLATION_ID", translation));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_SCALE_ID", scale));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_RIGHT_ROTATION_ID", rightRotation));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_LEFT_ROTATION_ID", leftRotation));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_BILLBOARD_RENDER_CONSTRAINTS_ID", (byte) billboard.ordinal()));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class,
+                    "DATA_BRIGHTNESS_OVERRIDE_ID",
+                    brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20
+            ));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_VIEW_RANGE_ID", viewRange));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_WIDTH_ID", width));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_HEIGHT_ID", height));
+            data.add(HologramManager.createDataValue(net.minecraft.world.entity.Display.class, "DATA_GLOW_COLOR_OVERRIDE_ID", glowColor));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             ChatUtils.MessageType.HOLOGRAMS.sendErrorMessage(e);
         }
         return data;
-    }
-
-    protected static <T, R> SynchedEntityData.DataValue<?> createDataValue(Class<T> clazz, String variableName, R value) throws NoSuchFieldException, IllegalAccessException {
-        return SynchedEntityData.DataValue.create(ReflectionUtils.getStaticField(clazz, variableName), value);
     }
 
     public EntityType<?> getEntityType() {
@@ -145,5 +156,82 @@ public abstract class HologramData {
 
     public void setTranslation(Vector3f translation) {
         this.translation = translation;
+    }
+
+    public static abstract class Builder<T extends Builder<T>> {
+
+        private final EntityType<?> entityType;
+        private Vector3f translation = new Vector3f(0, 0, 0);
+        private Vector3f scale = new Vector3f(1, 1, 1);
+        private Quaternionf rightRotation = new Quaternionf();
+        private Quaternionf leftRotation = new Quaternionf();
+        private Display.Billboard billboard = Display.Billboard.CENTER;
+        private Display.Brightness brightness = new Display.Brightness(15, 15);
+        private float viewRange = 50;
+        private float width = 0;
+        private float height = 0;
+        private int glowColor = -1;
+
+        public Builder(EntityType<?> entityType) {
+            this.entityType = entityType;
+        }
+
+        @SuppressWarnings("unchecked")
+        T self() {
+            return (T) this;
+        }
+
+        public T setTranslation(Vector3f translation) {
+            this.translation = translation;
+            return self();
+        }
+
+        public T setScale(Vector3f scale) {
+            this.scale = scale;
+            return self();
+        }
+
+        public T setRightRotation(Quaternionf rightRotation) {
+            this.rightRotation = rightRotation;
+            return self();
+        }
+
+        public T setLeftRotation(Quaternionf leftRotation) {
+            this.leftRotation = leftRotation;
+            return self();
+        }
+
+        public T setBillboard(Display.Billboard billboard) {
+            this.billboard = billboard;
+            return self();
+        }
+
+        public T setBrightness(Display.Brightness brightness) {
+            this.brightness = brightness;
+            return self();
+        }
+
+        public T setViewRange(float viewRange) {
+            this.viewRange = viewRange;
+            return self();
+        }
+
+        public T setWidth(float width) {
+            this.width = width;
+            return self();
+        }
+
+        public T setHeight(float height) {
+            this.height = height;
+            return self();
+        }
+
+        public T setGlowColor(int glowColor) {
+            this.glowColor = glowColor;
+            return self();
+        }
+
+        public abstract HologramData build();
+
     }
 }

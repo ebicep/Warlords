@@ -1,12 +1,19 @@
 package com.ebicep.holograms;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.ReflectionUtils;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,8 +36,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramManager implements Listener {
 
+    static int entityId = Integer.MAX_VALUE / 8;
     private static final Map<String, Hologram> HOLOGRAMS = new ConcurrentHashMap<>();
     private static BukkitTask TASK;
+    private static PacketAdapter packetListener;
 
     public static void init() {
         TASK = new BukkitRunnable() {
@@ -67,16 +76,40 @@ public class HologramManager implements Listener {
             }
 
         }.runTaskTimerAsynchronously(Warlords.getInstance(), 0, 0);
+        packetListener = new PacketAdapter(Warlords.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                Player player = event.getPlayer();
+                PacketContainer packet = event.getPacket().deepClone();
+                int entityID = packet.getIntegers().read(0);
+                HOLOGRAMS.forEach((s, hologram) -> {
+                    InteractManager interactManager = hologram.getInteractManager();
+                    if (interactManager == null) {
+                        return;
+                    }
+                    if (!interactManager.getIds().contains(entityID)) {
+                        return;
+                    }
+                    interactManager.getOnClick().accept(player);
+                });
+            }
+        };
+        PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);
         Warlords.getInstance().getServer().getPluginManager().registerEvents(new HologramManager(), Warlords.getInstance());
     }
 
     public static void cleanup() {
         TASK.cancel();
         HOLOGRAMS.clear();
+        PacketUtils.PROTOCOL_MANAGER.removePacketListener(packetListener);
     }
 
     public static Hologram getHologram(String id) {
         return HOLOGRAMS.get(id);
+    }
+
+    public static void addHologram(String id, Hologram.Builder hologramBuilder) {
+        addHologram(id, hologramBuilder.createHologram());
     }
 
     public static void addHologram(String id, Hologram hologram) {
@@ -102,6 +135,10 @@ public class HologramManager implements Listener {
                 }
             });
         }
+    }
+
+    public static <T, R> SynchedEntityData.DataValue<?> createDataValue(Class<T> clazz, String variableName, R value) throws NoSuchFieldException, IllegalAccessException {
+        return SynchedEntityData.DataValue.create(ReflectionUtils.getStaticField(clazz, variableName), value);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -175,6 +212,39 @@ public class HologramManager implements Listener {
                         )
                 )
         );
+        InteractManager interactManager = hologram.getInteractManager();
+        if (interactManager != null) {
+            InteractData interactData = interactManager.getDataForPlayer(player);
+            for (Integer id : interactManager.getIds()) {
+                PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                        player,
+                        PacketContainer.fromPacket(
+                                new ClientboundAddEntityPacket(
+                                        id,
+                                        UUID.randomUUID(),
+                                        location.getX(),
+                                        location.getY(),
+                                        location.getZ(),
+                                        location.getYaw(),
+                                        location.getPitch(),
+                                        EntityType.INTERACTION,
+                                        0,
+                                        new Vec3(0, 0, 0),
+                                        0
+                                )
+                        )
+                );
+                PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                        player,
+                        PacketContainer.fromPacket(
+                                new ClientboundSetEntityDataPacket(
+                                        id,
+                                        interactData.getData(hologram, player)
+                                )
+                        )
+                );
+            }
+        }
         hologram.getVisibilityManager().addCurrentViewer(player.getUniqueId());
     }
 
