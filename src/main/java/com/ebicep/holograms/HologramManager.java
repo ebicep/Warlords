@@ -3,9 +3,12 @@ package com.ebicep.holograms;
 import com.comphenix.protocol.events.PacketContainer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.phys.Vec3;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -41,16 +44,64 @@ public class HologramManager implements Listener {
                     world.getPlayers().forEach(player -> {
                         boolean withinRange = hologram.withinRange(player);
                         boolean currentlyVisibleTo = visibilityManager.isCurrentlyVisibleTo(player);
-                        if (withinRange && !currentlyVisibleTo) {
-                            showHologram(player, hologram);
-                        } else if (!withinRange && currentlyVisibleTo) {
-                            hideHologram(player, hologram);
+                        switch (visibilityManager.getVisibilityType()) {
+                            case ALL -> {
+                                if (!currentlyVisibleTo && withinRange) {
+                                    showHologram(player, hologram);
+                                } else if (currentlyVisibleTo && !withinRange) {
+                                    hideHologram(player, hologram);
+                                }
+                            }
+                            case MANUAL -> {
+                                if (visibilityManager.isViewer(player) && !currentlyVisibleTo && withinRange) {
+                                    showHologram(player, hologram);
+                                } else if (visibilityManager.isViewer(player) && currentlyVisibleTo && !withinRange) {
+                                    hideHologram(player, hologram);
+                                } else if (!visibilityManager.isViewer(player) && currentlyVisibleTo) {
+                                    hideHologram(player, hologram);
+                                }
+                            }
                         }
                     });
                 });
             }
 
         }.runTaskTimerAsynchronously(Warlords.getInstance(), 0, 0);
+        Warlords.getInstance().getServer().getPluginManager().registerEvents(new HologramManager(), Warlords.getInstance());
+    }
+
+    public static void cleanup() {
+        TASK.cancel();
+        HOLOGRAMS.clear();
+    }
+
+    public static Hologram getHologram(String id) {
+        return HOLOGRAMS.get(id);
+    }
+
+    public static void addHologram(String id, Hologram hologram) {
+        if (HOLOGRAMS.containsKey(id)) {
+            Hologram oldHologram = HOLOGRAMS.get(id);
+            oldHologram.getVisibilityManager().getCurrentViewers().forEach(uuid -> {
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null) {
+                    hideHologram(player, oldHologram);
+                }
+            });
+        }
+        HOLOGRAMS.put(id, hologram);
+    }
+
+    public static void deleteHologram(String id) {
+        Hologram hologram = HOLOGRAMS.remove(id);
+        if (hologram != null) {
+            hologram.getVisibilityManager().getCurrentViewers().forEach(uuid -> {
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null) {
+                    hideHologram(player, hologram);
+                }
+            });
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -94,6 +145,7 @@ public class HologramManager implements Listener {
     }
 
     private static void showHologram(Player player, Hologram hologram) {
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Showing hologram " + hologram.getName());
         HologramData data = hologram.getDataForPlayer(player);
         Location location = hologram.getLocation();
         PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
@@ -114,18 +166,20 @@ public class HologramManager implements Listener {
                         )
                 )
         );
-//        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
-//                player,
-//                PacketContainer.fromPacket(
-//                        new ClientboundSetEntityDataPacket(
-//                                hologram.getId(), // TODO
-//                        )
-//                )
-//        );
-        hologram.getVisibilityManager().getCurrentViewers().add(player.getUniqueId());
+        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                player,
+                PacketContainer.fromPacket(
+                        new ClientboundSetEntityDataPacket(
+                                hologram.getId(),
+                                data.getData()
+                        )
+                )
+        );
+        hologram.getVisibilityManager().addCurrentViewer(player.getUniqueId());
     }
 
     private static void hideHologram(Player player, Hologram hologram) {
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Hiding hologram " + hologram.getName());
         PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
                 player,
                 PacketContainer.fromPacket(
@@ -134,7 +188,7 @@ public class HologramManager implements Listener {
                         )
                 )
         );
-        hologram.getVisibilityManager().getCurrentViewers().remove(player.getUniqueId());
+        hologram.getVisibilityManager().removeCurrentViewer(player.getUniqueId());
     }
 
 }

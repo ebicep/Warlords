@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import java.util.Objects;
 import java.util.function.Function;
 
-public abstract class Hologram {
+public class Hologram {
 
     private static int entityId = Integer.MAX_VALUE / 8;
     private int id = entityId++;
@@ -14,7 +14,13 @@ public abstract class Hologram {
     private Location location;
     //    private Map<UUID, Data> playerData;
     private Function<Player, HologramData> playerDataFunction;
-    private VisibilityManager visibilityManager = new VisibilityManager(VisibilityType.INHERIT);
+    private VisibilityManager visibilityManager = new VisibilityManager(VisibilityType.MANUAL);
+
+    public Hologram(String name, Location location, Function<Player, HologramData> playerDataFunction) {
+        this.name = name;
+        this.location = location;
+        this.playerDataFunction = playerDataFunction;
+    }
 
     public int getId() {
         return id;

@@ -4,6 +4,5 @@ public enum VisibilityType {
 
     ALL,
     MANUAL,
-    INHERIT,
 
 }
