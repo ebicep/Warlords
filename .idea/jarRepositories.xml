@@ -146,5 +146,20 @@
       <option name="name" value="maven12" />
       <option name="url" value="https://repo.fancyplugins.de/releases" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="FabricMC" />
+      <option name="name" value="FabricMC" />
+      <option name="url" value="https://maven.fabricmc.net/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="NeoForged" />
+      <option name="name" value="NeoForged" />
+      <option name="url" value="https://maven.neoforged.net/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="ParchmentMC" />
+      <option name="name" value="ParchmentMC" />
+      <option name="url" value="https://maven.parchmentmc.org/" />
+    </remote-repository>
   </component>
 </project>
