@@ -125,7 +125,10 @@ public class OldTestCommand implements CommandExecutor {
 
             Hologram hologram = new Hologram.Builder("test",
                     player.getLocation(),
-                    p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN).build())
+                    p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN)
+                                                                        .newLine()
+                                                                        .text("NEW LINE", NamedTextColor.YELLOW)
+                                                                        .build())
                             .setViewRange(20)
                             .build()
             ).setInteract(p -> {

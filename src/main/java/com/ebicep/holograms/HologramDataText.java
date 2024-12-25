@@ -9,6 +9,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class HologramDataText extends HologramData {
@@ -31,9 +33,14 @@ public class HologramDataText extends HologramData {
     @Override
     public InteractData.AutoData getAutoInteractData() {
         // TODO test
-        int stringLength = DefaultFontInfo.getStringLength(LegacyComponentSerializer.legacySection().serialize(component));
-        float width = stringLength / 5f / 8;
-        float height = 0.5f * (stringLength / lineWidth + 1) / 2;
+        String text = LegacyComponentSerializer.legacySection().serialize(component);
+        String[] strings = text.split("\n");
+        String longest = Arrays.stream(strings)
+                               .max(Comparator.comparingInt(String::length))
+                               .orElse("");
+        int maxStringLength = DefaultFontInfo.getStringLength(longest);
+        float width = maxStringLength / 5f / 8;
+        float height = (0.5f * (maxStringLength / lineWidth + 1) / 2) * strings.length;
         // rescale based on scale
         width *= scale.x();
         height *= scale.y();
