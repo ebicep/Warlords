@@ -64,7 +64,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
         location.getWorld().spawnParticle(
-                Particle.SPELL,
+                Particle.EFFECT,
                 location.clone().add(0, 1, 0),
                 4,
                 (float) ((Math.random() * 2) - 1),

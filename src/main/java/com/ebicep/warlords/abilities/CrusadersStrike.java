@@ -76,7 +76,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
         EffectUtils.displayParticle(
-                Particle.SPELL,
+                Particle.EFFECT,
                 location.clone().add(0, 1, 0),
                 4,
                 (float) ((Math.random() * 2) - 1),

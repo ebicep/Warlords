@@ -118,9 +118,9 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                                     .source(wp)
                                     .value(healing)
                             );
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25, -1);
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER, 1, 1.25, -1);
                             EffectUtils.displayParticle(
-                                    Particle.VILLAGER_HAPPY,
+                                    Particle.HAPPY_VILLAGER,
                                     warlordsEntity.getLocation().add(0, 1.2, 0),
                                     4,
                                     0.5,
@@ -207,7 +207,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 6 == 0) {
                         EffectUtils.displayParticle(
-                                Particle.VILLAGER_HAPPY,
+                                Particle.HAPPY_VILLAGER,
                                 we.getLocation().add(0, 1.2, 0),
                                 1,
                                 0.5,

@@ -158,7 +158,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                     EffectUtils.playCircularEffectAround(
                             target.getGame(),
                             target.getLocation(),
-                            Particle.TOTEM,
+                            Particle.TOTEM_OF_UNDYING,
                             3,
                             1,
                             0.15,
@@ -214,7 +214,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
                         return;
                     }
                     EffectUtils.displayParticle(
-                            Particle.FIREWORKS_SPARK,
+                            Particle.FIREWORK,
                             to.getLocation().add(0, 1.5, 0),
                             2,
                             0.3,

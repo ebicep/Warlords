@@ -114,7 +114,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
 
         Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
 
-        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, currentLocation, 2, 0, 0, 0, 0.5);
+        EffectUtils.displayParticle(Particle.EXPLOSION, currentLocation, 2, 0, 0, 0, 0.5);
         EffectUtils.displayParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 2);
         EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1);
 

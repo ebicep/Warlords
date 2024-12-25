@@ -204,7 +204,7 @@ public class WarlordsNewHotbarMenu {
                     itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
                     if (hasRewards) {
                         itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
-                        itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                        itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                         hasRewardsForAny = true;
                     }
                     menu.setItem(
@@ -298,7 +298,7 @@ public class WarlordsNewHotbarMenu {
                         );
                 if (hasRewards) {
                     itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                     hasRewardsForAny = true;
                 }
                 menu.setItem(
@@ -641,7 +641,7 @@ public class WarlordsNewHotbarMenu {
 
                     if (weapon == selectedWeapon) {
                         lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                        builder.enchant(Enchantment.OXYGEN, 1);
+                        builder.enchant(Enchantment.RESPIRATION, 1);
                     } else {
                         lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
                     }
@@ -724,7 +724,7 @@ public class WarlordsNewHotbarMenu {
                         .addLore(Component.empty());
                 if (selectedHelmet.contains(helmet)) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
@@ -753,7 +753,7 @@ public class WarlordsNewHotbarMenu {
                         .addLore(Component.empty());
                 if (playerSettings.getArmorSet(classes) == armorSet) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
@@ -835,7 +835,7 @@ public class WarlordsNewHotbarMenu {
                 lore.add(Component.empty());
                 if (skillBoost == selectedBoost) {
                     lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
                 }

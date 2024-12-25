@@ -167,7 +167,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 20 == 0) {
                             EffectUtils.displayParticle(
-                                    Particle.CRIT_MAGIC,
+                                    Particle.ENCHANTED_HIT,
                                     warlordsEntity.getLocation().add(0, 1.2, 0),
                                     3,
                                     .25,

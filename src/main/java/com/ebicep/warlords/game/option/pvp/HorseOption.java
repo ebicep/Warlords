@@ -23,7 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -200,7 +200,7 @@ public class HorseOption implements Option, Listener {
                 horse.setColor(Horse.Color.BROWN);
                 horse.setStyle(Horse.Style.NONE);
                 horse.setAdult();
-                horse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(speed);
+                horse.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(speed);
                 ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);
                 horse.addPassenger(player); // not sure if including this in function above will cause issues
             }

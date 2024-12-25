@@ -145,14 +145,14 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveMasterUpgrade && ticksElapsed % 10 == 0) {
-                        EffectUtils.playSphereAnimation(totemStand.getLocation(), rad, Particle.VILLAGER_HAPPY, 2);
+                        EffectUtils.playSphereAnimation(totemStand.getLocation(), rad, Particle.HAPPY_VILLAGER, 2);
                     }
 
                     if (ticksElapsed % 20 == 0) {
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveMasterUpgrade ? 0.4f : 0.9f);
 
                         totemStand.getLocation().getWorld().spawnParticle(
-                                Particle.VILLAGER_HAPPY,
+                                Particle.HAPPY_VILLAGER,
                                 totemStand.getLocation().clone().add(0, 1.6, 0),
                                 5,
                                 0.4,
@@ -174,7 +174,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                 particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * rad);
 
                                 particleLoc.getWorld().spawnParticle(
-                                        Particle.FIREWORKS_SPARK,
+                                        Particle.FIREWORK,
                                         particleLoc,
                                         1,
                                         0,
@@ -192,7 +192,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                 wp.getTeam(),
                                 totemStand.getLocation().add(0, 1, 0),
                                 rad,
-                                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(1.5)
+                                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(1.5)
                         );
                         circle.playEffects();
 
@@ -310,7 +310,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                                 return;
                                             }
                                             EffectUtils.displayParticle(
-                                                    Particle.VILLAGER_HAPPY,
+                                                    Particle.HAPPY_VILLAGER,
                                                     wp.getLocation().add(0, 1.2, 0),
                                                     2,
                                                     0.3,

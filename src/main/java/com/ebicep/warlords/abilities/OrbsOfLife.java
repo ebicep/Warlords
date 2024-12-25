@@ -197,7 +197,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                     }
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.08f, 0.7f);
                     wp.getWorld().spawnParticle(
-                            Particle.VILLAGER_HAPPY,
+                            Particle.HAPPY_VILLAGER,
                             wp.getLocation().add(0, 1.5, 0),
                             10,
                             0.8,
@@ -249,7 +249,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
                                 );
                                 orb.forEach(orbArmorStand::addPassenger);
                                 orbArmorStand.getWorld().spawnParticle(
-                                        Particle.VILLAGER_HAPPY,
+                                        Particle.HAPPY_VILLAGER,
                                         orbArmorStand.getLocation().add(0, 1.65, 0),
                                         1,
                                         0,

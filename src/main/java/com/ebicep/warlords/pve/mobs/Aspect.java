@@ -300,7 +300,7 @@ public enum Aspect {
                                 return;
                             }
                             EffectUtils.displayParticle(
-                                    Particle.REDSTONE,
+                                    Particle.DUST,
                                     warlordsEntity.getLocation().add(
                                             0,
                                             1.2,

@@ -245,7 +245,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                                 particleLoc.getWorld().spawnParticle(
-                                                        Particle.REDSTONE,
+                                                        Particle.DUST,
                                                         particleLoc,
                                                         1,
                                                         0,

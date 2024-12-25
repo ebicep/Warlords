@@ -99,7 +99,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
 
             // Green line / Sound
             Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 1, 1);
-            EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), Particle.VILLAGER_HAPPY);
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), veneTarget.getLocation(), Particle.HAPPY_VILLAGER);
 
             // New cooldown, both players have the same instance of intervene.
             InterveneData data = new InterveneData(this, wp, veneTarget, maxDamagePrevented);

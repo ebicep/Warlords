@@ -3,7 +3,7 @@ package com.ebicep.customentities.nms.pve;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ambient.Bat;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.CraftWorld;
 
 public class CustomBat extends Bat {
 

@@ -200,11 +200,11 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                                           NamedTextColor.RED
                                   ))); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
-        AttributeInstance attribute = jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        AttributeInstance attribute = jimmy.getAttribute(Attribute.MOVEMENT_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(0);
         }
-        attribute = jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+        attribute = jimmy.getAttribute(Attribute.FOLLOW_RANGE);
         if (attribute != null) {
             attribute.setBaseValue(0);
         }
@@ -296,10 +296,10 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             if (firstItem != null) {
                 if (getCooldownManager().hasCooldown(Soulbinding.SoulbindingData.class)) {
                     ItemMeta itemMeta = firstItem.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                    itemMeta.addEnchant(Enchantment.RESPIRATION, 1, true);
                     firstItem.setItemMeta(itemMeta);
                 } else {
-                    firstItem.removeEnchantment(Enchantment.OXYGEN);
+                    firstItem.removeEnchantment(Enchantment.RESPIRATION);
                 }
             }
 

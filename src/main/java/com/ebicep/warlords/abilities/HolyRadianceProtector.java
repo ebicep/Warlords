@@ -142,7 +142,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                 EffectUtils.displayParticle(
-                                        Particle.REDSTONE,
+                                        Particle.DUST,
                                         particleLoc,
                                         1,
                                         new Particle.DustOptions(Color.fromRGB(0, 255, 70), 1)

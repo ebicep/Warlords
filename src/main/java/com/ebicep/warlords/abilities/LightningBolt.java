@@ -82,7 +82,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
 
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
 
-        currentLocation.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, currentLocation, 1, 0, 0, 0, 0, null, true);
+        currentLocation.getWorld().spawnParticle(Particle.EXPLOSION, currentLocation, 1, 0, 0, 0, 0, null, true);
 
         int playersHit = 0;
         for (WarlordsEntity enemy : PlayerFilter
@@ -206,7 +206,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
             if (playersHit >= 2 && playersHit <= 6) {
                 damageMultiplier = 1.2f;
                 EffectUtils.displayParticle(
-                        Particle.CRIT_MAGIC,
+                        Particle.ENCHANTED_HIT,
                         hit.getLocation().add(0, 1.2, 0),
                         5,
                         .25,

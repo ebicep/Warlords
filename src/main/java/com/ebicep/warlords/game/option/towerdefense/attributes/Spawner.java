@@ -52,7 +52,7 @@ public interface Spawner {
     default void renderSpawnLocations(World world) {
         for (LocationUtils.LocationXYZ blockSpawnLocation : getBlockSpawnLocations()) {
             EffectUtils.displayParticle(
-                    Particle.VILLAGER_HAPPY,
+                    Particle.HAPPY_VILLAGER,
                     new Location(world, blockSpawnLocation.x(), blockSpawnLocation.y() + .1, blockSpawnLocation.z()),
                     1
             );

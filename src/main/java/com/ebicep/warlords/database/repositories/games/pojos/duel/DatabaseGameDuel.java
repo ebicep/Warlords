@@ -8,7 +8,8 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.java.StringUtils;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -73,11 +74,10 @@ public class DatabaseGameDuel extends DatabaseGameBase<DatabaseGamePlayerDuel> {
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        hologram.getLines().appendText(ChatColor.GRAY + date);
-        hologram.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
-        hologram.getLines().appendText(ChatColor.YELLOW + "Winner: " + winner.getTeamColor() + winner.name);
+    public void appendLastGameStats(TextHologramData hologramData) {
+        hologramData.addLine(ChatColor.GRAY + date);
+        hologramData.addLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        hologramData.addLine(ChatColor.YELLOW + "Winner: " + winner.getTeamColor() + winner.name);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class AirType implements TDMobType {
 
     @Override
     public void onSpawn(AbstractMob mob) {
-        mob.getNpc().getOrAddTrait(Gravity.class).gravitate(true);
+        mob.getNpc().getOrAddTrait(Gravity.class).setHasGravity(false);
         mob.getNpc().data().set(NPC.Metadata.FLYABLE, true);
         mob.getNpc().teleport(mob.getNpc().getStoredLocation().add(0, groundOffset, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }

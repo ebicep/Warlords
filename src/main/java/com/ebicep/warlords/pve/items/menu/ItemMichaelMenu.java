@@ -160,7 +160,7 @@ public class ItemMichaelMenu {
                                         Component.text(blessingBoughtAmount, NamedTextColor.YELLOW)
                                 ))
                                 .amount(tier)
-                                .enchant(Enchantment.OXYGEN, 1)
+                                .enchant(Enchantment.RESPIRATION, 1)
                                 .get(),
                         (m, e) -> {
 
@@ -229,7 +229,7 @@ public class ItemMichaelMenu {
                                 ))
                                 .addLore(lore)
                                 .amount(tier)
-                                .enchant(Enchantment.OXYGEN, 1)
+                                .enchant(Enchantment.RESPIRATION, 1)
                                 .get(),
                         (m, e) -> {
                             if (stock <= 0) {
@@ -311,7 +311,7 @@ public class ItemMichaelMenu {
                                     )
                             );
                     if (!blessingFound) {
-                        selectedBlessing.enchant(Enchantment.OXYGEN, 1);
+                        selectedBlessing.enchant(Enchantment.RESPIRATION, 1);
                     }
                 } else {
                     selectedBlessing = new ItemBuilder(Material.PAPER)
@@ -498,7 +498,7 @@ public class ItemMichaelMenu {
                         )
                         .amount(blessingBoughtAmount);
                 if (normalItem) {
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                 }
                 menu.setItem(tier + 2, 1,
                         itemBuilder.get(),

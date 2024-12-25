@@ -75,7 +75,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                 wp.getTeam(),
                 groundLocation,
                 RADIUS,
-                new CircumferenceEffect(Particle.WAX_OFF, Particle.REDSTONE)
+                new CircumferenceEffect(Particle.WAX_OFF, Particle.DUST)
         );
 
         EffectUtils.playFirework(
@@ -147,7 +147,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
                         EffectUtils.playCircularEffectAround(
                                 wp.getGame(),
                                 crystal.getLocation(),
-                                Particle.VILLAGER_HAPPY,
+                                Particle.HAPPY_VILLAGER,
                                 1,
                                 1,
                                 0.1,

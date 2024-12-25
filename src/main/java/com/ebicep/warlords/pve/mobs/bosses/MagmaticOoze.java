@@ -601,7 +601,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                         cancel();
                     }
                     EffectUtils.displayParticle(
-                            Particle.BLOCK_CRACK,
+                            Particle.BLOCK,
                             groundLocation,
                             300,
                             5,

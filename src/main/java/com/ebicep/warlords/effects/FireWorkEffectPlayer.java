@@ -14,7 +14,7 @@ public class FireWorkEffectPlayer {
      */
     @Deprecated
     public static void playFirework(Location loc, FireworkEffect fe) {
-        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+        Firework firework = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK_ROCKET);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         fireworkMeta.addEffect(fe); // add the effect to the firework
         fireworkMeta.setPower(1); // set the power of the firework

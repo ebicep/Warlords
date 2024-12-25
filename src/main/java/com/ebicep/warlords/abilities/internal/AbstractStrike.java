@@ -81,7 +81,7 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
     protected void randomHitEffect(Location location, int particleAmount, int red, int green, int blue) {
         for (int i = 0; i < particleAmount; i++) {
             location.getWorld().spawnParticle(
-                    Particle.REDSTONE,
+                    Particle.DUST,
                     location.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
                     1,
                     0,

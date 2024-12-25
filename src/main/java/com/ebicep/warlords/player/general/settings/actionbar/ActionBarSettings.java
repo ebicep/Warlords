@@ -98,7 +98,7 @@ public class ActionBarSettings {
 
     public static class HealthCategory implements Category {
 
-        private static final ItemStack ITEM = new ItemBuilder(Material.SPLASH_POTION, PotionType.INSTANT_HEAL).get();
+        private static final ItemStack ITEM = new ItemBuilder(Material.SPLASH_POTION, PotionType.HEALING).get();
 
         @Field("show_hp_text")
         private boolean showHPText = true;

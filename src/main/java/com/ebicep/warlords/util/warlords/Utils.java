@@ -10,7 +10,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -97,7 +97,7 @@ public class Utils {
     }
 
     /**
-     * see org.bukkit.craftbukkit.v1_20_R2.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
+     * see org.bukkit.craftbukkit.entity.CraftLivingEntity#getLineOfSight(Set, int, int)}
      * this accounts for banners
      *
      * @param livingEntity
@@ -344,7 +344,7 @@ public class Utils {
 
     public static void addFallingBlock(Location location, Vector vector) {
         Material type = location.getWorld().getBlockAt(LocationUtils.getGroundLocation(location).add(0, -1, 0)).getType();
-        if (type == Material.GRASS) {
+        if (type == Material.GRASS_BLOCK) {
             if ((int) (Math.random() * 3) == 2) {
                 type = Material.DIRT;
             }
@@ -405,7 +405,7 @@ public class Utils {
                 WarlordsEntity directHit = null;
                 Material type = newLoc.getBlock().getType();
                 if (type != Material.AIR
-                        && type != Material.GRASS
+                        && type != Material.GRASS_BLOCK
                         && type != Material.BARRIER
                         && type != Material.VINE
                 ) {

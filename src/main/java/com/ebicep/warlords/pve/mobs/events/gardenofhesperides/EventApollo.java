@@ -95,7 +95,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
             PlayerFilter.playingGame(wp.getGame())
                         .aliveEnemiesOf(wp)
                         .first(warlordsEntity -> {
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY);
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER);
                             ImpalingStrike.giveLeechCooldown(
                                     wp,
                                     warlordsEntity,

@@ -98,7 +98,7 @@ public class ThunderCloudAbility extends AbstractPveAbility {
                     this.size,
                     new AreaEffect(
                             yOffset,
-                            Particle.REDSTONE,
+                            Particle.DUST,
                             new Particle.DustOptions(Color.fromRGB(cloudColor, cloudColor, cloudColor), 5)
                     ).particlesPerSurface(.4)
             ));

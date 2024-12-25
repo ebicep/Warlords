@@ -72,7 +72,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
         Utils.playGlobalSound(loc, "arcanist.sanctuary.activation", 2, 0.55f);
 
         EffectUtils.playCircularShieldAnimation(loc, Particle.END_ROD, 5, 0.8, 2);
-        EffectUtils.playCircularShieldAnimation(loc, Particle.DRIP_WATER, 3, 0.6, 1.2);
+        EffectUtils.playCircularShieldAnimation(loc, Particle.DRIPPING_WATER, 3, 0.6, 1.2);
 
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {

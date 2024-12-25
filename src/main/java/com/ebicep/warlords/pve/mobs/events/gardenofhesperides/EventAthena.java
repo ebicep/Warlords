@@ -116,7 +116,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                 EffectUtils.playParticleLinkAnimation(
                         mob.getWarlordsNPC().getLocation(),
                         warlordsNPC.getLocation(),
-                        Particle.ENCHANTMENT_TABLE
+                        Particle.ENCHANT
                 );
             });
             event.setCancelled(true);

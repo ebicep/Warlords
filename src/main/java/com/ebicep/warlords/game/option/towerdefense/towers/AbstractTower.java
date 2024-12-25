@@ -140,8 +140,8 @@ public abstract class AbstractTower {
         npc.getDefaultGoalController().clear();
         npc.getNavigator().setPaused(true);
 
-        npc.getOrAddTrait(Gravity.class).gravitate(true);
-        npc.getOrAddTrait(HologramTrait.class).setUseDisplayEntities(true);
+        npc.getOrAddTrait(Gravity.class).setHasGravity(false);
+        npc.getOrAddTrait(HologramTrait.class);
 
         npc.spawn(topCenterLocation);
 

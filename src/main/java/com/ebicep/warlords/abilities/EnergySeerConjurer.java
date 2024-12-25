@@ -32,7 +32,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
     protected void onEnd(WarlordsEntity wp, EnergySeerConjurer.EnergySeerConjurerData data) {
         super.onEnd(wp, data);
         EffectUtils.displayParticle(
-                Particle.REDSTONE,
+                Particle.DUST,
                 wp.getLocation().add(0, 1.2, 0),
                 3,
                 0.3,

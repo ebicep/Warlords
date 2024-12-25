@@ -4,7 +4,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.*;
+import org.bukkit.craftbukkit.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

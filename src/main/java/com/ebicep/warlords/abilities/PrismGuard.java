@@ -127,7 +127,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                             wp.getTeam(),
                             wp.getLocation(),
                             bubbleRadius,
-                            new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(2)
+                            new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(2)
                     ).playEffects();
 
                     float baseHealing = healingValues.bubbleBaseHealing.getValue();

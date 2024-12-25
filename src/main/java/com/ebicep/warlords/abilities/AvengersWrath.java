@@ -73,7 +73,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         EffectUtils.displayParticle(
-                                Particle.SPELL,
+                                Particle.EFFECT,
                                 wp.getLocation().add(0, 1.2, 0),
                                 6,
                                 0.3F,

@@ -12,7 +12,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.NarmersTombOption;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -80,9 +81,9 @@ public class DatabaseGamePvEEventNarmersTomb extends DatabaseGamePvEEventNarmer<
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        super.appendLastGameStats(hologram);
-        hologram.getLines().appendText(ChatColor.YELLOW + "Waves Cleared: " + wavesCleared);
+    public void appendLastGameStats(TextHologramData hologramData) {
+        super.appendLastGameStats(hologramData);
+        hologramData.addLine(ChatColor.YELLOW + "Waves Cleared: " + wavesCleared);
     }
 
     @Override

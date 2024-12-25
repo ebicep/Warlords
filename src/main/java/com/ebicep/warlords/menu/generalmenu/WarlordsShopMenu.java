@@ -108,7 +108,7 @@ public class WarlordsShopMenu {
             itemBuilder.addLore(Component.empty());
             if (spec == selectedSpec) {
                 itemBuilder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 itemBuilder.addLore(Component.text("> Click to activate <", NamedTextColor.YELLOW));
             }
@@ -159,7 +159,7 @@ public class WarlordsShopMenu {
             lore.add(Component.empty());
             if (skillBoost == selectedBoost) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
             }
@@ -238,7 +238,7 @@ public class WarlordsShopMenu {
 
                 if (weapon == selectedWeapon) {
                     lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
                 }
@@ -325,7 +325,7 @@ public class WarlordsShopMenu {
                     .addLore(Component.empty());
             if (selectedHelmet.contains(helmet)) {
                 builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
             }
@@ -354,7 +354,7 @@ public class WarlordsShopMenu {
                     .addLore(Component.empty());
             if (playerSettings.getArmorSet(classes) == armorSet) {
                 builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
             }
@@ -497,7 +497,7 @@ public class WarlordsShopMenu {
             List<Component> lore = new ArrayList<>();
             if (team == selectedTeam) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
             }

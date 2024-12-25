@@ -68,7 +68,7 @@ public class EventBoltaro extends AbstractMob implements BossMob {
     }
 
     private void split(PveOption option) {
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE_NORMAL, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE, 3, 20);
         for (int i = 0; i < 2; i++) {
             option.spawnNewMob(new EventBoltaroShadow(warlordsNPC.getLocation(), 0));
         }
@@ -110,7 +110,7 @@ public class EventBoltaro extends AbstractMob implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE_NORMAL, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.SMOKE, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)
                                                                        .with(FireworkEffect.Type.STAR)

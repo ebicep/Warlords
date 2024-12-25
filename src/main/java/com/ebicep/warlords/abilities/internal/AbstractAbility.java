@@ -223,7 +223,7 @@ public abstract class AbstractAbility implements AbilityIcon {
             if (getCurrentCooldown() > 0) {
                 ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, getCurrentCooldownItem());
                 if (!getSecondaryAbilities().isEmpty()) {
-                    cooldown.enchant(Enchantment.OXYGEN, 1);
+                    cooldown.enchant(Enchantment.RESPIRATION, 1);
                 }
                 player.getInventory().setItem(inventoryIndex, cooldown.get());
             } else {

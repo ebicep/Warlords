@@ -72,8 +72,8 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
-                new DoubleLineEffect(Particle.SPELL)
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST),
+                new DoubleLineEffect(Particle.EFFECT)
         );
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(

@@ -200,7 +200,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
             };
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, "paladin.consecrate.activation", 2, 0.3f);
-            EffectUtils.playHelixAnimation(loc, 10, Particle.VILLAGER_ANGRY, 1, 20);
+            EffectUtils.playHelixAnimation(loc, 10, Particle.ANGRY_VILLAGER, 1, 20);
             PlayerFilter.entitiesAround(wp, 10, 10, 10)
                         .aliveEnemiesOf(wp)
                         .forEach(enemyPlayer -> {

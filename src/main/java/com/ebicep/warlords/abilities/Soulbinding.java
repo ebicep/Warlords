@@ -105,7 +105,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                         if (wp.getEntity() instanceof Player) {
                             ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
                             if (item != null) {
-                                item.removeEnchantment(Enchantment.OXYGEN);
+                                item.removeEnchantment(Enchantment.RESPIRATION);
                             }
                         }
                     }
@@ -117,7 +117,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                         Location location = wp.getLocation();
                         location.add(0, 1.2, 0);
                         location.getWorld().spawnParticle(
-                                Particle.SPELL_WITCH,
+                                Particle.WITCH,
                                 location,
                                 2,
                                 0.2,
@@ -157,7 +157,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             ItemStack item = player.getInventory().getItem(0);
             if (item != null) {
                 ItemMeta newItemMeta = item.getItemMeta();
-                newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                newItemMeta.addEnchant(Enchantment.RESPIRATION, 1, true);
                 item.setItemMeta(newItemMeta);
             }
         }

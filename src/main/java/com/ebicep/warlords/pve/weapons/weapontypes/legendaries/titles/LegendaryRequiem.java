@@ -108,7 +108,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
                                                                  .limit(spawnAmount)
                                                                  .toList();
                 toConvert.forEach(convertedEnemy -> {
-                    EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.VILLAGER_HAPPY, 1);
+                    EffectUtils.playCylinderAnimation(convertedEnemy.getLocation(), 1.05, Particle.HAPPY_VILLAGER, 1);
                     convertedEnemy.setTeam(warlordsPlayer.getTeam());
                     AbstractMob mob = convertedEnemy.getMob();
                     updateMobEquipment(mob, player);

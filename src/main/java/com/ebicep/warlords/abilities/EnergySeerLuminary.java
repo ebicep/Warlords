@@ -36,7 +36,7 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
                         .aliveTeammatesOfExcludingSelf(wp)
                         .forEach(warlordsEntity -> {
                             MercifulHex.giveMercifulHex(wp, warlordsEntity);
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY, 1, 1.25, -1);
+                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER, 1, 1.25, -1);
                         });
         }
     }

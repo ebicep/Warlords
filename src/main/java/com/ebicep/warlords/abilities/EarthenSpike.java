@@ -138,7 +138,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                                 }
                                 Utils.playGlobalSound(targetLocation, Sound.BLOCK_GRAVEL_BREAK, 2, 0.5f);
                                 targetLocation.getWorld().spawnParticle(
-                                        Particle.EXPLOSION_LARGE,
+                                        Particle.EXPLOSION,
                                         targetLocation,
                                         2,
                                         1,

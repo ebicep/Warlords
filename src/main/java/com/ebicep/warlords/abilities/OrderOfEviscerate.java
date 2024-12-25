@@ -131,7 +131,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     if (ticksElapsed % 2 == 0) {
                         Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
                     }
-                    EffectUtils.displayParticle(Particle.SMOKE_NORMAL, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
+                    EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
                 })
         ) {
 

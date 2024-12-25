@@ -9,7 +9,8 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
 import com.ebicep.warlords.util.java.StringUtils;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -85,18 +86,17 @@ public class DatabaseGameSiege extends DatabaseGameBase<DatabaseGamePlayerSiege>
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        hologram.getLines().appendText(ChatColor.GRAY + date);
-        hologram.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeElapsed / 60 + ":" + timeElapsed % 60 + (timeElapsed % 60 < 10 ? "0" : ""));
-        hologram.getLines().appendText(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
+    public void appendLastGameStats(TextHologramData hologramData) {
+        hologramData.addLine(ChatColor.GRAY + date);
+        hologramData.addLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeElapsed / 60 + ":" + timeElapsed % 60 + (timeElapsed % 60 < 10 ? "0" : ""));
+        hologramData.addLine(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
     }
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-//        Hologram topDHPPerMinute = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
+//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
 //        holograms.add(topDHPPerMinute);
-//        topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+//        hologramData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 //
 //        List<String> topDHPPerGamePlayers = new ArrayList<>();
 //
@@ -137,7 +137,7 @@ public class DatabaseGameSiege extends DatabaseGameBase<DatabaseGamePlayerSiege>
 //                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
 //                  });
 //
-//        topDHPPerGamePlayers.forEach(s -> topDHPPerMinute.getLines().appendText(s));
+//        topDHPPerGamePlayers.forEach(s -> hologramData.addLine(s));
     }
 
 

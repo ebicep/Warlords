@@ -11,10 +11,10 @@ import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.HologramLines;
-import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
+import de.oliver.fancyholograms.api.FancyHologramsPlugin;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.data.property.Visibility;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -140,7 +140,7 @@ public class StatsLeaderboard {
         for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
             holograms.add(createHologram(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
         }
-        getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::delete);
+        getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::deleteHologram);
         getSortedHolograms(collection).clear();
         getSortedHolograms(collection).add(holograms);
     }
@@ -148,10 +148,11 @@ public class StatsLeaderboard {
     public Hologram createHologram(PlayersCollections collection, int page, String subTitle) {
         List<DatabasePlayer> databasePlayers = getSortedPlayers(collection);
 
-        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
-        HologramLines hologramLines = hologram.getLines();
-        hologramLines.appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + collection.name + " " + title);
-        hologramLines.appendText(ChatColor.GRAY + subTitle);
+        TextHologramData hologramData = new TextHologramData(title + "_" + collection.name + "_" + page, location);
+        hologramData.removeLine(0);
+        hologramData.setPersistent(false);
+        hologramData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + collection.name + " " + title);
+        hologramData.addLine(ChatColor.GRAY + subTitle);
         for (int i = page * PLAYERS_PER_PAGE; i < (page + 1) * PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
@@ -162,7 +163,7 @@ public class StatsLeaderboard {
                     guildTag = tag.getTag(false);
                 }
             }
-            hologramLines.appendText(LegacyComponentSerializer.legacySection().serialize(
+            hologramData.addLine(LegacyComponentSerializer.legacySection().serialize(
                     Component.text((i + 1) + ". ", NamedTextColor.YELLOW)
                              .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
                              .append(Component.space())
@@ -171,8 +172,10 @@ public class StatsLeaderboard {
                              .append(Component.text(stringFunction.apply(databasePlayer)))
             ));
         }
-        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+        hologramData.setVisibility(Visibility.ALL);
 
+        Hologram hologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
+        FancyHologramsPlugin.get().getHologramManager().addHologram(hologram);
         return hologram;
     }
 

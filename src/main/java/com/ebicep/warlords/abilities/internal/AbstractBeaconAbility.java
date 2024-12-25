@@ -72,7 +72,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
                 wp.getTeam(),
                 groundLocation,
                 radius.getCalculatedValue(),
-                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST),
                 getLineEffect(groundLocation)
         );
 

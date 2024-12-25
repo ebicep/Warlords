@@ -83,8 +83,8 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     hitRadius,
-                    new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(0.75),
-                    new DoubleLineEffect(Particle.SPELL)
+                    new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(0.75),
+                    new DoubleLineEffect(Particle.EFFECT)
             ).playEffects();
         }
     }
@@ -111,7 +111,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                             Location location = enemy.getLocation();
                             location.add(0, 1.5, 0);
                             location.getWorld().spawnParticle(
-                                    Particle.SMOKE_NORMAL,
+                                    Particle.SMOKE,
                                     location,
                                     1,
                                     0.3F,
@@ -122,7 +122,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                                     true
                             );
                             location.getWorld().spawnParticle(
-                                    Particle.SLIME,
+                                    Particle.ITEM_SLIME,
                                     location,
                                     1,
                                     0.3F,

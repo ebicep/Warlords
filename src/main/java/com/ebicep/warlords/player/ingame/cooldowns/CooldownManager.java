@@ -85,7 +85,7 @@ public class CooldownManager {
                 }
                 PotionEffect potionEffect = event.getPotionEffect();
                 if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
-                        PotionEffectType.CONFUSION.equals(potionEffect.getType())
+                        PotionEffectType.NAUSEA.equals(potionEffect.getType())
                 ) {
                     event.setCancelled(true);
                 }

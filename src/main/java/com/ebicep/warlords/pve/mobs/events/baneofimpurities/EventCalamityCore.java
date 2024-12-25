@@ -63,7 +63,7 @@ public class EventCalamityCore extends AbstractEventCore {
                 0
         );
         EffectUtils.displayParticle(
-                Particle.EXPLOSION_NORMAL,
+                Particle.POOF,
                 floorLocation,
                 15,
                 10,
@@ -73,7 +73,7 @@ public class EventCalamityCore extends AbstractEventCore {
         );
         floorLocation.add(0, 2, 0);
         EffectUtils.displayParticle(
-                Particle.EXPLOSION_HUGE,
+                Particle.EXPLOSION_EMITTER,
                 floorLocation,
                 3,
                 0,

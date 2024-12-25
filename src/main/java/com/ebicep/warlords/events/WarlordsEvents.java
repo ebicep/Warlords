@@ -59,6 +59,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -165,11 +166,11 @@ public class WarlordsEvents implements Listener {
 
     public static void joinInteraction(Player player, boolean fromGame) {
         player.playerListName(null);
-        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+        AttributeInstance attribute = player.getAttribute(Attribute.ATTACK_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(1024); // remove attack charge up / recoil
         }
-        attribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
+        attribute = player.getAttribute(Attribute.MAX_ABSORPTION);
         if (attribute != null) {
             attribute.setBaseValue(Integer.MAX_VALUE); // give absorption capability
         }
@@ -188,7 +189,7 @@ public class WarlordsEvents implements Listener {
         }
         if (isSpawnWorld) {
             player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.removePotionEffect(PotionEffectType.SLOW);
+            player.removePotionEffect(PotionEffectType.SLOWNESS);
             player.removePotionEffect(PotionEffectType.ABSORPTION);
 
             List<BossBar> bossBars = new ArrayList<>();
@@ -235,8 +236,13 @@ public class WarlordsEvents implements Listener {
                 CustomScoreboard.updateLobbyPlayerNames();
                 ExperienceManager.giveExperienceBar(player);
                 if (StatsLeaderboardManager.loaded) {
-                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
-                    DatabaseGameBase.setGameHologramVisibility(player);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                            DatabaseGameBase.setGameHologramVisibility(player);
+                        }
+                    }.runTaskLater(Warlords.getInstance(), 20);
                 }
             }, () -> {
                 if (!fromGame) {

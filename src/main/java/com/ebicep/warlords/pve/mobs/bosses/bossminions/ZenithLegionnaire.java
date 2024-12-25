@@ -106,7 +106,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
                             );
 
                             Utils.playGlobalSound(zenith.getLocation(), "shaman.earthlivingweapon.impact", 3, 1.5f);
-                            EffectUtils.playParticleLinkAnimation(zenith.getLocation(), wp.getLocation(), Particle.VILLAGER_HAPPY);
+                            EffectUtils.playParticleLinkAnimation(zenith.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER);
                         });
             if (wp instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.getMob().removeTarget();

@@ -205,7 +205,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                 display.teleport(location);
                 if (projectile.getTicksLived() % 4 == 0) {
                     EffectUtils.displayParticle(
-                            Particle.SPELL_WITCH,
+                            Particle.WITCH,
                             projectile.getCurrentLocation(),
                             1
                     );
@@ -216,7 +216,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
             public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                 display.remove();
                 EffectUtils.displayParticle(
-                        Particle.SPELL_WITCH,
+                        Particle.WITCH,
                         projectile.getCurrentLocation(),
                         1,
                         0,

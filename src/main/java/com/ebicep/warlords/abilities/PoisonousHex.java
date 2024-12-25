@@ -160,7 +160,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
                 display.teleport(location);
                 if (projectile.getTicksLived() % 3 == 0) {
                     EffectUtils.displayParticle(
-                            Particle.REDSTONE,
+                            Particle.DUST,
                             projectile.getCurrentLocation(),
                             1,
                             new Particle.DustOptions(Color.fromRGB(90, 90, 190), 1)
@@ -173,7 +173,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
                 display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), Sound.ENTITY_EVOKER_FANGS_ATTACK, 0.2f, 2);
                 EffectUtils.displayParticle(
-                        Particle.EXPLOSION_LARGE,
+                        Particle.EXPLOSION,
                         projectile.getCurrentLocation(),
                         1,
                         0,

@@ -86,7 +86,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         EffectUtils.displayParticle(
-                                Particle.VILLAGER_ANGRY,
+                                Particle.ANGRY_VILLAGER,
                                 wp.getLocation().add(0, 1.75, 0),
                                 1,
                                 0,

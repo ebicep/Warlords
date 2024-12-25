@@ -206,7 +206,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
             LocationBuilder end = new LocationBuilder(endLocation).direction(start.getDirection());
             ItemStack item = new ItemStack(Material.TIPPED_ARROW);
             PotionMeta itemMeta = (PotionMeta) item.getItemMeta();
-            itemMeta.setBasePotionType(PotionType.INSTANT_HEAL);
+            itemMeta.setBasePotionType(PotionType.HEALING);
             item.setItemMeta(itemMeta);
             ItemDisplay arrow = startLocation.getWorld().spawn(
                     start,

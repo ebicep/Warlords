@@ -111,7 +111,7 @@ public abstract class AbstractWeapon {
         if (isBound) {
             lore.add(Component.text("BOUND", NamedTextColor.AQUA));
             if (enchantIfBound) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
         }
         return itemBuilder

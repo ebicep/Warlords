@@ -322,7 +322,7 @@ public class ItemCraftingMenu {
                         Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
                         Component.text(" to select a" + (boughtBlessing != null ? " different " : " ") + "blessing", NamedTextColor.GREEN)
                 ))
-                .enchant(Enchantment.OXYGEN, 1);
+                .enchant(Enchantment.RESPIRATION, 1);
         if (boughtBlessing == null) {
             itemBuilder.name(Component.textOfChildren(
                     Component.text("CLICK", NamedTextColor.YELLOW, TextDecoration.BOLD),
@@ -372,7 +372,7 @@ public class ItemCraftingMenu {
                                     Component.text("Amount: ", NamedTextColor.GRAY),
                                     Component.text(blessingBoughtAmount, NamedTextColor.YELLOW)
                             ))
-                            .enchant(Enchantment.OXYGEN, 1)
+                            .enchant(Enchantment.RESPIRATION, 1)
                             .get(),
                     (m, e) -> {
                         if (blessingBoughtAmount > 0) {

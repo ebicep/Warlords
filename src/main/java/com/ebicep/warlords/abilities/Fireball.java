@@ -66,8 +66,8 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
-        EffectUtils.displayParticle(Particle.DRIP_LAVA, currentLocation, 5, 0, 0, 0, 0.35);
-        EffectUtils.displayParticle(Particle.SMOKE_NORMAL, currentLocation, 7, 0, 0, 0, 0.001);
+        EffectUtils.displayParticle(Particle.DRIPPING_LAVA, currentLocation, 5, 0, 0, 0, 0.35);
+        EffectUtils.displayParticle(Particle.SMOKE, currentLocation, 7, 0, 0, 0, 0.001);
         EffectUtils.displayParticle(Particle.FLAME, currentLocation, 1, 0, 0, 0, 0.06);
     }
 
@@ -80,7 +80,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
 
         Utils.playGlobalSound(effectLocation, "mage.fireball.impact", 2, 1);
 
-        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, effectLocation, 1, 0, 0, 0, 0.35);
+        EffectUtils.displayParticle(Particle.EXPLOSION, effectLocation, 1, 0, 0, 0, 0.35);
         EffectUtils.displayParticle(Particle.LAVA, effectLocation, 10, 0.5F, 0, 0.5F, 1.5);
         EffectUtils.displayParticle(Particle.CLOUD, effectLocation, 3, 0.3F, 0.3F, 0.3F, 1);
 

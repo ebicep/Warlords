@@ -174,7 +174,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
                             location.getWorld().spawnParticle(
-                                    Particle.SPELL_WITCH,
+                                    Particle.WITCH,
                                     location,
                                     1,
                                     0.01,
@@ -188,7 +188,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
 
                         warpTrail.add(wp.getLocation());
                         warpLocation.getWorld().spawnParticle(
-                                Particle.SPELL_WITCH,
+                                Particle.WITCH,
                                 warpLocation,
                                 4,
                                 0.1,
@@ -226,7 +226,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                                 double angle = 2 * Math.PI * e / points;
                                 Location point = warpLocation.clone().add(radius * Math.sin(angle), 2.1, radius * Math.cos(angle));
                                 point.getWorld().spawnParticle(
-                                        Particle.REDSTONE,
+                                        Particle.DUST,
                                         point,
                                         1,
                                         0,

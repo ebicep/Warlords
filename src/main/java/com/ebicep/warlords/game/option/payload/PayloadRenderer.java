@@ -48,7 +48,7 @@ public interface PayloadRenderer {
                 currentPathLoc.faceTowards(nextPathEntry.location());
                 currentPathLoc.forward(mappedPathIndex - currentPathEntry.mappedIndex());
                 displayLocation.set(currentPathLoc.getX(), currentPathLoc.getY(), currentPathLoc.getZ());
-                EffectUtils.displayParticle(Particle.WATER_WAKE, displayLocation.clone().add(0, 1, 0), 1);
+                EffectUtils.displayParticle(Particle.FISHING, displayLocation.clone().add(0, 1, 0), 1);
                 mappedPathIndex += RENDER_MOVE;
             }
         }.runTaskTimer(0, 0);
@@ -63,7 +63,7 @@ public interface PayloadRenderer {
 
             // render particle line towards nextLocation
             for (int j = 0; j < 10; j++) {
-                EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, location.clone().add(0, 1, 0), 1);
+                EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, location.clone().add(0, 1, 0), 1);
                 location.forward(.1);
             }
         }

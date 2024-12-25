@@ -35,7 +35,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -448,7 +448,11 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         @Nullable
         @Override
         protected String getActivationSound() {
-            return Sound.ENTITY_ENDER_DRAGON_SHOOT.getKey().getKey();
+            NamespacedKey key = Registry.SOUNDS.getKey(Sound.ENTITY_ENDER_DRAGON_SHOOT);
+            if (key == null) {
+                return "";
+            }
+            return key.getKey();
         }
 
         @Override

@@ -13,7 +13,9 @@ import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendary
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryWeaponTitleInfo;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import io.github.rapha149.signgui.SignGUI;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import de.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.exception.SignGUIVersionException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -69,7 +71,7 @@ public class WeaponTitleMenu {
                             Component.empty(),
                             Component.text("Selected", NamedTextColor.GREEN)
                     );
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     if (titleIsLocked) {
                         itemBuilder.addLore(loreCost);
@@ -184,6 +186,8 @@ public class WeaponTitleMenu {
                         .name(Component.text("Search Title", NamedTextColor.GREEN))
                         .get(),
                 (m, e) ->
+                {
+                    try {
                         SignGUI.builder()
                                .setLines("", "^ Search Query ^", "Returns titles", "containing query")
                                .setHandler((p, lines) -> {
@@ -210,7 +214,11 @@ public class WeaponTitleMenu {
                                         }.runTaskLater(Warlords.getInstance(), 1);
                                     }
                                    return null;
-                               }).build().open(player)
+                               }).build().open(player);
+                    } catch (SignGUIVersionException ex) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
+                    }
+                }
         );
         menu.openForPlayer(player);
     }

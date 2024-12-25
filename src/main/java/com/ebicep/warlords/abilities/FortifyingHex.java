@@ -200,7 +200,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
                 EffectUtils.displayParticle(
-                        Particle.EXPLOSION_LARGE,
+                        Particle.EXPLOSION,
                         projectile.getCurrentLocation(),
                         1,
                         0,
@@ -271,7 +271,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                     hitEnemy(warlordsEntity, wp, toReduceBy);
                 }
                 EffectUtils.displayParticle(
-                        Particle.EXPLOSION_LARGE,
+                        Particle.EXPLOSION,
                         hit.getLocation().add(0, 1, 0),
                         1,
                         .1,

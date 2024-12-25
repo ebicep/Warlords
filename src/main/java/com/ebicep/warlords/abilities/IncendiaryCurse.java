@@ -100,7 +100,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 1
         );
 
-        EffectUtils.displayParticle(Particle.SMOKE_NORMAL, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
+        EffectUtils.displayParticle(Particle.SMOKE, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
 
         float hitboxValue = hitbox.getCalculatedValue();
         List<WarlordsEntity> enemies = PlayerFilter
@@ -121,7 +121,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             } else {
                 nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
             }
-            nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, blindDurationInTicks, 0, true, false));
+            nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, blindDurationInTicks, 0, true, false));
 
             if (pveMasterUpgrade) {
                 EffectUtils.playFirework(
@@ -153,7 +153,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 });
             } else if (pveMasterUpgrade2) {
                 EffectUtils.displayParticle(
-                        Particle.REDSTONE,
+                        Particle.DUST,
                         nearEntity.getLocation().add(0, 1.2, 0),
                         3,
                         0.3,

@@ -30,7 +30,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
         Location location = wp.getLocation();
         Utils.playGlobalSound(location, Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY, 1, 0.5f);
         Utils.playGlobalSound(location, "paladin.holyradiance.activation", 0.8f, 0.6f);
-        EffectUtils.playCylinderAnimation(location, 6, Particle.FIREWORKS_SPARK, 1);
+        EffectUtils.playCylinderAnimation(location, 6, Particle.FIREWORK, 1);
         for (WarlordsEntity ally : PlayerFilter
                 .entitiesAround(wp, hitbox, hitbox, hitbox)
                 .aliveTeammatesOfExcludingSelf(wp)

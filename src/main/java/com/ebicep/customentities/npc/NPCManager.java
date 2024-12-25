@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.game.option.pve.ReadyUpOption;
 import com.ebicep.warlords.pve.events.mastersworkfair.MasterworksFairManager;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.MemoryNPCDataStore;
@@ -30,7 +31,7 @@ public class NPCManager {
         if (!Warlords.citizensEnabled) {
             return;
         }
-
+        ChatUtils.MessageType.GAME.sendMessage("Adding game join NPCs...");
         Warlords.newChain()
                 .sync(() -> {
                     createCTFNPC();
@@ -52,7 +53,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "capture-the-flag");
         npc.addTrait(CaptureTheFlagTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Chessking345");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 17.5, 82, 138.5, 45, 0));
@@ -63,7 +64,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "siege");
         npc.addTrait(SiegeTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 140.5, 45, 0));
@@ -74,7 +75,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "team-deathmatch");
         npc.addTrait(TeamDeathmatchTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Richdragon123");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
@@ -86,7 +87,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "interception");
         npc.addTrait(InterceptionTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("AwesomeRaki");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
 
@@ -98,7 +99,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "pve-mode");
         npc.addTrait(PvEStartTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Plikie");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 17.5, 82, 160.5, 135, 0));
@@ -109,7 +110,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "onslaught-mode");
         npc.addTrait(OnslaughtStartTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Heatran");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Heatran");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 5.5, 82, 160.5, -135, 0));
@@ -120,7 +121,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "treasure-hunt-mode");
         npc.addTrait(TreasureHuntStartTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Alexred2522");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 20.5, 82, 158.5, 135, 0));
@@ -131,7 +132,7 @@ public class NPCManager {
 
         NPC npc = NPC_REGISTRY.createNPC(EntityType.PLAYER, "boss-rush-mode");
         npc.addTrait(BossRushStartTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
+//        npc.getOrAddTrait(SkinTrait.class).setSkinName("Stratfull");
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
         npc.spawn(new Location(StatsLeaderboardManager.MAIN_LOBBY_SPAWN.getWorld(), 2.5, 82, 158.5, -135, 0));
@@ -240,7 +241,7 @@ public class NPCManager {
     public static void createStarPieceSynthesizerNPC() {
         registerTrait(StarPieceSynthesizerTrait.class, "StarPieceSynthesizerTrait");
 
-        NPC npc = NPC_REGISTRY.createNPC(EntityType.ENDER_CRYSTAL, "star-piece-synthesizer");
+        NPC npc = NPC_REGISTRY.createNPC(EntityType.END_CRYSTAL, "star-piece-synthesizer");
         npc.addTrait(StarPieceSynthesizerTrait.class);
 
         npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
@@ -254,7 +255,7 @@ public class NPCManager {
         npc.data().set("swim", false);
         npc.addTrait(ItemEnyaTrait.class);
         npc.getOrAddTrait(Gravity.class)
-           .gravitate(true);
+           .setHasGravity(false);
         LookClose lookClose = npc.getOrAddTrait(LookClose.class);
         lookClose.setPerPlayer(true);
         lookClose.toggle();

@@ -141,7 +141,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                         });
             locationBuilder = locationBuilder.forward(1);
             EffectUtils.displayParticle(
-                    Particle.SMOKE_NORMAL,
+                    Particle.SMOKE,
                     locationBuilder.clone().addY(-.5),
                     10,
                     .1,

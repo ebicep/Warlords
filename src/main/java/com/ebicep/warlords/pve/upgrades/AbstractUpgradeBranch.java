@@ -474,7 +474,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 Component.text(" to remove from auto upgrade queue.", NamedTextColor.GRAY)
                         )
                 );
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 itemBuilder.addLore(
                         Component.empty(),
@@ -511,7 +511,7 @@ public abstract class AbstractUpgradeBranch<T extends AbstractAbility> {
                                 Component.text(" to remove from auto upgrade queue.", NamedTextColor.GRAY)
                         )
                 );
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 itemBuilder.addLore(
                         Component.empty(),

@@ -7,7 +7,9 @@ import com.ebicep.warlords.guilds.logs.types.oneplayer.tag.GuildLogTagNameColor;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.bukkit.Colors;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import io.github.rapha149.signgui.SignGUI;
+import com.ebicep.warlords.util.chat.ChatUtils;
+import de.rapha149.signgui.SignGUI;
+import de.rapha149.signgui.exception.SignGUIVersionException;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -33,7 +35,7 @@ public class GuildTagMenu {
                                    .append(guildTag.getColoredName())
                                    .append(Component.text("]")));
             if (Objects.equals(color.textColor.toString(), guildTag.getBracketColor())) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),
@@ -55,13 +57,17 @@ public class GuildTagMenu {
                         .name(Component.text("Change Tag Name", NamedTextColor.GREEN))
                         .get(),
                 (m, e) -> {
-                    SignGUI.builder()
-                           .setLines("", "Enter Tag Name", "Max 6", "Characters")
-                           .setHandler((p, lines) -> {
-                               String newTagName = lines.getLine(0);
-                               player.performCommand("guild tag " + newTagName);
-                               return null;
-                           }).build().open(player);
+                    try {
+                        SignGUI.builder()
+                               .setLines("", "Enter Tag Name", "Max 6", "Characters")
+                               .setHandler((p, lines) -> {
+                                   String newTagName = lines.getLine(0);
+                                   player.performCommand("guild tag " + newTagName);
+                                   return null;
+                               }).build().open(player);
+                    } catch (SignGUIVersionException ex) {
+                        ChatUtils.MessageType.WARLORDS.sendErrorMessage(ex);
+                    }
                 }
         );
 
@@ -73,7 +79,7 @@ public class GuildTagMenu {
                                    .append(Component.text(guildTag.getName(), color.textColor))
                                    .append(Component.text("]")));
             if (Objects.equals(color.textColor.toString(), guildTag.getNameColor())) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
             menu.setItem(column, row,
                     itemBuilder.get(),

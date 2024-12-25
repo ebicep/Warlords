@@ -95,8 +95,8 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                     wp.getTeam(),
                     wp.getLocation().add(0, 0.25, 0),
                     6,
-                    new CircumferenceEffect(Particle.SPELL_WITCH, Particle.FIREWORKS_SPARK).particlesPerCircumference(1),
-                    new DoubleLineEffect(Particle.SPELL)
+                    new CircumferenceEffect(Particle.WITCH, Particle.FIREWORK).particlesPerCircumference(1),
+                    new DoubleLineEffect(Particle.EFFECT)
             ).playEffects();
 
             for (WarlordsEntity we : PlayerFilter

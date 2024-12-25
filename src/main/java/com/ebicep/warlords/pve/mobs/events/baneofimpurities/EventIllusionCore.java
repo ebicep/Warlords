@@ -54,7 +54,7 @@ public class EventIllusionCore extends AbstractEventCore {
         EffectUtils.strikeLightning(floorLocation, false, 1);
         floorLocation.add(0, 1, 0);
         EffectUtils.displayParticle(
-                Particle.SPELL_WITCH,
+                Particle.WITCH,
                 floorLocation,
                 1000,
                 10,
@@ -63,7 +63,7 @@ public class EventIllusionCore extends AbstractEventCore {
                 0
         );
         EffectUtils.displayParticle(
-                Particle.SPELL,
+                Particle.EFFECT,
                 floorLocation,
                 1000,
                 10,

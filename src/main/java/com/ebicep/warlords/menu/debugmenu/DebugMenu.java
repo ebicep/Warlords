@@ -45,7 +45,7 @@ public class DebugMenu {
                                     Component.text("Addons - ", NamedTextColor.DARK_GRAY).append(Component.text(game.getAddons().toString(), NamedTextColor.RED)),
                                     Component.text("Players - ", NamedTextColor.DARK_GRAY).append(Component.text(String.valueOf(game.playersCount()), NamedTextColor.RED))
                             )
-                            .enchant(Enchantment.OXYGEN, 1)
+                            .enchant(Enchantment.RESPIRATION, 1)
                             .get(),
                     (m, e) -> DebugMenuGameOptions.GamesMenu.openGameEditorMenu(player, game)
             );

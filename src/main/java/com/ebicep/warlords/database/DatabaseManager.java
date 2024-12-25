@@ -166,7 +166,7 @@ public class DatabaseManager {
         ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loading Last Games");
         long gameStart = System.nanoTime();
         Warlords.newChain()
-                .asyncFirst(() -> gameService.getLastGames(15))
+                .asyncFirst(() -> gameService.getLastGames(DatabaseGameBase.MAX_GAMES))
                 .syncLast((games) -> {
                     ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
                     DatabaseGameBase.previousGames.addAll(games);

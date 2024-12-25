@@ -59,7 +59,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
         EffectUtils.displayParticle(
-                Particle.SPELL,
+                Particle.EFFECT,
                 location,
                 4,
                 (float) ((Math.random() * 2) - 1),

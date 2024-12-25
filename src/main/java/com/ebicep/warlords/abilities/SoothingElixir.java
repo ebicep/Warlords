@@ -87,7 +87,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         double angle = Math.toRadians(i * 90) + integer * 0.3;
                         double width = 0.3D;
                         newLoc.getWorld().spawnParticle(
-                                Particle.VILLAGER_HAPPY,
+                                Particle.HAPPY_VILLAGER,
                                 center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
                                 2,
                                 0,
@@ -115,8 +115,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                             wp.getTeam(),
                             newLoc,
                             radius,
-                            new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
-                            new AreaEffect(1, Particle.DRIP_WATER).particlesPerSurface(0.025)
+                            new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST),
+                            new AreaEffect(1, Particle.DRIPPING_WATER).particlesPerSurface(0.025)
                     );
                     BukkitTask particleTask = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 2);
                     wp.getGame().registerGameTask(particleTask);

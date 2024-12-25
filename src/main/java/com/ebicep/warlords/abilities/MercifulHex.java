@@ -186,12 +186,12 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
                 display.teleport(location);
                 if (projectile.getTicksLived() % 3 == 0) {
                     EffectUtils.displayParticle(
-                            Particle.SPELL,
+                            Particle.EFFECT,
                             new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).left(1f),
                             1
                     );
                     EffectUtils.displayParticle(
-                            Particle.SPELL,
+                            Particle.EFFECT,
                             new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).right(1f),
                             1
                     );
@@ -203,7 +203,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
                 display.remove();
                 Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
                 EffectUtils.displayParticle(
-                        Particle.EXPLOSION_LARGE,
+                        Particle.EXPLOSION,
                         projectile.getCurrentLocation(),
                         1,
                         0,

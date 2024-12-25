@@ -203,7 +203,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                 particleLoc.getWorld().spawnParticle(
-                                        Particle.REDSTONE,
+                                        Particle.DUST,
                                         particleLoc,
                                         1,
                                         0,

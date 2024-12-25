@@ -75,7 +75,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                 wp.getTeam(),
                 wp.getLocation(),
                 radius,
-                new CircumferenceEffect(Particle.SPELL, Particle.REDSTONE).particlesPerCircumference(2)
+                new CircumferenceEffect(Particle.EFFECT, Particle.DUST).particlesPerCircumference(2)
         ).playEffects();
 
         EffectUtils.playHelixAnimation(wp.getLocation(), radius, 230, 130, 5);

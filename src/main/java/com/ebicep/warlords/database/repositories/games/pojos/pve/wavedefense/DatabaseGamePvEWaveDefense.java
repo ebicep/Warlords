@@ -8,7 +8,7 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.data.TextHologramData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -56,9 +56,9 @@ public class DatabaseGamePvEWaveDefense extends DatabaseGamePvEBase<DatabaseGame
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        super.appendLastGameStats(hologram);
-        hologram.getLines().appendText(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
+    public void appendLastGameStats(TextHologramData hologramData) {
+        super.appendLastGameStats(hologramData);
+        hologramData.addLine(ChatColor.YELLOW + difficulty.getName() + " Waves Cleared: " + wavesCleared +
                 (difficulty.getMaxWaves() != Integer.MAX_VALUE ? ChatColor.GRAY + "/" + ChatColor.YELLOW + difficulty.getMaxWaves() : ""));
 
     }

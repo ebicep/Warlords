@@ -1,7 +1,5 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -148,10 +146,10 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                                     16,
                                     (matrix4d, integer) -> {},
                                     List.of(
-                                            new Pair<>(Particle.BLOCK_DUST, Material.MOSSY_COBBLESTONE.createBlockData()),
-                                            new Pair<>(Particle.BLOCK_DUST, Material.BLUE_CONCRETE.createBlockData())
+                                            new Pair<>(Particle.BLOCK, Material.MOSSY_COBBLESTONE.createBlockData()),
+                                            new Pair<>(Particle.BLOCK, Material.BLUE_CONCRETE.createBlockData())
                                     ),
-                                    Particle.DRIP_WATER, Particle.ENCHANTMENT_TABLE
+                                    Particle.DRIPPING_WATER, Particle.ENCHANT
                             );
                         }
                         if (ticksElapsed % 20 == 0) {
@@ -161,7 +159,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
                             location.getWorld().spawnParticle(
-                                    Particle.SPELL_WITCH,
+                                    Particle.WITCH,
                                     location,
                                     1,
                                     0.01,
@@ -175,7 +173,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
 
                         warpTrail.add(wp.getLocation());
                         warpLocation.getWorld().spawnParticle(
-                                Particle.SPELL_WITCH,
+                                Particle.WITCH,
                                 warpLocation,
                                 4,
                                 0.1,
@@ -216,7 +214,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                         }
                         if (ticksElapsed % 8 == 0 && ticksLeft >= 40) {
                             baseLocation.getWorld().spawnParticle(
-                                    Particle.DRIP_WATER,
+                                    Particle.DRIPPING_WATER,
                                     baseLocation.clone().add(0, 4, 0),
                                     5,
                                     1,

@@ -33,7 +33,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.TeleportUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -41,6 +40,7 @@ import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
+import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -57,14 +57,15 @@ import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
@@ -300,7 +301,7 @@ public abstract class WarlordsEntity {
             ItemStack item = player.getInventory().getItem(0);
             //removing sg shiny weapon
             if (item != null) {
-                item.removeEnchantment(Enchantment.OXYGEN);
+                item.removeEnchantment(Enchantment.RESPIRATION);
             }
             //removing boner
             player.getInventory().remove(UndyingArmy.BONE);
@@ -588,7 +589,7 @@ public abstract class WarlordsEntity {
         if (ability.getCurrentCooldown() > 0) {
             ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
             if (!ability.getSecondaryAbilities().isEmpty()) {
-                cooldown.enchant(Enchantment.OXYGEN, 1);
+                cooldown.enchant(Enchantment.RESPIRATION, 1);
             }
             player.getInventory().setItem(slot, cooldown.get());
         } else {
@@ -1075,7 +1076,12 @@ public abstract class WarlordsEntity {
 
     public void teleportLocationOnly(Location location) {
         if (this.entity instanceof Player) {
-            TeleportUtils.smoothTeleport((Player) this.entity, location);
+            entity.teleport(location,
+                    PlayerTeleportEvent.TeleportCause.PLUGIN,
+                    TeleportFlag.Relative.VELOCITY_X,
+                    TeleportFlag.Relative.VELOCITY_Y,
+                    TeleportFlag.Relative.VELOCITY_Z
+            );
         } else {
             Location location1 = this.getLocation();
             location1.setX(location.getX());
@@ -1206,7 +1212,7 @@ public abstract class WarlordsEntity {
         if (player != null) {
             player.setWalkSpeed(MathUtils.clamp(this.walkSpeed, -1f, 1f));
         } else if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
+            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
         }
     }
 

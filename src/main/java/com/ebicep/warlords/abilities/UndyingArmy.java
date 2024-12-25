@@ -226,7 +226,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 double width = 1.5;
 
                 wp.getWorld().spawnParticle(
-                        Particle.ENCHANTMENT_TABLE,
+                        Particle.ENCHANT,
                         matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,
@@ -243,7 +243,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 double width = 0.6;
 
                 wp.getWorld().spawnParticle(
-                        Particle.SPELL,
+                        Particle.EFFECT,
                         matrix.translateVector(wp.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,
@@ -261,7 +261,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 wp.getTeam(),
                 wp.getLocation(),
                 radius,
-                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(2)
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(2)
         ).playEffects();
 
         UndyingArmyData data = new UndyingArmyData(this);
@@ -336,7 +336,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                 particleLoc.getWorld().spawnParticle(
-                                        Particle.REDSTONE,
+                                        Particle.DUST,
                                         particleLoc,
                                         1,
                                         0,
@@ -409,7 +409,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                     particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                     particleLoc.getWorld().spawnParticle(
-                                            Particle.REDSTONE,
+                                            Particle.DUST,
                                             particleLoc,
                                             1,
                                             0,

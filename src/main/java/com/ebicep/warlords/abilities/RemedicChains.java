@@ -164,7 +164,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                             linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
                             linked.getWorld().spawnParticle(
-                                    Particle.VILLAGER_HAPPY,
+                                    Particle.HAPPY_VILLAGER,
                                     linked.getLocation().add(0, 1, 0),
                                     10,
                                     0.5,

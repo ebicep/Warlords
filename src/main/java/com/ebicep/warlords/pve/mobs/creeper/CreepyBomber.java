@@ -58,7 +58,7 @@ public class CreepyBomber extends AbstractMob implements EliteMob {
                         });
             if (hit.get()) {
                 EffectUtils.displayParticle(
-                        Particle.EXPLOSION_LARGE,
+                        Particle.EXPLOSION,
                         warlordsNPC.getLocation().add(0, 1, 0),
                         1,
                         0,

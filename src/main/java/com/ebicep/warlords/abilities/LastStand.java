@@ -142,7 +142,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         ) {
             stats.targetsLastStanded++;
 
-            EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.VILLAGER_HAPPY);
+            EffectUtils.playParticleLinkAnimation(wp.getLocation(), standTarget.getLocation(), Particle.HAPPY_VILLAGER);
             standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "LAST",
@@ -236,7 +236,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 double angle = c / 10D * Math.PI * 2;
 
                 loc.getWorld().spawnParticle(
-                        Particle.REDSTONE,
+                        Particle.DUST,
                         matrix.translateVector(wp.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width),
                         1,
                         0,

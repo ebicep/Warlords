@@ -49,9 +49,9 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(210, 50, 50), 1))
+                new CircumferenceEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(210, 50, 50), 1))
                         .particlesPerCircumference(.25),
-                new DoubleLineEffect(Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(255, 160, 160), 1))
+                new DoubleLineEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 160, 160), 1))
         );
 
         HashSet<WarlordsEntity> hit = new HashSet<>();

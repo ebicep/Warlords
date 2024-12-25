@@ -97,7 +97,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
         Utils.playGlobalSound(effectLocation, "mage.frostbolt.impact", 2, 1);
 
-        EffectUtils.displayParticle(Particle.EXPLOSION_LARGE, effectLocation, 1);
+        EffectUtils.displayParticle(Particle.EXPLOSION, effectLocation, 1);
         EffectUtils.displayParticle(Particle.CLOUD, effectLocation, 3, 0.3, 0.3, 0.3, 1);
 
 
@@ -170,7 +170,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         hit(projectile, shooter, toReduceBy, stats.getTargetsHit(), hit);
         hit.addSpeedModifier(shooter, "Splintered Ice", -25, 40);
         EffectUtils.displayParticle(
-                Particle.SNOWBALL,
+                Particle.ITEM_SNOWBALL,
                 hit.getLocation().add(0, 1, 0),
                 10,
                 .2,

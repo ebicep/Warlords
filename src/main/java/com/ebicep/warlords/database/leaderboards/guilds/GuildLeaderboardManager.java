@@ -5,7 +5,7 @@ import com.ebicep.warlords.database.repositories.timings.pojos.Timing;
 import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.util.java.NumberFormat;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -45,7 +45,7 @@ public class GuildLeaderboardManager {
     }
 
     public static void resetEventBoards() {
-//        EVENT_LEADERBOARDS.forEach(Hologram::delete);
+//        EVENT_LEADERBOARDS.forEach(Hologram::deleteHologram);
 //        DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
 //        if (currentGameEvent == null) {
 //            return;
@@ -57,13 +57,13 @@ public class GuildLeaderboardManager {
 //        sortedGuilds.sort((o1, o2) -> o2.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)
 //                                        .compareTo(o1.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L)));
 //
-//        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(EVENT_LEADERBOARD_LOCATION);
+//        Hologram hologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
 //        HologramLines hologramLines = hologram.getLines();
-//        hologramLines.appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Guild Event Points");
-//        hologramLines.appendText(ChatColor.GRAY + event.name);
+//        hologramData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Guild Event Points");
+//        hologramData.addLine(ChatColor.GRAY + event.name);
 //        for (int i = 0, sortedGuildsSize = sortedGuilds.size(); i < sortedGuildsSize; i++) {
 //            Guild guild = sortedGuilds.get(i);
-//            hologramLines.appendText(ChatColor.YELLOW.toString() + (i + 1) + ". " +
+//            hologramData.addLine(ChatColor.YELLOW.toString() + (i + 1) + ". " +
 //                    ChatColor.AQUA + guild.getName() +
 //                    ChatColor.GRAY + " - " + ChatColor.YELLOW + NumberFormat.addCommas(guild.getEventStats().getOrDefault(event, new HashMap<>()).getOrDefault(startDateSecond, 0L))
 //            );

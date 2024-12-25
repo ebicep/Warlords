@@ -12,7 +12,8 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.TartarusOption;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import de.oliver.fancyholograms.api.data.TextHologramData;
+import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -83,8 +84,8 @@ public class DatabaseGamePvEEventTartarus extends DatabaseGamePvEEventGardenOfHe
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        super.appendLastGameStats(hologram);
+    public void appendLastGameStats(TextHologramData hologramData) {
+        super.appendLastGameStats(hologramData);
     }
 
     @Override

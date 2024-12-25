@@ -81,7 +81,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         Utils.playGlobalSound(wp.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
 
-        EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.SLIME, 1);
+        EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.ITEM_SLIME, 1);
         EffectUtils.playFirework(
                 wp.getLocation(),
                 FireworkEffect.builder()
@@ -92,7 +92,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
         if (pveMasterUpgrade) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_WITHER_SPAWN, 10, 1);
-            EffectUtils.playSphereAnimation(wp.getLocation(), radius, Particle.SLIME, 1);
+            EffectUtils.playSphereAnimation(wp.getLocation(), radius, Particle.ITEM_SLIME, 1);
             EffectUtils.playFirework(
                     wp.getLocation(),
                     FireworkEffect.builder()
@@ -135,7 +135,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
                             for (int i = 0; i < 3; i++) {
                                 EffectUtils.displayParticle(
-                                        Particle.REDSTONE,
+                                        Particle.DUST,
                                         miasmaTarget.getLocation().clone().add(
                                                 (Math.random() * 2) - 1,
                                                 1.2 + (Math.random() * 2) - 1,
