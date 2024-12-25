@@ -5,10 +5,14 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.ReflectionUtils;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
@@ -29,6 +33,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,7 +46,7 @@ public class HologramManager implements Listener {
     private static BukkitTask TASK;
     private static PacketAdapter packetListener;
 
-    public static void init() {
+    public static void init(Warlords instance) {
         TASK = new BukkitRunnable() {
 
             @Override
@@ -75,13 +80,18 @@ public class HologramManager implements Listener {
                 });
             }
 
-        }.runTaskTimerAsynchronously(Warlords.getInstance(), 0, 0);
-        packetListener = new PacketAdapter(Warlords.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+        }.runTaskTimerAsynchronously(instance, 0, 0);
+        packetListener = new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
                 Player player = event.getPlayer();
                 PacketContainer packet = event.getPacket().deepClone();
                 int entityID = packet.getIntegers().read(0);
+                List<WrappedEnumEntityUseAction> values = event.getPacket().getEnumEntityUseActions().getValues();
+                WrappedEnumEntityUseAction wrappedEnumEntityUseAction = values.getFirst();
+                if (wrappedEnumEntityUseAction.getAction() == EnumWrappers.EntityUseAction.INTERACT) {
+                    return;
+                }
                 HOLOGRAMS.forEach((s, hologram) -> {
                     InteractManager interactManager = hologram.getInteractManager();
                     if (interactManager == null) {
@@ -95,7 +105,8 @@ public class HologramManager implements Listener {
             }
         };
         PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);
-        Warlords.getInstance().getServer().getPluginManager().registerEvents(new HologramManager(), Warlords.getInstance());
+        Warlords.getInstance().getServer().getPluginManager().registerEvents(new HologramManager(), instance);
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Hologram manager initialized");
     }
 
     public static void cleanup() {
@@ -250,13 +261,14 @@ public class HologramManager implements Listener {
 
     private static void hideHologram(Player player, Hologram hologram) {
         ChatUtils.MessageType.HOLOGRAMS.sendMessage("Hiding hologram " + hologram.getName());
+        IntList ids = new IntArrayList();
+        ids.add(hologram.getId());
+        if (hologram.getInteractManager() != null) {
+            ids.addAll(hologram.getInteractManager().getIds());
+        }
         PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
                 player,
-                PacketContainer.fromPacket(
-                        new ClientboundRemoveEntitiesPacket(
-                                hologram.getId() // TODO batch
-                        )
-                )
+                PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(ids))
         );
         hologram.getVisibilityManager().removeCurrentViewer(player.getUniqueId());
     }

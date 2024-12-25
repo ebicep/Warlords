@@ -20,7 +20,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -128,7 +127,6 @@ public class OldTestCommand implements CommandExecutor {
                     player.getLocation(),
                     p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN).build())
                             .setViewRange(20)
-                            .setScale(new Vector3f(2, 2, 2))
                             .build()
             ).setInteract(p -> {
                 p.sendMessage(ComponentBuilder.create("Interacted with hologram", NamedTextColor.GREEN).build());

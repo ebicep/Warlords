@@ -32,8 +32,8 @@ public class HologramDataText extends HologramData {
     public InteractData.AutoData getAutoInteractData() {
         // TODO test
         int stringLength = DefaultFontInfo.getStringLength(LegacyComponentSerializer.legacySection().serialize(component));
-        float width = lineWidth / 5;
-        float height = 0.5f * (stringLength / lineWidth + 1);
+        float width = stringLength / 5f / 8;
+        float height = 0.5f * (stringLength / lineWidth + 1) / 2;
         // rescale based on scale
         width *= scale.x();
         height *= scale.y();

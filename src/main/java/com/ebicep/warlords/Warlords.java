@@ -352,8 +352,6 @@ public class Warlords extends JavaPlugin {
             }
         }
 
-        HologramManager.init();
-
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new GeneralEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
@@ -439,6 +437,7 @@ public class Warlords extends JavaPlugin {
         }
 
         PacketUtils.init(this);
+        HologramManager.init(this);
 
         startWarlordsEntitiesLoop();
         startRestartReminderLoop();

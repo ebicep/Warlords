@@ -16,6 +16,7 @@ public class InteractManager {
     public InteractManager(Consumer<Player> onClick, Function<Player, InteractData> playerDataFunction) {
         this.onClick = onClick;
         this.playerDataFunction = playerDataFunction;
+        this.recomputeIDs();
     }
 
     public void recomputeIDs() {
