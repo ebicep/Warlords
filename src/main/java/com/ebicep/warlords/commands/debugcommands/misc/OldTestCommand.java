@@ -1,19 +1,19 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.HologramDataText;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
-import de.oliver.fancyholograms.api.HologramManager;
-import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.data.property.Visibility;
-import de.oliver.fancyholograms.api.hologram.Hologram;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.command.Command;
@@ -123,25 +123,37 @@ public class OldTestCommand implements CommandExecutor {
         if (commandSender instanceof Player player) {
 
 
-            HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+            Hologram hologram = new Hologram.Builder("test",
+                    player.getLocation(),
+                    p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN).build())
+                            .setViewRange(20)
+                            .build()
+            ).setInteract(p -> {
+                p.sendMessage(ComponentBuilder.create("Interacted with hologram", NamedTextColor.GREEN).build());
+            }).createHologram();
+            hologram.getVisibilityManager().addViewer(player.getUniqueId());
+            HologramManager.addHologram("test", hologram);
 
-            String name = "testhologram2";
-            TextHologramData hologramData = new TextHologramData(name, player.getLocation());
-            hologramData.setPersistent(false);
-            hologramData.removeLine(0);
-            hologramData.addLine("Hello World");
-            hologramData.setVisibility(Visibility.MANUAL);
 
-            Hologram hologram = manager.create(hologramData);
-            hologram.showHologram(player);
-            Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
-            manager.addHologram(hologram);
-
-            FancyHologramsPlugin.get().getHologramManager().getHologram(name).ifPresent(h -> {
-                h.showHologram(player);
-                Visibility.ManualVisibility.addDistantViewer(h, player.getUniqueId());
-                System.out.println(Visibility.ManualVisibility.canSee(player, h));
-            });
+//            HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+//
+//            String name = "testhologram2";
+//            TextHologramData hologramData = new TextHologramData(name, player.getLocation());
+//            hologramData.setPersistent(false);
+//            hologramData.removeLine(0);
+//            hologramData.addLine("Hello World");
+//            hologramData.setVisibility(Visibility.MANUAL);
+//
+//            Hologram hologram = manager.create(hologramData);
+//            hologram.showHologram(player);
+//            Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
+//            manager.addHologram(hologram);
+//
+//            FancyHologramsPlugin.get().getHologramManager().getHologram(name).ifPresent(h -> {
+//                h.showHologram(player);
+//                Visibility.ManualVisibility.addDistantViewer(h, player.getUniqueId());
+//                System.out.println(Visibility.ManualVisibility.canSee(player, h));
+//            });
 
 
 //            player.setHealth(0);

@@ -4,6 +4,7 @@ import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.abilities.EarthenSpike;
@@ -319,6 +320,11 @@ public class Warlords extends JavaPlugin {
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
+        try {
+            HologramManager.cleanup();
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
 
         ChatUtils.MessageType.WARLORDS.sendMessage("Plugin is disabled");
     }
@@ -431,6 +437,7 @@ public class Warlords extends JavaPlugin {
         }
 
         PacketUtils.init(this);
+        HologramManager.init(this);
 
         startWarlordsEntitiesLoop();
         startRestartReminderLoop();

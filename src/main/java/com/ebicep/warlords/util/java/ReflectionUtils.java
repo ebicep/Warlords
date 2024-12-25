@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util.bukkit;
+package com.ebicep.warlords.util.java;
 
 import org.bukkit.Bukkit;
 
@@ -603,5 +603,11 @@ public final class ReflectionUtils {
             }
             return true;
         }
+    }
+
+    public static <T> T getStaticField(Class<?> clazz, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return (T) field.get(null);
     }
 }
