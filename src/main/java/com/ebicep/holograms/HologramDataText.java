@@ -22,7 +22,7 @@ public class HologramDataText extends HologramData {
     private int backgroundColor;
     private byte textOpacity;
     private byte flags;
-    private Function<ComponentModifier, Component> componentModifier; // modified version of component sent to client - used for player specific data so you dont need to create new data object
+    private final Function<ComponentModifier, Component> componentModifier; // modified version of component sent to client - used for player specific data so you dont need to create new data object
 
     private HologramDataText(Builder<?> builder) {
         super(builder);

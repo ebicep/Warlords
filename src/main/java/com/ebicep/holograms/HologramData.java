@@ -16,6 +16,7 @@ import java.util.Optional;
 
 public abstract class HologramData {
 
+    public static final int DEFAULT_VIEW_RANGE = 50;
     protected final EntityType<?> entityType;
     protected Vector3f translation;
     protected Vector3f scale;
@@ -168,7 +169,7 @@ public abstract class HologramData {
         private Quaternionf leftRotation = new Quaternionf();
         private Display.Billboard billboard = Display.Billboard.CENTER;
         private Display.Brightness brightness = new Display.Brightness(15, 15);
-        private float viewRange = 50;
+        private float viewRange = DEFAULT_VIEW_RANGE;
         private float width = 0;
         private float height = 0;
         private int glowColor = -1;

@@ -14,13 +14,22 @@ public class Hologram {
     private final Function<Player, HologramData> playerDataFunction;
     private final InteractManager interactManager;
     private final VisibilityManager visibilityManager;
+    private int staticViewRange; // -1 if player dependent - static so data is not recomputed everytime to check if player within distance
 
-    private Hologram(String name, Location location, Function<Player, HologramData> playerDataFunction, InteractManager interactManager, VisibilityManager visibilityManager) {
+    private Hologram(
+            String name,
+            Location location,
+            Function<Player, HologramData> playerDataFunction,
+            InteractManager interactManager,
+            VisibilityManager visibilityManager,
+            int staticViewRange
+    ) {
         this.name = name;
         this.location = location;
         this.playerDataFunction = playerDataFunction;
         this.interactManager = interactManager;
         this.visibilityManager = visibilityManager;
+        this.staticViewRange = staticViewRange;
     }
 
     public void deleteHologram() {
@@ -39,6 +48,9 @@ public class Hologram {
         Location playerLocation = player.getLocation();
         if (!Objects.equals(playerLocation.getWorld(), location.getWorld())) {
             return false;
+        }
+        if (staticViewRange != -1) {
+            return playerLocation.distanceSquared(location) < staticViewRange * staticViewRange;
         }
         HologramData data = getDataForPlayer(player);
         return playerLocation.distanceSquared(location) < data.getViewRange() * data.getViewRange();
@@ -67,6 +79,7 @@ public class Hologram {
         private final Function<Player, HologramData> playerDataFunction;
         private InteractManager interactManager = null;
         private VisibilityManager visibilityManager = new VisibilityManager(VisibilityType.MANUAL);
+        private int staticViewRange = HologramData.DEFAULT_VIEW_RANGE; // -1 if player dependent
 
         public Builder(String name, Location location, Function<Player, HologramData> playerDataFunction) {
             this.name = name;
@@ -89,8 +102,18 @@ public class Hologram {
             return this;
         }
 
+        public Builder setStaticViewRange(int staticViewRange) {
+            this.staticViewRange = staticViewRange;
+            return this;
+        }
+
+        public Builder dynamicViewRange() {
+            this.staticViewRange = -1;
+            return this;
+        }
+
         public Hologram build() {
-            return new Hologram(name, location, playerDataFunction, interactManager, visibilityManager);
+            return new Hologram(name, location, playerDataFunction, interactManager, visibilityManager, staticViewRange);
         }
     }
 }
