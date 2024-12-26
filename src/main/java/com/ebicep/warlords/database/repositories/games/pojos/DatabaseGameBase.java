@@ -229,7 +229,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
 
         for (String s : Utils.SPECS_ORDERED) {
 //            ComponentBuilder componentBuilder = ComponentBuilder.create(s, NamedTextColor.AQUA).text(": "); TODO
-            StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
+            StringBuilder playerSpecs = new StringBuilder("  " + ChatColor.AQUA + s).append(": ");
             final boolean[] add = {false};
             allPlayers.stream()
                       .filter(o -> o.getSpec().name.equalsIgnoreCase(s))
@@ -244,6 +244,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                       });
             if (add[0]) {
                 playerSpecs.setLength(playerSpecs.length() - 2);
+                playerSpecs.append("  ");
                 players.add(playerSpecs.toString());
             }
         }
@@ -262,24 +263,24 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                   .sorted(Comparator.comparingLong(DatabaseGamePlayerBase::getTotalDamage).reversed())
                   .forEach(databaseGamePlayer -> {
                       totalDamage.merge(playerColor.get(databaseGamePlayer), databaseGamePlayer.getTotalDamage(), Long::sum);
-                      topDamagePlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
-                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
+                      topDamagePlayers.add("  " + playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamage()) + "  ");
                   });
 
         allPlayers.stream()
                   .sorted(Comparator.comparingLong(DatabaseGamePlayerBase::getTotalHealing).reversed())
                   .forEach(databaseGamePlayer -> {
                       totalHealing.merge(playerColor.get(databaseGamePlayer), databaseGamePlayer.getTotalHealing(), Long::sum);
-                      topHealingPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
-                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealing()));
+                      topHealingPlayers.add("  " + playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealing()) + "  ");
                   });
 
         allPlayers.stream()
                   .sorted(Comparator.comparingLong(DatabaseGamePlayerBase::getTotalAbsorbed).reversed())
                   .forEach(databaseGamePlayer -> {
                       totalAbsorbed.merge(playerColor.get(databaseGamePlayer), databaseGamePlayer.getTotalAbsorbed(), Long::sum);
-                      topAbsorbedPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
-                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
+                      topAbsorbedPlayers.add("  " + playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()) + "  ");
                   });
 
         appendTeamDHP(topDamageComponent, totalDamage);
