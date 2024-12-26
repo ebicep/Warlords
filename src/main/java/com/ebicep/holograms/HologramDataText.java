@@ -8,10 +8,12 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 public class HologramDataText extends HologramData {
 
@@ -20,6 +22,7 @@ public class HologramDataText extends HologramData {
     private int backgroundColor;
     private byte textOpacity;
     private byte flags;
+    private Function<ComponentModifier, Component> componentModifier; // modified version of component sent to client - used for player specific data so you dont need to create new data object
 
     private HologramDataText(Builder<?> builder) {
         super(builder);
@@ -28,6 +31,7 @@ public class HologramDataText extends HologramData {
         this.backgroundColor = builder.backgroundColor;
         this.textOpacity = builder.textOpacity;
         this.flags = builder.flags;
+        this.componentModifier = builder.componentModifier;
     }
 
     @Override
@@ -48,10 +52,13 @@ public class HologramDataText extends HologramData {
     }
 
     @Override
-    protected List<SynchedEntityData.DataValue<?>> getData() {
-        List<SynchedEntityData.DataValue<?>> data = super.getData();
+    protected List<SynchedEntityData.DataValue<?>> getData(Player player) {
+        List<SynchedEntityData.DataValue<?>> data = super.getData(player);
         try {
-            data.add(HologramManager.createDataValue(Display.TextDisplay.class, "DATA_TEXT_ID", PaperAdventure.asVanilla(component)));
+            data.add(HologramManager.createDataValue(Display.TextDisplay.class,
+                    "DATA_TEXT_ID",
+                    PaperAdventure.asVanilla(componentModifier != null ? componentModifier.apply(new ComponentModifier(player, component)) : component)
+            ));
             data.add(HologramManager.createDataValue(Display.TextDisplay.class, "DATA_LINE_WIDTH_ID", lineWidth));
             data.add(HologramManager.createDataValue(Display.TextDisplay.class, "DATA_BACKGROUND_COLOR_ID", backgroundColor));
             data.add(HologramManager.createDataValue(Display.TextDisplay.class, "DATA_TEXT_OPACITY_ID", textOpacity));
@@ -102,13 +109,18 @@ public class HologramDataText extends HologramData {
         this.flags = flags;
     }
 
+    public record ComponentModifier(Player player, Component component) {
+
+    }
+
     public static class Builder<T extends Builder<T>> extends HologramData.Builder<T> {
 
         private final Component component;
-        private int lineWidth = 200;
+        private int lineWidth = 400;
         private int backgroundColor = 1073741824;
         private byte textOpacity = -1;
         private byte flags = 0;
+        private Function<ComponentModifier, Component> componentModifier = null;
 
         public Builder(Component component) {
             super(EntityType.TEXT_DISPLAY);
@@ -132,6 +144,11 @@ public class HologramDataText extends HologramData {
 
         public T setFlags(byte flags) {
             this.flags = flags;
+            return self();
+        }
+
+        public T setComponentModifier(Function<ComponentModifier, Component> componentModifier) {
+            this.componentModifier = componentModifier;
             return self();
         }
 

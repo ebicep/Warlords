@@ -33,16 +33,13 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramManager implements Listener {
 
-    static int entityId = Integer.MAX_VALUE / 8;
     private static final Map<String, Hologram> HOLOGRAMS = new ConcurrentHashMap<>();
+    static int entityId = Integer.MAX_VALUE / 8;
     private static BukkitTask TASK;
     private static PacketAdapter packetListener;
 
@@ -55,7 +52,8 @@ public class HologramManager implements Listener {
                     Location location = hologram.getLocation();
                     World world = location.getWorld();
                     VisibilityManager visibilityManager = hologram.getVisibilityManager();
-                    world.getPlayers().forEach(player -> {
+                    List<Player> players = new ArrayList<>(world.getPlayers());
+                    players.forEach(player -> {
                         boolean withinRange = hologram.withinRange(player);
                         boolean currentlyVisibleTo = visibilityManager.isCurrentlyVisibleTo(player);
                         switch (visibilityManager.getVisibilityType()) {
@@ -100,13 +98,126 @@ public class HologramManager implements Listener {
                     if (!interactManager.getIds().contains(entityID)) {
                         return;
                     }
-                    interactManager.getOnClick().accept(player);
+                    boolean updateHologram = interactManager.getOnClick().apply(player);
+                    if (updateHologram) {
+                        updateHologram(player, hologram);
+                    }
                 });
             }
         };
         PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);
         Warlords.getInstance().getServer().getPluginManager().registerEvents(new HologramManager(), instance);
         ChatUtils.MessageType.HOLOGRAMS.sendMessage("Hologram manager initialized");
+    }
+
+    private static void showHologram(Player player, Hologram hologram) {
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Showing hologram " + hologram.getName());
+        HologramData data = hologram.getDataForPlayer(player);
+        Location location = hologram.getLocation();
+        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                player,
+                PacketContainer.fromPacket(
+                        new ClientboundAddEntityPacket(
+                                hologram.getId(),
+                                UUID.randomUUID(),
+                                location.getX(),
+                                location.getY(),
+                                location.getZ(),
+                                location.getPitch(),
+                                location.getYaw(),
+                                data.getEntityType(),
+                                0,
+                                new Vec3(0, 0, 0),
+                                0
+                        )
+                )
+        );
+        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                player,
+                PacketContainer.fromPacket(
+                        new ClientboundSetEntityDataPacket(
+                                hologram.getId(),
+                                data.getData(player)
+                        )
+                )
+        );
+        InteractManager interactManager = hologram.getInteractManager();
+        if (interactManager != null) {
+            InteractData interactData = interactManager.getDataForPlayer(player);
+            for (Integer id : interactManager.getIds()) {
+                PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                        player,
+                        PacketContainer.fromPacket(
+                                new ClientboundAddEntityPacket(
+                                        id,
+                                        UUID.randomUUID(),
+                                        location.getX(),
+                                        location.getY(),
+                                        location.getZ(),
+                                        location.getYaw(),
+                                        location.getPitch(),
+                                        EntityType.INTERACTION,
+                                        0,
+                                        new Vec3(0, 0, 0),
+                                        0
+                                )
+                        )
+                );
+                PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                        player,
+                        PacketContainer.fromPacket(
+                                new ClientboundSetEntityDataPacket(
+                                        id,
+                                        interactData.getData(hologram, player)
+                                )
+                        )
+                );
+            }
+        }
+        hologram.getVisibilityManager().addCurrentViewer(player.getUniqueId());
+    }
+
+    private static void hideHologram(Player player, Hologram hologram) {
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Hiding hologram " + hologram.getName());
+        IntList ids = new IntArrayList();
+        ids.add(hologram.getId());
+        if (hologram.getInteractManager() != null) {
+            ids.addAll(hologram.getInteractManager().getIds());
+        }
+        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                player,
+                PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(ids))
+        );
+        hologram.getVisibilityManager().removeCurrentViewer(player.getUniqueId());
+    }
+
+    public static void updateHologram(Player player, Hologram hologram) {
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Updating hologram " + hologram.getName());
+        HologramData data = hologram.getDataForPlayer(player);
+        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                player,
+                PacketContainer.fromPacket(
+                        new ClientboundSetEntityDataPacket(
+                                hologram.getId(),
+                                data.getData(player)
+                        )
+                )
+        );
+        InteractManager interactManager = hologram.getInteractManager();
+        if (interactManager != null) {
+            InteractData interactData = interactManager.getDataForPlayer(player);
+            for (Integer id : interactManager.getIds()) {
+                PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
+                        player,
+                        PacketContainer.fromPacket(
+                                new ClientboundSetEntityDataPacket(
+                                        id,
+                                        interactData.getData(hologram, player)
+                                )
+                        )
+                );
+            }
+        }
     }
 
     public static void cleanup() {
@@ -119,11 +230,12 @@ public class HologramManager implements Listener {
         return HOLOGRAMS.get(id);
     }
 
-    public static void addHologram(String id, Hologram.Builder hologramBuilder) {
-        addHologram(id, hologramBuilder.createHologram());
+    public static void addHologram(Hologram hologram) {
+        addHologram(hologram.getName(), hologram);
     }
 
     public static void addHologram(String id, Hologram hologram) {
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Adding hologram " + hologram.getName());
         if (HOLOGRAMS.containsKey(id)) {
             Hologram oldHologram = HOLOGRAMS.get(id);
             oldHologram.getVisibilityManager().getCurrentViewers().forEach(uuid -> {
@@ -134,6 +246,10 @@ public class HologramManager implements Listener {
             });
         }
         HOLOGRAMS.put(id, hologram);
+    }
+
+    public static void addHologram(String id, Hologram.Builder hologramBuilder) {
+        addHologram(id, hologramBuilder.build());
     }
 
     public static void deleteHologram(String id) {
@@ -190,87 +306,6 @@ public class HologramManager implements Listener {
                 showHologram(event.getPlayer(), hologram);
             }
         });
-    }
-
-    private static void showHologram(Player player, Hologram hologram) {
-        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Showing hologram " + hologram.getName());
-        HologramData data = hologram.getDataForPlayer(player);
-        Location location = hologram.getLocation();
-        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
-                player,
-                PacketContainer.fromPacket(
-                        new ClientboundAddEntityPacket(
-                                hologram.getId(),
-                                UUID.randomUUID(),
-                                location.getX(),
-                                location.getY(),
-                                location.getZ(),
-                                location.getYaw(),
-                                location.getPitch(),
-                                data.getEntityType(),
-                                0,
-                                new Vec3(0, 0, 0),
-                                0
-                        )
-                )
-        );
-        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
-                player,
-                PacketContainer.fromPacket(
-                        new ClientboundSetEntityDataPacket(
-                                hologram.getId(),
-                                data.getData()
-                        )
-                )
-        );
-        InteractManager interactManager = hologram.getInteractManager();
-        if (interactManager != null) {
-            InteractData interactData = interactManager.getDataForPlayer(player);
-            for (Integer id : interactManager.getIds()) {
-                PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
-                        player,
-                        PacketContainer.fromPacket(
-                                new ClientboundAddEntityPacket(
-                                        id,
-                                        UUID.randomUUID(),
-                                        location.getX(),
-                                        location.getY(),
-                                        location.getZ(),
-                                        location.getYaw(),
-                                        location.getPitch(),
-                                        EntityType.INTERACTION,
-                                        0,
-                                        new Vec3(0, 0, 0),
-                                        0
-                                )
-                        )
-                );
-                PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
-                        player,
-                        PacketContainer.fromPacket(
-                                new ClientboundSetEntityDataPacket(
-                                        id,
-                                        interactData.getData(hologram, player)
-                                )
-                        )
-                );
-            }
-        }
-        hologram.getVisibilityManager().addCurrentViewer(player.getUniqueId());
-    }
-
-    private static void hideHologram(Player player, Hologram hologram) {
-        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Hiding hologram " + hologram.getName());
-        IntList ids = new IntArrayList();
-        ids.add(hologram.getId());
-        if (hologram.getInteractManager() != null) {
-            ids.addAll(hologram.getInteractManager().getIds());
-        }
-        PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
-                player,
-                PacketContainer.fromPacket(new ClientboundRemoveEntitiesPacket(ids))
-        );
-        hologram.getVisibilityManager().removeCurrentViewer(player.getUniqueId());
     }
 
 }

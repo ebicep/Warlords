@@ -7,11 +7,10 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -67,10 +66,10 @@ public class DatabaseGameTDM extends DatabaseGameBase<DatabaseGamePlayerTDM> {
     }
 
     @Override
-    public void appendLastGameStats(TextHologramData hologramData) {
-        hologramData.addLine(ChatColor.GRAY + date);
-        hologramData.addLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
-        hologramData.addLine(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
+    public void appendLastGameStats(ComponentBuilder componentBuilder) {
+        componentBuilder.newLine(ChatColor.GRAY + date);
+        componentBuilder.newLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        componentBuilder.newLine(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
     }
 
     @Override
@@ -93,7 +92,7 @@ public class DatabaseGameTDM extends DatabaseGameBase<DatabaseGamePlayerTDM> {
     }
 
     @Override
-    public void addCustomHolograms(List<Hologram> holograms) {
+    public void addCustomHolograms(List<com.ebicep.holograms.Hologram> holograms) {
         TextHologramData topDHPPerMinuteData = new TextHologramData("topDHPPerMinute_" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
         topDHPPerMinuteData.setPersistent(false);
         topDHPPerMinuteData.removeLine(0);
@@ -125,8 +124,8 @@ public class DatabaseGameTDM extends DatabaseGameBase<DatabaseGamePlayerTDM> {
 
         topDHPPerGamePlayers.forEach(s -> topDHPPerMinuteData.addLine(s));
 
-        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
-        holograms.add(topDHPPerMinute);
+//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
+//        holograms.add(topDHPPerMinute);
     }
 
     @Override

@@ -8,12 +8,9 @@ import java.util.UUID;
 
 public class VisibilityManager {
 
-    private VisibilityType visibilityType = VisibilityType.ALL;
-    private Set<UUID> currentViewers = new HashSet<>();
-    private Set<UUID> viewers = new HashSet<>();
-
-    public VisibilityManager() {
-    }
+    private VisibilityType visibilityType;
+    private final Set<UUID> currentViewers = new HashSet<>();
+    private final Set<UUID> viewers = new HashSet<>();
 
     public VisibilityManager(VisibilityType visibilityType) {
         this.visibilityType = visibilityType;

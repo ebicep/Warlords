@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.PvELeaderboard;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -8,7 +9,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 
 import java.util.List;
 import java.util.function.Predicate;

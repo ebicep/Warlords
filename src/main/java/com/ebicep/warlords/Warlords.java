@@ -41,8 +41,6 @@ import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
@@ -291,14 +289,6 @@ public class Warlords extends JavaPlugin {
         }
         try {
             gameManager.close();
-        } catch (Exception e) {
-            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
-        }
-        try {
-            if (hologramsEnabled) {
-                ChatUtils.MessageType.WARLORDS.sendMessage("Deleting holograms...");
-                FancyHologramsPlugin.get().getHologramManager().getHolograms().forEach(Hologram::deleteHologram);
-            }
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }

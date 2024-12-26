@@ -1,10 +1,10 @@
 package com.ebicep.warlords.database.leaderboards;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

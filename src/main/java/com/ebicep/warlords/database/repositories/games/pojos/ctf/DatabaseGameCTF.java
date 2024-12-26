@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -10,12 +11,11 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -157,10 +157,10 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     }
 
     @Override
-    public void appendLastGameStats(TextHologramData hologramData) {
-        hologramData.addLine(ChatColor.GRAY + date);
-        hologramData.addLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
-        hologramData.addLine(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
+    public void appendLastGameStats(ComponentBuilder componentBuilder) {
+        componentBuilder.newLine(ChatColor.GRAY + date);
+        componentBuilder.newLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        componentBuilder.newLine(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
     }
 
     @Override
@@ -247,12 +247,12 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
         topDamageOnCarrierPlayers.forEach(s -> topDamageOnCarrierData.addLine(s));
         topHealingOnCarrierPlayers.forEach(s -> topHealingOnCarrierData.addLine(s));
 
-        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
-        holograms.add(topDHPPerMinute);
-        Hologram topDamageOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topDamageOnCarrierData);
-        holograms.add(topDamageOnCarrier);
-        Hologram topHealingOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topHealingOnCarrierData);
-        holograms.add(topHealingOnCarrier);
+//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
+//        holograms.add(topDHPPerMinute);
+//        Hologram topDamageOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topDamageOnCarrierData);
+//        holograms.add(topDamageOnCarrier);
+//        Hologram topHealingOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topHealingOnCarrierData);
+//        holograms.add(topHealingOnCarrier);
     }
 
     @Override

@@ -308,6 +308,7 @@ public class GamesCommand extends BaseCommand {
         sendDebugMessage(issuer, Component.text("Reloading Game Holograms", NamedTextColor.GREEN));
         previousGames.forEach(DatabaseGameBase::deleteHolograms);
         previousGames.forEach(DatabaseGameBase::createHolograms);
+        DatabaseGameBase.createGameSwitcherHologram();
         Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
     }
 

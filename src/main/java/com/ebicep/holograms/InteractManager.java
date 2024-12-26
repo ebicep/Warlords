@@ -4,16 +4,15 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class InteractManager {
 
     private final List<Integer> ids = new ArrayList<>();
-    private final Consumer<Player> onClick;
+    private final Function<Player, Boolean> onClick;
     private final Function<Player, InteractData> playerDataFunction;
 
-    public InteractManager(Consumer<Player> onClick, Function<Player, InteractData> playerDataFunction) {
+    public InteractManager(Function<Player, Boolean> onClick, Function<Player, InteractData> playerDataFunction) {
         this.onClick = onClick;
         this.playerDataFunction = playerDataFunction;
         this.recomputeIDs();
@@ -28,7 +27,7 @@ public class InteractManager {
         return ids;
     }
 
-    public Consumer<Player> getOnClick() {
+    public Function<Player, Boolean> getOnClick() {
         return onClick;
     }
 

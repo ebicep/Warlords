@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve.events.boltaro.boltarobonanza;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.events.pojos.GameEvents;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -11,8 +12,7 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.EventPointsOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.modes.BoltaroBonanzaOption;
-import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.hologram.Hologram;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -85,9 +85,9 @@ public class DatabaseGamePvEEventBoltaroBonanza extends DatabaseGamePvEEventBolt
     }
 
     @Override
-    public void appendLastGameStats(TextHologramData hologramData) {
-        super.appendLastGameStats(hologramData);
-        hologramData.addLine(ChatColor.YELLOW + "Highest Split: " + highestSplit);
+    public void appendLastGameStats(ComponentBuilder componentBuilder) {
+        super.appendLastGameStats(componentBuilder);
+        componentBuilder.newLine(ChatColor.YELLOW + "Highest Split: " + highestSplit);
     }
 
     @Override

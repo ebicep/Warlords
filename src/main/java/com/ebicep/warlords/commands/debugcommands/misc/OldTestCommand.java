@@ -1,8 +1,5 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.holograms.Hologram;
-import com.ebicep.holograms.HologramDataText;
-import com.ebicep.holograms.HologramManager;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -13,9 +10,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -122,20 +121,28 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
+            TextComponent component = ComponentBuilder.create()
+                                                      .text("HELLO")
+                                                      .text(ChatColor.GOLD + "WORLD")
+                                                      .build();
+            component = component.decorate(TextDecoration.UNDERLINED);
+            player.sendMessage(component);
 
-            Hologram hologram = new Hologram.Builder("test",
-                    player.getLocation(),
-                    p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN)
-                                                                        .newLine()
-                                                                        .text("NEW LINE", NamedTextColor.YELLOW)
-                                                                        .build())
-                            .setViewRange(20)
-                            .build()
-            ).setInteract(p -> {
-                p.sendMessage(ComponentBuilder.create("Interacted with hologram", NamedTextColor.GREEN).build());
-            }).createHologram();
-            hologram.getVisibilityManager().addViewer(player.getUniqueId());
-            HologramManager.addHologram("test", hologram);
+//            Hologram hologram = new Hologram.Builder("test",
+//                    player.getLocation(),
+//                    p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN)
+//                                                                        .newLine()
+//                                                                        .text("NEW LINE", NamedTextColor.YELLOW)
+//                                                                        .build())
+//                            .setViewRange(20)
+//                            .setBillboard(Display.Billboard.FIXED)
+//                            .build()
+//            ).setInteract(p -> {
+//                p.sendMessage(ComponentBuilder.create("Interacted with hologram", NamedTextColor.GREEN).build());
+//                return false;
+//            }).build();
+//            hologram.getVisibilityManager().addViewer(player.getUniqueId());
+//            HologramManager.addHologram("test", hologram);
 
 
 //            HologramManager manager = FancyHologramsPlugin.get().getHologramManager();

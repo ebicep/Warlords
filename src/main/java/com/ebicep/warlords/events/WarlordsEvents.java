@@ -304,7 +304,7 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().getVehicle().remove();
         }
         //removing player position boards
-        StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
+//        StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer()); TODO
 
         sendHeaderFooterToAll(true);
 

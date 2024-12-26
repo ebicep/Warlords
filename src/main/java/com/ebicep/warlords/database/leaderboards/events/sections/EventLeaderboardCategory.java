@@ -4,7 +4,7 @@
 //import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 //import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 //import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventDatabaseStatInformation;
-//import de.oliver.fancyholograms.api.hologram.Hologram;
+//import com.ebicep.holograms.Hologram;
 //
 //import java.util.ArrayList;
 //import java.util.Collection;

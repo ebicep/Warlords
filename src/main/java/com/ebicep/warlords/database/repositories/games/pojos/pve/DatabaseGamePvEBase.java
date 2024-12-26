@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -10,11 +11,10 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.RecordTimeElapsedOption;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -49,9 +49,9 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
     }
 
     @Override
-    public void appendLastGameStats(TextHologramData hologramData) {
-        hologramData.addLine(ChatColor.GRAY + date);
-        hologramData.addLine(ChatColor.GREEN + map.getMapName() + " - " + StringUtils.formatTimeLeft(timeElapsed / 20));
+    public void appendLastGameStats(ComponentBuilder componentBuilder) {
+        componentBuilder.newLine(ChatColor.GRAY + date);
+        componentBuilder.newLine(ChatColor.GREEN + map.getMapName() + " - " + StringUtils.formatTimeLeft(timeElapsed / 20));
     }
 
     @Override
@@ -108,12 +108,12 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
         mobKillsMap.forEach((mob, aLong) -> mobKillsData.addLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
         mobDeathsMap.forEach((mob, aLong) -> mobDeathsData.addLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
 
-        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
-        holograms.add(topDHPPerMinute);
-        Hologram mobKills = FancyHologramsPlugin.get().getHologramManager().create(mobKillsData);
-        holograms.add(mobKills);
-        Hologram mobDeaths = FancyHologramsPlugin.get().getHologramManager().create(mobDeathsData);
-        holograms.add(mobDeaths);
+//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
+//        holograms.add(topDHPPerMinute);
+//        Hologram mobKills = FancyHologramsPlugin.get().getHologramManager().create(mobKillsData);
+//        holograms.add(mobKills);
+//        Hologram mobDeaths = FancyHologramsPlugin.get().getHologramManager().create(mobDeathsData);
+//        holograms.add(mobDeaths);
     }
 
     @Override

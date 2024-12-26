@@ -90,6 +90,29 @@ public class ComponentBuilder {
         return this;
     }
 
+    public ComponentBuilder newLine(String text) {
+        componentBuilder.append(Component.newline());
+        componentBuilder.append(Component.text(text));
+        return this;
+    }
+
+    public ComponentBuilder newLine(String text, TextColor textColor) {
+        componentBuilder.append(Component.newline());
+        componentBuilder.append(Component.text(text, textColor));
+        return this;
+    }
+
+    public ComponentBuilder newLine(String text, TextColor textColor, TextDecoration... textDecoration) {
+        componentBuilder.append(Component.newline());
+        componentBuilder.append(Component.text(text, textColor, textDecoration));
+        return this;
+    }
+
+    public ComponentBuilder space() {
+        componentBuilder.append(Component.space());
+        return this;
+    }
+
     public TextComponent build() {
         return componentBuilder.build();
     }

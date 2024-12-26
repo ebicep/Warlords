@@ -172,6 +172,7 @@ public class DatabaseManager {
                     DatabaseGameBase.previousGames.addAll(games);
                     StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
+                    DatabaseGameBase.createGameSwitcherHologram();
                     ChatUtils.MessageType.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
                 })
                 .execute();

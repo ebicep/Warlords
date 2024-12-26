@@ -6,7 +6,7 @@
 //import com.ebicep.warlords.database.repositories.player.pojos.pve.events.PvEEventDatabaseStatInformation;
 //import com.ebicep.warlords.util.bukkit.LocationBuilder;
 //import com.ebicep.warlords.util.java.NumberFormat;
-//import de.oliver.fancyholograms.api.hologram.Hologram;
+//import com.ebicep.holograms.Hologram;
 //
 //import java.util.List;
 //

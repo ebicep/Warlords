@@ -6,6 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
 import org.bukkit.entity.Display;
+import org.bukkit.entity.Player;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -43,7 +44,7 @@ public abstract class HologramData {
 
     public abstract InteractData.AutoData getAutoInteractData();
 
-    protected List<SynchedEntityData.DataValue<?>> getData() {
+    protected List<SynchedEntityData.DataValue<?>> getData(Player player) {
         List<SynchedEntityData.DataValue<?>> data = new ArrayList<>();
         try {
             data.add(HologramManager.createDataValue(Entity.class, "DATA_SHARED_FLAGS_ID", (byte) 0));

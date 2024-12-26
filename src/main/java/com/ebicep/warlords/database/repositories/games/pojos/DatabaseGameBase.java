@@ -2,7 +2,11 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import co.aikar.commands.CommandIssuer;
 import co.aikar.taskchain.TaskChain;
+import com.ebicep.holograms.*;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.TieredAchievements;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -18,19 +22,17 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.DifficultyIndex;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.TriFunction;
 import com.ebicep.warlords.util.warlords.Utils;
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
-import de.oliver.fancyholograms.api.HologramManager;
-import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.data.property.Visibility;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -59,10 +61,10 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
     public static final Location TOP_DAMAGE_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -14.5, 83, 181.5, -90, 0);
     public static final Location TOP_HEALING_ON_CARRIER_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -9.5, 83, 188.5, -135, 0);
     public static final Location PLAYER_ABILITY_STATS_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, -2.5, 83, 193.5, 180, 0);
-    public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 16.5, 83, 184.55);
-    public static final Location PLAYER_ABILITY_STATS_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 6.5, 83, 184.55);
+    public static final Location GAME_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 16.5, 83, 184.55, 180, 0);
+    public static final Location PLAYER_ABILITY_STATS_SWITCH_LOCATION = new Location(StatsLeaderboardManager.MAIN_LOBBY, 6.5, 83, 184.55, 180, 0);
     public static final List<DatabaseGameBase> previousGames = new ArrayList<>();
-    public static final int MAX_GAMES = 1;
+    public static final int MAX_GAMES = 5;
     protected static final String DATE_FORMAT = "MM/dd/yyyy HH:mm:ss";
 
     public static boolean addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
@@ -201,29 +203,10 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         List<Hologram> holograms = new ArrayList<>();
 
         //readding game holograms
-        TextHologramData lastGameStatsData = new TextHologramData("last_game_stats_" + exactDate, LAST_GAME_STATS_LOCATION);
-        lastGameStatsData.setPersistent(false);
-        lastGameStatsData.removeLine(0);
-        lastGameStatsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last " + (isPrivate() ? "Private" : "Pub") + " Game Stats");
-        lastGameStatsData.setBillboard(Display.Billboard.FIXED);
-
-        TextHologramData topDamageData = new TextHologramData("game_stats_damage" + exactDate, DatabaseGameBase.TOP_DAMAGE_LOCATION);
-        topDamageData.setPersistent(false);
-        topDamageData.removeLine(0);
-        topDamageData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage");
-        topDamageData.setBillboard(Display.Billboard.FIXED);
-
-        TextHologramData topHealingData = new TextHologramData("game_stats_healing" + exactDate, DatabaseGameBase.TOP_HEALING_LOCATION);
-        topHealingData.setPersistent(false);
-        topHealingData.removeLine(0);
-        topHealingData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing");
-        topHealingData.setBillboard(Display.Billboard.FIXED);
-
-        TextHologramData topAbsorbedData = new TextHologramData("game_stats_absorbed" + exactDate, DatabaseGameBase.TOP_ABSORBED_LOCATION);
-        topAbsorbedData.setPersistent(false);
-        topAbsorbedData.removeLine(0);
-        topAbsorbedData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Absorbed");
-        topAbsorbedData.setBillboard(Display.Billboard.FIXED);
+        ComponentBuilder lastGameStatsComponent = ComponentBuilder.create("Last " + (isPrivate() ? "Private" : "Pub") + " Game Stats", NamedTextColor.AQUA, TextDecoration.BOLD);
+        ComponentBuilder topDamageComponent = ComponentBuilder.create("Top Damage", NamedTextColor.AQUA, TextDecoration.BOLD);
+        ComponentBuilder topHealingComponent = ComponentBuilder.create("Top Healing", NamedTextColor.AQUA, TextDecoration.BOLD);
+        ComponentBuilder topAbsorbedComponent = ComponentBuilder.create("Top Absorbed", NamedTextColor.AQUA, TextDecoration.BOLD);
 
 //        TextHologramData topDHPPerMinuteData = new TextHologramData("game_stats_dhp" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
 //        topDHPPerMinuteData.setPersistent(false);
@@ -231,7 +214,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
 //        topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 
         //last game stats
-        appendLastGameStats(lastGameStatsData);
+        appendLastGameStats(lastGameStatsComponent);
 
         Set<? extends DatabaseGamePlayerBase> allPlayers = getBasePlayers();
         HashMap<DatabaseGamePlayerBase, ChatColor> playerColor = new HashMap<>();
@@ -245,6 +228,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         List<String> players = new ArrayList<>();
 
         for (String s : Utils.SPECS_ORDERED) {
+//            ComponentBuilder componentBuilder = ComponentBuilder.create(s, NamedTextColor.AQUA).text(": "); TODO
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
             final boolean[] add = {false};
             allPlayers.stream()
@@ -263,7 +247,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 players.add(playerSpecs.toString());
             }
         }
-        players.forEach(s -> lastGameStatsData.addLine(s));
+        players.forEach(s -> lastGameStatsComponent.newLine(s));
 
         //top dmg/healing/absorbed + dhp per game + dmg/heal on carrier
         List<String> topDamagePlayers = new ArrayList<>();
@@ -298,92 +282,217 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                               ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
                   });
 
-        appendTeamDHP(topDamageData, totalDamage);
-        appendTeamDHP(topHealingData, totalHealing);
-        appendTeamDHP(topAbsorbedData, totalAbsorbed);
+        appendTeamDHP(topDamageComponent, totalDamage);
+        appendTeamDHP(topHealingComponent, totalHealing);
+        appendTeamDHP(topAbsorbedComponent, totalAbsorbed);
 
-        topDamagePlayers.forEach(s -> topDamageData.addLine(s));
-        topHealingPlayers.forEach(s -> topHealingData.addLine(s));
-        topAbsorbedPlayers.forEach(s -> topAbsorbedData.addLine(s));
+        topDamagePlayers.forEach(topDamageComponent::newLine);
+        topHealingPlayers.forEach(topHealingComponent::newLine);
+        topAbsorbedPlayers.forEach(topAbsorbedComponent::newLine);
 
         addCustomHolograms(holograms);
 
-        HologramManager hologramManager = FancyHologramsPlugin.get().getHologramManager();
-        for (Hologram hologram : hologramManager.getHolograms()) {
-            hologram.forceUpdate();
-        }
-        Hologram lastGameStats = hologramManager.create(lastGameStatsData);
+        HologramDataText lastGameStatsData = new HologramDataText.Builder<>(lastGameStatsComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram lastGameStats = new Hologram.Builder("lastGameStats" + exactDate,
+                LAST_GAME_STATS_LOCATION,
+                p -> lastGameStatsData
+        ).build();
+        HologramDataText topDamageData = new HologramDataText.Builder<>(topDamageComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topDamage = new Hologram.Builder("topDamage" + exactDate,
+                TOP_DAMAGE_LOCATION,
+                p -> topDamageData
+        ).build();
+        HologramDataText topHealingData = new HologramDataText.Builder<>(topHealingComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topHealing = new Hologram.Builder("topHealing" + exactDate,
+                TOP_HEALING_LOCATION,
+                p -> topHealingData
+        ).build();
+        HologramDataText topAbsorbedData = new HologramDataText.Builder<>(topAbsorbedComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topAbsorbed = new Hologram.Builder("topAbsorbed" + exactDate,
+                TOP_ABSORBED_LOCATION,
+                p -> topAbsorbedData
+        ).build();
+
         holograms.add(lastGameStats);
-        Hologram topDamage = hologramManager.create(topDamageData);
         holograms.add(topDamage);
-        Hologram topHealing = hologramManager.create(topHealingData);
         holograms.add(topHealing);
-        Hologram topAbsorbed = hologramManager.create(topAbsorbedData);
         holograms.add(topAbsorbed);
 //        Hologram topDHPPerMinute = hologramManager.create(topDHPPerMinuteData);
 //        holograms.add(topDHPPerMinute);
 
-        //setting visibility to none
+        HologramDataText playerAbilityStatsSwitcherData = new HologramDataText.Builder<>(ComponentBuilder
+                .create("Player Ability Stats", NamedTextColor.AQUA, TextDecoration.UNDERLINED)
+                .build()
+        )
+                .setBillboard(Display.Billboard.VERTICAL)
+                .build();
+        Hologram playerAbilityStatsSwitcher = new Hologram.Builder("playerAbilityStatsSwitcher" +
+                exactDate,
+                DatabaseGameBase.PLAYER_ABILITY_STATS_SWITCH_LOCATION,
+                p -> playerAbilityStatsSwitcherData
+        ).build();
+
+        holograms.add(playerAbilityStatsSwitcher);
+
+        List<HologramDataText> playerData = new ArrayList<>();
+        List<T> sortedPlayerBySpec = getBasePlayers()
+                .stream()
+                .sorted((o1, o2) -> {
+                    int teamCompare = Integer.compare(getTeam(o1).ordinal(), getTeam(o2).ordinal());
+                    if (teamCompare == 0) {
+                        return Integer.compare(o1.getSpec().ordinal(), o2.getSpec().ordinal());
+                    }
+                    return teamCompare;
+                })
+                .toList();
+        for (int i = 0; i < sortedPlayerBySpec.size(); i++) {
+            T player = sortedPlayerBySpec.get(i);
+            int finalI = i;
+            playerData.add(new HologramDataText.Builder<>(ComponentBuilder
+                            .create(player.getSpec().name + ": ", NamedTextColor.AQUA)
+                            .text(player.getName(), getTeam(player).getTeamColor())
+                            .build()
+                    )
+                            .setBillboard(Display.Billboard.VERTICAL)
+                            .setComponentModifier(componentModifier -> {
+                                Player p = componentModifier.player();
+                                Component component = componentModifier.component();
+
+                                PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.getPlayerInfo(p);
+                                int currentPlayerIndex = playerLeaderboardInfo.getGameHologramPlayerAbilityStats(this);
+                                return currentPlayerIndex == finalI ? component.color(NamedTextColor.GREEN) : component;
+                            })
+                            .build()
+            );
+        }
+
+        // sort by team first then spec
+        List<HologramDataText> playerAbilityStats = new ArrayList<>();
+        getBasePlayers()
+                .stream()
+                .sorted((o1, o2) -> {
+                    int teamCompare = Integer.compare(getTeam(o1).ordinal(), getTeam(o2).ordinal());
+                    if (teamCompare == 0) {
+                        return Integer.compare(o1.getSpec().ordinal(), o2.getSpec().ordinal());
+                    }
+                    return teamCompare;
+                })
+                .forEachOrdered(player -> {
+                    ComponentBuilder componentBuilder = ComponentBuilder.create("" + getTeam(player).getChatColor() + ChatColor.BOLD + player.getName() + "'s Ability Stats")
+                                                                        .newLine();
+                    Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = player.getAbilityStats();
+                    for (Map.Entry<Ability<?>, AbstractAbilityStats<?, ?>> entry : abilityStats.entrySet()) {
+                        Ability<?> ability = entry.getKey();
+                        AbstractAbilityStats<?, ?> abstractAbilityStats = entry.getValue();
+                        AbstractAbility abstractAbility = ability.create.get();
+                        TextColor abilityColor = abstractAbility.getAbilityColor();
+                        ChatColor color = ChatColor.GRAY;
+                        if (abilityColor.equals(NamedTextColor.GREEN)) {
+                            color = ChatColor.GREEN;
+                        } else if (abilityColor.equals(NamedTextColor.RED)) {
+                            color = ChatColor.RED;
+                        } else if (abilityColor.equals(NamedTextColor.LIGHT_PURPLE)) {
+                            color = ChatColor.LIGHT_PURPLE;
+                        } else if (abilityColor.equals(NamedTextColor.AQUA)) {
+                            color = ChatColor.AQUA;
+                        } else if (abilityColor.equals(NamedTextColor.GOLD)) {
+                            color = ChatColor.GOLD;
+                        }
+                        componentBuilder.newLine(color + abstractAbility.getName());
+                        abstractAbilityStats.getStatsDisplay().forEach(abilityStatDisplay -> {
+                            componentBuilder.newLine(ChatColor.WHITE + abilityStatDisplay.name() + ": " + ChatColor.GOLD + abilityStatDisplay.value());
+                        });
+                        componentBuilder.newLine();
+                    }
+                    playerAbilityStats.add(new HologramDataText.Builder<>(componentBuilder.build())
+                            .setBillboard(Display.Billboard.FIXED)
+                            .build()
+                    );
+                });
+
+        Hologram playerStatsHologram = new Hologram.Builder("playerAbilityStatsPlayer" + exactDate,
+                PLAYER_ABILITY_STATS_LOCATION,
+                p -> {
+                    StatsLeaderboardManager.validatePlayerHolograms(p);
+                    PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(p.getUniqueId());
+                    return playerAbilityStats.get(playerLeaderboardInfo.getGameHologramPlayerAbilityStats(this));
+                }
+        ).build();
+        holograms.add(playerStatsHologram);
+
+        Location location = DatabaseGameBase.PLAYER_ABILITY_STATS_SWITCH_LOCATION.clone().add(0, -1.25, 0);
+        List<Hologram> playerAbilityStatsSwitcherHolograms = new ArrayList<>();
+        InteractData interactData = new InteractData(2f, -1, true);
+        for (int i = 0; i < 3 && i < playerData.size(); i++) {
+            int finalI = i;
+            Hologram.Builder builder = new Hologram.Builder("playerAbilityStatsPlayerSwitcher" + finalI +
+                    exactDate,
+                    location.clone(),
+                    p -> {
+                        PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.getPlayerInfo(p);
+                        int currentPlayerIndex = playerLeaderboardInfo.getGameHologramPlayerAbilityStats(this);
+                        HologramDataText playerDataText;
+                        if (finalI == 0) {
+                            if (currentPlayerIndex == 0) {
+                                playerDataText = playerData.getLast();
+                            } else {
+                                playerDataText = playerData.get(currentPlayerIndex - 1);
+                            }
+                        } else if (finalI == 1) {
+                            playerDataText = playerData.get(currentPlayerIndex);
+                        } else {
+                            if (currentPlayerIndex == playerData.size() - 1) {
+                                playerDataText = playerData.getFirst();
+                            } else {
+                                playerDataText = playerData.get(currentPlayerIndex + 1);
+                            }
+                        }
+                        return playerDataText;
+                    }
+            );
+            if (finalI == 0 || finalI == 2 || finalI == 1 && playerData.size() < 3) {
+                builder.setInteract(player -> {
+                            if (playerData.size() == 1) {
+                                return false;
+                            }
+                            StatsLeaderboardManager.validatePlayerHolograms(player);
+                            PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
+                            int currentPlayerIndex = playerLeaderboardInfo.getGameHologramPlayerAbilityStats(this);
+                            if (finalI == 0) {
+                                playerLeaderboardInfo.setGameHologramPlayerAbilityStats(currentPlayerIndex - 1 < 0 ? playerData.size() - 1 : currentPlayerIndex - 1);
+                                playerAbilityStatsSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
+                                HologramManager.updateHologram(player, playerStatsHologram);
+                                return false;
+                            }
+                            if (finalI == 1 && playerData.size() < 3 || finalI == 2) {
+                                playerLeaderboardInfo.setGameHologramPlayerAbilityStats(currentPlayerIndex + 1 >= playerData.size() ? 0 : currentPlayerIndex + 1);
+                                playerAbilityStatsSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
+                                HologramManager.updateHologram(player, playerStatsHologram);
+                                return false;
+                            }
+                            return false;
+                        }, player -> interactData
+                );
+            }
+            Hologram playerAbilityStatsPlayerSwitcher = builder.build();
+            holograms.add(playerAbilityStatsPlayerSwitcher);
+            playerAbilityStatsSwitcherHolograms.add(playerAbilityStatsPlayerSwitcher);
+            location.add(0, 0.4, 0);
+        }
+
         holograms.forEach(hologram -> {
-            hologram.getData().setVisibility(Visibility.ALL);
-            hologramManager.addHologram(hologram);
-            ChatUtils.MessageType.GAME.sendMessage("Hologram created: " + hologram.getName() + " - " + hologram.getData().getLocation());
+            HologramManager.addHologram(hologram);
         });
 
         this.holograms = holograms;
-
-        // sort by team first then spec
-//        getBasePlayers()
-//                .stream()
-//                .sorted((o1, o2) -> {
-//                    int teamCompare = Integer.compare(getTeam(o1).ordinal(), getTeam(o2).ordinal());
-//                    if (teamCompare == 0) {
-//                        return Integer.compare(o1.getSpec().ordinal(), o2.getSpec().ordinal());
-//                    }
-//                    return teamCompare;
-//                })
-//                .forEachOrdered(player -> {
-//                    TextHologramData hologramData = new TextHologramData("player_ability_stats_" +
-//                            player.getName() + "_" +
-//                            exactDate,
-//                            DatabaseGameBase.PLAYER_ABILITY_STATS_LOCATION
-//                    );
-//                    hologramData.setPersistent(false);
-//                    hologramData.removeLine(0);
-//                    hologramData.addLine("" + getTeam(player).getChatColor() + ChatColor.BOLD + player.getName() + "'s Ability Stats");
-//                    hologramData.addLine("");
-//                    Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = player.getAbilityStats();
-//                    for (Map.Entry<Ability<?>, AbstractAbilityStats<?, ?>> entry : abilityStats.entrySet()) {
-//                        Ability<?> ability = entry.getKey();
-//                        AbstractAbilityStats<?, ?> abstractAbilityStats = entry.getValue();
-//                        AbstractAbility abstractAbility = ability.create.get();
-//                        TextColor abilityColor = abstractAbility.getAbilityColor();
-//                        ChatColor color = ChatColor.GRAY;
-//                        if (abilityColor.equals(NamedTextColor.GREEN)) {
-//                            color = ChatColor.GREEN;
-//                        } else if (abilityColor.equals(NamedTextColor.RED)) {
-//                            color = ChatColor.RED;
-//                        } else if (abilityColor.equals(NamedTextColor.LIGHT_PURPLE)) {
-//                            color = ChatColor.LIGHT_PURPLE;
-//                        } else if (abilityColor.equals(NamedTextColor.AQUA)) {
-//                            color = ChatColor.AQUA;
-//                        } else if (abilityColor.equals(NamedTextColor.GOLD)) {
-//                            color = ChatColor.GOLD;
-//                        }
-//                        hologramData.addLine(color + abstractAbility.getName());
-//                        abstractAbilityStats.getStatsDisplay().forEach(abilityStatDisplay -> {
-//                            hologramData.addLine(ChatColor.WHITE + abilityStatDisplay.name() + ": " + ChatColor.GOLD + abilityStatDisplay.value());
-//                        });
-//                    }
-//                    Hologram playersAbilityStats = hologramManager.create(hologramData);
-//                    hologramManager.addHologram(playersAbilityStats);
-//                    playerStatsHolograms.add(playersAbilityStats);
-//                });
-//
-//        playerStatsHolograms.forEach(hologram -> {
-//            hologram.getData().setVisibility(Visibility.ALL);
-//            hologramManager.addHologram(hologram);
-//        });
     }
 
     public static void addGameToDatabase(DatabaseGameBase databaseGame, Player player) {
@@ -443,41 +552,38 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
     }
 
     public static void setGameHologramVisibility(Player player) {
-        StatsLeaderboardManager.validatePlayerHolograms(player);
-
-        int selectedGame = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId()).getGameHologram();
+        int selectedGame = StatsLeaderboardManager.getPlayerInfo(player).getGameHologram();
         for (int i = 0; i < previousGames.size(); i++) {
             DatabaseGameBase<?> databaseGameBase = previousGames.get(i);
             List<Hologram> gameHolograms = databaseGameBase.getHolograms();
             List<Hologram> statsHolograms = databaseGameBase.getPlayerStatsHolograms();
             if (i == selectedGame) {
-                gameHolograms.forEach(hologram -> Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId()));
+                gameHolograms.forEach(hologram -> hologram.getVisibilityManager().addViewer(player));
                 databaseGameBase.refreshHolograms(player);
             } else {
-                gameHolograms.forEach(hologram -> Visibility.ManualVisibility.removeDistantViewer(hologram, player.getUniqueId()));
-                statsHolograms.forEach(hologram -> Visibility.ManualVisibility.removeDistantViewer(hologram, player.getUniqueId()));
+                gameHolograms.forEach(hologram -> hologram.getVisibilityManager().removeViewer(player));
+                statsHolograms.forEach(hologram -> hologram.getVisibilityManager().removeViewer(player));
             }
         }
-
-//        createGameSwitcherHologram(player); TODO
     }
 
     public boolean isPrivate() {
         return gameAddons.contains(GameAddon.PRIVATE_GAME);
     }
 
-    public abstract void appendLastGameStats(TextHologramData hologramData);
+    public abstract void appendLastGameStats(ComponentBuilder componentBuilder);
 
     public abstract Set<T> getBasePlayers();
 
     public abstract Team getTeam(DatabaseGamePlayerBase player);
 
-    protected void appendTeamDHP(TextHologramData hologram, Map<ChatColor, Long> map) {
+    protected void appendTeamDHP(ComponentBuilder componentBuilder, Map<ChatColor, Long> map) {
         map.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach(chatColorLongEntry -> {
             ChatColor key = chatColorLongEntry.getKey();
             Long value = chatColorLongEntry.getValue();
-            hologram.addLine(key + (key == ChatColor.BLUE ? "Blue: " : "Red: ") + ChatColor.YELLOW + NumberFormat.addCommaAndRound(value));
+            componentBuilder.newLine(key + (key == ChatColor.BLUE ? "Blue: " : "Red: ") + ChatColor.YELLOW + NumberFormat.addCommaAndRound(value));
         });
+        componentBuilder.newLine();
     }
 
     public abstract void addCustomHolograms(List<Hologram> holograms);
@@ -508,135 +614,102 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
     }
 
     public void refreshHolograms(Player player) {
-        FancyHologramsPlugin.get().getHologramManager().getHolograms().stream()
-                            .filter(h -> h.isViewer(player) && h.getData().getLocation().equals(DatabaseGameBase.PLAYER_ABILITY_STATS_SWITCH_LOCATION))
-                            .forEach(Hologram::deleteHologram);
 
-        TextHologramData hologramData = new TextHologramData("player_ability_stats_switcher_" +
-                player.getName() + "_" +
-                exactDate,
-                DatabaseGameBase.PLAYER_ABILITY_STATS_SWITCH_LOCATION
-        );
-        hologramData.setPersistent(false);
-        hologramData.removeLine(0);
-        hologramData.addLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Player Ability Stats");
-        hologramData.addLine("");
-        Hologram playerSwitcher = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
-
-        PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
-        int currentPlayerIndex = playerLeaderboardInfo.getGameHologramPlayerAbilityStats(this);
-
-        List<T> orderedPlayers = new ArrayList<>();
-        getBasePlayers()
-                .stream()
-                .sorted((o1, o2) -> {
-                    int teamCompare = Integer.compare(getTeam(o1).ordinal(), getTeam(o2).ordinal());
-                    if (teamCompare == 0) {
-                        return Integer.compare(o1.getSpec().ordinal(), o2.getSpec().ordinal());
-                    }
-                    return teamCompare;
-                })
-                .forEachOrdered(orderedPlayers::add);
-
-        if (orderedPlayers.size() > 1) {
-//            int playerBefore = currentPlayerIndex - 1 < 0 ? orderedPlayers.size() - 1 : currentPlayerIndex - 1;
-//            T beforePair = orderedPlayers.get(playerBefore);
-//            ClickableHologramLine beforeLine = playerSwitcher.getLines()
-//                                                             .appendText(ChatColor.AQUA + beforePair.getSpec().name + ": " + getTeam(beforePair).getChatColor() + beforePair.getName());
-//            beforeLine.setClickListener((clicker) -> {
-//                playerLeaderboardInfo.setGameHologramPlayerAbilityStats(playerBefore);
-//                refreshHolograms(player);
-//            });
-        }
-        T currentPair = orderedPlayers.get(currentPlayerIndex);
-        hologramData.addLine(ChatColor.AQUA + currentPair.getSpec().name + ": " + getTeam(currentPair).getChatColor() + ChatColor.UNDERLINE + currentPair.getName());
-        if (orderedPlayers.size() > 2) {
-//            int playerAfter = currentPlayerIndex + 1 >= orderedPlayers.size() ? 0 : currentPlayerIndex + 1;
-//            T afterPair = orderedPlayers.get(playerAfter);
-//            ClickableHologramLine afterLine = playerSwitcher.getLines()
-//                                                            .appendText(ChatColor.AQUA + afterPair.getSpec().name + ": " + getTeam(afterPair).getChatColor() + afterPair.getName());
-//            afterLine.setClickListener((clicker) -> {
-//                playerLeaderboardInfo.setGameHologramPlayerAbilityStats(playerAfter);
-//                refreshHolograms(player);
-//            });
-        }
-
-        for (int i = 0; i < playerStatsHolograms.size(); i++) {
-            Hologram hologram = playerStatsHolograms.get(i);
-            if (i == currentPlayerIndex) {
-                Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
-                hologram.showHologram(player);
-            } else {
-                Visibility.ManualVisibility.removeDistantViewer(hologram, player.getUniqueId());
-                hologram.hideHologram(player);
-            }
-        }
-
-        hologramData.setVisibility(Visibility.ALL);
-        Visibility.ManualVisibility.addDistantViewer(playerSwitcher, player.getUniqueId());
-        playerSwitcher.showHologram(player);
-        FancyHologramsPlugin.get().getHologramManager().addHologram(playerSwitcher);
     }
 
     public void setCounted(boolean counted) {
         this.counted = counted;
     }
 
-    private static void createGameSwitcherHologram(Player player) {
-        FancyHologramsPlugin.get().getHologramManager().getHolograms().stream()
-                            .filter(h -> h.isViewer(player) && h.getData().getLocation().equals(DatabaseGameBase.GAME_SWITCH_LOCATION))
-                            .forEach(Hologram::deleteHologram);
-
-        TextHologramData hologramData = new TextHologramData("game_switcher_" + player.getName(), DatabaseGameBase.GAME_SWITCH_LOCATION);
-        hologramData.setPersistent(false);
-        hologramData.removeLine(0);
-        hologramData.addLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
-        hologramData.addLine("");
-        Hologram gameSwitcher = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
-
-        PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
-        int selectedGame = playerLeaderboardInfo.getGameHologram();
-        int gameBefore = getGameBefore(selectedGame);
-        int gameAfter = getGameAfter(selectedGame);
-
-        if (previousGames.isEmpty()) {
+    public static void createGameSwitcherHologram() {
+        if (!Warlords.hologramsEnabled) {
             return;
         }
+        HologramDataText gameSwitcherData = new HologramDataText.Builder<>(ComponentBuilder
+                .create("Last " + previousGames.size() + " Games", NamedTextColor.AQUA, TextDecoration.UNDERLINED)
+                .build()
+        )
+                .setBillboard(Display.Billboard.VERTICAL)
+                .build();
+        Hologram gameSwitcher = new Hologram.Builder("gameSwitcher",
+                DatabaseGameBase.GAME_SWITCH_LOCATION,
+                p -> gameSwitcherData
+        )
+                .setVisibility(VisibilityType.ALL)
+                .build();
 
-//        ClickableHologramLine beforeLine;
-//        ClickableHologramLine afterLine;
-//        if (previousGames.size() > 1) {
-//            if (gameBefore == previousGames.size() - 1) {
-//                beforeLine = hologramData.addLine(ChatColor.GRAY + "Latest Game");
-//            } else {
-//                beforeLine = gameSwitcher.getLines()
-//                                         .appendText(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
-//            }
-//            beforeLine.setClickListener((clicker) -> {
-//                playerLeaderboardInfo.setGameHologram(gameBefore);
-//                setGameHologramVisibility(player);
-//            });
-//        }
-//        if (selectedGame == previousGames.size() - 1) {
-//            hologramData.addLine(ChatColor.GREEN + "Latest Game");
-//        } else {
-//            gameSwitcher.getLines()
-//                        .appendText(ChatColor.GREEN.toString() + (selectedGame + 1) + ". " + previousGames.get(selectedGame).getDate());
-//        }
-//        if (previousGames.size() > 2) {
-//            if (gameAfter == previousGames.size() - 1) {
-//                afterLine = hologramData.addLine(ChatColor.GRAY + "Latest Game");
-//            } else {
-//                afterLine = gameSwitcher.getLines()
-//                                        .appendText(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
-//            }
-//            afterLine.setClickListener((clicker) -> {
-//                playerLeaderboardInfo.setGameHologram(gameAfter);
-//                setGameHologramVisibility(player);
-//            });
-//        }
-        hologramData.setVisibility(Visibility.ALL);
-        FancyHologramsPlugin.get().getHologramManager().addHologram(gameSwitcher);
+        HologramManager.addHologram(gameSwitcher);
+
+        Location location = DatabaseGameBase.GAME_SWITCH_LOCATION.clone().add(0, -1.25, 0);
+        List<Hologram> gameSwitcherHolograms = new ArrayList<>();
+        InteractData interactData = new InteractData(2f, -1, true);
+        for (int i = 0; i < 3 && i < previousGames.size(); i++) {
+            int finalI = i;
+            Hologram gameSwitcherGame = new Hologram.Builder("gameSwitcherGame" + finalI,
+                    location.clone(),
+                    p -> {
+                        PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.getPlayerInfo(p);
+                        int gameHologram = playerLeaderboardInfo.getGameHologram();
+                        DatabaseGameBase databaseGameBase;
+                        TextColor color;
+                        int gameNumber;
+                        if (finalI == 0) {
+                            color = NamedTextColor.GRAY;
+                            gameNumber = getGameBefore(gameHologram);
+                            if (gameHologram == 0) {
+                                databaseGameBase = previousGames.getLast();
+                            } else {
+                                databaseGameBase = previousGames.get(gameHologram - 1);
+                            }
+                        } else if (finalI == 1) {
+                            color = NamedTextColor.GREEN;
+                            gameNumber = gameHologram;
+                            databaseGameBase = previousGames.get(gameHologram);
+                        } else {
+                            color = NamedTextColor.GRAY;
+                            gameNumber = getGameAfter(gameHologram);
+                            if (gameHologram == previousGames.size() - 1) {
+                                databaseGameBase = previousGames.getFirst();
+                            } else {
+                                databaseGameBase = previousGames.get(gameHologram + 1);
+                            }
+                        }
+                        boolean isLatestGame = databaseGameBase == previousGames.getFirst();
+                        return new HologramDataText.Builder<>(ComponentBuilder
+                                .create(isLatestGame ? "Latest Game" : (gameNumber + 1) + ". " + previousGames.get(gameNumber).getDate(), color)
+                                .build()
+                        )
+                                .setBillboard(Display.Billboard.VERTICAL)
+                                .build();
+                    }
+            )
+                    .setInteract(player -> {
+                                if (previousGames.size() == 1) {
+                                    return false;
+                                }
+                                PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.getPlayerInfo(player);
+                                int gameHologram = playerLeaderboardInfo.getGameHologram();
+                                if (finalI == 0) {
+                                    playerLeaderboardInfo.setGameHologram(getGameBefore(gameHologram));
+                                    gameSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
+                                    setGameHologramVisibility(player);
+                                    return false;
+                                }
+                                if (finalI == 1 && previousGames.size() < 3 || finalI == 2) {
+                                    playerLeaderboardInfo.setGameHologram(getGameAfter(gameHologram));
+                                    gameSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
+                                    setGameHologramVisibility(player);
+                                    return false;
+                                }
+                                return false;
+                            }, player -> interactData
+                    )
+                    .setVisibility(VisibilityType.ALL)
+                    .build();
+            gameSwitcherHolograms.add(gameSwitcherGame);
+            location.add(0, 0.4, 0);
+        }
+        gameSwitcherHolograms.forEach(HologramManager::addHologram);
     }
 
     private static int getGameBefore(int currentGame) {
@@ -651,6 +724,14 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             return 0;
         }
         return currentGame + 1;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public static void removeGameFromDatabase(DatabaseGameBase databaseGame, Player player) {
@@ -804,13 +885,5 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
 
     public String getId() {
         return id;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 }

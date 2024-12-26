@@ -1,7 +1,12 @@
 package com.ebicep.warlords.database.leaderboards.events;
 
+import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.HologramDataText;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
+import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.Guild;
@@ -9,16 +14,13 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
-import de.oliver.fancyholograms.api.FancyHologramsPlugin;
-import de.oliver.fancyholograms.api.data.TextHologramData;
-import de.oliver.fancyholograms.api.data.property.Visibility;
-import de.oliver.fancyholograms.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
+import org.bukkit.entity.Display;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -107,22 +109,66 @@ public class EventLeaderboard {
         }
         //creating leaderboard
         List<Hologram> holograms = new ArrayList<>();
+        List<HologramDataText> pageHologramData = new ArrayList<>();
         for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
-            holograms.add(createHologram(i, subTitle));
+            pageHologramData.add(getPageHologramData(i, subTitle));
         }
+        Hologram board = new Hologram.Builder(
+                "event" + subTitle,
+                location,
+                p -> {
+                    PlayerLeaderboardInfo playerInfo = StatsLeaderboardManager.getPlayerInfo(p);
+                    int page = playerInfo.getPage();
+                    return pageHologramData.get(page);
+                }
+        ).build();
+        List<DatabasePlayer> databasePlayers = getSortedPlayers();
+        Hologram playerPosition = new Hologram.Builder(
+                "eventPlayerPosition" + subTitle,
+                location.clone().add(0, -0.5, 0),
+                p -> {
+                    for (int i = 0; i < databasePlayers.size(); i++) {
+                        DatabasePlayer databasePlayer = databasePlayers.get(i);
+                        if (!databasePlayer.getUuid().equals(p.getUniqueId())) {
+                            continue;
+                        }
+                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+                        Component guildTag = Component.empty();
+                        if (guildPlayerPair != null) {
+                            GuildTag tag = guildPlayerPair.getA().getTag();
+                            if (tag != null) {
+                                guildTag = tag.getTag(false);
+                            }
+                        }
+                        return new HologramDataText.Builder<>(ComponentBuilder
+                                .create((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                .text(databasePlayer.getName(), Permissions.getColor(databasePlayer))
+                                .space()
+                                .append(guildTag)
+                                .text(" - ", NamedTextColor.GRAY)
+                                .text(stringFunction.apply(databasePlayer, eventTime))
+                                .build()
+                        )
+                                .setBillboard(Display.Billboard.FIXED)
+                                .build();
+                    }
+                    return StatsLeaderboard.LOADING;
+                }
+        ).build();
+        HologramManager.addHologram(board);
+        HologramManager.addHologram(playerPosition);
         getSortedHolograms().stream().flatMap(Collection::stream).forEach(Hologram::deleteHologram);
         getSortedHolograms().clear();
         getSortedHolograms().add(holograms);
     }
 
-    public Hologram createHologram(int page, String subTitle) {
+    public HologramDataText getPageHologramData(int page, String subTitle) {
         List<DatabasePlayer> databasePlayers = getSortedPlayers();
 
-        TextHologramData hologramData = new TextHologramData("event_" + subTitle, location);
-        hologramData.removeLine(0);
-        hologramData.setPersistent(false);
-        hologramData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + title);
-        hologramData.addLine(ChatColor.GRAY + subTitle);
+        ComponentBuilder componentBuilder = ComponentBuilder
+                .create(title, NamedTextColor.AQUA, TextDecoration.BOLD)
+                .newLine(subTitle, NamedTextColor.GRAY);
+
         for (int i = page * StatsLeaderboard.PLAYERS_PER_PAGE; i < (page + 1) * StatsLeaderboard.PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
@@ -133,20 +179,16 @@ public class EventLeaderboard {
                     guildTag = tag.getTag(false);
                 }
             }
-            hologramData.addLine(LegacyComponentSerializer.legacySection().serialize(
-                    Component.text((i + 1) + ". ", NamedTextColor.YELLOW)
-                             .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
-                             .append(Component.space())
-                             .append(guildTag)
-                             .append(Component.text(" - ", NamedTextColor.GRAY))
-                             .append(Component.text(stringFunction.apply(databasePlayer, eventTime)))
-            ));
+            componentBuilder.newLine((i + 1) + ". ", NamedTextColor.YELLOW)
+                            .text(databasePlayer.getName(), Permissions.getColor(databasePlayer))
+                            .space()
+                            .append(guildTag)
+                            .text(" - ", NamedTextColor.GRAY)
+                            .text(stringFunction.apply(databasePlayer, eventTime));
         }
-        hologramData.setVisibility(Visibility.ALL);
-
-        Hologram hologram = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
-        FancyHologramsPlugin.get().getHologramManager().addHologram(hologram);
-        return hologram;
+        return new HologramDataText.Builder<>(componentBuilder.build())
+                .setBillboard(Display.Billboard.VERTICAL)
+                .build();
     }
 
     public List<List<Hologram>> getSortedHolograms() {
