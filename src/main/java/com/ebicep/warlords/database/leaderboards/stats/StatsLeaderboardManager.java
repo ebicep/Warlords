@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.leaderboards.stats;
 
 import com.ebicep.customentities.npc.NPCManager;
-import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
@@ -10,7 +10,6 @@ import com.ebicep.warlords.database.leaderboards.stats.sections.AbstractStatsLea
 import com.ebicep.warlords.database.leaderboards.stats.sections.StatsLeaderboardCategory;
 import com.ebicep.warlords.database.leaderboards.stats.sections.leaderboardgametypes.*;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
@@ -20,11 +19,14 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.sr.SRCalculator;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -32,7 +34,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -147,6 +150,8 @@ public class StatsLeaderboardManager {
                         NPCManager.createGameJoinNPCs();
                         DatabaseGameEvent.startGameEvent();
                         SRCalculator.recalculateSR();
+
+                        createLeaderboardSwitcherHologram();
                     }
                     this.cancel();
                 } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
@@ -227,7 +232,6 @@ public class StatsLeaderboardManager {
 
 
         CustomScoreboard.getPlayerScoreboard(player).giveMainLobbyScoreboard();
-        createLeaderboardSwitcherHologram(player);
     }
 
     public static void validatePlayerHolograms(Player player) {
@@ -263,57 +267,86 @@ public class StatsLeaderboardManager {
                                  .collect(Collectors.toList());
     }
 
-    private static void createLeaderboardSwitcherHologram(Player player) {
+    private static void createLeaderboardSwitcherHologram() {
         if (!Warlords.hologramsEnabled) {
             return;
         }
-        DatabaseGameBase.setGameHologramVisibility(player);
-        PlayerLeaderboardInfo playerLeaderboardInfo = PLAYER_LEADERBOARD_INFOS.get(player.getUniqueId());
 
         //PAGE
-        createLeaderboardSwitcherHologram(player,
+        createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_PAGE_SWITCH_LOCATION,
-                playerLeaderboardInfo.getPage(),
-                playerLeaderboardInfo.getPageBefore(),
-                playerLeaderboardInfo.getPageAfter(),
-                playerLeaderboardInfo::getPageRange,
-                playerLeaderboardInfo::setPage
+                "Page",
+                PlayerLeaderboardInfo::getPage,
+                PlayerLeaderboardInfo::getPageBefore,
+                PlayerLeaderboardInfo::getPageAfter,
+                PlayerLeaderboardInfo::getPageRange,
+                PlayerLeaderboardInfo::setPage
         );
 
         //GAME TYPE
-        GameType selectedType = playerLeaderboardInfo.getStatsGameType();
-        AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
-        if (leaderboardGameType == null) {
-            return;
-        }
-        createLeaderboardSwitcherHologram(player,
+        createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_GAME_TYPE_SWITCH_LOCATION,
-                selectedType,
-                GameType.getBefore(selectedType),
-                GameType.getAfter(selectedType),
-                gameType -> gameType.name,
-                playerLeaderboardInfo::setStatsGameType
+                "GameType",
+                PlayerLeaderboardInfo::getStatsGameType,
+                info -> GameType.getBefore(info.getStatsGameType()),
+                info -> GameType.getAfter(info.getStatsGameType()),
+                (playerLeaderboardInfo, gameType) -> {
+                    AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(gameType);
+                    if (leaderboardGameType == null) {
+                        return "";
+                    }
+                    return gameType.name;
+                },
+                PlayerLeaderboardInfo::setStatsGameType
         );
         //CATEGORY
-        List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
-        int selectedCategory = playerLeaderboardInfo.getStatsCategory();
-        createLeaderboardSwitcherHologram(player,
+        createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_CATEGORY_SWITCH_LOCATION,
-                categories.get(selectedCategory),
-                categories.get(selectedCategory == 0 ? categories.size() - 1 : selectedCategory - 1),
-                categories.get(selectedCategory == categories.size() - 1 ? 0 : selectedCategory + 1),
-                StatsLeaderboardCategory::getCategoryName,
-                category -> playerLeaderboardInfo.setStatsCategory(categories.indexOf(category))
+                "Category",
+                info -> {
+                    GameType selectedType = info.getStatsGameType();
+                    AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
+                    List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
+                    int selectedCategory = info.getStatsCategory();
+                    return categories.get(selectedCategory);
+                },
+                info -> {
+                    GameType selectedType = info.getStatsGameType();
+                    AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
+                    List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
+                    int selectedCategory = info.getStatsCategory();
+                    return categories.get(selectedCategory == 0 ? categories.size() - 1 : selectedCategory - 1);
+                },
+                info -> {
+                    GameType selectedType = info.getStatsGameType();
+                    AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
+                    List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
+                    int selectedCategory = info.getStatsCategory();
+                    return categories.get(selectedCategory == categories.size() - 1 ? 0 : selectedCategory + 1);
+                },
+                (info, category) -> {
+                    GameType selectedType = info.getStatsGameType();
+                    AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
+                    List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
+                    int selectedCategory = info.getStatsCategory();
+                    return categories.get(selectedCategory).getCategoryName();
+                },
+                (info, category) -> {
+                    GameType selectedType = info.getStatsGameType();
+                    AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
+                    List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
+                    info.setStatsCategory(categories.indexOf(category));
+                }
         );
         //TIME
-        PlayersCollections selectedTime = playerLeaderboardInfo.getStatsTime();
-        createLeaderboardSwitcherHologram(player,
+        createLeaderboardSwitcherHologram(
                 StatsLeaderboardLocations.STATS_TIME_SWITCH_LOCATION,
-                selectedTime,
-                PlayersCollections.getBeforeCollection(selectedTime),
-                PlayersCollections.getAfterCollection(selectedTime),
-                playersCollections -> playersCollections.name,
-                playerLeaderboardInfo::setStatsTime
+                "Time",
+                PlayerLeaderboardInfo::getStatsTime,
+                info -> PlayersCollections.getBeforeCollection(info.getStatsTime()),
+                info -> PlayersCollections.getAfterCollection(info.getStatsTime()),
+                (playerLeaderboardInfo, playersCollections) -> playersCollections.name,
+                PlayerLeaderboardInfo::setStatsTime
         );
     }
 
@@ -324,31 +357,62 @@ public class StatsLeaderboardManager {
     }
 
     private static <T> void createLeaderboardSwitcherHologram(
-            Player player,
             Location location,
-            T selected,
-            T before,
-            T after,
-            Function<T, String> getName,
-            Consumer<T> set
+            String name,
+            Function<PlayerLeaderboardInfo, T> selected,
+            Function<PlayerLeaderboardInfo, T> before,
+            Function<PlayerLeaderboardInfo, T> after,
+            BiFunction<PlayerLeaderboardInfo, T, String> getName,
+            BiConsumer<PlayerLeaderboardInfo, T> set
     ) {
-//        Hologram switchHologram = createSwitchHologram(location);
-//        if (selected != before) {
-//            hologramData.addLine(ChatColor.GRAY + getName.apply(before)).setClickListener(p -> {
-//                set.accept(before);
-//                setLeaderboardHologramVisibility(player);
-//            });
-//        }
-//        hologramData.addLine(ChatColor.GREEN + getName.apply(selected));
-//        if (selected != after) {
-//            hologramData.addLine(ChatColor.GRAY + getName.apply(after)).setClickListener(p -> {
-//                set.accept(after);
-//                setLeaderboardHologramVisibility(player);
-//            });
-//        }
-//
-//        hologramData.setVisibility(Visibility.ALL);
-//        switchHologram.showHologram(player);
+        location = location.clone().add(0, -1.25, 0);
+        List<Hologram> switcherHolograms = new ArrayList<>();
+        InteractData interactData = new InteractData(2f, -1, true);
+        int max = selected == before && selected == after ? 1 : before == after ? 2 : 3;
+        for (int i = 0; i < 3 && i < max; i++) {
+            int finalI = i;
+            Hologram.Builder builder = new Hologram.Builder("leaderboardSwitcher" + name + finalI,
+                    location.clone(),
+                    p -> {
+                        PlayerLeaderboardInfo playerLeaderboardInfo = getPlayerInfo(p);
+                        T mode;
+                        if (finalI == 0) {
+                            mode = before.apply(playerLeaderboardInfo);
+                        } else if (finalI == 1) {
+                            mode = selected.apply(playerLeaderboardInfo);
+                        } else {
+                            mode = after.apply(playerLeaderboardInfo);
+                        }
+                        return new HologramDataText.Builder<>(ComponentBuilder
+                                .create(getName.apply(playerLeaderboardInfo, mode), NamedTextColor.AQUA)
+                                .build()
+                        )
+                                .setBillboard(Display.Billboard.VERTICAL)
+                                .build();
+                    }
+            ).setVisibility(VisibilityType.ALL);
+            if (finalI == 0 || finalI == 2 || finalI == 1 && max == 2) {
+                builder.setInteract(p -> {
+                            if (max == 1) {
+                                return false;
+                            }
+                            PlayerLeaderboardInfo playerLeaderboardInfo = getPlayerInfo(p);
+                            if (finalI == 0) {
+                                set.accept(playerLeaderboardInfo, before.apply(playerLeaderboardInfo));
+                            } else {
+                                set.accept(playerLeaderboardInfo, after.apply(playerLeaderboardInfo));
+                            }
+                            switcherHolograms.forEach(hologram -> HologramManager.updateHologram(p, hologram));
+                            return false;
+                        }, player -> interactData
+                );
+            }
+
+            Hologram gameSwitcherGame = builder.build();
+            switcherHolograms.add(gameSwitcherGame);
+            location.add(0, 0.4, 0);
+        }
+        switcherHolograms.forEach(HologramManager::addHologram);
     }
 
     public static PlayerLeaderboardInfo getPlayerInfo(Player player) {
