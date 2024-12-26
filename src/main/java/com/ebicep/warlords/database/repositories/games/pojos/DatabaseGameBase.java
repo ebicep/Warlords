@@ -645,7 +645,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         InteractData interactData = new InteractData(2f, -1, true);
         for (int i = 0; i < 3 && i < previousGames.size(); i++) {
             int finalI = i;
-            Hologram gameSwitcherGame = new Hologram.Builder("gameSwitcherGame" + finalI,
+            Hologram.Builder builder = new Hologram.Builder("gameSwitcherGame" + finalI,
                     location.clone(),
                     p -> {
                         PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.getPlayerInfo(p);
@@ -682,30 +682,32 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                                 .setBillboard(Display.Billboard.VERTICAL)
                                 .build();
                     }
-            )
-                    .setInteract(player -> {
-                                if (previousGames.size() == 1) {
-                                    return false;
-                                }
-                                PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.getPlayerInfo(player);
-                                int gameHologram = playerLeaderboardInfo.getGameHologram();
-                                if (finalI == 0) {
-                                    playerLeaderboardInfo.setGameHologram(getGameBefore(gameHologram));
-                                    gameSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
-                                    setGameHologramVisibility(player);
-                                    return false;
-                                }
-                                if (finalI == 1 && previousGames.size() < 3 || finalI == 2) {
-                                    playerLeaderboardInfo.setGameHologram(getGameAfter(gameHologram));
-                                    gameSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
-                                    setGameHologramVisibility(player);
-                                    return false;
-                                }
+            ).setVisibility(VisibilityType.ALL);
+            if (finalI == 0 || finalI == 2 || finalI == 1 && previousGames.size() < 3) {
+                builder.setInteract(player -> {
+                            if (previousGames.size() == 1) {
                                 return false;
-                            }, player -> interactData
-                    )
-                    .setVisibility(VisibilityType.ALL)
-                    .build();
+                            }
+                            PlayerLeaderboardInfo playerLeaderboardInfo = StatsLeaderboardManager.getPlayerInfo(player);
+                            int gameHologram = playerLeaderboardInfo.getGameHologram();
+                            if (finalI == 0) {
+                                playerLeaderboardInfo.setGameHologram(getGameBefore(gameHologram));
+                                gameSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
+                                setGameHologramVisibility(player);
+                                return false;
+                            }
+                            if (finalI == 1 && previousGames.size() < 3 || finalI == 2) {
+                                playerLeaderboardInfo.setGameHologram(getGameAfter(gameHologram));
+                                gameSwitcherHolograms.forEach(hologram -> HologramManager.updateHologram(player, hologram));
+                                setGameHologramVisibility(player);
+                                return false;
+                            }
+                            return false;
+                        }, player -> interactData
+                );
+            }
+
+            Hologram gameSwitcherGame = builder.build();
             gameSwitcherHolograms.add(gameSwitcherGame);
             location.add(0, 0.4, 0);
         }
