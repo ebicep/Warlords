@@ -81,7 +81,7 @@ public class Warlords extends JavaPlugin {
     public static String VERSION = "";
     public static NamedTextColor VERSION_COLOR = NamedTextColor.RED;
     public static String serverIP;
-    public static boolean hologramsEnabled;
+    public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
@@ -391,8 +391,6 @@ public class Warlords extends JavaPlugin {
         ConfigUtil.loadConfigs(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-        hologramsEnabled = Bukkit.getPluginManager().isPluginEnabled("FancyHolograms");
-        ChatUtils.MessageType.WARLORDS.sendMessage("hologramsEnabled: " + hologramsEnabled);
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);

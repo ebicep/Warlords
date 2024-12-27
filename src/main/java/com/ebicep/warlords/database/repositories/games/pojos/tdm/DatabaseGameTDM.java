@@ -1,5 +1,8 @@
 package com.ebicep.warlords.database.repositories.games.pojos.tdm;
 
+import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.HologramDataText;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -10,10 +13,11 @@ import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
-import de.oliver.fancyholograms.api.data.TextHologramData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Display;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -93,10 +97,7 @@ public class DatabaseGameTDM extends DatabaseGameBase<DatabaseGamePlayerTDM> {
 
     @Override
     public void addCustomHolograms(List<com.ebicep.holograms.Hologram> holograms) {
-        TextHologramData topDHPPerMinuteData = new TextHologramData("topDHPPerMinute_" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
-        topDHPPerMinuteData.setPersistent(false);
-        topDHPPerMinuteData.removeLine(0);
-        topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+        ComponentBuilder topDHPPerMinuteComponent = ComponentBuilder.create("Top DHP per Minute", NamedTextColor.AQUA, TextDecoration.BOLD);
 
         List<String> topDHPPerGamePlayers = new ArrayList<>();
         int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
@@ -108,7 +109,7 @@ public class DatabaseGameTDM extends DatabaseGameBase<DatabaseGamePlayerTDM> {
         HashMap<DatabaseGamePlayerTDM, ChatColor> playerColor = new HashMap<>();
         for (Map.Entry<Team, List<DatabaseGamePlayerTDM>> teamListEntry : players.entrySet()) {
             for (DatabaseGamePlayerTDM gamePlayerTDM : teamListEntry.getValue()) {
-                // playerColor.put(gamePlayerTDM, teamListEntry.getKey().teamColor); TODO
+                playerColor.put(gamePlayerTDM, teamListEntry.getKey().getChatColor());
             }
         }
 
@@ -118,14 +119,20 @@ public class DatabaseGameTDM extends DatabaseGameBase<DatabaseGamePlayerTDM> {
                       Long p2DHPPerGame = o2.getTotalDHP() / minutes;
                       return p2DHPPerGame.compareTo(p1DHPPerGame);
                   }).forEach(databaseGamePlayer -> {
-                      topDHPPerGamePlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
-                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
+                      topDHPPerGamePlayers.add("  " + playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes) + "  ");
                   });
 
-        topDHPPerGamePlayers.forEach(s -> topDHPPerMinuteData.addLine(s));
+        topDHPPerGamePlayers.forEach(topDHPPerMinuteComponent::newLine);
 
-//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
-//        holograms.add(topDHPPerMinute);
+        HologramDataText topDHPPerMinuteData = new HologramDataText.Builder<>(topDHPPerMinuteComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topDHPPerMinute = new Hologram.Builder("topDHPPerMinute" + exactDate,
+                TOP_DHP_PER_MINUTE_LOCATION,
+                p -> topDHPPerMinuteData
+        ).build();
+        HologramManager.addHologram(topDHPPerMinute);
     }
 
     @Override

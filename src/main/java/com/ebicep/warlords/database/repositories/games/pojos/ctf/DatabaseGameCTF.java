@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.games.pojos.ctf;
 
 import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.HologramDataText;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -15,9 +17,9 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import de.oliver.fancyholograms.api.data.TextHologramData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Display;
 import org.springframework.data.annotation.Transient;
@@ -184,23 +186,9 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-        TextHologramData topDHPPerMinuteData = new TextHologramData("topDHPPerMinute_" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
-        topDHPPerMinuteData.setPersistent(false);
-        topDHPPerMinuteData.removeLine(0);
-        topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
-        topDHPPerMinuteData.setBillboard(Display.Billboard.FIXED);
-
-        TextHologramData topDamageOnCarrierData = new TextHologramData("topDamageOnCarrier_" + exactDate, DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
-        topDamageOnCarrierData.setPersistent(false);
-        topDamageOnCarrierData.removeLine(0);
-        topDamageOnCarrierData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
-        topDamageOnCarrierData.setBillboard(Display.Billboard.FIXED);
-
-        TextHologramData topHealingOnCarrierData = new TextHologramData("topHealingOnCarrier_" + exactDate, DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
-        topHealingOnCarrierData.setPersistent(false);
-        topHealingOnCarrierData.removeLine(0);
-        topHealingOnCarrierData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
-        topHealingOnCarrierData.setBillboard(Display.Billboard.FIXED);
+        ComponentBuilder topDHPPerMinuteComponent = ComponentBuilder.create("Top DHP per Minute", NamedTextColor.AQUA, TextDecoration.BOLD);
+        ComponentBuilder topDamageOnCarrierComponent = ComponentBuilder.create("Top Damage On Carrier", NamedTextColor.AQUA, TextDecoration.BOLD);
+        ComponentBuilder topHealingOnCarrierComponent = ComponentBuilder.create("Top Healing On Carrier", NamedTextColor.AQUA, TextDecoration.BOLD);
 
         List<String> topDHPPerGamePlayers = new ArrayList<>();
         List<String> topDamageOnCarrierPlayers = new ArrayList<>();
@@ -225,34 +213,54 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
                       Long p2DHPPerGame = o2.getTotalDHP() / minutes;
                       return p2DHPPerGame.compareTo(p1DHPPerGame);
                   }).forEach(databaseGamePlayer -> {
-                      topDHPPerGamePlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
-                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
+                      topDHPPerGamePlayers.add("  " + playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes) + "  ");
                   });
 
         allPlayers.stream()
                   .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalDamageOnCarrier).reversed())
                   .forEach(databaseGamePlayer -> {
-                      topDamageOnCarrierPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
-                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamageOnCarrier()));
+                      topDamageOnCarrierPlayers.add("  " + playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDamageOnCarrier()) + "  ");
                   });
 
         allPlayers.stream()
                   .sorted(Comparator.comparingLong(DatabaseGamePlayerCTF::getTotalHealingOnCarrier).reversed())
                   .forEach(databaseGamePlayer -> {
-                      topHealingOnCarrierPlayers.add(playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
-                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
+                      topHealingOnCarrierPlayers.add("  " + playerColor.get(databaseGamePlayer) + databaseGamePlayer.getName() + ": " +
+                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()) + "  ");
                   });
 
-        topDHPPerGamePlayers.forEach(s -> topDHPPerMinuteData.addLine(s));
-        topDamageOnCarrierPlayers.forEach(s -> topDamageOnCarrierData.addLine(s));
-        topHealingOnCarrierPlayers.forEach(s -> topHealingOnCarrierData.addLine(s));
+        topDHPPerGamePlayers.forEach(topDHPPerMinuteComponent::newLine);
+        topDamageOnCarrierPlayers.forEach(topDamageOnCarrierComponent::newLine);
+        topHealingOnCarrierPlayers.forEach(topHealingOnCarrierComponent::newLine);
 
-//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
-//        holograms.add(topDHPPerMinute);
-//        Hologram topDamageOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topDamageOnCarrierData);
-//        holograms.add(topDamageOnCarrier);
-//        Hologram topHealingOnCarrier = FancyHologramsPlugin.get().getHologramManager().create(topHealingOnCarrierData);
-//        holograms.add(topHealingOnCarrier);
+        HologramDataText topDHPPerMinuteData = new HologramDataText.Builder<>(topDHPPerMinuteComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topDHPPerMinute = new Hologram.Builder("topDHPPerMinute" + exactDate,
+                TOP_DHP_PER_MINUTE_LOCATION,
+                p -> topDHPPerMinuteData
+        ).build();
+        HologramManager.addHologram(topDHPPerMinute);
+
+        HologramDataText topDamageOnCarrierData = new HologramDataText.Builder<>(topDamageOnCarrierComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topDamageOnCarrier = new Hologram.Builder("topDamageOnCarrier" + exactDate,
+                TOP_DAMAGE_ON_CARRIER_LOCATION,
+                p -> topDamageOnCarrierData
+        ).build();
+        HologramManager.addHologram(topDamageOnCarrier);
+
+        HologramDataText topHealingOnCarrierData = new HologramDataText.Builder<>(topHealingOnCarrierComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topHealingOnCarrier = new Hologram.Builder("topHealingOnCarrier" + exactDate,
+                TOP_HEALING_ON_CARRIER_LOCATION,
+                p -> topHealingOnCarrierData
+        ).build();
+        HologramManager.addHologram(topHealingOnCarrier);
     }
 
     @Override

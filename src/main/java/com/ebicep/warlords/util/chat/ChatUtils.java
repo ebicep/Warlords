@@ -174,7 +174,7 @@ public class ChatUtils {
         GAME("Game", TextColor.color(173, 255, 47), true),
         TOWER_DEFENSE("Tower Defense", TextColor.color(250, 100, 100), true),
 
-        HOLOGRAMS("Holograms", NamedTextColor.DARK_PURPLE, true),
+        HOLOGRAMS("Holograms", NamedTextColor.DARK_PURPLE, false),
 
         ;
 

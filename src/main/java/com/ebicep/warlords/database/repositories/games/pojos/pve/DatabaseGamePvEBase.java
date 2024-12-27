@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.games.pojos.pve;
 
 import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.HologramDataText;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.warlords.commands.debugcommands.misc.GamesCommand;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
@@ -14,9 +16,9 @@ import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
-import de.oliver.fancyholograms.api.data.TextHologramData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Display;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -64,23 +66,9 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-        TextHologramData topDHPPerMinuteData = new TextHologramData("topDHPPerMinute_" + exactDate, DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
-        topDHPPerMinuteData.setPersistent(false);
-        topDHPPerMinuteData.removeLine(0);
-        topDHPPerMinuteData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
-        topDHPPerMinuteData.setBillboard(Display.Billboard.FIXED);
-
-        TextHologramData mobKillsData = new TextHologramData("mobKills" + exactDate, DatabaseGameBase.TOP_DAMAGE_ON_CARRIER_LOCATION);
-        mobKillsData.setPersistent(false);
-        mobKillsData.removeLine(0);
-        mobKillsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Kills");
-        mobKillsData.setBillboard(Display.Billboard.FIXED);
-
-        TextHologramData mobDeathsData = new TextHologramData("mobDeaths" + exactDate, DatabaseGameBase.TOP_HEALING_ON_CARRIER_LOCATION);
-        mobDeathsData.setPersistent(false);
-        mobDeathsData.removeLine(0);
-        mobDeathsData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mob Deaths");
-        mobDeathsData.setBillboard(Display.Billboard.FIXED);
+        ComponentBuilder topDHPPerMinuteComponent = ComponentBuilder.create("Top DHP per Minute", NamedTextColor.AQUA, TextDecoration.BOLD);
+        ComponentBuilder mobKillsComponent = ComponentBuilder.create("Mob Kills", NamedTextColor.AQUA, TextDecoration.BOLD);
+        ComponentBuilder mobDeathsComponent = ComponentBuilder.create("Mob Deaths", NamedTextColor.AQUA, TextDecoration.BOLD);
 
         int minutes = (timeElapsed / 1200) == 0 ? 1 : (timeElapsed / 1200);
 
@@ -96,7 +84,7 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
             topDHPPerGamePlayers.add(ChatColor.BLUE + databaseGamePlayer.getName() + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
         });
 
-        topDHPPerGamePlayers.forEach(s -> topDHPPerMinuteData.addLine(s));
+        topDHPPerGamePlayers.forEach(topDHPPerMinuteComponent::newLine);
 
         LinkedHashMap<String, Long> mobKillsMap = new LinkedHashMap<>();
         LinkedHashMap<String, Long> mobDeathsMap = new LinkedHashMap<>();
@@ -105,15 +93,35 @@ public abstract class DatabaseGamePvEBase<T extends DatabaseGamePlayerPvEBase> e
             playerPvE.getMobDeaths().forEach((s, aLong) -> mobDeathsMap.merge(s, aLong, Long::sum));
         }
 
-        mobKillsMap.forEach((mob, aLong) -> mobKillsData.addLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
-        mobDeathsMap.forEach((mob, aLong) -> mobDeathsData.addLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        mobKillsMap.forEach((mob, aLong) -> mobKillsComponent.newLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
+        mobDeathsMap.forEach((mob, aLong) -> mobDeathsComponent.newLine(ChatColor.RED + mob + ": " + ChatColor.YELLOW + NumberFormat.addCommaAndRound(aLong)));
 
-//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(topDHPPerMinuteData);
-//        holograms.add(topDHPPerMinute);
-//        Hologram mobKills = FancyHologramsPlugin.get().getHologramManager().create(mobKillsData);
-//        holograms.add(mobKills);
-//        Hologram mobDeaths = FancyHologramsPlugin.get().getHologramManager().create(mobDeathsData);
-//        holograms.add(mobDeaths);
+        HologramDataText topDHPPerMinuteData = new HologramDataText.Builder<>(topDHPPerMinuteComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram topDHPPerMinute = new Hologram.Builder("topDHPPerMinute" + exactDate,
+                TOP_DHP_PER_MINUTE_LOCATION,
+                p -> topDHPPerMinuteData
+        ).build();
+        HologramManager.addHologram(topDHPPerMinute);
+
+        HologramDataText mobKillsData = new HologramDataText.Builder<>(mobKillsComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram mobKills = new Hologram.Builder("mobKills" + exactDate,
+                TOP_DAMAGE_ON_CARRIER_LOCATION,
+                p -> mobKillsData
+        ).build();
+        HologramManager.addHologram(mobKills);
+
+        HologramDataText mobDeathsData = new HologramDataText.Builder<>(mobDeathsComponent.build())
+                .setBillboard(Display.Billboard.FIXED)
+                .build();
+        Hologram mobDeaths = new Hologram.Builder("mobDeaths" + exactDate,
+                TOP_HEALING_ON_CARRIER_LOCATION,
+                p -> mobDeathsData
+        ).build();
+        HologramManager.addHologram(mobDeaths);
     }
 
     @Override

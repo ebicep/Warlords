@@ -74,9 +74,6 @@ repositories {
         url = uri("https://maven.enginehub.org/repo")
     }
 
-    maven {
-        url = uri("https://repo.fancyplugins.de/releases")
-    }
 }
 
 dependencies {
@@ -95,8 +92,6 @@ dependencies {
 
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 
-//    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.4-SNAPSHOT")
-
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0")
     implementation("com.google.guava:guava:32.1.3-jre")
     implementation("com.google.code.gson:gson:2.10.1")
@@ -113,8 +108,6 @@ dependencies {
     compileOnlyApi("LibsDisguises:LibsDisguises:10.0.44") {
         exclude("org.spigotmc", "spigot")
     }
-
-    compileOnly("de.oliver:FancyHolograms:2.4.1")
 }
 
 publishing {
@@ -193,7 +186,7 @@ bukkit {
     main = "com.ebicep.warlords.Warlords"
     apiVersion = "1.21.4"
     authors = listOf("ebicep", "Plikie")
-    depend = listOf("ProtocolLib", "FancyHolograms", "Citizens", "Multiverse-Core")
+    depend = listOf("ProtocolLib", "Citizens", "Multiverse-Core")
     commands {
         register("oldtest") {
             description = "Old test command"

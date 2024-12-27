@@ -151,7 +151,7 @@ public class StatsLeaderboardManager {
                         DatabaseGameEvent.startGameEvent();
                         SRCalculator.recalculateSR();
 
-                        createLeaderboardSwitcherHologram();
+//                        createLeaderboardSwitcherHologram();
                     }
                     this.cancel();
                 } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
@@ -306,6 +306,9 @@ public class StatsLeaderboardManager {
                 info -> {
                     GameType selectedType = info.getStatsGameType();
                     AbstractStatsLeaderboardGameType<?, ?, ?, ?> leaderboardGameType = STATS_LEADERBOARDS.get(selectedType);
+                    if (leaderboardGameType == null) {
+                        return null;
+                    }
                     List<? extends StatsLeaderboardCategory<?, ?, ?>> categories = leaderboardGameType.getCategories();
                     int selectedCategory = info.getStatsCategory();
                     return categories.get(selectedCategory);
@@ -369,7 +372,7 @@ public class StatsLeaderboardManager {
         List<Hologram> switcherHolograms = new ArrayList<>();
         InteractData interactData = new InteractData(2f, -1, true);
         int max = selected == before && selected == after ? 1 : before == after ? 2 : 3;
-        for (int i = 0; i < 3 && i < max; i++) {
+        for (int i = 0; i < 3; i++) {
             int finalI = i;
             Hologram.Builder builder = new Hologram.Builder("leaderboardSwitcher" + name + finalI,
                     location.clone(),

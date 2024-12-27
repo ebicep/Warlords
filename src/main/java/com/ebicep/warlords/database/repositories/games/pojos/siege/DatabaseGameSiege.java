@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -94,10 +95,8 @@ public class DatabaseGameSiege extends DatabaseGameBase<DatabaseGamePlayerSiege>
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-//        Hologram topDHPPerMinute = FancyHologramsPlugin.get().getHologramManager().create(hologramData);
-//        holograms.add(topDHPPerMinute);
-//        hologramData.addLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
-//
+        ComponentBuilder topDHPPerMinuteComponent = ComponentBuilder.create("Top DHP per Minute", NamedTextColor.AQUA, TextDecoration.BOLD);
+
 //        List<String> topDHPPerGamePlayers = new ArrayList<>();
 //
 //        int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
