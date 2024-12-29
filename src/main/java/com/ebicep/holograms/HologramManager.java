@@ -38,6 +38,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramManager implements Listener {
 
+    private static final int INTERACT_COOLDOWN_MS = 250;
+    private static final Map<UUID, Long> INTERACT_COOLDOWNS = new ConcurrentHashMap<>();
     private static final Map<String, Hologram> HOLOGRAMS = new ConcurrentHashMap<>();
     static int entityId = Integer.MAX_VALUE / 8;
     private static BukkitTask TASK;
@@ -53,7 +55,7 @@ public class HologramManager implements Listener {
                     World world = location.getWorld();
                     VisibilityManager visibilityManager = hologram.getVisibilityManager();
                     List<Player> players = new ArrayList<>(world.getPlayers());
-                    players.forEach(player -> {
+                    for (Player player : players) {
                         boolean withinRange = hologram.withinRange(player);
                         boolean currentlyVisibleTo = visibilityManager.isCurrentlyVisibleTo(player);
                         switch (visibilityManager.getVisibilityType()) {
@@ -74,11 +76,11 @@ public class HologramManager implements Listener {
                                 }
                             }
                         }
-                    });
+                    }
                 });
             }
 
-        }.runTaskTimerAsynchronously(instance, 0, 0);
+        }.runTaskTimerAsynchronously(instance, 0, 10);
         packetListener = new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
@@ -98,6 +100,10 @@ public class HologramManager implements Listener {
                     if (!interactManager.getIds().contains(entityID)) {
                         return;
                     }
+                    if (INTERACT_COOLDOWNS.computeIfAbsent(player.getUniqueId(), uuid -> 0L) > System.currentTimeMillis()) {
+                        return;
+                    }
+                    INTERACT_COOLDOWNS.put(player.getUniqueId(), System.currentTimeMillis() + INTERACT_COOLDOWN_MS);
                     boolean updateHologram = interactManager.getOnClick().apply(player);
                     if (updateHologram) {
                         updateHologram(player, hologram);
@@ -111,11 +117,11 @@ public class HologramManager implements Listener {
     }
 
     private static void showHologram(Player player, Hologram hologram) {
-        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Showing hologram " + hologram.getName());
         HologramData data = hologram.getDataForPlayer(player);
         if (data == null) {
             return;
         }
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Showing hologram " + hologram.getName());
         Location location = hologram.getLocation();
         PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
                 player,
@@ -195,11 +201,12 @@ public class HologramManager implements Listener {
     }
 
     public static void updateHologram(Player player, Hologram hologram) {
-        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Updating hologram " + hologram.getName());
         HologramData data = hologram.getDataForPlayer(player);
         if (data == null) {
+            hideHologram(player, hologram);
             return;
         }
+        ChatUtils.MessageType.HOLOGRAMS.sendMessage("Updating hologram " + hologram.getName());
         PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
                 player,
                 PacketContainer.fromPacket(

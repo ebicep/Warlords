@@ -20,9 +20,9 @@ public class StatsLeaderboardGeneral extends AbstractStatsLeaderboardGameType<
     private static final List<StatsLeaderboardCategory<DatabaseGameBase<DatabaseGamePlayerBase>,
             DatabaseGamePlayerBase,
             Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>> CATEGORIES = new ArrayList<>() {{
-        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer, "All Queues", "All"));
-        add(new StatsLeaderboardCategory<>(DatabasePlayer::getCompStats, "Competitive Queue", "Comps"));
-        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPubStats, "Public Queue", "Pubs"));
+        add(new StatsLeaderboardCategory<>(databasePlayer -> databasePlayer, "All Queues", "All", false));
+        add(new StatsLeaderboardCategory<>(DatabasePlayer::getCompStats, "Competitive Queue", "Comps", false));
+        add(new StatsLeaderboardCategory<>(DatabasePlayer::getPubStats, "Public Queue", "Pubs", false));
     }};
 
 

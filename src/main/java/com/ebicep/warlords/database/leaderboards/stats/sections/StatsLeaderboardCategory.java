@@ -28,14 +28,19 @@ public class StatsLeaderboardCategory<
     private final String categoryName;
     private final String shortName;
     private final List<StatsLeaderboard> statsLeaderboards = new ArrayList<>();
+    private boolean active;
 
-    public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName, String shortName) {
+    public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName, String shortName, boolean active) {
         this.statFunction = statFunction;
         this.categoryName = categoryName;
         this.shortName = shortName;
+        this.active = active;
     }
 
     public void resetLeaderboards(PlayersCollections collection, Predicate<DatabasePlayer> externalFilter, String subTitle) {
+        if (!active) {
+            return;
+        }
         getStatsLeaderboards().parallelStream().forEach(statsLeaderboard -> statsLeaderboard.resetHolograms(collection, externalFilter, getShortName(), subTitle));
     }
 
