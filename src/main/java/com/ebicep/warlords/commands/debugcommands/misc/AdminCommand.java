@@ -95,7 +95,9 @@ public class AdminCommand extends BaseCommand {
     public void togglePlayerServiceMessages(CommandIssuer issuer, ChatUtils.MessageType messageType) {
         messageType.setEnabled(!messageType.isEnabled());
         ChatChannels.sendDebugMessage(issuer,
-                Component.text((messageType.isEnabled() ? "Enabled" : "Disabled") + " PlayerService messages.", messageType.isEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED)
+                Component.text((messageType.isEnabled() ? "Enabled" : "Disabled") + messageType.name + "  messages.",
+                        messageType.isEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED
+                )
         );
     }
 

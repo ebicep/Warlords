@@ -35,9 +35,9 @@ public class InteractData {
             data.add(HologramManager.createDataValue(Entity.class, "DATA_POSE", Pose.STANDING));
 
             HologramData hologramData = hologram.getDataForPlayer(player);
-            AutoData autoInteractData = hologramData.getAutoInteractData();
-            data.add(HologramManager.createDataValue(Interaction.class, "DATA_WIDTH_ID", width == -1 ? autoInteractData.width() : width));
-            data.add(HologramManager.createDataValue(Interaction.class, "DATA_HEIGHT_ID", height == -1 ? autoInteractData.height() : height));
+            AutoData autoInteractData = hologramData == null ? null : hologramData.getAutoInteractData();
+            data.add(HologramManager.createDataValue(Interaction.class, "DATA_WIDTH_ID", width == -1 && autoInteractData != null ? autoInteractData.width() : width));
+            data.add(HologramManager.createDataValue(Interaction.class, "DATA_HEIGHT_ID", height == -1 && autoInteractData != null ? autoInteractData.height() : height));
             data.add(HologramManager.createDataValue(Interaction.class, "DATA_RESPONSE_ID", responsive));
         } catch (NoSuchFieldException | IllegalAccessException e) {
             ChatUtils.MessageType.HOLOGRAMS.sendErrorMessage(e);

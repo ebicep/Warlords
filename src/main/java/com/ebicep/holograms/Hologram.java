@@ -49,10 +49,10 @@ public class Hologram {
         if (!Objects.equals(playerLocation.getWorld(), location.getWorld())) {
             return false;
         }
-        if (staticViewRange != -1) {
+        HologramData data = getDataForPlayer(player);
+        if (staticViewRange != -1 || data == null) {
             return playerLocation.distanceSquared(location) < staticViewRange * staticViewRange;
         }
-        HologramData data = getDataForPlayer(player);
         return playerLocation.distanceSquared(location) < data.getViewRange() * data.getViewRange();
     }
 

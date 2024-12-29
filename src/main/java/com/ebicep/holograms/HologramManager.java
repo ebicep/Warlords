@@ -113,6 +113,9 @@ public class HologramManager implements Listener {
     private static void showHologram(Player player, Hologram hologram) {
         ChatUtils.MessageType.HOLOGRAMS.sendMessage("Showing hologram " + hologram.getName());
         HologramData data = hologram.getDataForPlayer(player);
+        if (data == null) {
+            return;
+        }
         Location location = hologram.getLocation();
         PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
                 player,
@@ -194,6 +197,9 @@ public class HologramManager implements Listener {
     public static void updateHologram(Player player, Hologram hologram) {
         ChatUtils.MessageType.HOLOGRAMS.sendMessage("Updating hologram " + hologram.getName());
         HologramData data = hologram.getDataForPlayer(player);
+        if (data == null) {
+            return;
+        }
         PacketUtils.PROTOCOL_MANAGER.sendServerPacket(
                 player,
                 PacketContainer.fromPacket(
