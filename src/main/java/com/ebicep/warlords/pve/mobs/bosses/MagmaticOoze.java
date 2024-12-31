@@ -25,7 +25,6 @@ import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
@@ -49,7 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
 
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
@@ -114,7 +112,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     public void onNPCCreate() {
         super.onNPCCreate();
         npc.getOrAddTrait(SlimeSize.class).setSize(6 - splitNumber);
-        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> 0f);
     }
 
     @Override
