@@ -101,7 +101,7 @@ public abstract class MobHologram {
                     TextDisplay textDisplay = location.getWorld().spawn(location, TextDisplay.class, display -> {
                         display.setBillboard(Display.Billboard.CENTER);
                         display.text(customHologramLine.getText());
-                        display.setCustomNameVisible(true);
+                        display.setCustomNameVisible(false);
                         display.setSeeThrough(false);
                         display.setTeleportDuration(3); // SMOOTH TELEPORTATION
                         display.setViewRange(viewRange);
