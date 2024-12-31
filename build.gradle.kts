@@ -1,13 +1,13 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 
 plugins {
     id("com.gradleup.shadow") version "8.3.5" // Creates a fat jar
     java
     `maven-publish`
     `java-library`
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.8"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.10"
     id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0" // Generates plugin.yml
+    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0" // Generates plugin.yml based on the Gradle config
 }
 
 group = "com.ebicep"
@@ -77,6 +77,7 @@ repositories {
 }
 
 dependencies {
+    pluginRemapper("net.fabricmc:tiny-remapper:0.10.4:fat")
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
 
     implementation("co.aikar:taskchain-bukkit:3.7.2")
@@ -135,6 +136,7 @@ tasks {
     javadoc {
         options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
+
     processResources {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
@@ -164,7 +166,6 @@ tasks {
 
 }
 
-
 tasks.withType<JavaCompile>().configureEach {
 //    doFirst {
 //        configure(options, closureOf<CompileOptions> {
@@ -177,20 +178,20 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs.add("-parameters")
     options.isFork = true
+    options.release = 21
 //    options.forkOptions.executable = "javac"
 }
 
-// Configure plugin.yml generation https://github.com/Minecrell/plugin-yml
-bukkit {
-    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+bukkitPluginYaml {
+    load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
     main = "com.ebicep.warlords.Warlords"
     apiVersion = "1.21.4"
     authors = listOf("ebicep", "Plikie")
     depend = listOf("ProtocolLib", "Citizens", "Multiverse-Core")
     commands {
         register("oldtest") {
-            description = "Old test command"
             aliases = listOf("oldtest")
+            description = "Old test command"
             permission = "group.administrator"
         }
     }
