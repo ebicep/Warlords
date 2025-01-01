@@ -252,6 +252,10 @@ public abstract class AbstractMob implements Mob {
         return warlordsNPC;
     }
 
+    public double getDefaultAttackRange() {
+        return 2;
+    }
+
     public void giveGoals() {
         //TODO wander? - waypoints trait
 //        npc.getNavigator().getLocalParameters()
@@ -297,6 +301,10 @@ public abstract class AbstractMob implements Mob {
         handleAspects(option);
     }
 
+    public Component getColoredName() {
+        return Component.text(name, getColor());
+    }
+
     protected void handleAspects(PveOption option) {
         // null checks to handle manual spawns with aspects
         if (this.aspect == null &&
@@ -308,10 +316,6 @@ public abstract class AbstractMob implements Mob {
         if (this.aspect != null) {
             this.aspect.apply(warlordsNPC);
         }
-    }
-
-    public Component getColoredName() {
-        return Component.text(name, getColor());
     }
 
     public void whileAlive(int ticksElapsed, PveOption option) {
@@ -377,6 +381,12 @@ public abstract class AbstractMob implements Mob {
         dropWeapon(killer);
         dropMobDrop(killer);
         dropItem(killer);
+    }
+
+    /**
+     * Method is guaranteed to be called after the mob has been killed/removed from game
+     */
+    public void cleanup(PveOption pveOption) {
     }
 
     public void dropWeapon(WarlordsEntity killer) {
@@ -646,16 +656,6 @@ public abstract class AbstractMob implements Mob {
 
     public PveOption getPveOption() {
         return pveOption;
-    }
-
-    /**
-     * Method is guaranteed to be called after the mob has been killed/removed from game
-     */
-    public void cleanup(PveOption pveOption) {
-    }
-
-    public double getDefaultAttackRange() {
-        return 2;
     }
 
 }

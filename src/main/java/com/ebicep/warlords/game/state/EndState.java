@@ -53,6 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class EndState implements State, TimerDebugAble {
+
     @Nonnull
     private final Game game;
     private final WarlordsGameTriggerWinEvent winEvent;

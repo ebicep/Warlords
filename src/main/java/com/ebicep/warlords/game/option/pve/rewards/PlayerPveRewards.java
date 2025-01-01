@@ -8,6 +8,7 @@ import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import java.util.*;
 
 public class PlayerPveRewards {
+
     private final LinkedHashMap<String, Long> cachedBaseCoinSummary = new LinkedHashMap<>();
     private final List<AbstractWeapon> weaponsFound = new ArrayList<>();
     private final HashMap<MobDrop, Long> mobDropsGained = new HashMap<>();

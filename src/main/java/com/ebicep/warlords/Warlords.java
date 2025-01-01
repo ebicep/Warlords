@@ -50,6 +50,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
@@ -284,6 +285,7 @@ public class Warlords extends JavaPlugin {
             server.getEntityMetadata().invalidateAll(this);
             server.getWorldMetadata().invalidateAll(this);
             server.getPlayerMetadata().invalidateAll(this);
+            server.getWorlds().forEach(world -> ((CraftWorld) world).getBlockMetadata().invalidateAll(this));
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
