@@ -166,6 +166,9 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     public void cleanup() {
+        entity.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
+        entity.remove();
+        npc.data().remove(WARLORDS_ENTITY_METADATA);
         npc.destroy();
         if (playerHealthDisplay != null) {
             playerHealthDisplay.remove();

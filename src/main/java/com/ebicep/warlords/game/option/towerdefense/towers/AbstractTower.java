@@ -310,6 +310,7 @@ public abstract class AbstractTower {
     public void remove() {
         forEachBlock(block -> {
             block.setType(Material.AIR);
+            block.removeMetadata("TOWER", Warlords.getInstance());
             return false;
         });
         npc.destroy();
