@@ -123,6 +123,9 @@ public class WaveDefenseOption implements PveOption {
             @EventHandler
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                 WarlordsEntity attacker = event.getAttacker();
+                if (!(attacker instanceof WarlordsPlayer)) {
+                    return;
+                }
                 waveDefenseRewards.getPlayerRewards(attacker.getUuid())
                                   .getWaveDamage()
                                   .merge(waveCounter, (long) event.getValue(), Long::sum);
