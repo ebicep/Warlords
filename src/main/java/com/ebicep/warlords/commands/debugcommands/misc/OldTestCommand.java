@@ -4,17 +4,13 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
-import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -121,12 +117,13 @@ public class OldTestCommand implements CommandExecutor {
         int level = 20;
         if (commandSender instanceof Player player) {
 
-            TextComponent component = ComponentBuilder.create()
-                                                      .text("HELLO")
-                                                      .text(ChatColor.GOLD + "WORLD")
-                                                      .build();
-            component = component.decorate(TextDecoration.UNDERLINED);
-            player.sendMessage(component);
+
+//            TextComponent component = ComponentBuilder.create()
+//                                                      .text("HELLO")
+//                                                      .text(ChatColor.GOLD + "WORLD")
+//                                                      .build();
+//            component = component.decorate(TextDecoration.UNDERLINED);
+//            player.sendMessage(component);
 
 //            Hologram hologram = new Hologram.Builder("test",
 //                    player.getLocation(),

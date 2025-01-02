@@ -269,6 +269,16 @@ public interface PveOption extends Option {
     }
 
     @Override
+    default void onGameEnding(@Nonnull Game game) {
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            AbstractWeapon weapon = warlordsPlayer.getWeapon();
+            if (weapon != null) {
+                weapon.cleanup();
+            }
+        });
+    }
+
+    @Override
     default void onGameCleanup(@Nonnull Game game) {
         getMobs().forEach(mob -> mob.getNpc().destroy());
     }

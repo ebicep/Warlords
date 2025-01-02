@@ -362,6 +362,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
     }
 
     @Override
+    public void cleanup() {
+        this.warlordsPlayer = null;
+        this.pveOption = null;
+    }
+
+    @Override
     public float getHealthBonus() {
         float healthBonus = getHealthBonusValue();
         healthBonus *= Math.pow(healthBonus > 0 ? getUpgradeMultiplier() : getUpgradeMultiplierNegative(), upgradeLevel);

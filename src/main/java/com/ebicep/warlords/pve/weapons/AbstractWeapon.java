@@ -82,6 +82,9 @@ public abstract class AbstractWeapon {
         player.getHealth().addAdditiveModifier("Weapon Health (Base)", getHealthBonus());
     }
 
+    public void cleanup() {
+    }
+
     public abstract float getHealthBonus();
 
     public abstract WeaponsPvE getRarity();
