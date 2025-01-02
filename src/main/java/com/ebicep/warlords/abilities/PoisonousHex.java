@@ -236,6 +236,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         if (projectile.getHit().size() >= maxEnemiesHit) {
             getProjectiles(projectile).forEach(InternalProjectile::cancel);
         }
+        stats.addPlayersHit();
         return true;
     }
 

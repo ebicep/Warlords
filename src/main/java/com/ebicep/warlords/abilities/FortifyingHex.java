@@ -250,6 +250,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 return false;
             }
             giveFortifyingHex(wp, hit);
+            stats.addPlayersHit();
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> !we.isTeammate(wp)).count();
             if (enemiesHit > maxEnemiesHit) {
@@ -269,6 +270,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                         .toList()
                 ) {
                     hitEnemy(warlordsEntity, wp, toReduceBy);
+                    stats.addPlayersHit();
                 }
                 EffectUtils.displayParticle(
                         Particle.EXPLOSION,
@@ -378,6 +380,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
                 });
             }
         }
+        stats.addPlayersHit();
     }
 
     @Nonnull

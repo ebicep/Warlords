@@ -137,7 +137,6 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         hitProjectile(projectile, hit);
-
     }
 
     @Override
@@ -275,6 +274,9 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
                     .crit(damageValues.hexDamage)
             );
         }
+
+        stats.addPlayersHit();
+
         return true;
     }
 
