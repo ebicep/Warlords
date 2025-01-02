@@ -34,6 +34,7 @@ public class MasterworksFairTrait extends WarlordsTrait {
         if (PAUSED.get()) {
             return;
         }
+        tickCounter++;
         if (tickCounter % 10 != 0) {
             return;
         }
