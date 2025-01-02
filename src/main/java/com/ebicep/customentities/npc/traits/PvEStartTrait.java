@@ -12,17 +12,41 @@ import static com.ebicep.warlords.pve.DifficultyMenu.openDifficultyMenu;
 
 public class PvEStartTrait extends WarlordsTrait {
 
+    private int ticks = 0;
+    private long lastPlayerCount = 0;
+    private long lastPlayerCountInLobby = 0;
+
     public PvEStartTrait() {
         super("PveStartTrait");
     }
 
     @Override
+    public void onAttach() {
+        updateHologram(true);
+    }
+
+    @Override
     public void run() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.WAVE_DEFENSE) + " Players");
-        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.WAVE_DEFENSE) + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.GOLD + ChatColor.BOLD.toString() + "Wave Defense");
-        hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+        if (ticks++ % 20 != 0) {
+            return;
+        }
+        updateHologram(false);
+    }
+
+    private void updateHologram(boolean init) {
+        long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.WAVE_DEFENSE);
+        long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.WAVE_DEFENSE);
+        if (init || playerCount != lastPlayerCount || playerCountInLobby != lastPlayerCountInLobby) {
+            lastPlayerCount = playerCount;
+            lastPlayerCountInLobby = playerCountInLobby;
+            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + playerCount + " Players");
+            hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
+            if (init) {
+                hologramTrait.setLine(2, ChatColor.GOLD + ChatColor.BOLD.toString() + "Wave Defense");
+                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+            }
+        }
     }
 
     @Override

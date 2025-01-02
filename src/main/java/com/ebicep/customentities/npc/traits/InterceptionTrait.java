@@ -12,19 +12,42 @@ import org.bukkit.ChatColor;
 
 public class InterceptionTrait extends WarlordsTrait {
 
+    private int ticks = 0;
+    private long lastPlayerCount = 0;
+    private long lastPlayerCountInLobby = 0;
+
+
     public InterceptionTrait() {
         super("InterceptionTrait");
     }
 
     @Override
+    public void onAttach() {
+        updateHologram(true);
+    }
+
+    @Override
     public void run() {
-        HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0,
-                ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.INTERCEPTION) + " Players"
-        );
-        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.INTERCEPTION) + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.BLUE + ChatColor.BOLD.toString() + "Interception");
-        hologramTrait.setLine(3, ChatColor.RED + ChatColor.BOLD.toString() + "IN DEVELOPMENT");
+        if (ticks++ % 20 != 0) {
+            return;
+        }
+        updateHologram(false);
+    }
+
+    private void updateHologram(boolean init) {
+        long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.INTERCEPTION);
+        long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.INTERCEPTION);
+        if (init || playerCount != lastPlayerCount || playerCountInLobby != lastPlayerCountInLobby) {
+            lastPlayerCount = playerCount;
+            lastPlayerCountInLobby = playerCountInLobby;
+            HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
+            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + playerCount + " Players");
+            hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
+            if (init) {
+                hologramTrait.setLine(2, ChatColor.BLUE + ChatColor.BOLD.toString() + "Interception");
+                hologramTrait.setLine(3, ChatColor.RED + ChatColor.BOLD.toString() + "IN DEVELOPMENT");
+            }
+        }
     }
 
     @Override

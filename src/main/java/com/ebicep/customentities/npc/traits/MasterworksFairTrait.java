@@ -34,38 +34,41 @@ public class MasterworksFairTrait extends WarlordsTrait {
         if (PAUSED.get()) {
             return;
         }
-        if (tickCounter++ % 10 == 0) {
-            if (currentFair == null) {
-                if (startTime != null) {
-                    if (Instant.now().isAfter(startTime)) {
-                        startTime = null;
-                        //create new fair
-                        MasterworksFairManager.createFair();
-                    }
-                } else {
-                    PAUSED.set(true);
-                    Warlords.newChain()
-                            .asyncFirst(() -> DatabaseManager.masterworksFairService.findFirstByOrderByStartDateDesc())
-                            .asyncLast(masterworksFair -> {
-                                if (masterworksFair == null) {
-                                    ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Could not find masterworks fair in database");
-                                    ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Creating new masterworks fair.");
-                                    MasterworksFairManager.createFair();
-                                } else {
-                                    checkForReset(masterworksFair);
-                                }
-                            })
-                            .execute();
-                    return;
+        if (tickCounter % 10 != 0) {
+            return;
+        }
+        if (currentFair == null) {
+            if (startTime != null) {
+                if (Instant.now().isAfter(startTime)) {
+                    startTime = null;
+                    //create new fair
+                    MasterworksFairManager.createFair();
                 }
             } else {
-                //checking for reset
-                long secondsBetween = ChronoUnit.SECONDS.between(currentFair.getStartDate(), Instant.now());
-                if (secondsBetween > 0 && secondsBetween > Timing.WEEKLY.secondDuration) {
-                    ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
-                    resetFair(currentFair);
-                }
+                PAUSED.set(true);
+                Warlords.newChain()
+                        .asyncFirst(() -> DatabaseManager.masterworksFairService.findFirstByOrderByStartDateDesc())
+                        .asyncLast(masterworksFair -> {
+                            if (masterworksFair == null) {
+                                ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Could not find masterworks fair in database");
+                                ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Creating new masterworks fair.");
+                                MasterworksFairManager.createFair();
+                            } else {
+                                checkForReset(masterworksFair);
+                            }
+                        })
+                        .execute();
+                return;
             }
+        } else {
+            //checking for reset
+            long secondsBetween = ChronoUnit.SECONDS.between(currentFair.getStartDate(), Instant.now());
+            if (secondsBetween > 0 && secondsBetween > Timing.WEEKLY.secondDuration) {
+                ChatUtils.MessageType.MASTERWORKS_FAIR.sendMessage("Masterworks Fair reset time has passed");
+                resetFair(currentFair);
+            }
+        }
+        if (tickCounter % 100 == 0) {
             updateHologram();
         }
     }
