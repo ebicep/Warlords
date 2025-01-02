@@ -407,10 +407,12 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     }
 
     public interface InternalProjectileTask {
+
         void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile);
 
         default void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
         }
+
     }
 
     private record PendingHit(Location loc, double distance, WarlordsEntity hit) implements Comparable<PendingHit> {
@@ -428,6 +430,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
                     ", hit=" + hit +
                     '}';
         }
+
     }
 
     public static abstract class AbstractPiercingProjectileStats<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectileStats<T, R>> extends AbstractAbilityStats<T, R> {
@@ -480,8 +483,11 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         public void addNumberOfDismounts() {
             this.numberOfDismounts++;
         }
+
     }
+
     public class InternalProjectile extends BukkitRunnable {
+
         private final List<WarlordsEntity> hit = new ArrayList<>();
         private final List<InternalProjectileTask> tasks = new ArrayList<>();
         private final Location startingLocation;
@@ -536,33 +542,34 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
         @Override
         public void run() {
-            if (!shooter.getGame().isFrozen()) {
-                updateSpeed(this);
-                currentLocation.setDirection(speed);
-                HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
-                if (hitResult != null) {
-                    int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
-                                                  getFromEntity(entityHitResult.getEntity().getBukkitEntity()) :
-                                                  null
-                    );
-                    if (hitResult.getType() == HitResult.Type.ENTITY) {
-                        getAbilityStats().directHits++;
-                    }
-                    if (hitBySplash > 0) {
-                        getAbilityStats().targetsHit++;
-                        getAbilityStats().targetsHitBySplash += hitBySplash;
-                    }
+            if (shooter.getGame().isFrozen()) {
+                return;
+            }
+            updateSpeed(this);
+            currentLocation.setDirection(speed);
+            HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
+            if (hitResult != null) {
+                int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
+                                              getFromEntity(entityHitResult.getEntity().getBukkitEntity()) :
+                                              null
+                );
+                if (hitResult.getType() == HitResult.Type.ENTITY) {
+                    getAbilityStats().directHits++;
+                }
+                if (hitBySplash > 0) {
+                    getAbilityStats().targetsHit++;
+                    getAbilityStats().targetsHitBySplash += hitBySplash;
+                }
+                cancel();
+            } else if (ticksLived >= maxTicks) {
+                cancel();
+            } else {
+                playEffect(this);
+                ticksLived++;
+                blocksTravelled += speed.length();
+                //cancel after 15 seconds
+                if (ticksLived > 15 * 20) {
                     cancel();
-                } else if (ticksLived >= maxTicks) {
-                    cancel();
-                } else {
-                    playEffect(this);
-                    ticksLived++;
-                    blocksTravelled += speed.length();
-                    //cancel after 15 seconds
-                    if (ticksLived > 15 * 20) {
-                        cancel();
-                    }
                 }
             }
         }
@@ -573,6 +580,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             for (InternalProjectileTask task : tasks) {
                 task.onDestroy(this);
             }
+            internalProjectileGroup.remove(this);
         }
 
         public int getTicksLived() {
@@ -618,5 +626,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         public double getBlocksTravelled() {
             return blocksTravelled;
         }
+
     }
 }
