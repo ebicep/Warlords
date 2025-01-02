@@ -27,6 +27,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     private static final float CRIT_CHANCE_PER_UPGRADE = 1;
     private static final int MAX_STACKS = 5;
     private static final float MAX_STACKS_PER_UPGRADE = 1;
+
     @Transient
     public List<String> abilityNames;
     @Transient
@@ -55,9 +56,16 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
-        cooldown = null;
         abilityNames = player.getAbilities().stream().map(AbstractAbility::getName).toList();
+        cooldown = null;
         stacks = 0;
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        abilityNames = null;
+        cooldown = null;
     }
 
     @Override

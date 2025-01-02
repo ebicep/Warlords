@@ -42,6 +42,12 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public void cleanup() {
+        super.cleanup();
+        ability = null;
+    }
+
+    @Override
     public TextComponent getPassiveEffect() {
         return Component.text("Increase movement speed by 50%, decrease energy consumption of all abilities by ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(ABILITY_ENERGY_DECREASE + ABILITY_ENERGY_DECREASE_PER_UPGRADE * getTitleLevel()))

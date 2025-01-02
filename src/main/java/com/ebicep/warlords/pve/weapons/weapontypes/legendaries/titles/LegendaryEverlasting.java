@@ -60,6 +60,12 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
     }
 
     @Override
+    public void cleanup() {
+        super.cleanup();
+        cooldown = null;
+    }
+
+    @Override
     public TextComponent getPassiveEffect() {
         return ComponentBuilder.create("Upon landing a melee crit, heal for 5% of your max HP and gain ")
                                .append(formatTitleUpgrade(DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))

@@ -39,6 +39,12 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public void cleanup() {
+        super.cleanup();
+        ability = null;
+    }
+
+    @Override
     public TextComponent getPassiveEffect() {
         return Component.text("", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()))
