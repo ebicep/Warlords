@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class MobHologram {
@@ -108,7 +109,9 @@ public abstract class MobHologram {
                     });
                     customHologramLine.setEntity(textDisplay);
                 } else if (customHologramLine.getEntity() instanceof TextDisplay textDisplay) {
-                    textDisplay.text(customHologramLine.getText());
+                    if (!Objects.equals(textDisplay.text(), customHologramLine.getText())) {
+                        textDisplay.text(customHologramLine.getText());
+                    }
                     textDisplay.teleport(location.add(0, .325, 0));
                 }
             }

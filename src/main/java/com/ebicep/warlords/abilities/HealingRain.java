@@ -139,7 +139,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                             effect.playEffects();
                         });
                     }
-                    if (ticksElapsed % 5 == 0) {
+                    if ((inPve && ticksElapsed % 8 == 0) || (!inPve && ticksElapsed % 5 == 0)) {
                         circleEffect.playEffects();
                     }
 

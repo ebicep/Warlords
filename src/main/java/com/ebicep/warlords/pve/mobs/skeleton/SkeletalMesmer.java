@@ -35,7 +35,7 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
                 new FlameBurst(20) {{
                     this.getDamageValues().getFlameBurstDamage().critChance().setBaseValue(0);
                 }},
-                new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 30)
+                new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 20)
         );
     }
 
@@ -60,7 +60,7 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
                 new FlameBurst(20) {{
                     this.getDamageValues().getFlameBurstDamage().critChance().setBaseValue(0);
                 }},
-                new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 30)
+                new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 20)
         );
     }
 

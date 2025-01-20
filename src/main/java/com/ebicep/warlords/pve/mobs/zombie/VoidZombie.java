@@ -31,7 +31,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
                 1500,
                 2000,
                 new VoidShred(),
-                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 20)
+                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 10)
         );
     }
 
@@ -53,7 +53,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new VoidShred(),
-                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 20)
+                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 10)
         );
     }
 

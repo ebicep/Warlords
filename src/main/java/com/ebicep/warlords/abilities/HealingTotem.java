@@ -108,6 +108,13 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     protected void onActivation(WarlordsEntity wp, ArmorStand totemStand) {
         float rad = radius.getCalculatedValue();
         HealingTotemData data = new HealingTotemData(this, wp, totemStand);
+        CircleEffect circle = new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                totemStand.getLocation().add(0, 1, 0),
+                rad,
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(.75)
+        );
         RegularCooldown<HealingTotemData> healingTotemCooldown = new RegularCooldown<>(
                 name,
                 "TOTEM",
@@ -148,6 +155,11 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         EffectUtils.playSphereAnimation(totemStand.getLocation(), rad, Particle.HAPPY_VILLAGER, 2);
                     }
 
+                    if ((inPve && ticksElapsed % 30 == 0) || (!inPve && ticksElapsed % 20 == 0)) {
+                        circle.setCenter(totemStand.getLocation().add(0, 1, 0));
+                        circle.playEffects();
+                    }
+
                     if (ticksElapsed % 20 == 0) {
                         Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveMasterUpgrade ? 0.4f : 0.9f);
 
@@ -186,15 +198,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                 );
                             }
                         }
-
-                        CircleEffect circle = new CircleEffect(
-                                wp.getGame(),
-                                wp.getTeam(),
-                                totemStand.getLocation().add(0, 1, 0),
-                                rad,
-                                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(1.5)
-                        );
-                        circle.playEffects();
 
                         // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
                         int secondsElapsed = ticksElapsed / 20;

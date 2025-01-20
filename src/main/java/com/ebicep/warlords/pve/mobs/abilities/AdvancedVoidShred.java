@@ -16,6 +16,7 @@ public class AdvancedVoidShred extends AbstractAbility {
     private final float voidRadius;
     private final int slowness;
     private final int helixDots;
+    private final DamageValues damageValues;
 
     public AdvancedVoidShred(float minDamageHeal, float maxDamageHeal, float cooldown, int slowness, float voidRadius, int helixDots) {
         super("Void Shred", cooldown, 50);
@@ -42,8 +43,6 @@ public class AdvancedVoidShred extends AbstractAbility {
         }
         return true;
     }
-
-    private final DamageValues damageValues;
 
     public static class DamageValues implements Value.ValueHolder {
 
