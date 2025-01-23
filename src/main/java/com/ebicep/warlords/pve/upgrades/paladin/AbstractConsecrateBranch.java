@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.upgrades.paladin;
 
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.Upgrade;
@@ -26,9 +27,16 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
         masterUpgrade = new Upgrade(
                 "Sanctify",
                 "Consecrate - Master Upgrade",
-                "-30 Energy cost\n+2 Additional blocks hit radius\n+20% Cooldown reduction",
+                """
+                        +75% Damage
+                        -30 Energy cost
+                        +2 Additional blocks hit radius
+                        +20% Cooldown reduction""",
                 50000,
                 () -> {
+                    Value.RangedValueCritable damage = ability.getConsecrateDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .75f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .75f);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -30);
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 2);
                     ability.getCooldown().addMultiplicativeModifierMult("Sanctify", 0.8f);
