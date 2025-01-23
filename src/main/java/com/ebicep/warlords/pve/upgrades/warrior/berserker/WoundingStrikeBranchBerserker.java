@@ -13,8 +13,8 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
     @Override
     public void runOnce() {
         Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
-        damage.min().addMultiplicativeModifierAdd("PvE", .3f);
-        damage.max().addMultiplicativeModifierAdd("PvE", .3f);
+        damage.min().addMultiplicativeModifierAdd("PvE", .5f);
+        damage.max().addMultiplicativeModifierAdd("PvE", .5f);
     }
 
     public WoundingStrikeBranchBerserker(AbilityTree abilityTree, WoundingStrikeBerserker ability) {
