@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
+import com.ebicep.warlords.abilities.BloodLust;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
@@ -44,12 +45,15 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 "Lacerating Strike",
                 "Wounding Strike - Master Upgrade",
                 """
+                        +50% Wounding Strike Damage
                         Wounding Strike now applies BLEED instead of wounding.
 
                         BLEED: Enemies afflicted take 100% more damage from Wounding Strike while Blood Lust is active. Bleeding enemies have healing reduced by 80% and lose 0.5% of their max health per second.""",
                 50000,
                 () -> {
-
+                    Value.RangedValueCritable damage = ability.getDamageValues().getStrikeDamage();
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .5f);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -58,11 +62,14 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
                 """
                         -20 Energy cost
                         
-                        Wounding Strike now hits up to 3 enemies. Strikes deal 20% more damage while Blood Lust is active.
+                        Wounding Strike now hits up to 3 enemies. Strikes deal 25% more damage while Blood Lust is active, additionally Blood lust healing is reduced by 35%.
                         """,
                 50000,
                 () -> {
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -20);
+                    abilityTree.getWarlordsPlayer().doOnStaticAbility(BloodLust.class, bloodLust -> {
+                        bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() - 35);
+                    });
                 }
         );
 
