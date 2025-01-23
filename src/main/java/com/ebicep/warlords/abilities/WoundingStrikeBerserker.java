@@ -176,6 +176,14 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
         });
     }
 
+    public int getWounding() {
+        return wounding;
+    }
+
+    public void setWounding(int wounding) {
+        this.wounding = wounding;
+    }
+
     public int getWoundingTickDuration() {
         return woundingTickDuration;
     }

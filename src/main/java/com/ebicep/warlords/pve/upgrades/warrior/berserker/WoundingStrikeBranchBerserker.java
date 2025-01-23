@@ -2,13 +2,11 @@ package com.ebicep.warlords.pve.upgrades.warrior.berserker;
 
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.pve.upgrades.AbilityTree;
-import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
-import com.ebicep.warlords.pve.upgrades.Upgrade;
-import com.ebicep.warlords.pve.upgrades.UpgradeTreeBuilder;
+import com.ebicep.warlords.pve.upgrades.*;
 
 public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<WoundingStrikeBerserker> {
 
+    int wounding = ability.getWounding();
 
     @Override
     public void runOnce() {
@@ -28,7 +26,18 @@ public class WoundingStrikeBranchBerserker extends AbstractUpgradeBranch<Woundin
         UpgradeTreeBuilder
                 .create(abilityTree, this)
                 .addUpgradeEnergy(ability, 2.5f)
-                .addUpgradeDuration(ability::setWoundingTickDuration, ability::getWoundingTickDuration, 10f)
+                .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
+
+                    @Override
+                    public String getDescription0(String value) {
+                        return "+" + value + "% Wounding";
+                    }
+
+                    @Override
+                    public void run(float value) {
+                        ability.setWounding(wounding + (int) value);
+                    }
+                }, 2f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
