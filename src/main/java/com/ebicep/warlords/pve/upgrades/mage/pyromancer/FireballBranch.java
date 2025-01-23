@@ -36,12 +36,13 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 "Fiery Fusillade",
                 "Fireball - Master Upgrade",
                 """
+                        +50% Direct Hit Damage
                         Direct-hits apply the BURN status for 5s.
 
-                        BURN: Enemies take 20% more damage from all sources and burn for 0.5% of their max health every second.""",
+                        BURN: Enemies take 15% more damage from all sources and burn for 0.5% of their max health every second.""",
                 50000,
                 () -> {
-
+                    ability.setDirectHitMultiplier(ability.getDirectHitMultiplier() + 50);
                 }
         );
 
@@ -50,7 +51,7 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                 "Fireball - Master Upgrade",
                 """
                         Fires 2 projectiles. Direct-hits apply the IGNITE status.
-                                                
+                        
                         IGNITE: Enemies will explode after 1s dealing 450-650 true damage to nearby enemies.""",
                 50000,
                 () -> {

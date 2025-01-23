@@ -164,7 +164,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         ) {
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.2f;
+                return currentDamageValue * 1.15f;
             }
         });
     }
