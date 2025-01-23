@@ -31,8 +31,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveCounter {
 
     public static final int DAMAGE_BOOST = 5;
-    public static final int TARGETS_TO_HIT = 40;
-    public static final int DURATION = 30;
+    public static final int TARGETS_TO_HIT = 60;
+    public static final int DURATION = 45;
 
     public static final int ABILITY_DAMAGE_BOOST = 20;
     public static final int ABILITY_DAMAGE_BOOST_PER_UPGRADE = 5;
@@ -153,7 +153,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                                     modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                                     player.updateItems();
                                 },
-                                6 * 20
+                                8 * 20
                         ) {
                             @Override
                             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -205,7 +205,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     protected float getSpeedBonusValue() {
-        return 5;
+        return 7;
     }
 
     @Override
@@ -215,7 +215,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     protected float getEnergyPerHitBonusValue() {
-        return -7;
+        return -5;
     }
 
     @Override

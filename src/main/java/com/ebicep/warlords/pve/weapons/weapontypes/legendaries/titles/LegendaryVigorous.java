@@ -83,7 +83,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     protected float getEnergyPerSecondBonusValue() {
-        return 2;
+        return 3;
     }
 
     @Override

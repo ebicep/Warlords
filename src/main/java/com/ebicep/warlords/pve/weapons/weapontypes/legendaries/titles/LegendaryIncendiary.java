@@ -24,7 +24,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
 
     public static final int CRIT_CHANCE_BOOST = 15;
     public static final float CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE = 0.5f;
-    public static final int EPH_PERCENT_INCREASE = 20;
+    public static final int EPH_PERCENT_INCREASE = 30;
     public static final float EPH_PERCENT_INCREASE_PER_UPGRADE = 2.5f;
 
 
@@ -130,7 +130,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
 
     @Override
     protected float getCritMultiplierValue() {
-        return 180;
+        return 205;
     }
 
     @Override

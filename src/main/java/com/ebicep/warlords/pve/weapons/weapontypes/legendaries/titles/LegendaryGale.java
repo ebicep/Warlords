@@ -24,7 +24,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
     private static final int ABILITY_ENERGY_DECREASE = 10;
     private static final float ABILITY_ENERGY_DECREASE_PER_UPGRADE = 2.5f;
-    private static final int ABILITY_ANTI_KB = 20;
+    private static final int ABILITY_ANTI_KB = 35;
     private static final int ABILITY_ANTI_KB_PER_UPGRADE = 5;
 
     @Transient
@@ -80,7 +80,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
     @Override
     protected float getHealthBonusValue() {
-        return 500;
+        return 250;
     }
 
     @Override
@@ -95,12 +95,17 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
     @Override
     protected float getCritChanceValue() {
-        return 20;
+        return 10;
     }
 
     @Override
     protected float getCritMultiplierValue() {
         return 185;
+    }
+
+    @Override
+    protected float getEnergyPerHitBonusValue() {
+        return 2;
     }
 
     @Override

@@ -66,7 +66,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                 if (Instant.now().isBefore(lastActivated.get())) {
                     return;
                 }
-                if (player.getCurrentHealth() < player.getMaxHealth() * .3) {
+                if (player.getCurrentHealth() < player.getMaxHealth() * .4) {
                     giveHealingBoostCooldown();
                 }
             }
@@ -108,7 +108,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
     public TextComponent getPassiveEffect() {
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
         float cooldown = COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel();
-        return Component.text("When your health falls below 30%, incoming and outgoing healing increases by ", NamedTextColor.GRAY)
+        return Component.text("When your health falls below 40%, incoming and outgoing healing increases by ", NamedTextColor.GRAY)
                         .append(formatTitleUpgrade(outgoingHealingBoost, "%"))
                         .append(Component.text(" for 10s. Can be triggered once every "))
                         .append(formatTitleUpgrade(cooldown, "s"))

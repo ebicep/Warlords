@@ -94,7 +94,7 @@ public class LegendaryReliquary extends AbstractLegendaryWeapon implements Event
 
     @Override
     protected float getHealthBonusValue() {
-        return 700;
+        return 900;
     }
 
     @Override
