@@ -94,7 +94,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
                             return;
                         }
                         AbstractAbility rightClick = abilities.get(0);
-                        FloatModifiable.FloatModifier modifier = rightClick.getEnergyCost().addMultiplicativeModifierAdd("Arcane Energy", -.15f);
+                        FloatModifiable.FloatModifier modifier = rightClick.getEnergyCost().addMultiplicativeModifierAdd("Arcane Energy", -.25f);
                         wp.updateItem(rightClick);
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Arcane Energy",
