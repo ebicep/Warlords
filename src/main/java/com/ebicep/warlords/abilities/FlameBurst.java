@@ -146,18 +146,18 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
                     .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease)
             );
         } else {
-            float damageBoost = 0;
+            float damageBoost = 1;
             float blocksTravelled = (float) projectile.getBlocksTravelled();
             if (pveMasterUpgrade2) {
                 blocksTravelled = Math.min(30, blocksTravelled);
-                damageBoost = DamageCheck.clamp(nearEntity.getMaxBaseHealth() * .01f);
+                damageBoost += Math.min(.75f, (projectile.getHit().size() - 1) * .05f);
             }
             nearEntity.addInstance(InstanceBuilder
                     .damage()
                     .ability(this)
                     .source(shooter)
-                    .min(damageValues.flameBurstDamage.getMinValue() + damageBoost)
-                    .max(damageValues.flameBurstDamage.getMaxValue() + damageBoost)
+                    .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
+                    .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
                     .critChance(damageValues.flameBurstDamage.getCritChanceValue() + blocksTravelled)
                     .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue())
             );

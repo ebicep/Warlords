@@ -53,7 +53,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 "Backfire",
                 "Flame Burst - Master Upgrade",
                 """
-                        Converts the burst into a flaming boomerang that can pierce multiple targets and now additionally deals 1% of the target's max health as damage.
+                        Converts the burst into a flaming boomerang that can pierce multiple targets dealing 5% more damage per target hit (Max 75%).
                         """,
                 50000,
                 () -> {
