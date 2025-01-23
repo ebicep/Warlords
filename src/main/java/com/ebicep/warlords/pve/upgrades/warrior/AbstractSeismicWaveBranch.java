@@ -14,7 +14,7 @@ public abstract class AbstractSeismicWaveBranch extends AbstractUpgradeBranch<Ab
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
-                .addUpgradeDamage(ability.getWaveDamage(), 5f)
+                .addUpgradeDamage(ability.getWaveDamage(), 7.5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
