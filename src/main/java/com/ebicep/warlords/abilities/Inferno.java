@@ -4,23 +4,27 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.pve.mobs.events.boltarobonanza.EventBoltaroShadow;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.pyromancer.InfernoBranch;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Inferno, Inferno.InfernoStats> {
 
@@ -53,8 +57,15 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         Utils.playGlobalSound(wp.getLocation(), "mage.inferno.activation", 2, 1);
 
         Inferno tempInferno = new Inferno();
+        List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade) {
             wp.getCooldownManager().removeCooldown(Inferno.class, false);
+            modifiers = wp.getAbilitiesMatching(Fireball.class)
+                          .stream()
+                          .map(ability -> ability.getEnergyCost().addAdditiveModifier(name + " Master", -5))
+                          .toList();
+        } else {
+            modifiers = Collections.emptyList();
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -64,6 +75,9 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -75,7 +89,8 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                     }
                 })
         ) {
-            int finalMaxHits = maxHits;
+
+            private final Map<WarlordsEntity, Integer> hitCount = new HashMap<>();
 
             @Override
             public boolean distinct() {
@@ -109,28 +124,35 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2) {
+                if (pveMasterUpgrade) {
+                    WarlordsEntity hit = event.getWarlordsEntity();
+                    int oldHitCount = hitCount.computeIfAbsent(hit, k -> 0);
+                    hitCount.put(hit, oldHitCount + 1);
+                    return currentDamageValue * convertToMultiplicationDecimal(Math.min(50, 5 * oldHitCount));
+                } else if (pveMasterUpgrade2) {
                     return currentDamageValue * 1.2f;
                 }
                 return currentDamageValue;
             }
 
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (pveMasterUpgrade) {
-                    if (isCrit && !(finalMaxHits <= 0)) {
-                        subtractCurrentCooldown(0.5f);
-                        setTicksLeft(getTicksLeft() + 5);
-                        finalMaxHits--;
-                    }
-                }
-            }
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (pveMasterUpgrade2 && isKiller) {
-                    wp.addEnergy(wp, "Inferno", 30);
+                    wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
                 }
+            }
+
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+                    @EventHandler
+                    public void onWarlordsApplyBurnEffect(WarlordsApplyBurnEffectEvent event) {
+                        if (pveMasterUpgrade) {
+                            event.setTickPeriod(10);
+                        }
+                    }
+                };
             }
         });
 

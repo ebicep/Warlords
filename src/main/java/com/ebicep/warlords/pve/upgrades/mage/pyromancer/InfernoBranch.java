@@ -34,17 +34,21 @@ public class InfernoBranch extends AbstractUpgradeBranch<Inferno> {
         masterUpgrade = new Upgrade(
                 "Dante’s Inferno",
                 "Inferno - Master Upgrade",
-                "Inferno's cooldown gets reduced by 0.5 seconds and duration gets increased by 0.25 seconds for each critical hit (max 40 hits)",
+                """
+                        Increase duration by 5s. While inferno is active fireball costs 5 less energy.
+                        
+                        Additionally, damaging the same target will cause your damage against that target to increase by 5% (up to 50%) BURN now activates every 0.5s.
+                        """,
                 50000,
                 () -> {
-
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Promethean Gaze",
                 "Inferno - Master Upgrade",
                 """
-                        Damage is increased by 20% while Inferno is active. While Inferno is active, Ignition damage is doubled and enemies killed by Ignition damage will refund the caster 30 energy.
+                        While Inferno is active, increased damage by 20%, Ignition damage is doubled, and enemies killed by Ignition damage will refund the caster 30 energy.
                         """,
                 50000,
                 () -> {

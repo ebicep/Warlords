@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -137,6 +139,8 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
     }
 
     private void applyBurnEffect(@Nonnull WarlordsEntity hit, WarlordsEntity shooter) {
+        WarlordsApplyBurnEffectEvent applyBurnEffectEvent = new WarlordsApplyBurnEffectEvent(hit, shooter, 20);
+        Bukkit.getPluginManager().callEvent(applyBurnEffectEvent);
         hit.getCooldownManager().removeCooldownByName("Burn");
         hit.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Burn",
@@ -149,7 +153,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                 },
                 5 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksLeft % 20 == 0) {
+                    if (ticksLeft % applyBurnEffectEvent.getTickPeriod() == 0) {
                         float healthDamage = hit.getMaxHealth() * 0.005f;
                         healthDamage = DamageCheck.clamp(healthDamage);
                         hit.addInstance(InstanceBuilder

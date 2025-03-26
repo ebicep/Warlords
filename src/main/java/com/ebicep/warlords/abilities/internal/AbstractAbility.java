@@ -128,6 +128,8 @@ public abstract class AbstractAbility implements AbilityIcon {
     }
 
     public void updateCustomStats(WarlordsEntity warlordsEntity) {
+        getCooldown().addRefreshListener("UpdateAbilityItems", this::queueUpdateItem);
+        getEnergyCost().addRefreshListener("UpdateAbilityItems", this::queueUpdateItem);
         Value.applyDamageHealing(this, value -> value.forEachAllValues(floatModifiable -> floatModifiable.addRefreshListener("UpdateAbilityItems", this::queueUpdateItem)));
     }
 
