@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -66,7 +67,7 @@ public class LegendaryRevolt extends AbstractLegendaryWeapon implements LibraryA
 
     @Override
     public TextComponent getPassiveEffect() {
-        return ComponentBuilder.create("While protected by a shield, enemies within a ")
+        return ComponentBuilder.create("While protected by a shield, enemies within a ", NamedTextColor.GRAY)
                                .append(formatTitleUpgrade(RADIUS + RADIUS_PER_UPGRADE * getTitleLevel()))
                                .text(" block radius around you have ")
                                .append(formatTitleUpgrade(RESISTANCE_SHRED + RESISTANCE_SHRED_PER_UPGRADE * getTitleLevel(), "%"))

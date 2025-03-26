@@ -11,8 +11,8 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,13 +26,14 @@ import java.util.UUID;
 public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenOfHesperidesTitle, PassiveCounter {
 
     public static final int SHIELD_PERCENT = 25;
+    public static final int SHIELD_PERCENT_PER_UPGRADE = 5;
     public static final int COOLDOWN = 20;
-    public static final int COOLDOWN_PER_UPGRADE = 1;
+    public static final float COOLDOWN_PER_UPGRADE = -1.5f;
     public static final int EPS_BOOST = 10;
-    public static final int EPS_BOOST_PER_UPGRADE = 2;
+//    public static final int EPS_BOOST_PER_UPGRADE = 2;
 
     @Transient
-    private int secondCounter = 0;
+    private int tickCounter = 0;
 
     public LegendaryFulcrum() {
     }
@@ -55,9 +56,8 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
-        this.secondCounter = 0;
+        this.tickCounter = 0;
 
-        float epsBoost = (EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevel()) / 20f;
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 getTitleName(),
                 null,
@@ -67,15 +67,20 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                 CooldownTypes.WEAPON,
                 cooldownManager -> {
                 },
-                false
+                false,
+                (cooldown, ticksElapsed) -> {
+                    if (tickCounter > 0) {
+                        tickCounter--;
+                    }
+                }
         ) {
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (secondCounter != 0) {
+                if (tickCounter != 0) {
                     return;
                 }
-                secondCounter = COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel();
-                float shieldHealth = player.getMaxBaseHealth() * SHIELD_PERCENT / 100;
+                tickCounter = (int) (COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel()) * 20;
+                float shieldHealth = player.getMaxBaseHealth() * (SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevel()) / 100;
                 Shield shield = new Shield(getTitleName(), shieldHealth);
                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getTitleName(),
@@ -90,7 +95,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                 ) {
                     @Override
                     public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick + epsBoost;
+                        return energyGainPerTick + EPS_BOOST;
                     }
 
                     @Override
@@ -108,26 +113,16 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                 });
             }
         });
-
-        new GameRunnable(player.getGame()) {
-            @Override
-            public void run() {
-                if (secondCounter > 0) {
-                    secondCounter--;
-                }
-            }
-        }.runTaskTimer(0, 20);
     }
 
     @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("Taking damage create a shield that absorbs damage based on " + SHIELD_PERCENT + "% of your max health. This shield lasts 10s or until broken and can only be triggered every ",
-                                NamedTextColor.GRAY
-                        )
-                        .append(formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel(), "s"))
-                        .append(Component.text(". While the shield is active, EPS is increased by "))
-                        .append(formatTitleUpgrade(EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text("."));
+        return ComponentBuilder.create("Taking damage create a shield that absorbs damage based on ", NamedTextColor.GRAY)
+                               .append(formatTitleUpgrade(SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevel(), "%"))
+                               .text(" of your max health. This shield lasts 10s or until broken and can only be triggered every ")
+                               .append(formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel(), "s"))
+                               .text(". While the shield is active, EPS is increased by " + EPS_BOOST + ".")
+                               .build();
     }
 
     @Override
@@ -154,7 +149,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
     protected float getEnergyPerHitBonusValue() {
         return 3;
     }
-    
+
     @Override
     protected float getSkillCritChanceBonusValue() {
         return 5;
@@ -164,7 +159,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
     protected float getSkillCritMultiplierBonusValue() {
         return 5;
     }
-    
+
     @Override
     protected float getMeleeDamageMaxValue() {
         return 185;
@@ -182,19 +177,20 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
-                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel()),
-                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevelUpgraded())
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(SHIELD_PERCENT + SHIELD_PERCENT_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevel()),
-                        formatTitleUpgrade(EPS_BOOST + EPS_BOOST_PER_UPGRADE * getTitleLevelUpgraded())
+                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevel(), "s"),
+                        formatTitleUpgrade(COOLDOWN + COOLDOWN_PER_UPGRADE * getTitleLevelUpgraded(), "s")
                 )
         );
     }
 
     @Override
     public int getCounter() {
-        return secondCounter;
+        return tickCounter;
     }
 }

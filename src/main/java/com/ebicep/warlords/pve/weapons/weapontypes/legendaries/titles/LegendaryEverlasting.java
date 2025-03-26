@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
@@ -67,7 +68,7 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
 
     @Override
     public TextComponent getPassiveEffect() {
-        return ComponentBuilder.create("Upon landing a melee crit, heal for 5% of your max HP and gain ")
+        return ComponentBuilder.create("Upon landing a melee crit, heal for 5% of your max HP and gain ", NamedTextColor.GRAY)
                                .append(formatTitleUpgrade(DAMAGE_REDUCTION + DAMAGE_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))
                                .text(" damage reduction for ")
                                .append(formatTitleUpgrade(DURATION + DURATION_PER_UPGRADE * getTitleLevel(), "s"))
