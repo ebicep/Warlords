@@ -80,6 +80,11 @@ public class ComponentBuilder {
         return this;
     }
 
+    public ComponentBuilder text(int text, TextColor textColor) {
+        componentBuilder.append(Component.text(text, textColor));
+        return this;
+    }
+
     public ComponentBuilder text(float text, TextColor textColor, TextDecoration... textDecoration) {
         componentBuilder.append(Component.text(text, textColor, textDecoration));
         return this;

@@ -91,6 +91,7 @@ public abstract class WarlordsEntity {
     //GREEN >> (Doing negatives to enemy / Doing positives to team)
     public static final Component GIVE_ARROW_GREEN = Component.text("»", NamedTextColor.GREEN);
     private static final int MINUTE_STATS_SPLITS = 35;
+
     protected final Game game;
     protected final List<Component> debugMessageLog = new ArrayList<>();
     protected DatabasePlayer cachedDatabasePlayer;

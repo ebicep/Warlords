@@ -9,6 +9,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
+import com.ebicep.warlords.game.option.pvp.DebugLogOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
@@ -49,6 +50,32 @@ public class DebugCommand extends BaseCommand {
         );
         for (int i = max; i < size; i++) {
             player.sendMessage(target.getDebugMessageLog().get(i));
+        }
+    }
+
+    @Subcommand("getcachedlog")
+    @Description("Gets the last messages sent to player")
+    public void getCachedLog(Player player, String target, @Default("50") @Conditions("limits:min=0,max=100000") Integer amount) {
+        DebugLogOption.DebugLog debugLog = DebugLogOption.CACHED_DEBUG_LOG.get(target.toLowerCase());
+        if (debugLog == null) {
+            sendDebugMessage(player, ComponentBuilder
+                    .create("No cached log found for ", NamedTextColor.RED)
+                    .text(target, NamedTextColor.YELLOW)
+                    .build()
+            );
+            return;
+        }
+        int size = debugLog.debugLog().size();
+        int max = Math.max(0, size - amount);
+        sendDebugMessage(player, ComponentBuilder
+                .create("Showing last ", NamedTextColor.GREEN)
+                .text(amount, NamedTextColor.YELLOW)
+                .text(" messages from ")
+                .text(target, NamedTextColor.AQUA)
+                .build()
+        );
+        for (int i = max; i < size; i++) {
+            player.sendMessage(debugLog.debugLog().get(i));
         }
     }
 

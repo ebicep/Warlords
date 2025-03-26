@@ -22,10 +22,7 @@ import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.pve.BountyOption;
 import com.ebicep.warlords.game.option.pve.tutorial.TutorialOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WinByMaxWaveClearOption;
-import com.ebicep.warlords.game.option.pvp.ApplySkillBoostOption;
-import com.ebicep.warlords.game.option.pvp.FlagGlowOption;
-import com.ebicep.warlords.game.option.pvp.GameOvertimeOption;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
+import com.ebicep.warlords.game.option.pvp.*;
 import com.ebicep.warlords.game.option.pvp.ctf.FlagOption;
 import com.ebicep.warlords.game.option.pvp.interception.InterceptionOption;
 import com.ebicep.warlords.game.option.pvp.interception.InterceptionRespawnOption;
@@ -820,6 +817,7 @@ public enum GameMode {
         options.add(new KillDamage());
         options.add(new VoidDamage());
         options.add(new FlyOption());
+        options.add(new DebugLogOption());
 
         return options;
     }
