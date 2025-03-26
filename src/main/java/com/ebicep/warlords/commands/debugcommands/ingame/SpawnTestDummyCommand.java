@@ -15,7 +15,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 @CommandAlias("spawntestdummy")
 @CommandPermission("warlords.game.spawndummy")
 public class SpawnTestDummyCommand extends BaseCommand {
-
     @Default
     @CommandCompletion("@gameteams @boolean")
     @Syntax("<team> <takeDamage>")
@@ -29,16 +28,22 @@ public class SpawnTestDummyCommand extends BaseCommand {
         game.getOption(PveOption.class)
             .stream()
             .findFirst()
-            .ifPresent(pveOption -> {
-                ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvE TestDummy", NamedTextColor.RED));
-                pveOption.spawnNewMob(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()), team);
-            });
-        WarlordsEntity testDummy = game.addNPC(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()).toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null)));
-        testDummy.setTakeDamage(true);
-        testDummy.updateHealth();
-        testDummy.setRegenTickTimer(Integer.MAX_VALUE);
-        testDummy.setTakeDamage(takeDamage);
-        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvP TestDummy", NamedTextColor.RED));
+            .ifPresentOrElse(
+                    pveOption -> {
+                        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvE TestDummy", NamedTextColor.RED));
+                        pveOption.spawnNewMob(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()), team);
+                    },
+                    () -> {
+                        WarlordsEntity testDummy = game.addNPC(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation())
+                                                                             .toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null)));
+                        testDummy.setTakeDamage(true);
+                        testDummy.updateHealth();
+                        testDummy.setRegenTickTimer(Integer.MAX_VALUE);
+                        testDummy.setTakeDamage(takeDamage);
+                        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvP TestDummy", NamedTextColor.RED));
+                    }
+            );
     }
+
 
 }
