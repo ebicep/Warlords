@@ -74,7 +74,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(SoulfireBeam.class)
                           .stream()
-                          .map(soulfireBeam -> soulfireBeam.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.6f))
+                          .map(soulfireBeam -> soulfireBeam.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.7f))
                           .toList();
         } else {
             modifiers = Collections.emptyList();

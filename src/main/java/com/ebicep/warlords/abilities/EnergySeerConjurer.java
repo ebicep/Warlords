@@ -52,7 +52,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
         if (warlordsEntity.isEnemy(wp) || warlordsEntity.equals(wp)) {
             return;
         }
-        float amount = event.getEnergyUsed() * .05f;
+        float amount = event.getEnergyUsed() * .075f;
         wp.addEnergy(wp, name, amount);
     }
 

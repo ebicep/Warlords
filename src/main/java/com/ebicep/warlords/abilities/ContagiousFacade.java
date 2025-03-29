@@ -9,7 +9,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
@@ -23,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -140,19 +140,6 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                             .append(Component.text(name, NamedTextColor.YELLOW))
                             .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
                     );
-                    if (pveMasterUpgrade) {
-                        PlayerFilter.entitiesAround(wp, 4, 4, 4)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(enemy -> {
-                                        enemy.addInstance(InstanceBuilder
-                                                .damage()
-                                                .ability(this)
-                                                .source(wp)
-                                                .value(shieldHealth)
-                                        );
-                                        enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
-                                    });
-                    }
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -186,6 +173,13 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 totalAbsorbed.addAndGet(absorbedAmount);
                 return afterValue;
             }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                if (pveMasterUpgrade2) {
+                    currentVector.zero();
+                }
+            }
         };
         wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
         addSecondaryAbility(
@@ -205,7 +199,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                             .entitiesAround(wp, poisonRadius, poisonRadius, poisonRadius)
                             .aliveEnemiesOf(wp)
                             .closestFirst(wp)
-                            .limit(infectedPlayers)
+                            .limit(pveMasterUpgrade ? Integer.MAX_VALUE : infectedPlayers)
                     ) {
                         EffectUtils.playParticleLinkAnimation(
                                 wp.getLocation(),
@@ -238,6 +232,24 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                                 .append(Component.text(" has infected you!", NamedTextColor.GRAY))
                         );
                         stats.totalHexesInflicted++;
+                    }
+                    if (pveMasterUpgrade) {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                name,
+                                "FACADE",
+                                ContagiousFacade.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {
+                                },
+                                20 * 5
+                        ) {
+                            @Override
+                            public float addEnergyGainPerTick(float energyGainPerTick) {
+                                return 0.5f;
+                            }
+                        });
                     }
                     stats.timesReactivated++;
                 },

@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.SoulfireBeamBranch;
+import com.ebicep.warlords.util.java.MathUtils;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,11 +41,11 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
                 .create("Unleash a concentrated beam of demonic power, dealing ")
                 .damage(damageValues.beamDamage)
                 .text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by ")
-                .percent(25, NamedTextColor.RED)
+                .percent((damageValues.damageMultipliers.get(1) - 1) * 100, NamedTextColor.RED)
                 .text("/")
-                .percent(50, NamedTextColor.RED)
+                .percent((damageValues.damageMultipliers.get(1) - 2) * 100, NamedTextColor.RED)
                 .text("/")
-                .percent(100, NamedTextColor.RED)
+                .percent((damageValues.damageMultipliers.get(1) - 3) * 100, NamedTextColor.RED)
                 .text(" relative to the number of stacks and all stacks are removed.")
                 .maxRange(maxDistance)
                 .build();
@@ -77,12 +78,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
                         astralPlague -> astralPlague.getAbilityStats().setHexesNotConsumed(astralPlague.getAbilityStats().getHexesNotConsumed() + hexStacks)
                 );
             }
-            float multiplier = switch (hexStacks) {
-                case 0 -> 1f;
-                case 1 -> 1.25f;
-                case 2 -> 1.5f;
-                default -> 2f;
-            };
+            float multiplier = damageValues.damageMultipliers.get(MathUtils.clamp(hexStacks, 0, 3));
             getAbilityStats().getStacksRemoved().merge(hexStacks, 1, Integer::sum);
             if (hexStacks >= PoisonousHex.getFromHex(wp).getMaxStacks() && projectile.getHit().size() <= 4 && pveMasterUpgrade) {
                 multiplier += 5;
@@ -137,8 +133,18 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
     public static class DamageValues implements Value.ValueHolder {
 
+        private final List<Float> damageMultipliers = new ArrayList<>() {{
+            add(1.0f);
+            add(1.25f);
+            add(1.5f);
+            add(2.0f);
+        }};
         private final Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(376, 508, 20, 175);
         private final List<Value> values = List.of(beamDamage);
+
+        public List<Float> getDamageMultipliers() {
+            return damageMultipliers;
+        }
 
         public Value.RangedValueCritable getBeamDamage() {
             return beamDamage;

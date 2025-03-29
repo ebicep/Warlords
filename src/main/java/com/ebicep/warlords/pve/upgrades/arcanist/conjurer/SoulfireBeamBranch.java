@@ -34,7 +34,7 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 "Eradicating Beam",
                 "Soulfire Beam - Master Upgrade",
                 """
-                        Increase the damage multiplier on the first 4 max stack targets by 500%.
+                        Increase the damage multiplier on the first 8 max stack targets by 500%.
                         """,
                 50000,
                 () -> {
@@ -45,13 +45,16 @@ public class SoulfireBeamBranch extends AbstractUpgradeBranch<SoulfireBeam> {
                 "Soulfire Beam - Master Upgrade",
                 """
                         +3 Additional Block Radius
-                                                
-                        Soulfire Beam fires two additional beams.
+                        +15 Block range
+                        
+                        Soulfire Beam fires two additional beams, additionally double the damage increase based on hex stacks.
                         """,
                 50000,
                 () -> {
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 3);
+                    ability.setMaxDistance(ability.getMaxDistance() + 15);
                     ability.setShotsFiredAtATime(3);
+                    ability.getDamageValues().getDamageMultipliers().replaceAll(aFloat -> aFloat * 2);
                 }
         );
     }

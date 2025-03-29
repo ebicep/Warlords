@@ -28,12 +28,14 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
                         Remove energy loss.
                         +5s duration.
                         +20% damage bonus.
+                        +10 Energy.
                         """,
                 50000,
                 () -> {
                     ability.setEpsDecrease(0);
                     ability.setTickDuration(ability.getTickDuration() + 100);
                     ability.setDamageIncrease(ability.getDamageIncrease() + 20);
+                    ability.setEnergyRestore(ability.getEnergyRestore() + 10);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -42,7 +44,7 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
                 """
                         Remove energy loss.
                         +5s duration.
-                        When nearby allies within a 10 block radius expend energy while Energy Seer is active, gain 5% of their energy spent.
+                        When nearby allies within a 10 block radius expend energy while Energy Seer is active, gain 7.5% of their energy spent.
                         """,
                 50000,
                 () -> {

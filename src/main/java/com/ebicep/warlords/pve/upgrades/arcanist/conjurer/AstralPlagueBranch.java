@@ -25,18 +25,19 @@ public class AstralPlagueBranch extends AbstractUpgradeBranch<AstralPlague> {
                 "Virulent State",
                 "Astral Plague - Master Upgrade",
                 """
+                        +5s Duration
                         For the duration of Astral Plague, increase Crit Multiplier by 40%, and Soulfire Beam is guaranteed to crit on enemies with max Hex stacks.
                         """,
                 50000,
                 () -> {
-
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Crimson Catastrophe",
                 "Astral Plague - Master Upgrade",
                 """
-                        For the duration of Astral Plague, reduce the cooldown of Soulfire Beam by 40% and increase the damage of Soulfire Beam by 40%.
+                        For the duration of Astral Plague, reduce the cooldown of Soulfire Beam by 40% and increase the damage of Soulfire Beam by 70%.
                         """,
                 50000,
                 () -> {
