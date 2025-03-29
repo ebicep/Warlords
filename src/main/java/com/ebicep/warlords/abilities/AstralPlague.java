@@ -46,7 +46,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder
                 .create("Grant yourself Astral Energy, increasing ")
                 .text("PHEX", NamedTextColor.DARK_RED)
                 .text(" duration by ")
@@ -56,7 +56,11 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                 .text(" stacks.")
                 .emptyLine()
                 .text("Your attacks pierces shields and defenses of enemies with max stacks of ")
-                .text("PHEX", NamedTextColor.DARK_RED)
+                .text("PHEX", NamedTextColor.DARK_RED);
+        if (inPve) {
+            builder.text(". For the duration of Astral Plague the damage from Poisonous Hex stacks are increased by 400%");
+        }
+        description = builder
                 .text(". Lasts ")
                 .durationTicks(tickDuration)
                 .text(".")
@@ -104,6 +108,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (pveMasterUpgrade && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
+                    return currentDamageValue * 5;
+                }
                 if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
                     return currentDamageValue * 1.4f;
                 }
