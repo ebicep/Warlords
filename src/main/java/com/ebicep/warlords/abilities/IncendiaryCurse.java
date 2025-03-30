@@ -165,7 +165,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             }
         }
         if (pveMasterUpgrade2) {
-            wp.addEnergy(wp, "Unforseen Curse", Math.min(50, enemies.size() * 5));
+            wp.addEnergy(wp, "Unforseen Curse", Math.min(200, enemies.size() * 10));
         }
     }
 

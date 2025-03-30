@@ -92,6 +92,14 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         return true;
     }
 
+    public int getStrikeCritInterval() {
+        return strikeCritInterval;
+    }
+
+    public void setStrikeCritInterval(int strikeCritInterval) {
+        this.strikeCritInterval = strikeCritInterval;
+    }
+
     @Override
     public DamageValues getDamageValues() {
         return damageValues;

@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -158,6 +159,56 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     pveOption.despawnMob(npc.getMob());
                     Animus animus = new Animus(ownLocation, wp, swapTarget);
                     pveOption.spawnNewMob(animus, wp.getTeam());
+                    addSecondaryAbility(
+                            2,
+                            () -> {
+                                if (wp.isAlive()) {
+                                    animus.getWarlordsNPC().die(animus.getWarlordsNPC());
+                                    for (WarlordsEntity enemy : PlayerFilter
+                                            .entitiesAround(animus.getWarlordsNPC().getLocation(), 4, 4, 4)
+                                            .aliveEnemiesOf(wp)
+                                    ) {
+                                        enemy.addInstance(InstanceBuilder
+                                                .damage()
+                                                .cause("Animus")
+                                                .source(wp)
+                                                .min(400)
+                                                .max(600)
+                                        );
+                                    }
+                                }
+                            },
+                            false,
+                            secondaryAbility -> animus.getWarlordsNPC().isDead()
+                    );
+                    if (pveMasterUpgrade) {
+                        wp.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                                "Soul Burst",
+                                null,
+                                SoulSwitch.class,
+                                null,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                false
+                        ) {
+                            @Override
+                            public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                if (event.getCause().equals("Judgement Strike")) {
+                                    double speed = animus.getWarlordsNPC()
+                                                         .getSpeed()
+                                                         .getModifiers()
+                                                         .stream()
+                                                         .filter(modifier -> modifier.getModifier() > 0)
+                                                         .mapToDouble(CalculateSpeed.Modifier::getModifier)
+                                                         .sum();
+                                    float damageBoost = Math.min(1.1f, (float) (1 + (speed * 0.5f) / 100));
+                                    return currentDamageValue * damageBoost;
+                                }
+                                return currentDamageValue;
+                            }
+                        });
+                    }
                     if (pveMasterUpgrade2) {
                         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Tricky Switch",

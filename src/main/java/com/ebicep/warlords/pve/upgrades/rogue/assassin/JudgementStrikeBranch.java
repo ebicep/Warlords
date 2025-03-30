@@ -44,14 +44,20 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "Death Strike",
                 "Judgement Strike - Master Upgrade",
                 """
+                        +15% Damage
                         +100 Healing on Strike Kill
                         -10 Energy cost
-                                                
-                        Each strike deals 1% of the target's max health as bonus damage.""",
+                        
+                        Each strike deals 1% of the target's max health as bonus damage.
+                        Additionally Strikes guaranteed crit occurs every 2 hits instead of 4.
+                        """,
                 50000,
                 () -> {
+                    ability.getDamageValues().getStrikeDamage().min().addMultiplicativeModifierAdd("Master Upgrade Branch", .1f);
+                    ability.getDamageValues().getStrikeDamage().max().addMultiplicativeModifierAdd("Master Upgrade Branch", .1f);
                     ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Master Upgrade Branch", 100);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
+                    ability.setStrikeCritInterval(2);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -59,7 +65,7 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                 "Judgement Strike - Master Upgrade",
                 """
                         +45% Crit multiplier
-                                                
+                        
                         Judgement Strike will now hit twice in one use, the second strike is counted as an additional strike for a guarantee crit"
                         """,
                 50000,

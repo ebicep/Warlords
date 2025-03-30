@@ -364,6 +364,14 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         this.markedPlayer = markedPlayer;
     }
 
+    public float getVulnerableDamageBonus() {
+        return vulnerableDamageBonus;
+    }
+
+    public void setVulnerableDamageBonus(float vulnerableDamageBonus) {
+        this.vulnerableDamageBonus = vulnerableDamageBonus;
+    }
+
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new OrderOfEviscerateBranch(abilityTree, this);

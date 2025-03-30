@@ -165,8 +165,8 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                 5 * 20
         ) {
             @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                return currentCritChance * Math.min(2.5f * hit.size(), 25);
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                return currentCritMultiplier * Math.min(2f * hit.size(), 20);
             }
         });
     }
@@ -190,7 +190,6 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
         new GameRunnable(wp.getGame()) {
             double y = playerLoc.getY();
-            boolean wasOnGround = true;
             int counter = 0;
 
             @Override
@@ -205,13 +204,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                 boolean hitGround = wp.getEntity().isOnGround() || wp.onHorse();
                 y = playerLoc.getY();
 
-                if (wasOnGround && !hitGround) {
-                    wasOnGround = false;
-                }
-
-                if (!wasOnGround && hitGround) {
-                    wasOnGround = true;
-
+                if (hitGround) {
                     for (WarlordsEntity landingTarget : PlayerFilter
                             .entitiesAround(wp, 5, 5, 5)
                             .aliveEnemiesOf(wp)
@@ -239,7 +232,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
                     this.cancel();
                 }
             }
-        }.runTaskTimer(0, 0);
+        }.runTaskTimer(10, 0);
     }
 
     private void pveMasterOnLand(WarlordsEntity we) {
