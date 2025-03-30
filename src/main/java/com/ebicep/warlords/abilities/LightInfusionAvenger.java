@@ -8,14 +8,12 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.avenger.LightInfusionBranchAvenger;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LightInfusionAvenger extends AbstractLightInfusion {
@@ -80,33 +78,23 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
                     }
                 }
             }
-        });
 
-        if (pveMasterUpgrade2) {
-            List<WarlordsEntity> teammates = PlayerFilter.entitiesAround(wp, 5, 5, 5)
-                                                         .aliveTeammatesOfExcludingSelf(wp)
-                                                         .toList();
-            int duration = (5 + teammates.size()) * 20;
-            for (WarlordsEntity teammate : teammates) {
-                playCastEffect(teammate);
-                teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Stellar Light",
-                        "STELLAR",
-                        LightInfusionAvenger.class,
-                        tempLightInfusion,
-                        wp,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                        },
-                        duration
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.1f;
-                    }
-                });
+            @Override
+            public float addEnergyGainPerTick(float energyGainPerTick) {
+                if (pveMasterUpgrade2) {
+                    return energyGainPerTick + 0.5f;
+                }
+                return energyGainPerTick;
             }
-        }
+
+            @Override
+            public float addEnergyPerHit(WarlordsEntity we, float energyPerHit) {
+                if (pveMasterUpgrade2) {
+                    return energyPerHit + 20;
+                }
+                return energyPerHit;
+            }
+        });
 
         playCastEffect(wp);
 

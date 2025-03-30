@@ -58,11 +58,13 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
                 "Stellar Light",
                 "Light Infusion - Master Upgrade",
                 """
-                        Casting Light Infusion near allies in a 5 block radius, will grant them a 10% damage bonus for 5s and for every ally you grant this buff, increase the duration by 1s.
+                        +2s Duration
+                        
+                        For the duration of light infusion gain +10 energy per second and +20 energy per hit.
                         """,
                 50000,
                 () -> {
-
+                    ability.setTickDuration(ability.getTickDuration() + 200);
                 }
         );
     }
