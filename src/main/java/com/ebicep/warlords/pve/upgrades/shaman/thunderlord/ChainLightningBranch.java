@@ -48,12 +48,12 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 "Electrifying Chains",
                 "Chain Lightning - Master Upgrade",
                 """
-                        2x Chain Bounces
-                                                
+                        3x Chain Bounces
+                        
                         Chain Lightning now deals 10% more damage per bounce instead of less.""",
                 50000,
                 () -> {
-                    ability.setAdditionalBounces(ability.getAdditionalBounces() * 2);
+                    ability.setAdditionalBounces(ability.getAdditionalBounces() * 3);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -61,7 +61,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                 "Chain Lightning - Master Upgrade",
                 """
                         Chain Lightning will now give enemies hit the SHOCKED status for 3s.
-                                                
+                        
                         SHOCKED: Enemies that are shocked take 30% more damage from the caster and reduces the caster's ultimate ability cooldown by .5s if killed by the caster.
                         """,
                 50000,

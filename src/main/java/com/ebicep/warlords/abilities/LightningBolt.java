@@ -156,16 +156,17 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
                 .pitch(0)
                 .yaw(startingLocation.getYaw() - 90);
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-            itemDisplay.setItemStack(new ItemStack(Material.JUNGLE_SAPLING));
-            itemDisplay.setTeleportDuration(1);
-            itemDisplay.setBrightness(new Display.Brightness(15, 15));
-            itemDisplay.setTransformation(new Transformation(
-                    new Vector3f(),
-                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 0, 0, 1),
-                    new Vector3f(2f),
-                    new AxisAngle4f()
-            ));
-        });
+                    itemDisplay.setItemStack(new ItemStack(Material.JUNGLE_SAPLING));
+                    itemDisplay.setTeleportDuration(1);
+                    itemDisplay.setBrightness(new Display.Brightness(15, 15));
+                    itemDisplay.setTransformation(new Transformation(
+                            new Vector3f(),
+                            new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 0, 0, 1),
+                            new Vector3f(2f),
+                            new AxisAngle4f()
+                    ));
+                }
+        );
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
@@ -203,18 +204,20 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         int playersHit = projectile.getHit().size();
         float damageMultiplier = 1;
         if (pveMasterUpgrade2) {
-            if (playersHit >= 2 && playersHit <= 6) {
-                damageMultiplier = 1.2f;
-                EffectUtils.displayParticle(
-                        Particle.ENCHANTED_HIT,
-                        hit.getLocation().add(0, 1.2, 0),
-                        5,
-                        .25,
-                        .25,
-                        .25,
-                        0
-                );
+            if (playersHit == 1) {
+                damageMultiplier = 1.35f;
+            } else {
+                damageMultiplier = 1.1f;
             }
+            EffectUtils.displayParticle(
+                    Particle.ENCHANTED_HIT,
+                    hit.getLocation().add(0, 1.2, 0),
+                    5,
+                    .25,
+                    .25,
+                    .25,
+                    0
+            );
         }
         return hit.addInstance(InstanceBuilder
                 .damage()

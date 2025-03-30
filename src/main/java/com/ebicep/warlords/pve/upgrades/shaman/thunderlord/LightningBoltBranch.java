@@ -55,7 +55,7 @@ public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
                 """
                         -10 Energy cost
                         
-                        Each additional enemy hit takes 20% more damage. Max of 5 additional enemies will receive this increase in damage, further enemies will be hit the same as the first.
+                        The first target hit takes 35% more damage enemies hit afterwards take 15% more damage.
                         """,
                 50000,
                 () -> {

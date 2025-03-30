@@ -53,7 +53,7 @@ public class LightningRodBranch extends AbstractUpgradeBranch<LightningRod> {
                 "Call of Thunder",
                 "Lightning Rod - Master Upgrade",
                 """
-                        Lightning Rod now stuns enemies for 3s instead of knocking them away. All enemies stunned from Lightning Rod take 20% increased incoming damage from all sources and the caster will gain +15 EPS for 8s.
+                        Lightning Rod now applies SHOCKED and stuns enemies for 3s instead of knocking them away. Additionally, upon casting Lightning Rod, reduce the energy cost of chain lightning by 25 and gain +15 EPS for 8s.
                         """,
                 50000,
                 () -> {

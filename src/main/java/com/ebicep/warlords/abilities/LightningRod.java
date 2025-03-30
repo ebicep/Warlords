@@ -2,7 +2,6 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
-import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,10 +15,10 @@ import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningRodBranch;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -153,38 +152,23 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private void giveCallOfThunderEffect(WarlordsEntity from, List<WarlordsEntity> hit) {
         LightningRod tempRod = new LightningRod();
         for (WarlordsEntity warlordsEntity : hit) {
-            warlordsEntity.getCooldownManager().removeCooldownByName("Call of Thunder Debuff");
-            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Call of Thunder Debuff",
-                    "THUN",
-                    LightningRod.class,
-                    tempRod,
+            ChainLightning.giveShockedEffect(
                     from,
-                    CooldownTypes.DEBUFF,
-                    cooldownManager -> {
-                    },
-                    8 * 20,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 20 == 0) {
-                            EffectUtils.displayParticle(
-                                    Particle.ENCHANTED_HIT,
-                                    warlordsEntity.getLocation().add(0, 1.2, 0),
-                                    3,
-                                    .25,
-                                    .25,
-                                    .25,
-                                    0
-                            );
-                        }
-                    })
-            ) {
-                @Override
-                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * 1.2f;
-                }
-            });
+                    warlordsEntity,
+                    ChainLightning.class,
+                    new ChainLightning()
+            );
         }
         from.getCooldownManager().removeCooldownByName("Call of Thunder Buff");
+        List<FloatModifiable.FloatModifier> modifiers;
+        if (pveMasterUpgrade2) {
+            modifiers = from.getAbilitiesMatching(ChainLightning.class)
+                            .stream()
+                            .map(ability -> ability.getCooldown().addAdditiveModifier("Call of Thunder Buff", -25))
+                            .toList();
+        } else {
+            modifiers = Collections.emptyList();
+        }
         from.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Call of Thunder Buff",
                 "THUN",
@@ -193,6 +177,9 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                 from,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
+                },
+                cooldownManager -> {
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
                 8 * 20
         ) {
