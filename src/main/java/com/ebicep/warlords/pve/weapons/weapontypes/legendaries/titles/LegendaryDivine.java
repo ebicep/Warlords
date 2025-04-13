@@ -35,7 +35,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     public static final int DURATION = 45;
 
     public static final int ABILITY_DAMAGE_BOOST = 20;
-    public static final int ABILITY_DAMAGE_BOOST_PER_UPGRADE = 5;
+    public static final int ABILITY_ENERGY_COST_REDUCTION = 25;
+    public static final int ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE = 5;
     public static final int ABILITY_EPS = 15;
     public static final int ABILITY_EPS_PER_UPGRADE = 5;
 
@@ -62,6 +63,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
         final AtomicInteger targetsHit = new AtomicInteger(0);
         final AtomicInteger damageBoost = new AtomicInteger(0);
         final AtomicReference<RegularCooldown<LegendaryDivine>> cooldown = new AtomicReference<>(null);
+
+        float energyCostReduction = -(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel()) / 100f;
 
         player.getGame().registerEvents(new Listener() {
 
@@ -137,7 +140,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
                         for (AbstractAbility ability : player.getSpec().getAbilities()) {
                             if (ability.getEnergyCostValue() > 0) {
-                                modifiers.add(ability.getEnergyCost().addMultiplicativeModifierAdd("Divine", -.25f));
+                                modifiers.add(ability.getEnergyCost().addMultiplicativeModifierAdd("Divine", energyCostReduction));
                             }
                         }
                         player.getCooldownManager().addCooldown(new RegularCooldown<>(
@@ -157,7 +160,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         ) {
                             @Override
                             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * (1 + (ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel()) / 100f);
+                                return currentDamageValue * (1 + ABILITY_DAMAGE_BOOST / 100f);
                             }
 
                             @Override
@@ -181,9 +184,9 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
                         )
                         .append(Component.newline())
                         .append(Component.newline())
-                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain 25% energy cost reduction for all abilities, "))
-                        .append(formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"))
-                        .append(Component.text(" increased damage, and "))
+                        .append(Component.text("When at max stacks, shift for 1 second to consume all 3 stacks and gain "))
+                        .append(formatTitleUpgrade(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"))
+                        .append(Component.text(" energy cost reduction for all abilities, " + ABILITY_DAMAGE_BOOST + "% increased damage, and "))
                         .append(formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()))
                         .append(Component.text(" EPS for 6 seconds. Can be triggered every 40 seconds."));
     }
@@ -242,8 +245,8 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
         return Arrays.asList(
                 new Pair<>(
-                        formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(ABILITY_DAMAGE_BOOST + ABILITY_DAMAGE_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                        formatTitleUpgrade(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(ABILITY_ENERGY_COST_REDUCTION + ABILITY_ENERGY_COST_REDUCTION_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
                 new Pair<>(
                         formatTitleUpgrade(ABILITY_EPS + ABILITY_EPS_PER_UPGRADE * getTitleLevel()),
