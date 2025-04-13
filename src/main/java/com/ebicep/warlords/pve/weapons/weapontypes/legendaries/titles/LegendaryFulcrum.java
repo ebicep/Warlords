@@ -95,7 +95,7 @@ public class LegendaryFulcrum extends AbstractLegendaryWeapon implements GardenO
                 ) {
                     @Override
                     public float addEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick + EPS_BOOST;
+                        return energyGainPerTick + (EPS_BOOST / 20f);
                     }
 
                     @Override
