@@ -78,7 +78,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(SoulfireBeam.class)
                           .stream()
-                          .map(soulfireBeam -> soulfireBeam.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.7f))
+                          .map(soulfireBeam -> soulfireBeam.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.6f))
                           .toList();
         } else {
             modifiers = Collections.emptyList();
@@ -108,11 +108,11 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade && event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
+                if (event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
                     return currentDamageValue * 5;
                 }
                 if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
-                    return currentDamageValue * 1.4f;
+                    return currentDamageValue * 1.7f;
                 }
                 return currentDamageValue;
             }

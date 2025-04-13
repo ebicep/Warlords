@@ -206,10 +206,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         if (foundPlayer.isPresent()) {
             WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
-            if (pveMasterUpgrade) {
-                damageDecreasePerBounce = -10;
-            }
-            float damageMultiplier = 1 - Math.min(playersSize, 3) * damageDecreasePerBounce / 100f;
+            float damageMultiplier = 1 - Math.min(playersSize, pveMasterUpgrade ? Integer.MAX_VALUE : 3) * damageDecreasePerBounce / 100f;
 
             playersHit.add(hit);
             if (hit.onHorse()) {
@@ -257,6 +254,14 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                 .filter(totem -> totem.getArmorStand().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
                         && totem.isPlayerLookingAtTotem(warlordsPlayer))
                 .findFirst();
+    }
+
+    public float getDamageDecreasePerBounce() {
+        return damageDecreasePerBounce;
+    }
+
+    public void setDamageDecreasePerBounce(float damageDecreasePerBounce) {
+        this.damageDecreasePerBounce = damageDecreasePerBounce;
     }
 
     @Override

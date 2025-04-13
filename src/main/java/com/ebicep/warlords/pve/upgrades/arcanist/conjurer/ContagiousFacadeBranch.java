@@ -56,7 +56,7 @@ public class ContagiousFacadeBranch extends AbstractUpgradeBranch<ContagiousFaca
                 """
                         +20% Cooldown Reduction
                         
-                        When reactivating Contagious Facade, Increase EPS by 10 for 5 seconds and Poisonous Hex infliction now affects all enemies within the radius.
+                        When reactivating Contagious Facade, increase EPS by 10 for 5 seconds and Poisonous Hex infliction now affects all enemies within the radius.
                         """,
                 50000,
                 () -> {

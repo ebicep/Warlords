@@ -4,6 +4,9 @@ import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Bukkit;
@@ -16,10 +19,25 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends AbstractStrike.AbstractStrikeStats<T, R>> extends AbstractAbility implements WeaponAbilityIcon, HitBox, AbilityStats<T, R> {
+
+    public static void giveStrikePriority(WarlordsEntity from, WarlordsEntity target, int tickDuration) {
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Strike Priority",
+                null,
+                null,
+                null,
+                from,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {
+                },
+                tickDuration
+        ));
+    }
 
     private final FloatModifiable hitbox = new FloatModifiable(4.8f);
 
@@ -36,6 +54,24 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
                     .closestFirst(wp)
                     .requireLineOfSight(wp)
                     .lookingAtFirst(wp)
+                    .sorted((w1, w2) -> {
+                        Optional<RegularCooldown> w1StrikePriority = new CooldownFilter<>(w1, RegularCooldown.class)
+                                .filterCooldownName("Strike Priority")
+                                .filterCooldownFrom(wp)
+                                .findAny();
+                        Optional<RegularCooldown> w2StrikePriority = new CooldownFilter<>(w2, RegularCooldown.class)
+                                .filterCooldownName("Strike Priority")
+                                .filterCooldownFrom(wp)
+                                .findAny();
+                        if (w1StrikePriority.isPresent() && w2StrikePriority.isPresent()) {
+                            return 0;
+                        } else if (w1StrikePriority.isPresent()) {
+                            return -1;
+                        } else if (w2StrikePriority.isPresent()) {
+                            return 1;
+                        }
+                        return 0;
+                    })
                     .first(nearPlayer -> {
                         AbstractPlayerClass.sendRightClickPacket(wp);
                         playSoundAndEffect(nearPlayer.getLocation());

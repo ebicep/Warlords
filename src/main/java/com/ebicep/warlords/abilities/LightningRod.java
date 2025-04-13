@@ -164,7 +164,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         if (pveMasterUpgrade2) {
             modifiers = from.getAbilitiesMatching(ChainLightning.class)
                             .stream()
-                            .map(ability -> ability.getCooldown().addAdditiveModifier("Call of Thunder Buff", -25))
+                            .map(ability -> ability.getEnergyCost().addAdditiveModifier("Call of Thunder Buff", -25))
                             .toList();
         } else {
             modifiers = Collections.emptyList();

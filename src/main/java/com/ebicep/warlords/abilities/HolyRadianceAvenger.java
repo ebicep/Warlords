@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -66,11 +63,16 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     @Override
     public boolean chain(WarlordsEntity wp) {
         if (pveMasterUpgrade || pveMasterUpgrade2) {
-            for (WarlordsEntity circleTarget : PlayerFilter
+            for (WarlordsEntity markTarget : PlayerFilter
                     .entitiesAround(wp, 8, 8, 8)
                     .aliveEnemiesOf(wp)
             ) {
-                emitMarkRadiance(wp, circleTarget);
+                Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
+
+                EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
+                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
+
+                aoeMark(wp, markTarget);
             }
 
             return true;
@@ -88,64 +90,58 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
             }
             Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
-            // chain particles
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
             EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
 
-            RadianceData radianceData = new RadianceData();
-            markTarget.getCooldownManager().removeCooldown(RadianceData.class, false);
-            markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "AVE MARK",
-                    RadianceData.class,
-                    radianceData,
-                    wp,
-                    CooldownTypes.DEBUFF,
-                    cooldownManager -> {
-                    },
-                    markDuration * 20,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 10 == 0) {
-                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
-                        }
-                    })
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (pveMasterUpgrade) {
-                        if (event.getCause().equals("Avenger's Strike")) {
-                            return currentDamageValue * 1.4f;
-                        }
-                        return currentDamageValue;
-                    }
-                    return currentDamageValue;
-                }
-
-                @Override
-                public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick - energyDrainPerSecond / 20f;
-                }
-            });
-
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" Your ", NamedTextColor.GRAY))
-                    .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
-                    .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY))
-            );
-
-            markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                    .append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
-                    .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
-                    .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
-            );
+            mark(wp, markTarget);
 
             return true;
         }
         return false;
     }
 
-    private void emitMarkRadiance(WarlordsEntity giver, WarlordsEntity target) {
+    private void mark(WarlordsEntity wp, WarlordsEntity markTarget) {
         RadianceData radianceData = new RadianceData();
+        markTarget.getCooldownManager().removeCooldown(RadianceData.class, false);
+        markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "AVE MARK",
+                RadianceData.class,
+                radianceData,
+                wp,
+                CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                },
+                markDuration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
+                        EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
+                    }
+                })
+        ) {
+            @Override
+            public float addEnergyGainPerTick(float energyGainPerTick) {
+                return energyGainPerTick - energyDrainPerSecond / 20f;
+            }
+        });
+
+        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                .append(Component.text(" Your ", NamedTextColor.GRAY))
+                .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
+                .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY))
+        );
+
+        markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                .append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
+                .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
+                .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
+        );
+    }
+
+    private void aoeMark(WarlordsEntity giver, WarlordsEntity target) {
+        RadianceData radianceData = new RadianceData();
+        target.getCooldownManager().removeCooldownByName("Strike Priority");
+        AbstractStrike.giveStrikePriority(giver, target, markDuration * 20);
         target.getCooldownManager().removeCooldown(RadianceData.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -155,11 +151,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 giver,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
-                    if (pveMasterUpgrade2 && target.isDead() && radianceData.timesWrathReduced < 10) {
-                        radianceData.timesWrathReduced++;
-                        giver.getAbilitiesMatching(AvengersWrath.class).forEach(avengersWrath -> avengersWrath.subtractCurrentCooldown(.5f));
-                        playCooldownReductionEffect(target);
-                    }
                 },
                 markDuration * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -168,10 +159,14 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                     }
                 })
         ) {
+
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    return currentDamageValue * 1.15f;
+                if (pveMasterUpgrade && event.getCause().equals("Avenger's Strike")) {
+                    return currentDamageValue * 1.4f;
+                }
+                if (pveMasterUpgrade2) {
+                    return currentDamageValue * 1.2f;
                 }
                 return currentDamageValue;
             }

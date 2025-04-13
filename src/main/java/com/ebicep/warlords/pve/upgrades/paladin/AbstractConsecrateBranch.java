@@ -28,15 +28,15 @@ public abstract class AbstractConsecrateBranch<T extends AbstractConsecrate> ext
                 "Sanctify",
                 "Consecrate - Master Upgrade",
                 """
-                        +75% Damage
+                        +150% Damage
                         -30 Energy cost
                         +2 Additional blocks hit radius
                         +20% Cooldown reduction""",
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getConsecrateDamage();
-                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .75f);
-                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .75f);
+                    damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.50f);
+                    damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1.50f);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -30);
                     ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade Branch", 2);
                     ability.getCooldown().addMultiplicativeModifierMult("Sanctify", 0.8f);

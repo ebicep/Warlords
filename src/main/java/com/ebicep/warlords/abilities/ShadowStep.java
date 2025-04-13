@@ -166,7 +166,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         ) {
             @Override
             public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                return currentCritMultiplier * Math.min(2f * hit.size(), 20);
+                return currentCritMultiplier * convertToMultiplicationDecimal(Math.min(2f * hit.size(), 20));
             }
         });
     }

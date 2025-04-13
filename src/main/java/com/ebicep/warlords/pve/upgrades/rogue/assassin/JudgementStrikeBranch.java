@@ -53,8 +53,8 @@ public class JudgementStrikeBranch extends AbstractUpgradeBranch<JudgementStrike
                         """,
                 50000,
                 () -> {
-                    ability.getDamageValues().getStrikeDamage().min().addMultiplicativeModifierAdd("Master Upgrade Branch", .1f);
-                    ability.getDamageValues().getStrikeDamage().max().addMultiplicativeModifierAdd("Master Upgrade Branch", .1f);
+                    ability.getDamageValues().getStrikeDamage().min().addMultiplicativeModifierAdd("Master Upgrade Branch", .15f);
+                    ability.getDamageValues().getStrikeDamage().max().addMultiplicativeModifierAdd("Master Upgrade Branch", .15f);
                     ability.getHealValues().getStrikeHealing().value().addAdditiveModifier("Master Upgrade Branch", 100);
                     ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -10);
                     ability.setStrikeCritInterval(2);

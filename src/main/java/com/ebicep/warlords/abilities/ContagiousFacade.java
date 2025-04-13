@@ -247,7 +247,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                         ) {
                             @Override
                             public float addEnergyGainPerTick(float energyGainPerTick) {
-                                return 0.5f;
+                                return energyGainPerTick + 0.5f;
                             }
                         });
                     }

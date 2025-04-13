@@ -60,7 +60,7 @@ public class LightInfusionBranchAvenger extends AbstractUpgradeBranch<LightInfus
                 """
                         +2s Duration
                         
-                        For the duration of light infusion gain +10 energy per second and +20 energy per hit.
+                        For the duration of Light Infusion gain +10 energy per second and +20 energy per hit.
                         """,
                 50000,
                 () -> {

@@ -14,12 +14,16 @@ public class SeismicWaveBranchBerserker extends AbstractSeismicWaveBranch {
                 "Wild Wave",
                 "Seismic Wave - Master Upgrade",
                 """
-                        Increase the size of Seismic Wave by 150%. Enemies hit will be stunned for 1s. Enemies that are WOUNDED will take 30% more damage.
+                        Increase the size of Seismic Wave by 150%.
+                        Seismic knockback is reduced by 50%.
+                        
+                        After seismic wave ends the area affected becomes unstable causing enemies to take 723-906 damage per second within the area for 4s.
                         """,
                 50000,
                 () -> {
                     ability.setWaveLength((int) (ability.getWaveLength() * 2.5f));
                     ability.setWaveWidth((int) (ability.getWaveWidth() * 2.5f));
+                    ability.setVelocity(ability.getVelocity() * 0.6f);
                 }
         );
     }

@@ -28,14 +28,14 @@ public class EnergySeerBranchConjurer extends AbstractUpgradeBranch<EnergySeerCo
                         Remove energy loss.
                         +5s duration.
                         +20% damage bonus.
-                        +10 Energy.
+                        +20 Energy.
                         """,
                 50000,
                 () -> {
                     ability.setEpsDecrease(0);
                     ability.setTickDuration(ability.getTickDuration() + 100);
                     ability.setDamageIncrease(ability.getDamageIncrease() + 20);
-                    ability.setEnergyRestore(ability.getEnergyRestore() + 10);
+                    ability.setEnergyRestore(ability.getEnergyRestore() + 20);
                 }
         );
         masterUpgrade2 = new Upgrade(

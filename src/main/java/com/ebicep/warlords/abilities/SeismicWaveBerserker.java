@@ -1,13 +1,16 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
+import com.ebicep.warlords.abilities.internal.Damages;
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.berserker.SeismicWaveBranchBerserker;
 import com.ebicep.warlords.util.warlords.GameRunnable;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
+import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -28,23 +31,50 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, List<WarlordsEntity> playersHit, int i, WarlordsEntity waveTarget) {
+    protected void doWaveDamage(@Nonnull WarlordsEntity wp, List<List<Location>> fallingBlockLocations, UUID abilityUUID) {
+        super.doWaveDamage(wp, fallingBlockLocations, abilityUUID);
+        ArrayList<List<Location>> locations = new ArrayList<>(fallingBlockLocations);
+        new GameRunnable(wp.getGame()) {
+            int secondsElapsed = 0;
+
+            @Override
+            public void run() {
+                UUID uuid = UUID.randomUUID();
+                List<WarlordsEntity> playersHit = new ArrayList<>();
+                for (List<Location> fallingBlockLocation : locations) {
+                    for (Location loc : fallingBlockLocation) {
+                        for (WarlordsEntity waveTarget : PlayerFilter
+                                .entitiesAroundRectangle(loc, .6, 4, .6)
+                                .aliveEnemiesOf(wp)
+                                .excluding(playersHit)
+                                .closestFirst(wp)
+                        ) {
+                            playersHit.add(waveTarget);
+                            waveTarget.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(SeismicWaveBerserker.this)
+                                    .source(wp)
+                                    .min(723)
+                                    .max(906)
+                                    .crit(damageValues.waveDamage)
+                                    .uuid(uuid)
+                            );
+                        }
+                    }
+                }
+                secondsElapsed++;
+                if (secondsElapsed >= 4) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(20, 20);
+    }
+
+    @Override
+    protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, int i, WarlordsEntity waveTarget) {
         float multiplier = 1;
         if (pveMasterUpgrade) {
             multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
-        } else if (pveMasterUpgrade2) {
-            multiplier = waveTarget.getCooldownManager().hasCooldownFromName("Wounding Strike") ? 1.3f : 1;
-            if (waveTarget instanceof WarlordsNPC warlordsNPC) {
-                new GameRunnable(wp.getGame()) {
-                    @Override
-                    public void run() {
-                        if (warlordsNPC.getEntity().isOnGround()) {
-                            warlordsNPC.setStunTicks(20);
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(5, 0);
-            }
         }
         waveTarget.addInstance(InstanceBuilder
                 .damage()

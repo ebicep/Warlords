@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -93,7 +94,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 )
         ) {
             private final Set<UUID> abilitiesHit = new HashSet<>();
-            private int timesBerserkReduced = 0;
 
             @Override
             public boolean distinct() {
@@ -102,16 +102,35 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                float damageMultiplier = 1;
+                CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
                 if (pveMasterUpgrade) {
-                    if (event.getWarlordsEntity().getCooldownManager().hasCooldownFromName("Wounding Strike")) {
-                        return currentDamageValue * 1.3f;
+                    if (cooldownManager.hasCooldownFromName("Wounding Strike")) {
+                        damageMultiplier += 0.3f;
+                    }
+                } else if (pveMasterUpgrade2) {
+                    if (cooldownManager.hasCooldownFromName("Bleed")) {
+                        damageMultiplier += 0.3f;
                     }
                 }
-                return currentDamageValue;
+                return currentDamageValue * damageMultiplier;
             }
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (pveMasterUpgrade2 && event.getCause().equals("Wounding Strike") && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                    event.getWarlordsEntity().addInstance(InstanceBuilder
+                            .damage()
+                            .cause(event.getCause())
+                            .source(wp)
+                            .value(currentDamageValue * 0.2f)
+                            .showAsCrit(isCrit)
+                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING)
+                    );
+                }
+                if (event.getFlags().contains(InstanceFlags.NO_LUST_HEALING)) {
+                    return;
+                }
                 WarlordsEntity attacker = event.getSource();
                 float healAmount = currentDamageValue * convertToPercent(damageConvertPercent);
                 if (attacker.isInPve() && event.getUUID() != null) {
@@ -132,14 +151,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 });
             }
 
-            @Override
-            public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (pveMasterUpgrade2 && isKiller && timesBerserkReduced < 10) {
-                    timesBerserkReduced++;
-                    wp.getAbilitiesMatching(Berserk.class).forEach(berserk -> berserk.subtractCurrentCooldown(.5f));
-                    playCooldownReductionEffect(event.getWarlordsEntity());
-                }
-            }
         });
 
         return true;

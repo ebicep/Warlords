@@ -27,6 +27,7 @@ import java.util.List;
  * Random target is chosen from weighted list
  */
 public class TargetAggroWarlordsEntityGoal extends TargetGoal {
+
     protected LivingEntity targetEntity;
 
     public TargetAggroWarlordsEntityGoal(Mob entitycreature) {
@@ -72,7 +73,7 @@ public class TargetAggroWarlordsEntityGoal extends TargetGoal {
 
     @Override
     public boolean canContinueToUse() {
-        return mob.getTarget() != null && mob.getTarget().valid;
+        return mob.getTarget() != null && mob.getTarget().valid; // TODO stop if target is invis>?
     }
 
     @Override
