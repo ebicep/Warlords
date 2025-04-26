@@ -146,14 +146,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float newDamageValue;
-                float reduction = convertToDivisionDecimal(maxDamageReduction);
-                float multiplier = (((10 - hitCounter) / damageReductionPerBounce));
-                if (multiplier > reduction && pveMasterUpgrade) {
-                    multiplier = reduction;
-                }
-                newDamageValue = currentDamageValue * multiplier;
-                return newDamageValue;
+                return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce, maxDamageReduction));
             }
         });
     }
