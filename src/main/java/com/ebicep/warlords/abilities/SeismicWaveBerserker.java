@@ -33,6 +33,9 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     @Override
     protected void doWaveDamage(@Nonnull WarlordsEntity wp, List<List<Location>> fallingBlockLocations, UUID abilityUUID) {
         super.doWaveDamage(wp, fallingBlockLocations, abilityUUID);
+        if (!pveMasterUpgrade2) {
+            return;
+        }
         ArrayList<List<Location>> locations = new ArrayList<>(fallingBlockLocations);
         new GameRunnable(wp.getGame()) {
             int secondsElapsed = 0;
