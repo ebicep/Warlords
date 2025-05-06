@@ -97,18 +97,20 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
 
         });
 
-        for (WarlordsNPC we : PlayerFilterGeneric
-                .entitiesAround(wp, 5, 5, 5)
-                .aliveTeammatesOfExcludingSelf(wp)
-                .warlordsNPCs()
-        ) {
-            we.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(wp)
-                    .min(1045)
-                    .max(1425)
-            );
+        if (pveMasterUpgrade) {
+            for (WarlordsNPC we : PlayerFilterGeneric
+                    .entitiesAround(wp, 5, 5, 5)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .warlordsNPCs()
+            ) {
+                we.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(wp)
+                        .min(1045)
+                        .max(1425)
+                );
+            }
         }
 
         return true;
