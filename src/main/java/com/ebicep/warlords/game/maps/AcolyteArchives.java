@@ -44,7 +44,7 @@ public class AcolyteArchives extends GameMap {
                 1,
                 120 * SECOND,
                 "IllusionRiftEvent3",
-                3,
+                2,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }

@@ -50,7 +50,7 @@ public class ForgottenCodex extends GameMap {
                 2,
                 120 * SECOND,
                 "Forgotten",
-                3,
+                2,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }

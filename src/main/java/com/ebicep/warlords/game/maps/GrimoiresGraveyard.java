@@ -56,7 +56,7 @@ public class GrimoiresGraveyard extends GameMap {
                 2,
                 120 * SECOND,
                 "Grimoires",
-                3,
+                2,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }

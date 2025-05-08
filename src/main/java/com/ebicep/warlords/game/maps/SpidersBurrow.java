@@ -45,7 +45,7 @@ public class SpidersBurrow extends GameMap {
                 1,
                 120 * SECOND,
                 "IllusionRiftEvent4",
-                3,
+                2,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }

@@ -48,7 +48,7 @@ public class TheBorderlineOfIllusion extends GameMap {
                 1,
                 120 * SECOND,
                 "IllusionRiftEvent5",
-                1,
+                2,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }

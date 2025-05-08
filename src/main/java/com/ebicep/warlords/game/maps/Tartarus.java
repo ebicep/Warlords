@@ -56,7 +56,7 @@ public class Tartarus extends GameMap {
                 2,
                 120 * SECOND,
                 "Tartarus",
-                3,
+                2,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }
