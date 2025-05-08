@@ -13,8 +13,10 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.java.StringUtils;
+import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -89,18 +91,19 @@ public class GameStartCommand {
 
         if (GameMode.isPvE(entryBuilder.getGameMode())) {
             if (people.size() == 1 && !Permissions.isAdmin(player)) {
-                DatabaseManager.getPlayer(people.get(0).getUniqueId(), databasePlayer -> {
-                    if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {
-                        entryBuilder
-                                .setGameMode(GameMode.TUTORIAL)
-                                .setMap(GameMap.TUTORIAL_MAP)
-                                .setOnResult((result, game) -> {
-                                    if (game == null) {
-                                        people.get(0).sendMessage(Component.text("Unable to find a valid tutorial map. Report this.", NamedTextColor.RED));
-                                    }
-                                });
-                    }
-                });
+                DatabaseManager.getPlayer(people.getFirst().getUniqueId(), databasePlayer -> {
+                            if (databasePlayer.getPlays() <= 10 && !databasePlayer.getPveStats().isCompletedTutorial()) {
+                                entryBuilder
+                                        .setGameMode(GameMode.TUTORIAL)
+                                        .setMap(GameMap.TUTORIAL_MAP)
+                                        .setOnResult((result, game) -> {
+                                            if (game == null) {
+                                                people.get(0).sendMessage(Component.text("Unable to find a valid tutorial map. Report this.", NamedTextColor.RED));
+                                            }
+                                        });
+                            }
+                        }
+                );
             }
         }
 
@@ -137,6 +140,26 @@ public class GameStartCommand {
             player.sendMessage(Component.text("The event is over!", NamedTextColor.RED));
             return;
         }
+        GameManager.QueueEntryBuilder entryBuilder = Warlords.getGameManager().newEntry(Collections.emptyList());
+        entryEditor.accept(entryBuilder);
+        GameMap map = entryBuilder.getMap();
+        if (map == null) {
+            player.sendMessage(Component.text("Unable to find a valid map. Report this.", NamedTextColor.RED));
+            ChatUtils.MessageType.GAME.sendErrorMessage("Unable to find a valid map. (PVE EVENT) " + currentGameEvent);
+            return;
+        }
+        int numberOfMaps = map.getNumberOfMaps();
+        String fileName = map.getFileName();
+        MVWorldManager mvWorldManager = Warlords.multiverseCore.getMVWorldManager();
+        for (int i = 0; i < numberOfMaps; i++) {
+            String mapName = fileName + "-" + i;
+            if (mvWorldManager.hasUnloadedWorld(mapName, false)) {
+                ChatUtils.MessageType.GAME.sendErrorMessage("Map " + mapName + " is unloaded. Loading it now.");
+                mvWorldManager.loadWorld(mapName);
+                Warlords.getGameManager().addGameHolder(mapName, map);
+            }
+        }
+
         startGame(player, false, entryEditor.andThen(queueEntryBuilder -> {
                     queueEntryBuilder
                             .setGameMode(GameMode.EVENT_WAVE_DEFENSE)
@@ -152,62 +175,67 @@ public class GameStartCommand {
 
     public static void startGamePublic(Player player, GameMode gameMode) {
         startGame(player, false, queueEntryBuilder -> {
-            queueEntryBuilder
-                    .setGameMode(gameMode)
-                    .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
-                    .setPriority(0)
-                    .setOnResult((result, game) -> {
-                        if (game == null) {
-                            player.sendMessage(Component.text("Failed to join/create a game: " + result, NamedTextColor.RED));
-                        }
-                    });
-        });
+                    queueEntryBuilder
+                            .setGameMode(gameMode)
+                            .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
+                            .setPriority(0)
+                            .setOnResult((result, game) -> {
+                                if (game == null) {
+                                    player.sendMessage(Component.text("Failed to join/create a game: " + result, NamedTextColor.RED));
+                                }
+                            });
+                }
+        );
     }
 
     public static void startGameFromDebugMenu(Player player, boolean excludeStarter, Consumer<GameManager.QueueEntryBuilder> entryEditor) {
         startGame(player, excludeStarter, entryEditor.andThen(queueEntryBuilder -> queueEntryBuilder.setOnResult((result, game) -> {
-            if (game == null) {
-                sendDebugMessage(player, Component.text("Engine failed to find a game server suitable for your request:", NamedTextColor.RED));
-                sendDebugMessage(player, Component.text(result.toString(), NamedTextColor.GRAY));
-            } else {
-                sendDebugMessage(player,
-                        Component.text("Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") + " a game with the following parameters:",
-                                NamedTextColor.GREEN
-                        )
-                );
-                sendDebugMessage(player, Component.empty()
-                                                  .append(Component.text("- Gamemode: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(StringUtils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED)));
-                sendDebugMessage(player, Component.empty()
-                                                  .append(Component.text("- Map: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(StringUtils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED)));
-                sendDebugMessage(player, Component.empty()
-                                                  .append(Component.text("- Game Addons: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(game.getAddons()
-                                                                             .stream()
-                                                                             .map(e -> StringUtils.toTitleHumanCase(e.name()))
-                                                                             .collect(Collectors.joining(", ")), NamedTextColor.GOLD))
-                );
-                sendDebugMessage(player, Component.empty()
-                                                  .append(Component.text("- Min players: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(game.getMinPlayers(), NamedTextColor.RED))
-                );
+                    if (game == null) {
+                        sendDebugMessage(player, Component.text("Engine failed to find a game server suitable for your request:", NamedTextColor.RED));
+                        sendDebugMessage(player, Component.text(result.toString(), NamedTextColor.GRAY));
+                    } else {
+                        sendDebugMessage(player,
+                                Component.text("Engine " + (result == GameManager.QueueResult.READY_NEW ? "initiated" : "found") + " a game with the following parameters:",
+                                        NamedTextColor.GREEN
+                                )
+                        );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Gamemode: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(StringUtils.toTitleHumanCase(game.getGameMode()), NamedTextColor.RED))
+                        );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Map: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(StringUtils.toTitleHumanCase(game.getMap().getMapName()), NamedTextColor.RED))
+                        );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Game Addons: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getAddons()
+                                                                                     .stream()
+                                                                                     .map(e -> StringUtils.toTitleHumanCase(e.name()))
+                                                                                     .collect(Collectors.joining(", ")), NamedTextColor.GOLD
+                                                          ))
+                        );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Min players: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getMinPlayers(), NamedTextColor.RED))
+                        );
 
-                sendDebugMessage(player, Component.empty()
-                                                  .append(Component.text("- Max players: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(game.getMaxPlayers(), NamedTextColor.RED))
-                );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Max players: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getMaxPlayers(), NamedTextColor.RED))
+                        );
 
-                sendDebugMessage(player, Component.empty()
-                                                  .append(Component.text("- Open for public: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(game.acceptsPeople(), NamedTextColor.RED))
-                );
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Open for public: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.acceptsPeople(), NamedTextColor.RED))
+                        );
 
-                sendDebugMessage(player, Component.empty()
-                                                  .append(Component.text("- Game ID: ", NamedTextColor.GRAY))
-                                                  .append(Component.text(game.getGameId().toString(), NamedTextColor.RED))
-                );
-            }
-        })));
+                        sendDebugMessage(player, Component.empty()
+                                                          .append(Component.text("- Game ID: ", NamedTextColor.GRAY))
+                                                          .append(Component.text(game.getGameId().toString(), NamedTextColor.RED))
+                        );
+                    }
+                }))
+        );
     }
 }

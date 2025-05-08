@@ -74,6 +74,10 @@ repositories {
         url = uri("https://maven.enginehub.org/repo")
     }
 
+    maven {
+        url = uri("https://repo.onarandombox.com/content/groups/public/")
+    }
+
 }
 
 dependencies {
@@ -109,6 +113,8 @@ dependencies {
     compileOnlyApi("LibsDisguises:LibsDisguises:10.0.44") {
         exclude("org.spigotmc", "spigot")
     }
+
+    compileOnly("com.onarandombox.multiversecore:multiverse-core:4.3.16")
 }
 
 publishing {

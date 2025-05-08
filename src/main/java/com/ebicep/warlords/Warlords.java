@@ -41,6 +41,7 @@ import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
@@ -84,6 +85,7 @@ public class Warlords extends JavaPlugin {
     public static String serverIP;
     public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
+    public static MultiverseCore multiverseCore;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
@@ -393,6 +395,7 @@ public class Warlords extends JavaPlugin {
         ConfigUtil.loadConfigs(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
+        multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
