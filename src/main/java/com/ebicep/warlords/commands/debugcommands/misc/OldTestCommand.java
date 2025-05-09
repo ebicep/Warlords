@@ -1,6 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
@@ -116,7 +118,8 @@ public class OldTestCommand implements CommandExecutor {
 
         int level = 20;
         if (commandSender instanceof Player player) {
-
+            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
+            System.out.println(strikeDamage);
 
 //            TextComponent component = ComponentBuilder.create()
 //                                                      .text("HELLO")

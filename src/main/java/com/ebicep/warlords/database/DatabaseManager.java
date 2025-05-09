@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.events.GameEventsService;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GameService;
@@ -110,6 +111,7 @@ public class DatabaseManager {
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
             weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
             illusionVendorService = context.getBean("illusionVendorService", IllusionVendorService.class);
+            ConfigManager.init(warlordsDatabase);
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             return;
