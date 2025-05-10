@@ -32,7 +32,7 @@ public class DebugLogOption implements Option {
                     }
                 }
             }
-        }.runTaskLater(Warlords.getInstance(), 20 * 60 * 10);
+        }.runTaskLater(Warlords.getInstance(), 20 * 60 * 30);
     }
 
     public record DebugLog(UUID gameID, List<Component> debugLog) {
