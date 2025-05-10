@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -21,6 +22,8 @@ import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Comparator;
+import java.util.Map;
 
 public class EventNecronomiconGrimoire extends AbstractMob implements BossMinionMob {
 
@@ -76,6 +79,20 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 1.3f);
+        targetPlayer(option);
+    }
+
+    private void targetPlayer(PveOption option) {
+        option.getGame()
+              .warlordsPlayers().min(Comparator.comparing(warlordsPlayer -> {
+                  Map<SpecType, Integer> orderMap = Map.of(
+                          SpecType.HEALER, 0,
+                          SpecType.DAMAGE, 1,
+                          SpecType.TANK, 2
+                  );
+                  return orderMap.get(warlordsPlayer.getSpecClass().specType);
+              }))
+              .ifPresent(this::setTarget);
     }
 
     @Override
@@ -127,14 +144,6 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         return new LocationBuilder(warlordsNPC.getEyeLocation()).backward(.25f);
     }
 
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
-        super.onDeath(killer, deathLocation, option);
-        if (laser != null) {
-            laser.stop();
-        }
-    }
-
     private void smite() {
         if (targetWarlordsEntity == null) {
             return;
@@ -164,11 +173,20 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                     .value(2500)
             );
             smiteTickCooldown = 5 * 20;
+            targetPlayer(pveOption);
         });
         EffectUtils.playParticleLinkAnimation(targetWarlordsEntity.getLocation(), warlordsNPC.getLocation(), 255, 0, 0, 2, 2);
         EffectUtils.strikeLightning(targetWarlordsEntity.getLocation(), false);
         for (int i = 0; i < 3; i++) {
             Utils.playGlobalSound(targetWarlordsEntity.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 500, .6f);
+        }
+    }
+
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+        if (laser != null) {
+            laser.stop();
         }
     }
 

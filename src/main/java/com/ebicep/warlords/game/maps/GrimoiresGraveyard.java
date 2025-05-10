@@ -28,6 +28,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.Mob;
+import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventNecronomiconGrimoire;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventScriptedGrimoire;
 import com.ebicep.warlords.pve.mobs.events.libraryarchives.EventTheArchivist;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -39,10 +40,7 @@ import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.ebicep.warlords.util.warlords.GameRunnable.SECOND;
@@ -212,7 +210,7 @@ public class GrimoiresGraveyard extends GameMap {
                         .add(1, 3, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
                         .add(1, 3, Mob.EVENT_EMBELLISHED_GRIMOIRE)
                         .add(1, 2, Mob.EVENT_SCRIPTED_GRIMOIRE)
-                        .add(1, 2, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
+                        .add(1, 3, Mob.EVENT_NECRONOMICON_GRIMOIRE, necronomiconSpawnLocations)
                 )
                 .add(21, new RandomSpawnWave(18, 5 * SECOND, null)
                         .add(0.2, Mob.EVENT_UNPUBLISHED_GRIMOIRE)
@@ -235,6 +233,13 @@ public class GrimoiresGraveyard extends GameMap {
                             pveOption.spawnNewMob(archivist);
                         }
                         if (archivist == null || archivist.getWarlordsNPC().isAlive()) {
+                            if (ticksElapsed % 440 == 0) {
+                                List<Location> spawnLocations = new ArrayList<>(necronomiconSpawnLocations);
+                                Collections.shuffle(spawnLocations);
+                                for (int i = 0; i < 4; i++) {
+                                    pveOption.spawnNewMob(new EventNecronomiconGrimoire(spawnLocations.removeFirst()));
+                                }
+                            }
                             if (ticksElapsed % 340 == 0) {
                                 Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
                                     case 0 -> Mob.EVENT_ROUGE_GRIMOIRE;
@@ -248,10 +253,11 @@ public class GrimoiresGraveyard extends GameMap {
                                 pveOption.spawnNewMob(new EventScriptedGrimoire(getSpawnLocation()));
                             }
                         } else {
-                            if (archivist != null && pveOption instanceof WaveDefenseOption waveDefenseOption && pveOption.getMobs()
-                                                                                                                          .stream()
-                                                                                                                          .noneMatch(mob -> mob.getWarlordsNPC()
-                                                                                                                                               .getTeam() == Team.RED)) {
+                            if (archivist != null && pveOption instanceof WaveDefenseOption waveDefenseOption && pveOption
+                                    .getMobs()
+                                    .stream()
+                                    .noneMatch(mob -> mob.getWarlordsNPC().getTeam() == Team.RED)
+                            ) {
                                 waveDefenseOption.setSpawnCount(0);
                             }
                         }
@@ -282,12 +288,13 @@ public class GrimoiresGraveyard extends GameMap {
             public void register(@Nonnull Game game) {
                 super.register(game);
                 game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 2, "wave") {
-                    @Nonnull
-                    @Override
-                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                        return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
-                    }
-                });
+                            @Nonnull
+                            @Override
+                            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                                return Collections.singletonList(Component.text("Event: ").append(Component.text(getMapName(), NamedTextColor.GREEN)));
+                            }
+                        }
+                );
             }
 
             @Override
@@ -402,13 +409,14 @@ public class GrimoiresGraveyard extends GameMap {
         );
         options.add(new CoinGainOption()
                 .clearMobCoinValueAndSet("Bosses Killed", new LinkedHashMap<>() {{
-                    put("Rouge Grimoire", 1000L);
-                    put("Violette Grimoire", 1000L);
-                    put("Bleue Grimoire", 1000L);
-                    put("Orange Grimoire", 1000L);
-                    put("Necronomicon Grimoire", 1000L);
-                    put("The Archivist", 1000L);
-                }})
+                            put("Rouge Grimoire", 1000L);
+                            put("Violette Grimoire", 1000L);
+                            put("Bleue Grimoire", 1000L);
+                            put("Orange Grimoire", 1000L);
+                            put("Necronomicon Grimoire", 1000L);
+                            put("The Archivist", 1000L);
+                        }}
+                )
                 .playerCoinPerXSec(150, 10)
                 .guildCoinInsigniaConvertBonus(1000)
                 .guildCoinPerXSec(1, 3)
