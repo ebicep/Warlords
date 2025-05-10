@@ -10,9 +10,9 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.util.bukkit.Laser;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
+import fr.skytasul.guardianbeam.Laser;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -97,7 +97,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                     } else {
                         laser = new Laser.GuardianLaser(getLaserStartLocation(), targetWarlordsEntity.getEyeLocation(), 25, -1);
                     }
-                    laser.start();
+                    laser.start(Warlords.getInstance());
                 } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }

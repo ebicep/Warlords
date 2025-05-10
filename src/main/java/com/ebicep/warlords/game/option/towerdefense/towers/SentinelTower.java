@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Damages;
@@ -14,8 +15,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsTower;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
-import com.ebicep.warlords.util.bukkit.Laser;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import fr.skytasul.guardianbeam.Laser;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 
@@ -188,7 +189,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
                     } else {
                         laser = new Laser.GuardianLaser(topCenterLocation, target.getEyeLocation(), 25, -1);
                     }
-                    laser.start();
+                    laser.start(Warlords.getInstance());
                 } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
