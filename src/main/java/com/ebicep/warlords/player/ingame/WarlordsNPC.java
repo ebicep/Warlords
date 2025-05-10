@@ -229,7 +229,7 @@ public class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateHealth() {
-        if (isDead() || entity == null) {
+        if (isDead() || entity == null || !entity.isValid()) {
             return;
         }
         mobHologram.update();
