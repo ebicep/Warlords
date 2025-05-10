@@ -106,14 +106,14 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
     private void giveShield(WarlordsEntity from, WarlordsEntity to) {
         boolean hasSanctuary = from.getCooldownManager().hasCooldown(Sanctuary.class);
         int selfHexStacks = (int) new CooldownFilter<>(to, RegularCooldown.class)
-                .filterCooldownClass(FortifyingHex.class)
+                .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
                 .stream()
                 .count();
         if (selfHexStacks <= 0) {
             return;
         }
         if (!hasSanctuary) {
-            to.getCooldownManager().removeCooldown(FortifyingHex.class, false);
+            to.getCooldownManager().removeCooldown(FortifyingHex.FortifyingHexData.class, false);
         } else {
             from.doOnStaticAbility(Sanctuary.class,
                     sanctuary -> sanctuary.getAbilityStats().setHexesNotConsumed(sanctuary.getAbilityStats().getHexesNotConsumed() + selfHexStacks)

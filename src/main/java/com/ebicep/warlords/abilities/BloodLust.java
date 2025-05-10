@@ -62,12 +62,11 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
         Utils.playGlobalSound(wp.getLocation(), "warrior.bloodlust.activation", 2, 1);
 
-        BloodLust tempBloodLust = new BloodLust();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LUST",
                 BloodLust.class,
-                tempBloodLust,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

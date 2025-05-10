@@ -20,10 +20,6 @@ import java.util.Collections;
 
 public class LightInfusionProtector extends AbstractLightInfusion {
 
-    public LightInfusionProtector(float cooldown) {
-        super(cooldown);
-    }
-
     public LightInfusionProtector() {
         super(15.5f);
     }
@@ -35,12 +31,11 @@ public class LightInfusionProtector extends AbstractLightInfusion {
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
 
-        LightInfusionProtector tempLightInfusion = new LightInfusionProtector(cooldown.getBaseValue());
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",
                 LightInfusionProtector.class,
-                tempLightInfusion,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -74,7 +69,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     name,
                     "INF GRACE",
                     LightInfusionProtector.class,
-                    tempLightInfusion,
+                    null,
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -102,7 +97,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     "Chiron Light",
                     "CHIRON",
                     LightInfusionProtector.class,
-                    tempLightInfusion,
+                    null,
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {
@@ -129,7 +124,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                         "Chiron Light",
                         "CHIRON",
                         LightInfusionProtector.class,
-                        tempLightInfusion,
+                        null,
                         wp,
                         CooldownTypes.ABILITY,
                         cooldownManager -> {

@@ -1,8 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
@@ -115,12 +115,24 @@ public class OldTestCommand implements CommandExecutor {
                 return true;
             }
         }
-
         int level = 20;
         if (commandSender instanceof Player player) {
-            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
-            System.out.println(strikeDamage);
+//            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
+//            System.out.println(strikeDamage);
+            Document document = new Document();
+            for (Ability<?> value : Ability.ABILITY_MAP.values()) {
+                AbstractAbility ability = value.create.get();
+                System.out.println(ability.getClass().getSimpleName());
+                System.out.println(ability.getCooldownValue());
+                System.out.println(ability.getEnergyCostValue());
+                document.append(ability.getClass().getSimpleName(), new Document()
+                        .append("cooldown", ability.getCooldownValue())
+                        .append("energyCost", ability.getEnergyCostValue())
+                );
+//                break;
+            }
 
+            System.out.println(document.toJson());
 //            TextComponent component = ComponentBuilder.create()
 //                                                      .text("HELLO")
 //                                                      .text(ChatColor.GOLD + "WORLD")

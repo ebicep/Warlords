@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon, Duration, AbilityStats<WindfuryWeapon, WindfuryWeapon.WindfuryWeaponStats> {
 
-
     private final WindfuryWeaponStats stats = new WindfuryWeaponStats();
     private int tickDuration = 160;
     private float procChance = 35;
@@ -63,7 +62,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
 
         Utils.playGlobalSound(wp.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
 
-        WindfuryWeapon tempWindfuryWeapon = new WindfuryWeapon();
         wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
         CalculateSpeed.Modifier shreddingFurySpeed = new CalculateSpeed.Modifier(wp, "Shredding Fury", 0, Integer.MAX_VALUE, Collections.emptyList(), false);
         wp.addSpeedModifier(shreddingFurySpeed);
@@ -72,7 +70,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 name,
                 "FURY",
                 WindfuryWeapon.class,
-                tempWindfuryWeapon,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

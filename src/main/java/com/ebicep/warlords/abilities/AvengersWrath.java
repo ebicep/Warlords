@@ -58,13 +58,12 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
-        AvengersWrath tempAvengersWrath = new AvengersWrath();
         wp.getCooldownManager().removeCooldown(AvengersWrath.class, false);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "WRATH",
                 AvengersWrath.class,
-                tempAvengersWrath,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -90,7 +89,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                     return;
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
-                tempAvengersWrath.getAbilityStats().targetsStruckDuringWrath++;
+                stats.targetsStruckDuringWrath++;
                 EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE);
                 if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     flags.add(InstanceFlags.STRIKE_IN_CONS);
@@ -103,7 +102,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                             .value(event)
                             .flags(flags)
                     );
-                    tempAvengersWrath.getAbilityStats().extraTargetsStruck++;
+                    stats.extraTargetsStruck++;
                 }
                 for (WarlordsEntity wrathTarget : PlayerFilter
                         .entitiesAround(warlordsEntity, hitRadius, hitRadius, hitRadius)
@@ -113,7 +112,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                         .limit(maxTargets)
                 ) {
                     stats.extraTargetsStruck++;
-                    tempAvengersWrath.getAbilityStats().targetsStruckDuringWrath++;
+                    stats.targetsStruckDuringWrath++;
 
                     wrathTarget.addInstance(InstanceBuilder
                             .damage()
@@ -131,7 +130,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (isKiller) {
-                    tempAvengersWrath.getAbilityStats().targetsKilledDuringWrath++;
+                    stats.targetsKilledDuringWrath++;
                 }
             }
 

@@ -30,7 +30,6 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
     private final CapacitorTotemStats stats = new CapacitorTotemStats();
     private int tickDuration = 160;
     private double radius = 6;
-    private int playersHit = 0;
 
     public CapacitorTotem() {
         super("Capacitor Totem", 63, 20);
@@ -112,7 +111,6 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
             PlayerFilter.entitiesAround(totemStand.getLocation(), totemRadius, totemRadius, totemRadius)
                         .aliveEnemiesOf(wp)
                         .forEach(warlordsPlayer -> {
-                            playersHit++;
                             data.playersHit++;
                             warlordsPlayer.addInstance(InstanceBuilder
                                     .damage()
@@ -151,14 +149,6 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
 
     public void setRadius(double radius) {
         this.radius = radius;
-    }
-
-    public int getPlayersHit() {
-        return playersHit;
-    }
-
-    public void setPlayersHit(int playersHit) {
-        this.playersHit = playersHit;
     }
 
     @Override

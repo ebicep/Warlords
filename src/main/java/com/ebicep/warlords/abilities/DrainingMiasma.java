@@ -33,7 +33,6 @@ import java.util.List;
 
 public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<DrainingMiasma.DamageValues>, AbilityStats<DrainingMiasma, DrainingMiasma.DrainingMiasmaStats> {
 
-    protected int numberOfLeechProcd = 0;
     private final DamageValues damageValues = new DamageValues();
     private final DrainingMiasmaStats stats = new DrainingMiasmaStats();
     private int maxHealthDamage = 3;
@@ -102,7 +101,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             );
         }
 
-        DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
+        DrainingMiasmaData data = new DrainingMiasmaData();
         for (WarlordsEntity miasmaTarget : PlayerFilter
                 .entitiesAround(wp, getRadius(), getRadius(), getRadius())
                 .isAlive()
@@ -110,19 +109,19 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             stats.targetsHit++;
             if (miasmaTarget.isEnemy(wp)) {
                 Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20, "BASE");
-                miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasma.class, false);
+                miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasmaData.class, false);
                 miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                         name,
                         "MIAS",
-                        DrainingMiasma.class,
-                        tempDrainingMiasma,
+                        DrainingMiasmaData.class,
+                        data,
                         wp,
                         CooldownTypes.ABILITY,
                         cooldownManager -> {
                         },
                         cooldownManager -> {
                             cancelSlowness.run();
-                            if (tempDrainingMiasma.numberOfLeechProcd >= 150) {
+                            if (data.numberOfLeechProcd >= 150) {
                                 ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
                             }
                         },
@@ -172,8 +171,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                     miasmaTarget.getCooldownManager().addCooldown(new PermanentCooldown<>(
                             "Liquidizing Miasma",
                             "LIQ",
-                            DrainingMiasma.class,
-                            new DrainingMiasma(),
+                            DrainingMiasmaData.class,
+                            data,
                             wp,
                             CooldownTypes.DEBUFF,
                             cooldownManager -> {
@@ -209,7 +208,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                         leechSelfAmount / 100f,
                         leechAllyAmount / 100f,
                         warlordsDamageHealingFinalEvent -> {
-                            tempDrainingMiasma.numberOfLeechProcd++;
+                            data.numberOfLeechProcd++;
                         }
                 );
             } else {
@@ -217,8 +216,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                     miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                             "Toxic Immunity",
                             "MIAS",
-                            DrainingMiasma.class,
-                            tempDrainingMiasma,
+                            DrainingMiasmaData.class,
+                            data,
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {
@@ -329,6 +328,12 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         public List<Value> getValues() {
             return values;
         }
+
+    }
+
+    public static class DrainingMiasmaData {
+
+        private int numberOfLeechProcd = 0;
 
     }
 

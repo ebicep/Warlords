@@ -30,7 +30,6 @@ import java.util.function.Consumer;
 
 public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrike.ImpalingStrikeStats> implements Damages<ImpalingStrike.DamageValues> {
 
-    protected float healingDoneFromEnemyCarrier = 0;
     private final DamageValues damageValues = new DamageValues();
     private final ImpalingStrikeStats stats = new ImpalingStrikeStats();
     private int leechDuration = 5;
@@ -103,23 +102,24 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
 
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             additionalHit(pveMasterUpgrade ? 2 : 5, wp, nearPlayer, warlordsEntity -> {
-                warlordsEntity.addInstance(InstanceBuilder
-                        .damage()
-                        .ability(this)
-                        .source(wp)
-                        .value(damageValues.strikeDamage)
-                ).ifPresent(finalEvent -> {
-                    giveLeechCooldown(
-                            wp,
-                            nearPlayer,
-                            leechDuration,
-                            leechSelfAmount / 100f,
-                            leechAllyAmount / 100f,
-                            warlordsDamageHealingFinalEvent -> {
-                            }
-                    );
-                });
-            });
+                        warlordsEntity.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(this)
+                                .source(wp)
+                                .value(damageValues.strikeDamage)
+                        ).ifPresent(finalEvent -> {
+                            giveLeechCooldown(
+                                    wp,
+                                    nearPlayer,
+                                    leechDuration,
+                                    leechSelfAmount / 100f,
+                                    leechAllyAmount / 100f,
+                                    warlordsDamageHealingFinalEvent -> {
+                                    }
+                            );
+                        });
+                    }
+            );
         }
 
         return true;
@@ -134,13 +134,14 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
             Consumer<WarlordsDamageHealingFinalEvent> finalEvent
     ) {
         boolean inPve = wp.isInPve();
+        ImpalingStrikeData data = new ImpalingStrikeData();
         AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);
-        target.getCooldownManager().removeCooldown(ImpalingStrike.class, false);
+        target.getCooldownManager().removeCooldown(ImpalingStrikeData.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Leech Debuff",
                 "LCH",
-                ImpalingStrike.class,
-                new ImpalingStrike(),
+                ImpalingStrikeData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -172,7 +173,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
                     finalEvent.accept(warlordsDamageHealingFinalEvent);
                     totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
                     if (event.getWarlordsEntity().hasFlag()) {
-                        this.getCooldownObject().addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
+                        data.addHealingDoneFromEnemyCarrier(warlordsDamageHealingFinalEvent.getValue());
                     }
                 });
             }
@@ -191,20 +192,12 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         });
     }
 
-    public void addHealingDoneFromEnemyCarrier(float amount) {
-        this.healingDoneFromEnemyCarrier += amount;
-    }
-
     public int getLeechDuration() {
         return leechDuration;
     }
 
     public void setLeechDuration(int leechDuration) {
         this.leechDuration = leechDuration;
-    }
-
-    public float getHealingDoneFromEnemyCarrier() {
-        return healingDoneFromEnemyCarrier;
     }
 
     public float getLeechSelfAmount() {
@@ -242,6 +235,19 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
             return values;
         }
 
+    }
+
+    public static class ImpalingStrikeData {
+
+        private float healingDoneFromEnemyCarrier = 0;
+
+        public void addHealingDoneFromEnemyCarrier(float amount) {
+            this.healingDoneFromEnemyCarrier += amount;
+        }
+
+        public float getHealingDoneFromEnemyCarrier() {
+            return healingDoneFromEnemyCarrier;
+        }
     }
 
     public static class ImpalingStrikeStats extends AbstractStrikeStats<ImpalingStrike, ImpalingStrikeStats> {

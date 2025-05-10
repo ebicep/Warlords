@@ -34,8 +34,6 @@ import java.util.List;
 
 public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<LastStand, LastStand.LastStandStats> {
 
-
-    protected float amountPrevented = 0;
     private final LastStandStats stats = new LastStandStats();
     private int radius = 7;
     private int selfTickDuration = 240;
@@ -49,12 +47,6 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public LastStand(float cooldown, float startCooldown) {
         super("Last Stand", cooldown, 0, startCooldown);
-    }
-
-    public LastStand(int selfDamageReductionPercent, int teammateDamageReductionPercent) {
-        super("Last Stand", 56.38f, 40);
-        this.selfDamageReductionPercent = selfDamageReductionPercent;
-        this.teammateDamageReductionPercent = teammateDamageReductionPercent;
     }
 
     @Override
@@ -79,7 +71,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
         Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
 
-        LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
+        LastStandData data = new LastStandData();
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
             for (SeismicWaveDefender ability : wp.getAbilitiesMatching(SeismicWaveDefender.class)) {
@@ -93,8 +85,8 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "LAST",
-                LastStand.class,
-                tempLastStand,
+                LastStandData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -123,7 +115,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float afterValue = currentDamageValue * convertToDivisionDecimal(selfDamageReductionPercent);
-                tempLastStand.addAmountPrevented(currentDamageValue - afterValue);
+                data.addAmountPrevented(currentDamageValue - afterValue);
                 return afterValue;
             }
 
@@ -146,8 +138,8 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
             standTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "LAST",
-                    LastStand.class,
-                    tempLastStand,
+                    LastStandData.class,
+                    data,
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -160,13 +152,13 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     float newCurrentDamageValue = currentDamageValue * convertToDivisionDecimal(teammateDamageReductionPercent);
                     amountPrevented = currentDamageValue - newCurrentDamageValue;
-                    tempLastStand.addAmountPrevented(amountPrevented);
+                    data.addAmountPrevented(amountPrevented);
                     return newCurrentDamageValue;
                 }
 
                 @Override
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                    tempLastStand.addAmountPrevented(amountPrevented);
+                    data.addAmountPrevented(amountPrevented);
                     wp.addInstance(InstanceBuilder
                             .healing()
                             .ability(LastStand.this)
@@ -257,10 +249,6 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         return new LastStandBranch(abilityTree, this);
     }
 
-    public void addAmountPrevented(float amountPrevented) {
-        this.amountPrevented += amountPrevented;
-    }
-
     public int getSelfDamageReduction() {
         return selfDamageReductionPercent;
     }
@@ -275,10 +263,6 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public void setTeammateDamageReductionPercent(int teammateDamageReductionPercent) {
         this.teammateDamageReductionPercent = teammateDamageReductionPercent;
-    }
-
-    public float getAmountPrevented() {
-        return amountPrevented;
     }
 
     @Override
@@ -308,6 +292,19 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public LastStandStats getAbilityStats() {
         return stats;
+    }
+
+    public static class LastStandData {
+
+        private float amountPrevented = 0;
+
+        public void addAmountPrevented(float amountPrevented) {
+            this.amountPrevented += amountPrevented;
+        }
+
+        public float getAmountPrevented() {
+            return amountPrevented;
+        }
     }
 
     public static class LastStandStats extends AbstractAbilityStats<LastStand, LastStandStats> {

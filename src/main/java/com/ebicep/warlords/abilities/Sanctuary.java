@@ -126,7 +126,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 }
                                 int hexStacks = (int) new CooldownFilter<>(event.getWarlordsEntity(), RegularCooldown.class)
                                         .filterCooldownFrom(wp)
-                                        .filterCooldownClass(FortifyingHex.class)
+                                        .filterCooldownClass(FortifyingHex.FortifyingHexData.class)
                                         .stream()
                                         .count();
                                 if (hexStacks < FortifyingHex.getFromHex(wp).getMaxStacks()) {

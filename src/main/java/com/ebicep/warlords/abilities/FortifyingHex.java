@@ -43,21 +43,15 @@ import java.util.Optional;
 
 public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, FortifyingHex.FortifyingHexStats> implements WeaponAbilityIcon, Duration, Damages<FortifyingHex.DamageValues> {
 
-    protected FloatModifiable damageReduction = new FloatModifiable(4);
-
     private final DamageValues damageValues = new DamageValues();
     private final FortifyingHexStats stats = new FortifyingHexStats();
+    private FloatModifiable damageReduction = new FloatModifiable(4);
     private int maxEnemiesHit = 1;
     private int maxAlliesHit = 2;
     private int maxFullDistance = 40;
     private int tickDuration = 120;
     private int hexStacksPerHit = 1;
     private int maxStacks = 3;
-
-    public FortifyingHex(float damageReduction) {
-        this();
-        this.damageReduction = new FloatModifiable(damageReduction);
-    }
 
     public FortifyingHex() {
         super("Fortifying Hex", 0, 60, 2.5, 40, true);
@@ -163,16 +157,17 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         LocationBuilder location = new LocationBuilder(startingLocation)
                 .pitch(0);
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-            itemDisplay.setItemStack(new ItemStack(Material.WARPED_DOOR));
-            itemDisplay.setTeleportDuration(1);
-            itemDisplay.setBrightness(new Display.Brightness(15, 15));
-            itemDisplay.setTransformation(new Transformation(
-                    new Vector3f(),
-                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
-                    new Vector3f(1f),
-                    new AxisAngle4f()
-            ));
-        });
+                    itemDisplay.setItemStack(new ItemStack(Material.WARPED_DOOR));
+                    itemDisplay.setTeleportDuration(1);
+                    itemDisplay.setBrightness(new Display.Brightness(15, 15));
+                    itemDisplay.setTransformation(new Transformation(
+                            new Vector3f(),
+                            new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                            new Vector3f(1f),
+                            new AxisAngle4f()
+                    ));
+                }
+        );
 
         projectile.addTask(new InternalProjectileTask() {
             @Override
@@ -291,25 +286,25 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         String hexName = fromHex.getName();
         int maxStacks = fromHex.getMaxStacks();
         int duration = fromHex.getTickDuration();
-        to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHex.class, maxStacks);
-        FortifyingHex tempFortifyingHex = new FortifyingHex(fromHex.getDamageReduction().getCalculatedValue());
+        to.getCooldownManager().limitCooldowns(RegularCooldown.class, FortifyingHexData.class, maxStacks);
+        FortifyingHexData data = new FortifyingHexData(fromHex.getDamageReduction().getCalculatedValue());
         to.getCooldownManager().addCooldown(new RegularCooldown<>(
                 hexName,
                 "FHEX",
-                FortifyingHex.class,
-                tempFortifyingHex,
+                FortifyingHexData.class,
+                data,
                 from,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
                 },
                 duration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    tempFortifyingHex.getDamageReduction().tick();
+//                    data.getDamageReduction().tick();
                 })
         ) {
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - tempFortifyingHex.getDamageReduction().getCalculatedValue() / 100f);
+                return currentDamageValue * (1 - data.damageReduction / 100f);
             }
 
             @Override
@@ -456,6 +451,15 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
         public void setStacks(int stacks) {
             this.stacks = stacks;
+        }
+    }
+
+    public static class FortifyingHexData {
+
+        private final float damageReduction;
+
+        public FortifyingHexData(float damageReduction) {
+            this.damageReduction = damageReduction;
         }
     }
 

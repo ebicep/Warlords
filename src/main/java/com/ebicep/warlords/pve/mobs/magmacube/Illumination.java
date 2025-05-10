@@ -114,8 +114,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
 
-
-            wp.getCooldownManager().removeCooldown(LastStand.class, false);
+            wp.getCooldownManager().removeCooldown(LastStand.LastStandData.class, false);
 
             Location loc = wp.getLocation();
             EffectUtils.playSphereAnimation(loc, 9, Particle.EFFECT, 1);
@@ -125,12 +124,12 @@ public class Illumination extends AbstractMob implements AdvancedMob {
                     .aliveTeammatesOfExcludingSelf(wp)
             ) {
                 if (!ally.getName().equals("Illumination")) {
-                    ally.getCooldownManager().removeCooldown(LastStand.class, false);
+                    ally.getCooldownManager().removeCooldown(LastStand.LastStandData.class, false);
                     ally.getCooldownManager().addCooldown(new RegularCooldown<>(
                             name,
                             "",
-                            LastStand.class,
-                            new LastStand(),
+                            LastStand.LastStandData.class,
+                            null,
                             wp,
                             CooldownTypes.ABILITY,
                             cooldownManager -> {

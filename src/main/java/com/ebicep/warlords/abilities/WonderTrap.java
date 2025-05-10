@@ -37,14 +37,12 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
 //    }
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        WonderTrap tempTrap = new WonderTrap();
-
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
 
         Trap trap = new Trap(wp.getLocation(), wp, 200, 40, 3);
         trap.runTaskTimer(Warlords.getInstance(), 0, 0);
 
-        TextCooldown textCooldown = new TextCooldown("Wonder Trap", "TRAP", WonderTrap.class, tempTrap, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        TextCooldown textCooldown = new TextCooldown("Wonder Trap", "TRAP", WonderTrap.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, "2");
         wp.getCooldownManager().addCooldown(textCooldown);
 
@@ -154,13 +152,11 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
                                 //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
                                 //trapTarget.setVelocity(v);
 
-                                WonderTrap tempTrap = new WonderTrap();
-
                                 trapTarget.getCooldownManager().addRegularCooldown(
                                         "KB Increase",
                                         "KB",
                                         WonderTrap.class,
-                                        tempTrap,
+                                        null,
                                         trapOwner,
                                         CooldownTypes.DEBUFF,
                                         cooldownManager -> {

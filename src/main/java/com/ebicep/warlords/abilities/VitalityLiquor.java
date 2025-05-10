@@ -68,7 +68,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
         new FallingBlockWaveEffect(wp.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
 
-        VitalityLiquor tempVitalityLiquor = new VitalityLiquor();
         wp.addInstance(InstanceBuilder
                 .healing()
                 .ability(this)
@@ -99,7 +98,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                 enemy.addSpeedModifier(wp, "Vitality Slowness", -30, 20 * 3);
             }
             new CooldownFilter<>(enemy, RegularCooldown.class)
-                    .filterCooldownClass(ImpalingStrike.class)
+                    .filterCooldownClass(ImpalingStrike.ImpalingStrikeData.class)
                     .filterCooldownFrom(wp)
                     .findAny()
                     .ifPresent(regularCooldown -> {
@@ -130,7 +129,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                                             "Vitality Liquor",
                                             "VITAL",
                                             VitalityLiquor.class,
-                                            tempVitalityLiquor,
+                                            null,
                                             wp,
                                             CooldownTypes.BUFF,
                                             cooldownManager -> {

@@ -113,12 +113,11 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
             wp.setCurrentHealth(wp.getCurrentHealth() + healthIncrease);
         }
 
-        RemedicChains tempRemedicChain = new RemedicChains();
         LinkedCooldown<RemedicChains> remedicChainsCooldown = new LinkedCooldown<>(
                 name,
                 "REMEDIC",
                 RemedicChains.class,
-                tempRemedicChain,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 (cooldownManager, linkedCooldown) -> {

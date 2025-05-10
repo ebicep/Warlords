@@ -57,7 +57,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, name, speedBuff, tickDuration, "BASE");
 
-        Berserk tempBerserk = new Berserk();
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
@@ -73,7 +72,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 name,
                 "BERS",
                 Berserk.class,
-                tempBerserk,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

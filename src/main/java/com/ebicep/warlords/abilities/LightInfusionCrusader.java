@@ -31,12 +31,11 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
 
-        LightInfusionCrusader tempLightInfusion = new LightInfusionCrusader(cooldown.getBaseValue());
         wp.getCooldownManager().addRegularCooldown(
                 name,
                 "INF",
                 LightInfusionCrusader.class,
-                tempLightInfusion,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -72,7 +71,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
                         name,
                         "INF",
                         LightInfusionCrusader.class,
-                        tempLightInfusion,
+                        null,
                         wp,
                         CooldownTypes.ABILITY,
                         cooldownManager -> {

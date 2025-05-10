@@ -99,7 +99,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             }
         }.runTaskTimer(0, 1);
 
-        DivineBlessing tempDivineBlessing = new DivineBlessing();
+        DivineBlessingData data = new DivineBlessingData();
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
         Set<WarlordsEntity> healedLethal = new HashSet<>();
         List<FloatModifiable.FloatModifier> modifiers;
@@ -111,11 +111,11 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         } else {
             modifiers = Collections.emptyList();
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessing>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessingData>(
                 name,
                 "BLESS",
-                DivineBlessing.class,
-                tempDivineBlessing,
+                DivineBlessingData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -149,12 +149,12 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                             .stream()
                                             .count() >= maxStacks)
                                     .forEach(teammate -> {
-                                        teammate.getCooldownManager().removeCooldownByObject(tempDivineBlessing);
+                                        teammate.getCooldownManager().removeCooldownByObject(data);
                                         teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
                                                 name,
                                                 null,
-                                                DivineBlessing.class,
-                                                tempDivineBlessing,
+                                                DivineBlessingData.class,
+                                                data,
                                                 wp,
                                                 CooldownTypes.ABILITY,
                                                 cooldownManager -> {
@@ -337,6 +337,10 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         public List<Value> getValues() {
             return values;
         }
+
+    }
+
+    public static class DivineBlessingData {
 
     }
 

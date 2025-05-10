@@ -36,12 +36,11 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
 
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
 
-        LightInfusionAvenger tempLightInfusion = new LightInfusionAvenger(cooldown.getBaseValue());
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "INF",
                 LightInfusionAvenger.class,
-                tempLightInfusion,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

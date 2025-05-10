@@ -28,9 +28,7 @@ import java.util.*;
 
 public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<Inferno, Inferno.InfernoStats> {
 
-
     private final InfernoStats stats = new InfernoStats();
-    private int maxHits = 40;
     private int tickDuration = 360;
     private int critChanceIncrease = 30;
     private int critMultiplierIncrease = 30;
@@ -56,7 +54,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.inferno.activation", 2, 1);
 
-        Inferno tempInferno = new Inferno();
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade) {
             wp.getCooldownManager().removeCooldown(Inferno.class, false);
@@ -71,7 +68,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 name,
                 "INFR",
                 Inferno.class,
-                tempInferno,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -192,14 +189,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    public int getMaxHits() {
-        return maxHits;
-    }
-
-    public void setMaxHits(int maxHits) {
-        this.maxHits = maxHits;
     }
 
     @Override

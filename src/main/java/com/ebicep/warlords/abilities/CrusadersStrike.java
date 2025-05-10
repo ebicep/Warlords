@@ -136,7 +136,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
 
         new CooldownFilter<>(wp, RegularCooldown.class)
                 .filterCooldownFrom(wp)
-                .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.InspiringPresenceData.class)
                 .forEach(inspiringPresence -> inspiringPresence.addEnergyGivenFromStrikeAndPresence(stats.totalEnergyGiven - previousEnergyGiven));
 
         return true;

@@ -41,11 +41,6 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
         super("Ice Barrier", 47, 0);
     }
 
-    public IceBarrier(float damageReductionPercent) {
-        super("Ice Barrier", 47, 0);
-        this.damageReductionPercent = damageReductionPercent;
-    }
-
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
@@ -65,12 +60,11 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.icebarrier.activation", 2, 1);
 
-        IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "ICE",
                 IceBarrier.class,
-                tempIceBarrier,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

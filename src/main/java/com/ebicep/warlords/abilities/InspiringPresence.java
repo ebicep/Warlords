@@ -28,9 +28,6 @@ import java.util.List;
 
 public class InspiringPresence extends AbstractAbility implements OrangeAbilityIcon, Duration, HitBox, CanReduceCooldowns, AbilityStats<InspiringPresence, InspiringPresence.InspiringPresenceStats> {
 
-
-    protected List<WarlordsEntity> playersAffected = new ArrayList<>();
-    protected double energyGivenFromStrikeAndPresence = 0;
     private final InspiringPresenceStats stats = new InspiringPresenceStats();
     private int speedBuff = 30;
     private FloatModifiable radius = new FloatModifiable(10);
@@ -68,12 +65,12 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 .aliveTeammatesOfExcludingSelf(wp)
                 .toList();
 
-        InspiringPresence tempPresence = new InspiringPresence();
+        InspiringPresenceData data = new InspiringPresenceData();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "PRES",
-                InspiringPresence.class,
-                tempPresence,
+                InspiringPresenceData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -94,7 +91,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         ) {
             @Override
             public float addEnergyGainPerTick(float energyGainPerTick) {
-                tempPresence.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
+                data.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
                 return energyGainPerTick + energyPerSecond / 20f;
             }
 
@@ -113,7 +110,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
 
         for (WarlordsEntity presenceTarget : teammatesNear) {
             stats.targetsHit++;
-            tempPresence.getPlayersAffected().add(presenceTarget);
+            data.getPlayersAffected().add(presenceTarget);
             if (pveMasterUpgrade) {
                 resetCooldowns(presenceTarget);
             }
@@ -142,8 +139,8 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "PRES",
-                    InspiringPresence.class,
-                    tempPresence,
+                    InspiringPresenceData.class,
+                    data,
                     wp,
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
@@ -158,7 +155,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             ) {
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {
-                    tempPresence.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
+                    data.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
                     return energyGainPerTick + energyPerSecond / 20f;
                 }
             });
@@ -167,31 +164,17 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         return true;
     }
 
-    public void addEnergyGivenFromStrikeAndPresence(double energyGivenFromStrikeAndPresence) {
-        this.energyGivenFromStrikeAndPresence += energyGivenFromStrikeAndPresence;
-    }
 
     private void resetCooldowns(WarlordsEntity we) {
         for (AbstractAbility ability : we.getAbilities()) {
-            if (ability.getClass() == InspiringPresence.class) {
-                continue;
-            }
             ability.subtractCurrentCooldown(15);
         }
     }
 
-    public List<WarlordsEntity> getPlayersAffected() {
-        return playersAffected;
-    }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InspiringPresenceBranch(abilityTree, this);
-    }
-
-    @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade;
     }
 
     @Override
@@ -212,9 +195,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         this.energyPerSecond = energyPerSecond;
     }
 
-    public double getEnergyGivenFromStrikeAndPresence() {
-        return energyGivenFromStrikeAndPresence;
-    }
 
     public int getSpeedBuff() {
         return speedBuff;
@@ -232,6 +212,25 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     @Override
     public InspiringPresenceStats getAbilityStats() {
         return stats;
+    }
+
+    public static class InspiringPresenceData {
+
+        private final List<WarlordsEntity> playersAffected = new ArrayList<>();
+        private double energyGivenFromStrikeAndPresence = 0;
+
+        public void addEnergyGivenFromStrikeAndPresence(double energyGivenFromStrikeAndPresence) {
+            this.energyGivenFromStrikeAndPresence += energyGivenFromStrikeAndPresence;
+        }
+
+        public List<WarlordsEntity> getPlayersAffected() {
+            return playersAffected;
+        }
+
+        public double getEnergyGivenFromStrikeAndPresence() {
+            return energyGivenFromStrikeAndPresence;
+        }
+
     }
 
     public static class InspiringPresenceStats extends AbstractAbilityStats<InspiringPresence, InspiringPresenceStats> {

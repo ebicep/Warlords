@@ -150,7 +150,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     private void giveCallOfThunderEffect(WarlordsEntity from, List<WarlordsEntity> hit) {
-        LightningRod tempRod = new LightningRod();
         for (WarlordsEntity warlordsEntity : hit) {
             ChainLightning.giveShockedEffect(
                     from,
@@ -173,7 +172,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
                 "Call of Thunder Buff",
                 "THUN",
                 LightningRod.class,
-                tempRod,
+                null,
                 from,
                 CooldownTypes.BUFF,
                 cooldownManager -> {

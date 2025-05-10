@@ -251,8 +251,8 @@ public class InstanceManager {
                     warlordsEntity.playHurtAnimation(attacker);
                 }
 
-                for (OrderOfEviscerate orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
-                        .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.class)
+                for (OrderOfEviscerate.OrderOfEviscerateData orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.OrderOfEviscerateData.class)
                         .toList()
                 ) {
                     orderOfEviscerate.addAndCheckDamageThreshold(damageValue, attacker);

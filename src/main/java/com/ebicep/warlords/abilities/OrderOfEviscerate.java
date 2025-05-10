@@ -36,17 +36,12 @@ import java.util.Objects;
 
 public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats> {
 
-
-    protected float damageDoneWithOrder = 0;
-    protected int mobsKilledWithOrder = 0;
     private final OrderOfEviscerateStats stats = new OrderOfEviscerateStats();
     private int tickDuration = 160;
-    private float damageThreshold = 0;
     private float maxDamageThreshold = 600;
     private float vulnerableDamageBonus = 20;
     private float backstabDamageBonus = 10;
     private int speedBuff = 40;
-    private WarlordsEntity markedPlayer;
 
     public OrderOfEviscerate() {
         super("Order of Eviscerate", 50, 60);
@@ -106,13 +101,13 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", speedBuff, tickDuration, "BASE");
 
-        wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class, false);
-        OrderOfEviscerate tempOrderOfEviscerate = new OrderOfEviscerate();
+        wp.getCooldownManager().removeCooldown(OrderOfEviscerateData.class, false);
+        OrderOfEviscerateData data = new OrderOfEviscerateData(maxDamageThreshold);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Order of Eviscerate",
                 "ORDER",
-                OrderOfEviscerate.class,
-                tempOrderOfEviscerate,
+                OrderOfEviscerateData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -121,7 +116,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     cancelSpeed.run();
                     removeCloak(wp, true);
                     if (inPve) {
-                        if (tempOrderOfEviscerate.damageDoneWithOrder >= 15000 && tempOrderOfEviscerate.mobsKilledWithOrder >= 6) {
+                        if (data.damageDoneWithOrder >= 15000 && data.mobsKilledWithOrder >= 6) {
                             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.SERIAL_KILLER);
                         }
                     }
@@ -140,21 +135,21 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 //mark message here so it displays before damage
                 WarlordsEntity victim = event.getWarlordsEntity();
                 if (victim != wp) {
-                    if (!Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), victim)) {
+                    if (!Objects.equals(data.getMarkedPlayer(), victim)) {
                         wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
                                 .append(Component.text(" You have ", NamedTextColor.GRAY))
                                 .append(Component.text("marked ", NamedTextColor.YELLOW))
                                 .append(Component.text(victim.getName() + "!", NamedTextColor.GRAY))
                         );
                     }
-                    tempOrderOfEviscerate.setMarkedPlayer(victim);
+                    data.setMarkedPlayer(victim);
                 }
             }
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (
-                        Objects.equals(tempOrderOfEviscerate.getMarkedPlayer(), event.getWarlordsEntity()) &&
+                        Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity()) &&
                                 !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())
                 ) {
                     stats.numberOfBackstabs++;
@@ -166,17 +161,17 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                tempOrderOfEviscerate.addAndCheckDamageThreshold(currentDamageValue, wp);
+                data.addAndCheckDamageThreshold(currentDamageValue, wp);
             }
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                tempOrderOfEviscerate.damageDoneWithOrder += currentDamageValue;
+                data.damageDoneWithOrder += currentDamageValue;
             }
 
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
-                if (!Objects.equals(event.getWarlordsEntity(), tempOrderOfEviscerate.getMarkedPlayer())) {
+                if (!Objects.equals(event.getWarlordsEntity(), data.getMarkedPlayer())) {
                     return;
                 }
                 if (!inPve) {
@@ -188,7 +183,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                     stats.numberOfFullResets++;
 
                     if (inPve) {
-                        tempOrderOfEviscerate.mobsKilledWithOrder++;
+                        data.mobsKilledWithOrder++;
                     }
 
                     new GameRunnable(wp.getGame()) {
@@ -212,8 +207,8 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                                             "Cloaked Engagement",
                                             "ENGAGE",
-                                            OrderOfEviscerate.class,
-                                            new OrderOfEviscerate(),
+                                            OrderOfEviscerateData.class,
+                                            null,
                                             wp,
                                             CooldownTypes.BUFF,
                                             cooldownManager -> {
@@ -297,22 +292,11 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         }
     }
 
-    public WarlordsEntity getMarkedPlayer() {
-        return markedPlayer;
-    }
-
-    public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
-        addToDamageThreshold(damageValue);
-        if (getDamageThreshold() >= maxDamageThreshold) {
-            OrderOfEviscerate.removeCloak(warlordsPlayer, false);
-        }
-    }
-
-    public static RegularCooldown<OrderOfEviscerate> giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
+    public static RegularCooldown<OrderOfEviscerateData> giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
         wp.getCooldownManager().removeCooldownByName("Cloaked");
-        RegularCooldown<OrderOfEviscerate> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
+        RegularCooldown<OrderOfEviscerateData> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
                 "INVIS",
-                OrderOfEviscerate.class,
+                OrderOfEviscerateData.class,
                 null,
                 wp,
                 CooldownTypes.BUFF,
@@ -352,16 +336,10 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         return orderOfEviscerateCooldown;
     }
 
-    public void addToDamageThreshold(float damageThreshold) {
-        this.damageThreshold += damageThreshold;
-    }
 
-    public float getDamageThreshold() {
-        return damageThreshold;
-    }
-
-    public void setMarkedPlayer(WarlordsEntity markedPlayer) {
-        this.markedPlayer = markedPlayer;
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new OrderOfEviscerateBranch(abilityTree, this);
     }
 
     public float getVulnerableDamageBonus() {
@@ -370,11 +348,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     public void setVulnerableDamageBonus(float vulnerableDamageBonus) {
         this.vulnerableDamageBonus = vulnerableDamageBonus;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new OrderOfEviscerateBranch(abilityTree, this);
     }
 
     @Override
@@ -390,6 +363,43 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     @Override
     public OrderOfEviscerateStats getAbilityStats() {
         return stats;
+    }
+
+    public static class OrderOfEviscerateData {
+
+        private final float maxDamageThreshold;
+        private float damageDoneWithOrder = 0;
+        private int mobsKilledWithOrder = 0;
+        private float damageThreshold = 0;
+        private WarlordsEntity markedPlayer;
+
+        public OrderOfEviscerateData(float maxDamageThreshold) {
+            this.maxDamageThreshold = maxDamageThreshold;
+        }
+
+        public void addAndCheckDamageThreshold(float damageValue, WarlordsEntity warlordsPlayer) {
+            addToDamageThreshold(damageValue);
+            if (getDamageThreshold() >= maxDamageThreshold) {
+                OrderOfEviscerate.removeCloak(warlordsPlayer, false);
+            }
+        }
+
+        public void addToDamageThreshold(float damageThreshold) {
+            this.damageThreshold += damageThreshold;
+        }
+
+        public float getDamageThreshold() {
+            return damageThreshold;
+        }
+
+        public WarlordsEntity getMarkedPlayer() {
+            return markedPlayer;
+        }
+
+        public void setMarkedPlayer(WarlordsEntity markedPlayer) {
+            this.markedPlayer = markedPlayer;
+        }
+
     }
 
     public static class OrderOfEviscerateStats extends AbstractAbilityStats<OrderOfEviscerate, OrderOfEviscerateStats> {

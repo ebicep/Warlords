@@ -226,7 +226,7 @@ public enum ChallengeAchievements implements Achievement {
                                    .enemiesOf(warlordsEntity)
                                    .filter(enemy -> new CooldownFilter<>(enemy, RegularCooldown.class)
                                            .filterCooldownFrom(warlordsEntity)
-                                           .filterCooldownClassAndMapToObjectsOfClass(ImpalingStrike.class)
+                                           .filterCooldownClassAndMapToObjectsOfClass(ImpalingStrike.ImpalingStrikeData.class)
                                            .anyMatch(impalingStrike -> impalingStrike.getHealingDoneFromEnemyCarrier() >= 3000))
                                    .findAny()
                                    .isPresent();
@@ -326,7 +326,7 @@ public enum ChallengeAchievements implements Achievement {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent != null && lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
                     return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.InspiringPresenceData.class)
                             .anyMatch(inspiringPresence -> inspiringPresence.getPlayersAffected().size() >= 4);
                 }
                 return false;
@@ -620,7 +620,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.InspiringPresenceData.class)
                         .anyMatch(inspiringPresence -> inspiringPresence.getEnergyGivenFromStrikeAndPresence() >= 800);
             }
     ),
@@ -659,7 +659,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(LastStand.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(LastStand.LastStandData.class)
                         .anyMatch(lastStand -> lastStand.getAmountPrevented() >= 30000);
             }
     ),

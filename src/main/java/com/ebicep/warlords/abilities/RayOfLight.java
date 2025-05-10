@@ -85,7 +85,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
                 .filterCooldownClass(MercifulHex.class)
                 .stream()
                 .count();
-        boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.class);
+        boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class);
         if (!hasDivineBlessing) {
             hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
         } else {

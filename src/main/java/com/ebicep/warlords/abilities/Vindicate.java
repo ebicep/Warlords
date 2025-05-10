@@ -80,8 +80,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
         EffectUtils.playHelixAnimation(wp.getLocation(), radius, 230, 130, 5);
 
-        Vindicate tempVindicate = new Vindicate();
-        tempVindicate.setPveMasterUpgrade2(pveMasterUpgrade2);
         for (WarlordsEntity vindicateTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
@@ -104,14 +102,14 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             // Vindicate Immunity
             vindicateTarget.getSpeed().removeSlownessModifiers();
             stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
-            giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, tempVindicate, vindTickDuration);
+            giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, null, vindTickDuration);
         }
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Vindicate Resistance",
                 "VIND RESIST",
                 Vindicate.class,
-                tempVindicate,
+                null,
                 wp,
                 CooldownTypes.BUFF,
                 cooldownManager -> {
@@ -153,7 +151,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
         // remove other instances of vindicate buff to override
         target.getCooldownManager().removeCooldownByName("Vindicate");
-        boolean vindPveMaster2 = cooldownObject instanceof Vindicate vindicate && vindicate.pveMasterUpgrade2;
+        boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Vindicate",
                 "VIND",
