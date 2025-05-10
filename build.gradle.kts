@@ -115,6 +115,8 @@ dependencies {
     }
 
     compileOnly("com.onarandombox.multiversecore:multiverse-core:4.3.16")
+
+    implementation("fr.skytasul:guardianbeam:2.4.0")
 }
 
 publishing {
