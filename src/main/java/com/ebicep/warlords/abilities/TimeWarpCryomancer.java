@@ -86,6 +86,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                             .forEach(enemy -> {
                                 int duration = 100;
                                 enemy.addSpeedModifier(wp, "Freezing Cold", -80, duration);
+                                enemy.getCooldownManager().removeCooldownByName("Freezing Cold");
                                 enemy.getCooldownManager().addCooldown(new RegularCooldown<>(
                                         "Freezing Cold",
                                         "COLD",
