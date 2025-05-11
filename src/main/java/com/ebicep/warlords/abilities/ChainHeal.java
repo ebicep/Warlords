@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractChain;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -32,7 +29,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
     private float cooldownReductionInSeconds = 2.5f;
 
     public ChainHeal() {
-        super("Chain Heal", 8, 40, 15, 10, 1);
+        super(AbstractAbilityBuilder.create("Chain Heal").pvp());
     }
 
     @Override

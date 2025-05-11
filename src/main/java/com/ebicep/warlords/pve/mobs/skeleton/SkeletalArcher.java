@@ -23,7 +23,18 @@ import java.util.function.Consumer;
 public class SkeletalArcher extends AbstractMob implements EliteMob {
 
     public SkeletalArcher(Location spawnLocation) {
-        this(spawnLocation, "Skeletal Archer", 5000, 0f, 10, 0, 0, new Fireball(3));
+        this(
+                spawnLocation,
+                "Skeletal Archer",
+                5000,
+                0f,
+                10,
+                0,
+                0,
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(3f);
+                }}
+        );
     }
 
     public SkeletalArcher(

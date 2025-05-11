@@ -39,11 +39,11 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
-        this(8, 0);
+        this(AbstractAbilityBuilder.create("Incendiary Curse").pvp());
     }
 
-    public IncendiaryCurse(float cooldown, float startCooldown) {
-        super("Incendiary Curse", cooldown, 60, startCooldown);
+    public IncendiaryCurse(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

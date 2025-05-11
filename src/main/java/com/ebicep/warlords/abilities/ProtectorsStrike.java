@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -36,7 +33,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
     private double strikeRadius = 10;
 
     public ProtectorsStrike() {
-        super("Protector's Strike", 0, 90);
+        super(AbstractAbilityBuilder.create("Protector's Strike").pvp());
     }
 
     @Override

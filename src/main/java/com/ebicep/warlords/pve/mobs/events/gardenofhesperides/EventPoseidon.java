@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -58,7 +59,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthenSpike(6, 6) {
+                new EarthenSpike(AbstractAbilityBuilder.create("Earthen Spike").pve().cooldown(6).startCooldown(6)) {
                     {
                         this.getDamageValues().getSpikeDamage().min().setBaseValue(600);
                         this.getDamageValues().getSpikeDamage().max().setBaseValue(700);
@@ -116,7 +117,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         }
                     }
                 },
-                new Boulder(5, 5) {
+                new Boulder(AbstractAbilityBuilder.create("Boulder").pve().cooldown(5).startCooldown(5)) {
                     {
                         this.getDamageValues().getBoulderDamage().min().setBaseValue(551);
                         this.getDamageValues().getBoulderDamage().max().setBaseValue(773);
@@ -136,11 +137,12 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         return speed;
                     }
                 },
-                new GroundSlamBerserker(10, 10) {{
+                new GroundSlamBerserker(10) {{
+                    this.getCooldown().setBaseValue(10f);
                     this.getDamageValues().getSlamDamage().min().setBaseValue(558);
                     this.getDamageValues().getSlamDamage().max().setBaseValue(616);
                 }},
-                new LastStand(60f, 60)
+                new LastStand(AbstractAbilityBuilder.create("Last Stand").pve().cooldown(60).startCooldown(60))
         );
     }
 

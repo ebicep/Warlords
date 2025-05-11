@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -45,7 +46,7 @@ public class SpawnSouls extends AbstractSpawnMobAbility {
     private Mob randomSoulToSpawn;
 
     public SpawnSouls(float cooldown) {
-        super("Spawn Souls", cooldown, true);
+        super(AbstractAbilityBuilder.create("Spawn Souls").pve().cooldown(cooldown).energyCost(0).startNoCooldown());
     }
 
     @Override

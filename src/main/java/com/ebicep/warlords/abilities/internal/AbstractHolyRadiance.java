@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -30,14 +31,9 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
     private final FloatModifiable radius;
     private final AbstractHolyRadianceStats stats = new AbstractHolyRadianceStats();
 
-    public AbstractHolyRadiance(
-            String name,
-            float cooldown,
-            float energyCost,
-            int radius
-    ) {
-        super(name, cooldown, energyCost);
-        this.radius = new FloatModifiable(radius);
+    public AbstractHolyRadiance(AbstractAbilityBuilder builder) {
+        super(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("radius"), float.class));
     }
 
     @Override

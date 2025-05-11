@@ -18,12 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class LightInfusionAvenger extends AbstractLightInfusion {
 
-    public LightInfusionAvenger(float cooldown) {
-        super(cooldown);
-    }
-
     public LightInfusionAvenger() {
-        super(15.5f);
+        super();
     }
 
     @Override

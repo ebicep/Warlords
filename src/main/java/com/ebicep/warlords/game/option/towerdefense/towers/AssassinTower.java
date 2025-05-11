@@ -1,9 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -110,7 +107,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", 5, 0);
+            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 
@@ -224,7 +221,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
             private static final double GRAVITY = -0.007;
 
             public AssassinRangeAttack() {
-                super("Range Attack", 3, 0);
+                super(AbstractAbilityBuilder.create("Range Attack").td().cooldown(3).energyCost(0));
             }
 
             @Override

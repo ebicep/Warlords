@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -127,7 +128,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
         private int maxSpawnCount = 2;
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", Float.MAX_VALUE, 0, false);
+            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(Float.MAX_VALUE).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 

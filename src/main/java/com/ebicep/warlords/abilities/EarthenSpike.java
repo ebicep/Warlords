@@ -50,11 +50,11 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     private double verticalVelocity = .625;
 
     public EarthenSpike() {
-        this(0, 0);
+        super(AbstractAbilityBuilder.create("Earthen Spike").pvp());
     }
 
-    public EarthenSpike(float cooldown, float startCooldown) {
-        super("Earthen Spike", cooldown, 100, startCooldown);
+    public EarthenSpike(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

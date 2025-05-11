@@ -266,8 +266,9 @@ public class EventMithra extends AbstractMob implements BossMob {
     }
 
     private void groundSlam() {
-        AbstractGroundSlam groundSlam = new AbstractGroundSlam(0, 0) {
+        AbstractGroundSlam groundSlam = new AbstractGroundSlam() {
             {
+                this.getCooldown().setBaseValue(0f);
                 setTrueDamage(true);
                 getHitBoxRadius().setBaseValue(9);
             }

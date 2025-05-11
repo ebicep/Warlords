@@ -31,7 +31,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
     private final Map<InternalProjectile, Integer> maxStacksHit = new HashMap<>();
 
     public SoulfireBeam() {
-        super("Soulfire Beam", 10, 10, 30, 30, false);
+        super(AbstractAbilityBuilder.create("Soulfire Beam").pvp());
         this.maxTicks = 0;
     }
 

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.HealingRain;
 import com.ebicep.warlords.abilities.LightningBolt;
 import com.ebicep.warlords.abilities.LightningRod;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -54,12 +55,12 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new LightningBolt(3, 3),
-                new ChainLightning(7, 7) {{
+                new LightningBolt(AbstractAbilityBuilder.create("Lightning Bolt").pve().cooldown(3).startCooldown(3)),
+                new ChainLightning(AbstractAbilityBuilder.create("Chain Lightning").pve().cooldown(7).startCooldown(7)) {{
                     this.setTickDuration(40);
                 }},
                 new ZeusLightningRod(),
-                new HealingRain(60, 60) {{
+                new HealingRain(AbstractAbilityBuilder.create("Healing Rain").pve().cooldown(60).startCooldown(60)) {{
                     this.setPveMasterUpgrade(true);
                     this.setTickDuration(320);
                 }}
@@ -152,7 +153,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
         private float damageBuff = 1.15f;
 
         public ZeusLightningRod() {
-            super(15, 15);
+            super(AbstractAbilityBuilder.create("Lightning Rod").pve().cooldown(15).startCooldown(15));
             this.getHealValues().getHealthRestore().value().setBaseValue(0);
         }
 

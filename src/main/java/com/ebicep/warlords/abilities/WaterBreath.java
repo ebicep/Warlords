@@ -45,7 +45,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     private double velocity = 1.1;
 
     public WaterBreath() {
-        super("Water Breath", 8f, 60);
+        super(AbstractAbilityBuilder.create("Water Breath").pvp());
     }
 
     @Override

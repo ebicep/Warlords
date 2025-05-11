@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -38,7 +39,7 @@ public class ThunderCloudAbility extends AbstractPveAbility {
     }
 
     public ThunderCloudAbility(float cooldown) {
-        super("Thunder Cloud", cooldown, 50);
+        super(AbstractAbilityBuilder.create("Thunder Cloud").pve().cooldown(cooldown).energyCost(50));
     }
 
     @Override

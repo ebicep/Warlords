@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -40,11 +37,11 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     private int cooldownReduction = 2;
 
     public LightningBolt() {
-        this(0, 0);
+        super(AbstractAbilityBuilder.create("Lightning Bolt").pvp());
     }
 
-    public LightningBolt(float cooldown, float startCooldown) {
-        super("Lightning Bolt", cooldown, 60, 2.5, 60, false, startCooldown);
+    public LightningBolt(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

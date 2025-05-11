@@ -45,7 +45,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     private int puddleTickDuration = 80;
 
     public SoothingElixir() {
-        super("Soothing Elixir", 7, 60);
+        super(AbstractAbilityBuilder.create("Soothing Elixir").pvp());
     }
 
     @Override

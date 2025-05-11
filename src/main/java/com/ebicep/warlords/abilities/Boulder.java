@@ -35,11 +35,11 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     private double velocity = 1.15;
 
     public Boulder() {
-        this(7, 0);
+        super(AbstractAbilityBuilder.create("Boulder").pvp());
     }
 
-    public Boulder(float cooldown, float startCooldown) {
-        super("Boulder", cooldown, 80, startCooldown);
+    public Boulder(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

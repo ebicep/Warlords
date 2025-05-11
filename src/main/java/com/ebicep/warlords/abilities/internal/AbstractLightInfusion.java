@@ -32,8 +32,8 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     protected int energyGiven = 120;
     private final AbstractLightInfusionStats stats = new AbstractLightInfusionStats();
 
-    public AbstractLightInfusion(float cooldown) {
-        super("Light Infusion", cooldown, 0);
+    public AbstractLightInfusion() {
+        super(AbstractAbilityBuilder.create("Light Infusion").pvp());
     }
 
     @Override

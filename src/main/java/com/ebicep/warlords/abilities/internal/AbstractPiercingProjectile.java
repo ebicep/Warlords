@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -43,35 +44,12 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected double projectileSpeed;
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
-    public AbstractPiercingProjectile(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates
-    ) {
-        super(name, cooldown, energyCost);
-        this.projectileSpeed = projectileSpeed;
-        this.maxDistance = maxDistance;
+    public AbstractPiercingProjectile(AbstractAbilityBuilder builder) {
+        super(builder);
+        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("projectileSpeed"), double.class);
+        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("maxDistance"), double.class);
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-        this.hitTeammates = hitTeammates;
-    }
-
-    public AbstractPiercingProjectile(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates,
-            float startCooldown
-    ) {
-        super(name, cooldown, energyCost, startCooldown);
-        this.projectileSpeed = projectileSpeed;
-        this.maxDistance = maxDistance;
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-        this.hitTeammates = hitTeammates;
+        this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
     }
 
     /**

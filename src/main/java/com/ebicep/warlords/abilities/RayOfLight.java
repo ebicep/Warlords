@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractBeam;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -33,7 +30,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     private final RayOfLightStats stats = new RayOfLightStats();
 
     public RayOfLight() {
-        super("Ray of Light", 10, 10, 30, 30, true);
+        super(AbstractAbilityBuilder.create("Ray of Light").pvp());
     }
 
     @Override

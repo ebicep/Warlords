@@ -49,12 +49,12 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
     private int maxEnemiesHit = 2;
 
     public PoisonousHex() {
-        super("Poisonous Hex", 0, 60, 2.5, 40, false);
+        super(AbstractAbilityBuilder.create("Poisonous Hex").pvp());
         this.shotsFiredAtATime = 2;
         this.maxAngleOfShots = 26;
         this.forwardTeleportAmount = 1.6f;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
-    }
+    } // TODO
 
     @Override
     public void updateDescription(Player player) {

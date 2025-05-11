@@ -1,11 +1,11 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.abilities.internal.Ability;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -120,19 +120,23 @@ public class OldTestCommand implements CommandExecutor {
 //            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
 //            System.out.println(strikeDamage);
             Document document = new Document();
-            for (Ability<?> value : Ability.ABILITY_MAP.values()) {
-                AbstractAbility ability = value.create.get();
-                System.out.println(ability.getClass().getSimpleName());
-                System.out.println(ability.getCooldownValue());
-                System.out.println(ability.getEnergyCostValue());
-                document.append(ability.getClass().getSimpleName(), new Document()
-                        .append("cooldown", ability.getCooldownValue())
-                        .append("energyCost", ability.getEnergyCostValue())
-                );
-//                break;
+//            for (Ability<?> value : Ability.ABILITY_MAP.values()) {
+//                AbstractAbility ability = value.create.get();
+//                System.out.println(ability.getClass().getSimpleName());
+//                System.out.println(ability.getCooldownValue());
+//                System.out.println(ability.getEnergyCostValue());
+//                document.append(ability.getClass().getSimpleName(), new Document()
+//                        .append("cooldown", ability.getCooldownValue())
+//                        .append("energyCost", ability.getEnergyCostValue())
+//                );
+////                break;
+//            }
+
+            for (Mob value : Mob.VALUES) {
+                AbstractMob mob = value.createMobLegacy.apply(null);
             }
 
-            System.out.println(document.toJson());
+//            System.out.println(document.toJson());
 //            TextComponent component = ComponentBuilder.create()
 //                                                      .text("HELLO")
 //                                                      .text(ChatColor.GOLD + "WORLD")

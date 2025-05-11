@@ -22,7 +22,7 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     private final DamageValues damageValues = new DamageValues();
 
     public SeismicWaveBerserker() {
-        super(12, 60);
+        super();
     }
 
     @Override

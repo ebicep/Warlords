@@ -38,7 +38,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int maxAlliesHit = 2;
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 22, 30);
+        super(AbstractAbilityBuilder.create("Soulbinding Weapon").pvp());
     }
 
     @Override

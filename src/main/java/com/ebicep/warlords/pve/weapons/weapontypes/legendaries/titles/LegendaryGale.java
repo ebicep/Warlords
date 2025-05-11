@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -134,7 +135,11 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         private final int duration;
 
         public LegendaryGaleAbility(float abilityEnergyDecrease, float knockbackResistance, int duration) {
-            super("Gale", 30, 0);
+            super(AbstractAbilityBuilder.create("Gale")
+                                        .pve()
+                                        .cooldown(30)
+                                        .energyCost(0)
+            );
             this.abilityEnergyDecrease = abilityEnergyDecrease;
             this.knockbackResistance = knockbackResistance;
             this.duration = duration;

@@ -45,7 +45,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     private int additionalBlocks = 0;
 
     public RecklessCharge() {
-        super("Reckless Charge", 9.5f, 60);
+        super(AbstractAbilityBuilder.create("Reckless Charge").pvp());
     }
 
     @Override

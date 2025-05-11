@@ -32,7 +32,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
     private double radius = 6;
 
     public CapacitorTotem() {
-        super("Capacitor Totem", 63, 20);
+        super(AbstractAbilityBuilder.create("Capacitor Totem").pvp());
     }
 
     @Override

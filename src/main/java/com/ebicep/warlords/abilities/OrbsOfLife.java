@@ -53,7 +53,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     private int healingIncrease = 40;
 
     public OrbsOfLife() {
-        super("Orbs of Life", 19.5f, 20);
+        super(AbstractAbilityBuilder.create("Orbs of Life").pvp());
     }
 
     @Override

@@ -42,11 +42,11 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     private int cooldownReduction = 2;
 
     public FallenSouls() {
-        this(0, 0);
+        this(AbstractAbilityBuilder.create("Fallen Souls").pvp());
     }
 
-    public FallenSouls(float cooldown, float startCooldown) {
-        super("Fallen Souls", cooldown, 60, 2, 25, false, startCooldown);
+    public FallenSouls(AbstractAbilityBuilder builder) {
+        super(builder);
         this.shotsFiredAtATime = 3;
         this.maxAngleOfShots = 54;
         this.forwardTeleportAmount = 1.6f;

@@ -34,7 +34,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     private int speedBoost = 150;
 
     public VitalityConcoction() {
-        super("Vitality Concoction", 12, 20);
+        super(AbstractAbilityBuilder.create("Vitality Concoction").pvp());
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -37,7 +34,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     private float leechSelfAmount = 15;
 
     public ImpalingStrike() {
-        super("Impaling Strike", 0, 90);
+        super(AbstractAbilityBuilder.create("Impaling Strike").pvp());
     }
 
     @Override

@@ -34,7 +34,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     private int tickDuration = 120;
 
     public ArcaneShield() {
-        super("Arcane Shield", 31, 40);
+        super(AbstractAbilityBuilder.create("Arcane Shield").pvp());
     }
 
     @Override

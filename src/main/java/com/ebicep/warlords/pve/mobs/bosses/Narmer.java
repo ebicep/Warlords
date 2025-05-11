@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -67,7 +68,9 @@ public class Narmer extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst(15),
+                new FlameBurst() {{
+                    this.getCooldown().setBaseValue(15f);
+                }},
                 new GroundShred()
         );
     }
@@ -317,7 +320,7 @@ public class Narmer extends AbstractMob implements BossMob {
         private final List<WarlordsEntity> selfAcolytes = new ArrayList<>(); // spawned acolytes using this ability
 
         public SpawnNarmerAcolyteAbility(Narmer narmer) {
-            super("Narmer Acolyte", 15, false);
+            super(AbstractAbilityBuilder.create("Narmer Acolyte").pve().cooldown(15).energyCost(0).startFullCooldown());
             this.narmer = narmer;
             this.pveOption = narmer.pveOption;
         }
@@ -351,13 +354,7 @@ public class Narmer extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 12;
 
         public GroundShred() {
-            super(
-                    "Ground Shred",
-                    750,
-                    900,
-                    8,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("Ground Shred").pve().cooldown(8).energyCost(100));
         }
 
         @Override

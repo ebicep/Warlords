@@ -54,7 +54,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
     private int maxStacks = 3;
 
     public FortifyingHex() {
-        super("Fortifying Hex", 0, 60, 2.5, 40, true);
+        super(AbstractAbilityBuilder.create("Fortifying Hex").pvp());
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 

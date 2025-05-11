@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -9,22 +10,12 @@ import javax.annotation.Nonnull;
 
 public abstract class AbstractSpawnMobAbility extends AbstractPveAbility {
 
-    public AbstractSpawnMobAbility(String mobName, float cooldown, boolean startNoCooldown) {
-        super("Spawn " + mobName, cooldown, 50, startNoCooldown);
-    }
-
-    public AbstractSpawnMobAbility(String mobName, float cooldown, float energyCost, boolean startNoCooldown) {
-        super("Spawn " + mobName, cooldown, energyCost, startNoCooldown);
-    }
-
-    public AbstractSpawnMobAbility(String mobName, float cooldown, float energyCost, float startCooldown) {
-        super("Spawn " + mobName, cooldown, energyCost, startCooldown);
+    public AbstractSpawnMobAbility(AbstractAbilityBuilder builder) {
+        super(builder.name("Spawn " + builder.getName()));
     }
 
     @Override
     public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
         for (int i = 0; i < getSpawnAmount(); i++) {
             spawnMob(wp);
         }

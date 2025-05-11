@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -163,7 +164,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
     private static class Shimmer extends AbstractAbility implements Damages<Shimmer.DamageValues> {
 
         public Shimmer() {
-            super("Shimmer", 0.3f, 50);
+            super(AbstractAbilityBuilder.create("Shimmer").pve().cooldown(0.3f).energyCost(50));
         }
 
         @Override

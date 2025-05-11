@@ -57,7 +57,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     private float crownBonusHealing = 35;
 
     public HammerOfLight() {
-        super("Hammer of Light", 65, 50);
+        super(AbstractAbilityBuilder.create("Hammer of Light").pvp());
     }
 
     @Override

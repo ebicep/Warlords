@@ -38,7 +38,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     private int maxHits = 1;
 
     public EarthlivingWeapon() {
-        super("Earthliving Weapon", 15.5f, 30);
+        super(AbstractAbilityBuilder.create("Earthliving Weapon").pvp());
     }
 
     @Override

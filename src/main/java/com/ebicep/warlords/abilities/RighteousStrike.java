@@ -28,7 +28,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     private int targetsStruck = 0;
 
     public RighteousStrike() {
-        super("Righteous Strike", 0, 70);
+        super(AbstractAbilityBuilder.create("Righteous Strike").pvp());
     }
 
     @Override

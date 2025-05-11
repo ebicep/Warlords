@@ -36,8 +36,8 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
                 .toList();
     }
 
-    public AbstractTotem(String name, float cooldown, float energyCost) {
-        super(name, cooldown, energyCost);
+    public AbstractTotem(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

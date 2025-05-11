@@ -44,7 +44,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
     private int maxAnimationTime = 12;
 
     public FreezingBreath() {
-        super("Freezing Breath", 9.5f, 60, 1.25, 100, false);
+        super(AbstractAbilityBuilder.create("Freezing Breath").pvp());
     }
 
     @Override

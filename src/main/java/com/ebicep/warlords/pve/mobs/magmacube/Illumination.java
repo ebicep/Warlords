@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.magmacube;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.LastStand;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -108,7 +109,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
     private static class LastStandNear extends AbstractPveAbility {
 
         public LastStandNear() {
-            super("Last Stand Near", 3, 100);
+            super(AbstractAbilityBuilder.create("Last Stand Near").pve().cooldown(3).energyCost(100));
         }
 
         @Override

@@ -41,8 +41,8 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
 
     private final FloatModifiable hitbox = new FloatModifiable(4.8f);
 
-    public AbstractStrike(String name, float cooldown, float energyCost) {
-        super(name, cooldown, energyCost);
+    public AbstractStrike(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

@@ -23,7 +23,9 @@ public class SmartSkeleton extends AbstractMob implements ChampionMob {
                 10,
                 600,
                 900,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 
@@ -44,7 +46,9 @@ public class SmartSkeleton extends AbstractMob implements ChampionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 

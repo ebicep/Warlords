@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -126,7 +127,11 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         private final int duration;
 
         public LegendaryVigorousAbility(float energyPerSecond, int duration) {
-            super("Vigorous", 30, 0);
+            super(AbstractAbilityBuilder.create("Vigorous")
+                                        .pve()
+                                        .cooldown(30)
+                                        .energyCost(0)
+            );
             this.energyPerSecond = energyPerSecond;
             this.duration = duration;
         }

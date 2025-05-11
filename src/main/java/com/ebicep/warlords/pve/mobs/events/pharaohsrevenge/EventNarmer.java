@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -323,7 +324,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 12;
 
         public GroundShred() {
-            super("Ground Shred", 8, 50);
+            super(AbstractAbilityBuilder.create("Ground Shred").pve().cooldown(8).energyCost(50));
         }
 
         @Override

@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -99,7 +100,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
     private static class SilenceCrippleAll extends AbstractPveAbility {
 
         public SilenceCrippleAll() {
-            super("Djet", 5, 50);
+            super(AbstractAbilityBuilder.create("Djet").pve().cooldown(5).energyCost(50));
         }
 
         @Override

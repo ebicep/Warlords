@@ -36,11 +36,11 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private int energyRestore = 160;
 
     public LightningRod() {
-        this(31.5f, 0);
+        this(AbstractAbilityBuilder.create("Lightning Rod").pvp());
     }
 
-    public LightningRod(float cooldown, float startCooldown) {
-        super("Lightning Rod", cooldown, 0, startCooldown);
+    public LightningRod(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

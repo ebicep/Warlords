@@ -19,11 +19,11 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     private final DamageValues damageValues = new DamageValues();
 
     public GroundSlamBerserker() {
-        this(9.5f, 0);
+        super();
     }
 
-    public GroundSlamBerserker(float cooldown, float startCooldown) {
-        super(cooldown, 60, startCooldown);
+    public GroundSlamBerserker(float startCooldown) {
+        super(startCooldown);
     }
 
     @Override

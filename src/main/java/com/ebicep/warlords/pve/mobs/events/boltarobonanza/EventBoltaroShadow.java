@@ -57,7 +57,8 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage * (1 + split * .025f),
                 maxMeleeDamage * (1 + split * .025f),
-                new Fireball(MathUtils.generateRandomValueBetweenInclusive(4, 8)) {{
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(MathUtils.generateRandomValueBetweenInclusive(4, 8));
                     this.getDamageValues().getFireballDamage().min().setBaseValue(100);
                     this.getDamageValues().getFireballDamage().max().setBaseValue(200);
                 }}

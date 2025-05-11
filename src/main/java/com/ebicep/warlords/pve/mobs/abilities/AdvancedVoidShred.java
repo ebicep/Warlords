@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -19,7 +20,11 @@ public class AdvancedVoidShred extends AbstractAbility {
     private final DamageValues damageValues;
 
     public AdvancedVoidShred(float minDamageHeal, float maxDamageHeal, float cooldown, int slowness, float voidRadius, int helixDots) {
-        super("Void Shred", cooldown, 50);
+        super(AbstractAbilityBuilder.create("Void Shred")
+                                    .pve()
+                                    .cooldown(cooldown)
+                                    .energyCost(50)
+        );
         this.voidRadius = voidRadius;
         this.slowness = slowness;
         this.helixDots = helixDots;

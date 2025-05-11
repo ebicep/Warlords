@@ -16,12 +16,8 @@ import java.util.Collections;
 
 public class LightInfusionCrusader extends AbstractLightInfusion implements CanReduceCooldowns {
 
-    public LightInfusionCrusader(float cooldown) {
-        super(cooldown);
-    }
-
     public LightInfusionCrusader() {
-        super(15.5f);
+        super();
     }
 
     @Override

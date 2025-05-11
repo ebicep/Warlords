@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
@@ -33,7 +34,7 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
     private int maxAlliesHit = 10;
 
     public NotAShield() {
-        super("Not A Shield", 12, 45, 1, 20, true);
+        super(AbstractAbilityBuilder.create("Not A Shield").pvp());
     }
 
     @Override

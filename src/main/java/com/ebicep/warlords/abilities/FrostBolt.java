@@ -43,7 +43,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
     private int slowness = 30;
 
     public FrostBolt() {
-        super("Frostbolt", 0, 70, 2, 300, false);
+        super(AbstractAbilityBuilder.create("Frostbolt").pvp());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -148,7 +149,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
         private int timesInARowDamageMaxReduced = 0;
 
         public GhoulcallersFury() {
-            super("Ghoulcaller's Fury", 5, 100);
+            super(AbstractAbilityBuilder.create("Ghoulcaller's Fury").pve().cooldown(5).energyCost(100));
         }
 
         @Override

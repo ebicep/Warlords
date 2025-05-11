@@ -14,7 +14,7 @@ public class ConfigManager {
     };
     private static final String COLLECTION_NAME = "Config";
 
-    public static void init(MongoDatabase warlordsDatabase) {
+    public static void loadConfigs(MongoDatabase warlordsDatabase) {
         ChatUtils.MessageType.CONFIG.sendMessage("Loading config from database...");
         MongoCollection<Document> collection = warlordsDatabase.getCollection(COLLECTION_NAME);
 
@@ -32,6 +32,10 @@ public class ConfigManager {
             }
         }
         ChatUtils.MessageType.CONFIG.sendMessage("Finished loading config from database.");
+    }
+
+    public static <T> T getAbilityConfigValue(String namespace, String key, Class<T> fieldType) {
+        return ABILITIES_CONFIG.getValue(namespace, key, fieldType);
     }
 
     public interface Config {

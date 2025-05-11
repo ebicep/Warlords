@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.towerdefense.towers.TDAbility;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -91,19 +92,18 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected boolean pveMasterUpgrade2 = false;
     private boolean updateItem = true;
 
-    public AbstractAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
-        this(name, cooldown, energyCost, startNoCooldown ? 0 : cooldown);
-    }
-
-    public AbstractAbility(String name, float cooldown, float energyCost, float startCooldown) {
-        this.name = name;
-        this.cooldown = new FloatModifiable(cooldown);
-        this.currentCooldown = startCooldown;
-        this.energyCost = new FloatModifiable(energyCost);
-    }
-
-    public AbstractAbility(String name, float cooldown, float energyCost) {
-        this(name, cooldown, energyCost, 0);
+    public AbstractAbility(AbstractAbilityBuilder builder) {
+        this.name = builder.getName();
+        String nameSpace = builder.getNameSpace();
+        this.cooldown = new FloatModifiable(
+                builder.getCooldown() != null ? builder.getCooldown() :
+                ConfigManager.getAbilityConfigValue(nameSpace, builder.getAppendedFieldName("cooldown"), float.class)
+        );
+        this.currentCooldown = builder.getStartCooldown();
+        this.energyCost = new FloatModifiable(
+                builder.getEnergyCost() != null ? builder.getEnergyCost() :
+                ConfigManager.getAbilityConfigValue(nameSpace, builder.getAppendedFieldName("energyCost"), float.class)
+        );
     }
 
     public void updateDescription(Player player) {
@@ -133,8 +133,16 @@ public abstract class AbstractAbility implements AbilityIcon {
         Value.applyDamageHealing(this, value -> value.forEachAllValues(floatModifiable -> floatModifiable.addRefreshListener("UpdateAbilityItems", this::queueUpdateItem)));
     }
 
+    public FloatModifiable getCooldown() {
+        return cooldown;
+    }
+
     public void queueUpdateItem() {
         this.updateItem = true;
+    }
+
+    public FloatModifiable getEnergyCost() {
+        return energyCost;
     }
 
     public void addCurrentCooldown(float cooldown) {
@@ -175,14 +183,6 @@ public abstract class AbstractAbility implements AbilityIcon {
                 queueUpdateItem();
             }
         }
-    }
-
-    public FloatModifiable getCooldown() {
-        return cooldown;
-    }
-
-    public FloatModifiable getEnergyCost() {
-        return energyCost;
     }
 
     /**
@@ -291,12 +291,13 @@ public abstract class AbstractAbility implements AbilityIcon {
             List<Component> critChanceLore = new ArrayList<>();
             List<Component> critMultiplierLore = new ArrayList<>();
             Value.applyDamageHealing(this, (damage, value) -> {
-                if (value instanceof Value.RangedValueCritable critable) {
-                    TextColor textColor = damage ? NamedTextColor.RED : NamedTextColor.GREEN;
-                    critChanceLore.add(Component.text(format(Math.min(critable.critChance().getCalculatedValue(), 100)) + "%", textColor));
-                    critMultiplierLore.add(Component.text(format(critable.critMultiplier().getCalculatedValue()) + "%", textColor));
-                }
-            });
+                        if (value instanceof Value.RangedValueCritable critable) {
+                            TextColor textColor = damage ? NamedTextColor.RED : NamedTextColor.GREEN;
+                            critChanceLore.add(Component.text(format(Math.min(critable.critChance().getCalculatedValue(), 100)) + "%", textColor));
+                            critMultiplierLore.add(Component.text(format(critable.critMultiplier().getCalculatedValue()) + "%", textColor));
+                        }
+                    }
+            );
             if (!critChanceLore.isEmpty()) {
                 lore.add(ComponentBuilder
                         .create("Crit Chance: ", NamedTextColor.GRAY)

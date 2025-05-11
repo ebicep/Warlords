@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.FallenSouls;
 import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.abilities.IncendiaryCurse;
 import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -60,8 +61,8 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FallenSouls(3, 3),
-                new IncendiaryCurse(8, 8) {
+                new FallenSouls(AbstractAbilityBuilder.create("Fallen Souls").pve().cooldown(3).startCooldown(3)),
+                new IncendiaryCurse(AbstractAbilityBuilder.create("Incendiary Curse").pve().cooldown(8).startCooldown(8)) {
                     {
                         this.getDamageValues().getCurseDamage().min().setBaseValue(524);
                         this.getDamageValues().getCurseDamage().max().setBaseValue(607);
@@ -81,7 +82,9 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                         return speed;
                     }
                 },
-                new UndyingArmy(60f, 60)
+                new UndyingArmy(60) {{
+                    this.getCooldown().setBaseValue(60f);
+                }}
         );
     }
 

@@ -42,7 +42,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     private float vindicateDamageReduction = 30;
 
     public Vindicate() {
-        super("Vindicate", 55, 25);
+        super(AbstractAbilityBuilder.create("Vindicate").pvp());
     }
 
     @Override

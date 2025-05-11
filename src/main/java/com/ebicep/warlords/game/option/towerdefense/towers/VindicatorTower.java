@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.SoulShackle;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -101,7 +98,7 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
         private int mobsHit = 1;
 
         public StrikeAttack() {
-            super("Strike Attack", 4, 0);
+            super(AbstractAbilityBuilder.create("Strike Attack").td().cooldown(4).energyCost(0));
         }
 
         @Override

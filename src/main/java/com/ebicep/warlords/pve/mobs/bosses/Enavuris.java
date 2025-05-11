@@ -2,10 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.customentities.nms.pve.CustomBat;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -296,13 +293,11 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private PveOption pveOption;
 
         public EnderStones() {
-            super(
-                    "Ender Stones",
-                    10,
-                    50,
-                    2,
-                    50,
-                    false
+            super(AbstractAbilityBuilder.create("Ender Stones")
+                                        .pve()
+                                        .cooldown(2)
+                                        .energyCost(50)
+                                        .startFullCooldown()
             );
         }
 
@@ -527,7 +522,12 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private List<BlockDisplay> blockDisplays = new ArrayList<>();
 
         public Imprisonment() {
-            super("Imprisonment", 20, 50, true);
+            super(AbstractAbilityBuilder.create("Imprisonment")
+                                        .pve()
+                                        .cooldown(20)
+                                        .energyCost(50)
+                                        .startNoCooldown()
+            );
         }
 
         @Override

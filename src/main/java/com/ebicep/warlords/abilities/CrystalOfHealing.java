@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -39,7 +36,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     private int lifeSpan = 45; // seconds
 
     public CrystalOfHealing() {
-        super("Crystal of Healing", 20, 20);
+        super(AbstractAbilityBuilder.create("Crystal of Healing").pvp());
     }
 
     @Override

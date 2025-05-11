@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -30,16 +31,10 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
     protected int tickDuration;
     private int maxBeaconsAtATime = 2;
 
-    public AbstractBeaconAbility(
-            String name,
-            float cooldown,
-            float energyCost,
-            float radius,
-            int secondDuration
-    ) {
-        super(name, cooldown, energyCost);
-        this.radius = new FloatModifiable(radius);
-        this.tickDuration = secondDuration * 20;
+    public AbstractBeaconAbility(AbstractAbilityBuilder builder) {
+        super(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("radius"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override

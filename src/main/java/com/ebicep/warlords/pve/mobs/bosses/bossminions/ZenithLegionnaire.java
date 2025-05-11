@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -84,13 +85,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
     private static class Remedy extends AbstractPveAbility implements Heals<Remedy.HealingValues> {
 
         public Remedy() {
-            super(
-                    "Remedy",
-                    500,
-                    500,
-                    10,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("Remedy").pve().cooldown(10).energyCost(100));
         }
 
         @Override

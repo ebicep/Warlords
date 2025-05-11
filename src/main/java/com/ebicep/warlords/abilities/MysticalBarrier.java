@@ -41,7 +41,7 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     private int stacksGranted = 2;
 
     public MysticalBarrier() {
-        super("Mystical Barrier", 28, 20);
+        super(AbstractAbilityBuilder.create("Mystical Barrier").pvp());
     }
 
     @Override

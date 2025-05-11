@@ -26,7 +26,9 @@ public class SkeletalWarlock extends AbstractMob implements IntermediateMob {
                 0,
                 0,
                 0,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 
@@ -47,7 +49,9 @@ public class SkeletalWarlock extends AbstractMob implements IntermediateMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 

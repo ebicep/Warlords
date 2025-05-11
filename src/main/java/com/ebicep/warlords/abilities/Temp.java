@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 
@@ -16,7 +13,7 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     private final TempStats stats = new TempStats();
 
     public Temp() {
-        super("Placeholder Ability", 0, 0);
+        super(AbstractAbilityBuilder.create("Placeholder Ability").pvp());
     }
 
     @Override

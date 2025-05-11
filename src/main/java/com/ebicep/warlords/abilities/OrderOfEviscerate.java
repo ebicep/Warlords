@@ -44,7 +44,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private int speedBuff = 40;
 
     public OrderOfEviscerate() {
-        super("Order of Eviscerate", 50, 60);
+        super(AbstractAbilityBuilder.create("Order of Eviscerate").pvp());
     }
 
     @Override

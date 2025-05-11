@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -56,11 +57,13 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                     this.getCooldown().setBaseValue(5);
                     this.pveMasterUpgrade = true;
                 }},
-                new ChainLightning(5, 5) {{
+                new ChainLightning(AbstractAbilityBuilder.create("Chain Lightning").pve().cooldown(5).startCooldown(5)) {{
                     this.pveMasterUpgrade2 = true;
                 }},
-                new GroundSlamBerserker(8, 8),
-                new PrismGuard(18, 18),
+                new GroundSlamBerserker(8) {{
+                    this.getCooldown().setBaseValue(8f);
+                }},
+                new PrismGuard(AbstractAbilityBuilder.create("Prism Guard").pve().cooldown(18).startCooldown(18)),
                 new Inferno() {{
                     this.cooldown.setBaseValue(25);
                     this.currentCooldown = 25;

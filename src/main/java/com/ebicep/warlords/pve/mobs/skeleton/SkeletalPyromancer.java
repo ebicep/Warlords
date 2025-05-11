@@ -19,7 +19,10 @@ public class SkeletalPyromancer extends AbstractMob implements EliteMob {
                 20,
                 0,
                 0,
-                new Fireball(5.5f), new FlameBurst(20)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }},
+                new FlameBurst()
         );
     }
 
@@ -40,7 +43,10 @@ public class SkeletalPyromancer extends AbstractMob implements EliteMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f), new FlameBurst(20)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }},
+                new FlameBurst()
         );
     }
 

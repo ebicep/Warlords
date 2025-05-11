@@ -37,7 +37,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
     private int tickDuration = 120;
 
     public GuardianBeam() {
-        super("Guardian Beam", 10, 10, 30, 30, true);
+        super(AbstractAbilityBuilder.create("Guardian Beam").pvp());
     }
 
     @Override

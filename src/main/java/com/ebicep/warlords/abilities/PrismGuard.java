@@ -46,15 +46,11 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     private int maxDamageReduction = 21;
 
     public PrismGuard() {
-        super("Prism Guard", 26, 40);
+        super(AbstractAbilityBuilder.create("Prism Guard").pvp());
     }
 
-    public PrismGuard(float cooldown) {
-        super("Prism Guard", cooldown, 40);
-    }
-
-    public PrismGuard(float cooldown, float startingCooldown) {
-        super("Prism Guard", cooldown, 40, startingCooldown);
+    public PrismGuard(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

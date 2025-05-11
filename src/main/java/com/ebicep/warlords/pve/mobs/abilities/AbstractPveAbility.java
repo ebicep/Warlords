@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.jetbrains.annotations.Nullable;
@@ -14,41 +15,9 @@ public abstract class AbstractPveAbility extends AbstractAbility implements PvEA
 
     protected PveOption pveOption;
 
-    public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost) {
-        super(name, cooldown, energyCost);
-    }
-
-    public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, boolean startNoCooldown) {
-        super(name, cooldown, energyCost, startNoCooldown);
-    }
-
-    public AbstractPveAbility(String name, float cooldown, float energyCost) {
-        super(name, cooldown, energyCost);
-    }
-
-    public AbstractPveAbility(String name, float cooldown, float energyCost, boolean startNoCooldown) {
-        super(name, cooldown, energyCost, startNoCooldown);
-    }
-
-    public AbstractPveAbility(String name, float cooldown, float energyCost, float startCooldown) {
-        super(name, cooldown, energyCost, startCooldown);
-    }
-
-    public AbstractPveAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, float energyCost, float critChance, float critMultiplier) {
-        super(name, cooldown, energyCost);
-    }
-
-    public AbstractPveAbility(
-            String name,
-            float minDamageHeal,
-            float maxDamageHeal,
-            float cooldown,
-            float energyCost,
-            float critChance,
-            float critMultiplier,
-            float startCooldown
-    ) {
-        super(name, cooldown, energyCost, startCooldown);
+    public AbstractPveAbility(AbstractAbilityBuilder builder) {
+        super(builder.pve());
+        this.pveOption = null;
     }
 
     @Override

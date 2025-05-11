@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -318,7 +319,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class Bramble extends AbstractPveAbility implements Damages<Bramble.DamageValues> {
 
         public Bramble() {
-            super("Bramble", 1200, 1800, 5, 100);
+            super(AbstractAbilityBuilder.create("Bramble").pve().cooldown(5).energyCost(100));
         }
 
         @Override
@@ -366,7 +367,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class BrambleSlowness extends AbstractPveAbility {
 
         public BrambleSlowness() {
-            super("Bramble Slowness", 5, 100);
+            super(AbstractAbilityBuilder.create("Bramble Slowness").pve().cooldown(5).energyCost(100));
         }
 
         @Override

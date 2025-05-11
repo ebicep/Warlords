@@ -35,11 +35,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
     private double projectileWidth = 0.24D;
 
     public FlameBurst() {
-        super("Flame Burst", 9.5f, 60, 1.65, 200, false);
-    }
-
-    public FlameBurst(float cooldown) {
-        super("Flame Burst", cooldown, 60, 1.65, 200, false);
+        super(AbstractAbilityBuilder.create("Flame Burst").pvp());
     }
 
     @Override

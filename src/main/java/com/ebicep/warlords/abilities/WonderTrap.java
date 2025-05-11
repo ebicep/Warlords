@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -28,7 +29,7 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
     private final WonderTrapStats stats = new WonderTrapStats();
 
     public WonderTrap() {
-        super("Wonder Trap", 10, 40);
+        super(AbstractAbilityBuilder.create("Wonder Trap").pvp());
     }
 
     //    @Override

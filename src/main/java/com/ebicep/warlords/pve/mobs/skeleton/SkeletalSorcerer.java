@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.skeleton;
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -36,7 +37,10 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                 10,
                 800,
                 1000,
-                new Fireball(5.5f), new BlightedScorch()
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }},
+                new BlightedScorch()
         );
     }
 
@@ -57,7 +61,9 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f),
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }},
                 new BlightedScorch()
         );
     }
@@ -140,7 +146,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     private static class BlightedScorch extends AbstractAbility {
 
         public BlightedScorch() {
-            super("Blighted Scorch", 4, 100);
+            super(AbstractAbilityBuilder.create("Blighted Scorch").pve().cooldown(4).energyCost(100));
         }
 
         @Override

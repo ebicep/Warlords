@@ -51,7 +51,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
     private int tickDuration = 60;
 
     public MercifulHex() {
-        super("Merciful Hex", 0, 60, 2.5, 40, true);
+        super(AbstractAbilityBuilder.create("Merciful Hex").pvp());
         //TODO maybe inflate y separately
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .75f);
     }

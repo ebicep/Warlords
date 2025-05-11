@@ -44,7 +44,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private int infectedPlayers = 2;
 
     public ContagiousFacade() {
-        super("Contagious Facade", 30, 20);
+        super(AbstractAbilityBuilder.create("Contagious Facade").pvp());
     }
 
     @Override

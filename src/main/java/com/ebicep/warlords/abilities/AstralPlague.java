@@ -41,7 +41,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     private int hexTickDurationIncrease = 40;
 
     public AstralPlague() {
-        super("Astral Plague", 50, 10);
+        super(AbstractAbilityBuilder.create("Astral Plague").pvp());
     }
 
     @Override

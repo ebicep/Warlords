@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -96,7 +97,7 @@ public class RiftWalker extends AbstractMob implements EliteMob {
     private static class RiftSpeed extends AbstractAbility {
 
         public RiftSpeed() {
-            super("Rift Speed", 10, 100);
+            super(AbstractAbilityBuilder.create("Rift Speed").pve().cooldown(10).energyCost(100));
         }
 
         @Override

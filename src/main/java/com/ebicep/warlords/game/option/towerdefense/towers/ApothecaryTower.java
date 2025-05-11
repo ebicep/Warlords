@@ -102,7 +102,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         }
 
         public StrikeAttack() {
-            super("Strike Attack", 3, 0);
+            super(AbstractAbilityBuilder.create("Strike Attack").td().cooldown(3).energyCost(0));
         }
 
         @Override
@@ -189,7 +189,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public PoisonAttack() {
-            super("Poison Attack", 2, 0);
+            super(AbstractAbilityBuilder.create("Poison Attack").td().cooldown(2).energyCost(0));
         }
 
         @Override

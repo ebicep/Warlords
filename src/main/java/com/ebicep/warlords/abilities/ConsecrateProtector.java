@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
-import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -32,7 +29,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateProtector() {
-        super(10, 15, 4, 5);
+        super(AbstractAbilityBuilder.create("Consecrate").pvp());
     }
 
     @Override

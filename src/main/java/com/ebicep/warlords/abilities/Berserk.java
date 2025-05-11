@@ -32,7 +32,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     private float damageTakenIncrease = 10;
 
     public Berserk() {
-        super("Berserk", 47, 30);
+        super(AbstractAbilityBuilder.create("Berserk").pvp());
     }
 
     @Override

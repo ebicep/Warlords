@@ -36,7 +36,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
     private FloatModifiable splashRadius = new FloatModifiable(4.125f);
 
     public WaterBolt() {
-        super("Water Bolt", 0, 80, 2, 300, true);
+        super(AbstractAbilityBuilder.create("Water Bolt").pvp());
     }
 
     @Override

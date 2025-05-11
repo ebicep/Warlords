@@ -40,7 +40,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
     private int speedBuff = 30;
 
     public AbstractEnergySeer() {
-        super("Energy Seer", 26, 0);
+        super(AbstractAbilityBuilder.create("Energy Seer").pvp());
     }
 
     @Override

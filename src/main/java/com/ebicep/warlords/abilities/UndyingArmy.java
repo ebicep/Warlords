@@ -169,17 +169,12 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     private float missingHealing = 3.5f; // %
     private int healPeriod = 20;
 
-    public UndyingArmy(int maxHealthDamage) {
-        this();
-        this.maxHealthDamage = maxHealthDamage;
-    }
-
     public UndyingArmy() {
-        this(62, 0);
+        this(0f);
     }
 
-    public UndyingArmy(float cooldown, float startCooldown) {
-        super("Undying Army", cooldown, 60, startCooldown);
+    public UndyingArmy(float startCooldown) {
+        super(AbstractAbilityBuilder.create("Undying Army").pvp());
     }
 
     @Override

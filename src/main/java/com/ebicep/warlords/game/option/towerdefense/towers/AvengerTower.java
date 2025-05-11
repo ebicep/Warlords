@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
@@ -101,7 +102,7 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(5);
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", 5, 0);
+            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 

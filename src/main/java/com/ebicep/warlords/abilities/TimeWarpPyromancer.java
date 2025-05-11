@@ -35,7 +35,6 @@ import static java.lang.Math.sin;
 
 public class TimeWarpPyromancer extends AbstractTimeWarp {
 
-
     public TimeWarpPyromancer() {
         super();
     }

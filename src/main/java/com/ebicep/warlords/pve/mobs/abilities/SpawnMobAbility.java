@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -39,7 +40,7 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
             Mob mobToSpawn,
             boolean startNoCooldown
     ) {
-        super(mobToSpawn.name, cooldown, energyCost, startNoCooldown);
+        super(AbstractAbilityBuilder.create(mobToSpawn.name).pve().cooldown(cooldown).energyCost(energyCost).startNoCooldown(startNoCooldown));
         this.mobToSpawn = mobToSpawn;
     }
 
@@ -49,7 +50,7 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
             Mob mobToSpawn,
             float startCooldown
     ) {
-        super(mobToSpawn.name, cooldown, energyCost, startCooldown);
+        super(AbstractAbilityBuilder.create(mobToSpawn.name).pve().cooldown(cooldown).energyCost(energyCost).startCooldown(startCooldown));
         this.mobToSpawn = mobToSpawn;
     }
 

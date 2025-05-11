@@ -36,7 +36,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     private int hitRadius = 5;
 
     public AvengersWrath() {
-        super("Avenger's Wrath", 53, 0);
+        super(AbstractAbilityBuilder.create("Avenger's Wrath").pvp());
     }
 
     @Override

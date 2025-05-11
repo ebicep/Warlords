@@ -40,7 +40,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     private int tickDuration = 240;
 
     public Sanctuary() {
-        super("Sanctuary", 50, 10);
+        super(AbstractAbilityBuilder.create("Sanctuary").pvp());
     }
 
     @Override

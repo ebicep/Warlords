@@ -19,15 +19,8 @@ import java.util.Map;
 
 public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> implements RedAbilityIcon, AbilityStats<T, R> {
 
-    public AbstractBeam(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates
-    ) {
-        super(name, cooldown, energyCost, projectileSpeed, maxDistance, hitTeammates);
+    public AbstractBeam(AbstractAbilityBuilder builder) {
+        super(builder);
         this.maxTicks = 0;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .6f);
     }

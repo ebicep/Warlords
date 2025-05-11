@@ -42,11 +42,11 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     private int teammateDamageReductionPercent = 35;
 
     public LastStand() {
-        super("Last Stand", 56.5f, 40);
+        super(AbstractAbilityBuilder.create("Last Stand").pvp());
     }
 
-    public LastStand(float cooldown, float startCooldown) {
-        super("Last Stand", cooldown, 0, startCooldown);
+    public LastStand(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

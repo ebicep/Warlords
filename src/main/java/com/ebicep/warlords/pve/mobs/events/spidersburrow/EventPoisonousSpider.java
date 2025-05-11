@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -70,7 +71,7 @@ public class EventPoisonousSpider extends AbstractMob implements BossMinionMob, 
     private static class PoisonNear extends AbstractPveAbility implements Damages<PoisonNear.DamageValues> {
 
         public PoisonNear() {
-            super("Poison", 375, 500, 3, 50);
+            super(AbstractAbilityBuilder.create("Poison").pve().cooldown(3).energyCost(50));
         }
 
         @Override

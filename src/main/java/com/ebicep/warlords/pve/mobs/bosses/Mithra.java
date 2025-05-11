@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -57,7 +58,9 @@ public class Mithra extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst(1000),
+                new FlameBurst() {{
+                    this.getCooldown().setBaseValue(1000);
+                }},
                 new SpawnMobAbility(1000, Mob.ARACHNO_VENERATUS) {
                     @Override
                     public int getSpawnAmount() {
@@ -256,7 +259,7 @@ public class Mithra extends AbstractMob implements BossMob {
     private static class HibernatingEggSac extends AbstractPveAbility {
 
         public HibernatingEggSac() {
-            super("Hibernating Egg Sac", 15, 50, 7);
+            super(AbstractAbilityBuilder.create("Hibernating Egg Sac").pve().cooldown(15).energyCost(50).startCooldown(7));
         }
 
         @Override

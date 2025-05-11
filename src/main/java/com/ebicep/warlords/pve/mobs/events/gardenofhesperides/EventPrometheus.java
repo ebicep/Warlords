@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.PredictTargetFutureLocationGoal;
 import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -53,7 +54,8 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new BurstOfFlames(),
-                new Fireball(1000) {{
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(1000f);
                     this.getDamageValues().getFireballDamage().min().setBaseValue(350);
                     this.getDamageValues().getFireballDamage().max().setBaseValue(450);
                 }}
@@ -165,7 +167,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
         private float radius = 10;
 
         public BurstOfFlames() {
-            super("Burst of Flames", 860, 940, 5, 100, false);
+            super(AbstractAbilityBuilder.create("Burst of Flames").pve().cooldown(5).energyCost(100).startNoCooldown());
         }
 
         @Override

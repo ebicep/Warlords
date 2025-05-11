@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -77,15 +78,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
     private static class TormentingMark extends AbstractPveAbility implements Damages<TormentingMark.DamageValues> {
 
         public TormentingMark() {
-            super(
-                    "Tormenting Mark",
-                    1000,
-                    1000,
-                    .5f,
-                    50,
-                    0,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("Tormenting Mark").pve().cooldown(.5f).energyCost(50));
         }
 
         @Override

@@ -25,7 +25,9 @@ public class SkeletalEntropy extends AbstractMob implements AdvancedMob {
                 10,
                 0,
                 0,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 
@@ -46,7 +48,9 @@ public class SkeletalEntropy extends AbstractMob implements AdvancedMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 

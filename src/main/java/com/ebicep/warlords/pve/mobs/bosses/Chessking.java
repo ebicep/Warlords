@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -133,7 +134,11 @@ public class Chessking extends AbstractMob implements BossMob {
         private float range = 9;
 
         public Belch() {
-            super("Belch", 10, 100);
+            super(AbstractAbilityBuilder.create("Belch")
+                                        .pve()
+                                        .cooldown(10)
+                                        .energyCost(100)
+            );
         }
 
         @Override

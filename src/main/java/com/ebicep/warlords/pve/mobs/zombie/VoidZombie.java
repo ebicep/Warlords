@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -100,7 +101,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
     private static class VoidShred extends AbstractAbility {
 
         public VoidShred() {
-            super("Void Shred", 2, 100);
+            super(AbstractAbilityBuilder.create("Void Shred").pve().cooldown(2).energyCost(100));
         }
 
         @Override

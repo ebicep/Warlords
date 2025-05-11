@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractBeaconAbility;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -44,7 +41,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     private float damageReductionPve = 30;
 
     public SanctifiedBeacon() {
-        super("Sanctified Beacon", 20, 40, 8, 15);
+        super(AbstractAbilityBuilder.create("Sanctified Beacon").pvp());
     }
 
     @Override

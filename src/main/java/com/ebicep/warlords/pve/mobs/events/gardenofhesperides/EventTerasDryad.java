@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -55,7 +56,7 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
 
 
         public SpiritHealing() {
-            super("Spirit Healing", 200, 200, 2, 75, false);
+            super(AbstractAbilityBuilder.create("Spirit Healing").pve().cooldown(2).energyCost(75).startNoCooldown());
         }
 
         @Override

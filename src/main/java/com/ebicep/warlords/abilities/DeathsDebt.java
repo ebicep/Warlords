@@ -45,7 +45,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
     private int debtTickDuration = 120;
 
     public DeathsDebt() {
-        super("Death's Debt", 60f + 10.5f, 20);
+        super(AbstractAbilityBuilder.create("Death's Debt").pvp());
     }
 
     @Override

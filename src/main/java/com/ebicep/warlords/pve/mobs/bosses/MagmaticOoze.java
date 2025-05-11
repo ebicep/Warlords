@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
@@ -247,7 +248,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final double kbVelocity = 1.2;
 
         public FieryProjectile(float minDamageHeal, float maxDamageHeal) {
-            super("Fiery Projectile", minDamageHeal, maxDamageHeal, 5, 50, 10, 200);
+            super(AbstractAbilityBuilder.create("Fiery Projectile").pve().cooldown(5).energyCost(50));
             this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
@@ -356,7 +357,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private boolean launched = false;
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
-            super("Flaming Slam", minDamageHeal, maxDamageHeal, 12, 50, 15, 175);
+            super(AbstractAbilityBuilder.create("Flaming Slam").pve().cooldown(12).energyCost(50));
             this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
@@ -500,7 +501,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private int timesUsed = 0;
 
         public HeatAura(float startDamage, int hitbox) {
-            super("Heat Aura", startDamage, startDamage, 2, 50, 25, 175);
+            super(AbstractAbilityBuilder.create("Heat Aura").pve().cooldown(2).energyCost(50));
             this.hitbox = hitbox;
             this.damageValues = new DamageValues(startDamage);
         }
@@ -555,7 +556,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private int failedAttempts = 0;
 
         public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-            super("Molten Fissure", 12, 50);
+            super(AbstractAbilityBuilder.create("Molten Fissure").pve().cooldown(12).energyCost(50));
             this.previousBlocks = previousBlocks;
         }
 

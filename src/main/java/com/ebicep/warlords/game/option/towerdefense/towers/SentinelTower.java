@@ -2,10 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.GuardianBeam;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -89,7 +86,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(60);
 
         public HexAttack() {
-            super("Hex Attack", 3, 0);
+            super(AbstractAbilityBuilder.create("Hex Attack").td().cooldown(3).energyCost(0));
         }
 
         @Override
@@ -144,7 +141,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         private Laser.GuardianLaser laser;
 
         public BeamAttack() {
-            super("Beam Attack", 3, 0);
+            super(AbstractAbilityBuilder.create("Beam Attack").td().cooldown(3).energyCost(0));
         }
 
         @Override
@@ -239,7 +236,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 20, 0);
+            super(AbstractAbilityBuilder.create("Buff Towers").td().cooldown(20).energyCost(0));
         }
 
         @Override

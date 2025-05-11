@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -76,7 +77,7 @@ public class SlimyChess extends AbstractMob implements AdvancedMob {
     private static class Blob extends AbstractAbility {
 
         public Blob() {
-            super("Blob", 1, 50);
+            super(AbstractAbilityBuilder.create("Blob").pve().cooldown(1).energyCost(50));
         }
 
         @Override

@@ -98,7 +98,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
-            super("Strike Attack", 2, 0);
+            super(AbstractAbilityBuilder.create("Strike Attack").td().cooldown(2).energyCost(0));
         }
 
         @Override
@@ -179,7 +179,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(10);
 
         public AOEAttack() {
-            super("AOE Attack", 5, 0);
+            super(AbstractAbilityBuilder.create("AOE Attack").td().cooldown(5).energyCost(0));
         }
 
         @Override

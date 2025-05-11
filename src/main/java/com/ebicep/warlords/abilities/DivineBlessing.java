@@ -42,7 +42,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     private int tickDuration = 240;
 
     public DivineBlessing() {
-        super("Divine Blessing", 50, 10);
+        super(AbstractAbilityBuilder.create("Divine Blessing").pvp());
     }
 
     @Override

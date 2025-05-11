@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -194,13 +195,7 @@ public class Zenith extends AbstractMob implements BossMob {
         }
 
         public Armageddon() {
-            super(
-                    "Armageddon",
-                    550,
-                    700,
-                    12,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("Armageddon").pve().cooldown(12).energyCost(100));
         }
 
         @Override
@@ -290,13 +285,7 @@ public class Zenith extends AbstractMob implements BossMob {
     private static class Cleanse extends AbstractPveAbility {
 
         public Cleanse() {
-            super(
-                    "Cleanse",
-                    300,
-                    400,
-                    4,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("Cleanse").pve().cooldown(4).energyCost(100));
         }
 
         @Override

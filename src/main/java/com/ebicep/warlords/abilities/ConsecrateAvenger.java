@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -31,7 +32,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateAvenger() {
-        super(50, 20, 5, 4);
+        super(AbstractAbilityBuilder.create("Consecrate").pvp());
     }
 
     @Override

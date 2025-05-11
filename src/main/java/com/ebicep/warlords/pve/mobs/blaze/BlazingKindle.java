@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.blaze;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -82,7 +83,11 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
     private static class KindleWave extends AbstractAbility implements Damages<KindleWave.DamageValues> {
 
         public KindleWave() {
-            super("Kindle Wave", 8, 100);
+            super(AbstractAbilityBuilder.create("Kindle Wave")
+                                        .pve()
+                                        .cooldown(8)
+                                        .energyCost(100)
+            );
         }
 
         @Override

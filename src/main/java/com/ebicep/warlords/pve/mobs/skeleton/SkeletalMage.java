@@ -18,7 +18,9 @@ public class SkeletalMage extends AbstractMob implements BasicMob {
                 0,
                 0,
                 0,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 
@@ -39,7 +41,9 @@ public class SkeletalMage extends AbstractMob implements BasicMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f)
+                new Fireball() {{
+                    this.getCooldown().setBaseValue(5.5f);
+                }}
         );
     }
 

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -40,7 +37,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     private int allySpeedBoostDurationInTicks = 20;
 
     public CrusadersStrike() {
-        super("Crusader's Strike", 0, 90);
+        super(AbstractAbilityBuilder.create("Crusader's Strike").pvp());
     }
 
     @Override

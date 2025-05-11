@@ -27,12 +27,12 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
 
-    public AbstractGroundSlam(float cooldown, float energyCost) {
-        this(cooldown, energyCost, 0);
+    public AbstractGroundSlam() {
+        this(0);
     }
 
-    public AbstractGroundSlam(float cooldown, float energyCost, float startCooldown) {
-        super("Ground Slam", cooldown, energyCost, startCooldown);
+    public AbstractGroundSlam(float startCooldown) {
+        super(AbstractAbilityBuilder.create("Ground Slam").pvp().startCooldown(startCooldown));
     }
 
     @Override

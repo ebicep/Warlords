@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -20,7 +21,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
     private final float hitbox;
 
     public PigZombieHealing(float heal, float hitbox) {
-        super("Zombifaction", 3, 100);
+        super(AbstractAbilityBuilder.create("Zombifaction").pve().cooldown(3).energyCost(100));
         this.hitbox = hitbox;
         this.healingValues = new HealingValues(heal);
     }

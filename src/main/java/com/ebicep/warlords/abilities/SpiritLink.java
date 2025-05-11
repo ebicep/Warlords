@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractChain;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -41,7 +38,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     private float damageDecreasePerBounce = 20;
 
     public SpiritLink() {
-        super("Spirit Link", 8.5f, 40, 20, 10, 2);
+        super(AbstractAbilityBuilder.create("Spirit Link").pvp());
     }
 
     @Override

@@ -21,7 +21,7 @@ import java.util.Collections;
 public class LightInfusionProtector extends AbstractLightInfusion {
 
     public LightInfusionProtector() {
-        super(15.5f);
+        super();
     }
 
     @Override

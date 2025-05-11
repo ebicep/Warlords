@@ -1,9 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -106,7 +103,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 20, 0);
+            super(AbstractAbilityBuilder.create("Buff Towers").td().cooldown(20).energyCost(0));
         }
 
         @Override
@@ -142,7 +139,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
-            super("Strike Attack", .9f, 0);
+            super(AbstractAbilityBuilder.create("Strike Attack").td().cooldown(.9f).energyCost(0));
         }
 
         @Override

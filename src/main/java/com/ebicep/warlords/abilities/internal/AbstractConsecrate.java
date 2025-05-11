@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -31,16 +32,11 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     protected int tickDuration;
     private final AbstractConsecrateStats stats = new AbstractConsecrateStats();
 
-    public AbstractConsecrate(
-            float energyCost,
-            int strikeDamageBoost,
-            float hitBox,
-            int duration
-    ) {
-        super("Consecrate", 8, energyCost);
-        this.strikeDamageBoost = strikeDamageBoost;
-        this.hitBox = new FloatModifiable(hitBox);
-        this.tickDuration = duration * 20;
+    public AbstractConsecrate(AbstractAbilityBuilder builder) {
+        super(builder);
+        this.strikeDamageBoost = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("strikeDamageBoost"), int.class);
+        this.hitBox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("hitBox"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override

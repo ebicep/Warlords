@@ -47,7 +47,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     private float speedDuration = 1.5f;
 
     public SoulShackle() {
-        super("Soul Shackle", 9, 40);
+        super(AbstractAbilityBuilder.create("Soul Shackle").pvp());
     }
 
     @Override

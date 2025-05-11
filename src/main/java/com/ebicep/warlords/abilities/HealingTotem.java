@@ -45,7 +45,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     private float healingIncrement = 25;
 
     public HealingTotem() {
-        super("Healing Totem", 68, 60);
+        super(AbstractAbilityBuilder.create("Healing Totem").pvp());
     }
 
     @Override

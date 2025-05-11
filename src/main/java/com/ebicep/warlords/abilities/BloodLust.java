@@ -31,7 +31,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     private float healReductionPercent = 10;
 
     public BloodLust() {
-        super("Blood Lust", 31.5f, 20);
+        super(AbstractAbilityBuilder.create("Blood Lust").pvp());
     }
 
     @Override

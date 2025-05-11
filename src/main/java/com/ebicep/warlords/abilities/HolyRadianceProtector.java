@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbstractHolyRadiance;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -37,7 +34,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     private float markBonusHealing = 10;
 
     public HolyRadianceProtector() {
-        super("Holy Radiance", 10, 60, 7);
+        super(AbstractAbilityBuilder.create("Holy Radiance").pvp());
     }
 
     @Override

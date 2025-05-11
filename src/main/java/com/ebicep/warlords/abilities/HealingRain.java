@@ -45,11 +45,11 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     private FloatModifiable radius = new FloatModifiable(8);
 
     public HealingRain() {
-        this(60, 0);
+        super(AbstractAbilityBuilder.create("Healing Rain").pvp());
     }
 
-    public HealingRain(float cooldown, float startCooldown) {
-        super("Healing Rain", cooldown, 50, startCooldown);
+    public HealingRain(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
