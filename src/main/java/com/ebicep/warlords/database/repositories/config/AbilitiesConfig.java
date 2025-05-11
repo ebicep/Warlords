@@ -4,6 +4,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 public class AbilitiesConfig implements ConfigManager.Config {
 
@@ -20,6 +21,30 @@ public class AbilitiesConfig implements ConfigManager.Config {
         this.abilitiesConfig = doc;
     }
 
+    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType) {
+        if (abilitiesConfig == null) {
+            ChatUtils.MessageType.CONFIG.sendErrorMessage("Config document not set");
+            return defaultValue(fieldType);
+        }
+        Result<T> result = null;
+        for (String namespace : namespaces) {
+            result = getValue(namespace, key, fieldType);
+            if (result.valueResult == ValueResult.SUCCESS) {
+                break;
+            }
+        }
+        if (result == null || result.value == null) {
+            String debug = " (" + String.join(",", namespaces) + ") (" + key + ")" + " (" + fieldType.getName() + ")";
+            if (result != null) {
+                ChatUtils.MessageType.CONFIG.sendErrorMessage(result.valueResult + debug);
+            } else {
+                ChatUtils.MessageType.CONFIG.sendErrorMessage("No Result" + debug);
+            }
+            return defaultValue(fieldType);
+        }
+        return result.value;
+    }
+
     /**
      * Gets a value from the abilities configuration based on namespace and a dot-separated key path.
      *
@@ -29,23 +54,16 @@ public class AbilitiesConfig implements ConfigManager.Config {
      * @param <T> The type parameter for the return value
      * @return The value cast to the requested type, or a default value if not found
      */
-    public <T> T getValue(String namespace, String key, Class<T> fieldType) {
-        if (abilitiesConfig == null) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("Config document not set");
-            return defaultValue(fieldType);
-        }
-
+    private <T> Result<T> getValue(String namespace, String key, Class<T> fieldType) {
         // Get the namespace document
         Document namespaceDoc = abilitiesConfig.get(namespace, Document.class);
         if (namespaceDoc == null) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("No document for namespace: " + namespace);
-            return defaultValue(fieldType);
+            return new Result<>(ValueResult.INVALID_NAMESPACE);
         }
 
         String[] keyParts = key.split("\\.");
         if (keyParts.length == 0) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("Invalid empty key");
-            return defaultValue(fieldType);
+            return new Result<>(ValueResult.INVALID_KEY);
         }
 
         // Navigate to the parent object that contains our target value
@@ -56,8 +74,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
             String part = keyParts[i];
             currentObject = currentObject.get(part, Document.class);
             if (currentObject == null) {
-                ChatUtils.MessageType.CONFIG.sendErrorMessage("Path not found: " + part + " in " + key);
-                return defaultValue(fieldType);
+                return new Result<>(ValueResult.INVALID_PATH);
             }
         }
 
@@ -65,7 +82,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
         String finalKey = keyParts[keyParts.length - 1];
         if (!currentObject.containsKey(finalKey)) {
             ChatUtils.MessageType.CONFIG.sendErrorMessage("Field '" + finalKey + "' not found in path: " + key);
-            return defaultValue(fieldType);
+            return new Result<>(ValueResult.INVALID_FIELD);
         }
 
         Object value = currentObject.get(finalKey);
@@ -75,7 +92,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
             return buildValueObject(fieldType, (Document) value);
         }
 
-        return cast(value, fieldType);
+        return new Result<>(cast(value, fieldType), ValueResult.SUCCESS);
 
     }
 
@@ -152,7 +169,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
         return defaultValue(type);
     }
 
-    private <T> T buildValueObject(Class<T> type, Document doc) {
+    private <T> Result<T> buildValueObject(Class<T> type, Document doc) {
         try {
             T instance = type.getDeclaredConstructor().newInstance();
 
@@ -170,10 +187,9 @@ public class AbilitiesConfig implements ConfigManager.Config {
                 }
             }
 
-            return instance;
+            return new Result<>(instance, ValueResult.SUCCESS);
         } catch (Exception e) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("Failed to create instance of " + type.getName() + ": " + e.getMessage());
-            return null;
+            return new Result<>(ValueResult.INVALID_OBJECT);
         }
     }
 
@@ -205,6 +221,23 @@ public class AbilitiesConfig implements ConfigManager.Config {
         }
 
         return value;
+    }
+
+    enum ValueResult {
+        SUCCESS,
+        INVALID_NAMESPACE,
+        INVALID_KEY,
+        INVALID_PATH,
+        INVALID_FIELD,
+        INVALID_OBJECT,
+    }
+
+    record Result<T>(T value, ValueResult valueResult) {
+
+        public Result(ValueResult valueResult) {
+            this(null, valueResult);
+        }
+
     }
 
 }

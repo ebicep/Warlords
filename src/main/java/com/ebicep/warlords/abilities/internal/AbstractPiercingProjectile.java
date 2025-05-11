@@ -46,10 +46,10 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
     public AbstractPiercingProjectile(AbstractAbilityBuilder builder) {
         super(builder);
-        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("projectileSpeed"), double.class);
-        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("maxDistance"), double.class);
+        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), double.class);
+        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), double.class);
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-        this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
+        this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
     }
 
     /**

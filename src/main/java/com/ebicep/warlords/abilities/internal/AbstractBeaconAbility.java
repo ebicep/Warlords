@@ -33,8 +33,8 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
 
     public AbstractBeaconAbility(AbstractAbilityBuilder builder) {
         super(builder);
-        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("radius"), float.class));
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override

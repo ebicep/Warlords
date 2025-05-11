@@ -1,12 +1,15 @@
 package com.ebicep.warlords.abilities.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AbstractAbilityBuilder {
 
     public static AbstractAbilityBuilder create(String fieldName) {
         return new AbstractAbilityBuilder(fieldName);
     }
 
-    private String nameSpace = "";
+    private final List<String> namespaces = new ArrayList<>();
     private String fieldName;
     private String name;
     private Float cooldown;
@@ -18,17 +21,17 @@ public class AbstractAbilityBuilder {
     }
 
     public AbstractAbilityBuilder pvp() {
-        this.nameSpace = "pvp";
+        this.namespaces.addFirst("pvp");
         return this;
     }
 
     public AbstractAbilityBuilder pve() {
-        this.nameSpace = "pve";
+        this.namespaces.addFirst("pve");
         return this;
     }
 
     public AbstractAbilityBuilder td() {
-        this.nameSpace = "towerDefense";
+        this.namespaces.addFirst("towerDefense");
         return this;
     }
 
@@ -80,8 +83,8 @@ public class AbstractAbilityBuilder {
         return fieldName;
     }
 
-    public String getNameSpace() {
-        return nameSpace;
+    public List<String> getNamespaces() {
+        return namespaces;
     }
 
     public Float getCooldown() {

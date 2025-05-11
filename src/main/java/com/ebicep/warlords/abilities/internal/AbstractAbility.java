@@ -93,16 +93,20 @@ public abstract class AbstractAbility implements AbilityIcon {
     private boolean updateItem = true;
 
     public AbstractAbility(AbstractAbilityBuilder builder) {
-        this.name = builder.getName();
-        String nameSpace = builder.getNameSpace();
+        init(builder);
+    }
+
+    private void init(AbstractAbilityBuilder builder) {
+        List<String> namespaces = builder.getNamespaces();
+        this.name = ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("name"), String.class);
         this.cooldown = new FloatModifiable(
                 builder.getCooldown() != null ? builder.getCooldown() :
-                ConfigManager.getAbilityConfigValue(nameSpace, builder.getAppendedFieldName("cooldown"), float.class)
+                ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("cooldown"), float.class)
         );
         this.currentCooldown = builder.getStartCooldown();
         this.energyCost = new FloatModifiable(
                 builder.getEnergyCost() != null ? builder.getEnergyCost() :
-                ConfigManager.getAbilityConfigValue(nameSpace, builder.getAppendedFieldName("energyCost"), float.class)
+                ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("energyCost"), float.class)
         );
     }
 

@@ -6,6 +6,8 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
+import java.util.List;
+
 public class ConfigManager {
 
     public static final AbilitiesConfig ABILITIES_CONFIG = new AbilitiesConfig();
@@ -34,8 +36,8 @@ public class ConfigManager {
         ChatUtils.MessageType.CONFIG.sendMessage("Finished loading config from database.");
     }
 
-    public static <T> T getAbilityConfigValue(String namespace, String key, Class<T> fieldType) {
-        return ABILITIES_CONFIG.getValue(namespace, key, fieldType);
+    public static <T> T getAbilityConfigValue(List<String> namespaces, String key, Class<T> fieldType) {
+        return ABILITIES_CONFIG.getValue(namespaces, key, fieldType);
     }
 
     public interface Config {

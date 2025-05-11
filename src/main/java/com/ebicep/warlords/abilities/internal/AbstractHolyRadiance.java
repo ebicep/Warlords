@@ -33,7 +33,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
 
     public AbstractHolyRadiance(AbstractAbilityBuilder builder) {
         super(builder);
-        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNameSpace(), builder.getAppendedFieldName("radius"), float.class));
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
     }
 
     @Override
