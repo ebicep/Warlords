@@ -71,7 +71,7 @@ public class EventPoisonousSpider extends AbstractMob implements BossMinionMob, 
     private static class PoisonNear extends AbstractPveAbility implements Damages<PoisonNear.DamageValues> {
 
         public PoisonNear() {
-            super(AbstractAbilityBuilder.create("Poison").pve().cooldown(3).energyCost(50));
+            super(AbstractAbilityBuilder.create("poison").pve().cooldown(3).energyCost(50));
         }
 
         @Override

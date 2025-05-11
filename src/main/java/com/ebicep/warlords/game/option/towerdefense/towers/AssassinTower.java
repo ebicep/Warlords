@@ -107,7 +107,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpawnTroops(AbstractTower tower) {
-            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(5).energyCost(0));
+            super(AbstractAbilityBuilder.create("spawnTroops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 
@@ -221,7 +221,7 @@ public class AssassinTower extends AbstractTower implements Upgradeable.Path2 {
             private static final double GRAVITY = -0.007;
 
             public AssassinRangeAttack() {
-                super(AbstractAbilityBuilder.create("Range Attack").td().cooldown(3).energyCost(0));
+                super(AbstractAbilityBuilder.create("rangeAttack").td().cooldown(3).energyCost(0));
             }
 
             @Override

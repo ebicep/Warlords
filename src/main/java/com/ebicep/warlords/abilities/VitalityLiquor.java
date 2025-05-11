@@ -37,7 +37,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     private int energyPerSecond = 15;
 
     public VitalityLiquor() {
-        super(AbstractAbilityBuilder.create("Vitality Liquor").pvp());
+        super(AbstractAbilityBuilder.create("vitalityLiquor").pvp());
     }
 
     @Override

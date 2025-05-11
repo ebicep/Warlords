@@ -55,12 +55,12 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new LightningBolt(AbstractAbilityBuilder.create("Lightning Bolt").pve().cooldown(3).startCooldown(3)),
-                new ChainLightning(AbstractAbilityBuilder.create("Chain Lightning").pve().cooldown(7).startCooldown(7)) {{
+                new LightningBolt(AbstractAbilityBuilder.create("lightningBolt").pve().cooldown(3).startCooldown(3)),
+                new ChainLightning(AbstractAbilityBuilder.create("chainLightning").pve().cooldown(7).startCooldown(7)) {{
                     this.setTickDuration(40);
                 }},
                 new ZeusLightningRod(),
-                new HealingRain(AbstractAbilityBuilder.create("Healing Rain").pve().cooldown(60).startCooldown(60)) {{
+                new HealingRain(AbstractAbilityBuilder.create("healingRain").pve().cooldown(60).startCooldown(60)) {{
                     this.setPveMasterUpgrade(true);
                     this.setTickDuration(320);
                 }}
@@ -153,7 +153,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
         private float damageBuff = 1.15f;
 
         public ZeusLightningRod() {
-            super(AbstractAbilityBuilder.create("Lightning Rod").pve().cooldown(15).startCooldown(15));
+            super(AbstractAbilityBuilder.create("lightningRod").pve().cooldown(15).startCooldown(15));
             this.getHealValues().getHealthRestore().value().setBaseValue(0);
         }
 

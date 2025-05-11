@@ -35,7 +35,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     private int energyPerSecond = 10;
 
     public InspiringPresence() {
-        super(AbstractAbilityBuilder.create("Inspiring Presence").pvp());
+        super(AbstractAbilityBuilder.create("inspiringPresence").pvp());
     }
 
     @Override

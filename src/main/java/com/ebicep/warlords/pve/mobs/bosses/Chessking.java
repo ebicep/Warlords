@@ -134,7 +134,7 @@ public class Chessking extends AbstractMob implements BossMob {
         private float range = 9;
 
         public Belch() {
-            super(AbstractAbilityBuilder.create("Belch")
+            super(AbstractAbilityBuilder.create("belch")
                                         .pve()
                                         .cooldown(10)
                                         .energyCost(100)

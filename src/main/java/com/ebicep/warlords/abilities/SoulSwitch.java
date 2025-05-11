@@ -49,7 +49,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private int invisTicks = 30;
 
     public SoulSwitch() {
-        super(AbstractAbilityBuilder.create("Soul Switch").pvp());
+        super(AbstractAbilityBuilder.create("soulSwitch").pvp());
     }
 
     @Override

@@ -32,7 +32,7 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
     private int woundingTickDuration = 60;
 
     public WoundingStrikeBerserker() {
-        super(AbstractAbilityBuilder.create("Wounding Strike").pvp());
+        super(AbstractAbilityBuilder.create("woundingStrike").pvp());
     }
 
     public WoundingStrikeBerserker(AbstractAbilityBuilder builder) {

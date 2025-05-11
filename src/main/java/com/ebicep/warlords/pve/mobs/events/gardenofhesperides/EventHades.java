@@ -61,8 +61,8 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FallenSouls(AbstractAbilityBuilder.create("Fallen Souls").pve().cooldown(3).startCooldown(3)),
-                new IncendiaryCurse(AbstractAbilityBuilder.create("Incendiary Curse").pve().cooldown(8).startCooldown(8)) {
+                new FallenSouls(AbstractAbilityBuilder.create("fallenSouls").pve().cooldown(3).startCooldown(3)),
+                new IncendiaryCurse(AbstractAbilityBuilder.create("incendiaryCurse").pve().cooldown(8).startCooldown(8)) {
                     {
                         this.getDamageValues().getCurseDamage().min().setBaseValue(524);
                         this.getDamageValues().getCurseDamage().max().setBaseValue(607);

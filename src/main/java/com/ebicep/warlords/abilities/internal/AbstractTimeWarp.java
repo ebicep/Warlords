@@ -15,7 +15,7 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
     private final AbstractTimeWarpStats stats = new AbstractTimeWarpStats();
 
     public AbstractTimeWarp() {
-        super(AbstractAbilityBuilder.create("Time Warp").pvp());
+        super(AbstractAbilityBuilder.create("timeWarp").pvp());
     }
 
     @Override

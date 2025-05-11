@@ -33,7 +33,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
     private double strikeRadius = 10;
 
     public ProtectorsStrike() {
-        super(AbstractAbilityBuilder.create("Protector's Strike").pvp());
+        super(AbstractAbilityBuilder.create("protectorsStrike").pvp());
     }
 
     @Override

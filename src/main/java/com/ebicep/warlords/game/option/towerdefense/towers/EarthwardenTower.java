@@ -108,7 +108,7 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpikeAttack() {
-            super(AbstractAbilityBuilder.create("Spike Attack").td().cooldown(6).energyCost(0));
+            super(AbstractAbilityBuilder.create("spikeAttack").td().cooldown(6).energyCost(0));
         }
 
         @Override
@@ -213,7 +213,7 @@ public class EarthwardenTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpawnTroops(AbstractTower tower) {
-            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(5).energyCost(0));
+            super(AbstractAbilityBuilder.create("spawnTroops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 

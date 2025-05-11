@@ -32,7 +32,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     }
 
     public AbstractGroundSlam(float startCooldown) {
-        super(AbstractAbilityBuilder.create("Ground Slam").pvp().startCooldown(startCooldown));
+        super(AbstractAbilityBuilder.create("groundSlam").pvp().startCooldown(startCooldown));
     }
 
     @Override

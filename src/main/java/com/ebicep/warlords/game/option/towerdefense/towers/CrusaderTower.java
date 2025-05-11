@@ -103,7 +103,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super(AbstractAbilityBuilder.create("Buff Towers").td().cooldown(20).energyCost(0));
+            super(AbstractAbilityBuilder.create("buffTowers").td().cooldown(20).energyCost(0));
         }
 
         @Override
@@ -139,7 +139,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
-            super(AbstractAbilityBuilder.create("Strike Attack").td().cooldown(.9f).energyCost(0));
+            super(AbstractAbilityBuilder.create("strikeAttack").td().cooldown(.9f).energyCost(0));
         }
 
         @Override

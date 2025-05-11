@@ -29,7 +29,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     private float energyDrainPerSecond = 8;
 
     public HolyRadianceAvenger() {
-        super(AbstractAbilityBuilder.create("Holy Radiance").pvp());
+        super(AbstractAbilityBuilder.create("holyRadiance").pvp());
     }
 
     @Override

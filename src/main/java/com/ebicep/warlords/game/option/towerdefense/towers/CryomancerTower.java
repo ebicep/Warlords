@@ -82,7 +82,7 @@ public class CryomancerTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SlowAttack() {
-            super(AbstractAbilityBuilder.create("Slow").td().cooldown(2).energyCost(0));
+            super(AbstractAbilityBuilder.create("slow").td().cooldown(2).energyCost(0));
         }
 
         @Override

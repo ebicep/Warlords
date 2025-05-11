@@ -87,7 +87,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
     private static class PoisonArrow extends AbstractPveAbility implements Damages<PoisonArrow.DamageValues> {
 
         public PoisonArrow() {
-            super(AbstractAbilityBuilder.create("Poison Arrow")
+            super(AbstractAbilityBuilder.create("poisonArrow")
                                         .pve()
                                         .cooldown(5)
                                         .energyCost(100)

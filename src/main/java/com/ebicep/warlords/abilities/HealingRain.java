@@ -45,7 +45,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     private FloatModifiable radius = new FloatModifiable(8);
 
     public HealingRain() {
-        super(AbstractAbilityBuilder.create("Healing Rain").pvp());
+        super(AbstractAbilityBuilder.create("healingRain").pvp());
     }
 
     public HealingRain(AbstractAbilityBuilder builder) {

@@ -41,7 +41,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     private int maxTargets = 1;
 
     public Intervene() {
-        super(AbstractAbilityBuilder.create("Intervene").pvp());
+        super(AbstractAbilityBuilder.create("intervene").pvp());
     }
 
     @Override

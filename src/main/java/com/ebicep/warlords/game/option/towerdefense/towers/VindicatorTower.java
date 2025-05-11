@@ -98,7 +98,7 @@ public class VindicatorTower extends AbstractTower implements Upgradeable.Path2 
         private int mobsHit = 1;
 
         public StrikeAttack() {
-            super(AbstractAbilityBuilder.create("Strike Attack").td().cooldown(4).energyCost(0));
+            super(AbstractAbilityBuilder.create("strikeAttack").td().cooldown(4).energyCost(0));
         }
 
         @Override

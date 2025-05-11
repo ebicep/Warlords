@@ -102,7 +102,7 @@ public class AvengerTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(5);
 
         public SpawnTroops(AbstractTower tower) {
-            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(5).energyCost(0));
+            super(AbstractAbilityBuilder.create("spawnTroops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 

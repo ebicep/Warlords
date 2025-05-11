@@ -30,7 +30,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
     private float energySteal = 10;
 
     public AvengersStrike() {
-        super(AbstractAbilityBuilder.create("Avenger's Strike").pvp());
+        super(AbstractAbilityBuilder.create("avengersStrike").pvp());
     }
 
     @Override

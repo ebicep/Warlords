@@ -43,7 +43,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     private int vindDuration = 6;
 
     public HeartToHeart() {
-        super(AbstractAbilityBuilder.create("Heart to Heart").pvp());
+        super(AbstractAbilityBuilder.create("heartToHeart").pvp());
     }
 
     @Override

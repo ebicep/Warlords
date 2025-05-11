@@ -13,7 +13,7 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     private final TempStats stats = new TempStats();
 
     public Temp() {
-        super(AbstractAbilityBuilder.create("Placeholder Ability").pvp());
+        super(AbstractAbilityBuilder.create("placeholderAbility").pvp());
     }
 
     @Override

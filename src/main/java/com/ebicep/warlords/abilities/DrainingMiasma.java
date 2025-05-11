@@ -45,7 +45,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     private int slownessDuration = 3;
 
     public DrainingMiasma() {
-        super(AbstractAbilityBuilder.create("Draining Miasma").pvp());
+        super(AbstractAbilityBuilder.create("drainingMiasma").pvp());
     }
 
     @Override

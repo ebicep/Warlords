@@ -39,7 +39,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
-        this(AbstractAbilityBuilder.create("Incendiary Curse").pvp());
+        this(AbstractAbilityBuilder.create("incendiaryCurse").pvp());
     }
 
     public IncendiaryCurse(AbstractAbilityBuilder builder) {

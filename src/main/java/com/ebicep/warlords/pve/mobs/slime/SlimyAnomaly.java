@@ -164,7 +164,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
     private static class Shimmer extends AbstractAbility implements Damages<Shimmer.DamageValues> {
 
         public Shimmer() {
-            super(AbstractAbilityBuilder.create("Shimmer").pve().cooldown(0.3f).energyCost(50));
+            super(AbstractAbilityBuilder.create("shimmer").pve().cooldown(0.3f).energyCost(50));
         }
 
         @Override

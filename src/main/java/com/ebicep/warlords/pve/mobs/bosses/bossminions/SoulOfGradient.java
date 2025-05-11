@@ -78,7 +78,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
     private static class TormentingMark extends AbstractPveAbility implements Damages<TormentingMark.DamageValues> {
 
         public TormentingMark() {
-            super(AbstractAbilityBuilder.create("Tormenting Mark").pve().cooldown(.5f).energyCost(50));
+            super(AbstractAbilityBuilder.create("tormentingMark").pve().cooldown(.5f).energyCost(50));
         }
 
         @Override

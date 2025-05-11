@@ -59,7 +59,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthenSpike(AbstractAbilityBuilder.create("Earthen Spike").pve().cooldown(6).startCooldown(6)) {
+                new EarthenSpike(AbstractAbilityBuilder.create("earthenSpike").pve().cooldown(6).startCooldown(6)) {
                     {
                         this.getDamageValues().getSpikeDamage().min().setBaseValue(600);
                         this.getDamageValues().getSpikeDamage().max().setBaseValue(700);
@@ -117,7 +117,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         }
                     }
                 },
-                new Boulder(AbstractAbilityBuilder.create("Boulder").pve().cooldown(5).startCooldown(5)) {
+                new Boulder(AbstractAbilityBuilder.create("boulder").pve().cooldown(5).startCooldown(5)) {
                     {
                         this.getDamageValues().getBoulderDamage().min().setBaseValue(551);
                         this.getDamageValues().getBoulderDamage().max().setBaseValue(773);
@@ -142,7 +142,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                     this.getDamageValues().getSlamDamage().min().setBaseValue(558);
                     this.getDamageValues().getSlamDamage().max().setBaseValue(616);
                 }},
-                new LastStand(AbstractAbilityBuilder.create("Last Stand").pve().cooldown(60).startCooldown(60))
+                new LastStand(AbstractAbilityBuilder.create("lastStand").pve().cooldown(60).startCooldown(60))
         );
     }
 

@@ -33,7 +33,7 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     private final AbstractLightInfusionStats stats = new AbstractLightInfusionStats();
 
     public AbstractLightInfusion() {
-        super(AbstractAbilityBuilder.create("Light Infusion").pvp());
+        super(AbstractAbilityBuilder.create("lightInfusion").pvp());
     }
 
     @Override

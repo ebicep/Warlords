@@ -195,7 +195,7 @@ public class Zenith extends AbstractMob implements BossMob {
         }
 
         public Armageddon() {
-            super(AbstractAbilityBuilder.create("Armageddon").pve().cooldown(12).energyCost(100));
+            super(AbstractAbilityBuilder.create("armageddon").pve().cooldown(12).energyCost(100));
         }
 
         @Override
@@ -285,7 +285,7 @@ public class Zenith extends AbstractMob implements BossMob {
     private static class Cleanse extends AbstractPveAbility {
 
         public Cleanse() {
-            super(AbstractAbilityBuilder.create("Cleanse").pve().cooldown(4).energyCost(100));
+            super(AbstractAbilityBuilder.create("cleanse").pve().cooldown(4).energyCost(100));
         }
 
         @Override

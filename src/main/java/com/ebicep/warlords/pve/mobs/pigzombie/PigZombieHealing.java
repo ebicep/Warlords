@@ -21,7 +21,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
     private final float hitbox;
 
     public PigZombieHealing(float heal, float hitbox) {
-        super(AbstractAbilityBuilder.create("Zombifaction").pve().cooldown(3).energyCost(100));
+        super(AbstractAbilityBuilder.create("zombifaction").pve().cooldown(3).energyCost(100));
         this.hitbox = hitbox;
         this.healingValues = new HealingValues(heal);
     }

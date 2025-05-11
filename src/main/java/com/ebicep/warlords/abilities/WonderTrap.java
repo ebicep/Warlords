@@ -29,7 +29,7 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
     private final WonderTrapStats stats = new WonderTrapStats();
 
     public WonderTrap() {
-        super(AbstractAbilityBuilder.create("Wonder Trap").pvp());
+        super(AbstractAbilityBuilder.create("wonderTrap").pvp());
     }
 
     //    @Override

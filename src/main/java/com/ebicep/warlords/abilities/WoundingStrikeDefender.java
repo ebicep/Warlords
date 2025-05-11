@@ -38,7 +38,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
     private int woundingDurationInTicks = 60;
 
     public WoundingStrikeDefender() {
-        super(AbstractAbilityBuilder.create("Wounding Strike").pvp());
+        super(AbstractAbilityBuilder.create("woundingStrike").pvp());
     }
 
     @Override

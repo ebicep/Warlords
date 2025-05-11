@@ -127,7 +127,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
         private final int earthQuakeRadius = 12;
 
         public GroundShred() {
-            super(AbstractAbilityBuilder.create("Ground Shred")
+            super(AbstractAbilityBuilder.create("groundShred")
                                         .pve()
                                         .cooldown(5)
                                         .energyCost(100)

@@ -39,7 +39,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     private int castRange = 10;
 
     public RemedicChains() {
-        super(AbstractAbilityBuilder.create("Remedic Chains").pvp());
+        super(AbstractAbilityBuilder.create("remedicChains").pvp());
     }
 
     @Override

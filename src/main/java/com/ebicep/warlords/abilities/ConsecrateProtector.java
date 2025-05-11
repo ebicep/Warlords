@@ -29,7 +29,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateProtector() {
-        super(AbstractAbilityBuilder.create("Consecrate").pvp());
+        super(AbstractAbilityBuilder.create("consecrate").pvp());
     }
 
     @Override

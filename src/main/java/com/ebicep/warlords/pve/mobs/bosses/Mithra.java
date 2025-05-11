@@ -259,7 +259,7 @@ public class Mithra extends AbstractMob implements BossMob {
     private static class HibernatingEggSac extends AbstractPveAbility {
 
         public HibernatingEggSac() {
-            super(AbstractAbilityBuilder.create("Hibernating Egg Sac").pve().cooldown(15).energyCost(50).startCooldown(7));
+            super(AbstractAbilityBuilder.create("hibernatingEggSac").pve().cooldown(15).energyCost(50).startCooldown(7));
         }
 
         @Override

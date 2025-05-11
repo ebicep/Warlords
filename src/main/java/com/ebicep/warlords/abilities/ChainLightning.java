@@ -83,7 +83,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     private float damageDecreasePerBounce = 15;
 
     public ChainLightning() {
-        super(AbstractAbilityBuilder.create("Chain Lightning").pvp());
+        super(AbstractAbilityBuilder.create("chainLightning").pvp());
     }
 
     public ChainLightning(AbstractAbilityBuilder builder) {

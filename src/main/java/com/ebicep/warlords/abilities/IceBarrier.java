@@ -38,7 +38,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     private int slowDuration = 2;
 
     public IceBarrier() {
-        super(AbstractAbilityBuilder.create("Ice Barrier").pvp());
+        super(AbstractAbilityBuilder.create("iceBarrier").pvp());
     }
 
     @Override

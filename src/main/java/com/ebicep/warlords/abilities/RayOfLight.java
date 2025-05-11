@@ -30,7 +30,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     private final RayOfLightStats stats = new RayOfLightStats();
 
     public RayOfLight() {
-        super(AbstractAbilityBuilder.create("Ray of Light").pvp());
+        super(AbstractAbilityBuilder.create("rayOfLight").pvp());
     }
 
     @Override

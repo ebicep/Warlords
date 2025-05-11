@@ -319,7 +319,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class Bramble extends AbstractPveAbility implements Damages<Bramble.DamageValues> {
 
         public Bramble() {
-            super(AbstractAbilityBuilder.create("Bramble").pve().cooldown(5).energyCost(100));
+            super(AbstractAbilityBuilder.create("bramble").pve().cooldown(5).energyCost(100));
         }
 
         @Override
@@ -367,7 +367,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class BrambleSlowness extends AbstractPveAbility {
 
         public BrambleSlowness() {
-            super(AbstractAbilityBuilder.create("Bramble Slowness").pve().cooldown(5).energyCost(100));
+            super(AbstractAbilityBuilder.create("brambleSlowness").pve().cooldown(5).energyCost(100));
         }
 
         @Override

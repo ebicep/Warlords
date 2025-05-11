@@ -149,7 +149,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
         private int timesInARowDamageMaxReduced = 0;
 
         public GhoulcallersFury() {
-            super(AbstractAbilityBuilder.create("Ghoulcaller's Fury").pve().cooldown(5).energyCost(100));
+            super(AbstractAbilityBuilder.create("ghoulcallersFury").pve().cooldown(5).energyCost(100));
         }
 
         @Override

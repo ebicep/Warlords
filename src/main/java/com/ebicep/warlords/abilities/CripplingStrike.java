@@ -84,7 +84,7 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
     private int cripplePerStrike = 5;
 
     public CripplingStrike() {
-        super(AbstractAbilityBuilder.create("Crippling Strike").pvp());
+        super(AbstractAbilityBuilder.create("cripplingStrike").pvp());
     }
 
     @Override

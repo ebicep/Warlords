@@ -32,7 +32,7 @@ public class ConsecrateAvenger extends AbstractConsecrate implements Damages<Con
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateAvenger() {
-        super(AbstractAbilityBuilder.create("Consecrate").pvp());
+        super(AbstractAbilityBuilder.create("consecrate").pvp());
     }
 
     @Override

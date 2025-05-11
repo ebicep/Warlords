@@ -82,7 +82,7 @@ public class ThunderlordTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public BoltAttack() {
-            super(AbstractAbilityBuilder.create("Bolt Attack").td().cooldown(3).energyCost(0));
+            super(AbstractAbilityBuilder.create("boltAttack").td().cooldown(3).energyCost(0));
         }
 
         @Override

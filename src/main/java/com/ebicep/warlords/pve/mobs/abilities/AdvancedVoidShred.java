@@ -20,7 +20,7 @@ public class AdvancedVoidShred extends AbstractAbility {
     private final DamageValues damageValues;
 
     public AdvancedVoidShred(float minDamageHeal, float maxDamageHeal, float cooldown, int slowness, float voidRadius, int helixDots) {
-        super(AbstractAbilityBuilder.create("Void Shred")
+        super(AbstractAbilityBuilder.create("voidShred")
                                     .pve()
                                     .cooldown(cooldown)
                                     .energyCost(50)

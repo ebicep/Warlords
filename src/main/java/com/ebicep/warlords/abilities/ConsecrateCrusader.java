@@ -32,7 +32,7 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateCrusader() {
-        super(AbstractAbilityBuilder.create("Consecrate").pvp());
+        super(AbstractAbilityBuilder.create("consecrate").pvp());
     }
 
     @Override

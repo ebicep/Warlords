@@ -37,7 +37,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     private int allySpeedBoostDurationInTicks = 20;
 
     public CrusadersStrike() {
-        super(AbstractAbilityBuilder.create("Crusader's Strike").pvp());
+        super(AbstractAbilityBuilder.create("crusadersStrike").pvp());
     }
 
     @Override

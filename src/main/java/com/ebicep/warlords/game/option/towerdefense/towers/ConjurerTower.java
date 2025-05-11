@@ -86,7 +86,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         public HexAttack() {
-            super(AbstractAbilityBuilder.create("Hex Attack").td().cooldown(3).energyCost(0));
+            super(AbstractAbilityBuilder.create("hexAttack").td().cooldown(3).energyCost(0));
         }
 
         @Override

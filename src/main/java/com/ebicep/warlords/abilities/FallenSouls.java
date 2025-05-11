@@ -42,7 +42,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     private int cooldownReduction = 2;
 
     public FallenSouls() {
-        this(AbstractAbilityBuilder.create("Fallen Souls").pvp());
+        this(AbstractAbilityBuilder.create("fallenSouls").pvp());
     }
 
     public FallenSouls(AbstractAbilityBuilder builder) {

@@ -77,7 +77,7 @@ public class SlimyChess extends AbstractMob implements AdvancedMob {
     private static class Blob extends AbstractAbility {
 
         public Blob() {
-            super(AbstractAbilityBuilder.create("Blob").pve().cooldown(1).energyCost(50));
+            super(AbstractAbilityBuilder.create("blob").pve().cooldown(1).energyCost(50));
         }
 
         @Override

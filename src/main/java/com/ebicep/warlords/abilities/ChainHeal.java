@@ -29,7 +29,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
     private float cooldownReductionInSeconds = 2.5f;
 
     public ChainHeal() {
-        super(AbstractAbilityBuilder.create("Chain Heal").pvp());
+        super(AbstractAbilityBuilder.create("chainHeal").pvp());
     }
 
     @Override

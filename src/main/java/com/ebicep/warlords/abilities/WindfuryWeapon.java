@@ -37,7 +37,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     private float weaponDamage = 135;
 
     public WindfuryWeapon() {
-        super(AbstractAbilityBuilder.create("Windfury Weapon").pvp());
+        super(AbstractAbilityBuilder.create("windfuryWeapon").pvp());
     }
 
     @Override

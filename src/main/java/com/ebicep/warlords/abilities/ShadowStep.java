@@ -37,7 +37,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     private int fallDamageNegation = 10;
 
     public ShadowStep() {
-        super(AbstractAbilityBuilder.create("Shadow Step").pvp());
+        super(AbstractAbilityBuilder.create("shadowStep").pvp());
     }
 
     @Override

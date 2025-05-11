@@ -68,7 +68,7 @@ public class EventForsakenFrost extends AbstractMob implements BossMinionMob, Sp
     private static class Frost extends AbstractPveAbility {
 
         public Frost() {
-            super(AbstractAbilityBuilder.create("Frost").pve().cooldown(3).energyCost(50));
+            super(AbstractAbilityBuilder.create("frost").pve().cooldown(3).energyCost(50));
         }
 
         @Override

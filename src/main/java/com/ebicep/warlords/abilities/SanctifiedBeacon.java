@@ -41,7 +41,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     private float damageReductionPve = 30;
 
     public SanctifiedBeacon() {
-        super(AbstractAbilityBuilder.create("Sanctified Beacon").pvp());
+        super(AbstractAbilityBuilder.create("sanctifiedBeacon").pvp());
     }
 
     @Override

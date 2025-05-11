@@ -174,7 +174,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     public UndyingArmy(float startCooldown) {
-        super(AbstractAbilityBuilder.create("Undying Army").pvp());
+        super(AbstractAbilityBuilder.create("undyingArmy").pvp());
     }
 
     @Override

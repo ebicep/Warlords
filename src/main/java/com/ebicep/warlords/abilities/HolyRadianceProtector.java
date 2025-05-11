@@ -34,7 +34,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     private float markBonusHealing = 10;
 
     public HolyRadianceProtector() {
-        super(AbstractAbilityBuilder.create("Holy Radiance").pvp());
+        super(AbstractAbilityBuilder.create("holyRadiance").pvp());
     }
 
     @Override

@@ -39,7 +39,7 @@ public class ThunderCloudAbility extends AbstractPveAbility {
     }
 
     public ThunderCloudAbility(float cooldown) {
-        super(AbstractAbilityBuilder.create("Thunder Cloud").pve().cooldown(cooldown).energyCost(50));
+        super(AbstractAbilityBuilder.create("thunderCloud").pve().cooldown(cooldown).energyCost(50));
     }
 
     @Override

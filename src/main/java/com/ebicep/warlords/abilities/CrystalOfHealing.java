@@ -36,7 +36,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     private int lifeSpan = 45; // seconds
 
     public CrystalOfHealing() {
-        super(AbstractAbilityBuilder.create("Crystal of Healing").pvp());
+        super(AbstractAbilityBuilder.create("crystalOfHealing").pvp());
     }
 
     @Override

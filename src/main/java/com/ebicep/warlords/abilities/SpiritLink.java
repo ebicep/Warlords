@@ -38,7 +38,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     private float damageDecreasePerBounce = 20;
 
     public SpiritLink() {
-        super(AbstractAbilityBuilder.create("Spirit Link").pvp());
+        super(AbstractAbilityBuilder.create("spiritLink").pvp());
     }
 
     @Override

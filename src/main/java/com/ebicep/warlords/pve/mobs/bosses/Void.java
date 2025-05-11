@@ -436,7 +436,7 @@ public class Void extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 10;
 
         public GroundShred() {
-            super(AbstractAbilityBuilder.create("Ground Shred").pve().cooldown(8).energyCost(50));
+            super(AbstractAbilityBuilder.create("groundShred").pve().cooldown(8).energyCost(50));
         }
 
         @Override

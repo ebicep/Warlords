@@ -70,7 +70,7 @@ public class EventForsakenShrieker extends AbstractMob implements BossMinionMob,
     private static class BlindNear extends AbstractPveAbility {
 
         public BlindNear() {
-            super(AbstractAbilityBuilder.create("Blind Near").pve().cooldown(5).energyCost(50));
+            super(AbstractAbilityBuilder.create("blindNear").pve().cooldown(5).energyCost(50));
         }
 
         @Override

@@ -37,7 +37,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     private int cooldownReduction = 2;
 
     public LightningBolt() {
-        super(AbstractAbilityBuilder.create("Lightning Bolt").pvp());
+        super(AbstractAbilityBuilder.create("lightningBolt").pvp());
     }
 
     public LightningBolt(AbstractAbilityBuilder builder) {

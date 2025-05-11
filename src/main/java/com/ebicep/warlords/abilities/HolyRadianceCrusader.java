@@ -34,7 +34,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
     private int markSpeed = 25;
 
     public HolyRadianceCrusader() {
-        super(AbstractAbilityBuilder.create("Holy Radiance").pvp());
+        super(AbstractAbilityBuilder.create("holyRadiance").pvp());
     }
 
     @Override

@@ -32,7 +32,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     private float energyConvertPercent = 3.5f;
 
     public Repentance() {
-        super(AbstractAbilityBuilder.create("Repentance").pvp());
+        super(AbstractAbilityBuilder.create("repentance").pvp());
     }
 
     @Override

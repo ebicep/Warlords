@@ -35,7 +35,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
     private double projectileWidth = 0.24D;
 
     public FlameBurst() {
-        super(AbstractAbilityBuilder.create("Flame Burst").pvp());
+        super(AbstractAbilityBuilder.create("flameBurst").pvp());
     }
 
     @Override

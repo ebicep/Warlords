@@ -293,7 +293,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private PveOption pveOption;
 
         public EnderStones() {
-            super(AbstractAbilityBuilder.create("Ender Stones")
+            super(AbstractAbilityBuilder.create("enderStones")
                                         .pve()
                                         .cooldown(2)
                                         .energyCost(50)
@@ -522,7 +522,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private List<BlockDisplay> blockDisplays = new ArrayList<>();
 
         public Imprisonment() {
-            super(AbstractAbilityBuilder.create("Imprisonment")
+            super(AbstractAbilityBuilder.create("imprisonment")
                                         .pve()
                                         .cooldown(20)
                                         .energyCost(50)

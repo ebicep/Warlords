@@ -34,7 +34,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     private float leechSelfAmount = 15;
 
     public ImpalingStrike() {
-        super(AbstractAbilityBuilder.create("Impaling Strike").pvp());
+        super(AbstractAbilityBuilder.create("impalingStrike").pvp());
     }
 
     @Override

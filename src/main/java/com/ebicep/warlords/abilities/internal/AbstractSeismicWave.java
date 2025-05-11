@@ -25,7 +25,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
     public AbstractSeismicWave() {
-        super(AbstractAbilityBuilder.create("Seismic Wave").pvp());
+        super(AbstractAbilityBuilder.create("seismicWave").pvp());
     }
 
     @Override

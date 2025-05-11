@@ -146,7 +146,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     private static class BlightedScorch extends AbstractAbility {
 
         public BlightedScorch() {
-            super(AbstractAbilityBuilder.create("Blighted Scorch").pve().cooldown(4).energyCost(100));
+            super(AbstractAbilityBuilder.create("blightedScorch").pve().cooldown(4).energyCost(100));
         }
 
         @Override

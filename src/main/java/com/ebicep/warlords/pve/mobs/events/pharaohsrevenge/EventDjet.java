@@ -100,7 +100,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
     private static class SilenceCrippleAll extends AbstractPveAbility {
 
         public SilenceCrippleAll() {
-            super(AbstractAbilityBuilder.create("Djet").pve().cooldown(5).energyCost(50));
+            super(AbstractAbilityBuilder.create("djet").pve().cooldown(5).energyCost(50));
         }
 
         @Override

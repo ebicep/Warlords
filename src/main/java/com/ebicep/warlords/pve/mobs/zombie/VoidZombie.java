@@ -101,7 +101,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
     private static class VoidShred extends AbstractAbility {
 
         public VoidShred() {
-            super(AbstractAbilityBuilder.create("Void Shred").pve().cooldown(2).energyCost(100));
+            super(AbstractAbilityBuilder.create("voidShred").pve().cooldown(2).energyCost(100));
         }
 
         @Override

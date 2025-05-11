@@ -26,7 +26,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     private int strikeCritInterval = 4;
 
     public JudgementStrike() {
-        super(AbstractAbilityBuilder.create("Judgement Strike").pvp());
+        super(AbstractAbilityBuilder.create("judgementStrike").pvp());
     }
 
     @Override

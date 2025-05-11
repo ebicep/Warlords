@@ -320,7 +320,7 @@ public class Narmer extends AbstractMob implements BossMob {
         private final List<WarlordsEntity> selfAcolytes = new ArrayList<>(); // spawned acolytes using this ability
 
         public SpawnNarmerAcolyteAbility(Narmer narmer) {
-            super(AbstractAbilityBuilder.create("Narmer Acolyte").pve().cooldown(15).energyCost(0).startFullCooldown());
+            super(AbstractAbilityBuilder.create("narmerAcolyte").pve().cooldown(15).energyCost(0).startFullCooldown());
             this.narmer = narmer;
             this.pveOption = narmer.pveOption;
         }
@@ -354,7 +354,7 @@ public class Narmer extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 12;
 
         public GroundShred() {
-            super(AbstractAbilityBuilder.create("Ground Shred").pve().cooldown(8).energyCost(100));
+            super(AbstractAbilityBuilder.create("groundShred").pve().cooldown(8).energyCost(100));
         }
 
         @Override

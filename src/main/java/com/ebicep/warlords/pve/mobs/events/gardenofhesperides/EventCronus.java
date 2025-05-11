@@ -148,7 +148,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
         private float radius = 20;
 
         public HeavenlyDamage() {
-            super(AbstractAbilityBuilder.create("Heavenly Damage")
+            super(AbstractAbilityBuilder.create("heavenlyDamage")
                                         .pve()
                                         .cooldown(10)
                                         .energyCost(100)

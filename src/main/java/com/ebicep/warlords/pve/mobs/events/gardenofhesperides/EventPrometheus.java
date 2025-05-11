@@ -167,7 +167,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
         private float radius = 10;
 
         public BurstOfFlames() {
-            super(AbstractAbilityBuilder.create("Burst of Flames").pve().cooldown(5).energyCost(100).startNoCooldown());
+            super(AbstractAbilityBuilder.create("burstOfFlames").pve().cooldown(5).energyCost(100).startNoCooldown());
         }
 
         @Override

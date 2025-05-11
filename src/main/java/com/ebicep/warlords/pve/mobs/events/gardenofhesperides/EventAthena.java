@@ -65,7 +65,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new Shockwave(),
-                new AbstractSpawnMobAbility(AbstractAbilityBuilder.create("Athena Mobs").pve().cooldown(45).energyCost(100).startCooldown(2)) {
+                new AbstractSpawnMobAbility(AbstractAbilityBuilder.create("athenaMobs").pve().cooldown(45).energyCost(100).startCooldown(2)) {
                     private int spawnCounter = 0;
                     private List<Location> spawnLocations = new ArrayList<>();
 
@@ -134,7 +134,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
         private float radius = 10;
 
         public Shockwave() {
-            super(AbstractAbilityBuilder.create("Shockwave")
+            super(AbstractAbilityBuilder.create("shockwave")
                                         .pve()
                                         .cooldown(8)
                                         .energyCost(100)

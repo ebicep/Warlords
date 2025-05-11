@@ -34,7 +34,7 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
     private int maxAlliesHit = 10;
 
     public NotAShield() {
-        super(AbstractAbilityBuilder.create("Not A Shield").pvp());
+        super(AbstractAbilityBuilder.create("notAShield").pvp());
     }
 
     @Override

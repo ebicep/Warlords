@@ -81,7 +81,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
     private static class VoidHealing extends AbstractAbility implements Heals<VoidHealing.HealingValues> {
 
         public VoidHealing() {
-            super(AbstractAbilityBuilder.create("Void Healing").pve().cooldown(.5f).energyCost(100));
+            super(AbstractAbilityBuilder.create("voidHealing").pve().cooldown(.5f).energyCost(100));
         }
 
         @Override

@@ -1,29 +1,20 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.util.java.StringUtils;
-
 public class AbstractAbilityBuilder {
 
-    public static AbstractAbilityBuilder create(String name) {
-        return new AbstractAbilityBuilder(name);
+    public static AbstractAbilityBuilder create(String fieldName) {
+        return new AbstractAbilityBuilder(fieldName);
     }
 
-    private String name;
-    private String fieldName;
     private String nameSpace = "";
+    private String fieldName;
+    private String name;
     private Float cooldown;
     private Float energyCost;
     private Float startCooldown = 0f;
 
-    public AbstractAbilityBuilder(String name) {
-        this.name = name;
-        this.fieldName = StringUtils.toCamelCase(name);
-    }
-
-    public AbstractAbilityBuilder name(String name) {
-        this.name = name;
-        this.fieldName = StringUtils.toCamelCase(name);
-        return this;
+    public AbstractAbilityBuilder(String fieldName) {
+        this.fieldName = fieldName;
     }
 
     public AbstractAbilityBuilder pvp() {
@@ -38,6 +29,16 @@ public class AbstractAbilityBuilder {
 
     public AbstractAbilityBuilder td() {
         this.nameSpace = "towerDefense";
+        return this;
+    }
+
+    public AbstractAbilityBuilder fieldName(String fieldName) {
+        this.fieldName = fieldName;
+        return this;
+    }
+
+    public AbstractAbilityBuilder name(String name) {
+        this.name = name;
         return this;
     }
 

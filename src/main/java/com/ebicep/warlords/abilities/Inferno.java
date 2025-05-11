@@ -34,7 +34,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     private int critMultiplierIncrease = 30;
 
     public Inferno() {
-        super(AbstractAbilityBuilder.create("Inferno").pvp());
+        super(AbstractAbilityBuilder.create("inferno").pvp());
     }
 
     @Override

@@ -23,7 +23,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     private final BeaconOfLightStats stats = new BeaconOfLightStats();
 
     public BeaconOfLight() {
-        super(AbstractAbilityBuilder.create("Beacon of Light").pvp());
+        super(AbstractAbilityBuilder.create("beaconOfLight").pvp());
     }
 
     @Override

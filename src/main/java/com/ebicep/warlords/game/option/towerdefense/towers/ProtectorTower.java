@@ -101,7 +101,7 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
         private int maxSpawnCount = 1;
 
         public SpawnTroops(AbstractTower tower) {
-            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(5).energyCost(0));
+            super(AbstractAbilityBuilder.create("spawnTroops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 

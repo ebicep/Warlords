@@ -127,7 +127,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         private final int duration;
 
         public LegendaryVigorousAbility(float energyPerSecond, int duration) {
-            super(AbstractAbilityBuilder.create("Vigorous")
+            super(AbstractAbilityBuilder.create("vigorous")
                                         .pve()
                                         .cooldown(30)
                                         .energyCost(0)

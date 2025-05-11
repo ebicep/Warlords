@@ -128,7 +128,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
         private int maxSpawnCount = 2;
 
         public SpawnTroops(AbstractTower tower) {
-            super(AbstractAbilityBuilder.create("Spawn Troops").td().cooldown(Float.MAX_VALUE).energyCost(0));
+            super(AbstractAbilityBuilder.create("spawnTroops").td().cooldown(Float.MAX_VALUE).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 
