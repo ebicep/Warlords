@@ -23,6 +23,11 @@ public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends Abs
 
     public AbstractChain(AbstractAbilityBuilder builder) {
         super(builder);
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
         this.bounceRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bounceRange"), int.class);
         this.additionalBounces = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalBounces"), int.class);

@@ -33,7 +33,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         HitBox,
         AbilityStats<T, R> {
 
-    protected final boolean hitTeammates;
+    protected boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected int maxTicks;
     protected double maxDistance;
@@ -46,6 +46,11 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
     public AbstractPiercingProjectile(AbstractAbilityBuilder builder) {
         super(builder);
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
         this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), double.class);
         this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), double.class);
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;

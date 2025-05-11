@@ -96,7 +96,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         init(builder);
     }
 
-    private void init(AbstractAbilityBuilder builder) {
+    protected void init(AbstractAbilityBuilder builder) {
         List<String> namespaces = builder.getNamespaces();
         this.name = ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("name"), String.class);
         this.cooldown = new FloatModifiable(

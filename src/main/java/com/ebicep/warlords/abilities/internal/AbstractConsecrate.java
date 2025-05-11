@@ -34,6 +34,11 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
 
     public AbstractConsecrate(AbstractAbilityBuilder builder) {
         super(builder);
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
         this.strikeDamageBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamageBoost"), int.class);
         this.hitBox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class));
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);

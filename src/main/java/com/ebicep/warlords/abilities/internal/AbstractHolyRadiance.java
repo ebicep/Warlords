@@ -28,11 +28,16 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon, HitBox, AbilityStats<AbstractHolyRadiance, AbstractHolyRadiance.AbstractHolyRadianceStats> {
 
-    private final FloatModifiable radius;
+    private FloatModifiable radius;
     private final AbstractHolyRadianceStats stats = new AbstractHolyRadianceStats();
 
     public AbstractHolyRadiance(AbstractAbilityBuilder builder) {
         super(builder);
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
     }
 
