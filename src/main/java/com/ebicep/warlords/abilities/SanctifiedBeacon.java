@@ -34,6 +34,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
 
     public static final Map<Integer, Team> BEACON_IDS = new HashMap<>();
     private final SanctifiedBeaconStats stats = new SanctifiedBeaconStats();
+    private int maxAllies = 2;
     private int critMultiplierReducedBy = 25;
     private int hexIntervalTicks = 60;
     private int stacksGranted = 1;
