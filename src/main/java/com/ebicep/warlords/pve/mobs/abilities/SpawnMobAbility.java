@@ -40,7 +40,7 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
             Mob mobToSpawn,
             boolean startNoCooldown
     ) {
-        super(AbstractAbilityBuilder.create(mobtospawnname).pve().cooldown(cooldown).energyCost(energyCost).startNoCooldown(startNoCooldown));
+        super(AbstractAbilityBuilder.create(mobToSpawn.name).pve().cooldown(cooldown).energyCost(energyCost).startNoCooldown(startNoCooldown));
         this.mobToSpawn = mobToSpawn;
     }
 
@@ -50,7 +50,7 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
             Mob mobToSpawn,
             float startCooldown
     ) {
-        super(AbstractAbilityBuilder.create(mobtospawnname).pve().cooldown(cooldown).energyCost(energyCost).startCooldown(startCooldown));
+        super(AbstractAbilityBuilder.create(mobToSpawn.name).pve().cooldown(cooldown).energyCost(energyCost).startCooldown(startCooldown));
         this.mobToSpawn = mobToSpawn;
     }
 

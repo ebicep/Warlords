@@ -389,4 +389,5 @@ public abstract class AbstractAbility implements AbilityIcon {
     public record SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {
 
     }
+
 }

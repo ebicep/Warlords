@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.GroundSlamBerserker;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
@@ -29,9 +30,7 @@ public class EventTerasMinotaur extends AbstractMob implements BossMinionMob, Te
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new GroundSlamBerserker(5) {{
-                    this.getCooldown().setBaseValue(5f);
-                }}
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("groundSlamBerserker").pve().cooldown(5).startCooldown(5))
         );
     }
 

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -24,15 +25,17 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     protected boolean trueDamage = false;
     private final AbstractGroundSlamStats stats = new AbstractGroundSlamStats();
-    private FloatModifiable slamSize = new FloatModifiable(6);
+    private final FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
 
-    public AbstractGroundSlam() {
-        this(0);
+    public AbstractGroundSlam(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
-    public AbstractGroundSlam(float startCooldown) {
-        super(AbstractAbilityBuilder.create("groundSlam").pvp().startCooldown(startCooldown));
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
     }
 
     @Override
@@ -196,6 +199,11 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         private int warpsKnockbacked = 0;
 
         @Override
+        public Class<AbstractGroundSlamStats> getClazz() {
+            return AbstractGroundSlamStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
@@ -214,14 +222,10 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         }
 
         @Override
-        public Class<AbstractGroundSlamStats> getClazz() {
-            return AbstractGroundSlamStats.class;
-        }
-
-        @Override
         public AbstractGroundSlamStats create() {
             return new AbstractGroundSlamStats();
         }
+
     }
 
 }

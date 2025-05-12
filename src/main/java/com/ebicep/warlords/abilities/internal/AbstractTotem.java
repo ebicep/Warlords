@@ -49,9 +49,10 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
         playSound(wp, standLocation);
 
         ArmorStand totemStand = Utils.spawnArmorStand(standLocation, armorStand -> {
-            armorStand.getEquipment().setHelmet(getTotemItemStack());
-            armorStand.setSmall(true);
-        });
+                    armorStand.getEquipment().setHelmet(getTotemItemStack());
+                    armorStand.setSmall(true);
+                }
+        );
 
         onActivation(wp, totemStand);
 

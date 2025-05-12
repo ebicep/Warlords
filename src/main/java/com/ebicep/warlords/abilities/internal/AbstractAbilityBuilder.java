@@ -107,4 +107,5 @@ public class AbstractAbilityBuilder {
         }
         return sb.toString();
     }
-} 
+
+}

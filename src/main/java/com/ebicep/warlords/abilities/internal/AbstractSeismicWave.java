@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -20,12 +21,20 @@ import java.util.UUID;
 public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon, AbilityStats<AbstractSeismicWave, AbstractSeismicWave.AbstractSeismicWaveStats> {
 
     protected float velocity = 1.25f;
+    protected int waveLength = 8; // foward amount
+    protected int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
     private final AbstractSeismicWaveStats stats = new AbstractSeismicWaveStats();
-    private int waveLength = 8; // foward amount
-    private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
-    public AbstractSeismicWave() {
-        super(AbstractAbilityBuilder.create("seismicWave").pvp());
+    public AbstractSeismicWave(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
+        this.waveLength = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveLength"), int.class);
+        this.waveWidth = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveWidth"), int.class);
     }
 
     @Override
@@ -158,6 +167,11 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         private int warpsKnockbacked = 0;
 
         @Override
+        public Class<AbstractSeismicWaveStats> getClazz() {
+            return AbstractSeismicWaveStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
@@ -176,13 +190,10 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         }
 
         @Override
-        public Class<AbstractSeismicWaveStats> getClazz() {
-            return AbstractSeismicWaveStats.class;
-        }
-
-        @Override
         public AbstractSeismicWaveStats create() {
             return new AbstractSeismicWaveStats();
         }
+
     }
+
 }

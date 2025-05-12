@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -35,28 +36,72 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         super(AbstractAbilityBuilder.create("berserk").pvp());
     }
 
+    public float getDamageIncrease() {
+        return damageIncrease;
+    }
+
+    public void setDamageIncrease(float damageIncrease) {
+        this.damageIncrease = damageIncrease;
+    }
+
+    public float getDamageTakenIncrease() {
+        return damageTakenIncrease;
+    }
+
+    public void setDamageTakenIncrease(float damageTakenIncrease) {
+        this.damageTakenIncrease = damageTakenIncrease;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public BerserkStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), float.class);
+        this.damageTakenIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageTakenIncrease"), float.class);
+    }
+
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("You go into a berserker rage, increasing your damage by ")
-                .percent(damageIncrease, NamedTextColor.RED)
-                .text(" and movement speed by ")
-                .percent(speedBuff, NamedTextColor.WHITE)
-                .text(". While active, you also take ")
-                .percent(damageTakenIncrease, NamedTextColor.RED)
-                .text(" more damage. Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
+        description = AbilityDescriptionBuilder.create("You go into a berserker rage, increasing your damage by ")
+                                               .percent(damageIncrease, NamedTextColor.RED)
+                                               .text(" and movement speed by ")
+                                               .percent(speedBuff, NamedTextColor.WHITE)
+                                               .text(". While active, you also take ")
+                                               .percent(damageTakenIncrease, NamedTextColor.RED)
+                                               .text(" more damage. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
-
         Runnable cancelSpeed = wp.addSpeedModifier(wp, name, speedBuff, tickDuration, "BASE");
-
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
@@ -68,34 +113,17 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         } else {
             modifiers = Collections.emptyList();
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "BERS",
-                Berserk.class,
-                null,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    cancelSpeed.run();
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 3 == 0) {
-                        EffectUtils.displayParticle(
-                                Particle.ANGRY_VILLAGER,
-                                wp.getLocation().add(0, 1.75, 0),
-                                1,
-                                0,
-                                0,
-                                0,
-                                0.1F
-                        );
-                    }
-                })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "BERS", Berserk.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            cancelSpeed.run();
+            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 3 == 0) {
+                EffectUtils.displayParticle(Particle.ANGRY_VILLAGER, wp.getLocation().add(0, 1.75, 0), 1, 0, 0, 0, 0.1F);
+            }
+        })
         ) {
+
             int multiplier = 0;
 
             @Override
@@ -148,7 +176,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
                 return currentDamageValue * convertToMultiplicationDecimal(increase);
             }
         });
-
         return true;
     }
 
@@ -157,51 +184,18 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         return new BerserkBranch(abilityTree, this);
     }
 
-    public float getDamageIncrease() {
-        return damageIncrease;
-    }
-
-    public void setDamageIncrease(float damageIncrease) {
-        this.damageIncrease = damageIncrease;
-    }
-
-    public float getDamageTakenIncrease() {
-        return damageTakenIncrease;
-    }
-
-    public void setDamageTakenIncrease(float damageTakenIncrease) {
-        this.damageTakenIncrease = damageTakenIncrease;
-    }
-
-    public int getSpeedBuff() {
-        return speedBuff;
-    }
-
-    public void setSpeedBuff(int speedBuff) {
-        this.speedBuff = speedBuff;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public BerserkStats getAbilityStats() {
-        return stats;
-    }
-
     public static class BerserkStats extends AbstractAbilityStats<Berserk, BerserkStats> {
 
         @Field("hits_done_amplified")
         private int hitsDoneAmplified = 0;
+
         @Field("hits_taken_amplified")
         private int hitsTakenAmplified = 0;
+
+        @Override
+        public Class<BerserkStats> getClazz() {
+            return BerserkStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -220,13 +214,10 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         }
 
         @Override
-        public Class<BerserkStats> getClazz() {
-            return BerserkStats.class;
-        }
-
-        @Override
         public BerserkStats create() {
             return new BerserkStats();
         }
+
     }
+
 }

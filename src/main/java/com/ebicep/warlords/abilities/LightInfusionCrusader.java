@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractLightInfusion;
 import com.ebicep.warlords.abilities.internal.CanReduceCooldowns;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -17,105 +18,59 @@ import java.util.Collections;
 public class LightInfusionCrusader extends AbstractLightInfusion implements CanReduceCooldowns {
 
     public LightInfusionCrusader() {
-        super();
+        super(AbstractAbilityBuilder.create("lightInfusionCrusader").pvp());
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
-
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
-
-        wp.getCooldownManager().addRegularCooldown(
-                name,
-                "INF",
-                LightInfusionCrusader.class,
-                null,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
+        wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusionCrusader.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                }, cooldownManager -> {
                     cancelSpeed.run();
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        wp.getWorld().spawnParticle(
-                                Particle.EFFECT,
-                                wp.getLocation().add(0, 1.2, 0),
-                                2,
-                                0.3,
-                                0.1,
-                                0.3,
-                                0.2,
-                                null,
-                                true
-                        );
+                        wp.getWorld().spawnParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, null, true);
                     }
                 })
         );
-
         if (pveMasterUpgrade) {
-            for (WarlordsEntity infusionTarget : PlayerFilter
-                    .entitiesAround(wp, 6, 6, 6)
-                    .aliveTeammatesOfExcludingSelf(wp)
-            ) {
+            for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveTeammatesOfExcludingSelf(wp)) {
                 infusionTarget.addEnergy(wp, name, energyGiven / 2f);
-                infusionTarget.getCooldownManager().addRegularCooldown(
-                        name,
-                        "INF",
-                        LightInfusionCrusader.class,
-                        null,
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        cooldownManager -> {
+                infusionTarget.getCooldownManager().addRegularCooldown(name, "INF", LightInfusionCrusader.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                        }, cooldownManager -> {
                             cancelSpeed.run();
-                        },
-                        tickDuration,
-                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 4 == 0) {
-                                wp.getWorld().spawnParticle(
-                                        Particle.EFFECT,
-                                        wp.getLocation().add(0, 1.2, 0),
-                                        2,
-                                        0.3,
-                                        0.1,
-                                        0.3,
-                                        0.2,
-                                        null,
-                                        true
-                                );
+                                wp.getWorld().spawnParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, null, true);
                             }
                         })
                 );
             }
         } else if (pveMasterUpgrade2) {
-            for (WarlordsEntity infusionTarget : PlayerFilter
-                    .entitiesAround(wp, 6, 6, 6)
-                    .aliveTeammatesOfExcludingSelf(wp)
-            ) {
+            for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveTeammatesOfExcludingSelf(wp)) {
                 playCastEffect(infusionTarget);
                 infusionTarget.getSpec().decreaseAllCooldownTimersBy(2);
             }
         }
-
         playCastEffect(wp);
-
         return true;
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new LightInfusionBranchCrusader(abilityTree, this);
-    }
-
-    @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade2;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -36,22 +37,23 @@ import static java.lang.Math.sin;
 public class TimeWarpPyromancer extends AbstractTimeWarp {
 
     public TimeWarpPyromancer() {
-        super();
+        super(AbstractAbilityBuilder.create("timeWarpPyromancer").pvp());
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
-
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
         int startingBlocksTravelled = wp.getBlocksTravelled();
-
         // pveMasterUpgrade2
         List<WarlordsEntity> linkedPlayers = new ArrayList<>();
-        RegularCooldown<TimeWarpPyromancer> timeWarpCooldown = new RegularCooldown<>(
-                name,
+        RegularCooldown<TimeWarpPyromancer> timeWarpCooldown = new RegularCooldown<>(name,
                 "TIME",
                 TimeWarpPyromancer.class,
                 new TimeWarpPyromancer(),
@@ -61,37 +63,22 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
                         return;
                     }
-
                     getAbilityStats().addTimesSuccessful();
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-
-                    wp.addInstance(InstanceBuilder
-                            .healing()
-                            .ability(this)
-                            .source(wp)
-                            .value(wp.getMaxHealth() * (warpHealPercentage / 100f))
-                    );
-
+                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)));
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
-
                     if (pveMasterUpgrade2) {
                         float cooldownReduction = 0;
-                        for (WarlordsEntity enemy : PlayerFilter
-                                .entitiesAround(wp, 8, 8, 8)
-                                .aliveEnemiesOf(wp)
-                                .toList()
-                        ) {
+                        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, 8, 8, 8).aliveEnemiesOf(wp).toList()) {
                             float healthDamage = enemy.getMaxBaseHealth() * .075f;
                             if (enemy instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof BossLike) {
                                 healthDamage = DamageCheck.clamp(healthDamage);
                             }
-                            Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder
-                                    .damage()
-                                    .cause("Accursed Leap")
-                                    .source(wp)
-                                    .value(healthDamage)
-                            );
+                            Optional<WarlordsDamageHealingFinalEvent> finalEventOptional = enemy.addInstance(InstanceBuilder.damage()
+                                                                                                                            .cause("Accursed Leap")
+                                                                                                                            .source(wp)
+                                                                                                                            .value(healthDamage));
                             if (finalEventOptional.isPresent()) {
                                 if (finalEventOptional.get().isDead()) {
                                     cooldownReduction += .75f;
@@ -105,63 +92,22 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
-                            location.getWorld().spawnParticle(
-                                    Particle.WITCH,
-                                    location,
-                                    1,
-                                    0.01,
-                                    0,
-                                    0.01,
-                                    0.001,
-                                    null,
-                                    true
-                            );
+                            location.getWorld().spawnParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001, null, true);
                         }
-
                         warpTrail.add(wp.getLocation());
-                        warpLocation.getWorld().spawnParticle(
-                                Particle.WITCH,
-                                warpLocation,
-                                4,
-                                0.1,
-                                0,
-                                0.1,
-                                0.001,
-                                null,
-                                true
-                        );
-
+                        warpLocation.getWorld().spawnParticle(Particle.WITCH, warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
                         int points = 6;
                         double radius = 0.5d;
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            point.getWorld().spawnParticle(
-                                    Particle.CLOUD,
-                                    point,
-                                    1,
-                                    0.1,
-                                    0,
-                                    0.1,
-                                    0.001,
-                                    null,
-                                    true
-                            );
+                            point.getWorld().spawnParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001, null, true);
                         }
-
                         if (pveMasterUpgrade2) {
-                            PlayerFilter.entitiesAround(wp, 3, 3, 3)
-                                        .aliveEnemiesOf(wp)
-                                        .excluding(linkedPlayers)
-                                        .forEach(warlordsEntity -> {
-                                            linkedPlayers.add(warlordsEntity);
-                                            wp.playSound(
-                                                    warlordsEntity.getLocation().add(0, 1, 0),
-                                                    Instrument.PIANO,
-                                                    new Note(0, Note.Tone.G, true),
-                                                    SoundSource.MASTER
-                                            );
-                                        });
+                            PlayerFilter.entitiesAround(wp, 3, 3, 3).aliveEnemiesOf(wp).excluding(linkedPlayers).forEach(warlordsEntity -> {
+                                linkedPlayers.add(warlordsEntity);
+                                wp.playSound(warlordsEntity.getLocation().add(0, 1, 0), Instrument.PIANO, new Note(0, Note.Tone.G, true), SoundSource.MASTER);
+                            });
                         }
                     }
                     if (pveMasterUpgrade2 && ticksElapsed % 8 == 0) {
@@ -170,29 +116,18 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                             WarlordsEntity linked = linkedPlayers.get(i);
                             // play circle particle effect after linked then chain particle effect from linked to linkedAfter
                             // chain will be the closest possible to linkedAfter
-                            LocationBuilder linkedLocation = new LocationBuilder(linked.getLocation())
-                                    .addY(1);
+                            LocationBuilder linkedLocation = new LocationBuilder(linked.getLocation()).addY(1);
                             for (int j = 0; j < 12; j++) {
                                 double x = rad * cos(j);
                                 double z = rad * sin(j);
-                                Location location = linkedLocation
-                                        .clone()
-                                        .add(x, 0, z);
-                                EffectUtils.displayParticle(
-                                        Particle.WITCH,
-                                        location,
-                                        1
-                                );
+                                Location location = linkedLocation.clone().add(x, 0, z);
+                                EffectUtils.displayParticle(Particle.WITCH, location, 1);
                             }
                             if (i < linkedPlayers.size() - 1) {
                                 WarlordsEntity linkedNext = linkedPlayers.get(i + 1);
-                                LocationBuilder linkedNextLocation = new LocationBuilder(linkedNext.getLocation())
-                                        .addY(1);
-                                EffectUtils.playParticleLinkAnimation(
-                                        linkedNextLocation.faceTowards(linkedLocation)
-                                                          .forward(rad),
-                                        linkedLocation.faceTowards(linkedNextLocation)
-                                                      .forward(rad),
+                                LocationBuilder linkedNextLocation = new LocationBuilder(linkedNext.getLocation()).addY(1);
+                                EffectUtils.playParticleLinkAnimation(linkedNextLocation.faceTowards(linkedLocation).forward(rad),
+                                        linkedLocation.faceTowards(linkedNextLocation).forward(rad),
                                         Particle.WITCH,
                                         0
                                 );
@@ -201,6 +136,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     }
                 })
         ) {
+
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (pveMasterUpgrade2) {
@@ -210,14 +146,8 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
             }
         };
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
-
         if (pveMasterUpgrade) {
-            addSecondaryAbility(
-                    1,
-                    () -> timeWarpCooldown.setTicksLeft(1),
-                    false,
-                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown)
-            );
+            addSecondaryAbility(1, () -> timeWarpCooldown.setTicksLeft(1), false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown));
         }
         return true;
     }

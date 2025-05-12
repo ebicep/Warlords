@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon, HitBox, AbilityStats<AbstractHolyRadiance, AbstractHolyRadiance.AbstractHolyRadianceStats> {
 
-    private FloatModifiable radius;
     private final AbstractHolyRadianceStats stats = new AbstractHolyRadianceStats();
+    private FloatModifiable radius;
 
     public AbstractHolyRadiance(AbstractAbilityBuilder builder) {
         super(builder);
@@ -126,6 +126,11 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         private int playersMarked = 0;
 
         @Override
+        public Class<AbstractHolyRadianceStats> getClazz() {
+            return AbstractHolyRadianceStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Targets Healed", String.valueOf(playersHealed)));
@@ -142,14 +147,10 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         }
 
         @Override
-        public Class<AbstractHolyRadianceStats> getClazz() {
-            return AbstractHolyRadianceStats.class;
-        }
-
-        @Override
         public AbstractHolyRadianceStats create() {
             return new AbstractHolyRadianceStats();
         }
+
     }
 
     public class FlyingArmorStand extends GameRunnable {
@@ -228,5 +229,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             super.cancel();
             armorStand.remove();
         }
+
     }
+
 }

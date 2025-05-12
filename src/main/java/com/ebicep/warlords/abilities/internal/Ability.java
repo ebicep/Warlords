@@ -207,12 +207,6 @@ public class Ability<T extends AbstractAbility> {
             WOUNDING_STRIKE_BERSERKER,
             WOUNDING_STRIKE_DEFENDER,
     };
-
-    @Nullable
-    public static <T extends AbstractAbility> Ability<T> getAbility(Class<T> clazz) {
-        return (Ability<T>) ABILITY_MAP.get(clazz);
-    }
-
     public static final Map<Class<?>, Ability<?>> ABILITY_MAP = new HashMap<>();
     public static final Map<String, Ability<?>> ABILITY_DATABASE_MAP = new HashMap<>();
     public static final Map<Specializations, Ability<?>[]> SPEC_ABILITIES = new HashMap<>();
@@ -241,12 +235,22 @@ public class Ability<T extends AbstractAbility> {
         }
     }
 
+    @Nullable
+    public static <T extends AbstractAbility> Ability<T> getAbility(Class<T> clazz) {
+        return (Ability<T>) ABILITY_MAP.get(clazz);
+    }
+
     public final Class<T> clazz;
     public final Supplier<T> create;
 
     Ability(Class<T> clazz, Supplier<T> create) {
         this.clazz = clazz;
         this.create = create;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(clazz);
     }
 
     @Override
@@ -259,11 +263,6 @@ public class Ability<T extends AbstractAbility> {
         }
         Ability<?> ability = (Ability<?>) o;
         return Objects.equals(clazz, ability.clazz);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(clazz);
     }
 
     public String getDatabaseName() {

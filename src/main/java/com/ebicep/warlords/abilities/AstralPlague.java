@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -45,26 +46,43 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     }
 
     @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AstralPlagueStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
+    }
+
+    @Override
     public void updateDescription(Player player) {
-        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder
-                .create("Grant yourself Astral Energy, increasing ")
-                .text("PHEX", NamedTextColor.DARK_RED)
-                .text(" duration by ")
-                .durationTicks(hexTickDurationIncrease)
-                .text(" and causing Soulfire Beam to not consume ")
-                .text("PHEX", NamedTextColor.DARK_RED)
-                .text(" stacks.")
-                .emptyLine()
-                .text("Your attacks pierces shields and defenses of enemies with max stacks of ")
-                .text("PHEX", NamedTextColor.DARK_RED);
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder.create("Grant yourself Astral Energy, increasing ")
+                                                                     .text("PHEX", NamedTextColor.DARK_RED)
+                                                                     .text(" duration by ")
+                                                                     .durationTicks(hexTickDurationIncrease)
+                                                                     .text(" and causing Soulfire Beam to not consume ")
+                                                                     .text("PHEX", NamedTextColor.DARK_RED)
+                                                                     .text(" stacks.")
+                                                                     .emptyLine()
+                                                                     .text("Your attacks pierces shields and defenses of enemies with max stacks of ")
+                                                                     .text("PHEX", NamedTextColor.DARK_RED);
         if (inPve) {
             builder.text(". For the duration of Astral Plague the damage from Poisonous Hex stacks are increased by 400%");
         }
-        description = builder
-                .text(". Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
+        description = builder.text(". Lasts ").durationTicks(tickDuration).text(".").build();
     }
 
     @Override
@@ -73,7 +91,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CONVERTED, 2, 0.7f);
         EffectUtils.playCircularShieldAnimation(wp.getLocation(), Particle.SOUL, 8, 3, 1);
         EffectUtils.playCircularEffectAround(wp.getGame(), wp.getLocation(), Particle.FLAME, 1, 1, 0.25, 1, 1, 2);
-
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
             modifiers = wp.getAbilitiesMatching(SoulfireBeam.class)
@@ -83,19 +100,10 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         } else {
             modifiers = Collections.emptyList();
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "ASTRAL",
-                AstralPlague.class,
-                new AstralPlague(),
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                },
-                tickDuration
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ASTRAL", AstralPlague.class, new AstralPlague(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        }, tickDuration
         ) {
 
             @Override
@@ -124,10 +132,9 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                     @EventHandler(priority = EventPriority.LOWEST)
                     private void onAddCooldown(WarlordsAddCooldownEvent event) {
                         AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (Objects.equals(cooldown.getFrom(), wp) &&
-                                cooldown instanceof RegularCooldown<?> regularCooldown &&
-                                cooldown.getCooldownObject() instanceof PoisonousHex
-                        ) {
+                        if (Objects.equals(cooldown.getFrom(),
+                                wp
+                        ) && cooldown instanceof RegularCooldown<?> regularCooldown && cooldown.getCooldownObject() instanceof PoisonousHex) {
                             regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
                             stats.hexesProlonged++;
                         }
@@ -146,11 +153,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         PoisonousHex fromHex = PoisonousHex.getFromHex(wp);
-                        if (new CooldownFilter<>(victim, RegularCooldown.class)
-                                .filterCooldownClass(PoisonousHex.class)
-                                .stream()
-                                .count() < fromHex.getMaxStacks()
-                        ) {
+                        if (new CooldownFilter<>(victim, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() < fromHex.getMaxStacks()) {
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE);
@@ -174,43 +177,29 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         WarlordsEntity target = event.getWarlordsEntity();
-                        List<AbstractCooldown<?>> cooldowns = event
-                                .getPlayerCooldowns()
-                                .stream()
-                                .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
-                                .collect(Collectors.toList());
-                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
-                                .filterCooldownClass(Intervene.class)
-                                .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
-                                .findAny()
-                                .isPresent()
-                        ) {
+                        List<AbstractCooldown<?>> cooldowns = event.getPlayerCooldowns()
+                                                                   .stream()
+                                                                   .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                                                   .collect(Collectors.toList());
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.class)
+                                                                                  .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
+                                                                                  .findAny()
+                                                                                  .isPresent()) {
                             stats.intervenesPierced++;
                         }
-                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class)
-                                .filterCooldownClass(Shield.class)
-                                .filter(RegularCooldown::hasTicksLeft)
-                                .findAny()
-                                .isPresent()
-                        ) {
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Shield.class).filter(RegularCooldown::hasTicksLeft).findAny().isPresent()) {
                             stats.shieldsPierced++;
                         }
                     }
-
                 };
             }
         });
-        PlayerFilter.playingGame(wp.getGame())
-                    .enemiesOf(wp)
-                    .forEach(enemy -> {
-                        new CooldownFilter<>(enemy, RegularCooldown.class)
-                                .filterCooldownClass(PoisonousHex.class)
-                                .filterCooldownFrom(wp)
-                                .forEach(cd -> {
-                                    cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
-                                    stats.hexesProlonged++;
-                                });
-                    });
+        PlayerFilter.playingGame(wp.getGame()).enemiesOf(wp).forEach(enemy -> {
+            new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).filterCooldownFrom(wp).forEach(cd -> {
+                cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
+                stats.hexesProlonged++;
+            });
+        });
         return true;
     }
 
@@ -219,33 +208,27 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         return new AstralPlagueBranch(abilityTree, this);
     }
 
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public AstralPlagueStats getAbilityStats() {
-        return stats;
-    }
-
     public static class AstralPlagueStats extends AbstractAbilityStats<AstralPlague, AstralPlagueStats> {
 
         @Field("hexes_prolonged")
         private int hexesProlonged = 0;
+
         @Field("hexes_not_consumed")
         private int hexesNotConsumed = 0;
+
         @Field("triple_stack_beams")
         private int tripleStackBeams = 0;
+
         @Field("shields_pierced")
         private int shieldsPierced = 0;
+
         @Field("intervenes_pierced")
         private int intervenesPierced = 0;
+
+        @Override
+        public Class<AstralPlagueStats> getClazz() {
+            return AstralPlagueStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -270,11 +253,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         }
 
         @Override
-        public Class<AstralPlagueStats> getClazz() {
-            return AstralPlagueStats.class;
-        }
-
-        @Override
         public AstralPlagueStats create() {
             return new AstralPlagueStats();
         }
@@ -286,5 +264,7 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
         public void setHexesNotConsumed(int hexesNotConsumed) {
             this.hexesNotConsumed = hexesNotConsumed;
         }
+
     }
+
 }

@@ -192,6 +192,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
         public FloatModifiable getRadius() {
             return radius;
         }
+
     }
 
 }

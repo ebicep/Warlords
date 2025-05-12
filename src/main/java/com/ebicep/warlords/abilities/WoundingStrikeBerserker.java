@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -26,37 +27,17 @@ import java.util.List;
 
 public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerserker, WoundingStrikeBerserker.WoundingStrikeBerserkerStats> implements Damages<WoundingStrikeBerserker.DamageValues> {
 
-    private final DamageValues damageValues = new DamageValues();
     private final WoundingStrikeBerserkerStats stats = new WoundingStrikeBerserkerStats();
+    private final DamageValues damageValues = new DamageValues();
     private int wounding = 40;
     private int woundingTickDuration = 60;
 
     public WoundingStrikeBerserker() {
-        super(AbstractAbilityBuilder.create("woundingStrike").pvp());
+        super(AbstractAbilityBuilder.create("woundingStrikeBerserker").pvp());
     }
 
     public WoundingStrikeBerserker(AbstractAbilityBuilder builder) {
         super(builder);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Strike the targeted enemy player, causing ")
-                .damage(damageValues.strikeDamage)
-                .text(" damage and ")
-                .text("wounding", NamedTextColor.RED)
-                .text(" them for ")
-                .durationTicks(woundingTickDuration)
-                .text(", making them receive ")
-                .percent(40, NamedTextColor.RED)
-                .text(" less healing.")
-                .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new WoundingStrikeBranchBerserker(abilityTree, this);
     }
 
     @Override
@@ -68,28 +49,23 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         float lustDamageBoost = wp.getCooldownManager().hasCooldown(BloodLust.class) ? pveMasterUpgrade ? 2 : pveMasterUpgrade2 ? 1.25f : 1 : 1;
-        nearPlayer.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .min(damageValues.strikeDamage.getMinValue() * lustDamageBoost)
-                .max(damageValues.strikeDamage.getMaxValue() * lustDamageBoost)
-                .crit(damageValues.strikeDamage)
-        ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
-
+        nearPlayer.addInstance(InstanceBuilder.damage()
+                                              .ability(this)
+                                              .source(wp)
+                                              .min(damageValues.strikeDamage.getMinValue() * lustDamageBoost)
+                                              .max(damageValues.strikeDamage.getMaxValue() * lustDamageBoost)
+                                              .crit(damageValues.strikeDamage)).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
         if (pveMasterUpgrade2) {
             additionalHit(2, wp, nearPlayer, warlordsEntity -> {
-                warlordsEntity.addInstance(InstanceBuilder
-                        .damage()
-                        .ability(this)
-                        .source(wp)
-                        .min(damageValues.strikeDamage.getMinValue() * lustDamageBoost)
-                        .max(damageValues.strikeDamage.getMaxValue() * lustDamageBoost)
-                        .crit(damageValues.strikeDamage)
-                ).ifPresent(finalEvent -> onFinalEvent(wp, finalEvent.getWarlordsEntity(), finalEvent));
-            });
+                        warlordsEntity.addInstance(InstanceBuilder.damage()
+                                                                  .ability(this)
+                                                                  .source(wp)
+                                                                  .min(damageValues.strikeDamage.getMinValue() * lustDamageBoost)
+                                                                  .max(damageValues.strikeDamage.getMaxValue() * lustDamageBoost)
+                                                                  .crit(damageValues.strikeDamage)).ifPresent(finalEvent -> onFinalEvent(wp, finalEvent.getWarlordsEntity(), finalEvent));
+                    }
+            );
         }
-
         return true;
     }
 
@@ -102,78 +78,54 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
             return;
         }
         if (!(nearPlayer.getCooldownManager().hasCooldownFromName("Wounding Strike"))) {
-            nearPlayer.sendMessage(
-                    Component.text("You are ", NamedTextColor.GRAY)
-                             .append(Component.text("wounded", NamedTextColor.RED))
-                             .append(Component.text(".", NamedTextColor.GRAY))
-            );
+            nearPlayer.sendMessage(Component.text("You are ", NamedTextColor.GRAY)
+                                            .append(Component.text("wounded", NamedTextColor.RED))
+                                            .append(Component.text(".", NamedTextColor.GRAY)));
         }
         nearPlayer.getCooldownManager().removePreviousWounding();
-        nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "WND",
-                WoundingStrikeBerserker.class,
-                new WoundingStrikeBerserker(),
-                wp,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        nearPlayer.sendMessage(
-                                Component.text("You are no longer ", NamedTextColor.GRAY)
-                                         .append(Component.text("wounded", NamedTextColor.RED))
-                                         .append(Component.text(".", NamedTextColor.GRAY))
-                        );
-                    }
-                },
-                woundingTickDuration
-        ) {
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * (100 - wounding) / 100f;
-            }
+        nearPlayer.getCooldownManager()
+                  .addCooldown(new RegularCooldown<>(name, "WND", WoundingStrikeBerserker.class, new WoundingStrikeBerserker(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                  }, cooldownManager -> {
+                      if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
+                          nearPlayer.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
+                                                          .append(Component.text("wounded", NamedTextColor.RED))
+                                                          .append(Component.text(".", NamedTextColor.GRAY)));
+                      }
+                  }, woundingTickDuration
+                  ) {
 
-            @Override
-            public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("WND", NamedTextColor.RED),
-                        we -> we == wp || (we.isTeammate(nearPlayer) && we.getSpecClass().specType == SpecType.HEALER)
-                );
-            }
-        });
+                      @Override
+                      public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                          return currentHealValue * (100 - wounding) / 100f;
+                      }
+
+                      @Override
+                      public PlayerNameData addSuffixFromOther() {
+                          return new PlayerNameData(Component.text("WND", NamedTextColor.RED),
+                                  we -> we == wp || (we.isTeammate(nearPlayer) && we.getSpecClass().specType == SpecType.HEALER)
+                          );
+                      }
+                  });
     }
 
     private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removePreviousWounding();
-        hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Bleed",
-                "BLEED",
-                WoundingStrikeBerserker.class,
-                new WoundingStrikeBerserker(),
-                giver,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                woundingTickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksLeft % 20 == 0) {
-                        float healthDamage = hit.getMaxHealth() * 0.005f;
-                        healthDamage = DamageCheck.clamp(healthDamage);
-                        hit.addInstance(InstanceBuilder
-                                .damage()
-                                .cause("Bleed")
-                                .source(giver)
-                                .value(healthDamage)
-                                .flags(InstanceFlags.DOT)
-                        );
-                    }
-                })
-        ) {
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .2f;
-            }
-        });
+        hit.getCooldownManager()
+           .addCooldown(new RegularCooldown<>("Bleed", "BLEED", WoundingStrikeBerserker.class, new WoundingStrikeBerserker(), giver, CooldownTypes.DEBUFF, cooldownManager -> {
+           }, woundingTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+               if (ticksLeft % 20 == 0) {
+                   float healthDamage = hit.getMaxHealth() * 0.005f;
+                   healthDamage = DamageCheck.clamp(healthDamage);
+                   hit.addInstance(InstanceBuilder.damage().cause("Bleed").source(giver).value(healthDamage).flags(InstanceFlags.DOT));
+               }
+           })
+           ) {
+
+               @Override
+               public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                   return currentHealValue * .2f;
+               }
+           });
     }
 
     public int getWounding() {
@@ -202,9 +154,36 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
         return stats;
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.wounding = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), int.class);
+        this.woundingTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingTickDuration"), int.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Strike the targeted enemy player, causing ")
+                                               .damage(damageValues.strikeDamage)
+                                               .text(" damage and ")
+                                               .text("wounding", NamedTextColor.RED)
+                                               .text(" them for ")
+                                               .durationTicks(woundingTickDuration)
+                                               .text(", making them receive ")
+                                               .percent(40, NamedTextColor.RED)
+                                               .text(" less healing.")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new WoundingStrikeBranchBerserker(abilityTree, this);
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(497, 632, 20, 175);
+        private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(497, 632, 20, 175);
+
         private final List<Value> values = List.of(strikeDamage);
 
         public Value.RangedValueCritable getStrikeDamage() {
@@ -214,6 +193,11 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
         }
 
     }
@@ -241,5 +225,7 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
         public WoundingStrikeBerserkerStats create() {
             return new WoundingStrikeBerserkerStats();
         }
+
     }
+
 }

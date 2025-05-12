@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -39,10 +40,16 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
         ));
     }
 
-    private final FloatModifiable hitbox = new FloatModifiable(4.8f);
+    private FloatModifiable hitbox = new FloatModifiable(4.8f);
 
     public AbstractStrike(AbstractAbilityBuilder builder) {
         super(builder);
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class));
     }
 
     @Override
@@ -155,4 +162,5 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
         }
 
     }
+
 }

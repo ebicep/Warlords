@@ -1,7 +1,9 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.abilities.internal.Heals;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsEnergyUseEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -18,6 +20,10 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
 
     private int damageIncrease = 10;
 
+    public EnergySeerConjurer() {
+        super(AbstractAbilityBuilder.create("energySeerConjurer").pvp());
+    }
+
     @Override
     public EnergySeerConjurerData getDataObject() {
         return new EnergySeerConjurerData();
@@ -31,16 +37,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
     @Override
     protected void onEnd(WarlordsEntity wp, EnergySeerConjurer.EnergySeerConjurerData data) {
         super.onEnd(wp, data);
-        EffectUtils.displayParticle(
-                Particle.DUST,
-                wp.getLocation().add(0, 1.2, 0),
-                3,
-                0.3,
-                0.2,
-                0.3,
-                0,
-                new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2)
-        );
+        EffectUtils.displayParticle(Particle.DUST, wp.getLocation().add(0, 1.2, 0), 3, 0.3, 0.2, 0.3, 0, new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2));
     }
 
     @Override
@@ -58,13 +55,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
 
     @Override
     public TextComponent getBonus() {
-        return Component.text("Increase your damage by ")
-                        .append(Component.text(damageIncrease + "%", NamedTextColor.RED));
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new EnergySeerBranchConjurer(abilityTree, this);
+        return Component.text("Increase your damage by ").append(Component.text(damageIncrease + "%", NamedTextColor.RED));
     }
 
     public int getDamageIncrease() {
@@ -73,6 +64,17 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
 
     public void setDamageIncrease(int damageIncrease) {
         this.damageIncrease = damageIncrease;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchConjurer(abilityTree, this);
     }
 
     public static class EnergySeerConjurerData extends EnergySeerData {

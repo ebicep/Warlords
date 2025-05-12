@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -266,7 +267,7 @@ public class EventMithra extends AbstractMob implements BossMob {
     }
 
     private void groundSlam() {
-        AbstractGroundSlam groundSlam = new AbstractGroundSlam() {
+        AbstractGroundSlam groundSlam = new AbstractGroundSlam(AbstractAbilityBuilder.create("groundSlamBerserker").pve().cooldown(5).startCooldown(5)) {
             {
                 this.getCooldown().setBaseValue(0f);
                 setTrueDamage(true);

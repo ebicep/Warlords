@@ -137,8 +137,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         return speed;
                     }
                 },
-                new GroundSlamBerserker(10) {{
-                    this.getCooldown().setBaseValue(10f);
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("groundSlamBerserker").pve().cooldown(10).startCooldown(10)) {{
                     this.getDamageValues().getSlamDamage().min().setBaseValue(558);
                     this.getDamageValues().getSlamDamage().max().setBaseValue(616);
                 }},

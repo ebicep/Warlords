@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -38,90 +39,6 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Consume a powerful concoction, granting yourself an additional ")
-                .percent(speedBoost, NamedTextColor.WHITE)
-                .text(" movement speed, ")
-                .percent(damageResistance, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" damage reduction, and an immunity to de-buffs for ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .emptyLine()
-                .text("Vitality Concoction has reduced effectiveness when holding a flag.")
-                .build();
-
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
-        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
-
-        wp.setFlagPickCooldown(1);
-
-        new FallingBlockWaveEffect(wp.getLocation(), 4, 1, Material.BIRCH_SAPLING).play();
-
-        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
-        if (pveMasterUpgrade2) {
-            wp.doOnStaticAbility(ImpalingStrike.class, impalingStrike -> {
-                modifiers.add(impalingStrike.getEnergyCost().addMultiplicativeModifierAdd("Concoction Party", -.75f));
-            });
-        }
-
-        wp.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "STIM",
-                VitalityConcoction.class,
-                new VitalityConcoction(),
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-
-                },
-                cooldownManager -> {
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                },
-                tickDuration
-        ) {
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(damageResistance);
-            }
-
-            @Override
-            protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener(wp);
-            }
-
-        });
-
-        if (pveMasterUpgrade) {
-            for (WarlordsNPC we : PlayerFilterGeneric
-                    .entitiesAround(wp, 5, 5, 5)
-                    .aliveTeammatesOfExcludingSelf(wp)
-                    .warlordsNPCs()
-            ) {
-                we.addInstance(InstanceBuilder
-                        .healing()
-                        .ability(this)
-                        .source(wp)
-                        .min(1045)
-                        .max(1425)
-                );
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new VitalityConcoctionBranch(abilityTree, this);
-    }
-
-    @Override
     public int getTickDuration() {
         return tickDuration;
     }
@@ -136,7 +53,77 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         return stats;
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.damageResistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageResistance"), int.class);
+        this.speedBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBoost"), int.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Consume a powerful concoction, granting yourself an additional ")
+                                               .percent(speedBoost, NamedTextColor.WHITE)
+                                               .text(" movement speed, ")
+                                               .percent(damageResistance, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" damage reduction, and an immunity to de-buffs for ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Vitality Concoction has reduced effectiveness when holding a flag.")
+                                               .build();
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
+        Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
+        wp.setFlagPickCooldown(1);
+        new FallingBlockWaveEffect(wp.getLocation(), 4, 1, Material.BIRCH_SAPLING).play();
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
+        if (pveMasterUpgrade2) {
+            wp.doOnStaticAbility(ImpalingStrike.class, impalingStrike -> {
+                        modifiers.add(impalingStrike.getEnergyCost().addMultiplicativeModifierAdd("Concoction Party", -.75f));
+                    }
+            );
+        }
+        wp.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "STIM", VitalityConcoction.class, new VitalityConcoction(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        }, tickDuration
+        ) {
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * convertToDivisionDecimal(damageResistance);
+            }
+
+            @Override
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener(wp);
+            }
+        });
+        if (pveMasterUpgrade) {
+            for (WarlordsNPC we : PlayerFilterGeneric.entitiesAround(wp, 5, 5, 5).aliveTeammatesOfExcludingSelf(wp).warlordsNPCs()) {
+                we.addInstance(InstanceBuilder.healing().ability(this).source(wp).min(1045).max(1425));
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new VitalityConcoctionBranch(abilityTree, this);
+    }
+
     public static class VitalityConcoctionStats extends AbstractAbilityStats<VitalityConcoction, VitalityConcoctionStats> {
+
+        @Override
+        public Class<VitalityConcoctionStats> getClazz() {
+            return VitalityConcoctionStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -151,13 +138,10 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         }
 
         @Override
-        public Class<VitalityConcoctionStats> getClazz() {
-            return VitalityConcoctionStats.class;
-        }
-
-        @Override
         public VitalityConcoctionStats create() {
             return new VitalityConcoctionStats();
         }
+
     }
+
 }

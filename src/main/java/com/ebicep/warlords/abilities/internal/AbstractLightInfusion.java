@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,8 +33,8 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     protected int energyGiven = 120;
     private final AbstractLightInfusionStats stats = new AbstractLightInfusionStats();
 
-    public AbstractLightInfusion() {
-        super(AbstractAbilityBuilder.create("lightInfusion").pvp());
+    public AbstractLightInfusion(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
@@ -47,6 +48,14 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
                 .durationTicks(tickDuration)
                 .text(".")
                 .build();
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
     }
 
     @Override
@@ -83,6 +92,11 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     public static class AbstractLightInfusionStats extends AbstractAbilityStats<AbstractLightInfusion, AbstractLightInfusionStats> {
 
         @Override
+        public Class<AbstractLightInfusionStats> getClazz() {
+            return AbstractLightInfusionStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             return statsDisplay;
@@ -95,14 +109,10 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
         }
 
         @Override
-        public Class<AbstractLightInfusionStats> getClazz() {
-            return AbstractLightInfusionStats.class;
-        }
-
-        @Override
         public AbstractLightInfusionStats create() {
             return new AbstractLightInfusionStats();
         }
+
     }
 
 }

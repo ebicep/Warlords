@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -32,132 +33,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public BloodLust() {
         super(AbstractAbilityBuilder.create("bloodLust").pvp());
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        if (inPve) {
-            description = AbilityDescriptionBuilder
-                    .create("You lust for blood, healing yourself for ")
-                    .percent(damageConvertPercent, NamedTextColor.GREEN)
-                    .text(" of all the damage you deal. All AOE damage done after the first hit reduces the healing to ")
-                    .percent(healReductionPercent, NamedTextColor.GREEN)
-                    .text(". Lasts ")
-                    .durationTicks(tickDuration)
-                    .text(".")
-                    .build();
-        } else {
-            description = AbilityDescriptionBuilder
-                    .create("You lust for blood, healing yourself for ")
-                    .percent(damageConvertPercent, NamedTextColor.GREEN)
-                    .text(" of all the damage you deal. Lasts ")
-                    .durationTicks(tickDuration)
-                    .text(".")
-                    .build();
-        }
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-        Utils.playGlobalSound(wp.getLocation(), "warrior.bloodlust.activation", 2, 1);
-
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "LUST",
-                BloodLust.class,
-                null,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                            if (ticksElapsed % 3 == 0) {
-                                EffectUtils.displayParticle(
-                                        Particle.DUST,
-                                        wp.getLocation().add(
-                                                (Math.random() - 0.5) * 1,
-                                                1.2,
-                                                (Math.random() - 0.5) * 1
-                                        ),
-                                        1,
-                                        0,
-                                        0,
-                                        0,
-                                        0,
-                                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
-                                );
-                            }
-                        }
-                )
-        ) {
-            private final Set<UUID> abilitiesHit = new HashSet<>();
-
-            @Override
-            public boolean distinct() {
-                return true;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                float damageMultiplier = 1;
-                CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
-                if (pveMasterUpgrade) {
-                    if (cooldownManager.hasCooldownFromName("Wounding Strike")) {
-                        damageMultiplier += 0.3f;
-                    }
-                } else if (pveMasterUpgrade2) {
-                    if (cooldownManager.hasCooldownFromName("Bleed")) {
-                        damageMultiplier += 0.3f;
-                    }
-                }
-                return currentDamageValue * damageMultiplier;
-            }
-
-            @Override
-            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (pveMasterUpgrade2 && event.getCause().equals("Wounding Strike") && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
-                    event.getWarlordsEntity().addInstance(InstanceBuilder
-                            .damage()
-                            .cause(event.getCause())
-                            .source(wp)
-                            .value(currentDamageValue * 0.2f)
-                            .showAsCrit(isCrit)
-                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING)
-                    );
-                }
-                if (event.getFlags().contains(InstanceFlags.NO_LUST_HEALING)) {
-                    return;
-                }
-                WarlordsEntity attacker = event.getSource();
-                float healAmount = currentDamageValue * convertToPercent(damageConvertPercent);
-                if (attacker.isInPve() && event.getUUID() != null) {
-                    if (abilitiesHit.contains(event.getUUID())) {
-                        healAmount *= convertToPercent(healReductionPercent);
-                    } else {
-                        abilitiesHit.add(event.getUUID());
-                    }
-                }
-                attacker.addInstance(InstanceBuilder
-                        .healing()
-                        .ability(BloodLust.this)
-                        .source(attacker)
-                        .value(healAmount)
-                        .flags(InstanceFlags.NO_HIT_SOUND)
-                ).ifPresent(finalEvent -> {
-                    stats.amountHealed += finalEvent.getValue();
-                });
-            }
-
-        });
-
-        return true;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new BloodlustBranch(abilityTree, this);
     }
 
     public int getDamageConvertPercent() {
@@ -191,10 +66,123 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         return stats;
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.damageConvertPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageConvertPercent"), int.class);
+        this.healReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healReductionPercent"), float.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        if (inPve) {
+            description = AbilityDescriptionBuilder.create("You lust for blood, healing yourself for ")
+                                                   .percent(damageConvertPercent, NamedTextColor.GREEN)
+                                                   .text(" of all the damage you deal. All AOE damage done after the first hit reduces the healing to ")
+                                                   .percent(healReductionPercent, NamedTextColor.GREEN)
+                                                   .text(". Lasts ")
+                                                   .durationTicks(tickDuration)
+                                                   .text(".")
+                                                   .build();
+        } else {
+            description = AbilityDescriptionBuilder.create("You lust for blood, healing yourself for ")
+                                                   .percent(damageConvertPercent, NamedTextColor.GREEN)
+                                                   .text(" of all the damage you deal. Lasts ")
+                                                   .durationTicks(tickDuration)
+                                                   .text(".")
+                                                   .build();
+        }
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), "warrior.bloodlust.activation", 2, 1);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LUST", BloodLust.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 3 == 0) {
+                EffectUtils.displayParticle(Particle.DUST,
+                        wp.getLocation().add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1),
+                        1,
+                        0,
+                        0,
+                        0,
+                        0,
+                        new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1)
+                );
+            }
+        })
+        ) {
+
+            private final Set<UUID> abilitiesHit = new HashSet<>();
+
+            @Override
+            public boolean distinct() {
+                return true;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                float damageMultiplier = 1;
+                CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
+                if (pveMasterUpgrade) {
+                    if (cooldownManager.hasCooldownFromName("Wounding Strike")) {
+                        damageMultiplier += 0.3f;
+                    }
+                } else if (pveMasterUpgrade2) {
+                    if (cooldownManager.hasCooldownFromName("Bleed")) {
+                        damageMultiplier += 0.3f;
+                    }
+                }
+                return currentDamageValue * damageMultiplier;
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (pveMasterUpgrade2 && event.getCause().equals("Wounding Strike") && !event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                    event.getWarlordsEntity()
+                         .addInstance(InstanceBuilder.damage()
+                                                     .cause(event.getCause())
+                                                     .source(wp)
+                                                     .value(currentDamageValue * 0.2f)
+                                                     .showAsCrit(isCrit)
+                                                     .flags(InstanceFlags.RECURSIVE, InstanceFlags.NO_LUST_HEALING));
+                }
+                if (event.getFlags().contains(InstanceFlags.NO_LUST_HEALING)) {
+                    return;
+                }
+                WarlordsEntity attacker = event.getSource();
+                float healAmount = currentDamageValue * convertToPercent(damageConvertPercent);
+                if (attacker.isInPve() && event.getUUID() != null) {
+                    if (abilitiesHit.contains(event.getUUID())) {
+                        healAmount *= convertToPercent(healReductionPercent);
+                    } else {
+                        abilitiesHit.add(event.getUUID());
+                    }
+                }
+                attacker.addInstance(InstanceBuilder.healing().ability(BloodLust.this).source(attacker).value(healAmount).flags(InstanceFlags.NO_HIT_SOUND))
+                        .ifPresent(finalEvent -> {
+                            stats.amountHealed += finalEvent.getValue();
+                        });
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new BloodlustBranch(abilityTree, this);
+    }
+
     public static class BloodLustStats extends AbstractAbilityStats<BloodLust, BloodLustStats> {
 
         @Field("amount_healed")
         private float amountHealed = 0;
+
+        @Override
+        public Class<BloodLustStats> getClazz() {
+            return BloodLustStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -211,11 +199,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         }
 
         @Override
-        public Class<BloodLustStats> getClazz() {
-            return BloodLustStats.class;
-        }
-
-        @Override
         public BloodLustStats create() {
             return new BloodLustStats();
         }
@@ -223,5 +206,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         public float getAmountHealed() {
             return amountHealed;
         }
+
     }
+
 }

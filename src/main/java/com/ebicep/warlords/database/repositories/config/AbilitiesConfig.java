@@ -81,7 +81,6 @@ public class AbilitiesConfig implements ConfigManager.Config {
         // Extract the final value using the last key part
         String finalKey = keyParts[keyParts.length - 1];
         if (!currentObject.containsKey(finalKey)) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("Field '" + finalKey + "' not found in path: " + key);
             return new Result<>(ValueResult.INVALID_FIELD);
         }
 

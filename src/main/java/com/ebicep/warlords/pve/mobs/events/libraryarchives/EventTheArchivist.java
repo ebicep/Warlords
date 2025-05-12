@@ -60,9 +60,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 new ChainLightning(AbstractAbilityBuilder.create("chainLightning").pve().cooldown(5).startCooldown(5)) {{
                     this.pveMasterUpgrade2 = true;
                 }},
-                new GroundSlamBerserker(8) {{
-                    this.getCooldown().setBaseValue(8f);
-                }},
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("groundSlamBerserker").pve().cooldown(8).startCooldown(8)),
                 new PrismGuard(AbstractAbilityBuilder.create("prismGuard").pve().cooldown(18).startCooldown(18)),
                 new Inferno() {{
                     this.cooldown.setBaseValue(25);

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -27,8 +28,8 @@ import java.util.function.Consumer;
 
 public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrike.ImpalingStrikeStats> implements Damages<ImpalingStrike.DamageValues> {
 
-    private final DamageValues damageValues = new DamageValues();
     private final ImpalingStrikeStats stats = new ImpalingStrikeStats();
+    private final DamageValues damageValues = new DamageValues();
     private int leechDuration = 5;
     private float leechAllyAmount = 25;
     private float leechSelfAmount = 15;
@@ -43,31 +44,6 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Impale an enemy, dealing")
-                .damage(damageValues.strikeDamage)
-                .text("damage and inflicting them with ")
-                .text("LEECH", NamedTextColor.DARK_GREEN)
-                .text(" for ")
-                .durationSeconds(leechDuration)
-                .text(". Whenever an ally deals damage to an enemy with")
-                .text("LEECH", NamedTextColor.DARK_GREEN)
-                .text(", they heal for ")
-                .percent(leechAllyAmount, NamedTextColor.GREEN)
-                .text(" of the damage dealt. You heal for ")
-                .percent(leechSelfAmount, NamedTextColor.GREEN)
-                .text(" of the damage instead.")
-                .build();
-
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ImpalingStrikeBranch(abilityTree, this);
-    }
-
-    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "rogue.apothecarystrike.activation", 2, 0.5f);
         Utils.playGlobalSound(location, "mage.fireball.activation", 2, 1.8f);
@@ -77,48 +53,26 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         int multiplier = pveMasterUpgrade && nearPlayer.getCooldownManager().hasCooldownFromName("Leech Debuff") ? 3 : 1;
-        nearPlayer.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .min(damageValues.strikeDamage.getMinValue() * multiplier)
-                .max(damageValues.strikeDamage.getMaxValue() * multiplier)
-                .crit(damageValues.strikeDamage)
-        ).ifPresent(finalEvent -> {
-            giveLeechCooldown(
-                    wp,
-                    nearPlayer,
-                    leechDuration,
-                    leechSelfAmount / 100f,
-                    leechAllyAmount / 100f,
-                    warlordsDamageHealingFinalEvent -> {
+        nearPlayer.addInstance(InstanceBuilder.damage()
+                                              .ability(this)
+                                              .source(wp)
+                                              .min(damageValues.strikeDamage.getMinValue() * multiplier)
+                                              .max(damageValues.strikeDamage.getMaxValue() * multiplier)
+                                              .crit(damageValues.strikeDamage)).ifPresent(finalEvent -> {
+            giveLeechCooldown(wp, nearPlayer, leechDuration, leechSelfAmount / 100f, leechAllyAmount / 100f, warlordsDamageHealingFinalEvent -> {
                     }
             );
         });
-
-
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             additionalHit(pveMasterUpgrade ? 2 : 5, wp, nearPlayer, warlordsEntity -> {
-                        warlordsEntity.addInstance(InstanceBuilder
-                                .damage()
-                                .ability(this)
-                                .source(wp)
-                                .value(damageValues.strikeDamage)
-                        ).ifPresent(finalEvent -> {
-                            giveLeechCooldown(
-                                    wp,
-                                    nearPlayer,
-                                    leechDuration,
-                                    leechSelfAmount / 100f,
-                                    leechAllyAmount / 100f,
-                                    warlordsDamageHealingFinalEvent -> {
+                warlordsEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage)).ifPresent(finalEvent -> {
+                    giveLeechCooldown(wp, nearPlayer, leechDuration, leechSelfAmount / 100f, leechAllyAmount / 100f, warlordsDamageHealingFinalEvent -> {
                                     }
                             );
                         });
                     }
             );
         }
-
         return true;
     }
 
@@ -134,17 +88,10 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         ImpalingStrikeData data = new ImpalingStrikeData();
         AtomicReference<Float> totalHealingDone = new AtomicReference<>((float) 0);
         target.getCooldownManager().removeCooldown(ImpalingStrikeData.class, false);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Leech Debuff",
-                "LCH",
-                ImpalingStrikeData.class,
-                data,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                secondDuration * 20
+        target.getCooldownManager().addCooldown(new RegularCooldown<>("Leech Debuff", "LCH", ImpalingStrikeData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, secondDuration * 20
         ) {
+
             @Override
             public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                 if (inPve && totalHealingDone.get() >= 1000) {
@@ -161,12 +108,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
                 if (inPve) {
                     healValue = Math.min(500, healValue);
                 }
-                event.getSource().addInstance(InstanceBuilder
-                        .healing()
-                        .cause("Leech")
-                        .source(wp)
-                        .value(healValue)
-                ).ifPresent(warlordsDamageHealingFinalEvent -> {
+                event.getSource().addInstance(InstanceBuilder.healing().cause("Leech").source(wp).value(healValue)).ifPresent(warlordsDamageHealingFinalEvent -> {
                     finalEvent.accept(warlordsDamageHealingFinalEvent);
                     totalHealingDone.updateAndGet(v -> v + warlordsDamageHealingFinalEvent.getValue());
                     if (event.getWarlordsEntity().hasFlag()) {
@@ -218,9 +160,41 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         return stats;
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.leechDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechDuration"), int.class);
+        this.leechAllyAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAllyAmount"), float.class);
+        this.leechSelfAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechSelfAmount"), float.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Impale an enemy, dealing")
+                                               .damage(damageValues.strikeDamage)
+                                               .text("damage and inflicting them with ")
+                                               .text("LEECH", NamedTextColor.DARK_GREEN)
+                                               .text(" for ")
+                                               .durationSeconds(leechDuration)
+                                               .text(". Whenever an ally deals damage to an enemy with")
+                                               .text("LEECH", NamedTextColor.DARK_GREEN)
+                                               .text(", they heal for ")
+                                               .percent(leechAllyAmount, NamedTextColor.GREEN)
+                                               .text(" of the damage dealt. You heal for ")
+                                               .percent(leechSelfAmount, NamedTextColor.GREEN)
+                                               .text(" of the damage instead.")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ImpalingStrikeBranch(abilityTree, this);
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(323, 427, 20, 175);
+        private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(323, 427, 20, 175);
+
         private final List<Value> values = List.of(strikeDamage);
 
         public Value.RangedValueCritable getStrikeDamage() {
@@ -230,6 +204,11 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
         }
 
     }
@@ -245,6 +224,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         public float getHealingDoneFromEnemyCarrier() {
             return healingDoneFromEnemyCarrier;
         }
+
     }
 
     public static class ImpalingStrikeStats extends AbstractStrikeStats<ImpalingStrike, ImpalingStrikeStats> {
@@ -270,5 +250,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         public ImpalingStrikeStats create() {
             return new ImpalingStrikeStats();
         }
+
     }
+
 }

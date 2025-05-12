@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractConsecrate;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -32,7 +33,22 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
     private final DamageValues damageValues = new DamageValues();
 
     public ConsecrateCrusader() {
-        super(AbstractAbilityBuilder.create("consecrate").pvp());
+        super(AbstractAbilityBuilder.create("consecrateCrusader").pvp());
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ConsecrateBranchCrusader(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
@@ -40,60 +56,38 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         if (!pveMasterUpgrade2) {
             return super.onActivate(wp);
         }
-
         Location location = wp.getLocation().clone();
-
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
         float radius = hitBox.getCalculatedValue();
-        CircleEffect circleEffect = new CircleEffect(
-                wp.getGame(),
+        CircleEffect circleEffect = new CircleEffect(wp.getGame(),
                 wp.getTeam(),
                 location,
                 radius,
-                new CircumferenceEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1))
-                        .particlesPerCircumference(.25),
+                new CircumferenceEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 215, 0), 1)).particlesPerCircumference(.25),
                 new DoubleLineEffect(Particle.DUST, new Particle.DustOptions(Color.fromRGB(255, 255, 100), 1))
         );
-
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                null,
-                AbstractConsecrate.class,
-                null,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                },
-                false,
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    Location updatedLocation = wp.getLocation();
-                    circleEffect.setCenter(updatedLocation);
-                    if (ticksElapsed % 5 == 0) {
-                        circleEffect.playEffects();
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, null, AbstractConsecrate.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+        }, false, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            Location updatedLocation = wp.getLocation();
+            circleEffect.setCenter(updatedLocation);
+            if (ticksElapsed % 5 == 0) {
+                circleEffect.playEffects();
+            }
+            if (ticksElapsed % 30 == 0) {
+                AtomicInteger energyGiven = new AtomicInteger();
+                PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius).aliveEnemiesOf(wp).forEach(enemy -> {
+                    getAbilityStats().addPlayersHit();
+                    enemy.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.consecrateDamage));
+                    if (energyGiven.get() < 100) {
+                        energyGiven.addAndGet(10);
+                        wp.addEnergy(wp, "Sanctifying Ring", 10);
                     }
-                    if (ticksElapsed % 30 == 0) {
-                        AtomicInteger energyGiven = new AtomicInteger();
-                        PlayerFilter.entitiesAround(updatedLocation, radius, 6, radius)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(enemy -> {
-                                        getAbilityStats().addPlayersHit();
-                                        enemy.addInstance(InstanceBuilder
-                                                .damage()
-                                                .ability(this)
-                                                .source(wp)
-                                                .value(damageValues.consecrateDamage)
-                                        );
-                                        if (energyGiven.get() < 100) {
-                                            energyGiven.addAndGet(10);
-                                            wp.addEnergy(wp, "Sanctifying Ring", 10);
-                                        }
-                                    });
-                    }
-                })
+                });
+            }
+        })
         ) {
+
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
@@ -118,19 +112,10 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         return damageValues.consecrateDamage;
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ConsecrateBranchCrusader(abilityTree, this);
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(144, 194, 20, 175);
+        private Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(144, 194, 20, 175);
+
         private final List<Value> values = List.of(consecrateDamage);
 
         public Value.RangedValueCritable getConsecrateDamage() {
@@ -140,6 +125,11 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.consecrateDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("consecrateDamage"), Value.RangedValueCritable.class);
         }
 
     }

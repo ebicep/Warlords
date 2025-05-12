@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -37,8 +38,8 @@ import java.util.Optional;
 
 public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenSouls.FallenSoulsStats> implements WeaponAbilityIcon, Damages<FallenSouls.DamageValues> {
 
-    private final DamageValues damageValues = new DamageValues();
     private final FallenSoulsStats stats = new FallenSoulsStats();
+    private final DamageValues damageValues = new DamageValues();
     private int cooldownReduction = 2;
 
     public FallenSouls() {
@@ -54,19 +55,85 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Summon a wave of fallen souls, dealing")
-                .damage(damageValues.fallenSoulDamage)
-                .text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by ")
-                .durationSeconds(cooldownReduction)
-                .text(".")
-                .maxRange(maxDistance)
-                .build();
+        description = AbilityDescriptionBuilder.create("Summon a wave of fallen souls, dealing")
+                                               .damage(damageValues.fallenSoulDamage)
+                                               .text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by ")
+                                               .durationSeconds(cooldownReduction)
+                                               .text(".")
+                                               .maxRange(maxDistance)
+                                               .build();
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new FallenSoulsBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public FallenSoulsStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), int.class);
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation).pitch(0);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+                    itemDisplay.setItemStack(new ItemStack(Material.ACACIA_FENCE_GATE));
+                    itemDisplay.setTeleportDuration(1);
+                    itemDisplay.setBrightness(new Display.Brightness(15, 15));
+                    itemDisplay.setTransformation(new Transformation(new Vector3f(),
+                            new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                            new Vector3f(.75f),
+                            new AxisAngle4f()
+                    ));
+                }
+        );
+        projectile.addTask(new InternalProjectileTask() {
+
+            @Override
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation).pitch(0);
+                display.teleport(location);
+                if (projectile.getTicksLived() % 4 == 0) {
+                    EffectUtils.displayParticle(Particle.WITCH, projectile.getCurrentLocation(), 1);
+                }
+            }
+
+            @Override
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                display.remove();
+                EffectUtils.displayParticle(Particle.WITCH, projectile.getCurrentLocation(), 1, 0, 0, 0, 0.7f);
+            }
+        });
+    }
+
+    @Override
+    protected String getActivationSound() {
+        return "shaman.lightningbolt.impact";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1.5f;
     }
 
     @Override
@@ -83,61 +150,42 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     protected int onHit(@Nonnull InternalProjectile projectile, WarlordsEntity hit) {
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
-
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
-
         int playersHit = 0;
-        for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(currentLocation, 3, 3, 3)
-                .aliveEnemiesOf(wp)
-                .excluding(projectile.getHit())
-        ) {
+        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(currentLocation, 3, 3, 3).aliveEnemiesOf(wp).excluding(projectile.getHit())) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
             playersHit++;
             if (enemy.onHorse()) {
                 stats.addNumberOfDismounts();
             }
             hit(wp, enemy);
-
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(2);
             }
         }
-
         return playersHit;
     }
 
     private Optional<WarlordsDamageHealingFinalEvent> hit(WarlordsEntity wp, WarlordsEntity enemy) {
         if (pveMasterUpgrade2) {
             if (enemy.getCooldownManager().hasCooldown(FallenSoulsBranch.SoulFeast.class)) {
-                new CooldownFilter<>(enemy, PermanentCooldown.class)
-                        .filterCooldownClassAndMapToObjectsOfClass(FallenSoulsBranch.SoulFeast.class)
-                        .forEach(FallenSoulsBranch.SoulFeast::reduce);
+                new CooldownFilter<>(enemy, PermanentCooldown.class).filterCooldownClassAndMapToObjectsOfClass(FallenSoulsBranch.SoulFeast.class)
+                                                                    .forEach(FallenSoulsBranch.SoulFeast::reduce);
             } else {
                 FallenSoulsBranch.SoulFeast soulFeast = new FallenSoulsBranch.SoulFeast();
-                enemy.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                        "Soul Feast",
-                        "FEAST",
-                        FallenSoulsBranch.SoulFeast.class,
-                        soulFeast,
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {},
-                        false
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * soulFeast.getDamageMultiplier();
-                    }
-                });
+                enemy.getCooldownManager()
+                     .addCooldown(new PermanentCooldown<>("Soul Feast", "FEAST", FallenSoulsBranch.SoulFeast.class, soulFeast, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                     }, false
+                     ) {
+
+                         @Override
+                         public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                             return currentDamageValue * soulFeast.getDamageMultiplier();
+                         }
+                     });
             }
         }
-        return enemy.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .value(damageValues.fallenSoulDamage)
-        );
+        return enemy.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.fallenSoulDamage));
     }
 
     @Override
@@ -160,13 +208,10 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                 stats.addNumberOfDismounts();
             }
             Utils.playGlobalSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
-
             hit(wp, hit);
-
             for (SpiritLink spiritLink : wp.getAbilitiesMatching(SpiritLink.class)) {
                 spiritLink.subtractCurrentCooldown(cooldownReduction);
             }
-
             reduceCooldowns(wp, hit);
         }
     }
@@ -176,115 +221,36 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(0f);
     }
 
-    @Override
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        super.onSpawn(projectile);
-
-        Location startingLocation = projectile.getStartingLocation();
-        LocationBuilder location = new LocationBuilder(startingLocation)
-                .pitch(0);
-        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-            itemDisplay.setItemStack(new ItemStack(Material.ACACIA_FENCE_GATE));
-            itemDisplay.setTeleportDuration(1);
-            itemDisplay.setBrightness(new Display.Brightness(15, 15));
-            itemDisplay.setTransformation(new Transformation(
-                    new Vector3f(),
-                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
-                    new Vector3f(.75f),
-                    new AxisAngle4f()
-            ));
-        });
-
-        projectile.addTask(new InternalProjectileTask() {
-
-            @Override
-            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                Location currentLocation = projectile.getCurrentLocation();
-                LocationBuilder location = new LocationBuilder(currentLocation)
-                        .pitch(0);
-                display.teleport(location);
-                if (projectile.getTicksLived() % 4 == 0) {
-                    EffectUtils.displayParticle(
-                            Particle.WITCH,
-                            projectile.getCurrentLocation(),
-                            1
-                    );
-                }
-            }
-
-            @Override
-            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                display.remove();
-                EffectUtils.displayParticle(
-                        Particle.WITCH,
-                        projectile.getCurrentLocation(),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0.7f
-                );
-            }
-        });
-    }
-
-    @Override
-    protected String getActivationSound() {
-        return "shaman.lightningbolt.impact";
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1.5f;
-    }
-
     private void reduceCooldowns(WarlordsEntity wp, WarlordsEntity enemy) {
-        new CooldownFilter<>(wp, PersistentCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
-                .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
-                .forEachOrdered(data -> {
-                    Soulbinding soulbinding = data.getSoulbinding();
-                    soulbinding.addSoulProcs();
-                    for (AbstractAbility ability : wp.getAbilities()) {
-                        ability.subtractCurrentCooldownForce(soulbinding.getSelfCooldownReduction());
-                    }
-                    int radius = soulbinding.getRadius();
-                    for (WarlordsEntity teammate : PlayerFilter
-                            .entitiesAround(wp.getLocation(), radius, radius, radius)
-                            .aliveTeammatesOfExcludingSelf(wp)
-                            .filter(warlordsEntity -> warlordsEntity.getSpecClass() != Specializations.SPIRITGUARD)
-                            .closestWarlordPlayersFirst(wp.getLocation())
-                            .limit(soulbinding.getMaxAlliesHit())
-                    ) {
-                        soulbinding.addSoulTeammatesCDReductions();
-                        for (AbstractAbility ability : teammate.getAbilities()) {
-                            ability.subtractCurrentCooldown(soulbinding.getAllyCooldownReduction());
-                        }
-                    }
-                    if (soulbinding.isPveMasterUpgrade()) {
-                        wp.addEnergy(wp, "Soulbinding Weapon", 1);
-                    }
-                });
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public FallenSoulsStats getAbilityStats() {
-        return stats;
+        new CooldownFilter<>(wp, PersistentCooldown.class).filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
+                                                          .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(enemy))
+                                                          .forEachOrdered(data -> {
+                                                              Soulbinding soulbinding = data.getSoulbinding();
+                                                              soulbinding.addSoulProcs();
+                                                              for (AbstractAbility ability : wp.getAbilities()) {
+                                                                  ability.subtractCurrentCooldownForce(soulbinding.getSelfCooldownReduction());
+                                                              }
+                                                              int radius = soulbinding.getRadius();
+                                                              for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
+                                                                                                         .aliveTeammatesOfExcludingSelf(wp)
+                                                                                                         .filter(warlordsEntity -> warlordsEntity.getSpecClass() != Specializations.SPIRITGUARD)
+                                                                                                         .closestWarlordPlayersFirst(wp.getLocation())
+                                                                                                         .limit(soulbinding.getMaxAlliesHit())) {
+                                                                  soulbinding.addSoulTeammatesCDReductions();
+                                                                  for (AbstractAbility ability : teammate.getAbilities()) {
+                                                                      ability.subtractCurrentCooldown(soulbinding.getAllyCooldownReduction());
+                                                                  }
+                                                              }
+                                                              if (soulbinding.isPveMasterUpgrade()) {
+                                                                  wp.addEnergy(wp, "Soulbinding Weapon", 1);
+                                                              }
+                                                          });
     }
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(140, 181, 20, 180);
+        private Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(140, 181, 20, 180);
+
         private final List<Value> values = List.of(fallenSoulDamage);
 
         public Value.RangedValueCritable getFallenSoulDamage() {
@@ -294,6 +260,11 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.fallenSoulDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallenSoulDamage"), Value.RangedValueCritable.class);
         }
 
     }
@@ -323,4 +294,5 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         }
 
     }
+
 }

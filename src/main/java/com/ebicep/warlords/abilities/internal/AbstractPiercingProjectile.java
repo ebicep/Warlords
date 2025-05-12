@@ -33,15 +33,15 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         HitBox,
         AbilityStats<T, R> {
 
+    protected double projectileSpeed;
+    protected double maxDistance;
+    protected int maxTicks;
     protected boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
-    protected int maxTicks;
-    protected double maxDistance;
     protected float forwardTeleportAmount = 0;
     protected int maxAngleOfShots = 45;
     protected int shotsFiredAtATime = 1;
     protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
-    protected double projectileSpeed;
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
     public AbstractPiercingProjectile(AbstractAbilityBuilder builder) {
@@ -55,6 +55,78 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), double.class);
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
         this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        fire(shooter, shooter.getEyeLocation());
+        return true;
+    }
+
+    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
+        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
+        List<InternalProjectile> internalProjectiles = new ArrayList<>();
+        for (Location projectileLocation : projectileLocations) {
+            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
+            internalProjectiles.add(projectile);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            internalProjectileGroup.put(projectile, internalProjectiles);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            onSpawn(projectile);
+            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
+        }
+    }
+
+    /**
+     * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
+     */
+    public List<Location> getLocationsToFireShots(Location startingLocation) {
+        List<Location> locations = new ArrayList<>();
+
+        Location playerLocation = new LocationBuilder(startingLocation.clone()).backward(forwardTeleportAmount);
+        double beginningYaw = playerLocation.getYaw() - (maxAngleOfShots / 2d);
+        double angleBetweenShots = (double) maxAngleOfShots / (shotsFiredAtATime + 1);
+        for (int i = 1; i <= shotsFiredAtATime; i++) {
+            Location locationToAdd = new LocationBuilder(playerLocation.clone())
+                    .yaw((float) (beginningYaw + (angleBetweenShots * i)))
+                    .forward(forwardTeleportAmount);
+            locations.add(locationToAdd);
+        }
+
+        return locations;
+    }
+
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        playSound(projectile);
+    }
+
+    protected void playSound(@Nonnull InternalProjectile projectile) {
+        final String activationSound = getActivationSound();
+        if (activationSound != null) {
+            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, getSoundVolume(), getSoundPitch());
+        }
+    }
+
+    /**
+     * Gets the sound used when this projectile is activated
+     *
+     * @return
+     */
+    @Nullable
+    protected abstract String getActivationSound();
+
+    protected abstract float getSoundVolume();
+
+    protected abstract float getSoundPitch();
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        hitboxInflation.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     /**
@@ -96,6 +168,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      * @param currentLocation The current location of the projectile
      * @param speed           The speed of the projectile
      * @param shooter         The shooter of the projectile
+     *
      * @return The hit result = block or entity hit or null
      */
     @Nullable
@@ -137,12 +210,13 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
                 }
             } else {
                 PENDING_HITS.add(new PendingHit(
-                        new Location(
-                                currentLocation.getWorld(),
-                                vec.x,
-                                vec.y,
-                                vec.z
-                        ), distance, wp)
+                                new Location(
+                                        currentLocation.getWorld(),
+                                        vec.x,
+                                        vec.y,
+                                        vec.z
+                                ), distance, wp
+                        )
                 );
             }
         }
@@ -227,6 +301,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      *
      * @param projectile
      * @param wp
+     *
      * @return true if it should destroy itself
      */
     protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
@@ -236,6 +311,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      *
      * @param projectile
      * @param block
+     *
      * @return true if it should destroy itself
      */
     protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
@@ -258,6 +334,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      *
      * @param shooter
      * @param startingLocation
+     *
      * @return
      */
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
@@ -270,82 +347,11 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      *
      * @param shooter
      * @param startingLocation
+     *
      * @return
      */
     protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
         return startingLocation.getDirection().multiply(projectileSpeed);
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        fire(shooter, shooter.getEyeLocation());
-        return true;
-    }
-
-    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
-        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
-        List<InternalProjectile> internalProjectiles = new ArrayList<>();
-        for (Location projectileLocation : projectileLocations) {
-            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
-            internalProjectiles.add(projectile);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            internalProjectileGroup.put(projectile, internalProjectiles);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            onSpawn(projectile);
-            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
-        }
-    }
-
-    /**
-     * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
-     */
-    public List<Location> getLocationsToFireShots(Location startingLocation) {
-        List<Location> locations = new ArrayList<>();
-
-        Location playerLocation = new LocationBuilder(startingLocation.clone()).backward(forwardTeleportAmount);
-        double beginningYaw = playerLocation.getYaw() - (maxAngleOfShots / 2d);
-        double angleBetweenShots = (double) maxAngleOfShots / (shotsFiredAtATime + 1);
-        for (int i = 1; i <= shotsFiredAtATime; i++) {
-            Location locationToAdd = new LocationBuilder(playerLocation.clone())
-                    .yaw((float) (beginningYaw + (angleBetweenShots * i)))
-                    .forward(forwardTeleportAmount);
-            locations.add(locationToAdd);
-        }
-
-        return locations;
-    }
-
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        playSound(projectile);
-    }
-
-    protected void playSound(@Nonnull InternalProjectile projectile) {
-        final String activationSound = getActivationSound();
-        if (activationSound != null) {
-            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, getSoundVolume(), getSoundPitch());
-        }
-    }
-
-    /**
-     * Gets the sound used when this projectile is activated
-     *
-     * @return
-     */
-    @Nullable
-    protected abstract String getActivationSound();
-
-    protected abstract float getSoundVolume();
-
-    protected abstract float getSoundPitch();
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitboxInflation.tick();
-        super.runEveryTick(warlordsEntity);
     }
 
     public void setShotsFiredAtATime(int shotsFiredAtATime) {
@@ -611,4 +617,5 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         }
 
     }
+
 }

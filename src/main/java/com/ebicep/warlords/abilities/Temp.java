@@ -17,10 +17,18 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     }
 
     @Override
+    public TempStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+    }
+
+    @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Placeholder Ability")
-                .build();
+        description = AbilityDescriptionBuilder.create("Placeholder Ability").build();
     }
 
     @Override
@@ -28,12 +36,12 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
         return true;
     }
 
-    @Override
-    public TempStats getAbilityStats() {
-        return stats;
-    }
-
     public static class TempStats extends AbstractAbilityStats<Temp, TempStats> {
+
+        @Override
+        public Class<TempStats> getClazz() {
+            return TempStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -48,13 +56,10 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
         }
 
         @Override
-        public Class<TempStats> getClazz() {
-            return TempStats.class;
-        }
-
-        @Override
         public TempStats create() {
             return new TempStats();
         }
+
     }
+
 }

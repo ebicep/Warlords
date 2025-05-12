@@ -27,8 +27,8 @@ import java.util.List;
 
 public abstract class AbstractConsecrate extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, AbilityStats<AbstractConsecrate, AbstractConsecrate.AbstractConsecrateStats> {
 
-    protected int strikeDamageBoost;
     protected FloatModifiable hitBox;
+    protected int strikeDamageBoost;
     protected int tickDuration;
     private final AbstractConsecrateStats stats = new AbstractConsecrateStats();
 
@@ -173,6 +173,11 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         private int playersHit = 0;
 
         @Override
+        public Class<AbstractConsecrateStats> getClazz() {
+            return AbstractConsecrateStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
@@ -186,11 +191,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
             stats.strikesBoosted = this.strikesBoosted + other.strikesBoosted * multiplier;
             stats.playersHit = this.playersHit + other.playersHit * multiplier;
             return stats;
-        }
-
-        @Override
-        public Class<AbstractConsecrateStats> getClazz() {
-            return AbstractConsecrateStats.class;
         }
 
         @Override

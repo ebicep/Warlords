@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -25,8 +26,8 @@ import java.util.List;
 
 public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrike.AvengersStrikeStats> implements Damages<AvengersStrike.DamageValues> {
 
-    private final DamageValues damageValues = new DamageValues();
     private final AvengersStrikeStats stats = new AvengersStrikeStats();
+    private final DamageValues damageValues = new DamageValues();
     private float energySteal = 10;
 
     public AvengersStrike() {
@@ -39,34 +40,10 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Strike the targeted enemy player, causing")
-                .damage(damageValues.strikeDamage)
-                .text("damage and removing ")
-                .energy(energySteal)
-                .text(".")
-                .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new AvengerStrikeBranch(abilityTree, this);
-    }
-
-    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
-        EffectUtils.displayParticle(
-                Particle.EFFECT,
-                location,
-                4,
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                (float) ((Math.random() * 2) - 1),
-                1
-        );
+        EffectUtils.displayParticle(Particle.EFFECT, location, 4, (float) ((Math.random() * 2) - 1), (float) ((Math.random() * 2) - 1), (float) ((Math.random() * 2) - 1), 1);
     }
 
     @Override
@@ -91,41 +68,23 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
             }
         }
         healthDamage = DamageCheck.clamp(healthDamage);
-
-        nearPlayer.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .min((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
-                .max((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
-                .crit(damageValues.strikeDamage)
-        ).ifPresent(finalEvent -> {
+        nearPlayer.addInstance(InstanceBuilder.damage()
+                                              .ability(this)
+                                              .source(wp)
+                                              .min((damageValues.strikeDamage.getMinValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                                              .max((damageValues.strikeDamage.getMaxValue() * multiplier) + (pveMasterUpgrade ? healthDamage : 0))
+                                              .crit(damageValues.strikeDamage)).ifPresent(finalEvent -> {
             if (pveMasterUpgrade) {
-                for (WarlordsEntity we : PlayerFilter
-                        .entitiesAround(nearPlayer, 4, 4, 4)
-                        .aliveEnemiesOf(wp)
-                        .closestFirst(nearPlayer)
-                        .excluding(nearPlayer)
-                        .limit(2)
-                ) {
+                for (WarlordsEntity we : PlayerFilter.entitiesAround(nearPlayer, 4, 4, 4).aliveEnemiesOf(wp).closestFirst(nearPlayer).excluding(nearPlayer).limit(2)) {
                     float damage = finalEvent.getValue() * 0.75f;
                     if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getLevel() >= 4) {
                         damage = DamageCheck.clamp(we.getMaxHealth());
                     }
-                    we.addInstance(InstanceBuilder
-                            .damage()
-                            .ability(this)
-                            .source(wp)
-                            .value(damage)
-                            .showAsCrit(finalEvent.isCrit())
-                            .flags(InstanceFlags.TRUE_DAMAGE)
-                    );
+                    we.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damage).showAsCrit(finalEvent.isCrit()).flags(InstanceFlags.TRUE_DAMAGE));
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, this, we));
                 }
             }
         });
-
-
         stats.energyStole += nearPlayer.subtractEnergy(name, energySteal, true);
         return true;
     }
@@ -143,9 +102,31 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         return stats;
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.energySteal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energySteal"), float.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Strike the targeted enemy player, causing")
+                                               .damage(damageValues.strikeDamage)
+                                               .text("damage and removing ")
+                                               .energy(energySteal)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new AvengerStrikeBranch(abilityTree, this);
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
+        private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
+
         private final List<Value> values = List.of(strikeDamage);
 
         public Value.RangedValueCritable getStrikeDamage() {
@@ -155,6 +136,11 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
         }
 
     }
@@ -187,5 +173,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         public AvengersStrikeStats create() {
             return new AvengersStrikeStats();
         }
+
     }
+
 }

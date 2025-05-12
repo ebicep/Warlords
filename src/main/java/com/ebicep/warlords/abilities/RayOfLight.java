@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -25,9 +26,8 @@ import java.util.List;
 public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightStats> implements Heals<RayOfLight.HealingValues> {
 
     public static final ItemStack BEAM_ITEM = new ItemStack(Material.MANGROVE_FENCE);
-
-    private final HealingValues healingValues = new HealingValues();
     private final RayOfLightStats stats = new RayOfLightStats();
+    private final HealingValues healingValues = new HealingValues();
 
     public RayOfLight() {
         super(AbstractAbilityBuilder.create("rayOfLight").pvp());
@@ -35,20 +35,19 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Unleash a concentrated beam of holy light, healing ")
-                .heal(healingValues.rayHealing)
-                .text(" health to all allies hit and cleansing all ")
-                .text("de-buffs", NamedTextColor.DARK_RED)
-                .text(". If the target is affected by Merciful Hex the healing given is increased by ")
-                .percent(25, NamedTextColor.GREEN)
-                .text("/")
-                .percent(50, NamedTextColor.GREEN)
-                .text("/")
-                .percent(100, NamedTextColor.GREEN)
-                .text(" relative to the number of stacks and all stacks are removed.")
-                .maxRange(maxDistance)
-                .build();
+        description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of holy light, healing ")
+                                               .heal(healingValues.rayHealing)
+                                               .text(" health to all allies hit and cleansing all ")
+                                               .text("de-buffs", NamedTextColor.DARK_RED)
+                                               .text(". If the target is affected by Merciful Hex the healing given is increased by ")
+                                               .percent(25, NamedTextColor.GREEN)
+                                               .text("/")
+                                               .percent(50, NamedTextColor.GREEN)
+                                               .text("/")
+                                               .percent(100, NamedTextColor.GREEN)
+                                               .text(" relative to the number of stacks and all stacks are removed.")
+                                               .maxRange(maxDistance)
+                                               .build();
     }
 
     @Override
@@ -57,31 +56,21 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     }
 
     @Override
-    protected void playEffect(@Nonnull InternalProjectile projectile) {
-
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        beamPlayer(shooter, shooter);
+        Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
+        return super.onActivate(shooter);
     }
 
     @Override
-    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-
-    }
-
-    @Override
-    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        WarlordsEntity wp = projectile.getShooter();
-        if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            beamPlayer(hit, wp);
-        }
+    public ItemStack getBeamItem() {
+        return BEAM_ITEM;
     }
 
     private void beamPlayer(@Nonnull WarlordsEntity hit, WarlordsEntity wp) {
         hit.getCooldownManager().removeDebuffCooldowns();
         hit.getSpeed().removeSlownessModifiers();
-        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class)
-                .filterCooldownClass(MercifulHex.class)
-                .stream()
-                .count();
+        int hexStacks = (int) new CooldownFilter<>(hit, RegularCooldown.class).filterCooldownClass(MercifulHex.class).stream().count();
         boolean hasDivineBlessing = wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class);
         if (!hasDivineBlessing) {
             hit.getCooldownManager().removeCooldown(MercifulHex.class, false);
@@ -99,33 +88,38 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         };
         getAbilityStats().getStacksRemoved().merge(hexStacks, 1, Integer::sum);
         if (pveMasterUpgrade) {
-            hit.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "RAY",
-                    RayOfLight.class,
-                    new RayOfLight(),
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                    },
-                    100
+            hit.getCooldownManager().addCooldown(new RegularCooldown<>(name, "RAY", RayOfLight.class, new RayOfLight(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+            }, cooldownManager -> {
+            }, 100
             ) {
+
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     return currentDamageValue * (maxStacks ? 1.15f : 1.05f);
                 }
             });
         }
-        hit.addInstance(InstanceBuilder
-                .healing()
-                .ability(this)
-                .source(wp)
-                .min(healingValues.rayHealing.getMinValue() * multiplier)
-                .max(healingValues.rayHealing.getMaxValue() * multiplier)
-                .crit(healingValues.rayHealing)
-        );
+        hit.addInstance(InstanceBuilder.healing()
+                                       .ability(this)
+                                       .source(wp)
+                                       .min(healingValues.rayHealing.getMinValue() * multiplier)
+                                       .max(healingValues.rayHealing.getMaxValue() * multiplier)
+                                       .crit(healingValues.rayHealing));
+    }
+
+    @Override
+    public RayOfLightStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Nullable
@@ -145,30 +139,26 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        beamPlayer(shooter, shooter);
-        Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
-        return super.onActivate(shooter);
+    protected void playEffect(@Nonnull InternalProjectile projectile) {
     }
 
     @Override
-    public ItemStack getBeamItem() {
-        return BEAM_ITEM;
+    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
     }
 
     @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public RayOfLightStats getAbilityStats() {
-        return stats;
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        WarlordsEntity wp = projectile.getShooter();
+        if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            beamPlayer(hit, wp);
+        }
     }
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(389, 523, 20, 150);
+        private Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(389, 523, 20, 150);
+
         private final List<Value> values = List.of(rayHealing);
 
         public Value.RangedValueCritable getRayHealing() {
@@ -178,6 +168,11 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.rayHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("rayHealing"), Value.RangedValueCritable.class);
         }
 
     }
@@ -205,5 +200,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         public RayOfLightStats create() {
             return new RayOfLightStats();
         }
+
     }
+
 }

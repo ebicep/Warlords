@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -31,11 +32,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
     private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
-
-
-    private final DamageValues damageValues = new DamageValues();
     private final IncendiaryCurseStats stats = new IncendiaryCurseStats();
+    private final DamageValues damageValues = new DamageValues();
     private FloatModifiable hitbox = new FloatModifiable(5);
+
     private int blindDurationInTicks = 30;
 
     public IncendiaryCurse() {
@@ -44,134 +44,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
     public IncendiaryCurse(AbstractAbilityBuilder builder) {
         super(builder);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Ignite the targeted area with a cross flame, dealing")
-                .damage(damageValues.curseDamage)
-                .text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
-                .durationTicks(blindDurationInTicks)
-                .text(".")
-                .build();
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
-        Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
-
-        Utils.spawnThrowableProjectile(
-                wp.getGame(),
-                Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
-                    armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
-                }),
-                calculateSpeed(wp),
-                GRAVITY,
-                SPEED,
-                (newLoc, integer) -> {},
-                newLoc -> PlayerFilter
-                        .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                        .aliveEnemiesOf(wp)
-                        .findFirstOrNull(),
-                (newLoc, directHit) -> {
-                    onImpact(wp, newLoc);
-                }
-        );
-
-        return true;
-    }
-
-    protected Vector calculateSpeed(WarlordsEntity we) {
-        return we.getLocation().getDirection().multiply(SPEED);
-    }
-
-    public void onImpact(@Nonnull WarlordsEntity wp, Location newLoc) {
-        Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
-
-        EffectUtils.playFirework(
-                newLoc,
-                FireworkEffect.builder()
-                              .withColor(Color.ORANGE)
-                              .withColor(Color.RED)
-                              .with(FireworkEffect.Type.BURST)
-                              .build(),
-                1
-        );
-
-        EffectUtils.displayParticle(Particle.SMOKE, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
-
-        float hitboxValue = hitbox.getCalculatedValue();
-        List<WarlordsEntity> enemies = PlayerFilter
-                .entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue)
-                .aliveEnemiesOf(wp)
-                .toList();
-        for (WarlordsEntity nearEntity : enemies) {
-            stats.playersHit++;
-
-            nearEntity.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(wp)
-                    .value(damageValues.curseDamage)
-            );
-            if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
-                warlordsNPC.setStunTicks(blindDurationInTicks);
-            } else {
-                nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
-            }
-            nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, blindDurationInTicks, 0, true, false));
-
-            if (pveMasterUpgrade) {
-                EffectUtils.playFirework(
-                        newLoc,
-                        FireworkEffect.builder()
-                                      .withColor(Color.RED)
-                                      .withColor(Color.BLACK)
-                                      .with(FireworkEffect.Type.BALL_LARGE)
-                                      .build(),
-                        1
-                );
-
-                nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
-                nearEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        name,
-                        "INCEN",
-                        IncendiaryCurse.class,
-                        new IncendiaryCurse(),
-                        wp,
-                        CooldownTypes.DEBUFF,
-                        cooldownManager -> {
-                        },
-                        5 * 20
-                ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        return currentDamageValue * 1.3f;
-                    }
-                });
-            } else if (pveMasterUpgrade2) {
-                EffectUtils.displayParticle(
-                        Particle.DUST,
-                        nearEntity.getLocation().add(0, 1.2, 0),
-                        3,
-                        0.3,
-                        0.2,
-                        0.3,
-                        0,
-                        new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2)
-                );
-            }
-        }
-        if (pveMasterUpgrade2) {
-            wp.addEnergy(wp, "Unforseen Curse", Math.min(200, enemies.size() * 10));
-        }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new IncendiaryCurseBranch(abilityTree, this);
     }
 
     public int getBlindDurationInTicks() {
@@ -197,9 +69,87 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         return stats;
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
+        this.blindDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindDurationInTicks"), int.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Ignite the targeted area with a cross flame, dealing")
+                                               .damage(damageValues.curseDamage)
+                                               .text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
+                                               .durationTicks(blindDurationInTicks)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
+        Utils.spawnThrowableProjectile(wp.getGame(), Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
+                            armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
+                        }
+                ), calculateSpeed(wp), GRAVITY, SPEED, (newLoc, integer) -> {
+                }, newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(), (newLoc, directHit) -> {
+                    onImpact(wp, newLoc);
+                }
+        );
+        return true;
+    }
+
+    protected Vector calculateSpeed(WarlordsEntity we) {
+        return we.getLocation().getDirection().multiply(SPEED);
+    }
+
+    public void onImpact(@Nonnull WarlordsEntity wp, Location newLoc) {
+        Utils.playGlobalSound(newLoc, Sound.ITEM_FLINTANDSTEEL_USE, 2, 0.1f);
+        EffectUtils.playFirework(newLoc, FireworkEffect.builder().withColor(Color.ORANGE).withColor(Color.RED).with(FireworkEffect.Type.BURST).build(), 1);
+        EffectUtils.displayParticle(Particle.SMOKE, newLoc, 100, 0.4, 0.05, 0.4, 0.2);
+        float hitboxValue = hitbox.getCalculatedValue();
+        List<WarlordsEntity> enemies = PlayerFilter.entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue).aliveEnemiesOf(wp).toList();
+        for (WarlordsEntity nearEntity : enemies) {
+            stats.playersHit++;
+            nearEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.curseDamage));
+            if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
+                warlordsNPC.setStunTicks(blindDurationInTicks);
+            } else {
+                nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindDurationInTicks, 0, true, false));
+            }
+            nearEntity.addPotionEffect(new PotionEffect(PotionEffectType.NAUSEA, blindDurationInTicks, 0, true, false));
+            if (pveMasterUpgrade) {
+                EffectUtils.playFirework(newLoc, FireworkEffect.builder().withColor(Color.RED).withColor(Color.BLACK).with(FireworkEffect.Type.BALL_LARGE).build(), 1);
+                nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
+                nearEntity.getCooldownManager()
+                          .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                          }, 5 * 20
+                          ) {
+
+                              @Override
+                              public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                  return currentDamageValue * 1.3f;
+                              }
+                          });
+            } else if (pveMasterUpgrade2) {
+                EffectUtils.displayParticle(Particle.DUST, nearEntity.getLocation().add(0, 1.2, 0), 3, 0.3, 0.2, 0.3, 0, new Particle.DustOptions(Color.fromRGB(255, 255, 0), 2));
+            }
+        }
+        if (pveMasterUpgrade2) {
+            wp.addEnergy(wp, "Unforseen Curse", Math.min(200, enemies.size() * 10));
+        }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new IncendiaryCurseBranch(abilityTree, this);
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
+        private Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
+
         private final List<Value> values = List.of(curseDamage);
 
         public Value.RangedValueCritable getCurseDamage() {
@@ -211,12 +161,22 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
             return values;
         }
 
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.curseDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("curseDamage"), Value.RangedValueCritable.class);
+        }
+
     }
 
     public static class IncendiaryCurseStats extends AbstractAbilityStats<IncendiaryCurse, IncendiaryCurseStats> {
 
         @Field("targets_hit")
         private int playersHit = 0;
+
+        @Override
+        public Class<IncendiaryCurseStats> getClazz() {
+            return IncendiaryCurseStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -233,13 +193,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         }
 
         @Override
-        public Class<IncendiaryCurseStats> getClazz() {
-            return IncendiaryCurseStats.class;
-        }
-
-        @Override
         public IncendiaryCurseStats create() {
             return new IncendiaryCurseStats();
         }
+
     }
+
 }

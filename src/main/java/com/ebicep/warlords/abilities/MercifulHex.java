@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -40,9 +41,9 @@ import java.util.List;
 
 public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, MercifulHex.MercifulHexStats> implements WeaponAbilityIcon, Duration, Damages<MercifulHex.DamageValues> {
 
+    private final MercifulHexStats stats = new MercifulHexStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
-    private final MercifulHexStats stats = new MercifulHexStats();
     private int hexStacksPerHit = 1;
     private int maxAlliesHit = 2;
     private int subsequentReduction = 30;
@@ -58,40 +59,39 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Send a wave of energy forward. The first ")
-                .text(maxAlliesHit, NamedTextColor.BLUE)
-                .text(" allies hit heal ")
-                .heal(healingValues.hexHealing)
-                .text(" health and receive ")
-                .text(hexStacksPerHit, NamedTextColor.BLUE)
-                .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text("; subsequent allies are healed for only ")
-                .percent(subsequentReduction, NamedTextColor.GREEN)
-                .text(". The first enemy hit takes ")
-                .damage(damageValues.hexDamage)
-                .text(" damage. You also heal for ")
-                .heal(healingValues.hexSelfHealing)
-                .text(" and receive ")
-                .text(hexStacksPerHit, NamedTextColor.BLUE)
-                .text(" stack of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(".")
-                .emptyLine()
-                .text("Each stack of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(" heals ")
-                .heal(healingValues.hexDOTHealing)
-                .text(" health every ")
-                .durationTicks(ticksBetweenDot)
-                .text(" for ")
-                .durationTicks(tickDuration * 2)
-                .text(". Stacks up to")
-                .text(maxStacks, NamedTextColor.BLUE)
-                .text(" times.")
-                .maxRange(maxDistance)
-                .build();
+        description = AbilityDescriptionBuilder.create("Send a wave of energy forward. The first ")
+                                               .text(maxAlliesHit, NamedTextColor.BLUE)
+                                               .text(" allies hit heal ")
+                                               .heal(healingValues.hexHealing)
+                                               .text(" health and receive ")
+                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
+                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text("; subsequent allies are healed for only ")
+                                               .percent(subsequentReduction, NamedTextColor.GREEN)
+                                               .text(". The first enemy hit takes ")
+                                               .damage(damageValues.hexDamage)
+                                               .text(" damage. You also heal for ")
+                                               .heal(healingValues.hexSelfHealing)
+                                               .text(" and receive ")
+                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
+                                               .text(" stack of ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Each stack of ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text(" heals ")
+                                               .heal(healingValues.hexDOTHealing)
+                                               .text(" health every ")
+                                               .durationTicks(ticksBetweenDot)
+                                               .text(" for ")
+                                               .durationTicks(tickDuration * 2)
+                                               .text(". Stacks up to")
+                                               .text(maxStacks, NamedTextColor.BLUE)
+                                               .text(" times.")
+                                               .maxRange(maxDistance)
+                                               .build();
     }
 
     @Override
@@ -99,9 +99,107 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         return new MercifulHexBranch(abilityTree, this);
     }
 
+    public int getMaxStacks() {
+        return maxStacks;
+    }
+
+    public int getSubsequentReduction() {
+        return subsequentReduction;
+    }
+
+    public void setSubsequentReduction(int subsequentReduction) {
+        this.subsequentReduction = subsequentReduction;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public MercifulHexStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
+        this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
+        this.subsequentReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("subsequentReduction"), int.class);
+        this.ticksBetweenDot = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ticksBetweenDot"), int.class);
+        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        boolean activate = super.onActivate(shooter);
+        shooter.addInstance(InstanceBuilder.healing().ability(this).source(shooter).value(healingValues.hexSelfHealing));
+        giveMercifulHex(shooter, shooter);
+        return activate;
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        Location startingLocation = projectile.getStartingLocation();
+        LocationBuilder location = new LocationBuilder(startingLocation).pitch(0);
+        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
+                    itemDisplay.setItemStack(new ItemStack(Material.WARPED_FENCE));
+                    itemDisplay.setTeleportDuration(1);
+                    itemDisplay.setBrightness(new Display.Brightness(15, 15));
+                    itemDisplay.setTransformation(new Transformation(new Vector3f(),
+                            new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
+                            new Vector3f(1f),
+                            new AxisAngle4f()
+                    ));
+                }
+        );
+        projectile.addTask(new InternalProjectileTask() {
+
+            @Override
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                Location currentLocation = projectile.getCurrentLocation();
+                LocationBuilder location = new LocationBuilder(currentLocation).pitch(0);
+                display.teleport(location);
+                if (projectile.getTicksLived() % 3 == 0) {
+                    EffectUtils.displayParticle(Particle.EFFECT, new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).left(1f), 1);
+                    EffectUtils.displayParticle(Particle.EFFECT, new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).right(1f), 1);
+                }
+            }
+
+            @Override
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                display.remove();
+                Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
+                EffectUtils.displayParticle(Particle.EXPLOSION, projectile.getCurrentLocation(), 1, 0, 0, 0, 0.7);
+            }
+        });
+    }
+
+    @Nullable
+    @Override
+    protected String getActivationSound() {
+        return "arcanist.mercifulhexalt.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1.2f;
+    }
+
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-
     }
 
     @Override
@@ -109,12 +207,8 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         if (hit != null) {
             return 0;
         }
-
         int playersHit = 0;
-        for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(projectile.getCurrentLocation(), 2, 2, 2)
-                .excluding(projectile.getHit())
-        ) {
+        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(projectile.getCurrentLocation(), 2, 2, 2).excluding(projectile.getHit())) {
             if (hitProjectile(projectile, enemy)) {
                 playersHit++;
             } else {
@@ -144,117 +238,26 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         return new LocationBuilder(startingLocation.clone()).addY(-.3).backward(-.5f);
     }
 
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        boolean activate = super.onActivate(shooter);
-        shooter.addInstance(InstanceBuilder
-                .healing()
-                .ability(this)
-                .source(shooter)
-                .value(healingValues.hexSelfHealing)
-        );
-        giveMercifulHex(shooter, shooter);
-        return activate;
-    }
-
-    @Override
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        super.onSpawn(projectile);
-
-        Location startingLocation = projectile.getStartingLocation();
-        LocationBuilder location = new LocationBuilder(startingLocation)
-                .pitch(0);
-        ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-            itemDisplay.setItemStack(new ItemStack(Material.WARPED_FENCE));
-            itemDisplay.setTeleportDuration(1);
-            itemDisplay.setBrightness(new Display.Brightness(15, 15));
-            itemDisplay.setTransformation(new Transformation(
-                    new Vector3f(),
-                    new AxisAngle4f((float) Math.toRadians(startingLocation.getPitch()), 1, 0, 0),
-                    new Vector3f(1f),
-                    new AxisAngle4f()
-            ));
-        });
-
-        projectile.addTask(new InternalProjectileTask() {
-            @Override
-            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                Location currentLocation = projectile.getCurrentLocation();
-                LocationBuilder location = new LocationBuilder(currentLocation)
-                        .pitch(0);
-                display.teleport(location);
-                if (projectile.getTicksLived() % 3 == 0) {
-                    EffectUtils.displayParticle(
-                            Particle.EFFECT,
-                            new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).left(1f),
-                            1
-                    );
-                    EffectUtils.displayParticle(
-                            Particle.EFFECT,
-                            new LocationBuilder(projectile.getCurrentLocation()).addY(-.2).right(1f),
-                            1
-                    );
-                }
-            }
-
-            @Override
-            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
-                display.remove();
-                Utils.playGlobalSound(projectile.getCurrentLocation(), "shaman.chainheal.activation", 2, 2);
-                EffectUtils.displayParticle(
-                        Particle.EXPLOSION,
-                        projectile.getCurrentLocation(),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0.7
-                );
-            }
-        });
-    }
-
-    @Nullable
-    @Override
-    protected String getActivationSound() {
-        return "arcanist.mercifulhexalt.activation";
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1.2f;
-    }
-
     private boolean hitProjectile(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit) {
         if (projectile.getHit().contains(hit)) {
             return false;
         }
-
         WarlordsEntity wp = projectile.getShooter();
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
             stats.addNumberOfDismounts();
         }
-
         List<WarlordsEntity> hits = projectile.getHit();
-
         boolean isTeammate = hit.isTeammate(wp);
         if (isTeammate) {
             int teammatesHit = (int) hits.stream().filter(we -> we.isTeammate(wp)).count();
             float reduction = teammatesHit <= maxAlliesHit ? 1 : convertToPercent(subsequentReduction);
-            hit.addInstance(InstanceBuilder
-                    .healing()
-                    .ability(this)
-                    .source(wp)
-                    .min(healingValues.hexHealing.getMinValue() * reduction)
-                    .max(healingValues.hexHealing.getMaxValue() * reduction)
-                    .crit(healingValues.hexHealing)
-            );
+            hit.addInstance(InstanceBuilder.healing()
+                                           .ability(this)
+                                           .source(wp)
+                                           .min(healingValues.hexHealing.getMinValue() * reduction)
+                                           .max(healingValues.hexHealing.getMaxValue() * reduction)
+                                           .crit(healingValues.hexHealing));
             if (teammatesHit > maxAlliesHit) {
                 return false;
             }
@@ -265,18 +268,14 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         } else {
             int enemiesHit = (int) hits.stream().filter(we -> we.isEnemy(wp)).count();
             float reduction = enemiesHit == 1 ? 1 : convertToPercent(subsequentReduction);
-            hit.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(wp)
-                    .min(damageValues.hexDamage.getMinValue() * reduction)
-                    .max(damageValues.hexDamage.getMaxValue() * reduction)
-                    .crit(damageValues.hexDamage)
-            );
+            hit.addInstance(InstanceBuilder.damage()
+                                           .ability(this)
+                                           .source(wp)
+                                           .min(damageValues.hexDamage.getMinValue() * reduction)
+                                           .max(damageValues.hexDamage.getMaxValue() * reduction)
+                                           .crit(damageValues.hexDamage));
         }
-
         stats.addPlayersHit();
-
         return true;
     }
 
@@ -287,40 +286,20 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         int ticksBetweenDot = fromHex.getTicksBetweenDot();
         String name = fromHex.getName();
         to.getCooldownManager().limitCooldowns(RegularCooldown.class, MercifulHex.class, 3);
-        to.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Merciful Hex",
-                "MHEX",
-                MercifulHex.class,
-                new MercifulHex(),
-                from,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                    to.addInstance(InstanceBuilder
-                            .healing()
-                            .ability(fromHex)
-                            .source(from)
-                            .value(values.hexDOTHealing)
-                            .flags(InstanceFlags.DOT)
-                    );
-                },
-                tickDuration * 2, // base add 20 to delay damage by a second
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % ticksBetweenDot == 0 && ticksElapsed != 0) {
-                        to.addInstance(InstanceBuilder
-                                .healing()
-                                .ability(fromHex)
-                                .source(from)
-                                .value(values.hexDOTHealing)
-                                .flags(InstanceFlags.DOT)
-                        );
-                    }
-                })
+        to.getCooldownManager().addCooldown(new RegularCooldown<>("Merciful Hex", "MHEX", MercifulHex.class, new MercifulHex(), from, CooldownTypes.BUFF, cooldownManager -> {
+            to.addInstance(InstanceBuilder.healing().ability(fromHex).source(from).value(values.hexDOTHealing).flags(InstanceFlags.DOT));
+        }, // base add 20 to delay damage by a second
+                tickDuration * 2, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % ticksBetweenDot == 0 && ticksElapsed != 0) {
+                to.addInstance(InstanceBuilder.healing().ability(fromHex).source(from).value(values.hexDOTHealing).flags(InstanceFlags.DOT));
+            }
+        })
         ) {
+
             @Override
             public PlayerNameData addPrefixFromOther() {
                 boolean flag = new CooldownFilter<>(to, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).stream().count() == fromHex.maxStacks;
-                return new PlayerNameData(
-                        Component.text("MHEX", NamedTextColor.DARK_GREEN).decoration(TextDecoration.BOLD, flag),
+                return new PlayerNameData(Component.text("MHEX", NamedTextColor.DARK_GREEN).decoration(TextDecoration.BOLD, flag),
                         we -> we.isTeammate(from) && we.getSpecClass() == Specializations.LUMINARY
                 );
             }
@@ -334,11 +313,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
 
     @Nonnull
     public static MercifulHex getFromHex(WarlordsEntity from) {
-        return from.getSpec().getAbilities().stream()
-                   .filter(MercifulHex.class::isInstance)
-                   .map(MercifulHex.class::cast)
-                   .findFirst()
-                   .orElse(new MercifulHex());
+        return from.getSpec().getAbilities().stream().filter(MercifulHex.class::isInstance).map(MercifulHex.class::cast).findFirst().orElse(new MercifulHex());
     }
 
     @Override
@@ -359,35 +334,10 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         this.ticksBetweenDot = ticksBetweenDot;
     }
 
-    public int getMaxStacks() {
-        return maxStacks;
-    }
-
-    public int getSubsequentReduction() {
-        return subsequentReduction;
-    }
-
-    public void setSubsequentReduction(int subsequentReduction) {
-        this.subsequentReduction = subsequentReduction;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public MercifulHexStats getAbilityStats() {
-        return stats;
-    }
-
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(186, 250, 20, 180);
+        private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(186, 250, 20, 180);
+
         private final List<Value> values = List.of(hexDamage);
 
         public Value.RangedValueCritable getHexDamage() {
@@ -399,13 +349,21 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
             return values;
         }
 
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDamage"), Value.RangedValueCritable.class);
+        }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(229, 313, 20, 180);
-        private final Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(160, 219, 20, 180);
-        private final Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
+        private Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(229, 313, 20, 180);
+
+        private Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(160, 219, 20, 180);
+
+        private Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
+
         private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
 
         public Value.RangedValueCritable getHexHealing() {
@@ -423,6 +381,13 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.hexHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexHealing"), Value.RangedValueCritable.class);
+            this.hexSelfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexSelfHealing"), Value.RangedValueCritable.class);
+            this.hexDOTHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDOTHealing"), Value.RangedValue.class);
         }
 
     }
@@ -451,5 +416,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         public MercifulHexStats create() {
             return new MercifulHexStats();
         }
+
     }
+
 }

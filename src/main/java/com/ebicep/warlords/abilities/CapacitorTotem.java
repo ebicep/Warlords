@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -26,31 +27,13 @@ import java.util.List;
 
 public class CapacitorTotem extends AbstractTotem implements Duration, Damages<CapacitorTotem.DamageValues>, AbilityStats<CapacitorTotem, CapacitorTotem.CapacitorTotemStats> {
 
-    private final DamageValues damageValues = new DamageValues();
     private final CapacitorTotemStats stats = new CapacitorTotemStats();
+    private final DamageValues damageValues = new DamageValues();
     private int tickDuration = 160;
-    private double radius = 6;
+    private float radius = 6;
 
     public CapacitorTotem() {
         super(AbstractAbilityBuilder.create("capacitorTotem").pvp());
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing ")
-                .damage(damageValues.totemDamage)
-                .text(" damage to all enemies within ")
-                .blocks(radius)
-                .text(". Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new CapacitorTotemBranch(abilityTree, this);
     }
 
     @Override
@@ -66,38 +49,27 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
     @Override
     protected void onActivation(WarlordsEntity wp, ArmorStand totemStand) {
         Location totemLocation = wp.getLocation().clone();
-
         CapacitorTotemData data = new CapacitorTotemData(this, wp, totemStand);
-        RegularCooldown<CapacitorTotemData> totemCooldown = new RegularCooldown<>(
-                name,
-                "TOTEM",
-                CapacitorTotemData.class,
-                data,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    totemStand.remove();
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 5 != 0) {
-                        return;
-                    }
-                    if (!data.teamCarrierPassedThrough) {
-                        if (PlayerFilter.playingGame(wp.getGame())
-                                        .teammatesOfExcludingSelf(wp)
-                                        .stream()
-                                        .filter(WarlordsEntity::hasFlag)
-                                        .map(WarlordsEntity::getLocation)
-                                        .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)
-                        ) {
-                            data.teamCarrierPassedThrough = true;
-                        }
-                    }
-                })
+        RegularCooldown<CapacitorTotemData> totemCooldown = new RegularCooldown<>(name, "TOTEM", CapacitorTotemData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            totemStand.remove();
+        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 5 != 0) {
+                return;
+            }
+            if (!data.teamCarrierPassedThrough) {
+                if (PlayerFilter.playingGame(wp.getGame())
+                                .teammatesOfExcludingSelf(wp)
+                                .stream()
+                                .filter(WarlordsEntity::hasFlag)
+                                .map(WarlordsEntity::getLocation)
+                                .anyMatch(location -> location.distanceSquared(totemLocation) <= 1)) {
+                    data.teamCarrierPassedThrough = true;
+                }
+            }
+        })
         ) {
+
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (!pveMasterUpgrade2) {
@@ -108,46 +80,36 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         };
         data.pulseDamage = () -> {
             double totemRadius = data.radius;
-            PlayerFilter.entitiesAround(totemStand.getLocation(), totemRadius, totemRadius, totemRadius)
-                        .aliveEnemiesOf(wp)
-                        .forEach(warlordsPlayer -> {
-                            data.playersHit++;
-                            warlordsPlayer.addInstance(InstanceBuilder
-                                    .damage()
-                                    .ability(this)
-                                    .source(wp)
-                                    .value(damageValues.totemDamage)
-                            ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                if (warlordsDamageHealingFinalEvent.isDead()) {
-                                    if (++data.playersKilledWithFinalHit >= 15) {
-                                        ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIGHTNING_EXECUTION);
-                                    }
-                                }
-                            });
-
-                            if (pveMasterUpgrade) {
-                                float damageResistance = warlordsPlayer.getSpec().getDamageResistance();
-                                warlordsPlayer.setDamageResistance(damageResistance - 20);
-                            }
-                        });
-
+            PlayerFilter.entitiesAround(totemStand.getLocation(), totemRadius, totemRadius, totemRadius).aliveEnemiesOf(wp).forEach(warlordsPlayer -> {
+                data.playersHit++;
+                warlordsPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.totemDamage)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    if (warlordsDamageHealingFinalEvent.isDead()) {
+                        if (++data.playersKilledWithFinalHit >= 15) {
+                            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIGHTNING_EXECUTION);
+                        }
+                    }
+                });
+                if (pveMasterUpgrade) {
+                    float damageResistance = warlordsPlayer.getSpec().getDamageResistance();
+                    warlordsPlayer.setDamageResistance(damageResistance - 20);
+                }
+            });
             if (pveMasterUpgrade) {
                 data.radius += .5;
             } else if (pveMasterUpgrade2 && data.timesTotemIncreased < 20) {
                 data.timesTotemIncreased++;
                 totemCooldown.setTicksLeft(totemCooldown.getTicksLeft() + 10);
             }
-
             new FallingBlockWaveEffect(totemStand.getLocation().add(0, .75, 0), totemRadius, 1.2, Material.OAK_SAPLING).play();
         };
         wp.getCooldownManager().addCooldown(totemCooldown);
     }
 
-    public double getRadius() {
+    public float getRadius() {
         return radius;
     }
 
-    public void setRadius(double radius) {
+    public void setRadius(float radius) {
         this.radius = radius;
     }
 
@@ -171,9 +133,35 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         return stats;
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create(
+                                                       "Place a highly conductive totem on the ground. Casting Chain Lightning or Lightning Rod on the totem will cause it to pulse, dealing ")
+                                               .damage(damageValues.totemDamage)
+                                               .text(" damage to all enemies within ")
+                                               .blocks(radius)
+                                               .text(". Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new CapacitorTotemBranch(abilityTree, this);
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable totemDamage = new Value.RangedValueCritable(404, 523, 20, 200);
+        private Value.RangedValueCritable totemDamage = new Value.RangedValueCritable(404, 523, 20, 200);
+
         private final List<Value> values = List.of(totemDamage);
 
         public Value.RangedValueCritable getTotemDamage() {
@@ -185,16 +173,27 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
             return values;
         }
 
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.totemDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("totemDamage"), Value.RangedValueCritable.class);
+        }
+
     }
 
     public static class CapacitorTotemData extends TotemData<CapacitorTotem> {
 
         private boolean teamCarrierPassedThrough = false;
+
         private Runnable pulseDamage;
+
         private double radius = 6;
+
         private int timesTotemIncreased = 0;
+
         private int numberOfProcsAfterCarrierPassed = 0;
+
         private int playersKilledWithFinalHit = 0;
+
         private int playersHit = 0;
 
         public CapacitorTotemData(CapacitorTotem totem, WarlordsEntity owner, ArmorStand armorStand) {
@@ -220,12 +219,18 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         public void setRadius(double radius) {
             this.radius = radius;
         }
+
     }
 
     public static class CapacitorTotemStats extends AbstractAbilityStats<CapacitorTotem, CapacitorTotemStats> {
 
         @Field("number_of_procs")
         private int numberOfProcs = 0;
+
+        @Override
+        public Class<CapacitorTotemStats> getClazz() {
+            return CapacitorTotemStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -242,13 +247,10 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         }
 
         @Override
-        public Class<CapacitorTotemStats> getClazz() {
-            return CapacitorTotemStats.class;
-        }
-
-        @Override
         public CapacitorTotemStats create() {
             return new CapacitorTotemStats();
         }
+
     }
+
 }
