@@ -37,9 +37,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                 10,
                 800,
                 1000,
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(5.5f);
-                }},
+                new Fireball(AbstractAbilityBuilder.create("skeletalSorcererFireball").pve()),
                 new BlightedScorch()
         );
     }
@@ -61,9 +59,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(5.5f);
-                }},
+                new Fireball(AbstractAbilityBuilder.create("skeletalSorcererFireball").pve()),
                 new BlightedScorch()
         );
     }
@@ -146,7 +142,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     private static class BlightedScorch extends AbstractAbility {
 
         public BlightedScorch() {
-            super(AbstractAbilityBuilder.create("blightedScorch").pve().cooldown(4).energyCost(100));
+            super(AbstractAbilityBuilder.create("skeletalSorcererBlightedScorch").pve());
         }
 
         @Override

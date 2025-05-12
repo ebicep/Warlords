@@ -66,7 +66,7 @@ public class ZombieKnight extends AbstractMob implements AdvancedMob {
     private static class ReduceWeaponCooldowns extends AbstractAbility {
 
         public ReduceWeaponCooldowns() {
-            super(AbstractAbilityBuilder.create("reduceWeapon").pve().cooldown(6).energyCost(100));
+            super(AbstractAbilityBuilder.create("zombieKnightReduceWeapon").pve());
         }
 
         @Override

@@ -31,9 +31,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
                 450,
                 600,
                 new VoidHealing(),
-                new PrismGuard() {{
-                    this.getCooldown().setBaseValue(20f);
-                }}
+                new PrismGuard(AbstractAbilityBuilder.create("pigParticlePrismGuard").pve())
         );
     }
 
@@ -55,9 +53,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new VoidHealing(),
-                new PrismGuard() {{
-                    this.getCooldown().setBaseValue(20f);
-                }}
+                new PrismGuard(AbstractAbilityBuilder.create("pigParticlePrismGuard").pve())
         );
     }
 
@@ -81,7 +77,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
     private static class VoidHealing extends AbstractAbility implements Heals<VoidHealing.HealingValues> {
 
         public VoidHealing() {
-            super(AbstractAbilityBuilder.create("voidHealing").pve().cooldown(.5f).energyCost(100));
+            super(AbstractAbilityBuilder.create("pigParticleVoidHealing").pve());
         }
 
         @Override

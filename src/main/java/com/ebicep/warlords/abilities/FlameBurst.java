@@ -39,6 +39,10 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         super(AbstractAbilityBuilder.create("flameBurst").pvp());
     }
 
+    public FlameBurst(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

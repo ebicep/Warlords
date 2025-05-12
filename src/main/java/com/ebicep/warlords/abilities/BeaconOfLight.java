@@ -68,14 +68,13 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
             BeaconData beacon = cooldown.getCooldownObject();
             float rad = radius.getCalculatedValue();
             for (WarlordsEntity allyTarget : PlayerFilter.entitiesAround(beacon.getGroundLocation(), rad, rad, rad).aliveTeammatesOf(wp)) {
-                allyTarget.addInstance(InstanceBuilder.damage()
-                                                      .ability(this)
-                                                      .source(wp)
-                                                      .min(healingValues.beaconHealing.getMinValue() * (wp.getCooldownManager()
-                                                                                                          .hasCooldown(DivineBlessing.DivineBlessingData.class) ? 1.5f : 1))
-                                                      .max(healingValues.beaconHealing.getMaxValue() * (wp.getCooldownManager()
-                                                                                                          .hasCooldown(DivineBlessing.DivineBlessingData.class) ? 1.5f : 1))
-                                                      .crit(healingValues.beaconHealing));
+                allyTarget.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(wp)
+                        .min(healingValues.beaconHealing.getMinValue() * (wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class) ? 1.5f : 1))
+                        .max(healingValues.beaconHealing.getMaxValue() * (wp.getCooldownManager().hasCooldown(DivineBlessing.DivineBlessingData.class) ? 1.5f : 1))
+                        .crit(healingValues.beaconHealing));
             }
         }
     }

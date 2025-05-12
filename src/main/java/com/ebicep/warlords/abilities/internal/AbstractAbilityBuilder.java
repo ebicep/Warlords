@@ -9,7 +9,7 @@ public class AbstractAbilityBuilder {
         return new AbstractAbilityBuilder(fieldName);
     }
 
-    private final List<String> namespaces = new ArrayList<>(List.of("pvp", "pve", "td"));
+    private final List<String> namespaces = new ArrayList<>(List.of("pvp", "pve", "weapon", "td"));
     private String fieldName;
     private String name;
     private Float cooldown;
@@ -35,6 +35,12 @@ public class AbstractAbilityBuilder {
     public AbstractAbilityBuilder td() {
         this.namespaces.remove("td");
         this.namespaces.addFirst("td");
+        return this;
+    }
+
+    public AbstractAbilityBuilder weapon() {
+        this.namespaces.remove("weapon");
+        this.namespaces.addFirst("weapon");
         return this;
     }
 

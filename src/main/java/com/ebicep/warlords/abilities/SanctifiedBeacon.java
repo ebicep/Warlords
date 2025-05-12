@@ -44,6 +44,10 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
         super(AbstractAbilityBuilder.create("sanctifiedBeacon").pvp());
     }
 
+    public SanctifiedBeacon(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

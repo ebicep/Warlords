@@ -24,6 +24,10 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
         super(AbstractAbilityBuilder.create("groundSlamDefender").pvp());
     }
 
+    public GroundSlamDefender(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

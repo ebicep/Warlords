@@ -83,11 +83,7 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
     private static class KindleWave extends AbstractAbility implements Damages<KindleWave.DamageValues> {
 
         public KindleWave() {
-            super(AbstractAbilityBuilder.create("kindleWave")
-                                        .pve()
-                                        .cooldown(8)
-                                        .energyCost(100)
-            );
+            super(AbstractAbilityBuilder.create("blazingKindleKindleWave").pve());
         }
 
         @Override

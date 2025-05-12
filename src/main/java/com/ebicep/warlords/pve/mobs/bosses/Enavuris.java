@@ -101,7 +101,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 maxMeleeDamage,
                 new EnderStones(),
                 new Imprisonment(),
-                new SpawnMobAbility(12, Mob.ENAVURITE) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("narmerSpawnZombieLancer").pve(), Mob.ENAVURITE) {
                     @Override
                     public int getSpawnAmount() {
                         int playerCount = pveOption.playerCount();
@@ -114,7 +114,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         return 8;
                     }
                 },
-                new SpawnMobAbility(18, Mob.VANISHING_ENAVURITE) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("enavurisSpawnVanishingEnavurite").pve(), Mob.VANISHING_ENAVURITE) {
                     @Override
                     public int getSpawnAmount() {
                         int playerCount = pveOption.playerCount();
@@ -293,12 +293,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private PveOption pveOption;
 
         public EnderStones() {
-            super(AbstractAbilityBuilder.create("enderStones")
-                                        .pve()
-                                        .cooldown(2)
-                                        .energyCost(50)
-                                        .startFullCooldown()
-            );
+            super(AbstractAbilityBuilder.create("enderStones").pve().startFullCooldown());
         }
 
         @Override
@@ -522,12 +517,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private List<BlockDisplay> blockDisplays = new ArrayList<>();
 
         public Imprisonment() {
-            super(AbstractAbilityBuilder.create("imprisonment")
-                                        .pve()
-                                        .cooldown(20)
-                                        .energyCost(50)
-                                        .startNoCooldown()
-            );
+            super(AbstractAbilityBuilder.create("imprisonment").pve().startNoCooldown());
         }
 
         @Override

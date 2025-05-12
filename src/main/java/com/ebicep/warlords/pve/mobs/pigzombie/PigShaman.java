@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.pigzombie;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -25,7 +26,7 @@ public class PigShaman extends AbstractMob implements IntermediateMob {
                 10,
                 200,
                 300,
-                new PigZombieHealing(150, 6)
+                new PigZombieHealing(AbstractAbilityBuilder.create("pigAlleviatorZombifaction").pve(), 6)
         );
     }
 
@@ -46,7 +47,7 @@ public class PigShaman extends AbstractMob implements IntermediateMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new PigZombieHealing(150, 6)
+                new PigZombieHealing(AbstractAbilityBuilder.create("pigAlleviatorZombifaction").pve(), 6)
         );
     }
 

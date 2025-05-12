@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
 import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -36,11 +37,7 @@ public class BoltaroExiled extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(MathUtils.generateRandomValueBetweenInclusive(6, 12));
-                    this.getDamageValues().getFireballDamage().min().setBaseValue(200);
-                    this.getDamageValues().getFireballDamage().max().setBaseValue(400);
-                }}
+                new Fireball(AbstractAbilityBuilder.create("exiledApostateFireball").pve().cooldown(MathUtils.generateRandomValueBetweenInclusive(6, 12)))
         );
     }
 

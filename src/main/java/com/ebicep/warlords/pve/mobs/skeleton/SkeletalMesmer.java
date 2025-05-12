@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.skeleton;
 
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -31,14 +32,9 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
                 10,
                 0,
                 0,
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(5.5f);
-                }},
-                new FlameBurst() {{
-                    this.getCooldown().setBaseValue(20f);
-                    this.getDamageValues().getFlameBurstDamage().critChance().setBaseValue(0);
-                }},
-                new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 20)
+                new Fireball(AbstractAbilityBuilder.create("skeletalMesmerFireball").pve()),
+                new FlameBurst(AbstractAbilityBuilder.create("skeletalMesmerFlameBurst").pve()),
+                new AdvancedVoidShred(AbstractAbilityBuilder.create("skeletalMesmerAdvancedVoidShred").pve(), 450, 900, -30, voidRadius, 20)
         );
     }
 
@@ -59,14 +55,9 @@ public class SkeletalMesmer extends AbstractMob implements EliteMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(5.5f);
-                }},
-                new FlameBurst() {{
-                    this.getCooldown().setBaseValue(20f);
-                    this.getDamageValues().getFlameBurstDamage().critChance().setBaseValue(0);
-                }},
-                new AdvancedVoidShred(450, 900, 5, -30, voidRadius, 20)
+                new Fireball(AbstractAbilityBuilder.create("skeletalMesmerFireball").pve()),
+                new FlameBurst(AbstractAbilityBuilder.create("skeletalMesmerFlameBurst").pve()),
+                new AdvancedVoidShred(AbstractAbilityBuilder.create("skeletalMesmerAdvancedVoidShred").pve(), 450, 900, -30, voidRadius, 20)
         );
     }
 

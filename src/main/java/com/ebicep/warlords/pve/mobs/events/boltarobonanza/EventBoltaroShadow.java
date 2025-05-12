@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.boltarobonanza;
 
 import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -57,11 +58,7 @@ public class EventBoltaroShadow extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage * (1 + split * .025f),
                 maxMeleeDamage * (1 + split * .025f),
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(MathUtils.generateRandomValueBetweenInclusive(4, 8));
-                    this.getDamageValues().getFireballDamage().min().setBaseValue(100);
-                    this.getDamageValues().getFireballDamage().max().setBaseValue(200);
-                }}
+                new Fireball(AbstractAbilityBuilder.create("shadowBoltaroFireball").pve().cooldown(MathUtils.generateRandomValueBetweenInclusive(4, 8)))
         );
         this.split = split;
     }

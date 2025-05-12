@@ -35,7 +35,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                 0,
                 2000,
                 2500,
-                new RemoveTarget(20),
+                new RemoveTarget(AbstractAbilityBuilder.create("soulOfGradientRemoveTarget").pve()),
                 new TormentingMark()
         );
     }
@@ -56,7 +56,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(20),
+                new RemoveTarget(AbstractAbilityBuilder.create("soulOfGradientRemoveTarget").pve()),
                 new TormentingMark()
         );
     }
@@ -78,7 +78,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
     private static class TormentingMark extends AbstractPveAbility implements Damages<TormentingMark.DamageValues> {
 
         public TormentingMark() {
-            super(AbstractAbilityBuilder.create("tormentingMark").pve().cooldown(.5f).energyCost(50));
+            super(AbstractAbilityBuilder.create("soulOfGradientTormentingMark").pve());
         }
 
         @Override

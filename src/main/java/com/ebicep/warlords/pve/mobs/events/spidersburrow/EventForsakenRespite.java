@@ -69,7 +69,8 @@ public class EventForsakenRespite extends AbstractMob implements BossMinionMob, 
     private static class LeechAll extends AbstractPveAbility {
 
         public LeechAll() {
-            super(AbstractAbilityBuilder.create("leechAll").pve().cooldown(7).energyCost(50));
+            super(AbstractAbilityBuilder.create("forsakenRespiteEarthlivingWeapon").pve()
+            );
         }
 
         @Override

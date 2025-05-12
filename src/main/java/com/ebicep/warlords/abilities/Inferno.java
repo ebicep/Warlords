@@ -38,6 +38,10 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         super(AbstractAbilityBuilder.create("inferno").pvp());
     }
 
+    public Inferno(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

@@ -135,11 +135,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         private final int duration;
 
         public LegendaryGaleAbility(float abilityEnergyDecrease, float knockbackResistance, int duration) {
-            super(AbstractAbilityBuilder.create("gale")
-                                        .pve()
-                                        .cooldown(30)
-                                        .energyCost(0)
-            );
+            super(AbstractAbilityBuilder.create("gale").weapon());
             this.abilityEnergyDecrease = abilityEnergyDecrease;
             this.knockbackResistance = knockbackResistance;
             this.duration = duration;

@@ -56,7 +56,7 @@ public class EventTerasDryad extends AbstractMob implements BossMinionMob, Teras
 
 
         public SpiritHealing() {
-            super(AbstractAbilityBuilder.create("spiritHealing").pve().cooldown(2).energyCost(75).startNoCooldown());
+            super(AbstractAbilityBuilder.create("terasDryadSpiritHealing").pve().startNoCooldown());
         }
 
         @Override

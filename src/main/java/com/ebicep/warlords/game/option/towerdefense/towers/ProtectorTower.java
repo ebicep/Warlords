@@ -180,7 +180,7 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
                     damageResistance,
                     minMeleeDamage,
                     maxMeleeDamage,
-                    new ProtectorsStrike()
+                    new ProtectorsStrike(AbstractAbilityBuilder.create("protectorProtectorsStrike").td())
             );
         }
 

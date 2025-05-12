@@ -85,7 +85,7 @@ public class ZenithLegionnaire extends AbstractMob implements BossMinionMob {
     private static class Remedy extends AbstractPveAbility implements Heals<Remedy.HealingValues> {
 
         public Remedy() {
-            super(AbstractAbilityBuilder.create("remedy").pve().cooldown(10).energyCost(100));
+            super(AbstractAbilityBuilder.create("zenithLegionnaireRemedy").pve());
         }
 
         @Override

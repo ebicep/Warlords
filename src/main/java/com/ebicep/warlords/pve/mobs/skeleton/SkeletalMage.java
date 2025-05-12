@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
 import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -18,9 +19,7 @@ public class SkeletalMage extends AbstractMob implements BasicMob {
                 0,
                 0,
                 0,
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(5.5f);
-                }}
+                new Fireball(AbstractAbilityBuilder.create("skeletalMageFireball").pve())
         );
     }
 
@@ -41,9 +40,7 @@ public class SkeletalMage extends AbstractMob implements BasicMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(5.5f);
-                }}
+                new Fireball(AbstractAbilityBuilder.create("skeletalMageFireball").pve())
         );
     }
 

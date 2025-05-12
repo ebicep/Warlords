@@ -68,9 +68,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst() {{
-                    this.getCooldown().setBaseValue(15f);
-                }},
+                new FlameBurst(AbstractAbilityBuilder.create("narmerFlameBurst").pve()),
                 new GroundShred()
         );
     }
@@ -111,7 +109,12 @@ public class Narmer extends AbstractMob implements BossMob {
             case EXTREME -> 8;
             default -> 10;
         };
-        this.playerClass.addAbility(new SpawnMobAbility(Math.max(6, startingCooldown - playerCount + 1), Mob.ZOMBIE_LANCER, true) {
+        this.playerClass.addAbility(new SpawnMobAbility(AbstractAbilityBuilder.create("narmerSpawnZombieLancer")
+                                                                              .pve()
+                                                                              .cooldown(Math.max(6, startingCooldown - playerCount + 1))
+                                                                              .startNoCooldown()
+                , Mob.ZOMBIE_LANCER
+        ) {
 
             @Override
             public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
@@ -294,7 +297,8 @@ public class Narmer extends AbstractMob implements BossMob {
                                                               .withColor(Color.WHITE)
                                                               .with(FireworkEffect.Type.STAR)
                                                               .withTrail()
-                                                              .build());
+                                                              .build()
+        );
 
         if (timesMegaEarthQuakeActivated >= 2) {
             ChallengeAchievements.checkForAchievement(killer, ChallengeAchievements.NEAR_DEATH_EXPERIENCE);
@@ -320,7 +324,7 @@ public class Narmer extends AbstractMob implements BossMob {
         private final List<WarlordsEntity> selfAcolytes = new ArrayList<>(); // spawned acolytes using this ability
 
         public SpawnNarmerAcolyteAbility(Narmer narmer) {
-            super(AbstractAbilityBuilder.create("narmerAcolyte").pve().cooldown(15).energyCost(0).startFullCooldown());
+            super(AbstractAbilityBuilder.create("narmerSpawnAcolyte").pve().startFullCooldown());
             this.narmer = narmer;
             this.pveOption = narmer.pveOption;
         }
@@ -347,14 +351,16 @@ public class Narmer extends AbstractMob implements BossMob {
         public List<WarlordsEntity> getSelfAcolytes() {
             return selfAcolytes;
         }
+
     }
 
     private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
+        private final DamageValues damageValues = new DamageValues();
 
         public GroundShred() {
-            super(AbstractAbilityBuilder.create("groundShred").pve().cooldown(8).energyCost(100));
+            super(AbstractAbilityBuilder.create("narmerGroundShred").pve());
         }
 
         @Override
@@ -379,8 +385,6 @@ public class Narmer extends AbstractMob implements BossMob {
             return true;
         }
 
-        private final DamageValues damageValues = new DamageValues();
-
         @Override
         public DamageValues getDamageValues() {
             return damageValues;
@@ -397,5 +401,7 @@ public class Narmer extends AbstractMob implements BossMob {
             }
 
         }
+
     }
+
 }

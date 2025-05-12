@@ -29,10 +29,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 10,
                 930,
                 1210,
-                new FlameBurst() {{
-                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
-                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
-                }},
+                new FlameBurst(AbstractAbilityBuilder.create("djetFlameBurst").pve()),
                 new SilenceCrippleAll()
         );
     }
@@ -100,7 +97,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
     private static class SilenceCrippleAll extends AbstractPveAbility {
 
         public SilenceCrippleAll() {
-            super(AbstractAbilityBuilder.create("djet").pve().cooldown(5).energyCost(50));
+            super(AbstractAbilityBuilder.create("djetDjet").pve());
         }
 
         @Override

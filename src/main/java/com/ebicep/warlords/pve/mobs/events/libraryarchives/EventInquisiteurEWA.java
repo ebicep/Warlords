@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
@@ -35,17 +36,17 @@ public class EventInquisiteurEWA extends EventInquisiteur {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new WoundingStrikeBerserker() {{
+                new WoundingStrikeBerserker(AbstractAbilityBuilder.create("inquisiteurEwaWoundingStrikeBerserker").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new IncendiaryCurse() {{
+                new IncendiaryCurse(AbstractAbilityBuilder.create("inquisiteurEwaIncendiaryCurse").pve()) {{
                     this.setPveMasterUpgrade(true);
                 }},
-                new GroundSlamBerserker() {{
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("inquisiteurEwaGroundSlamBerserker").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new BloodLust(),
-                new Inferno() {{
+                new BloodLust(AbstractAbilityBuilder.create("inquisiteurEwaBloodLust").pve()),
+                new Inferno(AbstractAbilityBuilder.create("inquisiteurEwaInferno").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }}
         );

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -25,7 +26,7 @@ public class TormentedSoul extends AbstractMob implements BossMinionMob {
                 0,
                 214,
                 338,
-                new RemoveTarget(20)
+                new RemoveTarget(AbstractAbilityBuilder.create("tormentedSoulRemoveTarget").pve())
         );
     }
 
@@ -45,7 +46,7 @@ public class TormentedSoul extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(20)
+                new RemoveTarget(AbstractAbilityBuilder.create("tormentedSoulRemoveTarget").pve())
         );
     }
 

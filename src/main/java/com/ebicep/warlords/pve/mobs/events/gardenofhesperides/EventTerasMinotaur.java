@@ -30,7 +30,7 @@ public class EventTerasMinotaur extends AbstractMob implements BossMinionMob, Te
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new GroundSlamBerserker(AbstractAbilityBuilder.create("groundSlamBerserker").pve().cooldown(5).startCooldown(5))
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("terasMinotaurGroundSlamBerserker").pve().startCooldown(5))
         );
     }
 

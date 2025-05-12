@@ -25,7 +25,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     protected boolean trueDamage = false;
     private final AbstractGroundSlamStats stats = new AbstractGroundSlamStats();
-    private final FloatModifiable slamSize = new FloatModifiable(6);
+    private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
 
     public AbstractGroundSlam(AbstractAbilityBuilder builder) {
@@ -36,6 +36,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
+        this.slamSize = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slamSize"), float.class));
     }
 
     @Override

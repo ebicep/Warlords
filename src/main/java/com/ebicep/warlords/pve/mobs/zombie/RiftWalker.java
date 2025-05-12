@@ -97,7 +97,7 @@ public class RiftWalker extends AbstractMob implements EliteMob {
     private static class RiftSpeed extends AbstractAbility {
 
         public RiftSpeed() {
-            super(AbstractAbilityBuilder.create("riftSpeed").pve().cooldown(10).energyCost(100));
+            super(AbstractAbilityBuilder.create("riftWalkerRiftSpeed").pve());
         }
 
         @Override

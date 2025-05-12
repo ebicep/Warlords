@@ -29,17 +29,13 @@ public class ThunderCloudAbility extends AbstractPveAbility {
     private int sizeMin = 5;
     private int sizeMax = 10;
 
-    public ThunderCloudAbility(float cooldown, boolean canHitAllies, int secondsToLiveMin, int secondsToLiveMax, int sizeMin, int sizeMax) {
-        this(cooldown);
+    public ThunderCloudAbility(AbstractAbilityBuilder builder, boolean canHitAllies, int secondsToLiveMin, int secondsToLiveMax, int sizeMin, int sizeMax) {
+        super(builder);
         this.canHitAllies = canHitAllies;
         this.secondsToLiveMin = secondsToLiveMin;
         this.secondsToLiveMax = secondsToLiveMax;
         this.sizeMin = sizeMin;
         this.sizeMax = sizeMax;
-    }
-
-    public ThunderCloudAbility(float cooldown) {
-        super(AbstractAbilityBuilder.create("thunderCloud").pve().cooldown(cooldown).energyCost(50));
     }
 
     @Override

@@ -78,6 +78,10 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
         super(AbstractAbilityBuilder.create("cripplingStrike").pvp());
     }
 
+    public CripplingStrike(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

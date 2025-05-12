@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -19,11 +20,11 @@ import java.util.List;
 public class PigZombieHealing extends AbstractAbility implements Heals<PigZombieHealing.HealingValues> {
 
     private final float hitbox;
+    private final HealingValues healingValues = new HealingValues();
 
-    public PigZombieHealing(float heal, float hitbox) {
-        super(AbstractAbilityBuilder.create("zombifaction").pve().cooldown(3).energyCost(100));
+    public PigZombieHealing(AbstractAbilityBuilder builder, float hitbox) {
+        super(builder);
         this.hitbox = hitbox;
-        this.healingValues = new HealingValues(heal);
     }
 
     @Override
@@ -46,8 +47,6 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
         return true;
     }
 
-    private final HealingValues healingValues;
-
     @Override
     public HealingValues getHealValues() {
         return healingValues;
@@ -55,17 +54,20 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.SetValue zombificationHealing;
-        private final List<Value> values;
-
-        public HealingValues(float value) {
-            this.zombificationHealing = new Value.SetValue(value);
-            this.values = List.of(zombificationHealing);
-        }
+        private Value.SetValue zombificationHealing = new Value.SetValue(0);
+        private final List<Value> values = List.of(zombificationHealing);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.zombificationHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldName("zombificationHealing"),
+                    Value.SetValue.class
+            );
         }
 
     }

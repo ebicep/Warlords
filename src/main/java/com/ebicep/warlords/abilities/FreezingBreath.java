@@ -47,6 +47,10 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         super(AbstractAbilityBuilder.create("freezingBreath").pvp());
     }
 
+    public FreezingBreath(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

@@ -9,8 +9,8 @@ import javax.annotation.Nonnull;
 
 public class RemoveTarget extends AbstractPveAbility {
 
-    public RemoveTarget(float cooldown) {
-        super(AbstractAbilityBuilder.create("removeTarget").pve().cooldown(cooldown).energyCost(100));
+    public RemoveTarget(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

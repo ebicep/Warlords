@@ -61,12 +61,8 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FallenSouls(AbstractAbilityBuilder.create("fallenSouls").pve().cooldown(3).startCooldown(3)),
-                new IncendiaryCurse(AbstractAbilityBuilder.create("incendiaryCurse").pve().cooldown(8).startCooldown(8)) {
-                    {
-                        this.getDamageValues().getCurseDamage().min().setBaseValue(524);
-                        this.getDamageValues().getCurseDamage().max().setBaseValue(607);
-                    }
+                new FallenSouls(AbstractAbilityBuilder.create("hadesFallenSouls").pve().startCooldown(3)),
+                new IncendiaryCurse(AbstractAbilityBuilder.create("hadesIncendiaryCurse").pve().startCooldown(8)) {
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -82,9 +78,7 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
                         return speed;
                     }
                 },
-                new UndyingArmy(60) {{
-                    this.getCooldown().setBaseValue(60f);
-                }}
+                new UndyingArmy(AbstractAbilityBuilder.create("hadesUndyingArmy").pve())
         );
     }
 

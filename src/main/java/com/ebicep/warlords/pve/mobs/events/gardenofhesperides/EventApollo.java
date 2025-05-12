@@ -49,7 +49,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new PoisonArrow(),
-                new SpawnMobAbility(10, Mob.SKELETAL_ENTROPY, 10) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("apolloSpawnSkeletalEntropy").pve().startCooldown(10), Mob.SKELETAL_ENTROPY) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
@@ -87,12 +87,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
     private static class PoisonArrow extends AbstractPveAbility implements Damages<PoisonArrow.DamageValues> {
 
         public PoisonArrow() {
-            super(AbstractAbilityBuilder.create("poisonArrow")
-                                        .pve()
-                                        .cooldown(5)
-                                        .energyCost(100)
-                                        .startFullCooldown()
-            );
+            super(AbstractAbilityBuilder.create("apolloPoisonArrow").pve().startFullCooldown());
         }
 
         @Override

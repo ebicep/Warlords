@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -29,7 +30,7 @@ public class NarmerAcolyte extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(10)
+                new RemoveTarget(AbstractAbilityBuilder.create("acolyteOfNarmerRemoveTarget").pve())
         );
     }
 

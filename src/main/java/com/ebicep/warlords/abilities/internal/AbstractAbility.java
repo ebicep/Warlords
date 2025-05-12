@@ -90,24 +90,30 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected boolean inPve = false;
     protected boolean pveMasterUpgrade = false;
     protected boolean pveMasterUpgrade2 = false;
+    private final AbstractAbilityBuilder builder;
     private boolean updateItem = true;
 
     public AbstractAbility(AbstractAbilityBuilder builder) {
+        this.builder = builder;
         init(builder);
     }
 
     protected void init(AbstractAbilityBuilder builder) {
         List<String> namespaces = builder.getNamespaces();
         this.name = ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("name"), String.class);
-        this.cooldown = new FloatModifiable(
-                builder.getCooldown() != null ? builder.getCooldown() :
-                ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("cooldown"), float.class)
-        );
-        this.currentCooldown = builder.getStartCooldown();
+        Float cooldownValue = builder.getCooldown() != null ?
+                              builder.getCooldown() :
+                              ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("cooldown"), float.class);
+        this.cooldown = new FloatModifiable(cooldownValue);
+        this.currentCooldown = builder.getStartCooldown() == null ? cooldownValue : builder.getStartCooldown();
         this.energyCost = new FloatModifiable(
                 builder.getEnergyCost() != null ? builder.getEnergyCost() :
                 ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("energyCost"), float.class)
         );
+    }
+
+    public AbstractAbilityBuilder getBuilder() {
+        return builder;
     }
 
     public void updateDescription(Player player) {

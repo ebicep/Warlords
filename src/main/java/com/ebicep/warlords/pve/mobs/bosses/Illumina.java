@@ -57,7 +57,7 @@ public class Illumina extends AbstractMob implements BossMob {
                 3000,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility(30, Mob.SKELETAL_SORCERER) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("illuminaSpawnSkeletalSorcerer").pve(), Mob.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();
@@ -86,7 +86,7 @@ public class Illumina extends AbstractMob implements BossMob {
                 maxMeleeDamage,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility(30, Mob.SKELETAL_SORCERER) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("illuminaSpawnSkeletalSorcerer").pve(), Mob.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();
@@ -319,7 +319,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class Bramble extends AbstractPveAbility implements Damages<Bramble.DamageValues> {
 
         public Bramble() {
-            super(AbstractAbilityBuilder.create("bramble").pve().cooldown(5).energyCost(100));
+            super(AbstractAbilityBuilder.create("illuminaBramble").pve());
         }
 
         @Override
@@ -367,7 +367,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class BrambleSlowness extends AbstractPveAbility {
 
         public BrambleSlowness() {
-            super(AbstractAbilityBuilder.create("brambleSlowness").pve().cooldown(5).energyCost(100));
+            super(AbstractAbilityBuilder.create("illuminaBrambleSlowness").pve());
         }
 
         @Override

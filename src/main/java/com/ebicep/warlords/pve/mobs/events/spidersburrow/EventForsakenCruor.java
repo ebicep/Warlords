@@ -81,7 +81,7 @@ public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Sp
     private static class WoundAll extends AbstractPveAbility {
 
         public WoundAll() {
-            super(AbstractAbilityBuilder.create("woundAll").pve().cooldown(7).energyCost(50));
+            super(AbstractAbilityBuilder.create("forsakenRespiteWoundAll").pve());
         }
 
         @Override

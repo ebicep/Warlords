@@ -133,7 +133,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     public void setMaxHealthDamage(int maxHealthDamage) {
         this.maxHealthDamage = maxHealthDamage;
     }
-
     private final DamageValues damageValues = new DamageValues();
     private final UndyingArmyStats stats = new UndyingArmyStats();
     private int radius = 12;
@@ -145,11 +144,11 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     private int healPeriod = 20;
 
     public UndyingArmy() {
-        this(0f);
+        super(AbstractAbilityBuilder.create("undyingArmy").pvp());
     }
 
-    public UndyingArmy(float startCooldown) {
-        super(AbstractAbilityBuilder.create("undyingArmy").pvp());
+    public UndyingArmy(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

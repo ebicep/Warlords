@@ -31,6 +31,10 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         super(AbstractAbilityBuilder.create("righteousStrike").pvp());
     }
 
+    public RighteousStrike(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

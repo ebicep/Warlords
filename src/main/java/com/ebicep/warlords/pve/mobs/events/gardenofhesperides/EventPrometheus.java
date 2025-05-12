@@ -54,11 +54,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new BurstOfFlames(),
-                new Fireball() {{
-                    this.getCooldown().setBaseValue(1000f);
-                    this.getDamageValues().getFireballDamage().min().setBaseValue(350);
-                    this.getDamageValues().getFireballDamage().max().setBaseValue(450);
-                }}
+                new Fireball(AbstractAbilityBuilder.create("prometheusFireball").pve())
         );
     }
 
@@ -167,7 +163,7 @@ public class EventPrometheus extends AbstractMob implements BossMob, LesserGod {
         private float radius = 10;
 
         public BurstOfFlames() {
-            super(AbstractAbilityBuilder.create("burstOfFlames").pve().cooldown(5).energyCost(100).startNoCooldown());
+            super(AbstractAbilityBuilder.create("prometheusBurstOfFlames").pve().startNoCooldown());
         }
 
         @Override

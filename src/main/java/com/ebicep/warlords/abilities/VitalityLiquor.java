@@ -40,6 +40,10 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         super(AbstractAbilityBuilder.create("vitalityLiquor").pvp());
     }
 
+    public VitalityLiquor(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

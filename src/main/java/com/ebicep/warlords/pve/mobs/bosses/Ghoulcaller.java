@@ -60,7 +60,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new GhoulcallersFury(),
-                new SpawnSouls(10)
+                new SpawnSouls(AbstractAbilityBuilder.create("ghoulcallerSpawnSouls").pve())
         );
     }
 
@@ -149,7 +149,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
         private int timesInARowDamageMaxReduced = 0;
 
         public GhoulcallersFury() {
-            super(AbstractAbilityBuilder.create("ghoulcallersFury").pve().cooldown(5).energyCost(100));
+            super(AbstractAbilityBuilder.create("ghoulcallerGhoulcallersFury").pve());
         }
 
         @Override

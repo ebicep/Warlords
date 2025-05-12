@@ -48,6 +48,10 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         super(AbstractAbilityBuilder.create("waterBreath").pvp());
     }
 
+    public WaterBreath(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

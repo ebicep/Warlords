@@ -93,7 +93,7 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
     private static class WitchBuff extends AbstractPveAbility {
 
         public WitchBuff() {
-            super(AbstractAbilityBuilder.create("witchBuff").pve().cooldown(0).energyCost(100));
+            super(AbstractAbilityBuilder.create("witchDeaconWitchBuff").pve());
         }
 
         @Override

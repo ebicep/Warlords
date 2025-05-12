@@ -35,6 +35,10 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         super(AbstractAbilityBuilder.create("bloodLust").pvp());
     }
 
+    public BloodLust(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

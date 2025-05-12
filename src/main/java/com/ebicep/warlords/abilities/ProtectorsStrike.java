@@ -37,6 +37,10 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
         super(AbstractAbilityBuilder.create("protectorsStrike").pvp());
     }
 
+    public ProtectorsStrike(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

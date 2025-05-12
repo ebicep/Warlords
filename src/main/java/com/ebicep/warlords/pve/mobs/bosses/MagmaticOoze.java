@@ -248,7 +248,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final double kbVelocity = 1.2;
 
         public FieryProjectile(float minDamageHeal, float maxDamageHeal) {
-            super(AbstractAbilityBuilder.create("fieryProjectile").pve().cooldown(5).energyCost(50));
+            super(AbstractAbilityBuilder.create("magmaticOozeFieryProjectile").pve());
             this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
@@ -357,7 +357,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private boolean launched = false;
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
-            super(AbstractAbilityBuilder.create("flamingSlam").pve().cooldown(12).energyCost(50));
+            super(AbstractAbilityBuilder.create("magmaticOozeFlamingSlam").pve());
             this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
@@ -501,7 +501,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private int timesUsed = 0;
 
         public HeatAura(float startDamage, int hitbox) {
-            super(AbstractAbilityBuilder.create("heatAura").pve().cooldown(2).energyCost(50));
+            super(AbstractAbilityBuilder.create("magmaticOozeHeatAura").pve());
             this.hitbox = hitbox;
             this.damageValues = new DamageValues(startDamage);
         }
@@ -556,7 +556,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private int failedAttempts = 0;
 
         public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-            super(AbstractAbilityBuilder.create("moltenFissure").pve().cooldown(12).energyCost(50));
+            super(AbstractAbilityBuilder.create("moltenFissure").pve());
             this.previousBlocks = previousBlocks;
         }
 

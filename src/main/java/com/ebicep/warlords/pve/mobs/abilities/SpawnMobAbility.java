@@ -11,46 +11,8 @@ public class SpawnMobAbility extends AbstractSpawnMobAbility {
 
     protected final Mob mobToSpawn;
 
-    public SpawnMobAbility(
-            float cooldown,
-            Mob mobToSpawn
-    ) {
-        this(cooldown, mobToSpawn, false);
-    }
-
-    public SpawnMobAbility(
-            float cooldown,
-            Mob mobToSpawn,
-            boolean startNoCooldown
-    ) {
-        this(cooldown, 50, mobToSpawn, startNoCooldown);
-    }
-
-    public SpawnMobAbility(
-            float cooldown,
-            float energyCost,
-            Mob mobToSpawn,
-            boolean startNoCooldown
-    ) {
-        super(AbstractAbilityBuilder.create("spawn" + mobToSpawn.name.replaceAll(" ", "")).pve().cooldown(cooldown).energyCost(energyCost).startNoCooldown(startNoCooldown));
-        this.mobToSpawn = mobToSpawn;
-    }
-
-    public SpawnMobAbility(
-            float cooldown,
-            Mob mobToSpawn,
-            float startCooldown
-    ) {
-        this(cooldown, 50, mobToSpawn, startCooldown);
-    }
-
-    public SpawnMobAbility(
-            float cooldown,
-            float energyCost,
-            Mob mobToSpawn,
-            float startCooldown
-    ) {
-        super(AbstractAbilityBuilder.create("spawn" + mobToSpawn.name.replaceAll(" ", "")).pve().cooldown(cooldown).energyCost(energyCost).startCooldown(startCooldown));
+    public SpawnMobAbility(AbstractAbilityBuilder builder, Mob mobToSpawn) {
+        super(builder);
         this.mobToSpawn = mobToSpawn;
     }
 

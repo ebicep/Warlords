@@ -71,7 +71,7 @@ public class Void extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new GroundShred(),
-                new SpawnSouls(20) {
+                new SpawnSouls(AbstractAbilityBuilder.create("voidSpawnSouls").pve()) {
                     @Override
                     public int getSpawnAmount() {
                         int spawnAmount = 2 * pveOption.playerCount();
@@ -83,7 +83,7 @@ public class Void extends AbstractMob implements BossMob {
                     }
                 },
                 new ThunderCloudAbility(
-                        10,
+                        AbstractAbilityBuilder.create("voidThunderCloud").pve(),
                         false,
                         21, 30,
                         7, 12
@@ -436,7 +436,7 @@ public class Void extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 10;
 
         public GroundShred() {
-            super(AbstractAbilityBuilder.create("groundShred").pve().cooldown(8).energyCost(50));
+            super(AbstractAbilityBuilder.create("voidGroundShred").pve());
         }
 
         @Override

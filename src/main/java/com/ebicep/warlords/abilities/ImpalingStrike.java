@@ -38,6 +38,10 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         super(AbstractAbilityBuilder.create("impalingStrike").pvp());
     }
 
+    public ImpalingStrike(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);

@@ -59,11 +59,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthenSpike(AbstractAbilityBuilder.create("earthenSpike").pve().cooldown(6).startCooldown(6)) {
-                    {
-                        this.getDamageValues().getSpikeDamage().min().setBaseValue(600);
-                        this.getDamageValues().getSpikeDamage().max().setBaseValue(700);
-                    }
+                new EarthenSpike(AbstractAbilityBuilder.create("poseidonEarthenSpike").pve().startCooldown(6)) {
                     @Override
                     public boolean onActivate(@Nonnull WarlordsEntity wp) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
@@ -117,11 +113,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         }
                     }
                 },
-                new Boulder(AbstractAbilityBuilder.create("boulder").pve().cooldown(5).startCooldown(5)) {
-                    {
-                        this.getDamageValues().getBoulderDamage().min().setBaseValue(551);
-                        this.getDamageValues().getBoulderDamage().max().setBaseValue(773);
-                    }
+                new Boulder(AbstractAbilityBuilder.create("poseidonBoulder").pve().startCooldown(5)) {
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -137,11 +129,8 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         return speed;
                     }
                 },
-                new GroundSlamBerserker(AbstractAbilityBuilder.create("groundSlamBerserker").pve().cooldown(10).startCooldown(10)) {{
-                    this.getDamageValues().getSlamDamage().min().setBaseValue(558);
-                    this.getDamageValues().getSlamDamage().max().setBaseValue(616);
-                }},
-                new LastStand(AbstractAbilityBuilder.create("lastStand").pve().cooldown(60).startCooldown(60))
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("poseidonGroundSlamBerserker").pve().startCooldown(10)),
+                new LastStand(AbstractAbilityBuilder.create("poseidonLastStand").pve().startCooldown(60))
         );
     }
 

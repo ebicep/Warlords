@@ -58,10 +58,8 @@ public class Mithra extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst() {{
-                    this.getCooldown().setBaseValue(1000);
-                }},
-                new SpawnMobAbility(1000, Mob.ARACHNO_VENERATUS) {
+                new FlameBurst(AbstractAbilityBuilder.create("mithraFlameBurst").pve()),
+                new SpawnMobAbility(AbstractAbilityBuilder.create("mithraSpawnArachnoVeneratus").pve(), Mob.ARACHNO_VENERATUS) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
@@ -259,7 +257,7 @@ public class Mithra extends AbstractMob implements BossMob {
     private static class HibernatingEggSac extends AbstractPveAbility {
 
         public HibernatingEggSac() {
-            super(AbstractAbilityBuilder.create("hibernatingEggSac").pve().cooldown(15).energyCost(50).startCooldown(7));
+            super(AbstractAbilityBuilder.create("mithraHibernatingEggSac").pve().startCooldown(7));
         }
 
         @Override

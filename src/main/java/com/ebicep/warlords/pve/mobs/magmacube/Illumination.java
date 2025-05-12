@@ -109,7 +109,7 @@ public class Illumination extends AbstractMob implements AdvancedMob {
     private static class LastStandNear extends AbstractPveAbility {
 
         public LastStandNear() {
-            super(AbstractAbilityBuilder.create("lastStandNear").pve().cooldown(3).energyCost(100));
+            super(AbstractAbilityBuilder.create("illuminationLastStandNear").pve());
         }
 
         @Override

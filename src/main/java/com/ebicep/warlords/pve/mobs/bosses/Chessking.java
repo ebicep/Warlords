@@ -51,21 +51,13 @@ public class Chessking extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new Belch(),
-                new SpawnMobAbility(
-                        20,
-                        Mob.SLIME_GUARD,
-                        5
-                ) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("chesskingSpawnSlimeGuard").pve().startCooldown(5), Mob.SLIME_GUARD) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
                     }
                 },
-                new SpawnMobAbility(
-                        40,
-                        Mob.SLIMY_CHESS,
-                        15
-                ) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("chesskingSpawnSlimyChess").pve().startCooldown(15), Mob.SLIMY_CHESS) {
                     @Override
                     public int getSpawnAmount() {
                         int slimyChessCount = pveOption.getMobs().stream()
@@ -134,11 +126,7 @@ public class Chessking extends AbstractMob implements BossMob {
         private float range = 9;
 
         public Belch() {
-            super(AbstractAbilityBuilder.create("belch")
-                                        .pve()
-                                        .cooldown(10)
-                                        .energyCost(100)
-            );
+            super(AbstractAbilityBuilder.create("chesskingBelch").pve());
         }
 
         @Override

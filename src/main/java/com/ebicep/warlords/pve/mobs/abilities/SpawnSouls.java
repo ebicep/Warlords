@@ -45,8 +45,8 @@ public class SpawnSouls extends AbstractSpawnMobAbility {
     private List<Location> randomSpawnLocations;
     private Mob randomSoulToSpawn;
 
-    public SpawnSouls(float cooldown) {
-        super(AbstractAbilityBuilder.create("spawnSouls").pve().cooldown(cooldown).energyCost(0).startNoCooldown());
+    public SpawnSouls(AbstractAbilityBuilder builder) {
+        super(builder.startNoCooldown());
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -82,7 +83,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
+        Block targetBlock = !(wp instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
