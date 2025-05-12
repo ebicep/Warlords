@@ -51,7 +51,7 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
     public static class BerserkerZombieWoundingStrike extends WoundingStrikeBerserker {
 
         public BerserkerZombieWoundingStrike() {
-            super(AbstractAbilityBuilder.create("woundingStrike").pve().cooldown(5).energyCost(100).startNoCooldown());
+            super(AbstractAbilityBuilder.create("woundingStrikeBerserker").pve().cooldown(5).energyCost(100).startNoCooldown());
         }
 
         @Override

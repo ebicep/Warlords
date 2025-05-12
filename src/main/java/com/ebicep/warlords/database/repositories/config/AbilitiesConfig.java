@@ -22,9 +22,13 @@ public class AbilitiesConfig implements ConfigManager.Config {
     }
 
     public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType) {
+        return getValue(namespaces, key, fieldType, defaultValue(fieldType));
+    }
+
+    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue) {
         if (abilitiesConfig == null) {
             ChatUtils.MessageType.CONFIG.sendErrorMessage("Config document not set");
-            return defaultValue(fieldType);
+            return defaultValue;
         }
         Result<T> result = null;
         for (String namespace : namespaces) {
@@ -40,7 +44,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
             } else {
                 ChatUtils.MessageType.CONFIG.sendErrorMessage("No Result" + debug);
             }
-            return defaultValue(fieldType);
+            return defaultValue;
         }
         return result.value;
     }

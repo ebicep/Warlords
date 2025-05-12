@@ -133,6 +133,10 @@ public class OldTestCommand implements CommandExecutor {
 //            }
 
             for (Mob value : Mob.VALUES) {
+//                if (value != Mob.ARACHNO_VENERATUS) {
+//                    continue;
+//                }
+//                System.out.println(value);
                 AbstractMob mob = value.createMobLegacy.apply(null);
             }
 
