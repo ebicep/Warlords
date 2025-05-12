@@ -50,51 +50,6 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
         super(builder);
     }
 
-    public int getSelfDamageReduction() {
-        return selfDamageReductionPercent;
-    }
-
-    public void setSelfDamageReductionPercent(int selfDamageReductionPercent) {
-        this.selfDamageReductionPercent = selfDamageReductionPercent;
-    }
-
-    public int getTeammateDamageReduction() {
-        return teammateDamageReductionPercent;
-    }
-
-    public void setTeammateDamageReductionPercent(int teammateDamageReductionPercent) {
-        this.teammateDamageReductionPercent = teammateDamageReductionPercent;
-    }
-
-    @Override
-    public void multiplyTickDuration(float multiplier) {
-        this.selfTickDuration *= multiplier;
-        this.allyTickDuration *= multiplier;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return selfTickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.selfTickDuration = tickDuration;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    @Override
-    public LastStandStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -252,6 +207,51 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new LastStandBranch(abilityTree, this);
+    }
+
+    @Override
+    public void multiplyTickDuration(float multiplier) {
+        this.selfTickDuration *= multiplier;
+        this.allyTickDuration *= multiplier;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return selfTickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.selfTickDuration = tickDuration;
+    }
+
+    @Override
+    public LastStandStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getSelfDamageReduction() {
+        return selfDamageReductionPercent;
+    }
+
+    public void setSelfDamageReductionPercent(int selfDamageReductionPercent) {
+        this.selfDamageReductionPercent = selfDamageReductionPercent;
+    }
+
+    public int getTeammateDamageReduction() {
+        return teammateDamageReductionPercent;
+    }
+
+    public void setTeammateDamageReductionPercent(int teammateDamageReductionPercent) {
+        this.teammateDamageReductionPercent = teammateDamageReductionPercent;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 
     public static class LastStandData {

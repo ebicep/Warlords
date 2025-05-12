@@ -43,8 +43,8 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     public static final double ORB_HITBOX_SQUARED = ORB_HITBOX * ORB_HITBOX;
     public static final int MAX_ALLIES = 2;
     private final OrbsOfLifeStats stats = new OrbsOfLifeStats();
-    private int floatingOrbRadius = 20;
     private final HealingValues healingValues = new HealingValues();
+    private int floatingOrbRadius = 20;
     private int tickDuration = 280;
     private int initialOrbs = 3;
     private int orbTickDuration = 160;
@@ -54,45 +54,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
     public OrbsOfLife() {
         super(AbstractAbilityBuilder.create("orbsOfLife").pvp());
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getInitialOrbs() {
-        return initialOrbs;
-    }
-
-    public void setInitialOrbs(int initialOrbs) {
-        this.initialOrbs = initialOrbs;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    public int getHealingIncrease() {
-        return healingIncrease;
-    }
-
-    public void setHealingIncrease(int healingIncrease) {
-        this.healingIncrease = healingIncrease;
-    }
-
-    public int getOrbTickDuration() {
-        return orbTickDuration;
-    }
-
-    public void setOrbTickDuration(int orbTickDuration) {
-        this.orbTickDuration = orbTickDuration;
     }
 
     @Override
@@ -337,6 +298,45 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         return new OrbsOfLifeBranch(abilityTree, this);
     }
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public int getInitialOrbs() {
+        return initialOrbs;
+    }
+
+    public void setInitialOrbs(int initialOrbs) {
+        this.initialOrbs = initialOrbs;
+    }
+
+    public int getHealingIncrease() {
+        return healingIncrease;
+    }
+
+    public void setHealingIncrease(int healingIncrease) {
+        this.healingIncrease = healingIncrease;
+    }
+
+    public int getOrbTickDuration() {
+        return orbTickDuration;
+    }
+
+    public void setOrbTickDuration(int orbTickDuration) {
+        this.orbTickDuration = orbTickDuration;
+    }
+
     public static class OrbOfLife extends OrbPassenger {
 
         private final OrbsOfLifeData data;
@@ -370,10 +370,6 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         private final List<Value> values = List.of(orbHealing);
 
-        public Value.SetValue getOrbHealing() {
-            return orbHealing;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -382,6 +378,10 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.orbHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orbHealing"), Value.SetValue.class);
+        }
+
+        public Value.SetValue getOrbHealing() {
+            return orbHealing;
         }
 
     }

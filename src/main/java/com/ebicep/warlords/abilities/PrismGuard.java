@@ -38,8 +38,8 @@ import static com.ebicep.warlords.effects.EffectUtils.playSphereAnimation;
 public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<PrismGuard.HealingValues>, AbilityStats<PrismGuard, PrismGuard.PrismGuardStats> {
 
     private final PrismGuardStats stats = new PrismGuardStats();
-    private int damageReduction = 3;
     private final HealingValues healingValues = new HealingValues();
+    private int damageReduction = 3;
     private int bubbleRadius = 4;
     private int tickDuration = 100;
     private int projectileDamageReduction = 40;
@@ -52,50 +52,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
     public PrismGuard(AbstractAbilityBuilder builder) {
         super(builder);
-    }
-
-    public int getProjectileDamageReduction() {
-        return projectileDamageReduction;
-    }
-
-    public void setProjectileDamageReduction(int projectileDamageReduction) {
-        this.projectileDamageReduction = projectileDamageReduction;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getBubbleRadius() {
-        return bubbleRadius;
-    }
-
-    public void setBubbleRadius(int bubbleRadius) {
-        this.bubbleRadius = bubbleRadius;
-    }
-
-    public int getMaxHealing() {
-        return maxHealing;
-    }
-
-    public void setMaxHealing(int maxHealing) {
-        this.maxHealing = maxHealing;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public PrismGuardStats getAbilityStats() {
-        return stats;
     }
 
     @Override
@@ -245,6 +201,30 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         ) {
 
             @Override
+            protected Listener getListener() {
+                if (!pveMasterUpgrade2) {
+                    return super.getListener();
+                }
+                return new Listener() {
+
+                    @EventHandler
+                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                        WarlordsEntity attacker = event.getSource();
+                        if (attacker.isTeammate(wp)) {
+                            return;
+                        }
+                        if (attacker.getLocation().distanceSquared(wp.getLocation()) > bubbleRadius * bubbleRadius) {
+                            return;
+                        }
+                        if (event.getCause().isEmpty()) {
+                            event.setMin(event.getMin() * .75f);
+                            event.setMax(event.getMax() * .75f);
+                        }
+                    }
+                };
+            }
+
+            @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 int totalReduction = 0;
                 data.hitsTaken++;
@@ -268,30 +248,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     currentVector.multiply(.001);
                 }
             }
-
-            @Override
-            protected Listener getListener() {
-                if (!pveMasterUpgrade2) {
-                    return super.getListener();
-                }
-                return new Listener() {
-
-                    @EventHandler
-                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
-                        WarlordsEntity attacker = event.getSource();
-                        if (attacker.isTeammate(wp)) {
-                            return;
-                        }
-                        if (attacker.getLocation().distanceSquared(wp.getLocation()) > bubbleRadius * bubbleRadius) {
-                            return;
-                        }
-                        if (event.getCause().isEmpty()) {
-                            event.setMin(event.getMin() * .75f);
-                            event.setMax(event.getMax() * .75f);
-                        }
-                    }
-                };
-            }
         });
         return true;
     }
@@ -301,6 +257,50 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         return new PrismGuardBranch(abilityTree, this);
     }
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public PrismGuardStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getProjectileDamageReduction() {
+        return projectileDamageReduction;
+    }
+
+    public void setProjectileDamageReduction(int projectileDamageReduction) {
+        this.projectileDamageReduction = projectileDamageReduction;
+    }
+
+    public int getBubbleRadius() {
+        return bubbleRadius;
+    }
+
+    public void setBubbleRadius(int bubbleRadius) {
+        this.bubbleRadius = bubbleRadius;
+    }
+
+    public int getMaxHealing() {
+        return maxHealing;
+    }
+
+    public void setMaxHealing(int maxHealing) {
+        this.maxHealing = maxHealing;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.SetValue bubbleBaseHealing = new Value.SetValue(200);
@@ -308,14 +308,6 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         private Value.SetValue bubbleMissingHealthHealing = new Value.SetValue(1.5f);
 
         private final List<Value> values = List.of(bubbleMissingHealthHealing, bubbleMissingHealthHealing);
-
-        public Value.SetValue getBubbleBaseHealing() {
-            return bubbleBaseHealing;
-        }
-
-        public Value.SetValue getBubbleMissingHealthHealing() {
-            return bubbleMissingHealthHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -329,6 +321,14 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     builder.getAppendedFieldName("bubbleMissingHealthHealing"),
                     Value.SetValue.class
             );
+        }
+
+        public Value.SetValue getBubbleBaseHealing() {
+            return bubbleBaseHealing;
+        }
+
+        public Value.SetValue getBubbleMissingHealthHealing() {
+            return bubbleMissingHealthHealing;
         }
 
     }

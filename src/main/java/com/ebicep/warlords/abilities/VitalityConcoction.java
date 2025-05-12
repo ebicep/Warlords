@@ -39,21 +39,6 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public VitalityConcoctionStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -96,13 +81,13 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         ) {
 
             @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(damageResistance);
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener(wp);
             }
 
             @Override
-            protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener(wp);
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * convertToDivisionDecimal(damageResistance);
             }
         });
         if (pveMasterUpgrade) {
@@ -116,6 +101,21 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new VitalityConcoctionBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public VitalityConcoctionStats getAbilityStats() {
+        return stats;
     }
 
     public static class VitalityConcoctionStats extends AbstractAbilityStats<VitalityConcoction, VitalityConcoctionStats> {

@@ -22,13 +22,13 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
     }
 
     @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade2;
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
     }
 
     @Override

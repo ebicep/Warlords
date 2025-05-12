@@ -209,57 +209,6 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
         });
     }
 
-    public float getDelayedDamageTaken() {
-        return delayedDamageTaken;
-    }
-
-    public void setDelayedDamageTaken(float delayedDamageTaken) {
-        this.delayedDamageTaken = delayedDamageTaken;
-    }
-
-    public int getDebtTickDuration() {
-        return debtTickDuration;
-    }
-
-    public int getRespiteRadius() {
-        return respiteRadius;
-    }
-
-    public void setRespiteRadius(int respiteRadius) {
-        this.respiteRadius = respiteRadius;
-    }
-
-    public int getDebtRadius() {
-        return debtRadius;
-    }
-
-    public void setDebtRadius(int debtRadius) {
-        this.debtRadius = debtRadius;
-    }
-
-    public float getDamagePercent() {
-        return damagePercent;
-    }
-
-    public void setDamagePercent(float damagePercent) {
-        this.damagePercent = damagePercent;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public DeathsDebtStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -304,6 +253,57 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new DeathsDebtBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public DeathsDebtStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getDelayedDamageTaken() {
+        return delayedDamageTaken;
+    }
+
+    public void setDelayedDamageTaken(float delayedDamageTaken) {
+        this.delayedDamageTaken = delayedDamageTaken;
+    }
+
+    public int getDebtTickDuration() {
+        return debtTickDuration;
+    }
+
+    public int getRespiteRadius() {
+        return respiteRadius;
+    }
+
+    public void setRespiteRadius(int respiteRadius) {
+        this.respiteRadius = respiteRadius;
+    }
+
+    public int getDebtRadius() {
+        return debtRadius;
+    }
+
+    public void setDebtRadius(int debtRadius) {
+        this.debtRadius = debtRadius;
+    }
+
+    public float getDamagePercent() {
+        return damagePercent;
+    }
+
+    public void setDamagePercent(float damagePercent) {
+        this.damagePercent = damagePercent;
     }
 
     public static class DeathsDebtData extends TotemData<DeathsDebt> {

@@ -35,8 +35,9 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.energySteal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energySteal"), float.class);
     }
 
     @Override
@@ -89,23 +90,14 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         return true;
     }
 
-    public float getEnergySteal() {
-        return energySteal;
-    }
-
-    public void setEnergySteal(float energySteal) {
-        this.energySteal = energySteal;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public AvengersStrikeStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.energySteal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energySteal"), float.class);
     }
 
     @Override
@@ -123,15 +115,19 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         return new AvengerStrikeBranch(abilityTree, this);
     }
 
+    public float getEnergySteal() {
+        return energySteal;
+    }
+
+    public void setEnergySteal(float energySteal) {
+        this.energySteal = energySteal;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -141,6 +137,10 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

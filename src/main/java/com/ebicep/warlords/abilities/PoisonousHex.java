@@ -57,58 +57,6 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
-    // TODO
-    @Override
-    public void updateDescription(Player player) {
-        boolean infiniteHit = maxEnemiesHit >= 200;
-        description = AbilityDescriptionBuilder.create("Throw Hex Fangs in front of you, dealing ")
-                                               .damage(damageValues.hexDamage)
-                                               .text(" damage " + (infiniteHit ? "" : "to up to "))
-                                               .text((infiniteHit ? "infinite" : "" + maxEnemiesHit), NamedTextColor.RED)
-                                               .text(" enemies. Additionally, hit targets receive ")
-                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
-                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.")
-                                               .emptyLine()
-                                               .text("Each stack of Poisonous Hex deals ")
-                                               .damage(damageValues.hexDOTDamage)
-                                               .text(" damage every ")
-                                               .durationTicks(ticksBetweenDot)
-                                               .text(" for ")
-                                               .durationTicks(tickDuration * 2)
-                                               .text(". Stacks up to ")
-                                               .text(maxStacks, NamedTextColor.BLUE)
-                                               .text(" times.")
-                                               .maxRange(maxFullDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new PoisonousHexBranch(abilityTree, this);
-    }
-
-    public int getMaxStacks() {
-        return maxStacks;
-    }
-
-    public int getMaxEnemiesHit() {
-        return maxEnemiesHit;
-    }
-
-    public void setMaxEnemiesHit(int maxEnemiesHit) {
-        this.maxEnemiesHit = maxEnemiesHit;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public PoisonousHexStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -302,6 +250,58 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         this.ticksBetweenDot = ticksBetweenDot;
     }
 
+    // TODO
+    @Override
+    public void updateDescription(Player player) {
+        boolean infiniteHit = maxEnemiesHit >= 200;
+        description = AbilityDescriptionBuilder.create("Throw Hex Fangs in front of you, dealing ")
+                                               .damage(damageValues.hexDamage)
+                                               .text(" damage " + (infiniteHit ? "" : "to up to "))
+                                               .text((infiniteHit ? "infinite" : "" + maxEnemiesHit), NamedTextColor.RED)
+                                               .text(" enemies. Additionally, hit targets receive ")
+                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
+                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of Poisonous Hex.")
+                                               .emptyLine()
+                                               .text("Each stack of Poisonous Hex deals ")
+                                               .damage(damageValues.hexDOTDamage)
+                                               .text(" damage every ")
+                                               .durationTicks(ticksBetweenDot)
+                                               .text(" for ")
+                                               .durationTicks(tickDuration * 2)
+                                               .text(". Stacks up to ")
+                                               .text(maxStacks, NamedTextColor.BLUE)
+                                               .text(" times.")
+                                               .maxRange(maxFullDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new PoisonousHexBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public PoisonousHexStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
+    }
+
+    public int getMaxEnemiesHit() {
+        return maxEnemiesHit;
+    }
+
+    public void setMaxEnemiesHit(int maxEnemiesHit) {
+        this.maxEnemiesHit = maxEnemiesHit;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(263, 356, 20, 175);
@@ -309,14 +309,6 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         private Value.RangedValue hexDOTDamage = new Value.RangedValue(25, 35);
 
         private final List<Value> values = List.of(hexDamage, hexDOTDamage);
-
-        public Value.RangedValueCritable getHexDamage() {
-            return hexDamage;
-        }
-
-        public Value.RangedValue getHexDOTDamage() {
-            return hexDOTDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -327,6 +319,14 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         public void init(AbstractAbilityBuilder builder) {
             this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDamage"), Value.RangedValueCritable.class);
             this.hexDOTDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDOTDamage"), Value.RangedValue.class);
+        }
+
+        public Value.RangedValueCritable getHexDamage() {
+            return hexDamage;
+        }
+
+        public Value.RangedValue getHexDOTDamage() {
+            return hexDOTDamage;
         }
 
     }

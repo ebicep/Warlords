@@ -20,6 +20,13 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.warpHealPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("warpHealPercentage"), int.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("Activate to place a time rune on the ground. After ")
@@ -31,10 +38,8 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.warpHealPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("warpHealPercentage"), int.class);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+    public AbstractTimeWarpStats getAbilityStats() {
+        return stats;
     }
 
     public int getWarpHealPercentage() {
@@ -51,11 +56,6 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
 
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public AbstractTimeWarpStats getAbilityStats() {
-        return stats;
     }
 
     public static class AbstractTimeWarpStats extends AbstractAbilityStats<AbstractTimeWarp, AbstractTimeWarpStats> {

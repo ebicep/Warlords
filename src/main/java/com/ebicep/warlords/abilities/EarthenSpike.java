@@ -58,37 +58,6 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
-    public double getSpikeHitbox() {
-        return spikeHitbox;
-    }
-
-    public void setSpikeHitbox(double spikeHitbox) {
-        this.spikeHitbox = spikeHitbox;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
-    }
-
-    @Override
-    public EarthenSpikeStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
@@ -225,6 +194,37 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         return new EarthenSpikeBranch(abilityTree, this);
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
+    @Override
+    public EarthenSpikeStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public double getSpikeHitbox() {
+        return spikeHitbox;
+    }
+
+    public void setSpikeHitbox(double spikeHitbox) {
+        this.spikeHitbox = spikeHitbox;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable spikeDamage = new Value.RangedValueCritable(404, 562, 15, 175);
@@ -232,10 +232,6 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         private Value.RangedValue earthenRuptureDamage = new Value.RangedValue(548, 695);
 
         private final List<Value> values = List.of(spikeDamage, earthenRuptureDamage);
-
-        public Value.RangedValueCritable getSpikeDamage() {
-            return spikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -246,6 +242,10 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
         public void init(AbstractAbilityBuilder builder) {
             this.spikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("spikeDamage"), Value.RangedValueCritable.class);
             this.earthenRuptureDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("earthenRuptureDamage"), Value.RangedValue.class);
+        }
+
+        public Value.RangedValueCritable getSpikeDamage() {
+            return spikeDamage;
         }
 
     }

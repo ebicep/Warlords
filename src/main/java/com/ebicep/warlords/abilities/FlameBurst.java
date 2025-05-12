@@ -40,42 +40,6 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Launch a flame burst that will explode for ")
-                                               .damage(damageValues.flameBurstDamage)
-                                               .text(" damage. The Crit Chance increases by ")
-                                               .percent(1, NamedTextColor.RED)
-                                               .text(" for each travelled block. Up to ")
-                                               .percent(100, NamedTextColor.RED)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FlameburstBranch(abilityTree, this);
-    }
-
-    public void setProjectileWidth(double projectileWidth) {
-        this.projectileWidth = projectileWidth;
-    }
-
-    @Override
-    public FloatModifiable getSplashRadius() {
-        return splash;
-    }
-
-    @Override
-    public FlameBurstStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.splash = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("splash"), float.class));
@@ -257,15 +221,47 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         return super.getProjectileStartingSpeed(shooter, startingLocation);
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Launch a flame burst that will explode for ")
+                                               .damage(damageValues.flameBurstDamage)
+                                               .text(" damage. The Crit Chance increases by ")
+                                               .percent(1, NamedTextColor.RED)
+                                               .text(" for each travelled block. Up to ")
+                                               .percent(100, NamedTextColor.RED)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FlameburstBranch(abilityTree, this);
+    }
+
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splash;
+    }
+
+    @Override
+    public FlameBurstStats getAbilityStats() {
+        return stats;
+    }
+
+    public void setProjectileWidth(double projectileWidth) {
+        this.projectileWidth = projectileWidth;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
 
         private final List<Value> values = List.of(flameBurstDamage);
-
-        public Value.RangedValueCritable getFlameBurstDamage() {
-            return flameBurstDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -275,6 +271,10 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.flameBurstDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flameBurstDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getFlameBurstDamage() {
+            return flameBurstDamage;
         }
 
     }

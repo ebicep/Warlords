@@ -34,21 +34,6 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ConsecrateBranchProtector(abilityTree, this);
-    }
-
-    @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade2;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
@@ -113,6 +98,21 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
     @Override
     public Value.RangedValueCritable getConsecrateDamage() {
         return damageValues.consecrateDamage;
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ConsecrateBranchProtector(abilityTree, this);
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     public static class DamageValues implements Value.ValueHolder {

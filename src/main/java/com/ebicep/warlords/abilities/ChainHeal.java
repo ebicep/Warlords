@@ -34,91 +34,6 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Discharge a beam of energizing lightning that heals you and a targeted ally for ")
-                                               .heal(healingValues.chainHealing)
-                                               .text(" health and jumps to ")
-                                               .text(additionalBounces, NamedTextColor.BLUE)
-                                               .text(" additional target within ")
-                                               .blocks(bounceRange)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Each ally healed reduces the cooldown of Boulder by ")
-                                               .durationSeconds(cooldownReductionInSeconds)
-                                               .text(".")
-                                               .initialRange(radius)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ChainHealBranch(abilityTree, this);
-    }
-
-    private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {
-        if (bounceCount >= additionalBounces) {
-            return;
-        }
-        for (WarlordsEntity bounceTarget : PlayerFilter.entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
-                                                       .aliveTeammatesOf(wp)
-                                                       .excluding(toExclude)
-                                                       .warlordPlayersFirst()) {
-            chain(chainTarget.getLocation(), bounceTarget.getLocation());
-            bounceTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.chainHealing));
-            if (pveMasterUpgrade) {
-                critStatsOnHit(bounceTarget);
-            }
-            hitCounter.add(bounceTarget);
-            toExclude.add(bounceTarget);
-            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + 1);
-            break;
-        }
-    }
-
-    private void critStatsOnHit(WarlordsEntity we) {
-        we.getCooldownManager().removeCooldown(ChainHeal.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN CRIT", ChainHeal.class, new ChainHeal(), we, CooldownTypes.BUFF, cooldownManager -> {
-        }, 8 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksLeft % 6 == 0) {
-                EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, we.getLocation().add(0, 1.2, 0), 1, 0.5, 0.3, 0.5, 0.01);
-            }
-        })
-        ) {
-
-            @Override
-            public boolean distinct() {
-                return true;
-            }
-
-            @Override
-            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
-                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                    return currentCritChance;
-                }
-                return currentCritChance + 20;
-            }
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
-                    return currentCritMultiplier;
-                }
-                return currentCritMultiplier + 40;
-            }
-        });
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public ChainHealStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.cooldownReductionInSeconds = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReductionInSeconds"), float.class);
@@ -185,15 +100,96 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
         return new ItemStack(Material.BLUE_ORCHID);
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Discharge a beam of energizing lightning that heals you and a targeted ally for ")
+                                               .heal(healingValues.chainHealing)
+                                               .text(" health and jumps to ")
+                                               .text(additionalBounces, NamedTextColor.BLUE)
+                                               .text(" additional target within ")
+                                               .blocks(bounceRange)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Each ally healed reduces the cooldown of Boulder by ")
+                                               .durationSeconds(cooldownReductionInSeconds)
+                                               .text(".")
+                                               .initialRange(radius)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ChainHealBranch(abilityTree, this);
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public ChainHealStats getAbilityStats() {
+        return stats;
+    }
+
+    private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {
+        if (bounceCount >= additionalBounces) {
+            return;
+        }
+        for (WarlordsEntity bounceTarget : PlayerFilter.entitiesAround(chainTarget, bounceRange, bounceRange, bounceRange)
+                                                       .aliveTeammatesOf(wp)
+                                                       .excluding(toExclude)
+                                                       .warlordPlayersFirst()) {
+            chain(chainTarget.getLocation(), bounceTarget.getLocation());
+            bounceTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.chainHealing));
+            if (pveMasterUpgrade) {
+                critStatsOnHit(bounceTarget);
+            }
+            hitCounter.add(bounceTarget);
+            toExclude.add(bounceTarget);
+            additionalBounce(wp, hitCounter, bounceTarget, toExclude, bounceCount + 1);
+            break;
+        }
+    }
+
+    private void critStatsOnHit(WarlordsEntity we) {
+        we.getCooldownManager().removeCooldown(ChainHeal.class, false);
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN CRIT", ChainHeal.class, new ChainHeal(), we, CooldownTypes.BUFF, cooldownManager -> {
+        }, 8 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksLeft % 6 == 0) {
+                EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, we.getLocation().add(0, 1.2, 0), 1, 0.5, 0.3, 0.5, 0.01);
+            }
+        })
+        ) {
+
+            @Override
+            public boolean distinct() {
+                return true;
+            }
+
+            @Override
+            public float addCritChanceFromAttacker(WarlordsDamageHealingEvent event, float currentCritChance) {
+                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                    return currentCritChance;
+                }
+                return currentCritChance + 20;
+            }
+
+            @Override
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                if (event.getCause().isEmpty() || event.getCause().equals("Time Warp")) {
+                    return currentCritMultiplier;
+                }
+                return currentCritMultiplier + 40;
+            }
+        });
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);
 
         private final List<Value> values = List.of(chainHealing);
-
-        public Value.RangedValueCritable getChainHealing() {
-            return chainHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -203,6 +199,10 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chainHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getChainHealing() {
+            return chainHealing;
         }
 
     }

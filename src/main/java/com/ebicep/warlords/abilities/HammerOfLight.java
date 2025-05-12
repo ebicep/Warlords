@@ -50,44 +50,15 @@ import java.util.stream.Collectors;
 public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues>, AbilityStats<HammerOfLight, HammerOfLight.HammerOfLightStats> {
 
     private final HammerOfLightStats stats = new HammerOfLightStats();
-    private FloatModifiable radius = new FloatModifiable(6);
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
+    private FloatModifiable radius = new FloatModifiable(6);
     private int tickDuration = 200;
     private int crownEnergyReduction = 10;
     private float crownBonusHealing = 35;
 
     public HammerOfLight() {
         super(AbstractAbilityBuilder.create("hammerOfLight").pvp());
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    public FloatModifiable getRadius() {
-        return radius;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public HammerOfLightStats getAbilityStats() {
-        return stats;
     }
 
     @Override
@@ -406,6 +377,35 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         return new HammerOfLightBranch(abilityTree, this);
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public HammerOfLightStats getAbilityStats() {
+        return stats;
+    }
+
+    public FloatModifiable getRadius() {
+        return radius;
+    }
+
     public static class HammerOfLightData {
 
         private final Location location;
@@ -450,10 +450,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
         private final List<Value> values = List.of(hammerDamage);
 
-        public Value.RangedValueCritable getHammerDamage() {
-            return hammerDamage;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -464,6 +460,10 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
             this.hammerDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hammerDamage"), Value.RangedValueCritable.class);
         }
 
+        public Value.RangedValueCritable getHammerDamage() {
+            return hammerDamage;
+        }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {
@@ -471,10 +471,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         private Value.RangedValueCritable hammerHealing = new Value.RangedValueCritable(178, 244, 20, 175);
 
         private final List<Value> values = List.of(hammerHealing);
-
-        public Value.RangedValueCritable getHammerHealing() {
-            return hammerHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -484,6 +480,10 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.hammerHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hammerHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getHammerHealing() {
+            return hammerHealing;
         }
 
     }

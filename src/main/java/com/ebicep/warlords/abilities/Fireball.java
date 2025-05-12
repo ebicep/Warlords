@@ -47,45 +47,6 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Shoot a fireball that will explode for ")
-                                               .damage(damageValues.fireballDamage)
-                                               .text(" damage. A direct hit will cause the enemy to take an additional ")
-                                               .percent(directHitMultiplier, NamedTextColor.RED)
-                                               .text(" extra damage.")
-                                               .optimalRange(maxFullDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FireballBranch(abilityTree, this);
-    }
-
-    public float getDirectHitMultiplier() {
-        return directHitMultiplier;
-    }
-
-    public void setDirectHitMultiplier(float directHitMultiplier) {
-        this.directHitMultiplier = directHitMultiplier;
-    }
-
-    @Override
-    public FloatModifiable getSplashRadius() {
-        return splashRadius;
-    }
-
-    @Override
-    public FireballStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
@@ -206,6 +167,45 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         ));
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Shoot a fireball that will explode for ")
+                                               .damage(damageValues.fireballDamage)
+                                               .text(" damage. A direct hit will cause the enemy to take an additional ")
+                                               .percent(directHitMultiplier, NamedTextColor.RED)
+                                               .text(" extra damage.")
+                                               .optimalRange(maxFullDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FireballBranch(abilityTree, this);
+    }
+
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splashRadius;
+    }
+
+    @Override
+    public FireballStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(float directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable fireballDamage = new Value.RangedValueCritable(334, 433, 20, 175);
@@ -213,10 +213,6 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         private Value.RangedValue igniteDamage = new Value.RangedValue(450, 650);
 
         private final List<Value> values = List.of(fireballDamage, igniteDamage);
-
-        public Value.RangedValueCritable getFireballDamage() {
-            return fireballDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -227,6 +223,10 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
         public void init(AbstractAbilityBuilder builder) {
             this.fireballDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fireballDamage"), Value.RangedValueCritable.class);
             this.igniteDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("igniteDamage"), Value.RangedValue.class);
+        }
+
+        public Value.RangedValueCritable getFireballDamage() {
+            return fireballDamage;
         }
 
     }

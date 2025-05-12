@@ -38,41 +38,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         super(AbstractAbilityBuilder.create("inferno").pvp());
     }
 
-    public int getHitsAmplified() {
-        return stats.hitsAmplified;
-    }
-
-    public int getCritChanceIncrease() {
-        return critChanceIncrease;
-    }
-
-    public void setCritChanceIncrease(int critChanceIncrease) {
-        this.critChanceIncrease = critChanceIncrease;
-    }
-
-    public int getCritMultiplierIncrease() {
-        return critMultiplierIncrease;
-    }
-
-    public void setCritMultiplierIncrease(int critMultiplierIncrease) {
-        this.critMultiplierIncrease = critMultiplierIncrease;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public InfernoStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -117,6 +82,19 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         ) {
 
             private final Map<WarlordsEntity, Integer> hitCount = new HashMap<>();
+
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+
+                    @EventHandler
+                    public void onWarlordsApplyBurnEffect(WarlordsApplyBurnEffectEvent event) {
+                        if (pveMasterUpgrade) {
+                            event.setTickPeriod(10);
+                        }
+                    }
+                };
+            }
 
             @Override
             public boolean distinct() {
@@ -167,19 +145,6 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                     wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
                 }
             }
-
-            @Override
-            protected Listener getListener() {
-                return new Listener() {
-
-                    @EventHandler
-                    public void onWarlordsApplyBurnEffect(WarlordsApplyBurnEffectEvent event) {
-                        if (pveMasterUpgrade) {
-                            event.setTickPeriod(10);
-                        }
-                    }
-                };
-            }
         });
         return true;
     }
@@ -187,6 +152,41 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InfernoBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public InfernoStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getHitsAmplified() {
+        return stats.hitsAmplified;
+    }
+
+    public int getCritChanceIncrease() {
+        return critChanceIncrease;
+    }
+
+    public void setCritChanceIncrease(int critChanceIncrease) {
+        this.critChanceIncrease = critChanceIncrease;
+    }
+
+    public int getCritMultiplierIncrease() {
+        return critMultiplierIncrease;
+    }
+
+    public void setCritMultiplierIncrease(int critMultiplierIncrease) {
+        this.critMultiplierIncrease = critMultiplierIncrease;
     }
 
     public static class InfernoStats extends AbstractAbilityStats<Inferno, InfernoStats> {

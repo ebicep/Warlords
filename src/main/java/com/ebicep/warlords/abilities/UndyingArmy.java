@@ -152,62 +152,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         super(AbstractAbilityBuilder.create("undyingArmy").pvp());
     }
 
-    public void setMaxArmyAllies(int maxArmyAllies) {
-        this.maxArmyAllies = maxArmyAllies;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public float getFlatHealing() {
-        return flatHealing;
-    }
-
-    public void setFlatHealing(float flatHealing) {
-        this.flatHealing = flatHealing;
-    }
-
-    public float getMissingHealing() {
-        return missingHealing;
-    }
-
-    public void setMissingHealing(float missingHealing) {
-        this.missingHealing = missingHealing;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public UndyingArmyStats getAbilityStats() {
-        return stats;
-    }
-
-    public int getHealPeriod() {
-        return healPeriod;
-    }
-
-    public void setHealPeriod(int healPeriod) {
-        this.healPeriod = healPeriod;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -375,6 +319,62 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new UndyingArmyBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public UndyingArmyStats getAbilityStats() {
+        return stats;
+    }
+
+    public void setMaxArmyAllies(int maxArmyAllies) {
+        this.maxArmyAllies = maxArmyAllies;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public float getFlatHealing() {
+        return flatHealing;
+    }
+
+    public void setFlatHealing(float flatHealing) {
+        this.flatHealing = flatHealing;
+    }
+
+    public float getMissingHealing() {
+        return missingHealing;
+    }
+
+    public void setMissingHealing(float missingHealing) {
+        this.missingHealing = missingHealing;
+    }
+
+    public int getHealPeriod() {
+        return healPeriod;
+    }
+
+    public void setHealPeriod(int healPeriod) {
+        this.healPeriod = healPeriod;
     }
 
     public static class UndyingArmyData {

@@ -36,42 +36,6 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of demonic power, dealing ")
-                                               .damage(damageValues.beamDamage)
-                                               .text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by ")
-                                               .percent((damageValues.damageMultipliers.get(1) - 1) * 100, NamedTextColor.RED)
-                                               .text("/")
-                                               .percent((damageValues.damageMultipliers.get(2) - 1) * 100, NamedTextColor.RED)
-                                               .text("/")
-                                               .percent((damageValues.damageMultipliers.get(3) - 1) * 100, NamedTextColor.RED)
-                                               .text(" relative to the number of stacks and all stacks are removed.")
-                                               .maxRange(maxDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulfireBeamBranch(abilityTree, this);
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
-        return super.onActivate(shooter);
-    }
-
-    @Override
-    public ItemStack getBeamItem() {
-        return BEAM_ITEM;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
@@ -147,6 +111,42 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
         return stats;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of demonic power, dealing ")
+                                               .damage(damageValues.beamDamage)
+                                               .text(" damage to all enemies hit. If the target is affected by Poisonous Hex the damage dealt is increased by ")
+                                               .percent((damageValues.damageMultipliers.get(1) - 1) * 100, NamedTextColor.RED)
+                                               .text("/")
+                                               .percent((damageValues.damageMultipliers.get(2) - 1) * 100, NamedTextColor.RED)
+                                               .text("/")
+                                               .percent((damageValues.damageMultipliers.get(3) - 1) * 100, NamedTextColor.RED)
+                                               .text(" relative to the number of stacks and all stacks are removed.")
+                                               .maxRange(maxDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulfireBeamBranch(abilityTree, this);
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
+        return super.onActivate(shooter);
+    }
+
+    @Override
+    public ItemStack getBeamItem() {
+        return BEAM_ITEM;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private final List<Float> damageMultipliers = new ArrayList<>() {
@@ -163,14 +163,6 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
         private final List<Value> values = List.of(beamDamage);
 
-        public List<Float> getDamageMultipliers() {
-            return damageMultipliers;
-        }
-
-        public Value.RangedValueCritable getBeamDamage() {
-            return beamDamage;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -179,6 +171,14 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("beamDamage"), Value.RangedValueCritable.class);
+        }
+
+        public List<Float> getDamageMultipliers() {
+            return damageMultipliers;
+        }
+
+        public Value.RangedValueCritable getBeamDamage() {
+            return beamDamage;
         }
 
     }

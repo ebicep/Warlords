@@ -38,6 +38,15 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), int.class);
+        this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), int.class);
+        this.maxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAllies"), int.class);
+        this.strikeRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeRadius"), float.class);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
@@ -112,6 +121,35 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
         return true;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public ProtectorsStrikeStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Strike the targeted enemy player, causing ")
+                                               .damage(damageValues.strikeDamage)
+                                               .text(" damage and healing ")
+                                               .text(maxAllies, NamedTextColor.GREEN)
+                                               .text(" nearby allies for ")
+                                               .percent(allyHealing, NamedTextColor.GREEN)
+                                               .text(" of the damage done. Also heals yourself by ")
+                                               .percent(selfHealing, NamedTextColor.GREEN)
+                                               .text(" of the damage done.")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ProtectorStrikeBranch(abilityTree, this);
+    }
+
     public int getAllyHealing() {
         return allyHealing;
     }
@@ -136,53 +174,11 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
         this.strikeRadius = strikeRadius;
     }
 
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public ProtectorsStrikeStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), int.class);
-        this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), int.class);
-        this.maxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAllies"), int.class);
-        this.strikeRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeRadius"), float.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Strike the targeted enemy player, causing ")
-                                               .damage(damageValues.strikeDamage)
-                                               .text(" damage and healing ")
-                                               .text(maxAllies, NamedTextColor.GREEN)
-                                               .text(" nearby allies for ")
-                                               .percent(allyHealing, NamedTextColor.GREEN)
-                                               .text(" of the damage done. Also heals yourself by ")
-                                               .percent(selfHealing, NamedTextColor.GREEN)
-                                               .text(" of the damage done.")
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ProtectorStrikeBranch(abilityTree, this);
-    }
-
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(261, 352, 20, 175);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -192,6 +188,10 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

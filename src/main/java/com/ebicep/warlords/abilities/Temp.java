@@ -17,11 +17,6 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     }
 
     @Override
-    public TempStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
@@ -34,6 +29,11 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     @Override
     public boolean onActivate(@Nonnull WarlordsEntity wp) {
         return true;
+    }
+
+    @Override
+    public TempStats getAbilityStats() {
+        return stats;
     }
 
     public static class TempStats extends AbstractAbilityStats<Temp, TempStats> {

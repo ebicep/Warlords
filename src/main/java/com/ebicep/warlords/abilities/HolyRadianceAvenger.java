@@ -34,41 +34,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
-                                               .heal(healingValues.radianceHealing)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("You may look at an enemy to inflict them with ")
-                                               .text("MARK", NamedTextColor.DARK_RED)
-                                               .text(" for ")
-                                               .durationSeconds(markDuration)
-                                               .text(", causing them to lose ")
-                                               .energy(energyDrainPerSecond)
-                                               .text(" per second.")
-                                               .maxRange(markRadius)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HolyRadianceBranchAvenger(abilityTree, this);
-    }
-
-    public float getEnergyDrainPerSecond() {
-        return energyDrainPerSecond;
-    }
-
-    public void setEnergyDrainPerSecond(float energyDrainPerSecond) {
-        this.energyDrainPerSecond = energyDrainPerSecond;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.markDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("markDuration"), int.class);
@@ -162,6 +127,41 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
                                                                .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
                                                                .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY)));
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                                               .heal(healingValues.radianceHealing)
+                                               .text(" health.")
+                                               .emptyLine()
+                                               .text("You may look at an enemy to inflict them with ")
+                                               .text("MARK", NamedTextColor.DARK_RED)
+                                               .text(" for ")
+                                               .durationSeconds(markDuration)
+                                               .text(", causing them to lose ")
+                                               .energy(energyDrainPerSecond)
+                                               .text(" per second.")
+                                               .maxRange(markRadius)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HolyRadianceBranchAvenger(abilityTree, this);
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public float getEnergyDrainPerSecond() {
+        return energyDrainPerSecond;
+    }
+
+    public void setEnergyDrainPerSecond(float energyDrainPerSecond) {
+        this.energyDrainPerSecond = energyDrainPerSecond;
     }
 
     public static class HealingValues implements Value.ValueHolder {

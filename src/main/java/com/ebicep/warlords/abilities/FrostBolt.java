@@ -48,57 +48,6 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Shoot a frostbolt that will shatter for ")
-                                               .damage(damageValues.boltDamage)
-                                               .text(" damage and slow by ")
-                                               .percent(slowness, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationSeconds(slowDuration)
-                                               .text(". A direct hit will cause the enemy to take an additional ")
-                                               .percent(directHitMultiplier, NamedTextColor.RED)
-                                               .text(" extra damage.")
-                                               .optimalRange(maxFullDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FrostboltBranch(abilityTree, this);
-    }
-
-    public int getSlowness() {
-        return slowness;
-    }
-
-    public void setSlowness(int slowness) {
-        this.slowness = slowness;
-    }
-
-    public float getDirectHitMultiplier() {
-        return directHitMultiplier;
-    }
-
-    public void setDirectHitMultiplier(float directHitMultiplier) {
-        this.directHitMultiplier = directHitMultiplier;
-    }
-
-    @Override
-    public FloatModifiable getSplashRadius() {
-        return splash;
-    }
-
-    @Override
-    public FrostBoltStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
@@ -278,6 +227,57 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         return playersHit;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Shoot a frostbolt that will shatter for ")
+                                               .damage(damageValues.boltDamage)
+                                               .text(" damage and slow by ")
+                                               .percent(slowness, NamedTextColor.WHITE)
+                                               .text(" for ")
+                                               .durationSeconds(slowDuration)
+                                               .text(". A direct hit will cause the enemy to take an additional ")
+                                               .percent(directHitMultiplier, NamedTextColor.RED)
+                                               .text(" extra damage.")
+                                               .optimalRange(maxFullDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FrostboltBranch(abilityTree, this);
+    }
+
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splash;
+    }
+
+    @Override
+    public FrostBoltStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getSlowness() {
+        return slowness;
+    }
+
+    public void setSlowness(int slowness) {
+        this.slowness = slowness;
+    }
+
+    public float getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(float directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(242, 311, 20, 175);
@@ -285,10 +285,6 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         private Value.RangedValue shatterBoltDamage = new Value.RangedValue(409, 554);
 
         private final List<Value> values = List.of(boltDamage, shatterBoltDamage);
-
-        public Value.RangedValueCritable getBoltDamage() {
-            return boltDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -299,6 +295,10 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         public void init(AbstractAbilityBuilder builder) {
             this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltDamage"), Value.RangedValueCritable.class);
             this.shatterBoltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shatterBoltDamage"), Value.RangedValue.class);
+        }
+
+        public Value.RangedValueCritable getBoltDamage() {
+            return boltDamage;
         }
 
     }

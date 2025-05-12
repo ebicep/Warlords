@@ -42,37 +42,6 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
         super(AbstractAbilityBuilder.create("iceBarrier").pvp());
     }
 
-    public float getDamageReductionPercent() {
-        return damageReductionPercent;
-    }
-
-    public void setDamageReductionPercent(float damageReductionPercent) {
-        this.damageReductionPercent = damageReductionPercent;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getSlownessOnMeleeHit() {
-        return slownessOnMeleeHit;
-    }
-
-    public void setSlownessOnMeleeHit(int slownessOnMeleeHit) {
-        this.slownessOnMeleeHit = slownessOnMeleeHit;
-    }
-
-    @Override
-    public IceBarrierStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -185,6 +154,37 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
 
     public float getDamageReduction() {
         return (100 - damageReductionPercent) / 100f;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public IceBarrierStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getDamageReductionPercent() {
+        return damageReductionPercent;
+    }
+
+    public void setDamageReductionPercent(float damageReductionPercent) {
+        this.damageReductionPercent = damageReductionPercent;
+    }
+
+    public int getSlownessOnMeleeHit() {
+        return slownessOnMeleeHit;
+    }
+
+    public void setSlownessOnMeleeHit(int slownessOnMeleeHit) {
+        this.slownessOnMeleeHit = slownessOnMeleeHit;
     }
 
     public static class IceBarrierStats extends AbstractAbilityStats<IceBarrier, IceBarrierStats> {

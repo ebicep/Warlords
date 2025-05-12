@@ -40,35 +40,6 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         super(AbstractAbilityBuilder.create("crystalOfHealing").pvp());
     }
 
-    public float getMaxHeal() {
-        return maxHeal;
-    }
-
-    public void setMaxHeal(float maxHeal) {
-        this.maxHeal = maxHeal;
-    }
-
-    public int getLifeSpan() {
-        return lifeSpan;
-    }
-
-    public void setLifeSpan(int lifeSpan) {
-        this.lifeSpan = lifeSpan;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    @Override
-    public CrystalOfHealingStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -163,6 +134,35 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
         })
         ));
         return true;
+    }
+
+    @Override
+    public CrystalOfHealingStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getMaxHeal() {
+        return maxHeal;
+    }
+
+    public void setMaxHeal(float maxHeal) {
+        this.maxHeal = maxHeal;
+    }
+
+    public int getLifeSpan() {
+        return lifeSpan;
+    }
+
+    public void setLifeSpan(int lifeSpan) {
+        this.lifeSpan = lifeSpan;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public static class CrystalOfHealingStats extends AbstractAbilityStats<CrystalOfHealing, CrystalOfHealingStats> {

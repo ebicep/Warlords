@@ -43,6 +43,13 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.wounding = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), int.class);
+        this.woundingDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingDurationInTicks"), int.class);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
         randomHitEffect(location, 7, 255, 0, 0);
@@ -141,14 +148,6 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         }
     }
 
-    public int getWounding() {
-        return wounding;
-    }
-
-    public void setWounding(int wounding) {
-        this.wounding = wounding;
-    }
-
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -157,13 +156,6 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
     @Override
     public WoundingStrikeDefenderStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.wounding = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), int.class);
-        this.woundingDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingDurationInTicks"), int.class);
     }
 
     @Override
@@ -185,15 +177,19 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         return new WoundingStrikeBranchDefender(abilityTree, this);
     }
 
+    public int getWounding() {
+        return wounding;
+    }
+
+    public void setWounding(int wounding) {
+        this.wounding = wounding;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(416, 557, 20, 200);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -203,6 +199,10 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

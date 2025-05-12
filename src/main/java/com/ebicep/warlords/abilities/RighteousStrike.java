@@ -20,15 +20,23 @@ import java.util.List;
 
 public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousStrike.RighteousStrikeStats> implements Damages<RighteousStrike.DamageValues> {
 
+    protected int targetsStruck = 0;
     private final RighteousStrikeStats stats = new RighteousStrikeStats();
     private final DamageValues damageValues = new DamageValues();
     private int abilityReductionInTicks = 16;
     private int additionalReductionInTicks = 4;
     private float vindicateCooldownReduction = 0.5f;
-    protected int targetsStruck = 0;
 
     public RighteousStrike() {
         super(AbstractAbilityBuilder.create("righteousStrike").pvp());
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.abilityReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("abilityReductionInTicks"), int.class);
+        this.additionalReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalReductionInTicks"), int.class);
+        this.vindicateCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindicateCooldownReduction"), float.class);
     }
 
     @Override
@@ -81,14 +89,6 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.abilityReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("abilityReductionInTicks"), int.class);
-        this.additionalReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalReductionInTicks"), int.class);
-        this.vindicateCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindicateCooldownReduction"), float.class);
-    }
-
-    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Strike the targeted enemy for ")
                                                .damage(damageValues.strikeDamage)
@@ -115,10 +115,6 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
 
         private final List<Value> values = List.of(strikeDamage);
 
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -127,6 +123,10 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

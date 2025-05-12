@@ -105,34 +105,6 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         wp.getCooldownManager().addCooldown(totemCooldown);
     }
 
-    public float getRadius() {
-        return radius;
-    }
-
-    public void setRadius(float radius) {
-        this.radius = radius;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public CapacitorTotemStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -158,15 +130,39 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         return new CapacitorTotemBranch(abilityTree, this);
     }
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public CapacitorTotemStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable totemDamage = new Value.RangedValueCritable(404, 523, 20, 200);
 
         private final List<Value> values = List.of(totemDamage);
-
-        public Value.RangedValueCritable getTotemDamage() {
-            return totemDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -176,6 +172,10 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.totemDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("totemDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getTotemDamage() {
+            return totemDamage;
         }
 
     }

@@ -36,49 +36,6 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
         super(AbstractAbilityBuilder.create("repentance").pvp());
     }
 
-    public float getDamageConvertPercent() {
-        return damageConvertPercent;
-    }
-
-    public void setDamageConvertPercent(float damageConvertPercent) {
-        this.damageConvertPercent = damageConvertPercent;
-    }
-
-    public void addToPool(float amount) {
-        this.pool = Math.min(3000, pool + amount);
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getPoolDecay() {
-        return poolDecay;
-    }
-
-    public void setPoolDecay(int poolDecay) {
-        this.poolDecay = poolDecay;
-    }
-
-    public float getEnergyConvertPercent() {
-        return energyConvertPercent;
-    }
-
-    public void setEnergyConvertPercent(float energyConvertPercent) {
-        this.energyConvertPercent = energyConvertPercent;
-    }
-
-    @Override
-    public RepentanceStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -159,6 +116,49 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
             float newPool = pool * .8f - poolDecay;
             pool = Math.max(newPool, 0);
         }
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public RepentanceStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getDamageConvertPercent() {
+        return damageConvertPercent;
+    }
+
+    public void setDamageConvertPercent(float damageConvertPercent) {
+        this.damageConvertPercent = damageConvertPercent;
+    }
+
+    public void addToPool(float amount) {
+        this.pool = Math.min(3000, pool + amount);
+    }
+
+    public int getPoolDecay() {
+        return poolDecay;
+    }
+
+    public void setPoolDecay(int poolDecay) {
+        this.poolDecay = poolDecay;
+    }
+
+    public float getEnergyConvertPercent() {
+        return energyConvertPercent;
+    }
+
+    public void setEnergyConvertPercent(float energyConvertPercent) {
+        this.energyConvertPercent = energyConvertPercent;
     }
 
     public static class RepentanceStats extends AbstractAbilityStats<Repentance, RepentanceStats> {

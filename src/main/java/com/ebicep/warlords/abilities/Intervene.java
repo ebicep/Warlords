@@ -44,61 +44,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         super(AbstractAbilityBuilder.create("intervene").pvp());
     }
 
-    public float getMaxDamagePrevented() {
-        return maxDamagePrevented;
-    }
-
-    public void setMaxDamagePrevented(float maxDamagePrevented) {
-        this.maxDamagePrevented = maxDamagePrevented;
-    }
-
-    public int getBreakRadius() {
-        return breakRadius;
-    }
-
-    public void setBreakRadius(int breakRadius) {
-        this.breakRadius = breakRadius;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public int getDamageReduction() {
-        return damageReduction;
-    }
-
-    public void setDamageReduction(int damageReduction) {
-        this.damageReduction = damageReduction;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getMaxTargets() {
-        return maxTargets;
-    }
-
-    public void setMaxTargets(int maxTargets) {
-        this.maxTargets = maxTargets;
-    }
-
-    @Override
-    public InterveneStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -273,6 +218,61 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InterveneBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public InterveneStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getMaxDamagePrevented() {
+        return maxDamagePrevented;
+    }
+
+    public void setMaxDamagePrevented(float maxDamagePrevented) {
+        this.maxDamagePrevented = maxDamagePrevented;
+    }
+
+    public int getBreakRadius() {
+        return breakRadius;
+    }
+
+    public void setBreakRadius(int breakRadius) {
+        this.breakRadius = breakRadius;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
+    public int getMaxTargets() {
+        return maxTargets;
+    }
+
+    public void setMaxTargets(int maxTargets) {
+        this.maxTargets = maxTargets;
     }
 
     public static class InterveneData {

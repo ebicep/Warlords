@@ -40,20 +40,6 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         super(AbstractAbilityBuilder.create("shadowStep").pvp());
     }
 
-    public void setFallDamageNegation(int fallDamageNegation) {
-        this.fallDamageNegation = fallDamageNegation;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public ShadowStepStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -201,15 +187,25 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         }
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public ShadowStepStats getAbilityStats() {
+        return stats;
+    }
+
+    public void setFallDamageNegation(int fallDamageNegation) {
+        this.fallDamageNegation = fallDamageNegation;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable shadowStepDamage = new Value.RangedValueCritable(466, 598, 15, 175);
 
         private final List<Value> values = List.of(shadowStepDamage);
-
-        public Value.RangedValueCritable getShadowStepDamage() {
-            return shadowStepDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -219,6 +215,10 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.shadowStepDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shadowStepDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getShadowStepDamage() {
+            return shadowStepDamage;
         }
 
     }

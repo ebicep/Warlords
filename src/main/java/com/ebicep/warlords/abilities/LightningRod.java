@@ -32,8 +32,8 @@ import java.util.List;
 public class LightningRod extends AbstractAbility implements BlueAbilityIcon, Heals<LightningRod.HealingValues>, AbilityStats<LightningRod, LightningRod.LightningRodStats> {
 
     private final LightningRodStats stats = new LightningRodStats();
-    private int knockbackRadius = 5;
     private final HealingValues healingValues = new HealingValues();
+    private int knockbackRadius = 5;
     private int energyRestore = 160;
 
     public LightningRod() {
@@ -42,24 +42,6 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
     public LightningRod(AbstractAbilityBuilder builder) {
         super(builder);
-    }
-
-    public int getEnergyRestore() {
-        return energyRestore;
-    }
-
-    public void setEnergyRestore(int energyRestore) {
-        this.energyRestore = energyRestore;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public LightningRodStats getAbilityStats() {
-        return stats;
     }
 
     @Override
@@ -180,15 +162,29 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         return new LightningRodBranch(abilityTree, this);
     }
 
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public LightningRodStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getEnergyRestore() {
+        return energyRestore;
+    }
+
+    public void setEnergyRestore(int energyRestore) {
+        this.energyRestore = energyRestore;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.SetValue healthRestore = new Value.SetValue(30);
 
         private final List<Value> values = List.of(healthRestore);
-
-        public Value.SetValue getHealthRestore() {
-            return healthRestore;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -198,6 +194,10 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.healthRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healthRestore"), Value.SetValue.class);
+        }
+
+        public Value.SetValue getHealthRestore() {
+            return healthRestore;
         }
 
     }

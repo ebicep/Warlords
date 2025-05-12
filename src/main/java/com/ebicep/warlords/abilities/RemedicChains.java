@@ -43,42 +43,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         super(AbstractAbilityBuilder.create("remedicChains").pvp());
     }
 
-    public int getLinkBreakRadius() {
-        return linkBreakRadius;
-    }
-
-    public void setLinkBreakRadius(int linkBreakRadius) {
-        this.linkBreakRadius = linkBreakRadius;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public float getAllyDamageIncrease() {
-        return allyDamageIncrease;
-    }
-
-    public void setAllyDamageIncrease(float allyDamageIncrease) {
-        this.allyDamageIncrease = allyDamageIncrease;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public RemedicChainsStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -270,15 +234,47 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         return new RemedicChainsBranch(abilityTree, this);
     }
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public RemedicChainsStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getLinkBreakRadius() {
+        return linkBreakRadius;
+    }
+
+    public void setLinkBreakRadius(int linkBreakRadius) {
+        this.linkBreakRadius = linkBreakRadius;
+    }
+
+    public float getAllyDamageIncrease() {
+        return allyDamageIncrease;
+    }
+
+    public void setAllyDamageIncrease(float allyDamageIncrease) {
+        this.allyDamageIncrease = allyDamageIncrease;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
 
         private final List<Value> values = List.of(chainHealing);
-
-        public Value.RangedValueCritable getChainHealing() {
-            return chainHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -288,6 +284,10 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chainHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getChainHealing() {
+            return chainHealing;
         }
 
     }

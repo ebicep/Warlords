@@ -37,16 +37,6 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ConsecrateBranchCrusader(abilityTree, this);
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
@@ -112,15 +102,21 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         return damageValues.consecrateDamage;
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ConsecrateBranchCrusader(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(144, 194, 20, 175);
 
         private final List<Value> values = List.of(consecrateDamage);
-
-        public Value.RangedValueCritable getConsecrateDamage() {
-            return consecrateDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -130,6 +126,10 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.consecrateDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("consecrateDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getConsecrateDamage() {
+            return consecrateDamage;
         }
 
     }

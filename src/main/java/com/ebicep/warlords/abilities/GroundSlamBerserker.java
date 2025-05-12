@@ -29,6 +29,11 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+    }
+
+    @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
         if (pveMasterUpgrade2) {
             float damageBoost = 1 + Math.min(5, playersHit.size()) * .05f;
@@ -56,11 +61,6 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new GroundSlamBranchBerserker(abilityTree, this);
     }
@@ -71,10 +71,6 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
 
         private final List<Value> values = List.of(slamDamage);
 
-        public Value.RangedValueCritable getSlamDamage() {
-            return slamDamage;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -83,6 +79,10 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.slamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slamDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getSlamDamage() {
+            return slamDamage;
         }
 
     }

@@ -128,6 +128,11 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     public abstract Value.RangedValueCritable getWaveDamage();
 
+    @Override
+    public AbstractSeismicWaveStats getAbilityStats() {
+        return stats;
+    }
+
     public float getVelocity() {
         return velocity;
     }
@@ -150,11 +155,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     public void setWaveWidth(int waveWidth) {
         this.waveWidth = waveWidth;
-    }
-
-    @Override
-    public AbstractSeismicWaveStats getAbilityStats() {
-        return stats;
     }
 
     public static class AbstractSeismicWaveStats extends AbstractAbilityStats<AbstractSeismicWave, AbstractSeismicWaveStats> {

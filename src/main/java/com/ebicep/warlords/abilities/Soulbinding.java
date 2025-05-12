@@ -42,86 +42,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         super(AbstractAbilityBuilder.create("soulbindingWeapon").pvp());
     }
 
-    public void addPlayersBinded() {
-        stats.playersBinded++;
-    }
-
-    public void addSoulProcs() {
-        stats.soulProcs++;
-    }
-
-    public void addLinkProcs() {
-        stats.linkProcs++;
-    }
-
-    public void addSoulTeammatesCDReductions() {
-        stats.soulTeammatesCDReductions++;
-    }
-
-    public void addLinkTeammatesHealed() {
-        stats.linkTeammatesHealed++;
-    }
-
-    public int getBindDuration() {
-        return bindDuration;
-    }
-
-    public void setBindDuration(int bindDuration) {
-        this.bindDuration = bindDuration;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public float getSelfCooldownReduction() {
-        return selfCooldownReduction;
-    }
-
-    public void setSelfCooldownReduction(float selfCooldownReduction) {
-        this.selfCooldownReduction = selfCooldownReduction;
-    }
-
-    public float getAllyCooldownReduction() {
-        return allyCooldownReduction;
-    }
-
-    public void setAllyCooldownReduction(float allyCooldownReduction) {
-        this.allyCooldownReduction = allyCooldownReduction;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public int getMaxAlliesHit() {
-        return maxAlliesHit;
-    }
-
-    public void setMaxAlliesHit(int maxAlliesHit) {
-        this.maxAlliesHit = maxAlliesHit;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public SoulbindingStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -231,6 +151,86 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SoulbindingWeaponBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public SoulbindingStats getAbilityStats() {
+        return stats;
+    }
+
+    public void addPlayersBinded() {
+        stats.playersBinded++;
+    }
+
+    public void addSoulProcs() {
+        stats.soulProcs++;
+    }
+
+    public void addLinkProcs() {
+        stats.linkProcs++;
+    }
+
+    public void addSoulTeammatesCDReductions() {
+        stats.soulTeammatesCDReductions++;
+    }
+
+    public void addLinkTeammatesHealed() {
+        stats.linkTeammatesHealed++;
+    }
+
+    public int getBindDuration() {
+        return bindDuration;
+    }
+
+    public void setBindDuration(int bindDuration) {
+        this.bindDuration = bindDuration;
+    }
+
+    public float getSelfCooldownReduction() {
+        return selfCooldownReduction;
+    }
+
+    public void setSelfCooldownReduction(float selfCooldownReduction) {
+        this.selfCooldownReduction = selfCooldownReduction;
+    }
+
+    public float getAllyCooldownReduction() {
+        return allyCooldownReduction;
+    }
+
+    public void setAllyCooldownReduction(float allyCooldownReduction) {
+        this.allyCooldownReduction = allyCooldownReduction;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public int getMaxAlliesHit() {
+        return maxAlliesHit;
+    }
+
+    public void setMaxAlliesHit(int maxAlliesHit) {
+        this.maxAlliesHit = maxAlliesHit;
     }
 
     public static class SoulbindingData {
@@ -392,14 +392,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
         private final List<Value> values = List.of(allyHealing, selfHealing);
 
-        public Value.SetValue getAllyHealing() {
-            return allyHealing;
-        }
-
-        public Value.SetValue getSelfHealing() {
-            return selfHealing;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -409,6 +401,14 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         public void init(AbstractAbilityBuilder builder) {
             this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), Value.SetValue.class);
             this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), Value.SetValue.class);
+        }
+
+        public Value.SetValue getAllyHealing() {
+            return allyHealing;
+        }
+
+        public Value.SetValue getSelfHealing() {
+            return selfHealing;
         }
 
     }

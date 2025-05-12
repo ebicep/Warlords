@@ -54,32 +54,6 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Summon a wave of fallen souls, dealing")
-                                               .damage(damageValues.fallenSoulDamage)
-                                               .text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by ")
-                                               .durationSeconds(cooldownReduction)
-                                               .text(".")
-                                               .maxRange(maxDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FallenSoulsBranch(abilityTree, this);
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public FallenSoulsStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), int.class);
@@ -247,15 +221,37 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                                                           });
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Summon a wave of fallen souls, dealing")
+                                               .damage(damageValues.fallenSoulDamage)
+                                               .text(" damage to all enemies they pass through. Each target hit reduces the cooldown of Spirit Link by ")
+                                               .durationSeconds(cooldownReduction)
+                                               .text(".")
+                                               .maxRange(maxDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FallenSoulsBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public FallenSoulsStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(140, 181, 20, 180);
 
         private final List<Value> values = List.of(fallenSoulDamage);
-
-        public Value.RangedValueCritable getFallenSoulDamage() {
-            return fallenSoulDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -265,6 +261,10 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.fallenSoulDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallenSoulDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getFallenSoulDamage() {
+            return fallenSoulDamage;
         }
 
     }

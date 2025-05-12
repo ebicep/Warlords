@@ -60,68 +60,6 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Fling a wave of protective energy forward, hitting ")
-                                               .text(maxEnemiesHit, NamedTextColor.BLUE)
-                                               .text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and ")
-                                               .text(maxAlliesHit, NamedTextColor.BLUE)
-                                               .text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes ")
-                                               .damage(damageValues.hexDamage)
-                                               .text(" damage. The ally receives ")
-                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
-                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(". If Fortifying Hex hits a target, you receive ")
-                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
-                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Each stack of ")
-                                               .text("FHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(" and grants")
-                                               .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" damage reduction. Stacks up to")
-                                               .text(maxStacks, NamedTextColor.BLUE)
-                                               .text(" times.")
-                                               .maxRange(maxFullDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FortifyingHexBranch(abilityTree, this);
-    }
-
-    public int getMaxEnemiesHit() {
-        return maxEnemiesHit;
-    }
-
-    public void setMaxEnemiesHit(int maxEnemiesHit) {
-        this.maxEnemiesHit = maxEnemiesHit;
-    }
-
-    public int getMaxAlliesHit() {
-        return maxAlliesHit;
-    }
-
-    public void setMaxAlliesHit(int maxAlliesHit) {
-        this.maxAlliesHit = maxAlliesHit;
-    }
-
-    @Override
-    public FortifyingHexStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageReduction = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class));
@@ -370,15 +308,73 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         this.tickDuration = tickDuration;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Fling a wave of protective energy forward, hitting ")
+                                               .text(maxEnemiesHit, NamedTextColor.BLUE)
+                                               .text((maxEnemiesHit == 1 ? " enemy" : " enemies") + " and ")
+                                               .text(maxAlliesHit, NamedTextColor.BLUE)
+                                               .text((maxAlliesHit == 1 ? " ally" : " allies") + ". The enemy takes ")
+                                               .damage(damageValues.hexDamage)
+                                               .text(" damage. The ally receives ")
+                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
+                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                                               .text("FHEX", NamedTextColor.DARK_GREEN)
+                                               .text(". If Fortifying Hex hits a target, you receive ")
+                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
+                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                                               .text("FHEX", NamedTextColor.DARK_GREEN)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Each stack of ")
+                                               .text("FHEX", NamedTextColor.DARK_GREEN)
+                                               .text(" lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(" and grants")
+                                               .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" damage reduction. Stacks up to")
+                                               .text(maxStacks, NamedTextColor.BLUE)
+                                               .text(" times.")
+                                               .maxRange(maxFullDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FortifyingHexBranch(abilityTree, this);
+    }
+
+    @Override
+    public FortifyingHexStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getMaxEnemiesHit() {
+        return maxEnemiesHit;
+    }
+
+    public void setMaxEnemiesHit(int maxEnemiesHit) {
+        this.maxEnemiesHit = maxEnemiesHit;
+    }
+
+    public int getMaxAlliesHit() {
+        return maxAlliesHit;
+    }
+
+    public void setMaxAlliesHit(int maxAlliesHit) {
+        this.maxAlliesHit = maxAlliesHit;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(271, 365, 20, 175);
 
         private final List<Value> values = List.of(hexDamage);
-
-        public Value.RangedValueCritable getHexDamage() {
-            return hexDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -388,6 +384,10 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getHexDamage() {
+            return hexDamage;
         }
 
     }

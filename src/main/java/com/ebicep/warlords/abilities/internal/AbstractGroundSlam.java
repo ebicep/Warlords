@@ -167,6 +167,16 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     public abstract Value.RangedValueCritable getSlamDamage();
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return slamSize;
+    }
+
+    @Override
+    public AbstractGroundSlamStats getAbilityStats() {
+        return stats;
+    }
+
     public float getVelocity() {
         return velocity;
     }
@@ -177,16 +187,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     public void setTrueDamage(boolean trueDamage) {
         this.trueDamage = trueDamage;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return slamSize;
-    }
-
-    @Override
-    public AbstractGroundSlamStats getAbilityStats() {
-        return stats;
     }
 
     public static class AbstractGroundSlamStats extends AbstractAbilityStats<AbstractGroundSlam, AbstractGroundSlamStats> {

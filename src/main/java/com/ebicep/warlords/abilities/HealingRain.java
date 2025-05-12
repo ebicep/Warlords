@@ -54,36 +54,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public HealingRainStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -254,6 +224,36 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         return new HealingRainBranch(abilityTree, this);
     }
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public HealingRainStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
@@ -278,10 +278,6 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
         private final List<Value> values = List.of(rainHealing);
 
-        public Value.RangedValueCritable getRainHealing() {
-            return rainHealing;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -290,6 +286,10 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.rainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("rainHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getRainHealing() {
+            return rainHealing;
         }
 
     }

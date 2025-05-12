@@ -25,6 +25,12 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.healingIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrease"), int.class);
+    }
+
+    @Override
     public EnergySeerData getDataObject() {
         return new EnergySeerData();
     }
@@ -50,23 +56,17 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
         return Component.text("Increase your healing by ").append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchLuminary(abilityTree, this);
+    }
+
     public int getHealingIncrease() {
         return healingIncrease;
     }
 
     public void setHealingIncrease(int healingIncrease) {
         this.healingIncrease = healingIncrease;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.healingIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrease"), int.class);
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new EnergySeerBranchLuminary(abilityTree, this);
     }
 
 }

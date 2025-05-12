@@ -32,11 +32,6 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
     }
 
     @Override
-    public WonderTrapStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
@@ -80,6 +75,11 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
         return true;
+    }
+
+    @Override
+    public WonderTrapStats getAbilityStats() {
+        return stats;
     }
 
     public static class WonderTrapStats extends AbstractAbilityStats<WonderTrap, WonderTrapStats> {

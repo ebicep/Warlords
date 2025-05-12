@@ -40,45 +40,6 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
         super(AbstractAbilityBuilder.create("avengersWrath").pvp());
     }
 
-    public float getEnergyPerSecond() {
-        return energyPerSecond;
-    }
-
-    public void setEnergyPerSecond(float energyPerSecond) {
-        this.energyPerSecond = energyPerSecond;
-    }
-
-    public int getMaxTargets() {
-        return maxTargets;
-    }
-
-    public void setMaxTargets(int maxTargets) {
-        this.maxTargets = maxTargets;
-    }
-
-    public int getHitRadius() {
-        return hitRadius;
-    }
-
-    public void setHitRadius(int hitRadius) {
-        this.hitRadius = hitRadius;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public AvengersWrathStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -160,6 +121,45 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new AvengersWrathBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AvengersWrathStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(float energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
+    }
+
+    public int getMaxTargets() {
+        return maxTargets;
+    }
+
+    public void setMaxTargets(int maxTargets) {
+        this.maxTargets = maxTargets;
+    }
+
+    public int getHitRadius() {
+        return hitRadius;
+    }
+
+    public void setHitRadius(int hitRadius) {
+        this.hitRadius = hitRadius;
     }
 
     public static class AvengersWrathStats extends AbstractAbilityStats<AvengersWrath, AvengersWrathStats> {

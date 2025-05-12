@@ -40,40 +40,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         super(AbstractAbilityBuilder.create("vitalityLiquor").pvp());
     }
 
-    public int getEnergyPerSecond() {
-        return energyPerSecond;
-    }
-
-    public void setEnergyPerSecond(int energyPerSecond) {
-        this.energyPerSecond = energyPerSecond;
-    }
-
-    public int getVitalityRange() {
-        return vitalityRange;
-    }
-
-    public void setVitalityRange(int vitalityRange) {
-        this.vitalityRange = vitalityRange;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public VitalityLiquorStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -171,6 +137,40 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         return new VitalityLiquorBranch(abilityTree, this);
     }
 
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public VitalityLiquorStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
+    }
+
+    public int getVitalityRange() {
+        return vitalityRange;
+    }
+
+    public void setVitalityRange(int vitalityRange) {
+        this.vitalityRange = vitalityRange;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
@@ -178,14 +178,6 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         private Value.RangedValueCritable waveHealing = new Value.RangedValueCritable(268, 324, 25, 175);
 
         private final List<Value> values = List.of(liquorHealing, waveHealing);
-
-        public Value.RangedValueCritable getLiquorHealing() {
-            return liquorHealing;
-        }
-
-        public Value.RangedValueCritable getWaveHealing() {
-            return waveHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -196,6 +188,14 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         public void init(AbstractAbilityBuilder builder) {
             this.liquorHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("liquorHealing"), Value.RangedValueCritable.class);
             this.waveHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getLiquorHealing() {
+            return liquorHealing;
+        }
+
+        public Value.RangedValueCritable getWaveHealing() {
+            return waveHealing;
         }
 
     }

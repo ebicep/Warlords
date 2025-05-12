@@ -53,45 +53,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         super(AbstractAbilityBuilder.create("soulSwitch").pvp());
     }
 
-    public int getBlindnessTicks() {
-        return blindnessTicks;
-    }
-
-    public void setBlindnessTicks(int blindnessTicks) {
-        this.blindnessTicks = blindnessTicks;
-    }
-
-    public int getDecoyMaxTicksLived() {
-        return decoyMaxTicksLived;
-    }
-
-    public void setDecoyMaxTicksLived(int decoyMaxTicksLived) {
-        this.decoyMaxTicksLived = decoyMaxTicksLived;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
-    }
-
-    public int getInvisTicks() {
-        return invisTicks;
-    }
-
-    public void setInvisTicks(int invisTicks) {
-        this.invisTicks = invisTicks;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public SoulSwitchStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -260,15 +221,50 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         return new SoulSwitchBranch(abilityTree, this);
     }
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public SoulSwitchStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getBlindnessTicks() {
+        return blindnessTicks;
+    }
+
+    public void setBlindnessTicks(int blindnessTicks) {
+        this.blindnessTicks = blindnessTicks;
+    }
+
+    public int getDecoyMaxTicksLived() {
+        return decoyMaxTicksLived;
+    }
+
+    public void setDecoyMaxTicksLived(int decoyMaxTicksLived) {
+        this.decoyMaxTicksLived = decoyMaxTicksLived;
+    }
+
+    public int getInvisTicks() {
+        return invisTicks;
+    }
+
+    public void setInvisTicks(int invisTicks) {
+        this.invisTicks = invisTicks;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable switchHealing = new Value.RangedValueCritable(300, 500, 15, 175);
 
         private final List<Value> values = List.of(switchHealing);
-
-        public Value.RangedValueCritable getSwitchHealing() {
-            return switchHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -278,6 +274,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.switchHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("switchHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getSwitchHealing() {
+            return switchHealing;
         }
 
     }

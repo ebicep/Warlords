@@ -45,37 +45,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getHexTickDurationIncrease() {
-        return hexTickDurationIncrease;
-    }
-
-    public void setHexTickDurationIncrease(int hexTickDurationIncrease) {
-        this.hexTickDurationIncrease = hexTickDurationIncrease;
-    }
-
-    public int getAdditionalDamageReduction() {
-        return additionalDamageReduction;
-    }
-
-    public void setAdditionalDamageReduction(int additionalDamageReduction) {
-        this.additionalDamageReduction = additionalDamageReduction;
-    }
-
-    @Override
-    public SanctuaryStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
@@ -136,6 +105,35 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                     ) {
 
                         @Override
+                        protected Listener getListener() {
+                            if (!isSelf) {
+                                return null;
+                            }
+                            return new Listener() {
+
+                                @EventHandler(priority = EventPriority.LOWEST)
+                                private void onAddCooldown(WarlordsAddCooldownEvent event) {
+                                    AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                                    if (!Objects.equals(cooldown.getFrom(), wp) || !(cooldown instanceof RegularCooldown<?> regularCooldown)) {
+                                        return;
+                                    }
+                                    Object cdObject = cooldown.getCooldownObject();
+                                    if (cdObject instanceof FortifyingHex) {
+                                        regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                                        stats.hexesProlonged++;
+                                    }
+                                    if (pveMasterUpgrade2 && !event.getWarlordsEntity().equals(wp) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
+                                        float oldShieldPercent = guardianBeamShield.getShieldPercent() / 100f;
+                                        float newShieldPercent = oldShieldPercent + .15f;
+                                        float newShieldHealth = guardianBeamShield.getMaxShieldHealth() / oldShieldPercent * newShieldPercent;
+                                        guardianBeamShield.setMaxShieldHealth(newShieldHealth);
+                                        guardianBeamShield.setShieldHealth(newShieldHealth);
+                                    }
+                                }
+                            };
+                        }
+
+                        @Override
                         @Priority(-10)
                         public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             EnumSet<InstanceFlags> flags = event.getFlags();
@@ -165,35 +163,6 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
                             stats.totalDamageReflected += damageToReflect;
                             return (float) (currentDamageValue * Math.pow(convertToDivisionDecimal(additionalDamageReduction), 3));
                         }
-
-                        @Override
-                        protected Listener getListener() {
-                            if (!isSelf) {
-                                return null;
-                            }
-                            return new Listener() {
-
-                                @EventHandler(priority = EventPriority.LOWEST)
-                                private void onAddCooldown(WarlordsAddCooldownEvent event) {
-                                    AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                                    if (!Objects.equals(cooldown.getFrom(), wp) || !(cooldown instanceof RegularCooldown<?> regularCooldown)) {
-                                        return;
-                                    }
-                                    Object cdObject = cooldown.getCooldownObject();
-                                    if (cdObject instanceof FortifyingHex) {
-                                        regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                                        stats.hexesProlonged++;
-                                    }
-                                    if (pveMasterUpgrade2 && !event.getWarlordsEntity().equals(wp) && cdObject instanceof GuardianBeam.GuardianBeamShield guardianBeamShield) {
-                                        float oldShieldPercent = guardianBeamShield.getShieldPercent() / 100f;
-                                        float newShieldPercent = oldShieldPercent + .15f;
-                                        float newShieldHealth = guardianBeamShield.getMaxShieldHealth() / oldShieldPercent * newShieldPercent;
-                                        guardianBeamShield.setMaxShieldHealth(newShieldHealth);
-                                        guardianBeamShield.setShieldHealth(newShieldHealth);
-                                    }
-                                }
-                            };
-                        }
                     });
         });
         return true;
@@ -202,6 +171,37 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SanctuaryBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public SanctuaryStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getHexTickDurationIncrease() {
+        return hexTickDurationIncrease;
+    }
+
+    public void setHexTickDurationIncrease(int hexTickDurationIncrease) {
+        this.hexTickDurationIncrease = hexTickDurationIncrease;
+    }
+
+    public int getAdditionalDamageReduction() {
+        return additionalDamageReduction;
+    }
+
+    public void setAdditionalDamageReduction(int additionalDamageReduction) {
+        this.additionalDamageReduction = additionalDamageReduction;
     }
 
     public static class SanctuaryStats extends AbstractAbilityStats<Sanctuary, SanctuaryStats> {

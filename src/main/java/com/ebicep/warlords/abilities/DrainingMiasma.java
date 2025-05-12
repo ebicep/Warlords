@@ -49,58 +49,6 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         super(AbstractAbilityBuilder.create("drainingMiasma").pvp());
     }
 
-    public int getLeechDuration() {
-        return leechDuration;
-    }
-
-    public void setLeechDuration(int leechDuration) {
-        this.leechDuration = leechDuration;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getMaxHealthDamage() {
-        return maxHealthDamage;
-    }
-
-    public void setMaxHealthDamage(int maxHealthDamage) {
-        this.maxHealthDamage = maxHealthDamage;
-    }
-
-    public float getLeechSelfAmount() {
-        return leechSelfAmount;
-    }
-
-    public void setLeechSelfAmount(float leechSelfAmount) {
-        this.leechSelfAmount = leechSelfAmount;
-    }
-
-    public float getLeechAllyAmount() {
-        return leechAllyAmount;
-    }
-
-    public void setLeechAllyAmount(float leechAllyAmount) {
-        this.leechAllyAmount = leechAllyAmount;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public DrainingMiasmaStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -252,15 +200,63 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         this.radius = radius;
     }
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public DrainingMiasmaStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getLeechDuration() {
+        return leechDuration;
+    }
+
+    public void setLeechDuration(int leechDuration) {
+        this.leechDuration = leechDuration;
+    }
+
+    public int getMaxHealthDamage() {
+        return maxHealthDamage;
+    }
+
+    public void setMaxHealthDamage(int maxHealthDamage) {
+        this.maxHealthDamage = maxHealthDamage;
+    }
+
+    public float getLeechSelfAmount() {
+        return leechSelfAmount;
+    }
+
+    public void setLeechSelfAmount(float leechSelfAmount) {
+        this.leechSelfAmount = leechSelfAmount;
+    }
+
+    public float getLeechAllyAmount() {
+        return leechAllyAmount;
+    }
+
+    public void setLeechAllyAmount(float leechAllyAmount) {
+        this.leechAllyAmount = leechAllyAmount;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.SetValue miasmaDamage = new Value.SetValue(50);
 
         private final List<Value> values = List.of(miasmaDamage);
-
-        public Value.SetValue getMiasmaDamage() {
-            return miasmaDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -270,6 +266,10 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.miasmaDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("miasmaDamage"), Value.SetValue.class);
+        }
+
+        public Value.SetValue getMiasmaDamage() {
+            return miasmaDamage;
         }
 
     }

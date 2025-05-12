@@ -39,59 +39,6 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
-                                               .heal(healingValues.radianceHealing)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("You may look at an ally to grant them with ")
-                                               .text("MARK", NamedTextColor.DARK_GREEN)
-                                               .text(" for ")
-                                               .durationSeconds(markDuration)
-                                               .text(", granting them ")
-                                               .energy(energyPerSecond)
-                                               .text(" per second and ")
-                                               .percent(markSpeed, NamedTextColor.WHITE)
-                                               .text(" extra speed.")
-                                               .maxRange(markRadius)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HolyRadianceBranchCrusader(abilityTree, this);
-    }
-
-    public int getMarkDuration() {
-        return markDuration;
-    }
-
-    public void setMarkDuration(int markDuration) {
-        this.markDuration = markDuration;
-    }
-
-    public int getEnergyPerSecond() {
-        return energyPerSecond;
-    }
-
-    public void setEnergyPerSecond(int energyPerSecond) {
-        this.energyPerSecond = energyPerSecond;
-    }
-
-    public int getMarkSpeed() {
-        return markSpeed;
-    }
-
-    public void setMarkSpeed(int markSpeed) {
-        this.markSpeed = markSpeed;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.markRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("markRadius"), int.class);
@@ -162,6 +109,59 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                                               .heal(healingValues.radianceHealing)
+                                               .text(" health.")
+                                               .emptyLine()
+                                               .text("You may look at an ally to grant them with ")
+                                               .text("MARK", NamedTextColor.DARK_GREEN)
+                                               .text(" for ")
+                                               .durationSeconds(markDuration)
+                                               .text(", granting them ")
+                                               .energy(energyPerSecond)
+                                               .text(" per second and ")
+                                               .percent(markSpeed, NamedTextColor.WHITE)
+                                               .text(" extra speed.")
+                                               .maxRange(markRadius)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HolyRadianceBranchCrusader(abilityTree, this);
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public int getMarkDuration() {
+        return markDuration;
+    }
+
+    public void setMarkDuration(int markDuration) {
+        this.markDuration = markDuration;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
+    }
+
+    public int getMarkSpeed() {
+        return markSpeed;
+    }
+
+    public void setMarkSpeed(int markSpeed) {
+        this.markSpeed = markSpeed;
     }
 
     public static class HealingValues implements Value.ValueHolder {

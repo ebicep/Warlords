@@ -42,6 +42,16 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
+        this.energyRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRadius"), int.class);
+        this.energyMaxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyMaxAllies"), int.class);
+        this.allySpeedBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allySpeedBoost"), int.class);
+        this.allySpeedBoostDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allySpeedBoostDurationInTicks"), int.class);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "paladin.paladinstrike.activation", 2, 1);
         randomHitEffect(location, 5, 255, 0, 0);
@@ -91,22 +101,6 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         return true;
     }
 
-    public int getEnergyGiven() {
-        return energyGiven;
-    }
-
-    public void setEnergyGiven(int energyGiven) {
-        this.energyGiven = energyGiven;
-    }
-
-    public int getEnergyRadius() {
-        return energyRadius;
-    }
-
-    public void setEnergyRadius(int energyRadius) {
-        this.energyRadius = energyRadius;
-    }
-
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -115,16 +109,6 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     @Override
     public CrusadersStrikeStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
-        this.energyRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRadius"), int.class);
-        this.energyMaxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyMaxAllies"), int.class);
-        this.allySpeedBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allySpeedBoost"), int.class);
-        this.allySpeedBoostDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allySpeedBoostDurationInTicks"), int.class);
     }
 
     @Override
@@ -154,15 +138,27 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         return new CrusadersStrikeBranch(abilityTree, this);
     }
 
+    public int getEnergyGiven() {
+        return energyGiven;
+    }
+
+    public void setEnergyGiven(int energyGiven) {
+        this.energyGiven = energyGiven;
+    }
+
+    public int getEnergyRadius() {
+        return energyRadius;
+    }
+
+    public void setEnergyRadius(int energyRadius) {
+        this.energyRadius = energyRadius;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 175);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -172,6 +168,10 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

@@ -28,16 +28,6 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     }
 
     @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public BeaconOfLightStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
@@ -88,6 +78,16 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
                                                       .crit(healingValues.beaconHealing));
             }
         }
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public BeaconOfLightStats getAbilityStats() {
+        return stats;
     }
 
     public static class HealingValues implements Value.ValueHolder {

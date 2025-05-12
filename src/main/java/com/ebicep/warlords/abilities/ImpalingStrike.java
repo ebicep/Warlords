@@ -39,8 +39,11 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.leechDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechDuration"), int.class);
+        this.leechAllyAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAllyAmount"), float.class);
+        this.leechSelfAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechSelfAmount"), float.class);
     }
 
     @Override
@@ -131,41 +134,14 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         });
     }
 
-    public int getLeechDuration() {
-        return leechDuration;
-    }
-
-    public void setLeechDuration(int leechDuration) {
-        this.leechDuration = leechDuration;
-    }
-
-    public float getLeechSelfAmount() {
-        return leechSelfAmount;
-    }
-
-    public void setLeechSelfAmount(float leechSelfAmount) {
-        this.leechSelfAmount = leechSelfAmount;
-    }
-
-    public float getLeechAllyAmount() {
-        return leechAllyAmount;
-    }
-
-    public void setLeechAllyAmount(float leechAllyAmount) {
-        this.leechAllyAmount = leechAllyAmount;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
     public ImpalingStrikeStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.leechDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechDuration"), int.class);
-        this.leechAllyAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAllyAmount"), float.class);
-        this.leechSelfAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechSelfAmount"), float.class);
     }
 
     @Override
@@ -191,15 +167,35 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         return new ImpalingStrikeBranch(abilityTree, this);
     }
 
+    public int getLeechDuration() {
+        return leechDuration;
+    }
+
+    public void setLeechDuration(int leechDuration) {
+        this.leechDuration = leechDuration;
+    }
+
+    public float getLeechSelfAmount() {
+        return leechSelfAmount;
+    }
+
+    public void setLeechSelfAmount(float leechSelfAmount) {
+        this.leechSelfAmount = leechSelfAmount;
+    }
+
+    public float getLeechAllyAmount() {
+        return leechAllyAmount;
+    }
+
+    public void setLeechAllyAmount(float leechAllyAmount) {
+        this.leechAllyAmount = leechAllyAmount;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(323, 427, 20, 175);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -209,6 +205,10 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

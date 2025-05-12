@@ -35,37 +35,6 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
         super(AbstractAbilityBuilder.create("bloodLust").pvp());
     }
 
-    public int getDamageConvertPercent() {
-        return damageConvertPercent;
-    }
-
-    public void setDamageConvertPercent(int damageConvertPercent) {
-        this.damageConvertPercent = damageConvertPercent;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public float getHealReductionPercent() {
-        return healReductionPercent;
-    }
-
-    public void setHealReductionPercent(float healReductionPercent) {
-        this.healReductionPercent = healReductionPercent;
-    }
-
-    @Override
-    public BloodLustStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -172,6 +141,37 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new BloodlustBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public BloodLustStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getDamageConvertPercent() {
+        return damageConvertPercent;
+    }
+
+    public void setDamageConvertPercent(int damageConvertPercent) {
+        this.damageConvertPercent = damageConvertPercent;
+    }
+
+    public float getHealReductionPercent() {
+        return healReductionPercent;
+    }
+
+    public void setHealReductionPercent(float healReductionPercent) {
+        this.healReductionPercent = healReductionPercent;
     }
 
     public static class BloodLustStats extends AbstractAbilityStats<BloodLust, BloodLustStats> {

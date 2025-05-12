@@ -39,33 +39,6 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
-                                               .text(" damage and have their rune timers increase by ")
-                                               .text(format(runeTickIncrease), NamedTextColor.GOLD)
-                                               .text(". Allies hit pick up a piece of the shield, reducing its damage by ")
-                                               .percent(allyHitDamageReduction, NamedTextColor.RED)
-                                               .text(" while giving them ")
-                                               .text(allyHexStacks, NamedTextColor.BLUE)
-                                               .text(" stack of Fortifying Hex that lasts ")
-                                               .durationTicks(allyHexTickDuration)
-                                               .text("seconds.")
-                                               .maxRange(maxDistance)
-                                               .emptyLine()
-                                               .text("After traveling ")
-                                               .blocks(maxDistance / 2)
-                                               .text(", the shield returns to the location you threw it at, hitting all possible targets again. If ")
-                                               .text(maxAlliesHit, NamedTextColor.BLUE)
-                                               .text(" allies are hit with this shield, the shield shatters, ending its trajectory.")
-                                               .build();
-    }
-
-    @Override
-    public NotAShieldStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hitBox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class);
@@ -181,6 +154,33 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
     @Override
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
         return new LocationBuilder(startingLocation.clone()).addY(-.5).backward(0f);
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
+                                               .text(" damage and have their rune timers increase by ")
+                                               .text(format(runeTickIncrease), NamedTextColor.GOLD)
+                                               .text(". Allies hit pick up a piece of the shield, reducing its damage by ")
+                                               .percent(allyHitDamageReduction, NamedTextColor.RED)
+                                               .text(" while giving them ")
+                                               .text(allyHexStacks, NamedTextColor.BLUE)
+                                               .text(" stack of Fortifying Hex that lasts ")
+                                               .durationTicks(allyHexTickDuration)
+                                               .text("seconds.")
+                                               .maxRange(maxDistance)
+                                               .emptyLine()
+                                               .text("After traveling ")
+                                               .blocks(maxDistance / 2)
+                                               .text(", the shield returns to the location you threw it at, hitting all possible targets again. If ")
+                                               .text(maxAlliesHit, NamedTextColor.BLUE)
+                                               .text(" allies are hit with this shield, the shield shatters, ending its trajectory.")
+                                               .build();
+    }
+
+    @Override
+    public NotAShieldStats getAbilityStats() {
+        return stats;
     }
 
     public static class NotAShieldStats extends AbstractPiercingProjectileStats<NotAShield, NotAShieldStats> {

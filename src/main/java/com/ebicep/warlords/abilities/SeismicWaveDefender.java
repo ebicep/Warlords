@@ -21,6 +21,11 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+    }
+
+    @Override
     protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, int i, WarlordsEntity waveTarget) {
         float multiplier = 1;
         if (pveMasterUpgrade) {
@@ -54,11 +59,6 @@ public class SeismicWaveDefender extends AbstractSeismicWave implements CanReduc
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
     }
 
     @Override

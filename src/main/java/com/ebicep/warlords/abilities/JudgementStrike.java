@@ -18,16 +18,24 @@ import java.util.List;
 
 public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementStrike.JudgementStrikeStats> implements Damages<JudgementStrike.DamageValues>, Heals<JudgementStrike.HealingValues> {
 
+    protected int attacksDone = 0;
     private final JudgementStrikeStats stats = new JudgementStrikeStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
-    protected int attacksDone = 0;
     private int speedOnCrit = 25;
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
 
     public JudgementStrike() {
         super(AbstractAbilityBuilder.create("judgementStrike").pvp());
+    }
+
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.speedOnCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCrit"), int.class);
+        this.speedOnCritDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCritDuration"), int.class);
+        this.strikeCritInterval = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeCritInterval"), int.class);
     }
 
     @Override
@@ -65,14 +73,6 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         return true;
     }
 
-    public int getStrikeCritInterval() {
-        return strikeCritInterval;
-    }
-
-    public void setStrikeCritInterval(int strikeCritInterval) {
-        this.strikeCritInterval = strikeCritInterval;
-    }
-
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -86,14 +86,6 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     @Override
     public JudgementStrikeStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.speedOnCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCrit"), int.class);
-        this.speedOnCritDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCritDuration"), int.class);
-        this.strikeCritInterval = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeCritInterval"), int.class);
     }
 
     @Override
@@ -115,15 +107,19 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         return new JudgementStrikeBranch(abilityTree, this);
     }
 
+    public int getStrikeCritInterval() {
+        return strikeCritInterval;
+    }
+
+    public void setStrikeCritInterval(int strikeCritInterval) {
+        this.strikeCritInterval = strikeCritInterval;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -135,6 +131,10 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
         }
 
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {
@@ -142,10 +142,6 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         private Value.SetValue strikeHealing = new Value.SetValue(0);
 
         private final List<Value> values = List.of(strikeHealing);
-
-        public Value.SetValue getStrikeHealing() {
-            return strikeHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -155,6 +151,10 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeHealing"), Value.SetValue.class);
+        }
+
+        public Value.SetValue getStrikeHealing() {
+            return strikeHealing;
         }
 
     }

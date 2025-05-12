@@ -46,40 +46,6 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Hurl a fast, piercing bolt of lightning that deals ")
-                                               .damage(damageValues.boltDamage)
-                                               .text(" to all enemies it passes through. Each target hit reduces the cooldown of Chain Lightning by ")
-                                               .durationSeconds(cooldownReduction)
-                                               .text(".")
-                                               .maxRange(maxDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new LightningBoltBranch(abilityTree, this);
-    }
-
-    public double getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(double hitbox) {
-        this.hitbox = hitbox;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public LightningBoltStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
@@ -223,15 +189,45 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
                                               .crit(damageValues.boltDamage));
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Hurl a fast, piercing bolt of lightning that deals ")
+                                               .damage(damageValues.boltDamage)
+                                               .text(" to all enemies it passes through. Each target hit reduces the cooldown of Chain Lightning by ")
+                                               .durationSeconds(cooldownReduction)
+                                               .text(".")
+                                               .maxRange(maxDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new LightningBoltBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public LightningBoltStats getAbilityStats() {
+        return stats;
+    }
+
+    public double getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(double hitbox) {
+        this.hitbox = hitbox;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(252, 340, 25, 180);
 
         private final List<Value> values = List.of(boltDamage);
-
-        public Value.RangedValueCritable getBoltDamage() {
-            return boltDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -241,6 +237,10 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getBoltDamage() {
+            return boltDamage;
         }
 
     }

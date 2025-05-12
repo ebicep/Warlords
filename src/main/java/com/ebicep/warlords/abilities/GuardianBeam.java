@@ -42,6 +42,56 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.carrierBonusMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("carrierBonusMultiplier"), float.class);
+        this.runeTimerIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTimerIncrease"), float.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+    }
+
+    @Nullable
+    @Override
+    protected String getActivationSound() {
+        return "arcanist.guardianbeamalt.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
+    @Override
+    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
+    }
+
+    @Override
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        WarlordsEntity wp = projectile.getShooter();
+        if (!projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            if (hit.isEnemy(wp)) {
+                if (inPve) {
+                    hit.getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
+                }
+                hit.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.beamDamage));
+                if (pveMasterUpgrade2) {
+                    hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
+                }
+            } else {
+                giveShield(wp, hit);
+                if (pveMasterUpgrade2) {
+                    hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
+                }
+            }
+        }
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of mystical power, piercing all enemies and allies. Enemies hit take ")
                                                .damage(damageValues.beamDamage)
@@ -152,6 +202,11 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
         this.tickDuration = tickDuration;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
     public List<Integer> getShieldPercents() {
         return shieldPercents;
     }
@@ -162,61 +217,6 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
     public void setRuneTimerIncrease(float runeTimerIncrease) {
         this.runeTimerIncrease = runeTimerIncrease;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.carrierBonusMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("carrierBonusMultiplier"), float.class);
-        this.runeTimerIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTimerIncrease"), float.class);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-    }
-
-    @Nullable
-    @Override
-    protected String getActivationSound() {
-        return "arcanist.guardianbeamalt.activation";
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1;
-    }
-
-    @Override
-    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-    }
-
-    @Override
-    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        WarlordsEntity wp = projectile.getShooter();
-        if (!projectile.getHit().contains(hit)) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            if (hit.isEnemy(wp)) {
-                if (inPve) {
-                    hit.getSpec().increaseAllCooldownTimersBy(runeTimerIncrease);
-                }
-                hit.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.beamDamage));
-                if (pveMasterUpgrade2) {
-                    hit.addSpeedModifier(wp, "Conservator Beam", -25, 5 * 20);
-                }
-            } else {
-                giveShield(wp, hit);
-                if (pveMasterUpgrade2) {
-                    hit.addSpeedModifier(wp, "Conservator Beam", 25, 7 * 20);
-                }
-            }
-        }
     }
 
     public static class GuardianBeamShield extends Shield {
@@ -240,10 +240,6 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
         private final List<Value> values = List.of(beamDamage);
 
-        public Value.RangedValueCritable getBeamDamage() {
-            return beamDamage;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -252,6 +248,10 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("beamDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getBeamDamage() {
+            return beamDamage;
         }
 
     }

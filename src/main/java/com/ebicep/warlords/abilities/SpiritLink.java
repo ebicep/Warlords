@@ -42,6 +42,66 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), float.class);
+        this.speedDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedDuration"), float.class);
+        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class);
+        this.damageReductionDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionDuration"), float.class);
+        this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
+    }
+
+    @Override
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
+        Set<WarlordsEntity> hitCounter = new HashSet<>();
+        for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(wp, radius, radius - 2, radius).aliveEnemiesOf(wp).lookingAtFirst(wp).soulBindedFirst(wp)) {
+            if (LocationUtils.isLookingAtChain(wp, nearPlayer) && LocationUtils.hasLineOfSight(wp, nearPlayer)) {
+                stats.addPlayersHit();
+                if (nearPlayer.onHorse()) {
+                    stats.numberOfDismounts++;
+                }
+                chain(wp.getLocation(), nearPlayer.getLocation());
+                nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.linkDamage));
+                hitCounter.add(nearPlayer);
+                List<Soulbinding.SoulbindingData> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
+                for (Soulbinding.SoulbindingData data : soulbindings) {
+                    healNearPlayers(wp, nearPlayer, data);
+                }
+                additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && !soulbindings.isEmpty() ? -1 : 0);
+                if (pveMasterUpgrade2 && nearPlayer instanceof WarlordsNPC warlordsNPC) {
+                    warlordsNPC.getMob().setTarget(wp);
+                    EffectUtils.displayParticle(Particle.INSTANT_EFFECT, warlordsNPC.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
+                }
+                break;
+            }
+        }
+        return hitCounter;
+    }
+
+    @Override
+    protected void onHit(WarlordsEntity we, int hitCounter) {
+        we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
+        we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, inPve ? 4 : 1);
+        // speed buff
+        // 30 is ticks
+        we.addSpeedModifier(we, "Spirit Link", speedBuff, (int) (speedDuration * 20));
+        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LINK", SpiritLink.class, new SpiritLink(), we, CooldownTypes.BUFF, cooldownManager -> {
+        }, (int) (damageReductionDuration * 20)
+        ) {
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * (1 - damageReduction / 100f);
+            }
+        });
+    }
+
+    @Override
+    protected ItemStack getChainItem() {
+        return CHAIN_ITEM;
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Links your spirit with up to ")
                                                .text(additionalBounces + 1, NamedTextColor.BLUE)
@@ -65,6 +125,16 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SpiritLinkBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public SpiritLinkStats getAbilityStats() {
+        return stats;
     }
 
     private void additionalBounce(WarlordsEntity wp, Set<WarlordsEntity> hitCounter, WarlordsEntity chainTarget, List<WarlordsEntity> toExclude, int bounceCount) {
@@ -140,85 +210,11 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         this.damageReductionDuration = damageReductionDuration;
     }
 
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public SpiritLinkStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), float.class);
-        this.speedDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedDuration"), float.class);
-        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class);
-        this.damageReductionDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionDuration"), float.class);
-        this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
-    }
-
-    @Override
-    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
-        Set<WarlordsEntity> hitCounter = new HashSet<>();
-        for (WarlordsEntity nearPlayer : PlayerFilter.entitiesAround(wp, radius, radius - 2, radius).aliveEnemiesOf(wp).lookingAtFirst(wp).soulBindedFirst(wp)) {
-            if (LocationUtils.isLookingAtChain(wp, nearPlayer) && LocationUtils.hasLineOfSight(wp, nearPlayer)) {
-                stats.addPlayersHit();
-                if (nearPlayer.onHorse()) {
-                    stats.numberOfDismounts++;
-                }
-                chain(wp.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.linkDamage));
-                hitCounter.add(nearPlayer);
-                List<Soulbinding.SoulbindingData> soulbindings = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
-                for (Soulbinding.SoulbindingData data : soulbindings) {
-                    healNearPlayers(wp, nearPlayer, data);
-                }
-                additionalBounce(wp, hitCounter, nearPlayer, new ArrayList<>(Arrays.asList(wp, nearPlayer)), pveMasterUpgrade2 && !soulbindings.isEmpty() ? -1 : 0);
-                if (pveMasterUpgrade2 && nearPlayer instanceof WarlordsNPC warlordsNPC) {
-                    warlordsNPC.getMob().setTarget(wp);
-                    EffectUtils.displayParticle(Particle.INSTANT_EFFECT, warlordsNPC.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
-                }
-                break;
-            }
-        }
-        return hitCounter;
-    }
-
-    @Override
-    protected void onHit(WarlordsEntity we, int hitCounter) {
-        we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
-        we.getCooldownManager().limitCooldowns(RegularCooldown.class, SpiritLink.class, inPve ? 4 : 1);
-        // speed buff
-        // 30 is ticks
-        we.addSpeedModifier(we, "Spirit Link", speedBuff, (int) (speedDuration * 20));
-        we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LINK", SpiritLink.class, new SpiritLink(), we, CooldownTypes.BUFF, cooldownManager -> {
-        }, (int) (damageReductionDuration * 20)
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * (1 - damageReduction / 100f);
-            }
-        });
-    }
-
-    @Override
-    protected ItemStack getChainItem() {
-        return CHAIN_ITEM;
-    }
-
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable linkDamage = new Value.RangedValueCritable(276, 372, 20, 175);
 
         private final List<Value> values = List.of(linkDamage);
-
-        public Value.RangedValueCritable getLinkDamage() {
-            return linkDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -228,6 +224,10 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.linkDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getLinkDamage() {
+            return linkDamage;
         }
 
     }

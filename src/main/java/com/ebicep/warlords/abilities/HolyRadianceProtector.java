@@ -39,53 +39,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
-                                               .heal(healingValues.radianceHealing)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("You may look at an ally to grant them with ")
-                                               .text("MARK", NamedTextColor.DARK_GREEN)
-                                               .text(" for ")
-                                               .durationSeconds(markDuration)
-                                               .text(". Marked allies receive ")
-                                               .percent(markBonusHealing, NamedTextColor.GREEN)
-                                               .text(" more healing from all sources.")
-                                               .maxRange(markRadius)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HolyRadianceBranchProtector(abilityTree, this);
-    }
-
-    public FloatModifiable getMarkRadius() {
-        return markRadius;
-    }
-
-    public float getMarkBonusHealing() {
-        return markBonusHealing;
-    }
-
-    public void setMarkBonusHealing(float markBonusHealing) {
-        this.markBonusHealing = markBonusHealing;
-    }
-
-    public int getMarkDuration() {
-        return markDuration;
-    }
-
-    public void setMarkDuration(int markDuration) {
-        this.markDuration = markDuration;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.markRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("markRadius"), float.class));
@@ -163,6 +116,53 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
               });
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Radiate with holy energy, healing yourself and all nearby allies for ")
+                                               .heal(healingValues.radianceHealing)
+                                               .text(" health.")
+                                               .emptyLine()
+                                               .text("You may look at an ally to grant them with ")
+                                               .text("MARK", NamedTextColor.DARK_GREEN)
+                                               .text(" for ")
+                                               .durationSeconds(markDuration)
+                                               .text(". Marked allies receive ")
+                                               .percent(markBonusHealing, NamedTextColor.GREEN)
+                                               .text(" more healing from all sources.")
+                                               .maxRange(markRadius)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HolyRadianceBranchProtector(abilityTree, this);
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public FloatModifiable getMarkRadius() {
+        return markRadius;
+    }
+
+    public float getMarkBonusHealing() {
+        return markBonusHealing;
+    }
+
+    public void setMarkBonusHealing(float markBonusHealing) {
+        this.markBonusHealing = markBonusHealing;
+    }
+
+    public int getMarkDuration() {
+        return markDuration;
+    }
+
+    public void setMarkDuration(int markDuration) {
+        this.markDuration = markDuration;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);
@@ -170,10 +170,6 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
         private Value.RangedValue unrivalledRadianceHealing = new Value.RangedValue(150, 350);
 
         private final List<Value> values = List.of(radianceHealing, unrivalledRadianceHealing);
-
-        public Value.RangedValueCritable getRadianceHealing() {
-            return radianceHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -187,6 +183,10 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                     builder.getAppendedFieldName("unrivalledRadianceHealing"),
                     Value.RangedValue.class
             );
+        }
+
+        public Value.RangedValueCritable getRadianceHealing() {
+            return radianceHealing;
         }
 
     }

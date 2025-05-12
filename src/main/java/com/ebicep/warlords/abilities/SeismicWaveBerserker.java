@@ -28,8 +28,8 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
@@ -90,8 +90,8 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
@@ -105,10 +105,6 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
 
         private final List<Value> values = List.of(waveDamage);
 
-        public Value.RangedValueCritable getWaveDamage() {
-            return waveDamage;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -117,6 +113,10 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.waveDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getWaveDamage() {
+            return waveDamage;
         }
 
     }

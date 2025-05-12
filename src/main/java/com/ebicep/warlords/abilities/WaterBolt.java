@@ -41,58 +41,6 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Shoot a bolt of water that will burst for")
-                                               .damage(damageValues.boltDamage)
-                                               .text(" damage and restore")
-                                               .heal(healingValues.boltHealing)
-                                               .text(" health to allies. A direct hit will cause ")
-                                               .percent(directHitMultiplier, NamedTextColor.GREEN)
-                                               .text(" increased damage or healing for the target hit.")
-                                               .optimalRange(maxFullDistance)
-                                               .emptyLine()
-                                               .text("Water Bolt can overheal allies for up to ")
-                                               .percent(10, NamedTextColor.GREEN)
-                                               .text(" of their max health as bonus health for ")
-                                               .durationSeconds(Overheal.OVERHEAL_DURATION)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new WaterBoltBranch(abilityTree, this);
-    }
-
-    @Override
-    public FloatModifiable getSplashRadius() {
-        return splashRadius;
-    }
-
-    public float getDirectHitMultiplier() {
-        return directHitMultiplier;
-    }
-
-    public void setDirectHitMultiplier(float directHitMultiplier) {
-        this.directHitMultiplier = directHitMultiplier;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public WaterBoltStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
@@ -231,15 +179,63 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         });
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Shoot a bolt of water that will burst for")
+                                               .damage(damageValues.boltDamage)
+                                               .text(" damage and restore")
+                                               .heal(healingValues.boltHealing)
+                                               .text(" health to allies. A direct hit will cause ")
+                                               .percent(directHitMultiplier, NamedTextColor.GREEN)
+                                               .text(" increased damage or healing for the target hit.")
+                                               .optimalRange(maxFullDistance)
+                                               .emptyLine()
+                                               .text("Water Bolt can overheal allies for up to ")
+                                               .percent(10, NamedTextColor.GREEN)
+                                               .text(" of their max health as bonus health for ")
+                                               .durationSeconds(Overheal.OVERHEAL_DURATION)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new WaterBoltBranch(abilityTree, this);
+    }
+
+    @Override
+    public FloatModifiable getSplashRadius() {
+        return splashRadius;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public WaterBoltStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getDirectHitMultiplier() {
+        return directHitMultiplier;
+    }
+
+    public void setDirectHitMultiplier(float directHitMultiplier) {
+        this.directHitMultiplier = directHitMultiplier;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(231, 299, 20, 175);
 
         private final List<Value> values = List.of(boltDamage);
-
-        public Value.RangedValueCritable getBoltDamage() {
-            return boltDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -251,6 +247,10 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
             this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltDamage"), Value.RangedValueCritable.class);
         }
 
+        public Value.RangedValueCritable getBoltDamage() {
+            return boltDamage;
+        }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {
@@ -258,10 +258,6 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         private Value.RangedValueCritable boltHealing = new Value.RangedValueCritable(315, 434, 20, 175);
 
         private final List<Value> values = List.of(boltHealing);
-
-        public Value.RangedValueCritable getBoltHealing() {
-            return boltHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -271,6 +267,10 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.boltHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getBoltHealing() {
+            return boltHealing;
         }
 
     }

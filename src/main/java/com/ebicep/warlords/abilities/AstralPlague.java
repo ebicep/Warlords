@@ -46,21 +46,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public AstralPlagueStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -105,25 +90,6 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
         }, tickDuration
         ) {
-
-            @Override
-            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                if (pveMasterUpgrade) {
-                    return currentCritMultiplier + 40;
-                }
-                return currentCritMultiplier;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
-                    return currentDamageValue * 5;
-                }
-                if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
-                    return currentDamageValue * 1.7f;
-                }
-                return currentDamageValue;
-            }
 
             @Override
             protected Listener getListener() {
@@ -193,6 +159,25 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
                     }
                 };
             }
+
+            @Override
+            public float addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                if (pveMasterUpgrade) {
+                    return currentCritMultiplier + 40;
+                }
+                return currentCritMultiplier;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (event.getCause().equals("Poisonous Hex") && event.getFlags().contains(InstanceFlags.DOT)) {
+                    return currentDamageValue * 5;
+                }
+                if (pveMasterUpgrade2 && event.getCause().equals("Soulfire Beam")) {
+                    return currentDamageValue * 1.7f;
+                }
+                return currentDamageValue;
+            }
         });
         PlayerFilter.playingGame(wp.getGame()).enemiesOf(wp).forEach(enemy -> {
             new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(PoisonousHex.class).filterCooldownFrom(wp).forEach(cd -> {
@@ -206,6 +191,21 @@ public class AstralPlague extends AbstractAbility implements OrangeAbilityIcon, 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new AstralPlagueBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AstralPlagueStats getAbilityStats() {
+        return stats;
     }
 
     public static class AstralPlagueStats extends AbstractAbilityStats<AstralPlague, AstralPlagueStats> {

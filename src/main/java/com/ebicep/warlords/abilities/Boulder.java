@@ -44,40 +44,6 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    public double getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
-    }
-
-    public double getBoulderSpeed() {
-        return boulderSpeed;
-    }
-
-    public void setBoulderSpeed(double boulderSpeed) {
-        this.boulderSpeed = boulderSpeed;
-    }
-
-    public double getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(double hitbox) {
-        this.hitbox = hitbox;
-    }
-
-    @Override
-    public BoulderStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.boulderSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boulderSpeed"), float.class);
@@ -170,6 +136,40 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         return new BoulderBranch(abilityTree, this);
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public BoulderStats getAbilityStats() {
+        return stats;
+    }
+
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
+    }
+
+    public double getBoulderSpeed() {
+        return boulderSpeed;
+    }
+
+    public void setBoulderSpeed(double boulderSpeed) {
+        this.boulderSpeed = boulderSpeed;
+    }
+
+    public double getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(double hitbox) {
+        this.hitbox = hitbox;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable boulderDamage = new Value.RangedValueCritable(509, 686, 15, 175);
@@ -177,10 +177,6 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         private Value.RangedValue earthquakeDamage = new Value.RangedValue(450, 630);
 
         private final List<Value> values = List.of(boulderDamage, earthquakeDamage);
-
-        public Value.RangedValueCritable getBoulderDamage() {
-            return boulderDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -191,6 +187,10 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         public void init(AbstractAbilityBuilder builder) {
             this.boulderDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boulderDamage"), Value.RangedValueCritable.class);
             this.earthquakeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("earthquakeDamage"), Value.RangedValue.class);
+        }
+
+        public Value.RangedValueCritable getBoulderDamage() {
+            return boulderDamage;
         }
 
     }

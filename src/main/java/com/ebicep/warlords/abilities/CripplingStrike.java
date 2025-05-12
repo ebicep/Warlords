@@ -79,6 +79,14 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.crippleDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("crippleDuration"), int.class);
+        this.cripple = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cripple"), int.class);
+        this.cripplePerStrike = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cripplePerStrike"), int.class);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
         randomHitEffect(location, 7, 255, 0, 0);
@@ -132,22 +140,6 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
         cripple(from, target, null, name, 0, tickDuration, crippleAmount);
     }
 
-    public int getCripple() {
-        return cripple;
-    }
-
-    public void setCripple(int cripple) {
-        this.cripple = cripple;
-    }
-
-    public int getCripplePerStrike() {
-        return cripplePerStrike;
-    }
-
-    public void setCripplePerStrike(int cripplePerStrike) {
-        this.cripplePerStrike = cripplePerStrike;
-    }
-
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -156,14 +148,6 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
     @Override
     public CripplingStrikeStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.crippleDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("crippleDuration"), int.class);
-        this.cripple = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cripple"), int.class);
-        this.cripplePerStrike = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cripplePerStrike"), int.class);
     }
 
     @Override
@@ -189,15 +173,27 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
         return new CripplingStrikeBranch(abilityTree, this);
     }
 
+    public int getCripple() {
+        return cripple;
+    }
+
+    public void setCripple(int cripple) {
+        this.cripple = cripple;
+    }
+
+    public int getCripplePerStrike() {
+        return cripplePerStrike;
+    }
+
+    public void setCripplePerStrike(int cripplePerStrike) {
+        this.cripplePerStrike = cripplePerStrike;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362, 498, 20, 175);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -207,6 +203,10 @@ public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

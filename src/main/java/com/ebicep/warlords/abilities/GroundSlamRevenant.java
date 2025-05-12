@@ -25,6 +25,11 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+    }
+
+    @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
         if (pveMasterUpgrade2) {
             float healingBoost = 1 + Math.min(5, playersHit.size()) * .05f;
@@ -49,11 +54,6 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
     }
 
     @Override

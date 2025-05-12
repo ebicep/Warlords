@@ -98,6 +98,11 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
 
     protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer);
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitbox;
+    }
+
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
         final Location loc = kbTarget.getLocation();
         final Vector v = giver.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(y);
@@ -135,11 +140,6 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
                     true
             );
         }
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return hitbox;
     }
 
     public static abstract class AbstractStrikeStats<T extends AbstractStrike<T, R>, R extends AbstractStrikeStats<T, R>> extends AbstractAbilityStats<T, R> {

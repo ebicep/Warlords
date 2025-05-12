@@ -49,49 +49,6 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public FloatModifiable getDamageAbsorption() {
-        return damageAbsorption;
-    }
-
-    public int getShieldTickDuration() {
-        return shieldTickDuration;
-    }
-
-    public void setShieldTickDuration(int shieldTickDuration) {
-        this.shieldTickDuration = shieldTickDuration;
-    }
-
-    public int getStacksGranted() {
-        return stacksGranted;
-    }
-
-    public void setStacksGranted(int stacksGranted) {
-        this.stacksGranted = stacksGranted;
-    }
-
-    public int getInfectedPlayers() {
-        return infectedPlayers;
-    }
-
-    public void setInfectedPlayers(int infectedPlayers) {
-        this.infectedPlayers = infectedPlayers;
-    }
-
-    @Override
-    public ContagiousFacadeStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageAbsorption = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageAbsorption"), float.class));
@@ -259,6 +216,49 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         damageAbsorption.tick();
         super.runEveryTick(warlordsEntity);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public ContagiousFacadeStats getAbilityStats() {
+        return stats;
+    }
+
+    public FloatModifiable getDamageAbsorption() {
+        return damageAbsorption;
+    }
+
+    public int getShieldTickDuration() {
+        return shieldTickDuration;
+    }
+
+    public void setShieldTickDuration(int shieldTickDuration) {
+        this.shieldTickDuration = shieldTickDuration;
+    }
+
+    public int getStacksGranted() {
+        return stacksGranted;
+    }
+
+    public void setStacksGranted(int stacksGranted) {
+        this.stacksGranted = stacksGranted;
+    }
+
+    public int getInfectedPlayers() {
+        return infectedPlayers;
+    }
+
+    public void setInfectedPlayers(int infectedPlayers) {
+        this.infectedPlayers = infectedPlayers;
     }
 
     public static class ContagiousFacadeStats extends AbstractAbilityStats<ContagiousFacade, ContagiousFacadeStats> {

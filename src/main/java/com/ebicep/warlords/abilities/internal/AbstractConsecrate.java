@@ -142,14 +142,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return hitBox;
     }
 
-    public int getStrikeDamageBoost() {
-        return strikeDamageBoost;
-    }
-
-    public void setStrikeDamageBoost(int strikeDamageBoost) {
-        this.strikeDamageBoost = strikeDamageBoost;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -163,6 +155,14 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     @Override
     public AbstractConsecrateStats getAbilityStats() {
         return stats;
+    }
+
+    public int getStrikeDamageBoost() {
+        return strikeDamageBoost;
+    }
+
+    public void setStrikeDamageBoost(int strikeDamageBoost) {
+        this.strikeDamageBoost = strikeDamageBoost;
     }
 
     public static class AbstractConsecrateStats extends AbstractAbilityStats<AbstractConsecrate, AbstractConsecrateStats> {

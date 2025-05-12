@@ -45,43 +45,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         super(AbstractAbilityBuilder.create("vindicate").pvp());
     }
 
-    public float getVindicateDamageReduction() {
-        return vindicateDamageReduction;
-    }
-
-    public void setVindicateDamageReduction(float vindicateDamageReduction) {
-        this.vindicateDamageReduction = vindicateDamageReduction;
-    }
-
-    @Override
-    public void multiplyTickDuration(float multiplier) {
-        this.vindTickDuration *= multiplier;
-        this.damageReductionTickDuration *= multiplier;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return vindTickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.vindTickDuration = tickDuration;
-    }
-
-    public int getDamageReductionTickDuration() {
-        return damageReductionTickDuration;
-    }
-
-    public void setDamageReductionTickDuration(int damageReductionTickDuration) {
-        this.damageReductionTickDuration = damageReductionTickDuration;
-    }
-
-    @Override
-    public VindicateStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -170,6 +133,11 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         ) {
 
             @Override
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener(target);
+            }
+
+            @Override
             public void multiplyKB(Vector currentVector) {
                 currentVector.multiply(knockbackResistance / 100f);
             }
@@ -180,11 +148,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                     return currentDamageValue * .85f;
                 }
                 return currentDamageValue;
-            }
-
-            @Override
-            protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener(target);
             }
         });
         if (vindPveMaster2) {
@@ -199,6 +162,43 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new VindicateBranch(abilityTree, this);
+    }
+
+    @Override
+    public void multiplyTickDuration(float multiplier) {
+        this.vindTickDuration *= multiplier;
+        this.damageReductionTickDuration *= multiplier;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return vindTickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.vindTickDuration = tickDuration;
+    }
+
+    @Override
+    public VindicateStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getVindicateDamageReduction() {
+        return vindicateDamageReduction;
+    }
+
+    public void setVindicateDamageReduction(float vindicateDamageReduction) {
+        this.vindicateDamageReduction = vindicateDamageReduction;
+    }
+
+    public int getDamageReductionTickDuration() {
+        return damageReductionTickDuration;
+    }
+
+    public void setDamageReductionTickDuration(int damageReductionTickDuration) {
+        this.damageReductionTickDuration = damageReductionTickDuration;
     }
 
     public static class VindicateStats extends AbstractAbilityStats<Vindicate, VindicateStats> {

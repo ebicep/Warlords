@@ -49,29 +49,6 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade2;
-    }
-
-    @Override
-    public RecklessChargeStats getAbilityStats() {
-        return stats;
-    }
-
-    public int getAdditionalBlocks() {
-        return additionalBlocks;
-    }
-
-    public void setAdditionalBlocks(int additionalBlocks) {
-        this.additionalBlocks = additionalBlocks;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.stunTimeInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stunTimeInTicks"), int.class);
@@ -241,15 +218,34 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         this.stunTimeInTicks = stunTimeInTicks;
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
+    }
+
+    @Override
+    public RecklessChargeStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getAdditionalBlocks() {
+        return additionalBlocks;
+    }
+
+    public void setAdditionalBlocks(int additionalBlocks) {
+        this.additionalBlocks = additionalBlocks;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable chargeDamage = new Value.RangedValueCritable(457, 601, 20, 200);
 
         private final List<Value> values = List.of(chargeDamage);
-
-        public Value.RangedValueCritable getChargeDamage() {
-            return chargeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -259,6 +255,10 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chargeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chargeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getChargeDamage() {
+            return chargeDamage;
         }
 
     }

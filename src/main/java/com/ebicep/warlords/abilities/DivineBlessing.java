@@ -47,34 +47,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getLethalDamageHealing() {
-        return lethalDamageHealing;
-    }
-
-    public void setLethalDamageHealing(int lethalDamageHealing) {
-        this.lethalDamageHealing = lethalDamageHealing;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public DivineBlessingStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
@@ -187,6 +159,23 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         ) {
 
             @Override
+            protected Listener getListener() {
+                return new Listener() {
+
+                    @EventHandler(priority = EventPriority.LOWEST)
+                    private void onAddCooldown(WarlordsAddCooldownEvent event) {
+                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                        if (Objects.equals(cooldown.getFrom(),
+                                wp
+                        ) && cooldown instanceof RegularCooldown<?> regularCooldown && cooldown.getCooldownObject() instanceof MercifulHex) {
+                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                            stats.hexesProlonged++;
+                        }
+                    }
+                };
+            }
+
+            @Override
             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                 if (hasMaxStacks()) {
                     float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
@@ -213,23 +202,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     }
                 }
                 return currentDamageValue;
-            }
-
-            @Override
-            protected Listener getListener() {
-                return new Listener() {
-
-                    @EventHandler(priority = EventPriority.LOWEST)
-                    private void onAddCooldown(WarlordsAddCooldownEvent event) {
-                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (Objects.equals(cooldown.getFrom(),
-                                wp
-                        ) && cooldown instanceof RegularCooldown<?> regularCooldown && cooldown.getCooldownObject() instanceof MercifulHex) {
-                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                            stats.hexesProlonged++;
-                        }
-                    }
-                };
             }
         });
         PlayerFilter.playingGame(game).teammatesOf(wp).forEach(enemy -> {
@@ -267,6 +239,34 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new DivineBlessingBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public DivineBlessingStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getLethalDamageHealing() {
+        return lethalDamageHealing;
+    }
+
+    public void setLethalDamageHealing(int lethalDamageHealing) {
+        this.lethalDamageHealing = lethalDamageHealing;
     }
 
     public static class HealingValues implements Value.ValueHolder {

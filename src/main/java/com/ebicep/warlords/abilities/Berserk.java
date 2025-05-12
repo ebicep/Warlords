@@ -36,45 +36,6 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         super(AbstractAbilityBuilder.create("berserk").pvp());
     }
 
-    public float getDamageIncrease() {
-        return damageIncrease;
-    }
-
-    public void setDamageIncrease(float damageIncrease) {
-        this.damageIncrease = damageIncrease;
-    }
-
-    public float getDamageTakenIncrease() {
-        return damageTakenIncrease;
-    }
-
-    public void setDamageTakenIncrease(float damageTakenIncrease) {
-        this.damageTakenIncrease = damageTakenIncrease;
-    }
-
-    public int getSpeedBuff() {
-        return speedBuff;
-    }
-
-    public void setSpeedBuff(int speedBuff) {
-        this.speedBuff = speedBuff;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public BerserkStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -182,6 +143,45 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new BerserkBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public BerserkStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getDamageIncrease() {
+        return damageIncrease;
+    }
+
+    public void setDamageIncrease(float damageIncrease) {
+        this.damageIncrease = damageIncrease;
+    }
+
+    public float getDamageTakenIncrease() {
+        return damageTakenIncrease;
+    }
+
+    public void setDamageTakenIncrease(float damageTakenIncrease) {
+        this.damageTakenIncrease = damageTakenIncrease;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
     }
 
     public static class BerserkStats extends AbstractAbilityStats<Berserk, BerserkStats> {

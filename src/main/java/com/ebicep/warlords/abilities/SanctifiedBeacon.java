@@ -45,40 +45,6 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SanctifiedBeaconBranch(abilityTree, this);
-    }
-
-    public int getCritMultiplierReducedBy() {
-        return critMultiplierReducedBy;
-    }
-
-    public void setCritMultiplierReducedBy(int critMultiplierReducedBy) {
-        this.critMultiplierReducedBy = critMultiplierReducedBy;
-    }
-
-    public int getHexIntervalTicks() {
-        return hexIntervalTicks;
-    }
-
-    public void setHexIntervalTicks(int hexIntervalTicks) {
-        this.hexIntervalTicks = hexIntervalTicks;
-    }
-
-    public float getDamageReductionPve() {
-        return damageReductionPve;
-    }
-
-    public void setDamageReductionPve(float damageReductionPve) {
-        this.damageReductionPve = damageReductionPve;
-    }
-
-    @Override
-    public SanctifiedBeaconStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAllies"), int.class);
@@ -224,6 +190,40 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
             EffectUtils.playCircularEffectAround(wp.getGame(), crystal.getLocation(), Particle.TOTEM_OF_UNDYING, 3, 1, 0.15, 4, 1, 4);
             EffectUtils.playCircularEffectAround(wp.getGame(), crystal.getLocation(), Particle.HAPPY_VILLAGER, 1, 1, 0.1, 8, 1, 3);
         }
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SanctifiedBeaconBranch(abilityTree, this);
+    }
+
+    @Override
+    public SanctifiedBeaconStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getCritMultiplierReducedBy() {
+        return critMultiplierReducedBy;
+    }
+
+    public void setCritMultiplierReducedBy(int critMultiplierReducedBy) {
+        this.critMultiplierReducedBy = critMultiplierReducedBy;
+    }
+
+    public int getHexIntervalTicks() {
+        return hexIntervalTicks;
+    }
+
+    public void setHexIntervalTicks(int hexIntervalTicks) {
+        this.hexIntervalTicks = hexIntervalTicks;
+    }
+
+    public float getDamageReductionPve() {
+        return damageReductionPve;
+    }
+
+    public void setDamageReductionPve(float damageReductionPve) {
+        this.damageReductionPve = damageReductionPve;
     }
 
     public static class SanctifiedBeaconData extends AbstractBeaconAbility.BeaconData {

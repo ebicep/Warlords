@@ -47,21 +47,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public HeartToHeartStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
@@ -205,6 +190,21 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         }.runTaskTimer(0, 1);
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public HeartToHeartStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValue heartOfHeartsDamage = new Value.RangedValue(1635, 2096);
@@ -229,10 +229,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
         private final List<Value> values = List.of(heartToHeartHealing);
 
-        public Value.SetValue getHeartToHeartHealing() {
-            return heartToHeartHealing;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -241,6 +237,10 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.heartToHeartHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("heartToHeartHealing"), Value.SetValue.class);
+        }
+
+        public Value.SetValue getHeartToHeartHealing() {
+            return heartToHeartHealing;
         }
 
     }

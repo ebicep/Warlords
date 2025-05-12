@@ -48,36 +48,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     }
 
     @Override
-    public int getTickDuration() {
-        return puddleTickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.puddleTickDuration = tickDuration;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return puddleRadius;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public SoothingElixirStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.puddleRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleRadius"), float.class));
@@ -206,6 +176,36 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         return new SoothingElixirBranch(abilityTree, this);
     }
 
+    @Override
+    public int getTickDuration() {
+        return puddleTickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.puddleTickDuration = tickDuration;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return puddleRadius;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public SoothingElixirStats getAbilityStats() {
+        return stats;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable elixirDamage = new Value.RangedValueCritable(235, 342, 25, 175);
@@ -230,10 +230,6 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         private final List<Value> values = List.of(elixirHealing, elixirHealing);
         private Value.RangedValueCritable elixirDOTHealing = new Value.RangedValueCritable(158, 204, 25, 175);
 
-        public Value.RangedValueCritable getElixirHealing() {
-            return elixirHealing;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
@@ -243,6 +239,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         public void init(AbstractAbilityBuilder builder) {
             this.elixirHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("elixirHealing"), Value.RangedValueCritable.class);
             this.elixirDOTHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("elixirDOTHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getElixirHealing() {
+            return elixirHealing;
         }
 
     }

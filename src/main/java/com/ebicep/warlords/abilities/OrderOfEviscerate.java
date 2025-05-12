@@ -48,29 +48,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         super(AbstractAbilityBuilder.create("orderOfEviscerate").pvp());
     }
 
-    public float getVulnerableDamageBonus() {
-        return vulnerableDamageBonus;
-    }
-
-    public void setVulnerableDamageBonus(float vulnerableDamageBonus) {
-        this.vulnerableDamageBonus = vulnerableDamageBonus;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public OrderOfEviscerateStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -345,6 +322,29 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new OrderOfEviscerateBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public OrderOfEviscerateStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getVulnerableDamageBonus() {
+        return vulnerableDamageBonus;
+    }
+
+    public void setVulnerableDamageBonus(float vulnerableDamageBonus) {
+        this.vulnerableDamageBonus = vulnerableDamageBonus;
     }
 
     public static class OrderOfEviscerateData {

@@ -38,6 +38,14 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("You become infused with light, restoring ")
@@ -51,14 +59,6 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
-        this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
-    }
-
-    @Override
     public int getTickDuration() {
         return tickDuration;
     }
@@ -66,6 +66,11 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AbstractLightInfusionStats getAbilityStats() {
+        return stats;
     }
 
     public int getSpeedBuff() {
@@ -82,11 +87,6 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
 
     public void setEnergyGiven(int energyGiven) {
         this.energyGiven = energyGiven;
-    }
-
-    @Override
-    public AbstractLightInfusionStats getAbilityStats() {
-        return stats;
     }
 
     public static class AbstractLightInfusionStats extends AbstractAbilityStats<AbstractLightInfusion, AbstractLightInfusionStats> {

@@ -41,45 +41,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         super(AbstractAbilityBuilder.create("windfuryWeapon").pvp());
     }
 
-    public float getProcChance() {
-        return procChance;
-    }
-
-    public void setProcChance(float procChance) {
-        this.procChance = procChance;
-    }
-
-    public int getMaxHits() {
-        return maxHits;
-    }
-
-    public void setMaxHits(int maxHits) {
-        this.maxHits = maxHits;
-    }
-
-    public float getWeaponDamage() {
-        return weaponDamage;
-    }
-
-    public void setWeaponDamage(float weaponDamage) {
-        this.weaponDamage = weaponDamage;
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public WindfuryWeaponStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -195,6 +156,45 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new WindfuryBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public WindfuryWeaponStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getProcChance() {
+        return procChance;
+    }
+
+    public void setProcChance(float procChance) {
+        this.procChance = procChance;
+    }
+
+    public int getMaxHits() {
+        return maxHits;
+    }
+
+    public void setMaxHits(int maxHits) {
+        this.maxHits = maxHits;
+    }
+
+    public float getWeaponDamage() {
+        return weaponDamage;
+    }
+
+    public void setWeaponDamage(float weaponDamage) {
+        this.weaponDamage = weaponDamage;
     }
 
     public static class WindfuryWeaponStats extends AbstractAbilityStats<WindfuryWeapon, WindfuryWeaponStats> {

@@ -132,23 +132,6 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         ) {
 
             @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
-                    return currentHealValue * convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease());
-
-                }
-                return currentHealValue;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
-                    return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
-                }
-                return currentDamageValue;
-            }
-
-            @Override
             protected Listener getListener() {
                 return new Listener() {
                     @EventHandler
@@ -188,6 +171,23 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                         }
                     }
                 };
+            }
+
+            @Override
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
+                    return currentHealValue * convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease());
+
+                }
+                return currentHealValue;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
+                    return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
+                }
+                return currentDamageValue;
             }
         });
         return true;
@@ -238,22 +238,6 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     public abstract TextComponent getBonus();
 
-    public int getEnergyRestore() {
-        return energyRestore;
-    }
-
-    public void setEnergyRestore(int energyRestore) {
-        this.energyRestore = energyRestore;
-    }
-
-    public int getEpsDecrease() {
-        return epsDecrease;
-    }
-
-    public void setEpsDecrease(int epsDecrease) {
-        this.epsDecrease = epsDecrease;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -274,18 +258,34 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         return stats;
     }
 
+    public int getEnergyRestore() {
+        return energyRestore;
+    }
+
+    public void setEnergyRestore(int energyRestore) {
+        this.energyRestore = energyRestore;
+    }
+
+    public int getEpsDecrease() {
+        return epsDecrease;
+    }
+
+    public void setEpsDecrease(int epsDecrease) {
+        this.epsDecrease = epsDecrease;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         protected final Value.SetValue seerHealingMultiplier = new Value.SetValue(5);
         private final List<Value> values = List.of(seerHealingMultiplier);
 
-        public Value.SetValue getSeerHealingMultiplier() {
-            return seerHealingMultiplier;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        public Value.SetValue getSeerHealingMultiplier() {
+            return seerHealingMultiplier;
         }
 
     }

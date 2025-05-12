@@ -37,8 +37,8 @@ import java.util.Objects;
 public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Damages<SoulShackle.DamageValues>, AbilityStats<SoulShackle, SoulShackle.SoulShackleStats> {
 
     private final SoulShackleStats stats = new SoulShackleStats();
-    private int shackleRange = 15;
     private final DamageValues damageValues = new DamageValues();
+    private int shackleRange = 15;
     private float shacklePool = 0;
     private int maxShackleTargets = 1;
     private int silenceDurationInTicks = 30;
@@ -49,44 +49,6 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
     public SoulShackle() {
         super(AbstractAbilityBuilder.create("soulShackle").pvp());
-    }
-
-    public void addToShacklePool(float amount) {
-        this.shacklePool += amount;
-    }
-
-    public int getMaxSilenceDurationInTicks() {
-        return maxSilenceDurationInTicks;
-    }
-
-    public void setMaxSilenceDurationInTicks(int maxSilenceDurationInTicks) {
-        this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;
-    }
-
-    public int getMinSilenceDurationInTicks() {
-        return minSilenceDurationInTicks;
-    }
-
-    public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
-        this.minSilenceDurationInTicks = minSilenceDurationInTicks;
-    }
-
-    public int getSilenceDurationInTicks() {
-        return maxSilenceDurationInTicks;
-    }
-
-    public void setSilenceDurationInTicks(int maxSilenceDurationInTicks) {
-        this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public SoulShackleStats getAbilityStats() {
-        return stats;
     }
 
     @Override
@@ -246,15 +208,49 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         }
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public SoulShackleStats getAbilityStats() {
+        return stats;
+    }
+
+    public void addToShacklePool(float amount) {
+        this.shacklePool += amount;
+    }
+
+    public int getMaxSilenceDurationInTicks() {
+        return maxSilenceDurationInTicks;
+    }
+
+    public void setMaxSilenceDurationInTicks(int maxSilenceDurationInTicks) {
+        this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;
+    }
+
+    public int getMinSilenceDurationInTicks() {
+        return minSilenceDurationInTicks;
+    }
+
+    public void setMinSilenceDurationInTicks(int minSilenceDurationInTicks) {
+        this.minSilenceDurationInTicks = minSilenceDurationInTicks;
+    }
+
+    public int getSilenceDurationInTicks() {
+        return maxSilenceDurationInTicks;
+    }
+
+    public void setSilenceDurationInTicks(int maxSilenceDurationInTicks) {
+        this.maxSilenceDurationInTicks = maxSilenceDurationInTicks;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable shackleDamage = new Value.RangedValueCritable(446, 589, 20, 175);
 
         private final List<Value> values = List.of(shackleDamage);
-
-        public Value.RangedValueCritable getShackleDamage() {
-            return shackleDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -264,6 +260,10 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.shackleDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shackleDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getShackleDamage() {
+            return shackleDamage;
         }
 
     }

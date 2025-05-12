@@ -25,6 +25,12 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
+    }
+
+    @Override
     public EnergySeerConjurerData getDataObject() {
         return new EnergySeerConjurerData();
     }
@@ -58,23 +64,17 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
         return Component.text("Increase your damage by ").append(Component.text(damageIncrease + "%", NamedTextColor.RED));
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchConjurer(abilityTree, this);
+    }
+
     public int getDamageIncrease() {
         return damageIncrease;
     }
 
     public void setDamageIncrease(int damageIncrease) {
         this.damageIncrease = damageIncrease;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new EnergySeerBranchConjurer(abilityTree, this);
     }
 
     public static class EnergySeerConjurerData extends EnergySeerData {

@@ -41,6 +41,13 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.wounding = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), int.class);
+        this.woundingTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingTickDuration"), int.class);
+    }
+
+    @Override
     protected void playSoundAndEffect(Location location) {
         Utils.playGlobalSound(location, "warrior.mortalstrike.impact", 2, 1);
         randomHitEffect(location, 7, 255, 0, 0);
@@ -128,22 +135,6 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
            });
     }
 
-    public int getWounding() {
-        return wounding;
-    }
-
-    public void setWounding(int wounding) {
-        this.wounding = wounding;
-    }
-
-    public int getWoundingTickDuration() {
-        return woundingTickDuration;
-    }
-
-    public void setWoundingTickDuration(int woundingTickDuration) {
-        this.woundingTickDuration = woundingTickDuration;
-    }
-
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
@@ -152,13 +143,6 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
     @Override
     public WoundingStrikeBerserkerStats getAbilityStats() {
         return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.wounding = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), int.class);
-        this.woundingTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingTickDuration"), int.class);
     }
 
     @Override
@@ -180,15 +164,27 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
         return new WoundingStrikeBranchBerserker(abilityTree, this);
     }
 
+    public int getWounding() {
+        return wounding;
+    }
+
+    public void setWounding(int wounding) {
+        this.wounding = wounding;
+    }
+
+    public int getWoundingTickDuration() {
+        return woundingTickDuration;
+    }
+
+    public void setWoundingTickDuration(int woundingTickDuration) {
+        this.woundingTickDuration = woundingTickDuration;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(497, 632, 20, 175);
 
         private final List<Value> values = List.of(strikeDamage);
-
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -198,6 +194,10 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }

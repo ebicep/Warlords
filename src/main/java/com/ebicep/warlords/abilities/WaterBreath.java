@@ -49,49 +49,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     }
 
     @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade;
-    }
-
-    public double getVelocity() {
-        return velocity;
-    }
-
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
-    }
-
-    public int getMaxAnimationTime() {
-        return maxAnimationTime;
-    }
-
-    public void setMaxAnimationTime(int maxAnimationTime) {
-        this.maxAnimationTime = maxAnimationTime;
-    }
-
-    public float getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
-    }
-
-    public void setMaxAnimationEffects(int maxAnimationEffects) {
-        this.maxAnimationEffects = maxAnimationEffects;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public WaterBreathStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxAnimationTime = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAnimationTime"), int.class);
@@ -227,15 +184,54 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         return new WaterBreathBranch(abilityTree, this);
     }
 
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public WaterBreathStats getAbilityStats() {
+        return stats;
+    }
+
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
+    }
+
+    public int getMaxAnimationTime() {
+        return maxAnimationTime;
+    }
+
+    public void setMaxAnimationTime(int maxAnimationTime) {
+        this.maxAnimationTime = maxAnimationTime;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public void setMaxAnimationEffects(int maxAnimationEffects) {
+        this.maxAnimationEffects = maxAnimationEffects;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(536, 743, 25, 175);
 
         private final List<Value> values = List.of(breathHealing);
-
-        public Value.RangedValueCritable getBreathHealing() {
-            return breathHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -245,6 +241,10 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.breathHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("breathHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getBreathHealing() {
+            return breathHealing;
         }
 
     }

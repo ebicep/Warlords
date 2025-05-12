@@ -24,6 +24,10 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
         super(AbstractAbilityBuilder.create("groundSlamDefender").pvp());
     }
 
+    @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+    }
 
     @Override
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
@@ -50,11 +54,6 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
     @Override
     public DamageValues getDamageValues() {
         return damageValues;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
     }
 
     @Override

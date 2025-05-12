@@ -39,21 +39,6 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public ArcaneShieldStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.shieldPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldPercentage"), int.class);
@@ -153,6 +138,21 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
     public void setShieldPercentage(int shieldPercentage) {
         this.shieldPercentage = shieldPercentage;
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public ArcaneShieldStats getAbilityStats() {
+        return stats;
     }
 
     public static class ArcaneShieldStats extends AbstractAbilityStats<ArcaneShield, ArcaneShieldStats> {

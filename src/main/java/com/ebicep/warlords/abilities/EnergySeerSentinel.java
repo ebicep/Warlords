@@ -20,6 +20,12 @@ public class EnergySeerSentinel extends AbstractEnergySeer<AbstractEnergySeer.En
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageResistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageResistance"), int.class);
+    }
+
+    @Override
     public EnergySeerData getDataObject() {
         return new EnergySeerData();
     }
@@ -36,23 +42,17 @@ public class EnergySeerSentinel extends AbstractEnergySeer<AbstractEnergySeer.En
                         .append(Component.text(" damage resistance"));
     }
 
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new EnergySeerBranchSentinel(abilityTree, this);
+    }
+
     public int getDamageResistance() {
         return damageResistance;
     }
 
     public void setDamageResistance(int damageResistance) {
         this.damageResistance = damageResistance;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.damageResistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageResistance"), int.class);
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new EnergySeerBranchSentinel(abilityTree, this);
     }
 
 }

@@ -46,29 +46,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         super(builder);
     }
 
-    public int getBlindDurationInTicks() {
-        return blindDurationInTicks;
-    }
-
-    public void setBlindDurationInTicks(int blindDurationInTicks) {
-        this.blindDurationInTicks = blindDurationInTicks;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return hitbox;
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public IncendiaryCurseStats getAbilityStats() {
-        return stats;
-    }
-
     @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
@@ -146,15 +123,34 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         return new IncendiaryCurseBranch(abilityTree, this);
     }
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitbox;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public IncendiaryCurseStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getBlindDurationInTicks() {
+        return blindDurationInTicks;
+    }
+
+    public void setBlindDurationInTicks(int blindDurationInTicks) {
+        this.blindDurationInTicks = blindDurationInTicks;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
 
         private final List<Value> values = List.of(curseDamage);
-
-        public Value.RangedValueCritable getCurseDamage() {
-            return curseDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -164,6 +160,10 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.curseDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("curseDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getCurseDamage() {
+            return curseDamage;
         }
 
     }

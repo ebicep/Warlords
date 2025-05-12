@@ -40,42 +40,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getEnergyPerSecond() {
-        return energyPerSecond;
-    }
-
-    public void setEnergyPerSecond(int energyPerSecond) {
-        this.energyPerSecond = energyPerSecond;
-    }
-
-    public int getSpeedBuff() {
-        return speedBuff;
-    }
-
-    public void setSpeedBuff(int speedBuff) {
-        this.speedBuff = speedBuff;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
-    }
-
-    @Override
-    public InspiringPresenceStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
@@ -182,6 +146,42 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InspiringPresenceBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
+    @Override
+    public InspiringPresenceStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
     }
 
     public static class InspiringPresenceData {

@@ -54,61 +54,6 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public float getRuneTimerIncrease() {
-        return runeTimerIncrease;
-    }
-
-    public void setRuneTimerIncrease(float runeTimerIncrease) {
-        this.runeTimerIncrease = runeTimerIncrease;
-    }
-
-    public int getShieldBase() {
-        return shieldBase;
-    }
-
-    public void setShieldBase(int shieldBase) {
-        this.shieldBase = shieldBase;
-    }
-
-    public int getShieldMaxHealth() {
-        return shieldMaxHealth;
-    }
-
-    public void setShieldMaxHealth(int shieldMaxHealth) {
-        this.shieldMaxHealth = shieldMaxHealth;
-    }
-
-    public int getShieldIncrease() {
-        return shieldIncrease;
-    }
-
-    public void setShieldIncrease(int shieldIncrease) {
-        this.shieldIncrease = shieldIncrease;
-    }
-
-    public int getStacksGranted() {
-        return stacksGranted;
-    }
-
-    public void setStacksGranted(int stacksGranted) {
-        this.stacksGranted = stacksGranted;
-    }
-
-    @Override
-    public MysticalBarrierStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.runeTimerIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTimerIncrease"), float.class);
@@ -265,6 +210,61 @@ public class MysticalBarrier extends AbstractAbility implements BlueAbilityIcon,
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new MysticalBarrierBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public MysticalBarrierStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getRuneTimerIncrease() {
+        return runeTimerIncrease;
+    }
+
+    public void setRuneTimerIncrease(float runeTimerIncrease) {
+        this.runeTimerIncrease = runeTimerIncrease;
+    }
+
+    public int getShieldBase() {
+        return shieldBase;
+    }
+
+    public void setShieldBase(int shieldBase) {
+        this.shieldBase = shieldBase;
+    }
+
+    public int getShieldMaxHealth() {
+        return shieldMaxHealth;
+    }
+
+    public void setShieldMaxHealth(int shieldMaxHealth) {
+        this.shieldMaxHealth = shieldMaxHealth;
+    }
+
+    public int getShieldIncrease() {
+        return shieldIncrease;
+    }
+
+    public void setShieldIncrease(int shieldIncrease) {
+        this.shieldIncrease = shieldIncrease;
+    }
+
+    public int getStacksGranted() {
+        return stacksGranted;
+    }
+
+    public void setStacksGranted(int stacksGranted) {
+        this.stacksGranted = stacksGranted;
     }
 
     public static class MysticalBarrierStats extends AbstractAbilityStats<MysticalBarrier, MysticalBarrierStats> {

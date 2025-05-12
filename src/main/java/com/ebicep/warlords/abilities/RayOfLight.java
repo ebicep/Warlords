@@ -34,6 +34,44 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+    }
+
+    @Nullable
+    @Override
+    protected String getActivationSound() {
+        return "arcanist.energyseer.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1.1f;
+    }
+
+    @Override
+    protected void playEffect(@Nonnull InternalProjectile projectile) {
+    }
+
+    @Override
+    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
+    }
+
+    @Override
+    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
+        WarlordsEntity wp = projectile.getShooter();
+        if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
+            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
+            beamPlayer(hit, wp);
+        }
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Unleash a concentrated beam of holy light, healing ")
                                                .heal(healingValues.rayHealing)
@@ -117,53 +155,11 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         return healingValues;
     }
 
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Nullable
-    @Override
-    protected String getActivationSound() {
-        return "arcanist.energyseer.activation";
-    }
-
-    @Override
-    protected float getSoundVolume() {
-        return 2;
-    }
-
-    @Override
-    protected float getSoundPitch() {
-        return 1.1f;
-    }
-
-    @Override
-    protected void playEffect(@Nonnull InternalProjectile projectile) {
-    }
-
-    @Override
-    protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-    }
-
-    @Override
-    protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
-        WarlordsEntity wp = projectile.getShooter();
-        if (hit.isTeammate(wp) && !projectile.getHit().contains(hit)) {
-            getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
-            beamPlayer(hit, wp);
-        }
-    }
-
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(389, 523, 20, 150);
 
         private final List<Value> values = List.of(rayHealing);
-
-        public Value.RangedValueCritable getRayHealing() {
-            return rayHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -173,6 +169,10 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.rayHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("rayHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getRayHealing() {
+            return rayHealing;
         }
 
     }

@@ -129,6 +129,11 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         super.runEveryTick(warlordsEntity);
     }
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitboxInflation;
+    }
+
     /**
      * Plays this projectile effect at a location
      *
@@ -388,11 +393,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     public void setMaxDistance(double maxDistance) {
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return hitboxInflation;
     }
 
     public interface InternalProjectileTask {

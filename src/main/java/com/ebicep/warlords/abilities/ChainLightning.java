@@ -75,6 +75,41 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     }
 
     @Override
+    protected void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageReductionPerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionPerBounce"), float.class);
+        this.maxDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageReduction"), float.class);
+        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
+        this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
+    }
+
+    @Override
+    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
+        return partOfChainLightning(wp, new HashSet<>(), wp.getEntity(), false);
+    }
+
+    @Override
+    protected void onHit(WarlordsEntity wp, int hitCounter) {
+        Utils.playGlobalSound(wp.getLocation(), "shaman.chainlightning.activation", 3, 1);
+        wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
+        wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN", ChainLightning.class, new ChainLightning(), wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, damageReductionTickDuration
+        ) {
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce, maxDamageReduction));
+            }
+        });
+    }
+
+    @Override
+    protected ItemStack getChainItem() {
+        return CHAIN_ITEM;
+    }
+
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
@@ -103,6 +138,21 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ChainLightningBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return damageReductionTickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.damageReductionTickDuration = tickDuration;
+    }
+
+    @Override
+    public ChainLightningStats getAbilityStats() {
+        return stats;
     }
 
     private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
@@ -197,65 +247,11 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         this.damageDecreasePerBounce = damageDecreasePerBounce;
     }
 
-    @Override
-    public int getTickDuration() {
-        return damageReductionTickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.damageReductionTickDuration = tickDuration;
-    }
-
-    @Override
-    public ChainLightningStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.damageReductionPerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionPerBounce"), float.class);
-        this.maxDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageReduction"), float.class);
-        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
-        this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
-    }
-
-    @Override
-    protected Set<WarlordsEntity> getEntitiesHitAndActivate(WarlordsEntity wp) {
-        return partOfChainLightning(wp, new HashSet<>(), wp.getEntity(), false);
-    }
-
-    @Override
-    protected void onHit(WarlordsEntity wp, int hitCounter) {
-        Utils.playGlobalSound(wp.getLocation(), "shaman.chainlightning.activation", 3, 1);
-        wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
-        wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN", ChainLightning.class, new ChainLightning(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, damageReductionTickDuration
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce, maxDamageReduction));
-            }
-        });
-    }
-
-    @Override
-    protected ItemStack getChainItem() {
-        return CHAIN_ITEM;
-    }
-
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
 
         private final List<Value> values = List.of(chainDamage);
-
-        public Value.RangedValueCritable getChainDamage() {
-            return chainDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -265,6 +261,10 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chainDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chainDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getChainDamage() {
+            return chainDamage;
         }
 
     }

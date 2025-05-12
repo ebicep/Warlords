@@ -207,39 +207,6 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     }
 
     @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public float getHealingIncrement() {
-        return healingIncrement;
-    }
-
-    public void setHealingIncrement(float healingIncrement) {
-        this.healingIncrement = healingIncrement;
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public HealingTotemStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
@@ -292,15 +259,44 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         super.runEveryTick(warlordsEntity);
     }
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public HealingTotemStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getHealingIncrement() {
+        return healingIncrement;
+    }
+
+    public void setHealingIncrement(float healingIncrement) {
+        this.healingIncrement = healingIncrement;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable totemHealing = new Value.RangedValueCritable(621, 728, 25, 175);
 
         private final List<Value> values = List.of(totemHealing);
-
-        public Value.RangedValueCritable getTotemHealing() {
-            return totemHealing;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -310,6 +306,10 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.totemHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("totemHealing"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getTotemHealing() {
+            return totemHealing;
         }
 
     }

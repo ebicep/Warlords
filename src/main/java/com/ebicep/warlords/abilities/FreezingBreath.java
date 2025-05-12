@@ -48,57 +48,6 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Breathe cold air in a cone in front of you, dealing ")
-                                               .damage(damageValues.freezingBreathDamage)
-                                               .text(" damage to all enemies hit and slowing them by ")
-                                               .percent(slowness, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationSeconds(slowDuration)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FreezingBreathBranch(abilityTree, this);
-    }
-
-    public float getHitbox() {
-        return hitbox;
-    }
-
-    public void setHitbox(float hitbox) {
-        this.hitbox = hitbox;
-    }
-
-    public int getMaxAnimationTime() {
-        return maxAnimationTime;
-    }
-
-    public void setMaxAnimationTime(int maxAnimationTime) {
-        this.maxAnimationTime = maxAnimationTime;
-    }
-
-    public int getSlowness() {
-        return slowness;
-    }
-
-    public void setSlowness(int slowness) {
-        this.slowness = slowness;
-    }
-
-    @Override
-    public FreezingBreathStats getAbilityStats() {
-        return stats;
-    }
-
-    @Override
     protected void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.slowDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowDuration"), int.class);
@@ -259,15 +208,62 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         });
     }
 
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Breathe cold air in a cone in front of you, dealing ")
+                                               .damage(damageValues.freezingBreathDamage)
+                                               .text(" damage to all enemies hit and slowing them by ")
+                                               .percent(slowness, NamedTextColor.WHITE)
+                                               .text(" for ")
+                                               .durationSeconds(slowDuration)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FreezingBreathBranch(abilityTree, this);
+    }
+
+    @Override
+    public FreezingBreathStats getAbilityStats() {
+        return stats;
+    }
+
+    public float getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(float hitbox) {
+        this.hitbox = hitbox;
+    }
+
+    public int getMaxAnimationTime() {
+        return maxAnimationTime;
+    }
+
+    public void setMaxAnimationTime(int maxAnimationTime) {
+        this.maxAnimationTime = maxAnimationTime;
+    }
+
+    public int getSlowness() {
+        return slowness;
+    }
+
+    public void setSlowness(int slowness) {
+        this.slowness = slowness;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable freezingBreathDamage = new Value.RangedValueCritable(443, 614, 20, 175);
 
         private final List<Value> values = List.of(freezingBreathDamage);
-
-        public Value.RangedValueCritable getFreezingBreathDamage() {
-            return freezingBreathDamage;
-        }
 
         @Override
         public List<Value> getValues() {
@@ -280,6 +276,10 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                     builder.getAppendedFieldName("freezingBreathDamage"),
                     Value.RangedValueCritable.class
             );
+        }
+
+        public Value.RangedValueCritable getFreezingBreathDamage() {
+            return freezingBreathDamage;
         }
 
     }
