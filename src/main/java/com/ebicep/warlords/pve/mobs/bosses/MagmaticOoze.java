@@ -556,7 +556,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private int failedAttempts = 0;
 
         public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-            super(AbstractAbilityBuilder.create("moltenFissure").pve());
+            super(AbstractAbilityBuilder.create("magmaticOozeMoltenFissure").pve());
             this.previousBlocks = previousBlocks;
         }
 
