@@ -47,7 +47,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.vindDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindDuration"), int.class);
@@ -69,7 +69,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         float radius = getHitBoxRadius().getCalculatedValue();
         float verticalRadius = getHitBoxRadius().getCalculatedValue();
         if (wp.hasFlag()) {
@@ -218,7 +218,10 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.heartOfHeartsDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("heartOfHeartsDamage"), Value.RangedValue.class);
+            this.heartOfHeartsDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("heartOfHeartsDamage"),
+                    Value.RangedValue.class
+            );
         }
 
     }
@@ -236,7 +239,10 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.heartToHeartHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("heartToHeartHealing"), Value.SetValue.class);
+            this.heartToHeartHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("heartToHeartHealing"),
+                    Value.SetValue.class
+            );
         }
 
         public Value.SetValue getHeartToHeartHealing() {

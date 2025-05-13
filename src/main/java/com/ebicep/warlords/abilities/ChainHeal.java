@@ -34,7 +34,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.cooldownReductionInSeconds = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReductionInSeconds"), float.class);
     }
@@ -198,7 +198,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chainHealing"), Value.RangedValueCritable.class);
+            this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("chainHealing"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getChainHealing() {

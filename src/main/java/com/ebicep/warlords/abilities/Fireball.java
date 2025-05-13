@@ -47,7 +47,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
         this.directHitMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("directHitMultiplier"), float.class);
@@ -221,8 +221,11 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.fireballDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fireballDamage"), Value.RangedValueCritable.class);
-            this.igniteDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("igniteDamage"), Value.RangedValue.class);
+            this.fireballDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("fireballDamage"),
+                    Value.RangedValueCritable.class
+            );
+            this.igniteDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("igniteDamage"), Value.RangedValue.class);
         }
 
         public Value.RangedValueCritable getFireballDamage() {

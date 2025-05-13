@@ -42,7 +42,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
         this.energyRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRadius"), int.class);
@@ -167,7 +167,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

@@ -97,7 +97,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getAllyMobs(range, 1).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, RayOfLight.BEAM_ITEM, 3);
@@ -148,7 +148,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower abstractTower = warlordsTower.getTower();
                 abstractTower.getTowers(range)
@@ -188,7 +188,7 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getAllyMobs(range).forEach(target -> {
                     target.addInstance(InstanceBuilder

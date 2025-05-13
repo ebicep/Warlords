@@ -45,9 +45,7 @@ public class Void extends AbstractMob implements BossMob {
     private boolean timedDamageTriggerTwo = false;
     private boolean preventArmageddon = false;
     private boolean boltaroPhaseTrigger = false;
-    private PrismGuard prismGuard = new PrismGuard() {{
-        setTickDuration(200);
-    }};
+    private PrismGuard prismGuard = null;
 
     public Void(Location spawnLocation) {
         this(spawnLocation, "Void", 100000, 0.24f, 20, 3000, 4000);
@@ -109,6 +107,8 @@ public class Void extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+        prismGuard = new PrismGuard(AbstractAbilityBuilder.create("voidPrismGuard").pve());
+        prismGuard.init(prismGuard.getBuilder());
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
             float newHealth = 55000;

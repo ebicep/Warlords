@@ -154,7 +154,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "ROD DMG",
@@ -174,7 +174,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                     return currentDamageValue * damageBuff;
                 }
             });
-            return super.onActivate(wp);
+            return super.onActivateInternal(wp);
         }
 
         public float getDamageBuff() {

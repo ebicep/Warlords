@@ -25,7 +25,7 @@ public class EnergySeerConjurer extends AbstractEnergySeer<EnergySeerConjurer.En
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
     }

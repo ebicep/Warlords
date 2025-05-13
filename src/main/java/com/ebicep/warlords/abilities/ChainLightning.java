@@ -75,7 +75,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageReductionPerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionPerBounce"), float.class);
         this.maxDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageReduction"), float.class);
@@ -260,7 +260,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.chainDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chainDamage"), Value.RangedValueCritable.class);
+            this.chainDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("chainDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getChainDamage() {

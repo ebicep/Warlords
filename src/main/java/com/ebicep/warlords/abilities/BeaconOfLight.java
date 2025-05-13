@@ -28,7 +28,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
@@ -102,7 +102,10 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.beaconHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("beaconHealing"), Value.RangedValueCritable.class);
+            this.beaconHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("beaconHealing"),
+                    Value.RangedValueCritable.class
+            );
         }
 
     }

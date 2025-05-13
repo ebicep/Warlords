@@ -381,6 +381,7 @@ public class EventMithra extends AbstractMob implements BossMob {
         AbstractGroundSlam groundSlam = new GroundSlamBerserker(AbstractAbilityBuilder.create("mithraGroundSlamBerserker").pve().startCooldown(10).startCooldown(5)) {{
             setTrueDamage(true);
         }};
+        groundSlam.init(groundSlam.getBuilder());
         groundSlam.onActivate(warlordsNPC);
     }
 

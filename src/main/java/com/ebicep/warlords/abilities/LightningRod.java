@@ -45,7 +45,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.knockbackRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("knockbackRadius"), int.class);
         this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), int.class);
@@ -64,7 +64,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         List<WarlordsEntity> hit = kbHealEnergy(wp);
         if (pveMasterUpgrade) {
             damageIncreaseOnUse(wp);
@@ -193,7 +193,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.healthRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healthRestore"), Value.SetValue.class);
+            this.healthRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("healthRestore"), Value.SetValue.class);
         }
 
         public Value.SetValue getHealthRestore() {

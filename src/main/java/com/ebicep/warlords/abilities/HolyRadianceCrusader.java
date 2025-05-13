@@ -39,7 +39,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.markRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("markRadius"), int.class);
         this.markDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("markDuration"), int.class);
@@ -177,7 +177,10 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.radianceHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radianceHealing"), Value.RangedValueCritable.class);
+            this.radianceHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("radianceHealing"),
+                    Value.RangedValueCritable.class
+            );
         }
 
     }

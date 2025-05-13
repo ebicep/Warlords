@@ -293,7 +293,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private PveOption pveOption;
 
         public EnderStones() {
-            super(AbstractAbilityBuilder.create("enderStones").pve().startFullCooldown());
+            super(AbstractAbilityBuilder.create("enavurisEnderStones").pve().startFullCooldown());
         }
 
         @Override
@@ -384,7 +384,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
             new GameRunnable(shooter.getGame()) {
                 int fired = 0;
 
@@ -517,7 +517,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private List<BlockDisplay> blockDisplays = new ArrayList<>();
 
         public Imprisonment() {
-            super(AbstractAbilityBuilder.create("imprisonment").pve().startNoCooldown());
+            super(AbstractAbilityBuilder.create("enavurisImprisonment").pve().startNoCooldown());
         }
 
         @Override

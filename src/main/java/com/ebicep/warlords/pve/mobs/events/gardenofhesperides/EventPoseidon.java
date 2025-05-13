@@ -61,7 +61,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 maxMeleeDamage,
                 new EarthenSpike(AbstractAbilityBuilder.create("poseidonEarthenSpike").pve().startCooldown(6)) {
                     @Override
-                    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+                    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
                         float rad = 10;
                         for (WarlordsEntity spikeTarget : PlayerFilter

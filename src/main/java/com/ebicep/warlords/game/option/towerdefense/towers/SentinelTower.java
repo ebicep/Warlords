@@ -90,7 +90,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 1).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, GuardianBeam.BEAM_ITEM, 3);
@@ -145,7 +145,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 if (target == null || target.isDead()) {
                     warlordsTower.getTower().getEnemyMobs(range, 1).forEach(warlordsNPC -> {
@@ -240,7 +240,7 @@ public class SentinelTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower abstractTower = warlordsTower.getTower();
                 abstractTower.getTowers(range)

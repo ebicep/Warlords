@@ -207,7 +207,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -305,7 +305,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.totemHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("totemHealing"), Value.RangedValueCritable.class);
+            this.totemHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("totemHealing"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getTotemHealing() {

@@ -20,7 +20,7 @@ public class EnergySeerSentinel extends AbstractEnergySeer<AbstractEnergySeer.En
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageResistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageResistance"), int.class);
     }

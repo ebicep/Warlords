@@ -43,7 +43,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.leechDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechDuration"), int.class);
         this.leechAllyAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAllyAmount"), float.class);
@@ -208,7 +208,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

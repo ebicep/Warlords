@@ -43,7 +43,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.damageReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionPercent"), float.class);
@@ -66,7 +66,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.icebarrier.activation", 2, 1);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ICE", IceBarrier.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {

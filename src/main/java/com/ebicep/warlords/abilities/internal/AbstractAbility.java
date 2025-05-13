@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -93,12 +94,33 @@ public abstract class AbstractAbility implements AbilityIcon {
     private final AbstractAbilityBuilder builder;
     private boolean updateItem = true;
 
+    private boolean initialized = false;
+
     public AbstractAbility(AbstractAbilityBuilder builder) {
         this.builder = builder;
-        init(builder);
     }
 
-    protected void init(AbstractAbilityBuilder builder) {
+    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        if (!initialized) {
+            try {
+                throw new Exception("Ability not initialized: " + this.getClass().getSimpleName() + " - " + builder);
+            } catch (Exception e) {
+                ChatUtils.MessageType.GAME.sendErrorMessage(e);
+            }
+            init(builder);
+        }
+        return onActivateInternal(wp);
+    }
+
+    public AbstractAbilityBuilder getBuilder() {
+        return builder;
+    }
+
+    public void updateDescription(Player player) {
+
+    }
+
+    public void init(AbstractAbilityBuilder builder) {
         List<String> namespaces = builder.getNamespaces();
         this.name = ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("name"), String.class);
         Float cooldownValue = builder.getCooldown() != null ?
@@ -110,20 +132,19 @@ public abstract class AbstractAbility implements AbilityIcon {
                 builder.getEnergyCost() != null ? builder.getEnergyCost() :
                 ConfigManager.getAbilityConfigValue(namespaces, builder.getAppendedFieldName("energyCost"), float.class)
         );
-    }
-
-    public AbstractAbilityBuilder getBuilder() {
-        return builder;
-    }
-
-    public void updateDescription(Player player) {
-
+        if (this instanceof Damages<?> damages) {
+            damages.getDamageValues().init(builder);
+        }
+        if (this instanceof Heals<?> heals) {
+            heals.getHealValues().init(builder);
+        }
+        initialized = true;
     }
 
     /**
      * @return whether the ability has to go on cooldown after activation.
      */
-    public abstract boolean onActivate(@Nonnull WarlordsEntity wp);
+    protected abstract boolean onActivateInternal(@Nonnull WarlordsEntity wp);
 
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return null;

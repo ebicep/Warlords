@@ -26,7 +26,7 @@ public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends Abs
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
         this.bounceRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bounceRange"), int.class);
@@ -34,7 +34,7 @@ public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends Abs
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity warlordsPlayer) {
         Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {

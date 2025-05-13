@@ -47,13 +47,13 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class));
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
         float radius = hitbox.getCalculatedValue();
         PlayerFilter.entitiesAround(wp, radius, radius, radius)

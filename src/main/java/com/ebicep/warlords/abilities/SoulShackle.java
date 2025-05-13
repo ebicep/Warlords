@@ -52,7 +52,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.shackleRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shackleRange"), int.class);
         this.shacklePool = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shacklePool"), float.class);
@@ -82,7 +82,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         boolean hasShackled = false;
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
@@ -134,7 +134,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         shacklePlayer(wp, shackleTarget, silenceDuration);
         if (pveMasterUpgrade2) {
             shackleTarget.getCooldownManager()
-                         .addCooldown(new RegularCooldown<>("Oppressive Chains", "OPP", SoulShackle.class, new SoulShackle(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                         .addCooldown(new RegularCooldown<>("Oppressive Chains", "OPP", SoulShackle.class, null, wp, CooldownTypes.DEBUFF, cooldownManager -> {
                          }, 3 * 20
                          ) {
 
@@ -149,7 +149,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     public static void shacklePlayer(WarlordsEntity wp, WarlordsEntity shackleTarget, int tickDuration) {
         shackleTarget.getCooldownManager().removeCooldown(SoulShackle.class, false);
         shackleTarget.getCooldownManager()
-                     .addCooldown(new RegularCooldown<>("Shackle Silence", "SILENCE", SoulShackle.class, new SoulShackle(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                     .addCooldown(new RegularCooldown<>("Shackle Silence", "SILENCE", SoulShackle.class, null, wp, CooldownTypes.DEBUFF, cooldownManager -> {
                      }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                          if (ticksElapsed == 0) {
                              shackleTarget.getEntity()
@@ -259,7 +259,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.shackleDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shackleDamage"), Value.RangedValueCritable.class);
+            this.shackleDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("shackleDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getShackleDamage() {

@@ -69,8 +69,7 @@ public class EventForsakenRespite extends AbstractMob implements BossMinionMob, 
     private static class LeechAll extends AbstractPveAbility {
 
         public LeechAll() {
-            super(AbstractAbilityBuilder.create("forsakenRespiteEarthlivingWeapon").pve()
-            );
+            super(AbstractAbilityBuilder.create("forsakenRespiteLeechAll").pve());
         }
 
         @Override

@@ -107,7 +107,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower abstractTower = warlordsTower.getTower();
                 abstractTower.getTowers(range)
@@ -143,7 +143,7 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower tower = warlordsTower.getTower();
                 tower.getEnemyMobs(range).forEach(warlordsNPC -> {

@@ -28,7 +28,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location location = wp.getLocation();
         Utils.playGlobalSound(location, Sound.ENTITY_ZOMBIFIED_PIGLIN_ANGRY, 1, 0.5f);
         Utils.playGlobalSound(location, "paladin.holyradiance.activation", 0.8f, 0.6f);
@@ -65,7 +65,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.zombificationHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldName("zombificationHealing"),
+                    builder.getAppendedFieldNameHealing("zombificationHealing"),
                     Value.SetValue.class
             );
         }

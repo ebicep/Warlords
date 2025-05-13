@@ -57,7 +57,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.floatingOrbRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("floatingOrbRadius"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -97,7 +97,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
         OrbsOfLifeData data = new OrbsOfLifeData(this);
         PersistentCooldown<OrbsOfLifeData> orbsOfLifeCooldown = new PersistentCooldown<>(name, "ORBS", OrbsOfLifeData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -377,7 +377,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.orbHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orbHealing"), Value.SetValue.class);
+            this.orbHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("orbHealing"), Value.SetValue.class);
         }
 
         public Value.SetValue getOrbHealing() {

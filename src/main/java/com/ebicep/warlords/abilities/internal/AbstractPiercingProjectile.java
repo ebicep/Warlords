@@ -49,7 +49,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), double.class);
         this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), double.class);
@@ -58,7 +58,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
         fire(shooter, shooter.getEyeLocation());
         return true;
     }

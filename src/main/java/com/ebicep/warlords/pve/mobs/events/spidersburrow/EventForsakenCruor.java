@@ -96,7 +96,7 @@ public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Sp
                                            name,
                                            "WND",
                                            WoundingStrikeBerserker.class,
-                                           new WoundingStrikeBerserker(),
+                                           null,
                                            wp,
                                            CooldownTypes.DEBUFF,
                                            cooldownManager -> {

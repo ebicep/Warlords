@@ -46,7 +46,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
         this.vindTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindTickDuration"), int.class);
@@ -73,7 +73,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
         new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), radius, new CircumferenceEffect(Particle.EFFECT, Particle.DUST).particlesPerCircumference(2)).playEffects();

@@ -50,7 +50,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxHealthDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHealthDamage"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -87,7 +87,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
         EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.ITEM_SLIME, 1);
@@ -265,7 +265,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.miasmaDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("miasmaDamage"), Value.SetValue.class);
+            this.miasmaDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("miasmaDamage"), Value.SetValue.class);
         }
 
         public Value.SetValue getMiasmaDamage() {

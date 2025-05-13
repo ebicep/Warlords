@@ -49,7 +49,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageAbsorption = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageAbsorption"), float.class));
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -90,7 +90,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "arcanist.contagiousfacade.activation", 2, 1.4f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, 2, 0.7f);
         EffectUtils.playHelixAnimation(wp.getLocation().add(0, 0.25, 0), 3, Particle.CHERRY_LEAVES, 3, 20);

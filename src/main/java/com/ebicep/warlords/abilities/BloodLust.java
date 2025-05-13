@@ -40,7 +40,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.damageConvertPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageConvertPercent"), int.class);
@@ -69,9 +69,10 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.bloodlust.activation", 2, 1);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LUST", BloodLust.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        BloodLustData data = new BloodLustData();
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "LUST", BloodLustData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 3 == 0) {
                 EffectUtils.displayParticle(Particle.DUST,
@@ -136,6 +137,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 attacker.addInstance(InstanceBuilder.healing().ability(BloodLust.this).source(attacker).value(healAmount).flags(InstanceFlags.NO_HIT_SOUND))
                         .ifPresent(finalEvent -> {
                             stats.amountHealed += finalEvent.getValue();
+                            data.amountHealed += finalEvent.getValue();
                         });
             }
         });
@@ -176,6 +178,16 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
 
     public void setHealReductionPercent(float healReductionPercent) {
         this.healReductionPercent = healReductionPercent;
+    }
+
+    public static class BloodLustData {
+
+        private float amountHealed = 0;
+
+        public float getAmountHealed() {
+            return amountHealed;
+        }
+
     }
 
     public static class BloodLustStats extends AbstractAbilityStats<BloodLust, BloodLustStats> {

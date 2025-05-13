@@ -155,7 +155,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             Runnable cancelSpeed = wp.addSpeedModifier(wp, name, 50, 10 * 20, "BASE");
             List<FloatModifiable.FloatModifier> modifiers = wp
                     .getAbilities()

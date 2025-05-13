@@ -46,8 +46,12 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         super(AbstractAbilityBuilder.create("earthlivingWeapon").pvp());
     }
 
+    public EarthlivingWeapon(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.procChance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("procChance"), float.class);
@@ -73,7 +77,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "EARTH", EarthlivingData.class, new EarthlivingData(), wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
@@ -254,7 +258,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.earthlivingHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldName("earthlivingHealing"),
+                    builder.getAppendedFieldNameHealing("earthlivingHealing"),
                     Value.RangedValueCritable.class
             );
         }

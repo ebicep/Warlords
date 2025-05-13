@@ -81,7 +81,7 @@ public class SlimyChess extends AbstractMob implements AdvancedMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
 
 
             for (WarlordsEntity we : PlayerFilter

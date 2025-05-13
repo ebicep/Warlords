@@ -41,7 +41,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.duration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("duration"), int.class);
         this.maxHeal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHeal"), float.class);
@@ -61,7 +61,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 15);
         if (targetBlock.getType() == Material.AIR) {
             return false;

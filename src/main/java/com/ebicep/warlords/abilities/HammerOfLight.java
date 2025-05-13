@@ -62,7 +62,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -95,7 +95,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
@@ -457,7 +457,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.hammerDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hammerDamage"), Value.RangedValueCritable.class);
+            this.hammerDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hammerDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getHammerDamage() {
@@ -479,7 +479,10 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.hammerHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hammerHealing"), Value.RangedValueCritable.class);
+            this.hammerHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("hammerHealing"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getHammerHealing() {

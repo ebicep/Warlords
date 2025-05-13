@@ -52,7 +52,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.slowDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowDuration"), int.class);
         this.slowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowness"), int.class);
@@ -61,9 +61,9 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         if (pveMasterUpgrade2) {
-            return super.onActivate(wp);
+            return super.onActivateInternal(wp);
         }
         Utils.playGlobalSound(wp.getLocation(), "mage.freezingbreath.activation", 2, 1);
         Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
@@ -277,7 +277,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.freezingBreathDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldName("freezingBreathDamage"),
+                    builder.getAppendedFieldNameDamage("freezingBreathDamage"),
                     Value.RangedValueCritable.class
             );
         }

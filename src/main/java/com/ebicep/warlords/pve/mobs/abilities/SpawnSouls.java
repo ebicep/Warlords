@@ -50,8 +50,8 @@ public class SpawnSouls extends AbstractSpawnMobAbility {
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        boolean activate = super.onActivate(wp);
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        boolean activate = super.onActivateInternal(wp);
         if (activate) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
         }

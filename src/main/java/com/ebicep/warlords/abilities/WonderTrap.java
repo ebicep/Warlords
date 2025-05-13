@@ -32,7 +32,7 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
@@ -41,7 +41,7 @@ public class WonderTrap extends AbstractAbility implements AbilityStats<WonderTr
     //        //description = "PLACEHOLDER";
     //    }
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
         Trap trap = new Trap(wp.getLocation(), wp, 200, 40, 3);
         trap.runTaskTimer(Warlords.getInstance(), 0, 0);

@@ -43,7 +43,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.wounding = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("wounding"), int.class);
         this.woundingDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("woundingDurationInTicks"), int.class);
@@ -198,7 +198,7 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

@@ -36,8 +36,9 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
+        return super.onActivateInternal(shooter);
     }
 
     @Override
@@ -132,9 +133,8 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.6f);
-        return super.onActivate(shooter);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("beamDamage"), Value.RangedValueCritable.class);
+            this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("beamDamage"), Value.RangedValueCritable.class);
         }
 
         public List<Float> getDamageMultipliers() {

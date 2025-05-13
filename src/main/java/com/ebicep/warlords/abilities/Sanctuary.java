@@ -45,7 +45,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
         this.additionalDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalDamageReduction"), int.class);
@@ -73,7 +73,7 @@ public class Sanctuary extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location loc = wp.getLocation();
         Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1.8f);
         Utils.playGlobalSound(loc, "arcanist.sanctuary.activation", 2, 0.55f);

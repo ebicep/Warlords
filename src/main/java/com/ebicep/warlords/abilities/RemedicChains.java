@@ -44,7 +44,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.healingMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingMultiplier"), float.class);
         this.allyDamageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyDamageIncrease"), float.class);
@@ -77,7 +77,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Set<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, castRange, castRange, castRange)
                                                         .aliveTeammatesOfExcludingSelf(wp)
                                                         .closestFirst(wp)
@@ -283,7 +283,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chainHealing"), Value.RangedValueCritable.class);
+            this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("chainHealing"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getChainHealing() {

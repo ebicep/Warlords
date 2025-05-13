@@ -41,7 +41,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.energyPerSecond = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyPerSecond"), float.class);
@@ -64,10 +64,11 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
-        wp.getCooldownManager().removeCooldown(AvengersWrath.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "WRATH", AvengersWrath.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        wp.getCooldownManager().removeCooldown(AvengersWrathData.class, false);
+        AvengersWrathData data = new AvengersWrathData();
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "WRATH", AvengersWrathData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 4 == 0) {
                 EffectUtils.displayParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 6, 0.3F, 0.1F, 0.3F, 0.2F);
@@ -82,6 +83,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 }
                 WarlordsEntity warlordsEntity = event.getWarlordsEntity();
                 stats.targetsStruckDuringWrath++;
+                data.targetsStruckDuringWrath++;
                 EnumSet<InstanceFlags> flags = EnumSet.of(InstanceFlags.AVENGER_WRATH_STRIKE);
                 if (event.getFlags().contains(InstanceFlags.STRIKE_IN_CONS)) {
                     flags.add(InstanceFlags.STRIKE_IN_CONS);
@@ -89,6 +91,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                 if (pveMasterUpgrade2) {
                     warlordsEntity.addInstance(InstanceBuilder.damage().cause("Avenger's Strike").source(wp).value(event).flags(flags));
                     stats.extraTargetsStruck++;
+                    data.extraTargetsStruck++;
                 }
                 for (WarlordsEntity wrathTarget : PlayerFilter.entitiesAround(warlordsEntity, hitRadius, hitRadius, hitRadius)
                                                               .aliveEnemiesOf(wp)
@@ -97,6 +100,8 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                                                               .limit(maxTargets)) {
                     stats.extraTargetsStruck++;
                     stats.targetsStruckDuringWrath++;
+                    data.extraTargetsStruck++;
+                    data.targetsStruckDuringWrath++;
                     wrathTarget.addInstance(InstanceBuilder.damage().cause("Avenger's Strike").source(wp).value(event).flags(flags));
                     Bukkit.getPluginManager().callEvent(new WarlordsStrikeEvent(wp, AvengersWrath.this, wrathTarget));
                     wrathTarget.subtractEnergy(name, 10, true);
@@ -107,6 +112,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (isKiller) {
                     stats.targetsKilledDuringWrath++;
+                    data.targetsKilledDuringWrath++;
                 }
             }
 
@@ -160,6 +166,26 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
 
     public void setHitRadius(int hitRadius) {
         this.hitRadius = hitRadius;
+    }
+
+    public static class AvengersWrathData {
+
+        private int extraTargetsStruck = 0;
+        private int targetsStruckDuringWrath = 0;
+        private int targetsKilledDuringWrath = 0;
+
+        public int getExtraTargetsStruck() {
+            return extraTargetsStruck;
+        }
+
+        public int getTargetsStruckDuringWrath() {
+            return targetsStruckDuringWrath;
+        }
+
+        public int getTargetsKilledDuringWrath() {
+            return targetsKilledDuringWrath;
+        }
+
     }
 
     public static class AvengersWrathStats extends AbstractAbilityStats<AvengersWrath, AvengersWrathStats> {

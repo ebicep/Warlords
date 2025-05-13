@@ -28,7 +28,7 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
@@ -112,7 +112,7 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.waveDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveDamage"), Value.RangedValueCritable.class);
+            this.waveDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("waveDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getWaveDamage() {

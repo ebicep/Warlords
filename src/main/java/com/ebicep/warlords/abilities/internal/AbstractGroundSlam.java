@@ -33,7 +33,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
         this.slamSize = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slamSize"), float.class));
@@ -50,7 +50,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         UUID abilityUUID = UUID.randomUUID();

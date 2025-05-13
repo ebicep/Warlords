@@ -48,7 +48,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.puddleRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleRadius"), float.class));
         this.puddleTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleTickDuration"), int.class);
@@ -71,7 +71,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location location = wp.getLocation();
         Vector speed = wp.getLocation().getDirection().multiply(SPEED);
         Utils.spawnThrowableProjectile(wp.getGame(), Utils.spawnArmorStand(location, armorStand -> {
@@ -219,7 +219,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.elixirDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("elixirDamage"), Value.RangedValueCritable.class);
+            this.elixirDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("elixirDamage"), Value.RangedValueCritable.class);
         }
 
     }
@@ -237,8 +237,14 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.elixirHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("elixirHealing"), Value.RangedValueCritable.class);
-            this.elixirDOTHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("elixirDOTHealing"), Value.RangedValueCritable.class);
+            this.elixirHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("elixirHealing"),
+                    Value.RangedValueCritable.class
+            );
+            this.elixirDOTHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("elixirDOTHealing"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getElixirHealing() {

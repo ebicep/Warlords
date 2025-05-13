@@ -168,7 +168,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
 
 
             for (WarlordsEntity enemy : PlayerFilter

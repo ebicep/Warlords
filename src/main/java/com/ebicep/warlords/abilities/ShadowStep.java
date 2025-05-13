@@ -41,7 +41,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.fallDamageNegation = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallDamageNegation"), int.class);
     }
@@ -57,7 +57,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location playerLoc = wp.getLocation();
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
         Utils.playGlobalSound(playerLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 2);
@@ -214,7 +214,10 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.shadowStepDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shadowStepDamage"), Value.RangedValueCritable.class);
+            this.shadowStepDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("shadowStepDamage"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getShadowStepDamage() {

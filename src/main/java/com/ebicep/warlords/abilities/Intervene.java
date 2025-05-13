@@ -45,7 +45,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.maxDamagePrevented = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamagePrevented"), float.class);
@@ -89,7 +89,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         List<InterveneData> venes = new ArrayList<>();
         for (WarlordsEntity veneTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                                      .aliveTeammatesOfExcludingSelf(wp)
@@ -107,7 +107,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             InterveneData data = new InterveneData(this, wp, veneTarget, maxDamagePrevented);
             venes.add(data);
             // Removing all other intervenes
-            wp.getCooldownManager().removeIf(cd -> cd.getCooldownClass() == Intervene.class && veneTarget.getCooldownManager().hasCooldown(cd.getCooldownObject()));
+            wp.getCooldownManager().removeIf(cd -> cd.getCooldownClass() == InterveneData.class && veneTarget.getCooldownManager().hasCooldown(cd.getCooldownObject()));
             veneTarget.getCooldownManager().removeIf(cd -> {
                 if (cd.getCooldownClass() == Intervene.class) {
                     cd.getFrom()

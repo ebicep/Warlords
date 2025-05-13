@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AbstractAbilityBuilder {
@@ -18,6 +19,15 @@ public class AbstractAbilityBuilder {
 
     public AbstractAbilityBuilder(String fieldName) {
         this.fieldName = fieldName;
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractAbilityBuilder{" +
+                "namespaces=" + namespaces +
+                ", fieldName='" + fieldName + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     public AbstractAbilityBuilder pvp() {
@@ -115,6 +125,20 @@ public class AbstractAbilityBuilder {
             sb.append(element);
         }
         return sb.toString();
+    }
+
+    public String getAppendedFieldNameDamage(String... elements) {
+        List<String> e = new ArrayList<>();
+        e.addFirst("damageValues");
+        e.addAll(Arrays.asList(elements));
+        return getAppendedFieldName(e.toArray(new String[0]));
+    }
+
+    public String getAppendedFieldNameHealing(String... elements) {
+        List<String> e = new ArrayList<>();
+        e.addFirst("healingValues");
+        e.addAll(Arrays.asList(elements));
+        return getAppendedFieldName(e.toArray(new String[0]));
     }
 
 }

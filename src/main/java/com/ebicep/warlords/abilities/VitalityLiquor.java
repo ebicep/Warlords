@@ -45,7 +45,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.duration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("duration"), int.class);
         this.vitalityRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vitalityRange"), int.class);
@@ -73,7 +73,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
         new FallingBlockWaveEffect(wp.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
@@ -190,8 +190,11 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.liquorHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("liquorHealing"), Value.RangedValueCritable.class);
-            this.waveHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveHealing"), Value.RangedValueCritable.class);
+            this.liquorHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("liquorHealing"),
+                    Value.RangedValueCritable.class
+            );
+            this.waveHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("waveHealing"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getLiquorHealing() {

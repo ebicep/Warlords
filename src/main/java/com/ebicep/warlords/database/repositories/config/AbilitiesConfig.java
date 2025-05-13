@@ -1,9 +1,9 @@
 package com.ebicep.warlords.database.repositories.config;
 
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 public class AbilitiesConfig implements ConfigManager.Config {
@@ -49,13 +49,49 @@ public class AbilitiesConfig implements ConfigManager.Config {
         return result.value;
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> T defaultValue(Class<T> type) {
+        if (type.equals(boolean.class)) {
+            return (T) Boolean.FALSE;
+        } else if (type.equals(int.class)) {
+            return (T) Integer.valueOf(0);
+        } else if (type.equals(float.class)) {
+            return (T) Float.valueOf(0.0f);
+        } else if (type.equals(double.class)) {
+            return (T) Double.valueOf(0.0);
+        } else if (type.equals(long.class)) {
+            return (T) Long.valueOf(0L);
+        } else if (type.equals(byte.class)) {
+            return (T) Byte.valueOf((byte) 0);
+        } else if (type.equals(short.class)) {
+            return (T) Short.valueOf((short) 0);
+        } else if (type.equals(char.class)) {
+            return (T) Character.valueOf('\0');
+        }
+
+        if (type.equals(String.class)) {
+            return (T) "UNKNOWN";
+        }
+
+        if (type.equals(Value.RangedValue.class)) {
+            return (T) new Value.RangedValue(0, 0);
+        } else if (type.equals(Value.RangedValueCritable.class)) {
+            return (T) new Value.RangedValueCritable(0, 0, 0, 0);
+        } else if (type.equals(Value.SetValue.class)) {
+            return (T) new Value.SetValue(0);
+        }
+
+        return null;
+    }
+
     /**
      * Gets a value from the abilities configuration based on namespace and a dot-separated key path.
      *
      * @param namespace The namespace to look in (e.g., "pvp", "pve")
-     * @param key The dot-separated key path (e.g., "ArcaneShield.damageValues.strikeDamage")
+     * @param key       The dot-separated key path (e.g., "ArcaneShield.damageValues.strikeDamage")
      * @param fieldType The expected type of the value
-     * @param <T> The type parameter for the return value
+     * @param <T>       The type parameter for the return value
+     *
      * @return The value cast to the requested type, or a default value if not found
      */
     private <T> Result<T> getValue(String namespace, String key, Class<T> fieldType) {
@@ -96,7 +132,6 @@ public class AbilitiesConfig implements ConfigManager.Config {
         }
 
         return new Result<>(cast(value, fieldType), ValueResult.SUCCESS);
-
     }
 
     private boolean isSimpleType(Class<?> type) {
@@ -109,31 +144,33 @@ public class AbilitiesConfig implements ConfigManager.Config {
                 type.equals(Long.class);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T defaultValue(Class<T> type) {
-        if (!type.isPrimitive()) {
-            return null;
+    private <T> Result<T> buildValueObject(Class<T> type, Document doc) {
+        try {
+            T value = null;
+            if (type.equals(Value.RangedValue.class)) {
+                value = type.getConstructor(float.class, float.class)
+                            .newInstance(
+                                    getFloatValue(doc.get("min")),
+                                    getFloatValue(doc.get("max"))
+                            );
+            } else if (type.equals(Value.RangedValueCritable.class)) {
+                value = type.getConstructor(float.class, float.class, float.class, float.class)
+                            .newInstance(
+                                    getFloatValue(doc.get("min")),
+                                    getFloatValue(doc.get("max")),
+                                    getFloatValue(doc.get("critChance")),
+                                    getFloatValue(doc.get("critMultiplier"))
+                            );
+            } else if (type.equals(Value.SetValue.class)) {
+                value = type.getConstructor(float.class)
+                            .newInstance(getFloatValue(doc.get("value")));
+            } else {
+                return new Result<>(ValueResult.INVALID_OBJECT);
+            }
+            return new Result<>(value, ValueResult.SUCCESS);
+        } catch (Exception e) {
+            return new Result<>(ValueResult.INVALID_OBJECT);
         }
-
-        if (type.equals(boolean.class)) {
-            return (T) Boolean.FALSE;
-        } else if (type.equals(int.class)) {
-            return (T) Integer.valueOf(0);
-        } else if (type.equals(float.class)) {
-            return (T) Float.valueOf(0.0f);
-        } else if (type.equals(double.class)) {
-            return (T) Double.valueOf(0.0);
-        } else if (type.equals(long.class)) {
-            return (T) Long.valueOf(0L);
-        } else if (type.equals(byte.class)) {
-            return (T) Byte.valueOf((byte) 0);
-        } else if (type.equals(short.class)) {
-            return (T) Short.valueOf((short) 0);
-        } else if (type.equals(char.class)) {
-            return (T) Character.valueOf('\0');
-        }
-
-        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -172,58 +209,14 @@ public class AbilitiesConfig implements ConfigManager.Config {
         return defaultValue(type);
     }
 
-    private <T> Result<T> buildValueObject(Class<T> type, Document doc) {
-        try {
-            T instance = type.getDeclaredConstructor().newInstance();
-
-            for (String fieldName : doc.keySet()) {
-                try {
-                    Field field = type.getDeclaredField(fieldName);
-                    field.setAccessible(true);
-
-                    Object value = doc.get(fieldName);
-                    value = convertValueForField(value, field.getType());
-
-                    field.set(instance, value);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    ChatUtils.MessageType.CONFIG.sendErrorMessage("Failed to set field " + fieldName + " on " + type.getName() + ": " + e.getMessage());
-                }
-            }
-
-            return new Result<>(instance, ValueResult.SUCCESS);
-        } catch (Exception e) {
-            return new Result<>(ValueResult.INVALID_OBJECT);
+    private float getFloatValue(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).floatValue();
+        } else if (value instanceof String) {
+            return Float.parseFloat((String) value);
+        } else {
+            throw new IllegalArgumentException("Cannot convert " + value + " to float");
         }
-    }
-
-    private Object convertValueForField(Object value, Class<?> fieldType) {
-        if (value == null) {
-            return null;
-        }
-
-        if (fieldType.isAssignableFrom(value.getClass())) {
-            return value;
-        }
-
-        // Handle numeric conversions
-        if (value instanceof Number num) {
-            if (fieldType.equals(int.class) || fieldType.equals(Integer.class)) {
-                return num.intValue();
-            } else if (fieldType.equals(float.class) || fieldType.equals(Float.class)) {
-                return num.floatValue();
-            } else if (fieldType.equals(double.class) || fieldType.equals(Double.class)) {
-                return num.doubleValue();
-            } else if (fieldType.equals(long.class) || fieldType.equals(Long.class)) {
-                return num.longValue();
-            }
-        }
-
-        // Handle document to complex object conversion
-        if (value instanceof Document && !isSimpleType(fieldType)) {
-            return buildValueObject(fieldType, (Document) value);
-        }
-
-        return value;
     }
 
     enum ValueResult {

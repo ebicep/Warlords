@@ -22,17 +22,7 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
-    public boolean canReduceCooldowns() {
-        return pveMasterUpgrade2;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
@@ -66,6 +56,16 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
         }
         playCastEffect(wp);
         return true;
+    }
+
+    @Override
+    public boolean canReduceCooldowns() {
+        return pveMasterUpgrade2;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override

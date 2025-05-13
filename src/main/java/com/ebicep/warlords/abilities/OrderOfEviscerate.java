@@ -49,7 +49,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.maxDamageThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageThreshold"), float.class);
@@ -103,7 +103,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", speedBuff, tickDuration, "BASE");
         wp.getCooldownManager().removeCooldown(OrderOfEviscerateData.class, false);

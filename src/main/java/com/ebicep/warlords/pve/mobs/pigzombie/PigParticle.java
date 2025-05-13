@@ -81,7 +81,7 @@ public class PigParticle extends AbstractMob implements ChampionMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 6, 6, 6)
                     .aliveTeammatesOfExcludingSelf(wp)

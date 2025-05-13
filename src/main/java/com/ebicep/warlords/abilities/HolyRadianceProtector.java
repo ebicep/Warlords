@@ -39,7 +39,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.markRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("markRadius"), float.class));
         this.markDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("markDuration"), int.class);
@@ -178,9 +178,12 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.radianceHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radianceHealing"), Value.RangedValueCritable.class);
+            this.radianceHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("radianceHealing"),
+                    Value.RangedValueCritable.class
+            );
             this.unrivalledRadianceHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldName("unrivalledRadianceHealing"),
+                    builder.getAppendedFieldNameHealing("unrivalledRadianceHealing"),
                     Value.RangedValue.class
             );
         }

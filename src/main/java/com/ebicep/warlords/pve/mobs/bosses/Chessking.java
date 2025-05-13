@@ -130,7 +130,7 @@ public class Chessking extends AbstractMob implements BossMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, range, range, range)
                     .aliveEnemiesOf(wp)

@@ -42,11 +42,10 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.carrierBonusMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("carrierBonusMultiplier"), float.class);
-        this.runeTimerIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTimerIncrease"), float.class);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
+        giveShield(shooter, shooter);
+        return super.onActivateInternal(shooter);
     }
 
     @Nullable
@@ -122,10 +121,11 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        shooter.playSound(shooter.getLocation(), "mage.firebreath.activation", 2, 0.7f);
-        giveShield(shooter, shooter);
-        return super.onActivate(shooter);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.carrierBonusMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("carrierBonusMultiplier"), float.class);
+        this.runeTimerIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTimerIncrease"), float.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("beamDamage"), Value.RangedValueCritable.class);
+            this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("beamDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getBeamDamage() {

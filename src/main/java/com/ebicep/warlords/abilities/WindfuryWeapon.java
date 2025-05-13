@@ -42,7 +42,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.procChance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("procChance"), float.class);
@@ -67,7 +67,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
         wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
         CalculateSpeed.Modifier shreddingFurySpeed = new CalculateSpeed.Modifier(wp, "Shredding Fury", 0, Integer.MAX_VALUE, Collections.emptyList(), false);

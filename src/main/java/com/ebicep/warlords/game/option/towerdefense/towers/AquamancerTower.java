@@ -91,7 +91,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower tower = warlordsTower.getTower();
                 tower.getEnemyMobs(range, 1).forEach(warlordsNPC -> {

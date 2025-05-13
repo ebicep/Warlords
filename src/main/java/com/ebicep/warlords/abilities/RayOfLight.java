@@ -34,8 +34,10 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        beamPlayer(shooter, shooter);
+        Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
+        return super.onActivateInternal(shooter);
     }
 
     @Nullable
@@ -94,10 +96,8 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        beamPlayer(shooter, shooter);
-        Utils.playGlobalSound(shooter.getLocation(), "arcanist.rayoflightalt.activation", 2, 0.9f);
-        return super.onActivate(shooter);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.rayHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("rayHealing"), Value.RangedValueCritable.class);
+            this.rayHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("rayHealing"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getRayHealing() {

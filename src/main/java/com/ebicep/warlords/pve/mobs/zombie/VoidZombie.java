@@ -105,7 +105,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             float healthDamage = wp.getMaxHealth() * 0.01f;
             wp.addInstance(InstanceBuilder
                     .damage()

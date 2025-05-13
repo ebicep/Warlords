@@ -42,7 +42,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), float.class);
         this.speedDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedDuration"), float.class);
@@ -223,7 +223,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.linkDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkDamage"), Value.RangedValueCritable.class);
+            this.linkDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("linkDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getLinkDamage() {

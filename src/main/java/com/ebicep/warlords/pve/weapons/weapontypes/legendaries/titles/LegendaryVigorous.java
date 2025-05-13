@@ -141,7 +141,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "LegendaryVigorous",
                     "VIGOR",

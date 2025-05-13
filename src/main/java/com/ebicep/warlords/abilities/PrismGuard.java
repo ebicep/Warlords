@@ -55,7 +55,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
         this.bubbleRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bubbleRadius"), int.class);
@@ -90,7 +90,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
         Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.1f);
         // First Particle Sphere
@@ -316,9 +316,9 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.bubbleBaseHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bubbleBaseHealing"), Value.SetValue.class);
+            this.bubbleBaseHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("bubbleBaseHealing"), Value.SetValue.class);
             this.bubbleMissingHealthHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldName("bubbleMissingHealthHealing"),
+                    builder.getAppendedFieldNameHealing("bubbleMissingHealthHealing"),
                     Value.SetValue.class
             );
         }

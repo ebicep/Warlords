@@ -42,7 +42,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), int.class);
         this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), int.class);
@@ -191,7 +191,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

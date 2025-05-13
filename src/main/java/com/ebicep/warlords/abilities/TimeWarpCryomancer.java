@@ -37,12 +37,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
@@ -171,6 +166,11 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
             );
         }
         return true;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override

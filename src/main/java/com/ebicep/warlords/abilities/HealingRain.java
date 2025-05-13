@@ -55,7 +55,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
@@ -82,7 +82,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Block targetBlock = !(wp instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
@@ -268,7 +268,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.rainStrikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("rainStrikeDamage"), Value.RangedValue.class);
+            this.rainStrikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("rainStrikeDamage"), Value.RangedValue.class);
         }
 
     }
@@ -286,7 +286,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.rainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("rainHealing"), Value.RangedValueCritable.class);
+            this.rainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("rainHealing"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getRainHealing() {

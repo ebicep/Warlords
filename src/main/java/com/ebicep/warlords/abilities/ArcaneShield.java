@@ -39,7 +39,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.shieldPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldPercentage"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -56,7 +56,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 1);
         Shield shield = new Shield(name, maxShieldHealth);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ARCA", Shield.class, shield, wp, CooldownTypes.ABILITY, cooldownManager -> {

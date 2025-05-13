@@ -36,7 +36,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.abilityReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("abilityReductionInTicks"), int.class);
         this.additionalReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalReductionInTicks"), int.class);
@@ -126,7 +126,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

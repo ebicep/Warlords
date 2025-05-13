@@ -37,14 +37,14 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         if (!pveMasterUpgrade2) {
-            return super.onActivate(wp);
+            return super.onActivateInternal(wp);
         }
         Location location = wp.getLocation().clone();
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
@@ -125,7 +125,10 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.consecrateDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("consecrateDamage"), Value.RangedValueCritable.class);
+            this.consecrateDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("consecrateDamage"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getConsecrateDamage() {

@@ -43,7 +43,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.selfCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfCooldownReduction"), float.class);
@@ -88,7 +88,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         activeSoulbinding(wp);
         return true;
     }
@@ -399,8 +399,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), Value.SetValue.class);
-            this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), Value.SetValue.class);
+            this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("allyHealing"), Value.SetValue.class);
+            this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("selfHealing"), Value.SetValue.class);
         }
 
         public Value.SetValue getAllyHealing() {

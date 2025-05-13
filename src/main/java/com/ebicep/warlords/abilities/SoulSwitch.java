@@ -54,7 +54,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
@@ -85,7 +85,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         if (wp.getCarriedFlag() != null) {
             wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
             return false;
@@ -273,7 +273,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.switchHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("switchHealing"), Value.RangedValueCritable.class);
+            this.switchHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("switchHealing"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getSwitchHealing() {

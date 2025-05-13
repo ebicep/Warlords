@@ -152,7 +152,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -188,7 +188,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ZOMBIE_AMBIENT, 2, 0.3f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 0.9f);
         // particles
@@ -417,7 +417,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.relentlessArmy = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("relentlessArmy"), Value.RangedValue.class);
+            this.relentlessArmy = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("relentlessArmy"), Value.RangedValue.class);
         }
 
     }

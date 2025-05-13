@@ -24,12 +24,7 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         // pveMasterUpgrade
         AtomicInteger strikesUsed = new AtomicInteger();
         wp.addEnergy(wp, name, energyGiven);
@@ -76,6 +71,11 @@ public class LightInfusionAvenger extends AbstractLightInfusion {
         });
         playCastEffect(wp);
         return true;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override

@@ -57,8 +57,23 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .75f);
     }
 
+    @Nonnull
+    public static MercifulHex getFromHex(WarlordsEntity from) {
+        return from.getSpec()
+                   .getAbilities()
+                   .stream()
+                   .filter(MercifulHex.class::isInstance)
+                   .map(MercifulHex.class::cast)
+                   .findFirst()
+                   .orElseGet(() -> {
+                       MercifulHex mercifulHex = new MercifulHex();
+                       mercifulHex.init(mercifulHex.getBuilder());
+                       return mercifulHex;
+                   });
+    }
+
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
         this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
@@ -69,12 +84,142 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        boolean activate = super.onActivate(shooter);
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        boolean activate = super.onActivateInternal(shooter);
         shooter.addInstance(InstanceBuilder.healing().ability(this).source(shooter).value(healingValues.hexSelfHealing));
         giveMercifulHex(shooter, shooter);
         return activate;
     }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Send a wave of energy forward. The first ")
+                                               .text(maxAlliesHit, NamedTextColor.BLUE)
+                                               .text(" allies hit heal ")
+                                               .heal(healingValues.hexHealing)
+                                               .text(" health and receive ")
+                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
+                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text("; subsequent allies are healed for only ")
+                                               .percent(subsequentReduction, NamedTextColor.GREEN)
+                                               .text(". The first enemy hit takes ")
+                                               .damage(damageValues.hexDamage)
+                                               .text(" damage. You also heal for ")
+                                               .heal(healingValues.hexSelfHealing)
+                                               .text(" and receive ")
+                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
+                                               .text(" stack of ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Each stack of ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text(" heals ")
+                                               .heal(healingValues.hexDOTHealing)
+                                               .text(" health every ")
+                                               .durationTicks(ticksBetweenDot)
+                                               .text(" for ")
+                                               .durationTicks(tickDuration * 2)
+                                               .text(". Stacks up to")
+                                               .text(maxStacks, NamedTextColor.BLUE)
+                                               .text(" times.")
+                                               .maxRange(maxDistance)
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new MercifulHexBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public MercifulHexStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getMaxStacks() {
+        return maxStacks;
+    }
+
+    public int getSubsequentReduction() {
+        return subsequentReduction;
+    }
+
+    public void setSubsequentReduction(int subsequentReduction) {
+        this.subsequentReduction = subsequentReduction;
+    }
+
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    public static class DamageValues implements Value.ValueHolder {
+
+        private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(186, 250, 20, 180);
+
+        private final List<Value> values = List.of(hexDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getHexDamage() {
+            return hexDamage;
+        }
+
+    }
+
+    public static class HealingValues implements Value.ValueHolder {
+
+        private Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(229, 313, 20, 180);
+
+        private Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(160, 219, 20, 180);
+
+        private Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
+
+        private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.hexHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("hexHealing"), Value.RangedValueCritable.class);
+            this.hexSelfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("hexSelfHealing"),
+                    Value.RangedValueCritable.class
+            );
+            this.hexDOTHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("hexDOTHealing"), Value.RangedValue.class);
+        }
+
+        public Value.RangedValueCritable getHexHealing() {
+            return hexHealing;
+        }
+
+        public Value.RangedValueCritable getHexSelfHealing() {
+            return hexSelfHealing;
+        }
+
+        public Value.RangedValue getHexDOTHealing() {
+            return hexDOTHealing;
+        }
+
+    }
+
 
     @Override
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
@@ -114,25 +259,30 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         });
     }
 
+
     @Nullable
     @Override
     protected String getActivationSound() {
         return "arcanist.mercifulhexalt.activation";
     }
 
+
     @Override
     protected float getSoundVolume() {
         return 2;
     }
+
 
     @Override
     protected float getSoundPitch() {
         return 1.2f;
     }
 
+
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
     }
+
 
     @Override
     protected int onHit(@Nonnull InternalProjectile projectile, @Nullable WarlordsEntity hit) {
@@ -150,15 +300,18 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         return playersHit;
     }
 
+
     @Override
     protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
         return false;
     }
 
+
     @Override
     protected boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block) {
         return true;
     }
+
 
     @Override
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
@@ -243,155 +396,6 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         });
     }
 
-    @Nonnull
-    public static MercifulHex getFromHex(WarlordsEntity from) {
-        return from.getSpec().getAbilities().stream().filter(MercifulHex.class::isInstance).map(MercifulHex.class::cast).findFirst().orElse(new MercifulHex());
-    }
-
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    public int getTicksBetweenDot() {
-        return ticksBetweenDot;
-    }
-
-    public void setTicksBetweenDot(int ticksBetweenDot) {
-        this.ticksBetweenDot = ticksBetweenDot;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Send a wave of energy forward. The first ")
-                                               .text(maxAlliesHit, NamedTextColor.BLUE)
-                                               .text(" allies hit heal ")
-                                               .heal(healingValues.hexHealing)
-                                               .text(" health and receive ")
-                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
-                                               .text(" stack" + (hexStacksPerHit != 1 ? "s" : "") + " of ")
-                                               .text("MHEX", NamedTextColor.DARK_GREEN)
-                                               .text("; subsequent allies are healed for only ")
-                                               .percent(subsequentReduction, NamedTextColor.GREEN)
-                                               .text(". The first enemy hit takes ")
-                                               .damage(damageValues.hexDamage)
-                                               .text(" damage. You also heal for ")
-                                               .heal(healingValues.hexSelfHealing)
-                                               .text(" and receive ")
-                                               .text(hexStacksPerHit, NamedTextColor.BLUE)
-                                               .text(" stack of ")
-                                               .text("MHEX", NamedTextColor.DARK_GREEN)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Each stack of ")
-                                               .text("MHEX", NamedTextColor.DARK_GREEN)
-                                               .text(" heals ")
-                                               .heal(healingValues.hexDOTHealing)
-                                               .text(" health every ")
-                                               .durationTicks(ticksBetweenDot)
-                                               .text(" for ")
-                                               .durationTicks(tickDuration * 2)
-                                               .text(". Stacks up to")
-                                               .text(maxStacks, NamedTextColor.BLUE)
-                                               .text(" times.")
-                                               .maxRange(maxDistance)
-                                               .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new MercifulHexBranch(abilityTree, this);
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public MercifulHexStats getAbilityStats() {
-        return stats;
-    }
-
-    public int getMaxStacks() {
-        return maxStacks;
-    }
-
-    public int getSubsequentReduction() {
-        return subsequentReduction;
-    }
-
-    public void setSubsequentReduction(int subsequentReduction) {
-        this.subsequentReduction = subsequentReduction;
-    }
-
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    public static class DamageValues implements Value.ValueHolder {
-
-        private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(186, 250, 20, 180);
-
-        private final List<Value> values = List.of(hexDamage);
-
-        @Override
-        public List<Value> getValues() {
-            return values;
-        }
-
-        @Override
-        public void init(AbstractAbilityBuilder builder) {
-            this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDamage"), Value.RangedValueCritable.class);
-        }
-
-        public Value.RangedValueCritable getHexDamage() {
-            return hexDamage;
-        }
-
-    }
-
-    public static class HealingValues implements Value.ValueHolder {
-
-        private Value.RangedValueCritable hexHealing = new Value.RangedValueCritable(229, 313, 20, 180);
-
-        private Value.RangedValueCritable hexSelfHealing = new Value.RangedValueCritable(160, 219, 20, 180);
-
-        private Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
-
-        private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
-
-        @Override
-        public List<Value> getValues() {
-            return values;
-        }
-
-        @Override
-        public void init(AbstractAbilityBuilder builder) {
-            this.hexHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexHealing"), Value.RangedValueCritable.class);
-            this.hexSelfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexSelfHealing"), Value.RangedValueCritable.class);
-            this.hexDOTHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDOTHealing"), Value.RangedValue.class);
-        }
-
-        public Value.RangedValueCritable getHexHealing() {
-            return hexHealing;
-        }
-
-        public Value.RangedValueCritable getHexSelfHealing() {
-            return hexSelfHealing;
-        }
-
-        public Value.RangedValue getHexDOTHealing() {
-            return hexDOTHealing;
-        }
-
-    }
-
     public static class MercifulHexStats extends AbstractPiercingProjectileStats<MercifulHex, MercifulHexStats> {
 
         @Override
@@ -417,6 +421,24 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
             return new MercifulHexStats();
         }
 
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    public int getTicksBetweenDot() {
+        return ticksBetweenDot;
+    }
+
+    public void setTicksBetweenDot(int ticksBetweenDot) {
+        this.ticksBetweenDot = ticksBetweenDot;
     }
 
 }

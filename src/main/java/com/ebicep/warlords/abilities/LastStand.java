@@ -51,7 +51,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
         this.selfTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfTickDuration"), int.class);
@@ -80,7 +80,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
         LastStandData data = new LastStandData();
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();

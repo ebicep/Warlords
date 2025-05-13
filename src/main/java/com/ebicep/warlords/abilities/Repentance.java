@@ -37,7 +37,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.pool = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("pool"), float.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
@@ -59,7 +59,7 @@ public class Repentance extends AbstractAbility implements BlueAbilityIcon, Dura
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
         EffectUtils.playCylinderAnimation(wp.getLocation(), 1, 255, 255, 255);
         pool += 2000;

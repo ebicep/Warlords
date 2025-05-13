@@ -25,7 +25,7 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.healingIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrease"), int.class);
     }

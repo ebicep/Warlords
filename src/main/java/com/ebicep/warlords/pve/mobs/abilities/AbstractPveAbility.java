@@ -21,7 +21,7 @@ public abstract class AbstractPveAbility extends AbstractAbility implements PvEA
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         PveOption option = getPveOption(wp);
         if (option == null) {
             return false;

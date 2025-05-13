@@ -43,7 +43,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.critChanceIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("critChanceIncrease"), int.class);
@@ -63,7 +63,7 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.inferno.activation", 2, 1);
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade) {

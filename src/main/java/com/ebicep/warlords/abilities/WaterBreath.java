@@ -53,7 +53,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxAnimationTime = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAnimationTime"), int.class);
         this.maxAnimationEffects = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAnimationEffects"), int.class);
@@ -78,7 +78,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, 1);
         wp.getWorld().spawnParticle(Particle.HEART, wp.getLocation().add(0, 0.7, 0), 2, 0.6, 0.6, 0.6, 1, null, true);
         Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
@@ -244,7 +244,10 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.breathHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("breathHealing"), Value.RangedValueCritable.class);
+            this.breathHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("breathHealing"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getBreathHealing() {

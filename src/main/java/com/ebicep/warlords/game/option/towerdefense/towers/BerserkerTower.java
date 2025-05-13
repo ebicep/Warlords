@@ -102,7 +102,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 1).forEach(warlordsNPC -> {
                     TowerDefenseUtils.playSwordStrikeAnimation(warlordsTower, warlordsNPC, SWORD_ITEM);
@@ -183,7 +183,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range).forEach(warlordsNPC -> {
                     warlordsNPC.addInstance(InstanceBuilder

@@ -146,7 +146,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
 
 
             EffectUtils.playSphereAnimation(wp.getLocation(), 6, Particle.FLAME, 1);

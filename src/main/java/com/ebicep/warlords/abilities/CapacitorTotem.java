@@ -106,7 +106,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class);
@@ -171,7 +171,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.totemDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("totemDamage"), Value.RangedValueCritable.class);
+            this.totemDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("totemDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getTotemDamage() {

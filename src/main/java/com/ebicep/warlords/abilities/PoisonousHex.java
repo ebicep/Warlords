@@ -57,15 +57,19 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
-    @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
-        this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
-        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-        this.ticksBetweenDot = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ticksBetweenDot"), int.class);
-        this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
+    @Nonnull
+    public static PoisonousHex getFromHex(WarlordsEntity from) {
+        return from.getSpec()
+                   .getAbilities()
+                   .stream()
+                   .filter(PoisonousHex.class::isInstance)
+                   .map(PoisonousHex.class::cast)
+                   .findFirst()
+                   .orElseGet(() -> {
+                       PoisonousHex poisonousHex = new PoisonousHex();
+                       poisonousHex.init(poisonousHex.getBuilder());
+                       return poisonousHex;
+                   });
     }
 
     @Override
@@ -227,9 +231,15 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         });
     }
 
-    @Nonnull
-    public static PoisonousHex getFromHex(WarlordsEntity from) {
-        return from.getSpec().getAbilities().stream().filter(PoisonousHex.class::isInstance).map(PoisonousHex.class::cast).findFirst().orElse(new PoisonousHex());
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
+        this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
+        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.ticksBetweenDot = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ticksBetweenDot"), int.class);
+        this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
     }
 
     @Override
@@ -317,8 +327,8 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDamage"), Value.RangedValueCritable.class);
-            this.hexDOTDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDOTDamage"), Value.RangedValue.class);
+            this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDamage"), Value.RangedValueCritable.class);
+            this.hexDOTDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDOTDamage"), Value.RangedValue.class);
         }
 
         public Value.RangedValueCritable getHexDamage() {

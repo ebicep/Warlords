@@ -59,8 +59,23 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .4f);
     }
 
+    @Nonnull
+    public static FortifyingHex getFromHex(WarlordsEntity from) {
+        return from.getSpec()
+                   .getAbilities()
+                   .stream()
+                   .filter(FortifyingHex.class::isInstance)
+                   .map(FortifyingHex.class::cast)
+                   .findFirst()
+                   .orElseGet(() -> {
+                       FortifyingHex fortifyingHex = new FortifyingHex();
+                       fortifyingHex.init(fortifyingHex.getBuilder());
+                       return fortifyingHex;
+                   });
+    }
+
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.damageReduction = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class));
         this.maxEnemiesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnemiesHit"), int.class);
@@ -69,12 +84,6 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.hexStacksPerHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexStacksPerHit"), int.class);
         this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        giveFortifyingHex(shooter, shooter);
-        return super.onActivate(shooter);
     }
 
     @Override
@@ -285,9 +294,10 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         }
     }
 
-    @Nonnull
-    public static FortifyingHex getFromHex(WarlordsEntity from) {
-        return from.getSpec().getAbilities().stream().filter(FortifyingHex.class::isInstance).map(FortifyingHex.class::cast).findFirst().orElse(new FortifyingHex());
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        giveFortifyingHex(shooter, shooter);
+        return super.onActivateInternal(shooter);
     }
 
     public int getMaxStacks() {
@@ -383,7 +393,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexDamage"), Value.RangedValueCritable.class);
+            this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getHexDamage() {

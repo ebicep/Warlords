@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
 import com.ebicep.warlords.abilities.PrismGuard;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
@@ -49,9 +50,7 @@ public class EventIllumina extends AbstractMob implements BossMob {
     private boolean phaseTwoTriggered = false;
     private boolean phaseThreeTriggered = false;
     private AtomicInteger damageToDeal = new AtomicInteger(0);
-    private PrismGuard prismGuard = new PrismGuard() {{
-        setTickDuration(200);
-    }};
+    private PrismGuard prismGuard = null;
 
     public EventIllumina(Location spawnLocation) {
         super(spawnLocation,
@@ -103,6 +102,8 @@ public class EventIllumina extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+        prismGuard = new PrismGuard(AbstractAbilityBuilder.create("illuminaPrismGuard").pve());
+        prismGuard.init(prismGuard.getBuilder());
 
         for (int i = 0; i < (2 * option.getGame().warlordsPlayers().count()); i++) {
             option.spawnNewMob(new GolemApprentice(spawnLocation));

@@ -17,7 +17,7 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
@@ -27,7 +27,7 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         return true;
     }
 

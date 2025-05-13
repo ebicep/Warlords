@@ -85,7 +85,7 @@ public class LegendaryRequiem extends AbstractLegendaryWeapon implements Passive
             @EventHandler
             public void onAddCooldown(WarlordsAddCooldownEvent event) {
                 AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                if (!(cooldown.getCooldownObject() instanceof UndyingArmy)) {
+                if (!(cooldown.getCooldownObject() instanceof UndyingArmy.UndyingArmyData)) {
                     return;
                 }
                 if (!Objects.equals(event.getWarlordsEntity(), player)) {

@@ -25,7 +25,7 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
@@ -74,7 +74,7 @@ public class GroundSlamRevenant extends AbstractGroundSlam implements Damages<Gr
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.slamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slamDamage"), Value.RangedValueCritable.class);
+            this.slamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("slamDamage"), Value.RangedValueCritable.class);
         }
 
     }

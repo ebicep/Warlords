@@ -49,7 +49,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.stunTimeInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stunTimeInTicks"), int.class);
         this.additionalBlocks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalBlocks"), int.class);
@@ -68,7 +68,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             wp.getCooldownManager()
@@ -254,7 +254,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.chargeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("chargeDamage"), Value.RangedValueCritable.class);
+            this.chargeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("chargeDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getChargeDamage() {

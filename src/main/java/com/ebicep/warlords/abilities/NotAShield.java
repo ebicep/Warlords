@@ -39,7 +39,7 @@ public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShiel
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hitBox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class);
         this.runeTickIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTickIncrease"), float.class);

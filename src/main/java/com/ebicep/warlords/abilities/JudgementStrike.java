@@ -31,7 +31,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.speedOnCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCrit"), int.class);
         this.speedOnCritDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCritDuration"), int.class);
@@ -128,7 +128,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamage"), Value.RangedValueCritable.class);
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {
@@ -150,7 +150,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.strikeHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeHealing"), Value.SetValue.class);
+            this.strikeHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("strikeHealing"), Value.SetValue.class);
         }
 
         public Value.SetValue getStrikeHealing() {

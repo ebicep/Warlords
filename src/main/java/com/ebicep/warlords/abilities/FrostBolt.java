@@ -48,7 +48,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
         this.directHitMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("directHitMultiplier"), float.class);
@@ -293,8 +293,8 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltDamage"), Value.RangedValueCritable.class);
-            this.shatterBoltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shatterBoltDamage"), Value.RangedValue.class);
+            this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boltDamage"), Value.RangedValueCritable.class);
+            this.shatterBoltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("shatterBoltDamage"), Value.RangedValue.class);
         }
 
         public Value.RangedValueCritable getBoltDamage() {

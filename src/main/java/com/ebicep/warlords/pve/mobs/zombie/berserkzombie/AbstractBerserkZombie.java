@@ -55,8 +55,8 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
-            boolean onActivate = super.onActivate(wp);
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+            boolean onActivate = super.onActivateInternal(wp);
             if (onActivate) {
                 PacketUtils.playRightClickAnimationForPlayer(((CraftEntity) wp.getEntity()).getHandle(),
                         wp.getGame()

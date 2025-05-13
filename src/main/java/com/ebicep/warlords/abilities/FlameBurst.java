@@ -44,7 +44,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.splash = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("splash"), float.class));
         this.acceleration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("acceleration"), float.class);
@@ -274,7 +274,10 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.flameBurstDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flameBurstDamage"), Value.RangedValueCritable.class);
+            this.flameBurstDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("flameBurstDamage"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getFlameBurstDamage() {

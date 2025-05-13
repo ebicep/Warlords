@@ -47,7 +47,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
         this.blindDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindDurationInTicks"), int.class);
@@ -64,7 +64,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
         Utils.spawnThrowableProjectile(wp.getGame(), Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
                             armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
@@ -159,7 +159,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.curseDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("curseDamage"), Value.RangedValueCritable.class);
+            this.curseDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("curseDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getCurseDamage() {

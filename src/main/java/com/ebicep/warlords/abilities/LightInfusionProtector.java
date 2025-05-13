@@ -26,12 +26,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
@@ -99,6 +94,11 @@ public class LightInfusionProtector extends AbstractLightInfusion {
         }
         playCastEffect(wp);
         return true;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override

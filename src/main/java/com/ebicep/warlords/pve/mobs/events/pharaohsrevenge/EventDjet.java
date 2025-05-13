@@ -50,10 +50,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst() {{
-                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
-                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
-                }},
+                new FlameBurst(AbstractAbilityBuilder.create("djetFlameBurst").pve()),
                 new SilenceCrippleAll()
         );
     }

@@ -41,7 +41,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
         this.directHitMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("directHitMultiplier"), float.class);
@@ -244,7 +244,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltDamage"), Value.RangedValueCritable.class);
+            this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boltDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getBoltDamage() {
@@ -266,7 +266,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.boltHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltHealing"), Value.RangedValueCritable.class);
+            this.boltHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("boltHealing"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getBoltHealing() {

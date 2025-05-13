@@ -30,7 +30,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
         this.waveLength = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveLength"), int.class);
@@ -47,7 +47,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = getWaveLocations(wp.getLocation());

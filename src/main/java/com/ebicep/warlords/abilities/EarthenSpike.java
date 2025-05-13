@@ -58,7 +58,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.speed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speed"), float.class);
@@ -77,7 +77,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         List<WarlordsEntity> spiked = new ArrayList<>();
         float rad = radius.getCalculatedValue();
         for (WarlordsEntity spikeTarget : PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveEnemiesOf(wp).lookingAtFirst(wp)) {
@@ -240,8 +240,11 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.spikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("spikeDamage"), Value.RangedValueCritable.class);
-            this.earthenRuptureDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("earthenRuptureDamage"), Value.RangedValue.class);
+            this.spikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("spikeDamage"), Value.RangedValueCritable.class);
+            this.earthenRuptureDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("earthenRuptureDamage"),
+                    Value.RangedValue.class
+            );
         }
 
         public Value.RangedValueCritable getSpikeDamage() {

@@ -47,7 +47,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
         this.hexHealingBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexHealingBonus"), int.class);
@@ -83,7 +83,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "arcanist.divineblessing.activation", 2, 1.2f);
         Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.6f);
         EffectUtils.strikeLightning(wp.getLocation(), true);
@@ -283,7 +283,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.divineBlessingPostHeal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldName("divineBlessingPostHeal"),
+                    builder.getAppendedFieldNameHealing("divineBlessingPostHeal"),
                     Value.SetValue.class
             );
         }

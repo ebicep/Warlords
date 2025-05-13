@@ -90,7 +90,7 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 2).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, SoulfireBeam.BEAM_ITEM, 3);

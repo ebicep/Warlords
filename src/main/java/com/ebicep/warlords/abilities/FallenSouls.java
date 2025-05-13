@@ -54,7 +54,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), int.class);
     }
@@ -260,7 +260,10 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.fallenSoulDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallenSoulDamage"), Value.RangedValueCritable.class);
+            this.fallenSoulDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("fallenSoulDamage"),
+                    Value.RangedValueCritable.class
+            );
         }
 
         public Value.RangedValueCritable getFallenSoulDamage() {

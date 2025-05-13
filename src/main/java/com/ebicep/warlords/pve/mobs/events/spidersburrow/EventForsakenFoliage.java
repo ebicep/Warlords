@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.abilities.EarthlivingWeapon;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -20,10 +21,7 @@ public class EventForsakenFoliage extends AbstractMob implements BossMinionMob, 
                 0,
                 300,
                 450,
-                new EarthlivingWeapon() {{ // Attacks are converted into Earth Living with double the proc chance as standard.
-                    setProcChance(getProcChance() * 2);
-                    setTickDuration(18000);
-                }}
+                new EarthlivingWeapon(AbstractAbilityBuilder.create("forsakenRespiteEarthlivingWeapon").pve().startFullCooldown())
         );
     }
 
@@ -44,10 +42,7 @@ public class EventForsakenFoliage extends AbstractMob implements BossMinionMob, 
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthlivingWeapon() {{ // Attacks are converted into Earth Living with double the proc chance as standard.
-                    setProcChance(getProcChance() * 2);
-                    setTickDuration(18000);
-                }}
+                new EarthlivingWeapon(AbstractAbilityBuilder.create("forsakenRespiteEarthlivingWeapon").pve().startFullCooldown())
         );
     }
 

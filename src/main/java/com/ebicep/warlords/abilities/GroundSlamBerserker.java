@@ -29,7 +29,7 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
@@ -78,7 +78,7 @@ public class GroundSlamBerserker extends AbstractGroundSlam implements Damages<G
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.slamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slamDamage"), Value.RangedValueCritable.class);
+            this.slamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("slamDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getSlamDamage() {

@@ -87,7 +87,7 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             Location loc = wp.getLocation();
             EffectUtils.playSphereAnimation(loc, kindleRadius, Particle.FLAME, 1);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 2, 0.2f);

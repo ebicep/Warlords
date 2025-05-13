@@ -44,7 +44,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.boulderSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boulderSpeed"), float.class);
         this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
@@ -60,7 +60,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.boulder.activation", 2, 1);
         Location location = wp.getLocation();
         Vector speed = calculateSpeed(wp);
@@ -185,8 +185,8 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.boulderDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boulderDamage"), Value.RangedValueCritable.class);
-            this.earthquakeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("earthquakeDamage"), Value.RangedValue.class);
+            this.boulderDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boulderDamage"), Value.RangedValueCritable.class);
+            this.earthquakeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("earthquakeDamage"), Value.RangedValue.class);
         }
 
         public Value.RangedValueCritable getBoulderDamage() {

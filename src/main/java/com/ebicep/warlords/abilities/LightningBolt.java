@@ -46,7 +46,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     }
 
     @Override
-    protected void init(AbstractAbilityBuilder builder) {
+    public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
         this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), int.class);
@@ -236,7 +236,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
 
         @Override
         public void init(AbstractAbilityBuilder builder) {
-            this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boltDamage"), Value.RangedValueCritable.class);
+            this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boltDamage"), Value.RangedValueCritable.class);
         }
 
         public Value.RangedValueCritable getBoltDamage() {
