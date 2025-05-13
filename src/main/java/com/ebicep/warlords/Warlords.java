@@ -488,7 +488,8 @@ public class Warlords extends JavaPlugin {
                                 we.displayCompassActionBar(player);
                             } else {
                                 we.displayActionBar();
-                                game.spectators().map(Bukkit::getPlayer)
+                                game.spectators()
+                                    .map(Bukkit::getPlayer)
                                     .filter(Objects::nonNull)
                                     .forEach(p -> {
                                         if (Objects.equals(p.getSpectatorTarget(), player)) {

@@ -285,10 +285,13 @@ public class WaveDefenseOption implements PveOption {
             }
         }
         waveCounter++;
+        if (waveCounter >= maxWave) {
+            return; // TODO TEST
+        }
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
         int spawns = spawnCount;
-        spawns *= getSpawnCountMultiplier((int) game.warlordsPlayers().count());
+        spawns *= (int) getSpawnCountMultiplier((int) game.warlordsPlayers().count());
 
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             if (currentWave.getMessage() != null) {
