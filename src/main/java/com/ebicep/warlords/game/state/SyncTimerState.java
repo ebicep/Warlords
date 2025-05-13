@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.state;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.CanStartGameMarker;
 import net.kyori.adventure.text.Component;
@@ -31,8 +30,11 @@ public class SyncTimerState implements State {
     @Nullable
     @Override
     public State run() {
-        return Warlords.LOOP_TICK_COUNTER.get() % 20 == 0 &&
-                game.getMarkers(CanStartGameMarker.class).stream().allMatch(CanStartGameMarker::canStartGame) ? new PlayingState(game) : null;
+        return game.getLoopTickCounter() % 20 == 0 && game.getMarkers(CanStartGameMarker.class)
+                                                          .stream()
+                                                          .allMatch(CanStartGameMarker::canStartGame)
+               ? new PlayingState(game)
+               : null;
     }
 
     @Override

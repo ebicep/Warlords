@@ -69,13 +69,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class Warlords extends JavaPlugin {
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
-    public static final AtomicInteger LOOP_TICK_COUNTER = new AtomicInteger(0);
     public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
@@ -469,18 +467,20 @@ public class Warlords extends JavaPlugin {
     private void startWarlordsEntitiesLoop() {
         new BukkitRunnable() {
 
+            int ticksElapsed = 0;
+
             @Override
             public void run() {
                 // Every 1 tick - 0.05 seconds.
                 for (WarlordsEntity we : PLAYERS.values()) {
                     // Checks whether the game is paused.
-                    if (we.getGame().isFrozen()) {
+                    Game game = we.getGame();
+                    if (game.isFrozen()) {
                         continue;
                     }
                     we.runEveryTick();
-                }
-                if (LOOP_TICK_COUNTER.get() % 5 == 0) {
-                    for (WarlordsEntity we : PLAYERS.values()) {
+                    int loopTickCounter = game.getLoopTickCounter();
+                    if (loopTickCounter % 5 == 0) {
                         Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
                         if (player != null) {
                             //ACTION BAR
@@ -488,7 +488,7 @@ public class Warlords extends JavaPlugin {
                                 we.displayCompassActionBar(player);
                             } else {
                                 we.displayActionBar();
-                                we.getGame().spectators().forEach(uuid -> {
+                                game.spectators().forEach(uuid -> {
                                     Player p = Bukkit.getPlayer(uuid);
                                     if (p != null) {
                                         DatabaseManager.getPlayer(uuid, databasePlayer -> p.sendActionBar(we.getActionBar(databasePlayer)));
@@ -497,29 +497,12 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                     }
-                }
-                // Every 20 ticks - 1 second.
-                if (LOOP_TICK_COUNTER.get() % 20 == 0) {
-                    // Removes leftover horses if there are any.
-//                    RemoveEntities.removeHorsesInGame();
-
-                    for (WarlordsEntity we : PLAYERS.values()) {
-                        // Checks whether the game is paused.
-                        if (we.getGame().isFrozen()) {
-                            continue;
-                        }
+                    // Every 20 ticks - 1 second.
+                    if (loopTickCounter % 20 == 0) {
                         we.runEverySecond();
                     }
-
-                    // for removing falling blocks that didnt get removed prior
-                    GeneralEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
-                }
-                // Loops every 50 ticks - 2.5 seconds.
-                if (LOOP_TICK_COUNTER.get() % 50 == 0) {
-                    for (WarlordsEntity we : PLAYERS.values()) {
-                        if (we.getGame().isFrozen()) {
-                            continue;
-                        }
+                    // Loops every 50 ticks - 2.5 seconds.
+                    if (loopTickCounter % 50 == 0) {
                         if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getMobRegistry() == Mob.TEST_DUMMY) {
                             continue;
                         }
@@ -532,7 +515,22 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 }
-                LOOP_TICK_COUNTER.getAndIncrement();
+                if (ticksElapsed % 100 == 0) {
+                    // Removes leftover horses if there are any.
+//                    RemoveEntities.removeHorsesInGame();
+                    // for removing falling blocks that didnt get removed prior
+                    GeneralEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
+                }
+
+                for (GameManager.GameHolder gameHolder : gameManager.getGames()) {
+                    Game game = gameHolder.getGame();
+                    if (game == null) {
+                        continue;
+                    }
+                    game.addTickCounter();
+                }
+
+                ticksElapsed++;
             }
         }.runTaskTimer(this, 0, 0);
     }

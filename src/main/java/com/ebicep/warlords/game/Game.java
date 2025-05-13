@@ -92,6 +92,7 @@ public final class Game implements Runnable, AutoCloseable {
     private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
     private Map<LocationUtils.LocationBlockHolder, Material> previousBlocks = new HashMap<>(); // for when world blocks are changed and needs to be revertd later
 
+    private int loopTickCounter = 0;
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
@@ -902,6 +903,14 @@ public final class Game implements Runnable, AutoCloseable {
 
     public boolean isFrozen() {
         return getOption(GameFreezeOption.class).stream().anyMatch(GameFreezeOption::isFrozen);
+    }
+
+    public int getLoopTickCounter() {
+        return loopTickCounter;
+    }
+
+    public void addTickCounter() {
+        this.loopTickCounter++;
     }
 
 }
