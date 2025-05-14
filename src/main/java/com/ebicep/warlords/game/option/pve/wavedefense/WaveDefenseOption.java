@@ -285,8 +285,8 @@ public class WaveDefenseOption implements PveOption {
             }
         }
         waveCounter++;
-        if (waveCounter >= maxWave) {
-            return; // TODO TEST
+        if (waveCounter > maxWave) {
+            return;
         }
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
