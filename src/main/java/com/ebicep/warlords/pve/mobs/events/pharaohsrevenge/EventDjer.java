@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -126,7 +127,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
         private final int earthQuakeRadius = 12;
 
         public GroundShred() {
-            super("Ground Shred", 5, 50);
+            super(AbstractAbilityBuilder.create("djerGroundShred").pve());
         }
 
         @Override

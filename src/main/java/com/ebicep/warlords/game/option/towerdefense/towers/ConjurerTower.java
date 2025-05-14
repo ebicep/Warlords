@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.SoulfireBeam;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -89,11 +86,11 @@ public class ConjurerTower extends AbstractTower implements Upgradeable.Path2 {
         }
 
         public HexAttack() {
-            super("Hex Attack", 3, 0);
+            super(AbstractAbilityBuilder.create("hexAttack").td().cooldown(3).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range, 2).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, SoulfireBeam.BEAM_ITEM, 3);

@@ -111,7 +111,7 @@ public class DatabaseManager {
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
             weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
             illusionVendorService = context.getBean("illusionVendorService", IllusionVendorService.class);
-            ConfigManager.init(warlordsDatabase);
+            ConfigManager.loadConfigs(warlordsDatabase);
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             return;

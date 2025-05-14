@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.ImpalingStrike;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -48,7 +49,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new PoisonArrow(),
-                new SpawnMobAbility(10, Mob.SKELETAL_ENTROPY, 10) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("apolloSpawnSkeletalEntropy").pve().startCooldown(10), Mob.SKELETAL_ENTROPY) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
@@ -86,7 +87,7 @@ public class EventApollo extends AbstractMob implements BossMob, LesserGod {
     private static class PoisonArrow extends AbstractPveAbility implements Damages<PoisonArrow.DamageValues> {
 
         public PoisonArrow() {
-            super("Poison Arrow", 550, 750, 5, 100, false);
+            super(AbstractAbilityBuilder.create("apolloPoisonArrow").pve().startFullCooldown());
         }
 
         @Override

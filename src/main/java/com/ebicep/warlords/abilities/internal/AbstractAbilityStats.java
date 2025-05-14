@@ -25,6 +25,8 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
         throw new IllegalArgumentException("Cannot merge two different AbilityStats classes");
     }
 
+    public abstract Class<R> getClazz();
+
     @Field("times_used")
     protected int timesUsed = 0;
 
@@ -43,6 +45,7 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
      *
      * @param other      other AbilityStats object
      * @param multiplier multiplier to apply to the other AbilityStats object
+     *
      * @return new AbilityStats object with this AbilityStats data merged with other AbilityStats data
      */
     public R merge(R other, int multiplier) {
@@ -50,8 +53,6 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
         r.timesUsed = timesUsed + other.timesUsed * multiplier;
         return r;
     }
-
-    public abstract Class<R> getClazz();
 
     public abstract R create();
 
@@ -64,6 +65,7 @@ public abstract class AbstractAbilityStats<T extends AbstractAbility, R extends 
         public AbilityStatDisplay(String name, double value) {
             this(name, NumberFormat.addCommaAndRound(value));
         }
+
     }
 
 }

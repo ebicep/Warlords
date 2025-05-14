@@ -54,6 +54,10 @@ public interface Value {
 
         List<Value> getValues();
 
+        default void init(AbstractAbilityBuilder builder) {
+
+        }
+
     }
 
     class RangedValue implements Value {

@@ -19,17 +19,20 @@ import java.util.Map;
 
 public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> implements RedAbilityIcon, AbilityStats<T, R> {
 
-    public AbstractBeam(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates
-    ) {
-        super(name, cooldown, energyCost, projectileSpeed, maxDistance, hitTeammates);
+    public AbstractBeam(AbstractAbilityBuilder builder) {
+        super(builder);
         this.maxTicks = 0;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .6f);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
+        for (Location locationsToFireShot : locationsToFireShots) {
+            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
+            EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
+        }
+        return super.onActivateInternal(shooter);
     }
 
     @Override
@@ -52,18 +55,7 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
         return new LocationBuilder(startingLocation).backward(.5f);
     }
 
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
-        for (Location locationsToFireShot : locationsToFireShots) {
-            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
-            EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
-        }
-        return super.onActivate(shooter);
-    }
-
     public abstract ItemStack getBeamItem();
-
 
     public static abstract class AbstractBeamStats<T extends AbstractPiercingProjectile<T, R>, R extends AbstractBeamStats<T, R>> extends AbstractPiercingProjectileStats<T, R> {
 

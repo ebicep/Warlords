@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -64,7 +65,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new Shockwave(),
-                new AbstractSpawnMobAbility("Athena Mobs", 45, 100, 2) {
+                new AbstractSpawnMobAbility(AbstractAbilityBuilder.create("athenaSpawnMobs").pve().startCooldown(2)) {
                     private int spawnCounter = 0;
                     private List<Location> spawnLocations = new ArrayList<>();
 
@@ -133,7 +134,7 @@ public class EventAthena extends AbstractMob implements BossMob, LesserGod {
         private float radius = 10;
 
         public Shockwave() {
-            super("Shockwave", 650, 800, 8, 100, false);
+            super(AbstractAbilityBuilder.create("athenaShockwave").pve().startFullCooldown());
         }
 
         @Override

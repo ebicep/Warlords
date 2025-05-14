@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.SpiritLink;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.Spawner;
@@ -101,11 +98,11 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpiritAttack() {
-            super("Spirit Attack", 2, 0);
+            super(AbstractAbilityBuilder.create("spiritAttack").td().cooldown(2).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 1)
                              .forEach(target -> attack(warlordsTower, target));
@@ -169,12 +166,12 @@ public class SpiritguardTower extends AbstractTower implements Upgradeable.Path2
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", 5, 0);
+            super(AbstractAbilityBuilder.create("spawnTroops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 spawnedMobs.removeIf(mob -> mob.getWarlordsNPC() != null && mob.getWarlordsNPC().isDead());
                 if (spawnedMobs.size() > 0) {

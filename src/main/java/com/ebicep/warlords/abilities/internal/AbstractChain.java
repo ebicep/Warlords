@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -20,34 +21,20 @@ public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends Abs
     protected int bounceRange;
     protected int additionalBounces;
 
-    public AbstractChain(
-            String name,
-            float cooldown,
-            float energyCost,
-            int radius,
-            int bounceRange,
-            int additionalBounces
-    ) {
-        this(name, cooldown, energyCost, radius, bounceRange, additionalBounces, 0);
-    }
-
-    public AbstractChain(
-            String name,
-            float cooldown,
-            float energyCost,
-            int radius,
-            int bounceRange,
-            int additionalBounces,
-            float startCooldown
-    ) {
-        super(name, cooldown, energyCost, startCooldown);
-        this.radius = radius;
-        this.bounceRange = bounceRange;
-        this.additionalBounces = additionalBounces;
+    public AbstractChain(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer) {
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
+        this.bounceRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bounceRange"), int.class);
+        this.additionalBounces = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalBounces"), int.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity warlordsPlayer) {
         Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {
@@ -126,4 +113,5 @@ public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends Abs
         }
 
     }
+
 }

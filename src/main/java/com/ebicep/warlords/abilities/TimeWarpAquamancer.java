@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -30,58 +31,35 @@ import java.util.List;
 public class TimeWarpAquamancer extends AbstractTimeWarp {
 
     public TimeWarpAquamancer() {
-        super();
+        super(AbstractAbilityBuilder.create("timeWarpPyromancer").pvp());
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1);
-
         Location warpLocation = wp.getLocation();
         List<Location> warpTrail = new ArrayList<>();
         List<ArmorStand> altarsBlocks = new ArrayList<>();
         LocationBuilder baseLocation;
         if (pveMasterUpgrade) {
-            baseLocation = new LocationBuilder(warpLocation)
-                    .pitch(0)
-                    .yaw(0)
-                    .addY(-1.4);
-            List<Location> spawnLocations = getAltarLocations(baseLocation.clone()
-                                                                          .left(.6f * 2)
-                                                                          .forward(.6f));
+            baseLocation = new LocationBuilder(warpLocation).pitch(0).yaw(0).addY(-1.4);
+            List<Location> spawnLocations = getAltarLocations(baseLocation.clone().left(.6f * 2).forward(.6f));
             for (Location spawnLocation : spawnLocations) {
                 ArmorStand altar = Utils.spawnArmorStand(spawnLocation, armorStand -> {
-                    armorStand.setMarker(true);
-                    armorStand.getEquipment().setHelmet(new ItemStack(Material.PRISMARINE_BRICKS));
-                });
+                            armorStand.setMarker(true);
+                            armorStand.getEquipment().setHelmet(new ItemStack(Material.PRISMARINE_BRICKS));
+                        }
+                );
                 altarsBlocks.add(altar);
             }
-            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                    .addY(-.8)
-                    .left(2)
-                    .forward(2))
-            );
-            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                    .addY(-.8)
-                    .right(2)
-                    .forward(2))
-            );
-            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                    .addY(-.8)
-                    .left(2)
-                    .backward(2))
-            );
-            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation)
-                    .addY(-.8)
-                    .right(2)
-                    .backward(2))
-            );
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation).addY(-.8).left(2).forward(2)));
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation).addY(-.8).right(2).forward(2)));
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation).addY(-.8).left(2).backward(2)));
+            altarsBlocks.addAll(getAltarPillar(new LocationBuilder(baseLocation).addY(-.8).right(2).backward(2)));
         } else {
             baseLocation = null;
         }
-        RegularCooldown<TimeWarpAquamancer> timeWarpCooldown = new RegularCooldown<>(
-                name,
+        RegularCooldown<TimeWarpAquamancer> timeWarpCooldown = new RegularCooldown<>(name,
                 "TIME",
                 TimeWarpAquamancer.class,
                 new TimeWarpAquamancer(),
@@ -91,37 +69,22 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     if (wp.isDead() || wp.getGame().getState() instanceof EndState) {
                         return;
                     }
-
                     getAbilityStats().addTimesSuccessful();
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-
-                    wp.addInstance(InstanceBuilder
-                            .healing()
-                            .ability(this)
-                            .source(wp)
-                            .value(wp.getMaxHealth() * (warpHealPercentage / 100f))
-                    );
-
+                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)));
                     wp.getEntity().teleport(warpLocation);
                     warpTrail.clear();
-
                     if (pveMasterUpgrade2) {
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Cyclone",
-                                "CYC",
-                                TimeWarpAquamancer.class,
-                                new TimeWarpAquamancer(),
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager1 -> {
-                                },
-                                5 * 20
-                        ) {
-                            @Override
-                            public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                return currentHealValue * 1.15f;
-                            }
-                        });
+                        wp.getCooldownManager()
+                          .addCooldown(new RegularCooldown<>("Cyclone", "CYC", TimeWarpAquamancer.class, new TimeWarpAquamancer(), wp, CooldownTypes.ABILITY, cooldownManager1 -> {
+                          }, 5 * 20
+                          ) {
+
+                              @Override
+                              public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
+                                  return currentHealValue * 1.15f;
+                              }
+                          });
                     }
                 },
                 cooldownManager -> {
@@ -131,25 +94,23 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveMasterUpgrade2) {
                         if (ticksElapsed % 2 == 0) {
-                            PlayerFilter.entitiesAround(wp, 3, 3, 3)
-                                        .aliveEnemiesOf(wp)
-                                        .forEach(enemy -> {
-                                            Utils.addKnockback(name, wp.getLocation(), enemy, -1.2, 0.2);
-                                        });
+                            PlayerFilter.entitiesAround(wp, 3, 3, 3).aliveEnemiesOf(wp).forEach(enemy -> {
+                                Utils.addKnockback(name, wp.getLocation(), enemy, -1.2, 0.2);
+                            });
                         }
                         if (ticksElapsed % 8 == 0) {
-                            EffectUtils.playSpiralAnimation(
-                                    true,
+                            EffectUtils.playSpiralAnimation(true,
                                     wp,
                                     new LocationBuilder(wp.getLocation()).pitch(0),
                                     4,
                                     16,
-                                    (matrix4d, integer) -> {},
-                                    List.of(
-                                            new Pair<>(Particle.BLOCK, Material.MOSSY_COBBLESTONE.createBlockData()),
+                                    (matrix4d, integer) -> {
+                                    },
+                                    List.of(new Pair<>(Particle.BLOCK, Material.MOSSY_COBBLESTONE.createBlockData()),
                                             new Pair<>(Particle.BLOCK, Material.BLUE_CONCRETE.createBlockData())
                                     ),
-                                    Particle.DRIPPING_WATER, Particle.ENCHANT
+                                    Particle.DRIPPING_WATER,
+                                    Particle.ENCHANT
                             );
                         }
                         if (ticksElapsed % 20 == 0) {
@@ -158,87 +119,41 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     }
                     if (ticksElapsed % 4 == 0) {
                         for (Location location : warpTrail) {
-                            location.getWorld().spawnParticle(
-                                    Particle.WITCH,
-                                    location,
-                                    1,
-                                    0.01,
-                                    0,
-                                    0.01,
-                                    0.001,
-                                    null,
-                                    true
-                            );
+                            location.getWorld().spawnParticle(Particle.WITCH, location, 1, 0.01, 0, 0.01, 0.001, null, true);
                         }
-
                         warpTrail.add(wp.getLocation());
-                        warpLocation.getWorld().spawnParticle(
-                                Particle.WITCH,
-                                warpLocation,
-                                4,
-                                0.1,
-                                0,
-                                0.1,
-                                0.001,
-                                null,
-                                true
-                        );
-
+                        warpLocation.getWorld().spawnParticle(Particle.WITCH, warpLocation, 4, 0.1, 0, 0.1, 0.001, null, true);
                         int points = 6;
                         double radius = 0.5d;
                         for (int e = 0; e < points; e++) {
                             double angle = 2 * Math.PI * e / points;
                             Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            point.getWorld().spawnParticle(
-                                    Particle.CLOUD,
-                                    point,
-                                    1,
-                                    0.1,
-                                    0,
-                                    0.1,
-                                    0.001,
-                                    null,
-                                    true
-                            );
-
+                            point.getWorld().spawnParticle(Particle.CLOUD, point, 1, 0.1, 0, 0.1, 0.001, null, true);
                         }
                     }
                     if (pveMasterUpgrade && baseLocation != null) {
                         if (ticksElapsed % 4 == 0) {
-                            PlayerFilter.entitiesAround(baseLocation, 15, 14, 15)
-                                        .aliveTeammatesOf(wp)
-                                        .forEach(warlordsEntity -> {
-                                            warlordsEntity.getSpeed().removeSlownessModifiers();
-                                            warlordsEntity.getCooldownManager().removeDebuffCooldowns();
-                                        });
+                            PlayerFilter.entitiesAround(baseLocation, 15, 14, 15).aliveTeammatesOf(wp).forEach(warlordsEntity -> {
+                                warlordsEntity.getSpeed().removeSlownessModifiers();
+                                warlordsEntity.getCooldownManager().removeDebuffCooldowns();
+                            });
                         }
                         if (ticksElapsed % 8 == 0 && ticksLeft >= 40) {
-                            baseLocation.getWorld().spawnParticle(
-                                    Particle.DRIPPING_WATER,
-                                    baseLocation.clone().add(0, 4, 0),
-                                    5,
-                                    1,
-                                    0,
-                                    1,
-                                    0.1,
-                                    null,
-                                    true
-                            );
+                            baseLocation.getWorld().spawnParticle(Particle.DRIPPING_WATER, baseLocation.clone().add(0, 4, 0), 5, 1, 0, 1, 0.1, null, true);
                         }
                     }
                 })
         );
         wp.getCooldownManager().addCooldown(timeWarpCooldown);
-
         if (pveMasterUpgrade) {
-            addSecondaryAbility(
-                    1,
-                    () -> timeWarpCooldown.setTicksLeft(1),
-                    false,
-                    secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown)
-            );
+            addSecondaryAbility(1, () -> timeWarpCooldown.setTicksLeft(1), false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(timeWarpCooldown));
         }
         return true;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
@@ -264,15 +179,17 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
         for (int i = 0; i < 4; i++) {
             Location pillarLocation = baseLocation.add(0, .6, 0);
             ArmorStand pillar = Utils.spawnArmorStand(pillarLocation, armorStand -> {
-                armorStand.setMarker(true);
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.DARK_PRISMARINE));
-            });
+                        armorStand.setMarker(true);
+                        armorStand.getEquipment().setHelmet(new ItemStack(Material.DARK_PRISMARINE));
+                    }
+            );
             pillars.add(pillar);
         }
         ArmorStand light = Utils.spawnArmorStand(baseLocation.add(0, .6, 0), armorStand -> {
-            armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.SEA_LANTERN));
-        });
+                    armorStand.setMarker(true);
+                    armorStand.getEquipment().setHelmet(new ItemStack(Material.SEA_LANTERN));
+                }
+        );
         pillars.add(light);
         return pillars;
     }

@@ -1,9 +1,6 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.TowerDefenseUtils;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -106,11 +103,11 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 20, 0);
+            super(AbstractAbilityBuilder.create("buffTowers").td().cooldown(20).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower abstractTower = warlordsTower.getTower();
                 abstractTower.getTowers(range)
@@ -142,11 +139,11 @@ public class CrusaderTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(30);
 
         public StrikeAttack() {
-            super("Strike Attack", .9f, 0);
+            super(AbstractAbilityBuilder.create("strikeAttack").td().cooldown(.9f).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower tower = warlordsTower.getTower();
                 tower.getEnemyMobs(range).forEach(warlordsNPC -> {

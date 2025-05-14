@@ -1,6 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
@@ -81,11 +82,11 @@ public class CryomancerTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public SlowAttack() {
-            super("Slow", 2, 0);
+            super(AbstractAbilityBuilder.create("slow").td().cooldown(2).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getEnemyMobs(range).forEach(warlordsNPC -> {
                     EffectUtils.displayParticle(Particle.SNOWFLAKE, warlordsNPC.getLocation(), 15, .15, 0, .15, 0);

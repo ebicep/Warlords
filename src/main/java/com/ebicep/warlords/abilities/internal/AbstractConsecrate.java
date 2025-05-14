@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -26,21 +27,21 @@ import java.util.List;
 
 public abstract class AbstractConsecrate extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, AbilityStats<AbstractConsecrate, AbstractConsecrate.AbstractConsecrateStats> {
 
-    protected int strikeDamageBoost;
     protected FloatModifiable hitBox;
+    protected int strikeDamageBoost;
     protected int tickDuration;
     private final AbstractConsecrateStats stats = new AbstractConsecrateStats();
 
-    public AbstractConsecrate(
-            float energyCost,
-            int strikeDamageBoost,
-            float hitBox,
-            int duration
-    ) {
-        super("Consecrate", 8, energyCost);
-        this.strikeDamageBoost = strikeDamageBoost;
-        this.hitBox = new FloatModifiable(hitBox);
-        this.tickDuration = duration * 20;
+    public AbstractConsecrate(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.strikeDamageBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeDamageBoost"), int.class);
+        this.hitBox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override
@@ -62,7 +63,7 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location location = wp.getLocation().clone();
 
         Utils.playGlobalSound(location, "paladin.consecrate.activation", 2, 1);
@@ -141,14 +142,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return hitBox;
     }
 
-    public int getStrikeDamageBoost() {
-        return strikeDamageBoost;
-    }
-
-    public void setStrikeDamageBoost(int strikeDamageBoost) {
-        this.strikeDamageBoost = strikeDamageBoost;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -164,12 +157,25 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return stats;
     }
 
+    public int getStrikeDamageBoost() {
+        return strikeDamageBoost;
+    }
+
+    public void setStrikeDamageBoost(int strikeDamageBoost) {
+        this.strikeDamageBoost = strikeDamageBoost;
+    }
+
     public static class AbstractConsecrateStats extends AbstractAbilityStats<AbstractConsecrate, AbstractConsecrateStats> {
 
         @Field("strikes_boosted")
         private int strikesBoosted = 0;
         @Field("targets_hit")
         private int playersHit = 0;
+
+        @Override
+        public Class<AbstractConsecrateStats> getClazz() {
+            return AbstractConsecrateStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -185,11 +191,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
             stats.strikesBoosted = this.strikesBoosted + other.strikesBoosted * multiplier;
             stats.playersHit = this.playersHit + other.playersHit * multiplier;
             return stats;
-        }
-
-        @Override
-        public Class<AbstractConsecrateStats> getClazz() {
-            return AbstractConsecrateStats.class;
         }
 
         @Override

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -49,22 +49,15 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new CripplingStrike() {{
-                    Value.RangedValueCritable strikeDamage = this.getDamageValues().getStrikeDamage();
-                    strikeDamage.min().setBaseValue(1560);
-                    strikeDamage.max().setBaseValue(1960);
-                    this.getCooldown().setBaseValue(5);
+                new CripplingStrike(AbstractAbilityBuilder.create("theArchivistCripplingStrike").pve()) {{
                     this.pveMasterUpgrade = true;
                 }},
-                new ChainLightning(5, 5) {{
+                new ChainLightning(AbstractAbilityBuilder.create("theArchivistChainLightning").pve().startCooldown(5)) {{
                     this.pveMasterUpgrade2 = true;
                 }},
-                new GroundSlamBerserker(8, 8),
-                new PrismGuard(18, 18),
-                new Inferno() {{
-                    this.cooldown.setBaseValue(25);
-                    this.currentCooldown = 25;
-                }}
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("theArchivistGroundSlamBerserker").pve().startCooldown(8)),
+                new PrismGuard(AbstractAbilityBuilder.create("theArchivistPrismGuard").pve().startCooldown(18)),
+                new Inferno(AbstractAbilityBuilder.create("theArchivistInferno").pve().startCooldown(25))
         );
     }
 

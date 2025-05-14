@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -69,7 +70,7 @@ public class EventForsakenShrieker extends AbstractMob implements BossMinionMob,
     private static class BlindNear extends AbstractPveAbility {
 
         public BlindNear() {
-            super("Blind Near", 5, 50);
+            super(AbstractAbilityBuilder.create("forsakenRespiteBlindNear").pve());
         }
 
         @Override

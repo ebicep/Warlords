@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
@@ -20,12 +21,20 @@ import java.util.UUID;
 public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon, AbilityStats<AbstractSeismicWave, AbstractSeismicWave.AbstractSeismicWaveStats> {
 
     protected float velocity = 1.25f;
+    protected int waveLength = 8; // foward amount
+    protected int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
     private final AbstractSeismicWaveStats stats = new AbstractSeismicWaveStats();
-    private int waveLength = 8; // foward amount
-    private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
 
-    public AbstractSeismicWave(float cooldown, float energyCost) {
-        super("Seismic Wave", cooldown, energyCost);
+    public AbstractSeismicWave(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
+        this.waveLength = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveLength"), int.class);
+        this.waveWidth = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveWidth"), int.class);
     }
 
     @Override
@@ -38,7 +47,7 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
         List<List<Location>> fallingBlockLocations = getWaveLocations(wp.getLocation());
@@ -119,6 +128,11 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
 
     public abstract Value.RangedValueCritable getWaveDamage();
 
+    @Override
+    public AbstractSeismicWaveStats getAbilityStats() {
+        return stats;
+    }
+
     public float getVelocity() {
         return velocity;
     }
@@ -143,11 +157,6 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         this.waveWidth = waveWidth;
     }
 
-    @Override
-    public AbstractSeismicWaveStats getAbilityStats() {
-        return stats;
-    }
-
     public static class AbstractSeismicWaveStats extends AbstractAbilityStats<AbstractSeismicWave, AbstractSeismicWaveStats> {
 
         @Field("targets_hit")
@@ -156,6 +165,11 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         private int carrierHit = 0;
         @Field("warps_knockbacked")
         private int warpsKnockbacked = 0;
+
+        @Override
+        public Class<AbstractSeismicWaveStats> getClazz() {
+            return AbstractSeismicWaveStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -176,13 +190,10 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         }
 
         @Override
-        public Class<AbstractSeismicWaveStats> getClazz() {
-            return AbstractSeismicWaveStats.class;
-        }
-
-        @Override
         public AbstractSeismicWaveStats create() {
             return new AbstractSeismicWaveStats();
         }
+
     }
+
 }

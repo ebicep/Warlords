@@ -1,9 +1,6 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
-import com.ebicep.warlords.abilities.internal.AbilityStats;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.entity.Player;
 
@@ -16,18 +13,21 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     private final TempStats stats = new TempStats();
 
     public Temp() {
-        super("Placeholder Ability", 0, 0);
+        super(AbstractAbilityBuilder.create("placeholderAbility").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Placeholder Ability")
-                .build();
+        description = AbilityDescriptionBuilder.create("Placeholder Ability").build();
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         return true;
     }
 
@@ -37,6 +37,11 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
     }
 
     public static class TempStats extends AbstractAbilityStats<Temp, TempStats> {
+
+        @Override
+        public Class<TempStats> getClazz() {
+            return TempStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -51,13 +56,10 @@ public class Temp extends AbstractAbility implements AbilityStats<Temp, Temp.Tem
         }
 
         @Override
-        public Class<TempStats> getClazz() {
-            return TempStats.class;
-        }
-
-        @Override
         public TempStats create() {
             return new TempStats();
         }
+
     }
+
 }

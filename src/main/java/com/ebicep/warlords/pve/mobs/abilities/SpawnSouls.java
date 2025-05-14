@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -44,13 +45,13 @@ public class SpawnSouls extends AbstractSpawnMobAbility {
     private List<Location> randomSpawnLocations;
     private Mob randomSoulToSpawn;
 
-    public SpawnSouls(float cooldown) {
-        super("Spawn Souls", cooldown, true);
+    public SpawnSouls(AbstractAbilityBuilder builder) {
+        super(builder.startNoCooldown());
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        boolean activate = super.onActivate(wp);
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        boolean activate = super.onActivateInternal(wp);
         if (activate) {
             Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 1.5f);
         }

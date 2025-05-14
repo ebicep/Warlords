@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -17,36 +18,24 @@ import java.util.List;
 
 public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementStrike.JudgementStrikeStats> implements Damages<JudgementStrike.DamageValues>, Heals<JudgementStrike.HealingValues> {
 
+    protected int attacksDone = 0;
+    private final JudgementStrikeStats stats = new JudgementStrikeStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
-    private final JudgementStrikeStats stats = new JudgementStrikeStats();
-    private int attacksDone = 0;
-    private int speedOnCrit = 25; // %
+    private int speedOnCrit = 25;
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
 
     public JudgementStrike() {
-        super("Judgement Strike", 0, 70);
+        super(AbstractAbilityBuilder.create("judgementStrike").pvp());
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Strike the targeted enemy, dealing ")
-                .damage(damageValues.strikeDamage)
-                .text("damage. Every ")
-                .text(strikeCritInterval, NamedTextColor.BLUE)
-                .text("th strike is a guaranteed critical strike. Critical strikes temporarily increase your movement speed by ")
-                .percent(speedOnCrit, NamedTextColor.WHITE)
-                .text(" for ")
-                .durationSeconds(speedOnCritDuration)
-                .text(".")
-                .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new JudgementStrikeBranch(abilityTree, this);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.speedOnCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCrit"), int.class);
+        this.speedOnCritDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCritDuration"), int.class);
+        this.strikeCritInterval = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeCritInterval"), int.class);
     }
 
     @Override
@@ -66,38 +55,22 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 critChance = 100;
             }
             float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
-            nearPlayer.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(wp)
-                    .min(damageValues.strikeDamage.getMinValue() + extraDamage)
-                    .max(damageValues.strikeDamage.getMaxValue() + extraDamage)
-                    .critChance(critChance)
-                    .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
-            ).ifPresent(finalEvent -> {
+            nearPlayer.addInstance(InstanceBuilder.damage()
+                                                  .ability(this)
+                                                  .source(wp)
+                                                  .min(damageValues.strikeDamage.getMinValue() + extraDamage)
+                                                  .max(damageValues.strikeDamage.getMaxValue() + extraDamage)
+                                                  .critChance(critChance)
+                                                  .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())).ifPresent(finalEvent -> {
                 if (finalEvent.isCrit()) {
                     wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
                 }
                 if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
-                    wp.addInstance(InstanceBuilder
-                            .healing()
-                            .ability(this)
-                            .source(wp)
-                            .value(healingValues.strikeHealing)
-                    );
+                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.strikeHealing));
                 }
             });
         }
-
         return true;
-    }
-
-    public int getStrikeCritInterval() {
-        return strikeCritInterval;
-    }
-
-    public void setStrikeCritInterval(int strikeCritInterval) {
-        this.strikeCritInterval = strikeCritInterval;
     }
 
     @Override
@@ -115,34 +88,73 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         return stats;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Strike the targeted enemy, dealing ")
+                                               .damage(damageValues.strikeDamage)
+                                               .text("damage. Every ")
+                                               .text(strikeCritInterval, NamedTextColor.BLUE)
+                                               .text("th strike is a guaranteed critical strike. Critical strikes temporarily increase your movement speed by ")
+                                               .percent(speedOnCrit, NamedTextColor.WHITE)
+                                               .text(" for ")
+                                               .durationSeconds(speedOnCritDuration)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new JudgementStrikeBranch(abilityTree, this);
+    }
+
+    public int getStrikeCritInterval() {
+        return strikeCritInterval;
+    }
+
+    public void setStrikeCritInterval(int strikeCritInterval) {
+        this.strikeCritInterval = strikeCritInterval;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
-        private final List<Value> values = List.of(strikeDamage);
+        private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
 
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
+        private final List<Value> values = List.of(strikeDamage);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.SetValue strikeHealing = new Value.SetValue(0);
-        private final List<Value> values = List.of(strikeHealing);
+        private Value.SetValue strikeHealing = new Value.SetValue(0);
 
-        public Value.SetValue getStrikeHealing() {
-            return strikeHealing;
-        }
+        private final List<Value> values = List.of(strikeHealing);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.strikeHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("strikeHealing"), Value.SetValue.class);
+        }
+
+        public Value.SetValue getStrikeHealing() {
+            return strikeHealing;
         }
 
     }
@@ -170,5 +182,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         public JudgementStrikeStats create() {
             return new JudgementStrikeStats();
         }
+
     }
+
 }

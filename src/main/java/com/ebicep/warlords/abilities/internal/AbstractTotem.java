@@ -36,12 +36,12 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
                 .toList();
     }
 
-    public AbstractTotem(String name, float cooldown, float energyCost) {
-        super(name, cooldown, energyCost);
+    public AbstractTotem(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location standLocation = LocationUtils.getGroundLocation(wp.getLocation());
         standLocation.setYaw(0);
         standLocation.setY(standLocation.getY() - 0.46);
@@ -49,9 +49,10 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
         playSound(wp, standLocation);
 
         ArmorStand totemStand = Utils.spawnArmorStand(standLocation, armorStand -> {
-            armorStand.getEquipment().setHelmet(getTotemItemStack());
-            armorStand.setSmall(true);
-        });
+                    armorStand.getEquipment().setHelmet(getTotemItemStack());
+                    armorStand.setSmall(true);
+                }
+        );
 
         onActivation(wp, totemStand);
 

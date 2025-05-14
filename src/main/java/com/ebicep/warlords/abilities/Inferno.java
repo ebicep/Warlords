@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsApplyBurnEffectEvent;
@@ -34,60 +35,70 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
     private int critMultiplierIncrease = 30;
 
     public Inferno() {
-        super("Inferno", 47, 0);
+        super(AbstractAbilityBuilder.create("inferno").pvp());
+    }
+
+    public Inferno(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.critChanceIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("critChanceIncrease"), int.class);
+        this.critMultiplierIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("critMultiplierIncrease"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Combust into a molten inferno, increasing your Crit Chance by ")
-                .percent(critChanceIncrease, NamedTextColor.RED)
-                .text(" and your Crit Multiplier by ")
-                .percent(critMultiplierIncrease, NamedTextColor.RED)
-                .text(". Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
+        description = AbilityDescriptionBuilder.create("Combust into a molten inferno, increasing your Crit Chance by ")
+                                               .percent(critChanceIncrease, NamedTextColor.RED)
+                                               .text(" and your Crit Multiplier by ")
+                                               .percent(critMultiplierIncrease, NamedTextColor.RED)
+                                               .text(". Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.inferno.activation", 2, 1);
-
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade) {
             wp.getCooldownManager().removeCooldown(Inferno.class, false);
-            modifiers = wp.getAbilitiesMatching(Fireball.class)
-                          .stream()
-                          .map(ability -> ability.getEnergyCost().addAdditiveModifier(name + " Master", -5))
-                          .toList();
+            modifiers = wp.getAbilitiesMatching(Fireball.class).stream().map(ability -> ability.getEnergyCost().addAdditiveModifier(name + " Master", -5)).toList();
         } else {
             modifiers = Collections.emptyList();
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "INFR",
-                Inferno.class,
-                null,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 3 == 0) {
-                        Location loc = wp.getLocation().add(0, 1.2, 0);
-                        EffectUtils.displayParticle(Particle.DRIPPING_LAVA, loc, 1, 0.5, 0.3, 0.5, 0.4);
-                        EffectUtils.displayParticle(Particle.FLAME, loc, 1, 0.5, 0.3, 0.5, 0.0001);
-                        EffectUtils.displayParticle(Particle.CRIT, loc, 1, 0.5, 0.3, 0.5, 0.0001);
-                    }
-                })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "INFR", Inferno.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 3 == 0) {
+                Location loc = wp.getLocation().add(0, 1.2, 0);
+                EffectUtils.displayParticle(Particle.DRIPPING_LAVA, loc, 1, 0.5, 0.3, 0.5, 0.4);
+                EffectUtils.displayParticle(Particle.FLAME, loc, 1, 0.5, 0.3, 0.5, 0.0001);
+                EffectUtils.displayParticle(Particle.CRIT, loc, 1, 0.5, 0.3, 0.5, 0.0001);
+            }
+        })
         ) {
 
             private final Map<WarlordsEntity, Integer> hitCount = new HashMap<>();
+
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+
+                    @EventHandler
+                    public void onWarlordsApplyBurnEffect(WarlordsApplyBurnEffectEvent event) {
+                        if (pveMasterUpgrade) {
+                            event.setTickPeriod(10);
+                        }
+                    }
+                };
+            }
 
             @Override
             public boolean distinct() {
@@ -132,33 +143,34 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
                 return currentDamageValue;
             }
 
-
             @Override
             public void onDeathFromEnemies(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit, boolean isKiller) {
                 if (pveMasterUpgrade2 && isKiller) {
                     wp.addEnergy(wp, "Inferno", event.getWarlordsEntity() instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof EventBoltaroShadow ? 10 : 30);
                 }
             }
-
-            @Override
-            protected Listener getListener() {
-                return new Listener() {
-                    @EventHandler
-                    public void onWarlordsApplyBurnEffect(WarlordsApplyBurnEffectEvent event) {
-                        if (pveMasterUpgrade) {
-                            event.setTickPeriod(10);
-                        }
-                    }
-                };
-            }
         });
-
         return true;
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new InfernoBranch(abilityTree, this);
+    }
+
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public InfernoStats getAbilityStats() {
+        return stats;
     }
 
     public int getHitsAmplified() {
@@ -181,25 +193,15 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         this.critMultiplierIncrease = critMultiplierIncrease;
     }
 
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public InfernoStats getAbilityStats() {
-        return stats;
-    }
-
     public static class InfernoStats extends AbstractAbilityStats<Inferno, InfernoStats> {
 
         @Field("hits_amplified")
         private int hitsAmplified = 0;
+
+        @Override
+        public Class<InfernoStats> getClazz() {
+            return InfernoStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -216,13 +218,10 @@ public class Inferno extends AbstractAbility implements OrangeAbilityIcon, Durat
         }
 
         @Override
-        public Class<InfernoStats> getClazz() {
-            return InfernoStats.class;
-        }
-
-        @Override
         public InfernoStats create() {
             return new InfernoStats();
         }
+
     }
+
 }

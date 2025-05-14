@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -19,38 +20,27 @@ import java.util.List;
 
 public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousStrike.RighteousStrikeStats> implements Damages<RighteousStrike.DamageValues> {
 
-
-    private final DamageValues damageValues = new DamageValues();
+    protected int targetsStruck = 0;
     private final RighteousStrikeStats stats = new RighteousStrikeStats();
+    private final DamageValues damageValues = new DamageValues();
     private int abilityReductionInTicks = 16;
     private int additionalReductionInTicks = 4;
     private float vindicateCooldownReduction = 0.5f;
-    private int targetsStruck = 0;
 
     public RighteousStrike() {
-        super("Righteous Strike", 0, 70);
+        super(AbstractAbilityBuilder.create("righteousStrike").pvp());
+    }
+
+    public RighteousStrike(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Strike the targeted enemy for ")
-                .damage(damageValues.strikeDamage)
-                .text(" damage. Each strike reduces the duration of your struck target's active ability timers by ")
-                .durationTicks(abilityReductionInTicks)
-                .text(".")
-                .emptyLine()
-                .text("If your struck target is silenced, reduce the cooldown of your Vindicate by ")
-                .durationSeconds(vindicateCooldownReduction)
-                .text(" and reduce their active ability timers by ")
-                .durationTicks((abilityReductionInTicks + additionalReductionInTicks))
-                .text(" instead.")
-                .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new RighteousStrikeBranch(abilityTree, this);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.abilityReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("abilityReductionInTicks"), int.class);
+        this.additionalReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalReductionInTicks"), int.class);
+        this.vindicateCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindicateCooldownReduction"), float.class);
     }
 
     @Override
@@ -63,13 +53,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         targetsStruck++;
-        nearPlayer.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .value(damageValues.strikeDamage)
-        );
-
+        nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage));
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             stats.silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks + additionalReductionInTicks, CooldownTypes.ABILITY);
@@ -79,35 +63,22 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);
         }
-
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             if (pveMasterUpgrade) {
                 SoulShackle.shacklePlayer(wp, nearPlayer, 120);
             }
-            for (WarlordsEntity we : PlayerFilter
-                    .entitiesAround(nearPlayer, 4, 4, 4)
-                    .aliveEnemiesOf(wp)
-                    .closestFirst(nearPlayer)
-                    .excluding(nearPlayer)
-                    .limit(4)
-            ) {
+            for (WarlordsEntity we : PlayerFilter.entitiesAround(nearPlayer, 4, 4, 4).aliveEnemiesOf(wp).closestFirst(nearPlayer).excluding(nearPlayer).limit(4)) {
                 targetsStruck++;
                 if (pveMasterUpgrade) {
                     SoulShackle.shacklePlayer(wp, we, 80);
                 }
-                we.addInstance(InstanceBuilder
-                        .damage()
-                        .ability(this)
-                        .source(wp)
-                        .value(damageValues.strikeDamage)
-                );
+                we.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage));
                 if (pveMasterUpgrade2 && targetsStruck % 5 == 0) {
                     wp.getAbilitiesMatching(SoulShackle.class).forEach(soulShackle -> soulShackle.subtractCurrentCooldown(.5f));
                     playCooldownReductionEffect(we);
                 }
             }
         }
-
         return true;
     }
 
@@ -121,18 +92,45 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         return stats;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Strike the targeted enemy for ")
+                                               .damage(damageValues.strikeDamage)
+                                               .text(" damage. Each strike reduces the duration of your struck target's active ability timers by ")
+                                               .durationTicks(abilityReductionInTicks)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("If your struck target is silenced, reduce the cooldown of your Vindicate by ")
+                                               .durationSeconds(vindicateCooldownReduction)
+                                               .text(" and reduce their active ability timers by ")
+                                               .durationTicks((abilityReductionInTicks + additionalReductionInTicks))
+                                               .text(" instead.")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new RighteousStrikeBranch(abilityTree, this);
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(334, 425, 20, 175);
-        private final List<Value> values = List.of(strikeDamage);
+        private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(334, 425, 20, 175);
 
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
+        private final List<Value> values = List.of(strikeDamage);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
         }
 
     }
@@ -165,5 +163,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         public RighteousStrikeStats create() {
             return new RighteousStrikeStats();
         }
+
     }
+
 }

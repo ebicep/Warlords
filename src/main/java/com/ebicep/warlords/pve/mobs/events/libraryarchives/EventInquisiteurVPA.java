@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
@@ -35,22 +36,19 @@ public class EventInquisiteurVPA extends EventInquisiteur {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new ImpalingStrike() {{
-                    this.setLeechDuration(3);
-                    this.setLeechAllyAmount(20);
-                    this.setLeechSelfAmount(15);
+                new ImpalingStrike(AbstractAbilityBuilder.create("inquisiteurVpaImpalingStrike").pve()) {{
                     this.setPveMasterUpgrade(true);
                 }},
-                new WaterBreath() {{
+                new WaterBreath(AbstractAbilityBuilder.create("inquisiteurVpaWaterBreath").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new VitalityLiquor() {{
+                new VitalityLiquor(AbstractAbilityBuilder.create("inquisiteurVpaVitalityLiquor").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new SanctifiedBeacon() {{
+                new SanctifiedBeacon(AbstractAbilityBuilder.create("inquisiteurVpaSanctifiedBeacon").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new HealingRain() {{
+                new HealingRain(AbstractAbilityBuilder.create("inquisiteurVpaHealingRain").pve()) {{
                     this.setPveMasterUpgrade(true);
                 }}
         );

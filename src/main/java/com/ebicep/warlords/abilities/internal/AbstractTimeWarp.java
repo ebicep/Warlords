@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -14,8 +15,15 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
     protected int warpHealPercentage = 30; //TODO
     private final AbstractTimeWarpStats stats = new AbstractTimeWarpStats();
 
-    public AbstractTimeWarp() {
-        super("Time Warp", 28, 30);
+    public AbstractTimeWarp(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.warpHealPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("warpHealPercentage"), int.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override
@@ -29,8 +37,9 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
                 .build();
     }
 
-    public int getTimesSuccessful() {
-        return stats.timesSuccessful;
+    @Override
+    public AbstractTimeWarpStats getAbilityStats() {
+        return stats;
     }
 
     public int getWarpHealPercentage() {
@@ -49,15 +58,15 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
         this.tickDuration = tickDuration;
     }
 
-    @Override
-    public AbstractTimeWarpStats getAbilityStats() {
-        return stats;
-    }
-
     public static class AbstractTimeWarpStats extends AbstractAbilityStats<AbstractTimeWarp, AbstractTimeWarpStats> {
 
         @Field("times_successful")
         private int timesSuccessful = 0;
+
+        @Override
+        public Class<AbstractTimeWarpStats> getClazz() {
+            return AbstractTimeWarpStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -74,11 +83,6 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
         }
 
         @Override
-        public Class<AbstractTimeWarpStats> getClazz() {
-            return AbstractTimeWarpStats.class;
-        }
-
-        @Override
         public AbstractTimeWarpStats create() {
             return new AbstractTimeWarpStats();
         }
@@ -86,5 +90,7 @@ public abstract class AbstractTimeWarp extends AbstractAbility implements Purple
         public void addTimesSuccessful() {
             timesSuccessful++;
         }
+
     }
+
 }

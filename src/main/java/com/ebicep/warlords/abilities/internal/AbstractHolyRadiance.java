@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -27,21 +28,21 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractHolyRadiance extends AbstractAbility implements BlueAbilityIcon, HitBox, AbilityStats<AbstractHolyRadiance, AbstractHolyRadiance.AbstractHolyRadianceStats> {
 
-    private final FloatModifiable radius;
     private final AbstractHolyRadianceStats stats = new AbstractHolyRadianceStats();
+    private FloatModifiable radius;
 
-    public AbstractHolyRadiance(
-            String name,
-            float cooldown,
-            float energyCost,
-            int radius
-    ) {
-        super(name, cooldown, energyCost);
-        this.radius = new FloatModifiable(radius);
+    public AbstractHolyRadiance(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Value.RangedValueCritable radianceHealing = getRadianceHealing();
         wp.addInstance(InstanceBuilder
                 .healing()
@@ -125,6 +126,11 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         private int playersMarked = 0;
 
         @Override
+        public Class<AbstractHolyRadianceStats> getClazz() {
+            return AbstractHolyRadianceStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Targets Healed", String.valueOf(playersHealed)));
@@ -141,14 +147,10 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
         }
 
         @Override
-        public Class<AbstractHolyRadianceStats> getClazz() {
-            return AbstractHolyRadianceStats.class;
-        }
-
-        @Override
         public AbstractHolyRadianceStats create() {
             return new AbstractHolyRadianceStats();
         }
+
     }
 
     public class FlyingArmorStand extends GameRunnable {
@@ -227,5 +229,7 @@ public abstract class AbstractHolyRadiance extends AbstractAbility implements Bl
             super.cancel();
             armorStand.remove();
         }
+
     }
+
 }

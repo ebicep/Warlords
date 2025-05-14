@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.pve.mobs.Mob;
 import org.bukkit.Location;
 
@@ -35,17 +36,17 @@ public class EventInquisiteurEGA extends EventInquisiteur {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RighteousStrike(),
-                new FreezingBreath() {{
+                new RighteousStrike(AbstractAbilityBuilder.create("inquisiteurEgaRighteousStrike").pve()),
+                new FreezingBreath(AbstractAbilityBuilder.create("inquisiteurEgaFreezingBreath").pve()) {{
                     this.setPveMasterUpgrade(true);
                 }},
-                new GroundSlamDefender() {{
+                new GroundSlamDefender(AbstractAbilityBuilder.create("inquisiteurEgaGroundSlamDefender").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new MysticalBarrier() {{
+                new MysticalBarrier(AbstractAbilityBuilder.create("inquisiteurEgaMysticalBarrier").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }},
-                new InspiringPresence() {{
+                new InspiringPresence(AbstractAbilityBuilder.create("inquisiteurEgaInspiringPresence").pve()) {{
                     this.setPveMasterUpgrade2(true);
                 }}
         );

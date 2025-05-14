@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsStrikeEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -39,14 +40,20 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
         ));
     }
 
-    private final FloatModifiable hitbox = new FloatModifiable(4.8f);
+    private FloatModifiable hitbox = new FloatModifiable(4.8f);
 
-    public AbstractStrike(String name, float cooldown, float energyCost) {
-        super(name, cooldown, energyCost);
+    public AbstractStrike(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class));
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         AtomicBoolean hitPlayer = new AtomicBoolean(false);
         float radius = hitbox.getCalculatedValue();
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
@@ -91,6 +98,11 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
 
     protected abstract boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer);
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitbox;
+    }
+
     public void knockbackOnHit(WarlordsEntity giver, WarlordsEntity kbTarget, double velocity, double y) {
         final Location loc = kbTarget.getLocation();
         final Vector v = giver.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(y);
@@ -130,11 +142,6 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
         }
     }
 
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return hitbox;
-    }
-
     public static abstract class AbstractStrikeStats<T extends AbstractStrike<T, R>, R extends AbstractStrikeStats<T, R>> extends AbstractAbilityStats<T, R> {
 
         @Field("targets_struck")
@@ -155,4 +162,5 @@ public abstract class AbstractStrike<T extends AbstractStrike<T, R>, R extends A
         }
 
     }
+
 }

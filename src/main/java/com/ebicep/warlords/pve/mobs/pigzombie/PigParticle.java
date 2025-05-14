@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.pigzombie;
 
 import com.ebicep.warlords.abilities.PrismGuard;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -29,7 +30,8 @@ public class PigParticle extends AbstractMob implements ChampionMob {
                 10,
                 450,
                 600,
-                new VoidHealing(), new PrismGuard(20)
+                new VoidHealing(),
+                new PrismGuard(AbstractAbilityBuilder.create("pigParticlePrismGuard").pve())
         );
     }
 
@@ -50,7 +52,8 @@ public class PigParticle extends AbstractMob implements ChampionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new VoidHealing(), new PrismGuard(20)
+                new VoidHealing(),
+                new PrismGuard(AbstractAbilityBuilder.create("pigParticlePrismGuard").pve())
         );
     }
 
@@ -74,11 +77,11 @@ public class PigParticle extends AbstractMob implements ChampionMob {
     private static class VoidHealing extends AbstractAbility implements Heals<VoidHealing.HealingValues> {
 
         public VoidHealing() {
-            super("Void Healing", .5f, 100);
+            super(AbstractAbilityBuilder.create("pigParticleVoidHealing").pve());
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, 6, 6, 6)
                     .aliveTeammatesOfExcludingSelf(wp)

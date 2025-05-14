@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -36,81 +37,61 @@ import java.util.List;
 
 public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanReduceCooldowns, Heals<WaterBreath.HealingValues>, AbilityStats<WaterBreath, WaterBreath.WaterBreathStats> {
 
-
-    private final HealingValues healingValues = new HealingValues();
     private final WaterBreathStats stats = new WaterBreathStats();
+    private final HealingValues healingValues = new HealingValues();
     private int maxAnimationTime = 12;
     private int maxAnimationEffects = 4;
     private float hitbox = 10;
     private double velocity = 1.1;
 
     public WaterBreath() {
-        super("Water Breath", 8f, 60);
+        super(AbstractAbilityBuilder.create("waterBreath").pvp());
+    }
+
+    public WaterBreath(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.maxAnimationTime = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAnimationTime"), int.class);
+        this.maxAnimationEffects = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAnimationEffects"), int.class);
+        this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Breathe water in a cone in front of you, knocking back enemies, cleansing all ")
-                .text("de-buffs", NamedTextColor.DARK_RED)
-                .text(" and restoring ")
-                .heal(healingValues.breathHealing)
-                .text(" health to yourself and all allies hit.")
-                .emptyLine()
-                .text("Water Breath can overheal allies for up to ")
-                .percent(10, NamedTextColor.GREEN)
-                .text(" of their max health as bonus health for ")
-                .durationSeconds(Overheal.OVERHEAL_DURATION)
-                .text(".")
-                .build();
+        description = AbilityDescriptionBuilder.create("Breathe water in a cone in front of you, knocking back enemies, cleansing all ")
+                                               .text("de-buffs", NamedTextColor.DARK_RED)
+                                               .text(" and restoring ")
+                                               .heal(healingValues.breathHealing)
+                                               .text(" health to yourself and all allies hit.")
+                                               .emptyLine()
+                                               .text("Water Breath can overheal allies for up to ")
+                                               .percent(10, NamedTextColor.GREEN)
+                                               .text(" of their max health as bonus health for ")
+                                               .durationSeconds(Overheal.OVERHEAL_DURATION)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, 1);
-        wp.getWorld().spawnParticle(
-                Particle.HEART,
-                wp.getLocation().add(0, 0.7, 0),
-                2,
-                0.6,
-                0.6,
-                0.6,
-                1,
-                null,
-                true
+        wp.getWorld().spawnParticle(Particle.HEART, wp.getLocation().add(0, 0.7, 0), 2, 0.6, 0.6, 0.6, 1, null, true);
+        Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
+        EffectUtils.playSpiralAnimation(wp, playerLoc, maxAnimationEffects, maxAnimationTime, (center, animationTimer) -> {
+                }, Particle.DRIPPING_WATER, Particle.ENCHANT, Particle.HAPPY_VILLAGER
         );
-
-        Location playerLoc = new LocationBuilder(wp.getLocation())
-                .pitch(0)
-                .add(0, 1.7, 0);
-
-        EffectUtils.playSpiralAnimation(
-                wp,
-                playerLoc,
-                maxAnimationEffects,
-                maxAnimationTime,
-                (center, animationTimer) -> {},
-                Particle.DRIPPING_WATER, Particle.ENCHANT, Particle.HAPPY_VILLAGER
-        );
-
         int previousDebuffsRemoved = stats.debuffsRemoved;
         stats.debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
-        wp.addInstance(InstanceBuilder
-                .healing()
-                .ability(this)
-                .source(wp)
-                .value(healingValues.breathHealing)
-        );
-        Location playerEyeLoc = new LocationBuilder(wp.getLocation())
-                .pitch(0)
-                .backward(1);
+        wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.breathHealing));
+        Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
         Vector viewDirection = playerLoc.getDirection();
-        for (WarlordsEntity breathTarget : PlayerFilter
-                .entitiesAroundRectangle(playerLoc, hitbox - 2.5, hitbox, hitbox - 2.5)
-                .excluding(wp)
-                .isAlive()
-        ) {
+        for (WarlordsEntity breathTarget : PlayerFilter.entitiesAroundRectangle(playerLoc, hitbox - 2.5, hitbox, hitbox - 2.5).excluding(wp).isAlive()) {
             Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
             if (!(viewDirection.dot(direction) > .68)) {
                 continue;
@@ -120,13 +101,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 stats.targetsHealed++;
                 stats.debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
                 breathTarget.getSpeed().removeSlownessModifiers();
-                breathTarget.addInstance(InstanceBuilder
-                        .healing()
-                        .ability(this)
-                        .source(wp)
-                        .value(healingValues.breathHealing)
-                        .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
-                );
+                breathTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.breathHealing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
                 Overheal.giveOverHeal(wp, breathTarget);
                 if (pveMasterUpgrade || pveMasterUpgrade2) {
                     regenOnHit(wp, breathTarget);
@@ -135,7 +110,6 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 final Location loc = breathTarget.getLocation();
                 final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
                 breathTarget.setVelocity(name, v, false);
-
                 if (pveMasterUpgrade2) {
                     giveMaliciousMist(wp, breathTarget);
                 }
@@ -145,33 +119,17 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         if (totalDebuffsRemoved >= 7) {
             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.CLEANSING_RITUAL);
         }
-
         return true;
     }
 
     private void regenOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         boolean hasPreviousCooldown = hit.getCooldownManager().hasCooldown(WaterBreath.class);
         hit.getCooldownManager().removeCooldown(WaterBreath.class, false);
-        hit.getCooldownManager().addRegularCooldown(
-                name,
-                "BREATH RGN",
-                WaterBreath.class,
-                new WaterBreath(),
-                giver,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                5 * 20,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+        hit.getCooldownManager().addRegularCooldown(name, "BREATH RGN", WaterBreath.class, new WaterBreath(), giver, CooldownTypes.ABILITY, cooldownManager -> {
+                }, 5 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 20 == 0) {
                         float healing = hit.getMaxHealth() * 0.02f;
-                        hit.addInstance(InstanceBuilder
-                                .healing()
-                                .ability(this)
-                                .source(giver)
-                                .value(healing)
-                                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS)
-                        );
+                        hit.addInstance(InstanceBuilder.healing().ability(this).source(giver).value(healing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
                     }
                 })
         );
@@ -187,8 +145,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         CooldownManager breathTargetCooldownManager = breathTarget.getCooldownManager();
         breathTargetCooldownManager.removeBuffCooldowns();
         breathTargetCooldownManager.removeCooldownByName("Malicious Mist");
-        breathTargetCooldownManager.addCooldown(new RegularCooldown<>(
-                "Malicious Mist",
+        breathTargetCooldownManager.addCooldown(new RegularCooldown<>("Malicious Mist",
                 "MIST",
                 WaterBreath.class,
                 new WaterBreath(),
@@ -199,21 +156,15 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
                 3 * 20,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksLeft % 5 == 0) {
-                        EffectUtils.displayParticle(
-                                Particle.SPLASH,
-                                breathTarget.getLocation().add(0, 1.25, 0),
-                                10,
-                                0.4f,
-                                0.4f,
-                                0.4f,
-                                0
-                        );
+                        EffectUtils.displayParticle(Particle.SPLASH, breathTarget.getLocation().add(0, 1.25, 0), 10, 0.4f, 0.4f, 0.4f, 0);
                     }
                 })
         ) {
+
             @Override
             protected Listener getListener() {
                 return new Listener() {
+
                     @EventHandler
                     public void onAbilityActivate(WarlordsAbilityActivateEvent.Pre event) {
                         if (event.getWarlordsEntity().equals(breathTarget)) {
@@ -240,6 +191,16 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
     @Override
     public boolean canReduceCooldowns() {
         return pveMasterUpgrade;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public WaterBreathStats getAbilityStats() {
+        return stats;
     }
 
     public double getVelocity() {
@@ -270,28 +231,27 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         this.maxAnimationEffects = maxAnimationEffects;
     }
 
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public WaterBreathStats getAbilityStats() {
-        return stats;
-    }
-
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(536, 743, 25, 175);
-        private final List<Value> values = List.of(breathHealing);
+        private Value.RangedValueCritable breathHealing = new Value.RangedValueCritable(536, 743, 25, 175);
 
-        public Value.RangedValueCritable getBreathHealing() {
-            return breathHealing;
-        }
+        private final List<Value> values = List.of(breathHealing);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.breathHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("breathHealing"),
+                    Value.RangedValueCritable.class
+            );
+        }
+
+        public Value.RangedValueCritable getBreathHealing() {
+            return breathHealing;
         }
 
     }
@@ -303,6 +263,11 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
 
         @Field("debuffs_removed")
         private int debuffsRemoved = 0;
+
+        @Override
+        public Class<WaterBreathStats> getClazz() {
+            return WaterBreathStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -321,13 +286,10 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         }
 
         @Override
-        public Class<WaterBreathStats> getClazz() {
-            return WaterBreathStats.class;
-        }
-
-        @Override
         public WaterBreathStats create() {
             return new WaterBreathStats();
         }
+
     }
+
 }

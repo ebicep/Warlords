@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -33,8 +34,8 @@ import java.util.*;
 
 public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon, Duration, Heals<DivineBlessing.HealingValues>, AbilityStats<DivineBlessing, DivineBlessing.DivineBlessingStats> {
 
-    private final HealingValues healingValues = new HealingValues();
     private final DivineBlessingStats stats = new DivineBlessingStats();
+    private final HealingValues healingValues = new HealingValues();
     private int hexTickDurationIncrease = 40;
     private int hexHealingBonus = 30;
     private int lethalDamageHealing = 15;
@@ -42,125 +43,97 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
     private int tickDuration = 240;
 
     public DivineBlessing() {
-        super("Divine Blessing", 50, 10);
+        super(AbstractAbilityBuilder.create("divineBlessing").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.hexTickDurationIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexTickDurationIncrease"), int.class);
+        this.hexHealingBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hexHealingBonus"), int.class);
+        this.lethalDamageHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("lethalDamageHealing"), int.class);
+        this.postHealthTickDelay = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("postHealthTickDelay"), int.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Imbue yourself with Holy Energy, increasing ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(" duration by ")
-                .durationTicks(hexTickDurationIncrease)
-                .text(" and causing Ray of Light to not consume ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(" stacks.")
-                .emptyLine()
-                .text("Allies with max stacks of ")
-                .text("MHEX", NamedTextColor.DARK_GREEN)
-                .text(" receive ")
-                .percent(hexHealingBonus, NamedTextColor.GREEN)
-                .text(" more healing from all sources and heal for ")
-                .percent(lethalDamageHealing, NamedTextColor.GREEN)
-                .text(" of their maximum health when taking lethal damage for the first time. After ")
-                .durationTicks(postHealthTickDelay)
-                .text("seconds all allies restore ")
-                .heal(healingValues.divineBlessingPostHeal)
-                .text(" health. Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
+        description = AbilityDescriptionBuilder.create("Imbue yourself with Holy Energy, increasing ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text(" duration by ")
+                                               .durationTicks(hexTickDurationIncrease)
+                                               .text(" and causing Ray of Light to not consume ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text(" stacks.")
+                                               .emptyLine()
+                                               .text("Allies with max stacks of ")
+                                               .text("MHEX", NamedTextColor.DARK_GREEN)
+                                               .text(" receive ")
+                                               .percent(hexHealingBonus, NamedTextColor.GREEN)
+                                               .text(" more healing from all sources and heal for ")
+                                               .percent(lethalDamageHealing, NamedTextColor.GREEN)
+                                               .text(" of their maximum health when taking lethal damage for the first time. After ")
+                                               .durationTicks(postHealthTickDelay)
+                                               .text("seconds all allies restore ")
+                                               .heal(healingValues.divineBlessingPostHeal)
+                                               .text(" health. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "arcanist.divineblessing.activation", 2, 1.2f);
         Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.6f);
         EffectUtils.strikeLightning(wp.getLocation(), true);
         Game game = wp.getGame();
         new GameRunnable(game) {
+
             double interval = 3;
 
             @Override
             public void run() {
                 interval -= 0.5;
-                EffectUtils.playCylinderAnimation(
-                        wp.getLocation(),
-                        1.5 + interval,
-                        70,
-                        255,
-                        70
-                );
-
+                EffectUtils.playCylinderAnimation(wp.getLocation(), 1.5 + interval, 70, 255, 70);
                 if (interval <= 0) {
                     this.cancel();
                 }
             }
         }.runTaskTimer(0, 1);
-
         DivineBlessingData data = new DivineBlessingData();
         int maxStacks = MercifulHex.getFromHex(wp).getMaxStacks();
         Set<WarlordsEntity> healedLethal = new HashSet<>();
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
-            modifiers = wp.getAbilitiesMatching(RayOfLight.class)
-                          .stream()
-                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.55f))
-                          .toList();
+            modifiers = wp.getAbilitiesMatching(RayOfLight.class).stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.55f)).toList();
         } else {
             modifiers = Collections.emptyList();
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessingData>(
-                name,
-                "BLESS",
-                DivineBlessingData.class,
-                data,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    if (pveMasterUpgrade) {
-                        healAllies(wp);
-                    }
-                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 10 == 0) {
-                        EffectUtils.displayParticle(
-                                Particle.CRIMSON_SPORE,
-                                wp.getLocation(),
-                                10,
-                                0.1,
-                                0.1,
-                                0.1,
-                                0.5
-                        );
-                    }
-
-                    if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
-                        PlayerFilter.playingGame(game)
-                                    .teammatesOfExcludingSelf(wp)
-                                    .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class)
-                                            .filterCooldownFrom(wp)
-                                            .filterCooldownClass(MercifulHex.class)
-                                            .stream()
-                                            .count() >= maxStacks)
-                                    .forEach(teammate -> {
-                                        teammate.getCooldownManager().removeCooldownByObject(data);
-                                        teammate.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                                name,
-                                                null,
-                                                DivineBlessingData.class,
-                                                data,
-                                                wp,
-                                                CooldownTypes.ABILITY,
-                                                cooldownManager -> {
-                                                },
-                                                21
+        wp.getCooldownManager().addCooldown(new RegularCooldown<DivineBlessingData>(name, "BLESS", DivineBlessingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            if (pveMasterUpgrade) {
+                healAllies(wp);
+            }
+            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 10 == 0) {
+                EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 10, 0.1, 0.1, 0.1, 0.5);
+            }
+            if (ticksElapsed % 20 == 0 && ticksLeft != 0) {
+                PlayerFilter.playingGame(game)
+                            .teammatesOfExcludingSelf(wp)
+                            .filter(teammate -> new CooldownFilter<>(teammate, RegularCooldown.class).filterCooldownFrom(wp)
+                                                                                                     .filterCooldownClass(MercifulHex.class)
+                                                                                                     .stream()
+                                                                                                     .count() >= maxStacks)
+                            .forEach(teammate -> {
+                                teammate.getCooldownManager().removeCooldownByObject(data);
+                                teammate.getCooldownManager()
+                                        .addCooldown(new RegularCooldown<>(name, null, DivineBlessingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                                        }, 21
                                         ) {
+
                                             @Override
                                             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
                                                 float newValue = currentHealValue * convertToMultiplicationDecimal(hexHealingBonus);
@@ -173,22 +146,34 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                                                 if (teammate.getCurrentHealth() - currentDamageValue < 0 && !healedLethal.contains(teammate)) {
                                                     healedLethal.add(teammate);
                                                     float healAmount = teammate.getMaxHealth() * convertToPercent(lethalDamageHealing);
-                                                    teammate.addInstance(InstanceBuilder
-                                                            .healing()
-                                                            .ability(DivineBlessing.this)
-                                                            .source(wp)
-                                                            .value(healAmount)
-                                                    );
+                                                    teammate.addInstance(InstanceBuilder.healing().ability(DivineBlessing.this).source(wp).value(healAmount));
                                                     teammate.playSound(teammate.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
                                                     stats.lethalDamgeHealed++;
                                                 }
                                                 return currentDamageValue;
                                             }
                                         });
-                                    });
-                    }
-                })
+                            });
+            }
+        })
         ) {
+
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+
+                    @EventHandler(priority = EventPriority.LOWEST)
+                    private void onAddCooldown(WarlordsAddCooldownEvent event) {
+                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+                        if (Objects.equals(cooldown.getFrom(),
+                                wp
+                        ) && cooldown instanceof RegularCooldown<?> regularCooldown && cooldown.getCooldownObject() instanceof MercifulHex) {
+                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
+                            stats.hexesProlonged++;
+                        }
+                    }
+                };
+            }
 
             @Override
             public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
@@ -202,11 +187,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             }
 
             public boolean hasMaxStacks() {
-                return new CooldownFilter<>(wp, RegularCooldown.class)
-                        .filterCooldownFrom(wp)
-                        .filterCooldownClass(MercifulHex.class)
-                        .stream()
-                        .count() >= maxStacks;
+                return new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp).filterCooldownClass(MercifulHex.class).stream().count() >= maxStacks;
             }
 
             @Override
@@ -215,47 +196,20 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     if (wp.getCurrentHealth() - currentDamageValue < 0 && !healedLethal.contains(wp)) {
                         healedLethal.add(wp);
                         float healAmount = wp.getMaxHealth() * convertToPercent(lethalDamageHealing);
-                        wp.addInstance(InstanceBuilder
-                                .healing()
-                                .ability(DivineBlessing.this)
-                                .source(wp)
-                                .value(healAmount)
-                        );
+                        wp.addInstance(InstanceBuilder.healing().ability(DivineBlessing.this).source(wp).value(healAmount));
                         wp.playSound(wp.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 2, 0.5f);
                         stats.lethalDamgeHealed++;
                     }
                 }
                 return currentDamageValue;
             }
-
-            @Override
-            protected Listener getListener() {
-                return new Listener() {
-                    @EventHandler(priority = EventPriority.LOWEST)
-                    private void onAddCooldown(WarlordsAddCooldownEvent event) {
-                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (Objects.equals(cooldown.getFrom(), wp) &&
-                                cooldown instanceof RegularCooldown<?> regularCooldown &&
-                                cooldown.getCooldownObject() instanceof MercifulHex
-                        ) {
-                            regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + hexTickDurationIncrease);
-                            stats.hexesProlonged++;
-                        }
-                    }
-                };
-            }
         });
-        PlayerFilter.playingGame(game)
-                    .teammatesOf(wp)
-                    .forEach(enemy -> {
-                        new CooldownFilter<>(enemy, RegularCooldown.class)
-                                .filterCooldownClass(MercifulHex.class)
-                                .filterCooldownFrom(wp)
-                                .forEach(cd -> {
-                                    cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
-                                    stats.hexesProlonged++;
-                                });
-                    });
+        PlayerFilter.playingGame(game).teammatesOf(wp).forEach(enemy -> {
+            new CooldownFilter<>(enemy, RegularCooldown.class).filterCooldownClass(MercifulHex.class).filterCooldownFrom(wp).forEach(cd -> {
+                cd.setTicksLeft(cd.getTicksLeft() + hexTickDurationIncrease);
+                stats.hexesProlonged++;
+            });
+        });
         new GameRunnable(game) {
 
             @Override
@@ -263,36 +217,23 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                 healAllies(wp);
             }
         }.runTaskLater(postHealthTickDelay);
-
         if (pveMasterUpgrade2) {
-            PlayerFilter.entitiesAround(wp, 10, 10, 10)
-                        .aliveTeammatesOf(wp)
-                        .forEach(warlordsEntity -> {
-                            new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                                    .filterCooldownClass(MercifulHex.class)
-                                    .forEach(regularCooldown -> {
-                                        regularCooldown.setTicksLeft(regularCooldown.getStartingTicks() + hexTickDurationIncrease);
-                                        stats.hexesProlonged++;
-                                    });
-                        });
+            PlayerFilter.entitiesAround(wp, 10, 10, 10).aliveTeammatesOf(wp).forEach(warlordsEntity -> {
+                new CooldownFilter<>(warlordsEntity, RegularCooldown.class).filterCooldownClass(MercifulHex.class).forEach(regularCooldown -> {
+                    regularCooldown.setTicksLeft(regularCooldown.getStartingTicks() + hexTickDurationIncrease);
+                    stats.hexesProlonged++;
+                });
+            });
         }
-
         return true;
     }
 
     private void healAllies(@Nonnull WarlordsEntity wp) {
-        PlayerFilter.playingGame(wp.getGame())
-                    .teammatesOf(wp)
-                    .forEach(teammate -> {
-                        teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
-                        teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
-                        teammate.addInstance(InstanceBuilder
-                                .healing()
-                                .ability(this)
-                                .source(wp)
-                                .value(healingValues.divineBlessingPostHeal)
-                        );
-                    });
+        PlayerFilter.playingGame(wp.getGame()).teammatesOf(wp).forEach(teammate -> {
+            teammate.playSound(teammate.getLocation(), "shaman.earthlivingweapon.impact", 1, 0.55f);
+            teammate.playSound(teammate.getLocation(), "arcanist.divineblessing.impact", 0.2f, 1.75f);
+            teammate.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.divineBlessingPostHeal));
+        });
     }
 
     @Override
@@ -310,14 +251,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         this.tickDuration = tickDuration;
     }
 
-    public int getLethalDamageHealing() {
-        return lethalDamageHealing;
-    }
-
-    public void setLethalDamageHealing(int lethalDamageHealing) {
-        this.lethalDamageHealing = lethalDamageHealing;
-    }
-
     @Override
     public HealingValues getHealValues() {
         return healingValues;
@@ -328,9 +261,18 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         return stats;
     }
 
+    public int getLethalDamageHealing() {
+        return lethalDamageHealing;
+    }
+
+    public void setLethalDamageHealing(int lethalDamageHealing) {
+        this.lethalDamageHealing = lethalDamageHealing;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.SetValue divineBlessingPostHeal = new Value.SetValue(800);
+        private Value.SetValue divineBlessingPostHeal = new Value.SetValue(800);
+
         private final List<Value> values = List.of(divineBlessingPostHeal);
 
         @Override
@@ -338,22 +280,37 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
             return values;
         }
 
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.divineBlessingPostHeal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("divineBlessingPostHeal"),
+                    Value.SetValue.class
+            );
+        }
+
     }
 
     public static class DivineBlessingData {
-
     }
 
     public static class DivineBlessingStats extends AbstractAbilityStats<DivineBlessing, DivineBlessingStats> {
 
         @Field("hexes_prolonged")
         private int hexesProlonged = 0;
+
         @Field("hexes_not_consumed")
         private int hexesNotConsumed = 0;
+
         @Field("healing_increased")
         private float healingIncreased = 0;
+
         @Field("lethal_damge_healed")
         private int lethalDamgeHealed = 0;
+
+        @Override
+        public Class<DivineBlessingStats> getClazz() {
+            return DivineBlessingStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -376,11 +333,6 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         }
 
         @Override
-        public Class<DivineBlessingStats> getClazz() {
-            return DivineBlessingStats.class;
-        }
-
-        @Override
         public DivineBlessingStats create() {
             return new DivineBlessingStats();
         }
@@ -392,5 +344,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
         public void setHexesNotConsumed(int hexesNotConsumed) {
             this.hexesNotConsumed = hexesNotConsumed;
         }
+
     }
+
 }

@@ -4,6 +4,7 @@ import com.ebicep.customentities.nms.pve.pathfindergoals.NPCFleeWarlordsEntityGo
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -23,7 +24,16 @@ import java.util.function.Consumer;
 public class SkeletalArcher extends AbstractMob implements EliteMob {
 
     public SkeletalArcher(Location spawnLocation) {
-        this(spawnLocation, "Skeletal Archer", 5000, 0f, 10, 0, 0, new Fireball(3));
+        this(
+                spawnLocation,
+                "Skeletal Archer",
+                5000,
+                0f,
+                10,
+                0,
+                0,
+                new Fireball(AbstractAbilityBuilder.create("skeletalArcherFireball").pve())
+        );
     }
 
     public SkeletalArcher(

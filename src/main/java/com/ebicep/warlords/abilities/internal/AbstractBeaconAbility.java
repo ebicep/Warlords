@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -30,16 +31,15 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
     protected int tickDuration;
     private int maxBeaconsAtATime = 2;
 
-    public AbstractBeaconAbility(
-            String name,
-            float cooldown,
-            float energyCost,
-            float radius,
-            int secondDuration
-    ) {
-        super(name, cooldown, energyCost);
-        this.radius = new FloatModifiable(radius);
-        this.tickDuration = secondDuration * 20;
+    public AbstractBeaconAbility(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
     public abstract Component getBonusDescription();
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
 
         wp.getCooldownManager().limitCooldowns(RegularCooldown.class, getDataClass(), maxBeaconsAtATime);
         Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
@@ -192,6 +192,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R
         public FloatModifiable getRadius() {
             return radius;
         }
+
     }
 
 }

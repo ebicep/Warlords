@@ -1,8 +1,10 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractSeismicWave;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -22,12 +24,12 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
     private final DamageValues damageValues = new DamageValues();
 
     public SeismicWaveBerserker() {
-        super(12, 60);
+        super(AbstractAbilityBuilder.create("seismicWaveBerserker").pvp());
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
@@ -38,6 +40,7 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
         }
         ArrayList<List<Location>> locations = new ArrayList<>(fallingBlockLocations);
         new GameRunnable(wp.getGame()) {
+
             int secondsElapsed = 0;
 
             @Override
@@ -46,22 +49,15 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
                 List<WarlordsEntity> playersHit = new ArrayList<>();
                 for (List<Location> fallingBlockLocation : locations) {
                     for (Location loc : fallingBlockLocation) {
-                        for (WarlordsEntity waveTarget : PlayerFilter
-                                .entitiesAroundRectangle(loc, .6, 4, .6)
-                                .aliveEnemiesOf(wp)
-                                .excluding(playersHit)
-                                .closestFirst(wp)
-                        ) {
+                        for (WarlordsEntity waveTarget : PlayerFilter.entitiesAroundRectangle(loc, .6, 4, .6).aliveEnemiesOf(wp).excluding(playersHit).closestFirst(wp)) {
                             playersHit.add(waveTarget);
-                            waveTarget.addInstance(InstanceBuilder
-                                    .damage()
-                                    .ability(SeismicWaveBerserker.this)
-                                    .source(wp)
-                                    .min(723)
-                                    .max(906)
-                                    .crit(damageValues.waveDamage)
-                                    .uuid(uuid)
-                            );
+                            waveTarget.addInstance(InstanceBuilder.damage()
+                                                                  .ability(SeismicWaveBerserker.this)
+                                                                  .source(wp)
+                                                                  .min(723)
+                                                                  .max(906)
+                                                                  .crit(damageValues.waveDamage)
+                                                                  .uuid(uuid));
                         }
                     }
                 }
@@ -79,20 +75,23 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
         if (pveMasterUpgrade) {
             multiplier = (1.5f / 15f) * Math.min(i + 1, 15) + 1;
         }
-        waveTarget.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .min(damageValues.waveDamage.getMinValue() * multiplier)
-                .max(damageValues.waveDamage.getMaxValue() * multiplier)
-                .crit(damageValues.waveDamage)
-                .uuid(abilityUUID)
-        );
+        waveTarget.addInstance(InstanceBuilder.damage()
+                                              .ability(this)
+                                              .source(wp)
+                                              .min(damageValues.waveDamage.getMinValue() * multiplier)
+                                              .max(damageValues.waveDamage.getMaxValue() * multiplier)
+                                              .crit(damageValues.waveDamage)
+                                              .uuid(abilityUUID));
     }
 
     @Override
     public Value.RangedValueCritable getWaveDamage() {
         return damageValues.waveDamage;
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
@@ -102,16 +101,22 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable waveDamage = new Value.RangedValueCritable(557, 753, 25, 200);
-        private final List<Value> values = List.of(waveDamage);
+        private Value.RangedValueCritable waveDamage = new Value.RangedValueCritable(557, 753, 25, 200);
 
-        public Value.RangedValueCritable getWaveDamage() {
-            return waveDamage;
-        }
+        private final List<Value> values = List.of(waveDamage);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.waveDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("waveDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getWaveDamage() {
+            return waveDamage;
         }
 
     }

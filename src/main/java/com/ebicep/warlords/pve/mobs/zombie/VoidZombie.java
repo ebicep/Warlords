@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -31,7 +32,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
                 1500,
                 2000,
                 new VoidShred(),
-                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 10)
+                new AdvancedVoidShred(AbstractAbilityBuilder.create("zombieSingularityAdvancedVoidShred").pve(), 200, 300, -70, voidRadius, 10)
         );
     }
 
@@ -53,7 +54,7 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new VoidShred(),
-                new AdvancedVoidShred(200, 300, .5f, -70, voidRadius, 10)
+                new AdvancedVoidShred(AbstractAbilityBuilder.create("zombieSingularityAdvancedVoidShred").pve(), 200, 300, -70, voidRadius, 10)
         );
     }
 
@@ -100,11 +101,11 @@ public class VoidZombie extends AbstractMob implements AdvancedMob {
     private static class VoidShred extends AbstractAbility {
 
         public VoidShred() {
-            super("Void Shred", 2, 100);
+            super(AbstractAbilityBuilder.create("zombieSingularityVoidShred").pve());
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             float healthDamage = wp.getMaxHealth() * 0.01f;
             wp.addInstance(InstanceBuilder
                     .damage()

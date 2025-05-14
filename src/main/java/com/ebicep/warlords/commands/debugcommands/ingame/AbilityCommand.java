@@ -42,6 +42,7 @@ public class AbilityCommand extends BaseCommand {
     public void useAll(WarlordsPlayer warlordsPlayer) {
         for (Ability<?> value : Ability.VALUES) {
             AbstractAbility ability = value.create.get();
+            ability.init(ability.getBuilder());
             ability.onActivate(warlordsPlayer);
         }
     }

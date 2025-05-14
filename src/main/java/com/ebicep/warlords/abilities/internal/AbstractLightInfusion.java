@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,8 +33,16 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     protected int energyGiven = 120;
     private final AbstractLightInfusionStats stats = new AbstractLightInfusionStats();
 
-    public AbstractLightInfusion(float cooldown) {
-        super("Light Infusion", cooldown, 0);
+    public AbstractLightInfusion(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
     }
 
     @Override
@@ -59,6 +68,11 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
         this.tickDuration = tickDuration;
     }
 
+    @Override
+    public AbstractLightInfusionStats getAbilityStats() {
+        return stats;
+    }
+
     public int getSpeedBuff() {
         return speedBuff;
     }
@@ -75,12 +89,12 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
         this.energyGiven = energyGiven;
     }
 
-    @Override
-    public AbstractLightInfusionStats getAbilityStats() {
-        return stats;
-    }
-
     public static class AbstractLightInfusionStats extends AbstractAbilityStats<AbstractLightInfusion, AbstractLightInfusionStats> {
+
+        @Override
+        public Class<AbstractLightInfusionStats> getClazz() {
+            return AbstractLightInfusionStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -95,14 +109,10 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
         }
 
         @Override
-        public Class<AbstractLightInfusionStats> getClazz() {
-            return AbstractLightInfusionStats.class;
-        }
-
-        @Override
         public AbstractLightInfusionStats create() {
             return new AbstractLightInfusionStats();
         }
+
     }
 
 }

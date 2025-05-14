@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -27,12 +28,15 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
 
-    public AbstractGroundSlam(float cooldown, float energyCost) {
-        this(cooldown, energyCost, 0);
+    public AbstractGroundSlam(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
-    public AbstractGroundSlam(float cooldown, float energyCost, float startCooldown) {
-        super("Ground Slam", cooldown, energyCost, startCooldown);
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
+        this.slamSize = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slamSize"), float.class));
     }
 
     @Override
@@ -46,7 +50,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         UUID abilityUUID = UUID.randomUUID();
@@ -164,6 +168,16 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
 
     public abstract Value.RangedValueCritable getSlamDamage();
 
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return slamSize;
+    }
+
+    @Override
+    public AbstractGroundSlamStats getAbilityStats() {
+        return stats;
+    }
+
     public float getVelocity() {
         return velocity;
     }
@@ -176,16 +190,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         this.trueDamage = trueDamage;
     }
 
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return slamSize;
-    }
-
-    @Override
-    public AbstractGroundSlamStats getAbilityStats() {
-        return stats;
-    }
-
     public static class AbstractGroundSlamStats extends AbstractAbilityStats<AbstractGroundSlam, AbstractGroundSlamStats> {
 
         @Field("targets_hit")
@@ -194,6 +198,11 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         private int carrierHit = 0;
         @Field("warps_knockbacked")
         private int warpsKnockbacked = 0;
+
+        @Override
+        public Class<AbstractGroundSlamStats> getClazz() {
+            return AbstractGroundSlamStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -214,14 +223,10 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         }
 
         @Override
-        public Class<AbstractGroundSlamStats> getClazz() {
-            return AbstractGroundSlamStats.class;
-        }
-
-        @Override
         public AbstractGroundSlamStats create() {
             return new AbstractGroundSlamStats();
         }
+
     }
 
 }

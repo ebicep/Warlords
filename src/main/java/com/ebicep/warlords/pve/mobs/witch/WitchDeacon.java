@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witch;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -92,7 +93,7 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
     private static class WitchBuff extends AbstractPveAbility {
 
         public WitchBuff() {
-            super("Witch Buff", 0, 100);
+            super(AbstractAbilityBuilder.create("witchDeaconWitchBuff").pve());
         }
 
         @Override

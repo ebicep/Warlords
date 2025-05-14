@@ -1,8 +1,10 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.abilities.internal.Heals;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -18,6 +20,16 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
 
     private int healingIncrease = 20;
 
+    public EnergySeerLuminary() {
+        super(AbstractAbilityBuilder.create("energySeerLuminary").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.healingIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrease"), int.class);
+    }
+
     @Override
     public EnergySeerData getDataObject() {
         return new EnergySeerData();
@@ -32,19 +44,16 @@ public class EnergySeerLuminary extends AbstractEnergySeer<AbstractEnergySeer.En
     protected void onEnd(WarlordsEntity wp, EnergySeerData data) {
         super.onEnd(wp, data);
         if (pveMasterUpgrade2) {
-            PlayerFilter.entitiesAround(wp, 10, 10, 10)
-                        .aliveTeammatesOfExcludingSelf(wp)
-                        .forEach(warlordsEntity -> {
-                            MercifulHex.giveMercifulHex(wp, warlordsEntity);
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER, 1, 1.25, -1);
-                        });
+            PlayerFilter.entitiesAround(wp, 10, 10, 10).aliveTeammatesOfExcludingSelf(wp).forEach(warlordsEntity -> {
+                MercifulHex.giveMercifulHex(wp, warlordsEntity);
+                EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.HAPPY_VILLAGER, 1, 1.25, -1);
+            });
         }
     }
 
     @Override
     public TextComponent getBonus() {
-        return Component.text("Increase your healing by ")
-                        .append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
+        return Component.text("Increase your healing by ").append(Component.text(healingIncrease + "%", NamedTextColor.GREEN));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -34,7 +35,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                 0,
                 2000,
                 2500,
-                new RemoveTarget(20),
+                new RemoveTarget(AbstractAbilityBuilder.create("soulOfGradientRemoveTarget").pve()),
                 new TormentingMark()
         );
     }
@@ -55,7 +56,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(20),
+                new RemoveTarget(AbstractAbilityBuilder.create("soulOfGradientRemoveTarget").pve()),
                 new TormentingMark()
         );
     }
@@ -77,15 +78,7 @@ public class SoulOfGradient extends AbstractMob implements BossMinionMob {
     private static class TormentingMark extends AbstractPveAbility implements Damages<TormentingMark.DamageValues> {
 
         public TormentingMark() {
-            super(
-                    "Tormenting Mark",
-                    1000,
-                    1000,
-                    .5f,
-                    50,
-                    0,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("soulOfGradientTormentingMark").pve());
         }
 
         @Override

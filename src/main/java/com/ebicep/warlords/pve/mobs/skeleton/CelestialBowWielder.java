@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
 import com.ebicep.warlords.abilities.Fireball;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -23,7 +24,7 @@ public class CelestialBowWielder extends AbstractMob implements AdvancedMob {
                 10,
                 600,
                 900,
-                new Fireball(5.5f)
+                new Fireball(AbstractAbilityBuilder.create("celestialBowWielderFireball").pve())
         );
     }
 
@@ -44,7 +45,7 @@ public class CelestialBowWielder extends AbstractMob implements AdvancedMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new Fireball(5.5f)
+                new Fireball(AbstractAbilityBuilder.create("celestialBowWielderFireball").pve())
         );
     }
 

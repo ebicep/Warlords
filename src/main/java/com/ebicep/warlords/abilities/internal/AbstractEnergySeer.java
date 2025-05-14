@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.EnergySeerLuminary;
 import com.ebicep.warlords.abilities.EnergySeerSentinel;
 import com.ebicep.warlords.abilities.FortifyingHex;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -33,14 +34,25 @@ import java.util.Objects;
 public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeerData> extends AbstractAbility implements PurpleAbilityIcon, Duration, Heals<AbstractEnergySeer.HealingValues>, AbilityStats<AbstractEnergySeer, AbstractEnergySeer.AbstractEnergySeerStats> {
 
     private final HealingValues healingValues = new HealingValues();
+    private final AbstractEnergySeerStats stats = new AbstractEnergySeerStats();
     private int tickDuration = 100;
     private int postEffectTickDuration = 100;
     private int energyRestore = 130;
     private int epsDecrease = 10;
     private int speedBuff = 30;
 
-    public AbstractEnergySeer() {
-        super("Energy Seer", 26, 0);
+    public AbstractEnergySeer(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.postEffectTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("postEffectTickDuration"), int.class);
+        this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), int.class);
+        this.epsDecrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("epsDecrease"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
     }
 
     @Override
@@ -82,7 +94,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "arcanist.energyseer.activation", 2, 0.9f);
         for (int i = 0; i < 20; i++) {
             EffectUtils.displayParticle(Particle.SOUL_FIRE_FLAME, wp.getLocation(), 3, 0.3, 0.1, 0.3, 0.1);
@@ -118,23 +130,6 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                     }
                 })
         ) {
-
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
-                    return currentHealValue * convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease());
-
-                }
-                return currentHealValue;
-            }
-
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
-                    return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
-                }
-                return currentDamageValue;
-            }
 
             @Override
             protected Listener getListener() {
@@ -176,6 +171,23 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
                         }
                     }
                 };
+            }
+
+            @Override
+            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
+                if (inPve && AbstractEnergySeer.this instanceof EnergySeerLuminary energySeerLuminary) {
+                    return currentHealValue * convertToMultiplicationDecimal(energySeerLuminary.getHealingIncrease());
+
+                }
+                return currentHealValue;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (inPve && AbstractEnergySeer.this instanceof EnergySeerConjurer energySeerConjurer) {
+                    return currentDamageValue * convertToMultiplicationDecimal(energySeerConjurer.getDamageIncrease());
+                }
+                return currentDamageValue;
             }
         });
         return true;
@@ -226,6 +238,26 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     public abstract TextComponent getBonus();
 
+    @Override
+    public int getTickDuration() {
+        return tickDuration;
+    }
+
+    @Override
+    public void setTickDuration(int tickDuration) {
+        this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public AbstractEnergySeerStats getAbilityStats() {
+        return stats;
+    }
+
     public int getEnergyRestore() {
         return energyRestore;
     }
@@ -242,33 +274,18 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         this.epsDecrease = epsDecrease;
     }
 
-    @Override
-    public int getTickDuration() {
-        return tickDuration;
-    }
-
-    @Override
-    public void setTickDuration(int tickDuration) {
-        this.tickDuration = tickDuration;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
     public static class HealingValues implements Value.ValueHolder {
 
         protected final Value.SetValue seerHealingMultiplier = new Value.SetValue(5);
         private final List<Value> values = List.of(seerHealingMultiplier);
 
-        public Value.SetValue getSeerHealingMultiplier() {
-            return seerHealingMultiplier;
-        }
-
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        public Value.SetValue getSeerHealingMultiplier() {
+            return seerHealingMultiplier;
         }
 
     }
@@ -287,28 +304,21 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
 
     }
 
-    private final AbstractEnergySeerStats stats = new AbstractEnergySeerStats();
-
-    @Override
-    public AbstractEnergySeerStats getAbilityStats() {
-        return stats;
-    }
-
     public static class AbstractEnergySeerStats extends AbstractAbilityStats<AbstractEnergySeer, AbstractEnergySeerStats> {
 
         @Field("times_healed")
         private int timesHealed = 0;
 
         @Override
+        public Class<AbstractEnergySeerStats> getClazz() {
+            return AbstractEnergySeerStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Times Healed", timesHealed));
             return statsDisplay;
-        }
-
-        @Override
-        public Class<AbstractEnergySeerStats> getClazz() {
-            return AbstractEnergySeerStats.class;
         }
 
         @Override
@@ -322,5 +332,7 @@ public abstract class AbstractEnergySeer<T extends AbstractEnergySeer.EnergySeer
         public AbstractEnergySeerStats create() {
             return new AbstractEnergySeerStats();
         }
+
     }
+
 }

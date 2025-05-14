@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -28,41 +29,41 @@ import java.util.List;
 
 public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurst.FlameBurstStats> implements RedAbilityIcon, Splash, Damages<FlameBurst.DamageValues> {
 
-    private final DamageValues damageValues = new DamageValues();
     private final FlameBurstStats stats = new FlameBurstStats();
+    private final DamageValues damageValues = new DamageValues();
     private FloatModifiable splash = new FloatModifiable(5.125f);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;
 
     public FlameBurst() {
-        super("Flame Burst", 9.5f, 60, 1.65, 200, false);
+        super(AbstractAbilityBuilder.create("flameBurst").pvp());
     }
 
-    public FlameBurst(float cooldown) {
-        super("Flame Burst", cooldown, 60, 1.65, 200, false);
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    public FlameBurst(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Launch a flame burst that will explode for ")
-                .damage(damageValues.flameBurstDamage)
-                .text(" damage. The Crit Chance increases by ")
-                .percent(1, NamedTextColor.RED)
-                .text(" for each travelled block. Up to ")
-                .percent(100, NamedTextColor.RED)
-                .text(".")
-                .build();
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.splash = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("splash"), float.class));
+        this.acceleration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("acceleration"), float.class);
+        this.projectileWidth = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileWidth"), float.class);
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new FlameburstBranch(abilityTree, this);
+    protected String getActivationSound() {
+        return "mage.fireball.activation";
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 1;
     }
 
     @Override
@@ -71,8 +72,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
             if (ticksLived % 2 == 0) {
                 return;
             }
-            for (Location location : Arrays.asList(
-                    currentLocation,
+            for (Location location : Arrays.asList(currentLocation,
                     new LocationBuilder(currentLocation).backward(.25f).left(.25f),
                     new LocationBuilder(currentLocation).backward(.5f).left(.5f),
                     new LocationBuilder(currentLocation).backward(.75f).left(.75f),
@@ -80,28 +80,15 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
                     new LocationBuilder(currentLocation).backward(.5f).right(.5f),
                     new LocationBuilder(currentLocation).backward(.75f).right(.75f)
             )) {
-                EffectUtils.displayParticle(
-                        Particle.FLAME,
-                        location,
-                        5,
-                        .05,
-                        .05,
-                        .05,
-                        0
-                );
+                EffectUtils.displayParticle(Particle.FLAME, location, 5, .05, .05, .05, 0);
             }
             return;
         }
         Matrix4d center = new Matrix4d(currentLocation);
-
         for (float i = 0; i < 4; i++) {
             double angle = Math.toRadians(i * 90) + ticksLived * 0.45;
             double width = projectileWidth;
-            EffectUtils.displayParticle(
-                    Particle.FLAME,
-                    center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width),
-                    2
-            );
+            EffectUtils.displayParticle(Particle.FLAME, center.translateVector(currentLocation.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 2);
         }
     }
 
@@ -111,13 +98,10 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
             return 0;
         }
         Location currentLocation = projectile.getCurrentLocation();
-
         Utils.playGlobalSound(currentLocation, "mage.flameburst.impact", 2, 1);
-
         EffectUtils.displayParticle(Particle.EXPLOSION, currentLocation, 2, 0, 0, 0, 0.5);
         EffectUtils.displayParticle(Particle.LAVA, currentLocation, 10, 0.5F, 0, 0.5F, 2);
         EffectUtils.displayParticle(Particle.CLOUD, currentLocation, 3, 0.3F, 0.3F, 0.3F, 1);
-
         if (hit != null) {
             hitEntity(projectile, hit);
         }
@@ -128,51 +112,42 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         WarlordsEntity shooter = projectile.getShooter();
         Location startingLocation = projectile.getStartingLocation();
         Location currentLocation = projectile.getCurrentLocation();
-
         getProjectiles(projectile).forEach(p -> p.getHit().add(nearEntity));
         if (nearEntity.onHorse()) {
             stats.addNumberOfDismounts();
         }
-
         if (pveMasterUpgrade) {
             int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
-            nearEntity.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(shooter)
-                    .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
-                    .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
-                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
-                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease)
-            );
+            nearEntity.addInstance(InstanceBuilder.damage()
+                                                  .ability(this)
+                                                  .source(shooter)
+                                                  .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
+                                                  .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
+                                                  .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
+                                                  .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease));
         } else {
             float damageBoost = 1;
             if (pveMasterUpgrade2) {
                 damageBoost += Math.min(.75f, (projectile.getHit().size() - 1) * .05f);
             }
-            nearEntity.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(shooter)
-                    .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
-                    .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
-                    .critChance(damageValues.flameBurstDamage.getCritChanceValue())
-                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue())
-            );
+            nearEntity.addInstance(InstanceBuilder.damage()
+                                                  .ability(this)
+                                                  .source(shooter)
+                                                  .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
+                                                  .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
+                                                  .critChance(damageValues.flameBurstDamage.getCritChanceValue())
+                                                  .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue()));
         }
     }
 
     private int hit(@Nonnull InternalProjectile projectile) {
         WarlordsEntity shooter = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
-
         int playersHit = 0;
         float splashRadius = splash.getCalculatedValue();
-        for (WarlordsEntity nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
-                .aliveEnemiesOf(shooter)
-                .excluding(projectile.getHit())
-        ) {
+        for (WarlordsEntity nearEntity : PlayerFilter.entitiesAround(currentLocation, splashRadius, splashRadius, splashRadius)
+                                                     .aliveEnemiesOf(shooter)
+                                                     .excluding(projectile.getHit())) {
             playersHit++;
             hitEntity(projectile, nearEntity);
         }
@@ -251,22 +226,25 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
     }
 
     @Override
-    protected String getActivationSound() {
-        return "mage.fireball.activation";
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
-    protected float getSoundVolume() {
-        return 2;
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Launch a flame burst that will explode for ")
+                                               .damage(damageValues.flameBurstDamage)
+                                               .text(" damage. The Crit Chance increases by ")
+                                               .percent(1, NamedTextColor.RED)
+                                               .text(" for each travelled block. Up to ")
+                                               .percent(100, NamedTextColor.RED)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    protected float getSoundPitch() {
-        return 1;
-    }
-
-    public void setProjectileWidth(double projectileWidth) {
-        this.projectileWidth = projectileWidth;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new FlameburstBranch(abilityTree, this);
     }
 
     @Override
@@ -279,18 +257,31 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         return stats;
     }
 
+    public void setProjectileWidth(double projectileWidth) {
+        this.projectileWidth = projectileWidth;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
-        private final List<Value> values = List.of(flameBurstDamage);
+        private Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
 
-        public Value.RangedValueCritable getFlameBurstDamage() {
-            return flameBurstDamage;
-        }
+        private final List<Value> values = List.of(flameBurstDamage);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.flameBurstDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("flameBurstDamage"),
+                    Value.RangedValueCritable.class
+            );
+        }
+
+        public Value.RangedValueCritable getFlameBurstDamage() {
+            return flameBurstDamage;
         }
 
     }
@@ -318,5 +309,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         public FlameBurstStats create() {
             return new FlameBurstStats();
         }
+
     }
+
 }

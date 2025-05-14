@@ -1,12 +1,15 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
-import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -120,19 +123,52 @@ public class OldTestCommand implements CommandExecutor {
 //            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
 //            System.out.println(strikeDamage);
             Document document = new Document();
-            for (Ability<?> value : Ability.ABILITY_MAP.values()) {
-                AbstractAbility ability = value.create.get();
-                System.out.println(ability.getClass().getSimpleName());
-                System.out.println(ability.getCooldownValue());
-                System.out.println(ability.getEnergyCostValue());
-                document.append(ability.getClass().getSimpleName(), new Document()
-                        .append("cooldown", ability.getCooldownValue())
-                        .append("energyCost", ability.getEnergyCostValue())
-                );
-//                break;
+//            for (Ability<?> value : Ability.ABILITY_MAP.values()) {
+//                AbstractAbility ability = value.create.get();
+//                System.out.println(ability.getClass().getSimpleName());
+//                System.out.println(ability.getCooldownValue());
+//                System.out.println(ability.getEnergyCostValue());
+//                document.append(ability.getClass().getSimpleName(), new Document()
+//                        .append("cooldown", ability.getCooldownValue())
+//                        .append("energyCost", ability.getEnergyCostValue())
+//                );
+////                break;
+//            }
+
+            for (Mob value : Mob.VALUES) {
+//                if (value != Mob.ARACHNO_VENERATUS) {
+//                    continue;
+//                }
+//                System.out.println(value);
+                AbstractMob mob = value.createMobLegacy.apply(null);
+                for (AbstractAbility ability : mob.getPlayerClass().getAbilities()) {
+                    AbstractAbilityBuilder builder = ability.getBuilder();
+                    String str = StringUtils.toCamelCase(mob.getName()) + builder.getFieldName().substring(0, 1).toUpperCase() + builder.getFieldName().substring(1);
+//                    if (builder.getEnergyCost() != null) {
+//                        str += "(energyCost: " + builder.getEnergyCost() + ")";
+//                    }
+//                    if (builder.getCooldown() != null) {
+//                        str += "(cooldown: " + builder.getCooldown() + ")";
+//                    }
+                    if (builder.getCooldown() != null && builder.getEnergyCost() != null) {
+//                        System.out.println(str);
+                    }
+//                    Float cd = ConfigManager.getAbilityConfigValue(List.of("pve"), StringUtils.toCamelCase(mob.getName()) + builder.getFieldName().substring(0, 1).toUpperCase() + builder.getFieldName().substring(1) + ".cooldown", float.class, -1f);
+//                    Float energy = ConfigManager.getAbilityConfigValue(List.of("pve"), StringUtils.toCamelCase(mob.getName()) + builder.getFieldName().substring(0, 1).toUpperCase() + builder.getFieldName().substring(1) + ".energyCost", float.class, -1f);
+//                    if (builder.getEnergyCost() != null && builder.getCooldown() != null && (!Objects.equals(cd, builder.getCooldown()) || !Objects.equals(energy, builder.getEnergyCost()))) {
+//                        System.out.println("DIFFERENT: " + str);
+//                    }
+//                    if (cd == -1 || energy == -1) {
+//                        Float energyCost = builder.getEnergyCost();
+//                        str += "(energyCost: " + ability.getEnergyCostValue() + ")";
+//                        Float cooldown = builder.getCooldown();
+//                        str += "(cooldown: " + ability.getCooldownValue() + ")";
+//                        System.out.println(str);
+//                    }
+                }
             }
 
-            System.out.println(document.toJson());
+//            System.out.println(document.toJson());
 //            TextComponent component = ComponentBuilder.create()
 //                                                      .text("HELLO")
 //                                                      .text(ChatColor.GOLD + "WORLD")

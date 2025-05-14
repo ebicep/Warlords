@@ -35,12 +35,13 @@ public class OrbPassenger extends ExperienceOrb {
                 null
         );
         ArmorStand orbStand = Utils.spawnArmorStand(location.clone().add(0, 1.5, 0), armorStand -> {
-            armorStand.setGravity(true);
-            armorStand.addPassenger(spawn(location).getBukkitEntity());
-            if (standConsumer != null) {
-                standConsumer.accept(armorStand);
-            }
-        });
+                    armorStand.setGravity(true);
+                    armorStand.addPassenger(spawn(location).getBukkitEntity());
+                    if (standConsumer != null) {
+                        standConsumer.accept(armorStand);
+                    }
+                }
+        );
         for (WarlordsEntity warlordsEntity : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
             if (warlordsEntity.getEntity() instanceof Player player) {
                 PacketUtils.removeEntityForPlayer(player, getId());

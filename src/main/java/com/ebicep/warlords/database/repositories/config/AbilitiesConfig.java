@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.config;
 
+import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 
@@ -8,6 +9,7 @@ import java.util.List;
 public class AbilitiesConfig implements ConfigManager.Config {
 
     public Document abilitiesConfig;
+    // TODO cache
 
     @Override
     public String getName() {
@@ -19,136 +21,219 @@ public class AbilitiesConfig implements ConfigManager.Config {
         this.abilitiesConfig = doc;
     }
 
-    public <T> T getValue(String fieldName, Class<T> fieldType, Object contextInstance) {
+    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType) {
+        return getValue(namespaces, key, fieldType, defaultValue(fieldType));
+    }
+
+    public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue) {
         if (abilitiesConfig == null) {
             ChatUtils.MessageType.CONFIG.sendErrorMessage("Config document not set");
-            return defaultValue(fieldType);
+            return defaultValue;
         }
-
-        Class<?> contextClass = contextInstance.getClass();
-        Class<?> outerClass = contextClass.getEnclosingClass();
-        String className = "AvengersStrike";//(outerClass != null ? outerClass : contextClass).getSimpleName();
-        Document classDoc = abilitiesConfig.get(className, Document.class);
-        if (classDoc == null) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("No document for class: " + className);
-            return defaultValue(fieldType);
-        }
-
-        // Try reading directly for top-level fields (e.g., energySteal)
-        if (classDoc.containsKey(fieldName)) {
-            Object val = classDoc.get(fieldName);
-            return cast(val, fieldType);
-        }
-
-        // Fallback: check if it's inside a value object (e.g., damageValues)
-        List<Document> lists = classDoc.getList("damageValues", Document.class);
-        if (lists != null) {
-            for (Document entry : lists) {
-                if (entry.containsKey(fieldName)) {
-                    Document valueData = entry.get(fieldName, Document.class);
-                    return buildValueObject(fieldType, valueData);
-                }
+        Result<T> result = null;
+        for (String namespace : namespaces) {
+            result = getValue(namespace, key, fieldType);
+            if (result.valueResult == ValueResult.SUCCESS) {
+                break;
             }
         }
-        ChatUtils.MessageType.CONFIG.sendErrorMessage("Field '" + fieldName + "' not found in config for " + className);
-        return defaultValue(fieldType);
+        if (result == null || result.value == null) {
+            String debug = " (" + String.join(",", namespaces) + ") (" + key + ")" + " (" + fieldType.getName() + ")";
+            if (result != null) {
+                ChatUtils.MessageType.CONFIG.sendErrorMessage(result.valueResult + debug);
+            } else {
+                ChatUtils.MessageType.CONFIG.sendErrorMessage("No Result" + debug);
+            }
+            return defaultValue;
+        }
+        return result.value;
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T defaultValue(Class<T> clazz) {
-        try {
-            switch (clazz.getSimpleName()) {
-                case "int", "Integer" -> {
-                    return (T) Integer.valueOf(0);
-                }
-                case "float", "Float" -> {
-                    return (T) Float.valueOf(0f);
-                }
-                case "double", "Double" -> {
-                    return (T) Double.valueOf(0d);
-                }
-                case "long", "Long" -> {
-                    return (T) Long.valueOf(0L);
-                }
-                case "boolean", "Boolean" -> {
-                    return (T) Boolean.FALSE;
-                }
-                case "RangedValue" -> {
-                    return clazz.getConstructor(float.class, float.class)
-                                .newInstance(0f, 0f);
-                }
-                case "RangedValueCritable" -> {
-                    return clazz.getConstructor(float.class, float.class, float.class, float.class)
-                                .newInstance(0f, 0f, 0f, 0f);
-                }
-                case "SetValue" -> {
-                    return clazz.getConstructor(float.class)
-                                .newInstance(0f);
-                }
-            }
-        } catch (Exception e) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("Failed to create default for: " + clazz.getSimpleName());
-            ChatUtils.MessageType.CONFIG.sendErrorMessage(e);
+    private <T> T defaultValue(Class<T> type) {
+        if (type.equals(boolean.class)) {
+            return (T) Boolean.FALSE;
+        } else if (type.equals(int.class)) {
+            return (T) Integer.valueOf(0);
+        } else if (type.equals(float.class)) {
+            return (T) Float.valueOf(0.0f);
+        } else if (type.equals(double.class)) {
+            return (T) Double.valueOf(0.0);
+        } else if (type.equals(long.class)) {
+            return (T) Long.valueOf(0L);
+        } else if (type.equals(byte.class)) {
+            return (T) Byte.valueOf((byte) 0);
+        } else if (type.equals(short.class)) {
+            return (T) Short.valueOf((short) 0);
+        } else if (type.equals(char.class)) {
+            return (T) Character.valueOf('\0');
+        }
+
+        if (type.equals(String.class)) {
+            return (T) "UNKNOWN";
+        }
+
+        if (type.equals(Value.RangedValue.class)) {
+            return (T) new Value.RangedValue(0, 0);
+        } else if (type.equals(Value.RangedValueCritable.class)) {
+            return (T) new Value.RangedValueCritable(0, 0, 0, 0);
+        } else if (type.equals(Value.SetValue.class)) {
+            return (T) new Value.SetValue(0);
         }
 
         return null;
     }
 
-    private static <T> T cast(Object val, Class<T> targetType) {
-        if (val == null) {
-            return null;
+    /**
+     * Gets a value from the abilities configuration based on namespace and a dot-separated key path.
+     *
+     * @param namespace The namespace to look in (e.g., "pvp", "pve")
+     * @param key       The dot-separated key path (e.g., "ArcaneShield.damageValues.strikeDamage")
+     * @param fieldType The expected type of the value
+     * @param <T>       The type parameter for the return value
+     *
+     * @return The value cast to the requested type, or a default value if not found
+     */
+    private <T> Result<T> getValue(String namespace, String key, Class<T> fieldType) {
+        // Get the namespace document
+        Document namespaceDoc = abilitiesConfig.get(namespace, Document.class);
+        if (namespaceDoc == null) {
+            return new Result<>(ValueResult.INVALID_NAMESPACE);
         }
-        if (targetType == int.class || targetType == Integer.class) {
-            return targetType.cast(((Number) val).intValue());
-        }
-        if (targetType == float.class || targetType == Float.class) {
-            return targetType.cast(((Number) val).floatValue());
-        }
-        if (targetType == double.class || targetType == Double.class) {
-            return targetType.cast(((Number) val).doubleValue());
-        }
-        if (targetType == long.class || targetType == Long.class) {
-            return targetType.cast(((Number) val).longValue());
-        }
-        return targetType.cast(val);
-    }
 
-    private static <T> T buildValueObject(Class<T> clazz, Document data) {
-        try {
-            switch (clazz.getSimpleName()) {
-                case "RangedValue" -> {
-                    return clazz.getConstructor(float.class, float.class)
-                                .newInstance(
-                                        getOrDefault(data, "min"),
-                                        getOrDefault(data, "max")
-                                );
-                }
-                case "RangedValueCritable" -> {
-                    return clazz.getConstructor(float.class, float.class, float.class, float.class)
-                                .newInstance(
-                                        getOrDefault(data, "min"),
-                                        getOrDefault(data, "max"),
-                                        getOrDefault(data, "critChance"),
-                                        getOrDefault(data, "critMultiplier")
-                                );
-                }
-                case "SetValue" -> {
-                    return clazz.getConstructor(float.class)
-                                .newInstance(getOrDefault(data, "value"));
-                }
+        String[] keyParts = key.split("\\.");
+        if (keyParts.length == 0) {
+            return new Result<>(ValueResult.INVALID_KEY);
+        }
+
+        // Navigate to the parent object that contains our target value
+        Document currentObject = namespaceDoc;
+
+        // Navigate through all key parts except the last one
+        for (int i = 0; i < keyParts.length - 1; i++) {
+            String part = keyParts[i];
+            currentObject = currentObject.get(part, Document.class);
+            if (currentObject == null) {
+                return new Result<>(ValueResult.INVALID_PATH);
             }
-        } catch (Exception e) {
-            ChatUtils.MessageType.CONFIG.sendErrorMessage("Error constructing value object: " + clazz.getSimpleName());
-            ChatUtils.MessageType.CONFIG.sendErrorMessage(e);
-            return defaultValue(clazz);
         }
 
-        ChatUtils.MessageType.CONFIG.sendErrorMessage("Unsupported value object type: " + clazz.getName());
-        return defaultValue(clazz);
+        // Extract the final value using the last key part
+        String finalKey = keyParts[keyParts.length - 1];
+        if (!currentObject.containsKey(finalKey)) {
+            return new Result<>(ValueResult.INVALID_FIELD);
+        }
+
+        Object value = currentObject.get(finalKey);
+
+        // If the value is a document and we're expecting a complex type, build the object
+        if (value instanceof Document && !isSimpleType(fieldType)) {
+            return buildValueObject(fieldType, (Document) value);
+        }
+
+        return new Result<>(cast(value, fieldType), ValueResult.SUCCESS);
     }
 
-    private static float getOrDefault(Document doc, String key) {
-        return doc != null && doc.containsKey(key) ? Float.parseFloat(doc.get(key) + "") : 0f;
+    private boolean isSimpleType(Class<?> type) {
+        return type.isPrimitive() ||
+                type.equals(String.class) ||
+                type.equals(Integer.class) ||
+                type.equals(Float.class) ||
+                type.equals(Double.class) ||
+                type.equals(Boolean.class) ||
+                type.equals(Long.class);
+    }
+
+    private <T> Result<T> buildValueObject(Class<T> type, Document doc) {
+        try {
+            T value = null;
+            if (type.equals(Value.RangedValue.class)) {
+                value = type.getConstructor(float.class, float.class)
+                            .newInstance(
+                                    getFloatValue(doc.get("min")),
+                                    getFloatValue(doc.get("max"))
+                            );
+            } else if (type.equals(Value.RangedValueCritable.class)) {
+                value = type.getConstructor(float.class, float.class, float.class, float.class)
+                            .newInstance(
+                                    getFloatValue(doc.get("min")),
+                                    getFloatValue(doc.get("max")),
+                                    getFloatValue(doc.get("critChance")),
+                                    getFloatValue(doc.get("critMultiplier"))
+                            );
+            } else if (type.equals(Value.SetValue.class)) {
+                value = type.getConstructor(float.class)
+                            .newInstance(getFloatValue(doc.get("value")));
+            } else {
+                return new Result<>(ValueResult.INVALID_OBJECT);
+            }
+            return new Result<>(value, ValueResult.SUCCESS);
+        } catch (Exception e) {
+            return new Result<>(ValueResult.INVALID_OBJECT);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T cast(Object value, Class<T> type) {
+        if (value == null) {
+            return defaultValue(type);
+        }
+
+        if (type.isAssignableFrom(value.getClass())) {
+            return (T) value;
+        }
+
+        if (type.equals(int.class) || type.equals(Integer.class)) {
+            if (value instanceof Number) {
+                return (T) Integer.valueOf(((Number) value).intValue());
+            }
+        } else if (type.equals(float.class) || type.equals(Float.class)) {
+            if (value instanceof Number) {
+                return (T) Float.valueOf(((Number) value).floatValue());
+            }
+        } else if (type.equals(double.class) || type.equals(Double.class)) {
+            if (value instanceof Number) {
+                return (T) Double.valueOf(((Number) value).doubleValue());
+            }
+        } else if (type.equals(long.class) || type.equals(Long.class)) {
+            if (value instanceof Number) {
+                return (T) Long.valueOf(((Number) value).longValue());
+            }
+        } else if (type.equals(boolean.class) || type.equals(Boolean.class)) {
+            if (value instanceof Boolean) {
+                return (T) value;
+            }
+        }
+
+        ChatUtils.MessageType.CONFIG.sendErrorMessage("Failed to cast value of type " + value.getClass().getName() + " to " + type.getName());
+        return defaultValue(type);
+    }
+
+    private float getFloatValue(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).floatValue();
+        } else if (value instanceof String) {
+            return Float.parseFloat((String) value);
+        } else {
+            throw new IllegalArgumentException("Cannot convert " + value + " to float");
+        }
+    }
+
+    enum ValueResult {
+        SUCCESS,
+        INVALID_NAMESPACE,
+        INVALID_KEY,
+        INVALID_PATH,
+        INVALID_FIELD,
+        INVALID_OBJECT,
+    }
+
+    record Result<T>(T value, ValueResult valueResult) {
+
+        public Result(ValueResult valueResult) {
+            this(null, valueResult);
+        }
+
     }
 
 }

@@ -52,6 +52,7 @@ public abstract class AbstractPlayerClass {
         this.energyPerHit = energyPerHit;
         this.damageResistance = damageResistance;
         this.abilities = new ArrayList<>(List.of(abilities));
+        this.abilities.forEach(abstractAbility -> abstractAbility.init(abstractAbility.getBuilder()));
         this.name = name;
     }
 

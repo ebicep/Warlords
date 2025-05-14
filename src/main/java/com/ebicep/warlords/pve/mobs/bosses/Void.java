@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.PrismGuard;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -44,9 +45,7 @@ public class Void extends AbstractMob implements BossMob {
     private boolean timedDamageTriggerTwo = false;
     private boolean preventArmageddon = false;
     private boolean boltaroPhaseTrigger = false;
-    private PrismGuard prismGuard = new PrismGuard() {{
-        setTickDuration(200);
-    }};
+    private PrismGuard prismGuard = null;
 
     public Void(Location spawnLocation) {
         this(spawnLocation, "Void", 100000, 0.24f, 20, 3000, 4000);
@@ -70,7 +69,7 @@ public class Void extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new GroundShred(),
-                new SpawnSouls(20) {
+                new SpawnSouls(AbstractAbilityBuilder.create("voidSpawnSouls").pve()) {
                     @Override
                     public int getSpawnAmount() {
                         int spawnAmount = 2 * pveOption.playerCount();
@@ -82,7 +81,7 @@ public class Void extends AbstractMob implements BossMob {
                     }
                 },
                 new ThunderCloudAbility(
-                        10,
+                        AbstractAbilityBuilder.create("voidThunderCloud").pve(),
                         false,
                         21, 30,
                         7, 12
@@ -108,6 +107,8 @@ public class Void extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+        prismGuard = new PrismGuard(AbstractAbilityBuilder.create("voidPrismGuard").pve());
+        prismGuard.init(prismGuard.getBuilder());
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
             float newHealth = 55000;
@@ -435,7 +436,7 @@ public class Void extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 10;
 
         public GroundShred() {
-            super("Ground Shred", 900, 1200, 8, 50);
+            super(AbstractAbilityBuilder.create("voidGroundShred").pve());
         }
 
         @Override

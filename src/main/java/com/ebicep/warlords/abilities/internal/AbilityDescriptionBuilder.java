@@ -11,7 +11,9 @@ import net.kyori.adventure.text.format.TextColor;
 import java.util.function.UnaryOperator;
 
 public class AbilityDescriptionBuilder {
+
     final public static TextColor COLOR_BROWN = TextColor.color(100, 66, 33);
+
     //TODO: auto space
     public static AbilityDescriptionBuilder create(String text) {
         return new AbilityDescriptionBuilder(ComponentBuilder.create(text));
@@ -88,13 +90,13 @@ public class AbilityDescriptionBuilder {
         return durationSeconds(ticks / 20f);
     }
 
-    public AbilityDescriptionBuilder durationSeconds(int seconds) {
+    public AbilityDescriptionBuilder durationSeconds(float seconds) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
         parentBuilder.text(seconds == 1 ? " second" : " seconds");
         return this;
     }
 
-    public AbilityDescriptionBuilder durationSeconds(float seconds) {
+    public AbilityDescriptionBuilder durationSeconds(int seconds) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
         parentBuilder.text(seconds == 1 ? " second" : " seconds");
         return this;

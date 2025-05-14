@@ -95,8 +95,8 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 name,
                 "LUST",
-                BloodLust.class,
-                new BloodLust(),
+                BloodLust.BloodLustData.class,
+                null,
                 warlordsNPC,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

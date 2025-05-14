@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -32,30 +33,14 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
 
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Aftershock",
-                "SHOCKED",
-                clazz,
-                object,
-                giver,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                3 * 20,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 20 == 0) {
-                        EffectUtils.displayParticle(
-                                Particle.ELECTRIC_SPARK,
-                                receiver.getLocation().add(0, 1.2, 0),
-                                5,
-                                .25,
-                                .25,
-                                .25,
-                                0
-                        );
-                    }
-                })
+        receiver.getCooldownManager().addCooldown(new RegularCooldown<>("Aftershock", "SHOCKED", clazz, object, giver, CooldownTypes.DEBUFF, cooldownManager -> {
+        }, 3 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 20 == 0) {
+                EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
+            }
+        })
         ) {
+
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return event.getSource().equals(giver) ? currentDamageValue * 1.3f : currentDamageValue;
@@ -74,52 +59,28 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         });
     }
 
-
-    private final DamageValues damageValues = new DamageValues();
     private final ChainLightningStats stats = new ChainLightningStats();
+    private final DamageValues damageValues = new DamageValues();
     private float damageReductionPerBounce = 10;
     private float maxDamageReduction = 25;
     private int damageReductionTickDuration = 90;
     private float damageDecreasePerBounce = 15;
 
     public ChainLightning() {
-        super("Chain Lightning", 9.5f, 40, 20, 10, 3);
+        super(AbstractAbilityBuilder.create("chainLightning").pvp());
     }
 
-    public ChainLightning(float cooldown, float startCooldown) {
-        super("Chain Lightning", cooldown, 40, 20, 10, 3, startCooldown);
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    public ChainLightning(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Discharge a bolt of lightning at the targeted enemy player that deals ")
-                .damage(damageValues.chainDamage)
-                .text(" damage and jumps to ")
-                .text(additionalBounces, NamedTextColor.BLUE)
-                .text(" additional targets within ")
-                .blocks(bounceRange)
-                .text(". Each time the lightning jumps, the damage is decreased by ")
-                .percent(damageDecreasePerBounce, NamedTextColor.RED)
-                .text(". You gain ")
-                .percent(damageReductionPerBounce, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" damage resistance for each target hit, up to ")
-                .percent(maxDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                .text(" damage resistance. This buff lasts ")
-                .durationTicks(damageReductionTickDuration)
-                .text(".")
-                .initialRange(radius)
-                .build();
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ChainLightningBranch(abilityTree, this);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageReductionPerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionPerBounce"), float.class);
+        this.maxDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageReduction"), float.class);
+        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
+        this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
     }
 
     @Override
@@ -131,19 +92,11 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     protected void onHit(WarlordsEntity wp, int hitCounter) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.chainlightning.activation", 3, 1);
         wp.playSound(wp.getLocation(), "shaman.chainlightning.impact", 2, 1);
-
         wp.getCooldownManager().removeCooldown(ChainLightning.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "CHAIN",
-                ChainLightning.class,
-                new ChainLightning(),
-                wp,
-                CooldownTypes.BUFF,
-                cooldownManager -> {
-                },
-                damageReductionTickDuration
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CHAIN", ChainLightning.class, new ChainLightning(), wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, damageReductionTickDuration
         ) {
+
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce, maxDamageReduction));
@@ -156,105 +109,35 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         return CHAIN_ITEM;
     }
 
-    private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
-        int playersSize = playersHit.size();
-        if (playersSize >= (hasHitTotem ? additionalBounces - 1 : additionalBounces)) {
-            if (hasHitTotem) {
-                playersHit.add(null);
-            }
-            return playersHit;
-        }
-
-        boolean firstCheck = checkFrom == wp.getEntity();
-        if (!hasHitTotem) {
-            if (firstCheck) {
-                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = getLookingAtTotem(wp);
-                if (optionalTotem.isPresent()) {
-                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
-                    ArmorStand armorStand = data.getArmorStand();
-                    chain(checkFrom.getLocation(), armorStand.getLocation());
-                    partOfChainLightningPulseDamage(data);
-                    playersHit.add(null);
-                    return partOfChainLightning(wp, playersHit, armorStand, true);
-                } // no else
-            } else {
-                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = AbstractTotem.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.CapacitorTotemData.class);
-                if (optionalTotem.isPresent()) {
-                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
-                    ArmorStand armorStand = data.getArmorStand();
-                    chain(checkFrom.getLocation(), armorStand.getLocation());
-                    partOfChainLightningPulseDamage(data);
-                    return partOfChainLightning(wp, playersHit, armorStand, true);
-                } // no else
-            }
-        } // no else
-
-        PlayerFilter filter = firstCheck ?
-                              PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
-                                          .filter(e -> LocationUtils.isLookingAtChain(wp, e) && LocationUtils.hasLineOfSight(wp, e)) :
-                              PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange)
-                                          .lookingAtFirst(wp);
-
-        Optional<WarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
-        if (foundPlayer.isPresent()) {
-            WarlordsEntity hit = foundPlayer.get();
-            chain(checkFrom.getLocation(), hit.getLocation());
-            float damageMultiplier = 1 - Math.min(playersSize, pveMasterUpgrade ? Integer.MAX_VALUE : 3) * damageDecreasePerBounce / 100f;
-
-            playersHit.add(hit);
-            if (hit.onHorse()) {
-                stats.numberOfDismounts++;
-            }
-
-            hit.addInstance(InstanceBuilder
-                    .damage()
-                    .ability(this)
-                    .source(wp)
-                    .min(damageValues.chainDamage.getMinValue() * damageMultiplier)
-                    .max(damageValues.chainDamage.getMaxValue() * damageMultiplier)
-                    .crit(damageValues.chainDamage)
-            );
-
-            if (pveMasterUpgrade2) {
-                giveShockedEffect(
-                        wp,
-                        hit,
-                        ChainLightning.class,
-                        new ChainLightning()
-                );
-            }
-
-            return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
-        } else {
-            return playersHit;
-        }
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
-    private void partOfChainLightningPulseDamage(CapacitorTotem.CapacitorTotemData data) {
-        ArmorStand armorStand = data.getArmorStand();
-        data.proc();
-        if (data.getTotem().isPveMasterUpgrade()) {
-            data.setRadius(data.getRadius() + 0.5);
-        }
-
-        Utils.playGlobalSound(armorStand.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
-        data.getOwner().playSound(armorStand.getLocation(), "shaman.chainlightning.impact", 2, 1);
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Discharge a bolt of lightning at the targeted enemy player that deals ")
+                                               .damage(damageValues.chainDamage)
+                                               .text(" damage and jumps to ")
+                                               .text(additionalBounces, NamedTextColor.BLUE)
+                                               .text(" additional targets within ")
+                                               .blocks(bounceRange)
+                                               .text(". Each time the lightning jumps, the damage is decreased by ")
+                                               .percent(damageDecreasePerBounce, NamedTextColor.RED)
+                                               .text(". You gain ")
+                                               .percent(damageReductionPerBounce, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" damage resistance for each target hit, up to ")
+                                               .percent(maxDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" damage resistance. This buff lasts ")
+                                               .durationTicks(damageReductionTickDuration)
+                                               .text(".")
+                                               .initialRange(radius)
+                                               .build();
     }
 
-    private Optional<CapacitorTotem.CapacitorTotemData> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
-        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.CapacitorTotemData.class)
-                .filter(totem -> totem.getArmorStand().getLocation().distanceSquared(warlordsPlayer.getLocation()) <= radius * radius
-                        && totem.isPlayerLookingAtTotem(warlordsPlayer))
-                .findFirst();
-    }
-
-    public float getDamageDecreasePerBounce() {
-        return damageDecreasePerBounce;
-    }
-
-    public void setDamageDecreasePerBounce(float damageDecreasePerBounce) {
-        this.damageDecreasePerBounce = damageDecreasePerBounce;
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ChainLightningBranch(abilityTree, this);
     }
 
     @Override
@@ -272,18 +155,116 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         return stats;
     }
 
+    private Set<WarlordsEntity> partOfChainLightning(WarlordsEntity wp, Set<WarlordsEntity> playersHit, Entity checkFrom, boolean hasHitTotem) {
+        int playersSize = playersHit.size();
+        if (playersSize >= (hasHitTotem ? additionalBounces - 1 : additionalBounces)) {
+            if (hasHitTotem) {
+                playersHit.add(null);
+            }
+            return playersHit;
+        }
+        boolean firstCheck = checkFrom == wp.getEntity();
+        if (!hasHitTotem) {
+            if (firstCheck) {
+                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = getLookingAtTotem(wp);
+                if (optionalTotem.isPresent()) {
+                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
+                    ArmorStand armorStand = data.getArmorStand();
+                    chain(checkFrom.getLocation(), armorStand.getLocation());
+                    partOfChainLightningPulseDamage(data);
+                    playersHit.add(null);
+                    return partOfChainLightning(wp, playersHit, armorStand, true);
+                }
+                // no else
+            } else {
+                Optional<CapacitorTotem.CapacitorTotemData> optionalTotem = AbstractTotem.getTotemDownAndClose(wp, checkFrom, CapacitorTotem.CapacitorTotemData.class);
+                if (optionalTotem.isPresent()) {
+                    CapacitorTotem.CapacitorTotemData data = optionalTotem.get();
+                    ArmorStand armorStand = data.getArmorStand();
+                    chain(checkFrom.getLocation(), armorStand.getLocation());
+                    partOfChainLightningPulseDamage(data);
+                    return partOfChainLightning(wp, playersHit, armorStand, true);
+                }
+                // no else
+            }
+        }
+        // no else
+        PlayerFilter filter = firstCheck ? PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
+                                                       .filter(e -> LocationUtils.isLookingAtChain(wp, e) && LocationUtils.hasLineOfSight(wp, e)) : PlayerFilter.entitiesAround(
+                checkFrom,
+                bounceRange,
+                bounceRange,
+                bounceRange
+        ).lookingAtFirst(wp);
+        Optional<WarlordsEntity> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
+        if (foundPlayer.isPresent()) {
+            WarlordsEntity hit = foundPlayer.get();
+            chain(checkFrom.getLocation(), hit.getLocation());
+            float damageMultiplier = 1 - Math.min(playersSize, pveMasterUpgrade ? Integer.MAX_VALUE : 3) * damageDecreasePerBounce / 100f;
+            playersHit.add(hit);
+            if (hit.onHorse()) {
+                stats.numberOfDismounts++;
+            }
+            hit.addInstance(InstanceBuilder.damage()
+                                           .ability(this)
+                                           .source(wp)
+                                           .min(damageValues.chainDamage.getMinValue() * damageMultiplier)
+                                           .max(damageValues.chainDamage.getMaxValue() * damageMultiplier)
+                                           .crit(damageValues.chainDamage));
+            if (pveMasterUpgrade2) {
+                giveShockedEffect(wp, hit, ChainLightning.class, new ChainLightning());
+            }
+            return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
+        } else {
+            return playersHit;
+        }
+    }
+
+    private void partOfChainLightningPulseDamage(CapacitorTotem.CapacitorTotemData data) {
+        ArmorStand armorStand = data.getArmorStand();
+        data.proc();
+        if (data.getTotem().isPveMasterUpgrade()) {
+            data.setRadius(data.getRadius() + 0.5);
+        }
+        Utils.playGlobalSound(armorStand.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+        data.getOwner().playSound(armorStand.getLocation(), "shaman.chainlightning.impact", 2, 1);
+    }
+
+    private Optional<CapacitorTotem.CapacitorTotemData> getLookingAtTotem(WarlordsEntity warlordsPlayer) {
+        return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class).filterCooldownClassAndMapToObjectsOfClass(CapacitorTotem.CapacitorTotemData.class)
+                                                                          .filter(totem -> totem.getArmorStand()
+                                                                                                .getLocation()
+                                                                                                .distanceSquared(warlordsPlayer.getLocation()) <= radius * radius && totem.isPlayerLookingAtTotem(
+                                                                                  warlordsPlayer))
+                                                                          .findFirst();
+    }
+
+    public float getDamageDecreasePerBounce() {
+        return damageDecreasePerBounce;
+    }
+
+    public void setDamageDecreasePerBounce(float damageDecreasePerBounce) {
+        this.damageDecreasePerBounce = damageDecreasePerBounce;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
-        private final List<Value> values = List.of(chainDamage);
+        private Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
 
-        public Value.RangedValueCritable getChainDamage() {
-            return chainDamage;
-        }
+        private final List<Value> values = List.of(chainDamage);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.chainDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("chainDamage"), Value.RangedValueCritable.class);
+        }
+
+        public Value.RangedValueCritable getChainDamage() {
+            return chainDamage;
         }
 
     }
@@ -316,5 +297,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         public ChainLightningStats create() {
             return new ChainLightningStats();
         }
+
     }
+
 }

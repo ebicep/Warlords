@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -29,71 +30,61 @@ import java.util.List;
 
 public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon, Heals<VitalityLiquor.HealingValues>, AbilityStats<VitalityLiquor, VitalityLiquor.VitalityLiquorStats> {
 
-
-    private final HealingValues healingValues = new HealingValues();
     private final VitalityLiquorStats stats = new VitalityLiquorStats();
+    private final HealingValues healingValues = new HealingValues();
     private int duration = 3;
     private int vitalityRange = 8;
     private int energyPerSecond = 15;
 
     public VitalityLiquor() {
-        super("Vitality Liquor", 14, 30);
+        super(AbstractAbilityBuilder.create("vitalityLiquor").pvp());
+    }
+
+    public VitalityLiquor(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.duration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("duration"), int.class);
+        this.vitalityRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vitalityRange"), int.class);
+        this.energyPerSecond = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyPerSecond"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Discharge a shockwave of special potions around you, healing allies in the range for ")
-                .heal(healingValues.liquorHealing)
-                .text(" health.")
-                .emptyLine()
-                .text("Each enemy afflicted with your ")
-                .text("LEECH", NamedTextColor.DARK_GREEN)
-                .text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals ")
-                .text("2", NamedTextColor.BLUE)
-                .text(" nearby allies for ")
-                .heal(healingValues.waveHealing)
-                .text(" health and increase their energy regeneration by ")
-                .text(energyPerSecond, NamedTextColor.YELLOW)
-                .text(" for ")
-                .durationSeconds(duration)
-                .text(".")
-                .build();
+        description = AbilityDescriptionBuilder.create("Discharge a shockwave of special potions around you, healing allies in the range for ")
+                                               .heal(healingValues.liquorHealing)
+                                               .text(" health.")
+                                               .emptyLine()
+                                               .text("Each enemy afflicted with your ")
+                                               .text("LEECH", NamedTextColor.DARK_GREEN)
+                                               .text(" effect within the range will cause the enemy to discharge an additional shockwave of vitality that heals ")
+                                               .text("2", NamedTextColor.BLUE)
+                                               .text(" nearby allies for ")
+                                               .heal(healingValues.waveHealing)
+                                               .text(" health and increase their energy regeneration by ")
+                                               .text(energyPerSecond, NamedTextColor.YELLOW)
+                                               .text(" for ")
+                                               .durationSeconds(duration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
         new FallingBlockWaveEffect(wp.getLocation(), vitalityRange, 1, Material.BIRCH_SAPLING).play();
-
-        wp.addInstance(InstanceBuilder
-                .healing()
-                .ability(this)
-                .source(wp)
-                .value(healingValues.liquorHealing)
-        );
-
-        for (WarlordsEntity teammate : PlayerFilter
-                .entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange)
-                .aliveTeammatesOfExcludingSelf(wp)
-        ) {
-            teammate.addInstance(InstanceBuilder
-                    .healing()
-                    .ability(this)
-                    .source(wp)
-                    .value(healingValues.liquorHealing)
-            );
+        wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.liquorHealing));
+        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange).aliveTeammatesOfExcludingSelf(wp)) {
+            teammate.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.liquorHealing));
             if (pveMasterUpgrade2) {
                 teammate.addSpeedModifier(wp, "Medicinal Brew", 30, duration * 20);
             }
         }
-
-        for (WarlordsEntity enemy : PlayerFilter
-                .entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange)
-                .aliveEnemiesOf(wp)
-        ) {
+        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(wp, vitalityRange, vitalityRange, vitalityRange).aliveEnemiesOf(wp)) {
             if (pveMasterUpgrade) {
                 enemy.addSpeedModifier(wp, "Vitality Slowness", -30, 20 * 3);
             }
@@ -103,56 +94,61 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                     .findAny()
                     .ifPresent(regularCooldown -> {
                         Utils.playGlobalSound(enemy.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.6f);
-                        EffectUtils.playFirework(enemy.getLocation(), FireworkEffect.builder()
-                                                                                    .withColor(Color.ORANGE)
-                                                                                    .with(FireworkEffect.Type.STAR)
-                                                                                    .build());
-
+                        EffectUtils.playFirework(enemy.getLocation(),
+                                FireworkEffect.builder().withColor(Color.ORANGE).with(FireworkEffect.Type.STAR).build()
+                        );
                         new GameRunnable(wp.getGame()) {
+
                             @Override
                             public void run() {
-                                for (WarlordsEntity allyTarget : PlayerFilter
-                                        .entitiesAround(enemy, 6, 6, 6)
-                                        .aliveTeammatesOf(wp)
-                                        .closestFirst(enemy)
-                                        .limit(2)
-                                ) {
+                                for (WarlordsEntity allyTarget : PlayerFilter.entitiesAround(enemy, 6, 6, 6)
+                                                                             .aliveTeammatesOf(wp)
+                                                                             .closestFirst(enemy)
+                                                                             .limit(2)) {
                                     stats.numberOfAdditionalWaves++;
-                                    allyTarget.addInstance(InstanceBuilder
-                                            .healing()
-                                            .ability(VitalityLiquor.this)
-                                            .source(wp)
-                                            .value(healingValues.waveHealing)
-                                    );
+                                    allyTarget.addInstance(InstanceBuilder.healing()
+                                                                          .ability(VitalityLiquor.this)
+                                                                          .source(wp)
+                                                                          .value(healingValues.waveHealing));
                                     allyTarget.getCooldownManager().removeCooldown(VitalityLiquor.class, false);
-                                    allyTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                            "Vitality Liquor",
-                                            "VITAL",
-                                            VitalityLiquor.class,
-                                            null,
-                                            wp,
-                                            CooldownTypes.BUFF,
-                                            cooldownManager -> {
-                                            },
-                                            duration * 20
-                                    ) {
-                                        @Override
-                                        public float addEnergyGainPerTick(float energyGainPerTick) {
-                                            return energyGainPerTick + energyPerSecond / 20f;
-                                        }
-                                    });
+                                    allyTarget.getCooldownManager()
+                                              .addCooldown(new RegularCooldown<>("Vitality Liquor",
+                                                      "VITAL",
+                                                      VitalityLiquor.class,
+                                                      null,
+                                                      wp,
+                                                      CooldownTypes.BUFF,
+                                                      cooldownManager -> {
+                                                      },
+                                                      duration * 20
+                                              ) {
+
+                                                  @Override
+                                                  public float addEnergyGainPerTick(float energyGainPerTick) {
+                                                      return energyGainPerTick + energyPerSecond / 20f;
+                                                  }
+                                              });
                                 }
                             }
                         }.runTaskLater(5);
                     });
         }
-
         return true;
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new VitalityLiquorBranch(abilityTree, this);
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public VitalityLiquorStats getAbilityStats() {
+        return stats;
     }
 
     public int getEnergyPerSecond() {
@@ -179,21 +175,27 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         this.duration = duration;
     }
 
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    @Override
-    public VitalityLiquorStats getAbilityStats() {
-        return stats;
-    }
-
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
-        private final Value.RangedValueCritable waveHealing = new Value.RangedValueCritable(268, 324, 25, 175);
+        private Value.RangedValueCritable liquorHealing = new Value.RangedValueCritable(359, 485, 25, 175);
+
+        private Value.RangedValueCritable waveHealing = new Value.RangedValueCritable(268, 324, 25, 175);
+
         private final List<Value> values = List.of(liquorHealing, waveHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.liquorHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("liquorHealing"),
+                    Value.RangedValueCritable.class
+            );
+            this.waveHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("waveHealing"), Value.RangedValueCritable.class);
+        }
 
         public Value.RangedValueCritable getLiquorHealing() {
             return liquorHealing;
@@ -203,17 +205,17 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
             return waveHealing;
         }
 
-        @Override
-        public List<Value> getValues() {
-            return values;
-        }
-
     }
 
     public static class VitalityLiquorStats extends AbstractAbilityStats<VitalityLiquor, VitalityLiquorStats> {
 
         @Field("number_of_additional_waves")
         private int numberOfAdditionalWaves = 0;
+
+        @Override
+        public Class<VitalityLiquorStats> getClazz() {
+            return VitalityLiquorStats.class;
+        }
 
         @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
@@ -230,13 +232,10 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
         }
 
         @Override
-        public Class<VitalityLiquorStats> getClazz() {
-            return VitalityLiquorStats.class;
-        }
-
-        @Override
         public VitalityLiquorStats create() {
             return new VitalityLiquorStats();
         }
+
     }
+
 }

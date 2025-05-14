@@ -3,6 +3,7 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -35,60 +36,57 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     private int energyPerSecond = 10;
 
     public InspiringPresence() {
-        super("Inspiring Presence", 60f + 10.5f, 0);
+        super(AbstractAbilityBuilder.create("inspiringPresence").pvp());
+    }
+
+    public InspiringPresence(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.energyPerSecond = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyPerSecond"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Your presence on the battlefield inspires your allies within ")
-                .blocks(radius)
-                .text(", granting them ")
-                .energy(energyPerSecond)
-                .text(" per second and ")
-                .percent(speedBuff, NamedTextColor.WHITE)
-                .text(" extra movement speed for ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
+        description = AbilityDescriptionBuilder.create("Your presence on the battlefield inspires your allies within ")
+                                               .blocks(radius)
+                                               .text(", granting them ")
+                                               .energy(energyPerSecond)
+                                               .text(" per second and ")
+                                               .percent(speedBuff, NamedTextColor.WHITE)
+                                               .text(" extra movement speed for ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
-
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
-
         float rad = radius.getCalculatedValue();
-        List<WarlordsEntity> teammatesNear = PlayerFilter
-                .entitiesAround(wp, rad, rad, rad)
-                .aliveTeammatesOfExcludingSelf(wp)
-                .toList();
-
+        List<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveTeammatesOfExcludingSelf(wp).toList();
         InspiringPresenceData data = new InspiringPresenceData();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "PRES",
-                InspiringPresenceData.class,
-                data,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    cancelSpeed.run();
-                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 4 == 0) {
-                        Location location = wp.getLocation();
-                        location.add(0, 1.5, 0);
-                        EffectUtils.displayParticle(Particle.SMOKE, location, 1, 0.3, 0.3, 0.3, 0.02);
-                        EffectUtils.displayParticle(Particle.EFFECT, location, 2, 0.3, 0.3, 0.3, 0.5);
-                    }
-                })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "PRES", InspiringPresenceData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            cancelSpeed.run();
+            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
+        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 4 == 0) {
+                Location location = wp.getLocation();
+                location.add(0, 1.5, 0);
+                EffectUtils.displayParticle(Particle.SMOKE, location, 1, 0.3, 0.3, 0.3, 0.02);
+                EffectUtils.displayParticle(Particle.EFFECT, location, 2, 0.3, 0.3, 0.3, 0.5);
+            }
+        })
         ) {
+
             @Override
             public float addEnergyGainPerTick(float energyGainPerTick) {
                 data.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
@@ -103,56 +101,36 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 }
             }
         });
-
         if (pveMasterUpgrade) {
             resetCooldowns(wp);
         }
-
         for (WarlordsEntity presenceTarget : teammatesNear) {
             stats.targetsHit++;
             data.getPlayersAffected().add(presenceTarget);
             if (pveMasterUpgrade) {
                 resetCooldowns(presenceTarget);
             }
-
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" Your ", NamedTextColor.GRAY))
-                    .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
-                    .append(Component.text(" inspired " + presenceTarget.getName() + "!", NamedTextColor.GRAY))
-            );
-            presenceTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                    .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                    .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
-                    .append(Component.text(" inspired you!", NamedTextColor.GRAY))
-            );
-
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
+                                                          .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                                                          .append(Component.text(" inspired " + presenceTarget.getName() + "!", NamedTextColor.GRAY)));
+            presenceTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                                                         .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                                                                         .append(Component.text(" inspired you!", NamedTextColor.GRAY)));
             Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
             List<FloatModifiable.FloatModifier> modifiers;
             if (pveMasterUpgrade) {
-                modifiers = presenceTarget.getAbilities()
-                                          .stream()
-                                          .map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f))
-                                          .toList();
+                modifiers = presenceTarget.getAbilities().stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f)).toList();
             } else {
                 modifiers = Collections.emptyList();
             }
-            presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "PRES",
-                    InspiringPresenceData.class,
-                    data,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    cooldownManager -> {
-                        cancelAllySpeed.run();
-                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                    },
-                    tickDuration,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    })
+            presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name, "PRES", InspiringPresenceData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+            }, cooldownManager -> {
+                cancelAllySpeed.run();
+                modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+            }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            })
             ) {
+
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {
                     data.addEnergyGivenFromStrikeAndPresence(energyPerSecond / 20d);
@@ -160,17 +138,14 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 }
             });
         }
-
         return true;
     }
-
 
     private void resetCooldowns(WarlordsEntity we) {
         for (AbstractAbility ability : we.getAbilities()) {
             ability.subtractCurrentCooldown(15);
         }
     }
-
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
@@ -187,23 +162,6 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         this.tickDuration = tickDuration;
     }
 
-    public int getEnergyPerSecond() {
-        return energyPerSecond;
-    }
-
-    public void setEnergyPerSecond(int energyPerSecond) {
-        this.energyPerSecond = energyPerSecond;
-    }
-
-
-    public int getSpeedBuff() {
-        return speedBuff;
-    }
-
-    public void setSpeedBuff(int speedBuff) {
-        this.speedBuff = speedBuff;
-    }
-
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
@@ -214,9 +172,26 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         return stats;
     }
 
+    public int getEnergyPerSecond() {
+        return energyPerSecond;
+    }
+
+    public void setEnergyPerSecond(int energyPerSecond) {
+        this.energyPerSecond = energyPerSecond;
+    }
+
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
+    }
+
     public static class InspiringPresenceData {
 
         private final List<WarlordsEntity> playersAffected = new ArrayList<>();
+
         private double energyGivenFromStrikeAndPresence = 0;
 
         public void addEnergyGivenFromStrikeAndPresence(double energyGivenFromStrikeAndPresence) {
@@ -239,6 +214,11 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         private int targetsHit = 0;
 
         @Override
+        public Class<InspiringPresenceStats> getClazz() {
+            return InspiringPresenceStats.class;
+        }
+
+        @Override
         public List<AbilityStatDisplay> getStatsDisplay() {
             List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
             statsDisplay.add(new AbilityStatDisplay("Targets Hit", targetsHit));
@@ -253,13 +233,10 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
         }
 
         @Override
-        public Class<InspiringPresenceStats> getClazz() {
-            return InspiringPresenceStats.class;
-        }
-
-        @Override
         public InspiringPresenceStats create() {
             return new InspiringPresenceStats();
         }
+
     }
+
 }

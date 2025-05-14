@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -59,7 +60,7 @@ public class Zenith extends AbstractMob implements BossMob {
                 maxMeleeDamage,
                 new Armageddon(),
                 new Cleanse(),
-                new SpawnMobAbility(15, Mob.ZENITH_LEGIONNAIRE) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("zenithSpawnZenithLegionnaire").pve(), Mob.ZENITH_LEGIONNAIRE) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
@@ -114,7 +115,7 @@ public class Zenith extends AbstractMob implements BossMob {
             sizeMax = 6;
         }
         this.playerClass.addAbility(new ThunderCloudAbility(
-                cooldown,
+                AbstractAbilityBuilder.create("zenithThunderCloud").pve().cooldown(cooldown),
                 true,
                 secondsMin, secondsMax,
                 sizeMin, sizeMax
@@ -194,13 +195,7 @@ public class Zenith extends AbstractMob implements BossMob {
         }
 
         public Armageddon() {
-            super(
-                    "Armageddon",
-                    550,
-                    700,
-                    12,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("zenithArmageddon").pve());
         }
 
         @Override
@@ -290,13 +285,7 @@ public class Zenith extends AbstractMob implements BossMob {
     private static class Cleanse extends AbstractPveAbility {
 
         public Cleanse() {
-            super(
-                    "Cleanse",
-                    300,
-                    400,
-                    4,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("zenithCleanse").pve());
         }
 
         @Override

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -44,7 +45,7 @@ public class VoltaicSoul extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new RemoveTarget(10)
+                new RemoveTarget(AbstractAbilityBuilder.create("voltaicSoulRemoveTarget").pve())
         );
     }
 
