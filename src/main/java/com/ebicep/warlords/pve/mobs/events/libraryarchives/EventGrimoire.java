@@ -31,14 +31,17 @@ public abstract class EventGrimoire extends AbstractMob implements BossMinionMob
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
         getAbilities().forEach(ability -> {
             AbstractAbility abstractAbility = ability.create.get();
+            abstractAbility.init(abstractAbility.getBuilder());
             this.abilities.put(abstractAbility, 0);
         });
         getAbilitiesM1().forEach(ability -> {
             AbstractAbility abstractAbility = ability.create.get();
+            abstractAbility.init(abstractAbility.getBuilder());
             this.abilities.put(abstractAbility, 1);
         });
         getAbilitiesM2().forEach(ability -> {
             AbstractAbility abstractAbility = ability.create.get();
+            abstractAbility.init(abstractAbility.getBuilder());
             abstractAbility.setPveMasterUpgrade2(true);
             this.abilities.put(abstractAbility, 2);
         });
