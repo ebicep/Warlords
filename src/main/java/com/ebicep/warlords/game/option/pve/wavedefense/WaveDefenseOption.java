@@ -215,29 +215,32 @@ public class WaveDefenseOption implements PveOption {
 
         });
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY - 1, "wave") {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return getWaveScoreboard(player);
-            }
-        });
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        return getWaveScoreboard(player);
+                    }
+                }
+        );
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "wave") {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return Collections.singletonList(
-                        Component.text("Monsters Left: ")
-                                 .append(Component.text(mobCount(), (spawnCount > 0 || ticksElapsed.get() < 10 ? NamedTextColor.RED : NamedTextColor.GREEN)))
-                );
-            }
-        });
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        return Collections.singletonList(
+                                Component.text("Monsters Left: ")
+                                         .append(Component.text(mobCount(), (spawnCount > 0 || ticksElapsed.get() < 10 ? NamedTextColor.RED : NamedTextColor.GREEN)))
+                        );
+                    }
+                }
+        );
         game.registerGameMarker(ScoreboardHandler.class, new SimpleScoreboardHandler(6, "kills") {
-            @Nonnull
-            @Override
-            public List<Component> computeLines(@Nullable WarlordsPlayer player) {
-                return healthScoreboard(game);
-            }
-        });
+                    @Nonnull
+                    @Override
+                    public List<Component> computeLines(@Nullable WarlordsPlayer player) {
+                        return healthScoreboard(game);
+                    }
+                }
+        );
 
         new TimerSkipAbleMarker() {
             @Override
@@ -284,10 +287,10 @@ public class WaveDefenseOption implements PveOption {
                 entry.getKey().playSound(entry.getKey().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 500, 2);
             }
         }
-        waveCounter++;
-        if (waveCounter > maxWave) {
+        if (waveCounter + 1 > maxWave) {
             return;
         }
+        waveCounter++;
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
         int spawns = spawnCount;
@@ -331,6 +334,23 @@ public class WaveDefenseOption implements PveOption {
             case 7, 8 -> 2.5f;
             default -> 2.5f + (playerCount - 8) * 0.5f;
         };
+    }
+
+    protected int getWaveDelay() {
+        if (currentWave != null) {
+            AtomicBoolean fastWave = new AtomicBoolean(true);
+            getGame().warlordsPlayers().forEach(warlordsPlayer -> {
+                DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
+                            if (databasePlayer.getFastWaveMode() == FastWaveMode.OFF) {
+                                fastWave.set(false);
+                            }
+                        }
+                );
+            });
+            int waveDelay = currentWave.getDelay();
+            return fastWave.get() ? waveDelay / 2 : waveDelay;
+        }
+        return 0;
     }
 
     protected Pair<Float, Component> getWaveOpening() {
@@ -458,20 +478,10 @@ public class WaveDefenseOption implements PveOption {
         }.runTaskTimer(0, 0);
     }
 
-    protected int getWaveDelay() {
-        if (currentWave != null) {
-            AtomicBoolean fastWave = new AtomicBoolean(true);
-            getGame().warlordsPlayers().forEach(warlordsPlayer -> {
-                DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                    if (databasePlayer.getFastWaveMode() == FastWaveMode.OFF) {
-                        fastWave.set(false);
-                    }
-                });
-            });
-            int waveDelay = currentWave.getDelay();
-            return fastWave.get() ? waveDelay / 2 : waveDelay;
-        }
-        return 0;
+    @Override
+    @Nonnull
+    public Game getGame() {
+        return game;
     }
 
     protected void onSpawnDelayChange(int newTickDelay) {
@@ -532,6 +542,58 @@ public class WaveDefenseOption implements PveOption {
         int endlessFlagCheckMax = isEndless ? maxMeleeDamage : (int) (warlordsNPC.getMaxMeleeDamage() * difficultyDamageMultiplier);
         warlordsNPC.setMinMeleeDamage(endlessFlagCheckMin);
         warlordsNPC.setMaxMeleeDamage(endlessFlagCheckMax);
+    }
+
+    @Override
+    public Set<AbstractMob> getMobs() {
+        return mobs.keySet();
+    }
+
+    @Override
+    public int getTicksElapsed() {
+        return ticksElapsed.get();
+    }
+
+    @Override
+    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
+        return mobs;
+    }
+
+    @Override
+    public int getWaveCounter() {
+        return waveCounter;
+    }
+
+    public void setWaveCounter(int waveCounter) {
+        this.waveCounter = waveCounter - 1;
+        newWave();
+    }
+
+    @Override
+    public DifficultyIndex getDifficulty() {
+        return difficulty;
+    }
+
+    @Override
+    public void spawnNewMob(AbstractMob mob, Team team) {
+        game.addNPC(mob.toNPC(game, team, this::modifyStats));
+        mobs.put(mob, new MobData(ticksElapsed.get()));
+        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
+    }
+
+    @Override
+    public boolean isPauseMobSpawn() {
+        return pauseMobSpawn;
+    }
+
+    @Override
+    public void setPauseMobSpawn(boolean pauseMobSpawn) {
+        this.pauseMobSpawn = pauseMobSpawn;
+    }
+
+    @Override
+    public PveRewards<?> getRewards() {
+        return waveDefenseRewards;
     }
 
     @Override
@@ -599,64 +661,6 @@ public class WaveDefenseOption implements PveOption {
         }.runTaskTimer(20, 0);
     }
 
-    @Override
-    @Nonnull
-    public Game getGame() {
-        return game;
-    }
-
-    @Override
-    public Set<AbstractMob> getMobs() {
-        return mobs.keySet();
-    }
-
-    @Override
-    public int getTicksElapsed() {
-        return ticksElapsed.get();
-    }
-
-    @Override
-    public ConcurrentHashMap<AbstractMob, ? extends MobData> getMobsMap() {
-        return mobs;
-    }
-
-    @Override
-    public int getWaveCounter() {
-        return waveCounter;
-    }
-
-    public void setWaveCounter(int waveCounter) {
-        this.waveCounter = waveCounter - 1;
-        newWave();
-    }
-
-    @Override
-    public DifficultyIndex getDifficulty() {
-        return difficulty;
-    }
-
-    @Override
-    public void spawnNewMob(AbstractMob mob, Team team) {
-        game.addNPC(mob.toNPC(game, team, this::modifyStats));
-        mobs.put(mob, new MobData(ticksElapsed.get()));
-        Bukkit.getPluginManager().callEvent(new WarlordsMobSpawnEvent(game, mob));
-    }
-
-    @Override
-    public boolean isPauseMobSpawn() {
-        return pauseMobSpawn;
-    }
-
-    @Override
-    public void setPauseMobSpawn(boolean pauseMobSpawn) {
-        this.pauseMobSpawn = pauseMobSpawn;
-    }
-
-    @Override
-    public PveRewards<?> getRewards() {
-        return waveDefenseRewards;
-    }
-
     public int getWavesCleared() {
         if (waveCounter <= 1) {
             return 0;
@@ -687,4 +691,5 @@ public class WaveDefenseOption implements PveOption {
     public void setCurrentDelay(int currentDelay) {
         this.currentDelay = currentDelay;
     }
+
 }
