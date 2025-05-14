@@ -257,7 +257,7 @@ public class WaveDefenseOption implements PveOption {
     public List<Component> getWaveScoreboard(WarlordsPlayer player) {
         TextComponent.Builder waveScoreboard = Component.text();
         waveScoreboard.append(Component.text("Wave: "))
-                      .append(Component.text(waveCounter, NamedTextColor.GREEN));
+                      .append(Component.text(Math.min(waveCounter, maxWave), NamedTextColor.GREEN));
         if (maxWave != Integer.MAX_VALUE) {
             waveScoreboard.append(Component.text("/"))
                           .append(Component.text(maxWave, NamedTextColor.GREEN));
