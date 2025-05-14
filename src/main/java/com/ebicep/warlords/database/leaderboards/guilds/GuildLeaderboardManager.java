@@ -71,6 +71,9 @@ public class GuildLeaderboardManager {
         for (int i = 0; i < sortedGuilds.size() / MAX_PAGES; i++) {
             pageHologramData.add(getPagedHologramData(event, sortedGuilds, i));
         }
+        if (pageHologramData.isEmpty()) {
+            return;
+        }
         Hologram board = new Hologram.Builder(
                 "guildEventLeaderboardPoints",
                 EVENT_LEADERBOARD_LOCATION,
