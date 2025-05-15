@@ -82,44 +82,6 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         targetPlayer(option);
     }
 
-    private void smite() {
-        if (targetWarlordsEntity == null) {
-            return;
-        }
-        timesSmited++;
-        if (timesSmited == 2) {
-            pveOption.despawnMob(this);
-            if (laser != null) {
-                laser.stop();
-            }
-        }
-        targetWarlordsEntity.addInstance(InstanceBuilder
-                .damage()
-                .cause("Smite")
-                .source(warlordsNPC)
-                .value(targetWarlordsEntity.getMaxHealth() * .9f)
-                .flags(InstanceFlags.TRUE_DAMAGE)
-        ).ifPresent(event -> {
-            if (!event.isDead()) {
-                smiteTickCooldown = 10 * 20;
-                return;
-            }
-            warlordsNPC.addInstance(InstanceBuilder
-                    .healing()
-                    .cause("Smite Kill")
-                    .source(warlordsNPC)
-                    .value(2000)
-            );
-            smiteTickCooldown = 5 * 20;
-            targetPlayer(pveOption);
-        });
-        EffectUtils.playParticleLinkAnimation(targetWarlordsEntity.getLocation(), warlordsNPC.getLocation(), 255, 0, 0, 2, 2);
-        EffectUtils.strikeLightning(targetWarlordsEntity.getLocation(), false);
-        for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(targetWarlordsEntity.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 500, .6f);
-        }
-    }
-
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         Entity target = getTarget();
@@ -169,9 +131,57 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         return new LocationBuilder(warlordsNPC.getEyeLocation()).backward(.25f);
     }
 
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+        if (laser != null) {
+            laser.stop();
+        }
+    }
+
+    private void smite() {
+        if (targetWarlordsEntity == null) {
+            return;
+        }
+        timesSmited++;
+        if (timesSmited == 2) {
+            pveOption.despawnMob(this);
+            if (laser != null) {
+                laser.stop();
+            }
+        }
+        targetWarlordsEntity.addInstance(InstanceBuilder
+                .damage()
+                .cause("Smite")
+                .source(warlordsNPC)
+                .value(targetWarlordsEntity.getMaxHealth() * .9f)
+                .flags(InstanceFlags.TRUE_DAMAGE)
+        ).ifPresent(event -> {
+            if (!event.isDead()) {
+                smiteTickCooldown = 10 * 20;
+                return;
+            }
+            warlordsNPC.addInstance(InstanceBuilder
+                    .healing()
+                    .cause("Smite Kill")
+                    .source(warlordsNPC)
+                    .value(2000)
+            );
+            smiteTickCooldown = 5 * 20;
+            targetPlayer(pveOption);
+        });
+        EffectUtils.playParticleLinkAnimation(targetWarlordsEntity.getLocation(), warlordsNPC.getLocation(), 255, 0, 0, 2, 2);
+        EffectUtils.strikeLightning(targetWarlordsEntity.getLocation(), false);
+        for (int i = 0; i < 3; i++) {
+            Utils.playGlobalSound(targetWarlordsEntity.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 500, .6f);
+        }
+    }
+
     private void targetPlayer(PveOption option) {
         option.getGame()
-              .warlordsPlayers().min(Comparator.comparing(warlordsPlayer -> {
+              .warlordsPlayers()
+              .filter(WarlordsEntity::isAlive)
+              .min(Comparator.comparing(warlordsPlayer -> {
                   Map<SpecType, Integer> orderMap = Map.of(
                           SpecType.HEALER, 0,
                           SpecType.DAMAGE, 1,
@@ -180,14 +190,6 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                   return orderMap.get(warlordsPlayer.getSpecClass().specType);
               }))
               .ifPresent(this::setTarget);
-    }
-
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
-        super.onDeath(killer, deathLocation, option);
-        if (laser != null) {
-            laser.stop();
-        }
     }
 
 }
