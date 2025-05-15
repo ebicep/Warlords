@@ -82,17 +82,42 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         targetPlayer(option);
     }
 
-    private void targetPlayer(PveOption option) {
-        option.getGame()
-              .warlordsPlayers().min(Comparator.comparing(warlordsPlayer -> {
-                  Map<SpecType, Integer> orderMap = Map.of(
-                          SpecType.HEALER, 0,
-                          SpecType.DAMAGE, 1,
-                          SpecType.TANK, 2
-                  );
-                  return orderMap.get(warlordsPlayer.getSpecClass().specType);
-              }))
-              .ifPresent(this::setTarget);
+    private void smite() {
+        if (targetWarlordsEntity == null) {
+            return;
+        }
+        timesSmited++;
+        if (timesSmited == 2) {
+            pveOption.despawnMob(this);
+            if (laser != null) {
+                laser.stop();
+            }
+        }
+        targetWarlordsEntity.addInstance(InstanceBuilder
+                .damage()
+                .cause("Smite")
+                .source(warlordsNPC)
+                .value(targetWarlordsEntity.getMaxHealth() * .9f)
+                .flags(InstanceFlags.TRUE_DAMAGE)
+        ).ifPresent(event -> {
+            if (!event.isDead()) {
+                smiteTickCooldown = 10 * 20;
+                return;
+            }
+            warlordsNPC.addInstance(InstanceBuilder
+                    .healing()
+                    .cause("Smite Kill")
+                    .source(warlordsNPC)
+                    .value(2000)
+            );
+            smiteTickCooldown = 5 * 20;
+            targetPlayer(pveOption);
+        });
+        EffectUtils.playParticleLinkAnimation(targetWarlordsEntity.getLocation(), warlordsNPC.getLocation(), 255, 0, 0, 2, 2);
+        EffectUtils.strikeLightning(targetWarlordsEntity.getLocation(), false);
+        for (int i = 0; i < 3; i++) {
+            Utils.playGlobalSound(targetWarlordsEntity.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 500, .6f);
+        }
     }
 
     @Override
@@ -144,42 +169,17 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         return new LocationBuilder(warlordsNPC.getEyeLocation()).backward(.25f);
     }
 
-    private void smite() {
-        if (targetWarlordsEntity == null) {
-            return;
-        }
-        timesSmited++;
-        if (timesSmited == 2) {
-            pveOption.despawnMob(this);
-            if (laser != null) {
-                laser.stop();
-            }
-        }
-        targetWarlordsEntity.addInstance(InstanceBuilder
-                .damage()
-                .cause("Smite")
-                .source(warlordsNPC)
-                .value(3250)
-                .flags(InstanceFlags.TRUE_DAMAGE)
-        ).ifPresent(event -> {
-            if (!event.isDead()) {
-                smiteTickCooldown = 10 * 20;
-                return;
-            }
-            warlordsNPC.addInstance(InstanceBuilder
-                    .healing()
-                    .cause("Smite Kill")
-                    .source(warlordsNPC)
-                    .value(2500)
-            );
-            smiteTickCooldown = 5 * 20;
-            targetPlayer(pveOption);
-        });
-        EffectUtils.playParticleLinkAnimation(targetWarlordsEntity.getLocation(), warlordsNPC.getLocation(), 255, 0, 0, 2, 2);
-        EffectUtils.strikeLightning(targetWarlordsEntity.getLocation(), false);
-        for (int i = 0; i < 3; i++) {
-            Utils.playGlobalSound(targetWarlordsEntity.getLocation(), Sound.ITEM_TRIDENT_RIPTIDE_1, 500, .6f);
-        }
+    private void targetPlayer(PveOption option) {
+        option.getGame()
+              .warlordsPlayers().min(Comparator.comparing(warlordsPlayer -> {
+                  Map<SpecType, Integer> orderMap = Map.of(
+                          SpecType.HEALER, 2,
+                          SpecType.DAMAGE, 1,
+                          SpecType.TANK, 0
+                  );
+                  return orderMap.get(warlordsPlayer.getSpecClass().specType);
+              }))
+              .ifPresent(this::setTarget);
     }
 
     @Override
