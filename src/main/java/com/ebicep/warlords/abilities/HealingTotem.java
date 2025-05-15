@@ -169,6 +169,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         if (pveMasterUpgrade2) {
             PlayerFilter.playingGame(wp.getGame()).aliveTeammatesOfExcludingSelf(wp).forEach(warlordsEntity -> {
                 EarthlivingWeapon earthlivingWeapon = new EarthlivingWeapon();
+                earthlivingWeapon.init(earthlivingWeapon.getBuilder());
                 warlordsEntity.getCooldownManager()
                               .addCooldown(new RegularCooldown<>(earthlivingWeapon.getName(),
                                       null,
