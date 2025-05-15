@@ -141,6 +141,10 @@ public abstract class AbstractAbility implements AbilityIcon {
         initialized = true;
     }
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
     /**
      * @return whether the ability has to go on cooldown after activation.
      */

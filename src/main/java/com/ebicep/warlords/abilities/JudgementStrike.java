@@ -61,7 +61,8 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                                                   .min(damageValues.strikeDamage.getMinValue() + extraDamage)
                                                   .max(damageValues.strikeDamage.getMaxValue() + extraDamage)
                                                   .critChance(critChance)
-                                                  .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())).ifPresent(finalEvent -> {
+                                                  .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
+            ).ifPresent(finalEvent -> {
                 if (finalEvent.isCrit()) {
                     wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
                 }
@@ -113,6 +114,22 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
     public void setStrikeCritInterval(int strikeCritInterval) {
         this.strikeCritInterval = strikeCritInterval;
+    }
+
+    public int getSpeedOnCrit() {
+        return speedOnCrit;
+    }
+
+    public void setSpeedOnCrit(int speedOnCrit) {
+        this.speedOnCrit = speedOnCrit;
+    }
+
+    public int getSpeedOnCritDuration() {
+        return speedOnCritDuration;
+    }
+
+    public void setSpeedOnCritDuration(int speedOnCritDuration) {
+        this.speedOnCritDuration = speedOnCritDuration;
     }
 
     public static class DamageValues implements Value.ValueHolder {

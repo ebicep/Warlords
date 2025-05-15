@@ -95,6 +95,9 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
                 JudgementStrike ability = new JudgementStrike();
                 ability.init(ability.getBuilder());
                 ability.getCooldown().setBaseValue(2);
+                ability.setSpeedOnCrit(judgementStrike.getSpeedOnCrit());
+                ability.setSpeedOnCritDuration(judgementStrike.getSpeedOnCritDuration());
+                ability.setStrikeCritInterval(judgementStrike.getStrikeCritInterval());
                 Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
                 Value.RangedValueCritable newStrikeDamage = ability.getDamageValues().getStrikeDamage();
                 newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());

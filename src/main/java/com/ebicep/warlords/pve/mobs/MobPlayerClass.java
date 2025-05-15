@@ -58,7 +58,9 @@ public class MobPlayerClass extends AbstractPlayerClass {
     }
 
     public void addAbility(AbstractAbility abilityToAdd) {
-        abilityToAdd.init(abilityToAdd.getBuilder());
+        if (!abilityToAdd.isInitialized()) {
+            abilityToAdd.init(abilityToAdd.getBuilder());
+        }
         abilities.add(abilityToAdd);
         maxEnergy = (int) Math.round(abilities
                 .stream()
