@@ -1,16 +1,24 @@
 package com.ebicep.warlords.game.option;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.state.EndState;
-import com.ebicep.warlords.player.general.settings.CooldownDisplayMode;
+import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
+import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
+import com.ebicep.warlords.util.bukkit.packets.wrappers.WrapperPlayServerEntityMetadata;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -25,21 +33,51 @@ import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PlayerCooldownDisplayOption implements Option, Listener {
 
-    public static boolean enabled = true;
     private static final ItemStack GRAY_DYE = new ItemStack(Material.GRAY_DYE);
+    public static boolean enabled = true;
     private final Map<WarlordsEntity, CooldownData> playerSettings = new HashMap<>();
-//    private final Map<Integer, EntityData> entityDataByID = new HashMap<>();
+    private final Map<Integer, EntityData> entityDataByID = new HashMap<>();
+    private PacketAdapter packetListener;
 
     @Override
     public void register(@Nonnull Game game) {
         game.registerEvents(this);
+        packetListener = new PacketAdapter(Warlords.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_METADATA) {
+            @Override
+            public void onPacketSending(PacketEvent event) {
+                Player playerReceiving = event.getPlayer();
+                WarlordsEntity warlordsPlayer = Warlords.getPlayer(playerReceiving);
+                if (warlordsPlayer == null || !Objects.equals(warlordsPlayer.getGame(), game)) {
+                    return;
+                }
+                DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
+                            WrapperPlayServerEntityMetadata entityMetadata = new WrapperPlayServerEntityMetadata(event.getPacket());
+                            int id = entityMetadata.getId();
+                            EntityData entityData = entityDataByID.get(id);
+                            if (entityData == null) {
+                                return;
+                            }
+                            CooldownDisplaySettings cooldownDisplaySettings = databasePlayer.getCooldownDisplaySettings();
+                            List<WrappedDataValue> packedItems = entityMetadata.getPackedItems();
+                            for (WrappedDataValue packedItem : packedItems) {
+                                if (packedItem.getIndex() == 12) {
+                                    if (entityData.entity instanceof TextDisplay) {
+                                        packedItem.setValue(new Vector3f(cooldownDisplaySettings.getTextScale()));
+                                    } else if (entityData.entity instanceof ItemDisplay) {
+                                        packedItem.setValue(new Vector3f(cooldownDisplaySettings.getItemScale(), cooldownDisplaySettings.getItemScale(), .1f));
+                                    }
+                                }
+                            }
+                            event.setPacket(entityMetadata.getHandle());
+                        }
+                );
+            }
+        };
+        PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);
     }
 
     @Override
@@ -58,8 +96,8 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     return;
                 }
                 playerSettings.forEach((warlordsEntity, cooldownData) -> {
-                    if (ticksElapsed % 10 == 0) {
-                        cooldownData.cooldowns.update(warlordsEntity);
+                    if (ticksElapsed % 10 == 0) { // TODO update based on ability updateItem
+                        cooldownData.cooldowns.update(warlordsEntity, entityDataByID);
                     }
                     cooldownData.cooldowns.teleport(warlordsEntity);
                 });
@@ -72,10 +110,10 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                             return;
                         }
                         DatabasePlayer databasePlayer = warlordsEntity.getDatabasePlayer();
-                        CooldownDisplayMode cooldownDisplayMode = databasePlayer.getCooldownDisplayMode();
+                        CooldownDisplaySettings.CooldownDisplayMode cooldownDisplayMode = databasePlayer.getCooldownDisplaySettings().getCooldownDisplayMode();
                         warlordsEntityByTeam.forEach((team, warlordsEntities) -> {
                             boolean sameTeam = team == warlordsEntity.getTeam();
-                            boolean shouldSee = cooldownDisplayMode == CooldownDisplayMode.ON &&
+                            boolean shouldSee = cooldownDisplayMode == CooldownDisplaySettings.CooldownDisplayMode.ON &&
                                     (sameTeam && cooldownData.seeTeammates || !sameTeam && cooldownData.seeEnemies);
                             warlordsEntities.forEach(we -> {
                                 CooldownData otherData = playerSettings.get(we);
@@ -107,8 +145,10 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
     @Override
     public void onGameCleanup(@Nonnull Game game) {
         ChatUtils.MessageType.GAME.sendMessage("Cleaning up cooldown display entities");
+        PacketUtils.PROTOCOL_MANAGER.removePacketListener(packetListener);
         playerSettings.forEach((warlordsEntity, cooldownData) -> cooldownData.cooldowns.cooldownEntities.forEach(Cooldowns.CooldownEntities::remove));
         playerSettings.clear();
+        entityDataByID.clear();
     }
 
     @Override
@@ -156,6 +196,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
         public void setSeeEnemies(boolean seeEnemies) {
             this.seeEnemies = seeEnemies;
         }
+
     }
 
     static class Cooldowns {
@@ -164,7 +205,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
         private final List<CooldownEntities> cooldownEntities = new ArrayList<>();
 
-        public void update(WarlordsEntity warlordsEntity) {
+        public void update(WarlordsEntity warlordsEntity, Map<Integer, EntityData> entityDataByID) {
             if (warlordsEntity.isDead()) {
                 return;
             }
@@ -176,14 +217,14 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     cooldownEntity = cooldownEntities.get(cooldownIndex);
                 } else {
                     cooldownEntity = createCooldownEntities(warlordsEntity.getLocation(), ab);
-//                    cooldownEntity.addTo(warlordsEntity, entityDataByID);
+                    cooldownEntity.addTo(warlordsEntity, entityDataByID);
                     cooldownEntities.add(cooldownEntity);
                 }
                 if (cooldownEntity.ability != ab || !cooldownEntity.itemDisplay.isValid() || !cooldownEntity.textDisplay.isValid()) {
                     cooldownEntity.remove();
-//                    cooldownEntity.removeFrom(entityDataByID);
+                    cooldownEntity.removeFrom(entityDataByID);
                     cooldownEntity = createCooldownEntities(warlordsEntity.getLocation(), ab);
-//                    cooldownEntity.addTo(warlordsEntity, entityDataByID);
+                    cooldownEntity.addTo(warlordsEntity, entityDataByID);
                     cooldownEntities.set(cooldownIndex, cooldownEntity);
                 }
                 boolean onCooldown = ab.getCurrentCooldown() > 0;
@@ -193,8 +234,20 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                 } else if (onCooldown) {
                     itemDisplay.setItemStack(GRAY_DYE);
                 }
+                itemDisplay.setTransformation(new Transformation(
+                        new Vector3f(),
+                        new AxisAngle4f(),
+                        new Vector3f(.2f),
+                        new AxisAngle4f()
+                ));
                 TextDisplay textDisplay = cooldownEntity.textDisplay;
                 textDisplay.text(onCooldown ? Component.text(ab.getCurrentCooldownItem()) : null);
+                textDisplay.setTransformation(new Transformation(
+                        new Vector3f(),
+                        new AxisAngle4f(),
+                        new Vector3f(.2f),
+                        new AxisAngle4f()
+                ));
             }
             // remove any extra cooldown entities
             for (int i = cooldownEntities.size() - 1; i >= warlordsEntity.getAbilities().size() - 1; i--) {

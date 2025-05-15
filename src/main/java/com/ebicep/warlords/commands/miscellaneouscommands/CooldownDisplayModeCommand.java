@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.player.general.settings.CooldownDisplayMode;
+import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -17,17 +17,20 @@ public class CooldownDisplayModeCommand extends BaseCommand {
     @Description("Toggles cooldown display mode")
     public void toggle(Player player) {
         DatabaseManager.updatePlayer(player.getUniqueId(), databasePlayer -> {
-            databasePlayer.setCooldownDisplayMode(databasePlayer.getCooldownDisplayMode() == CooldownDisplayMode.ON ?
-                                                  CooldownDisplayMode.OFF :
-                                                  CooldownDisplayMode.ON);
-            if (databasePlayer.getCooldownDisplayMode() == CooldownDisplayMode.ON) {
-                player.sendMessage(Component.text("Cooldown Display Mode ", NamedTextColor.GREEN)
-                                            .append(Component.text("enabled."))
-                );
-            } else {
-                player.sendMessage(Component.text("Cooldown Display Mode ", NamedTextColor.GREEN)
-                                            .append(Component.text("disabled.", NamedTextColor.GREEN)));
-            }
-        });
+                    databasePlayer.getCooldownDisplaySettings()
+                                  .setCooldownDisplayMode(databasePlayer.getCooldownDisplaySettings().getCooldownDisplayMode() == CooldownDisplaySettings.CooldownDisplayMode.ON ?
+                                                          CooldownDisplaySettings.CooldownDisplayMode.OFF :
+                                                          CooldownDisplaySettings.CooldownDisplayMode.ON);
+                    if (databasePlayer.getCooldownDisplaySettings().getCooldownDisplayMode() == CooldownDisplaySettings.CooldownDisplayMode.ON) {
+                        player.sendMessage(Component.text("Cooldown Display Mode ", NamedTextColor.GREEN)
+                                                    .append(Component.text("enabled."))
+                        );
+                    } else {
+                        player.sendMessage(Component.text("Cooldown Display Mode ", NamedTextColor.GREEN)
+                                                    .append(Component.text("disabled.", NamedTextColor.GREEN)));
+                    }
+                }
+        );
     }
+
 }

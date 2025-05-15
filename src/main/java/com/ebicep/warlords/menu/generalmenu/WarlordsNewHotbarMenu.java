@@ -15,6 +15,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
+import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -1069,10 +1070,9 @@ public class WarlordsNewHotbarMenu {
                 menu.setItem(
                         7,
                         1,
-                        databasePlayer.getCooldownDisplayMode().item,
+                        CooldownDisplaySettings.ITEM,
                         (m, e) -> {
-                            player.performCommand("cooldowndisplaymode");
-                            openSettingsMenu(player);
+                            CooldownDisplaySettings.openMenu(player, databasePlayer);
                         }
                 );
                 menu.setItem(
