@@ -13,6 +13,9 @@ public class ComponentBuilder {
     }
 
     public static ComponentBuilder create(String text) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         return new ComponentBuilder(text);
     }
 
@@ -21,10 +24,16 @@ public class ComponentBuilder {
     }
 
     public static ComponentBuilder create(String text, TextColor textColor) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         return new ComponentBuilder(text, textColor);
     }
 
     public static ComponentBuilder create(String text, TextColor textColor, TextDecoration... textDecoration) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         return new ComponentBuilder(text, textColor, textDecoration);
     }
 
@@ -35,6 +44,9 @@ public class ComponentBuilder {
     private final TextComponent.Builder componentBuilder;
 
     public ComponentBuilder(String text) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         this.componentBuilder = Component.text(text).toBuilder();
     }
 
