@@ -394,6 +394,7 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                         Ability<?> ability = entry.getKey();
                         AbstractAbilityStats<?, ?> abstractAbilityStats = entry.getValue();
                         AbstractAbility abstractAbility = ability.create.get();
+                        abstractAbility.init(abstractAbility.getBuilder());
                         TextColor abilityColor = abstractAbility.getAbilityColor();
                         ChatColor color = ChatColor.GRAY;
                         if (abilityColor.equals(NamedTextColor.GREEN)) {

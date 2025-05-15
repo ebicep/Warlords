@@ -4,6 +4,7 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
@@ -1455,9 +1456,11 @@ public enum GameEvents {
                                          .decoration(TextDecoration.OBFUSCATED, !unlocked)
                         ));
                 for (Ability<?> ability : codexForSpec.abilities) {
+                    AbstractAbility abstractAbility = ability.create.get();
+                    abstractAbility.init(abstractAbility.getBuilder());
                     itemBuilder.addLore(Component.textOfChildren(
                             Component.text(" - ", NamedTextColor.DARK_GRAY),
-                            Component.text(unlocked ? ability.create.get().getName() : "??????????", NamedTextColor.GOLD)
+                            Component.text(unlocked ? abstractAbility.getName() : "??????????", NamedTextColor.GOLD)
                                      .decoration(TextDecoration.OBFUSCATED, !unlocked)
                     ));
                 }

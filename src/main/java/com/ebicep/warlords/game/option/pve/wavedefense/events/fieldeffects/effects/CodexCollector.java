@@ -85,7 +85,9 @@ public class CodexCollector implements FieldEffect {
                     codexesEquipped++;
                     player.getSpec().getAbilities().clear();
                     for (Ability<?> ability : codexForSpec.abilities) {
-                        player.getSpec().getAbilities().add(ability.create.get());
+                        AbstractAbility abstractAbility = ability.create.get();
+                        abstractAbility.init(abstractAbility.getBuilder());
+                        player.getSpec().getAbilities().add(abstractAbility);
                     }
                     warlordsPlayer.resetAbilityTree();
                     playerCodexEquipped.put(player, codexForSpec);
