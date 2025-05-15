@@ -7,6 +7,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -62,7 +63,7 @@ public class CrystalOfHealing extends AbstractAbility implements PurpleAbilityIc
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 15);
+        Block targetBlock = !(wp.getEntity() instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 15);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }

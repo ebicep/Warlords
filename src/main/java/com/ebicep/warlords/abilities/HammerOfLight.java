@@ -10,6 +10,7 @@ import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
@@ -96,7 +97,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
+        Block targetBlock = !(wp.getEntity() instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
