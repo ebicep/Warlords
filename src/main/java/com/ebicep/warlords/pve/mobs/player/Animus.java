@@ -92,20 +92,20 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
 
             // copy strike stats
             for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {
-                playerClass.addAbility(new JudgementStrike() {{
-                    getCooldown().setBaseValue(2);
-                    Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
-                    Value.RangedValueCritable newStrikeDamage = getDamageValues().getStrikeDamage();
-                    newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
-                    newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
-                    newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
-                    newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
-                    getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
-                    setInPve(judgementStrike.isInPve());
-                    setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
-                    setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
-                    init(getBuilder());
-                }});
+                JudgementStrike ability = new JudgementStrike();
+                ability.init(ability.getBuilder());
+                ability.getCooldown().setBaseValue(2);
+                Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
+                Value.RangedValueCritable newStrikeDamage = ability.getDamageValues().getStrikeDamage();
+                newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
+                newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
+                newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
+                newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
+                ability.getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
+                ability.setInPve(judgementStrike.isInPve());
+                ability.setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
+                ability.setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
+                playerClass.addAbility(ability);
                 break;
             }
         }
