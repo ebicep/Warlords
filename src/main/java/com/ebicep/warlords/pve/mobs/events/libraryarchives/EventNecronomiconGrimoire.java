@@ -173,9 +173,9 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         option.getGame()
               .warlordsPlayers().min(Comparator.comparing(warlordsPlayer -> {
                   Map<SpecType, Integer> orderMap = Map.of(
-                          SpecType.HEALER, 2,
+                          SpecType.HEALER, 0,
                           SpecType.DAMAGE, 1,
-                          SpecType.TANK, 0
+                          SpecType.TANK, 2
                   );
                   return orderMap.get(warlordsPlayer.getSpecClass().specType);
               }))
