@@ -104,6 +104,7 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
                     setInPve(judgementStrike.isInPve());
                     setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
                     setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
+                    init(getBuilder());
                 }});
                 break;
             }
