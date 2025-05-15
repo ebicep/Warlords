@@ -34,6 +34,7 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PlayerCooldownDisplayOption implements Option, Listener {
 
@@ -42,6 +43,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
     private final Map<WarlordsEntity, CooldownData> playerSettings = new HashMap<>();
     private final Map<Integer, EntityData> entityDataByID = new HashMap<>();
     private PacketAdapter packetListener;
+    private boolean forcePacketUpdate = false;
 
     @Override
     public void register(@Nonnull Game game) {
@@ -97,10 +99,13 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                 }
                 playerSettings.forEach((warlordsEntity, cooldownData) -> {
                     if (ticksElapsed % 10 == 0) { // TODO update based on ability updateItem
-                        cooldownData.cooldowns.update(warlordsEntity, entityDataByID);
+                        cooldownData.cooldowns.update(warlordsEntity, entityDataByID, forcePacketUpdate);
                     }
                     cooldownData.cooldowns.teleport(warlordsEntity);
                 });
+                if (ticksElapsed % 10 == 0 && forcePacketUpdate) {
+                    forcePacketUpdate = false;
+                }
                 if (ticksElapsed % 40 == 0) {
                     Map<Team, List<WarlordsEntity>> warlordsEntityByTeam = new HashMap<>();
                     playerSettings.forEach((warlordsEntity, cooldownData) -> warlordsEntityByTeam.computeIfAbsent(warlordsEntity.getTeam(), k -> new ArrayList<>())
@@ -171,6 +176,10 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
         return playerSettings;
     }
 
+    public void forcePacketUpdate() {
+        forcePacketUpdate = true;
+    }
+
     public record EntityData(Entity entity, WarlordsEntity warlordsEntity) {
 
     }
@@ -205,7 +214,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
 
         private final List<CooldownEntities> cooldownEntities = new ArrayList<>();
 
-        public void update(WarlordsEntity warlordsEntity, Map<Integer, EntityData> entityDataByID) {
+        public void update(WarlordsEntity warlordsEntity, Map<Integer, EntityData> entityDataByID, boolean forcePacketUpdate) {
             if (warlordsEntity.isDead()) {
                 return;
             }
@@ -234,20 +243,22 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                 } else if (onCooldown) {
                     itemDisplay.setItemStack(GRAY_DYE);
                 }
-                itemDisplay.setTransformation(new Transformation(
-                        new Vector3f(),
-                        new AxisAngle4f(),
-                        new Vector3f(.2f),
-                        new AxisAngle4f()
-                ));
                 TextDisplay textDisplay = cooldownEntity.textDisplay;
                 textDisplay.text(onCooldown ? Component.text(ab.getCurrentCooldownItem()) : null);
-                textDisplay.setTransformation(new Transformation(
-                        new Vector3f(),
-                        new AxisAngle4f(),
-                        new Vector3f(.2f),
-                        new AxisAngle4f()
-                ));
+                if (forcePacketUpdate) {
+                    itemDisplay.setTransformation(new Transformation(
+                            new Vector3f(),
+                            new AxisAngle4f(),
+                            new Vector3f(.5f + ThreadLocalRandom.current().nextFloat(.001f)),
+                            new AxisAngle4f()
+                    ));
+                    textDisplay.setTransformation(new Transformation(
+                            new Vector3f(),
+                            new AxisAngle4f(),
+                            new Vector3f(1f + ThreadLocalRandom.current().nextFloat(.001f)),
+                            new AxisAngle4f()
+                    ));
+                }
             }
             // remove any extra cooldown entities
             for (int i = cooldownEntities.size() - 1; i >= warlordsEntity.getAbilities().size() - 1; i--) {

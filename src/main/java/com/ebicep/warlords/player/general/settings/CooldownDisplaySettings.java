@@ -2,8 +2,10 @@ package com.ebicep.warlords.player.general.settings;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.game.option.PlayerCooldownDisplayOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -53,15 +55,18 @@ public class CooldownDisplaySettings {
                                    String score = lines.getLine(0);
                                    try {
                                        float newScale = Float.parseFloat(score);
-                                       if (newScale < 0.5 || 1.51 < newScale) {
+                                       if (newScale < 0.499 || 1.51 < newScale) {
                                            p.sendMessage(Component.text("Scale must be between 0.2 and 1.5", NamedTextColor.RED));
                                            return Collections.singletonList(SignGUIAction.displayNewLines(lines.getLines()));
                                        }
                                        cooldownDisplaySettings.setTextScale(newScale);
                                        p.sendMessage(Component.text("Text Scale set to " + NumberFormat.formatOptionalHundredths(newScale), NamedTextColor.GREEN));
+                                       WarlordsEntity warlordsEntity = Warlords.getPlayer(p);
+                                       if (warlordsEntity != null) {
+                                           warlordsEntity.getGame().doOnOption(PlayerCooldownDisplayOption.class, PlayerCooldownDisplayOption::forcePacketUpdate);
+                                       }
                                    } catch (Exception e1) {
                                        p.sendMessage(Component.text("Invalid Scale", NamedTextColor.GREEN));
-                                       return Collections.singletonList(SignGUIAction.displayNewLines(lines.getLines()));
                                    }
                                    return null;
                                })
@@ -91,15 +96,18 @@ public class CooldownDisplaySettings {
                                    String score = lines.getLine(0);
                                    try {
                                        float newScale = Float.parseFloat(score);
-                                       if (newScale < 0.25 || 0.61 < newScale) {
+                                       if (newScale < 0.249 || 0.61 < newScale) {
                                            p.sendMessage(Component.text("Scale must be between 0.25 and 0.6", NamedTextColor.RED));
                                            return Collections.singletonList(SignGUIAction.displayNewLines(lines.getLines()));
                                        }
                                        cooldownDisplaySettings.setItemScale(newScale);
                                        p.sendMessage(Component.text("Item Scale set to " + NumberFormat.formatOptionalHundredths(newScale), NamedTextColor.GREEN));
+                                       WarlordsEntity warlordsEntity = Warlords.getPlayer(p);
+                                       if (warlordsEntity != null) {
+                                           warlordsEntity.getGame().doOnOption(PlayerCooldownDisplayOption.class, PlayerCooldownDisplayOption::forcePacketUpdate);
+                                       }
                                    } catch (Exception e1) {
                                        p.sendMessage(Component.text("Invalid Scale", NamedTextColor.GREEN));
-                                       return Collections.singletonList(SignGUIAction.displayNewLines(lines.getLines()));
                                    }
                                    return null;
                                })
