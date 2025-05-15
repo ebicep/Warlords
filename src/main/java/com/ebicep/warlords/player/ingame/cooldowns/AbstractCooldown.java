@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.type.*;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.HandlerList;
@@ -62,7 +63,14 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             Consumer<CooldownManager> onRemoveForce,
             boolean removeOnDeath
     ) {
-        this.name = name;
+        if (name == null) {
+            try {
+                throw new Exception("NULL cooldown name");
+            } catch (Exception e) {
+                ChatUtils.MessageType.GAME.sendErrorMessage(e);
+            }
+        }
+        this.name = name == null ? "UNKNOWN" : name;
         this.nameAbbreviation = nameAbbreviation;
         this.cooldownClass = cooldownClass;
         this.cooldownObject = cooldownObject;
