@@ -1,18 +1,21 @@
 package com.ebicep.warlords.database.leaderboards;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PlayerLeaderboardInfo {
 
     private int gameHologram = 0;
+    private Map<DatabaseGameBase, Integer> gameHologramPlayerAbilityStats = new HashMap<>();
     @Nonnull
     private StatsLeaderboardManager.GameType statsGameType = StatsLeaderboardManager.GameType.PVE;
     private int statsCategory = 0;
@@ -27,6 +30,14 @@ public class PlayerLeaderboardInfo {
 
     public void setGameHologram(int gameHologram) {
         this.gameHologram = gameHologram;
+    }
+
+    public int getGameHologramPlayerAbilityStats(DatabaseGameBase databaseGameBase) {
+        return gameHologramPlayerAbilityStats.getOrDefault(databaseGameBase, 0);
+    }
+
+    public void setGameHologramPlayerAbilityStats(int abilityStats) {
+        gameHologramPlayerAbilityStats.put(DatabaseGameBase.previousGames.get(gameHologram), abilityStats);
     }
 
     public void resetGameHologram() {
@@ -60,7 +71,7 @@ public class PlayerLeaderboardInfo {
     }
 
     public void clearHolograms() {
-        this.holograms.forEach(Hologram::delete);
+        this.holograms.forEach(Hologram::deleteHologram);
         this.holograms.clear();
     }
 

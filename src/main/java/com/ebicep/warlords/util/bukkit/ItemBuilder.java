@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import javax.annotation.Nonnull;
@@ -66,7 +65,7 @@ public class ItemBuilder {
     public ItemBuilder(@Nonnull Material material, @Nonnull PotionType potionType) {
         this(material);
         PotionMeta potionMeta = (PotionMeta) meta();
-        potionMeta.setBasePotionData(new PotionData(potionType));
+        potionMeta.setBasePotionType(potionType);
         item.setItemMeta(potionMeta);
         hideAllFlags();
     }
@@ -181,7 +180,10 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setPlaceableOn(EnumSet<Material> materials) {
-        meta().setPlaceableKeys(materials.stream().map(Material::getKey).collect(Collectors.toList()));
+        meta().setPlaceableKeys(materials.stream()
+                                         .map(Material::getKey)
+                                         .collect(Collectors.toList())
+        );
         return this;
     }
 

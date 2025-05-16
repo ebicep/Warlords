@@ -1,9 +1,12 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.onslaught;
 
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePlayerPvEOnslaught;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.onslaught.DatabaseGamePvEOnslaught;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.option.pve.onslaught.PouchReward;
@@ -12,10 +15,11 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats {
+public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats, TracksAbilityStats {
 
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEOnslaughtPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
@@ -24,6 +28,13 @@ public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats {
         put(3, new DatabasePlayerPvEOnslaughtPlayerCountStats());
         put(4, new DatabasePlayerPvEOnslaughtPlayerCountStats());
     }};
+    @Field("ability_stats")
+    private Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
+    }
 
     public DatabasePlayerOnslaughtStats() {
     }
@@ -68,6 +79,7 @@ public class DatabasePlayerOnslaughtStats implements MultiPvEOnslaughtStats {
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEOnslaughtPlayerCountStats getPlayerCountStats(int playerCount) {

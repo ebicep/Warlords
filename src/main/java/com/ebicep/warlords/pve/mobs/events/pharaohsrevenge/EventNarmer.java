@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -190,7 +191,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
                     EffectUtils.playHelixAnimation(
                             location.add(0, 0.15, 0),
                             12,
-                            Particle.SPELL,
+                            Particle.EFFECT,
                             3,
                             60
                     );
@@ -274,7 +275,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
 
         if (ticksElapsed % 15 == 0) {
             for (WarlordsEntity acolyte : acolytes) {
-                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIP_LAVA);
+                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIPPING_LAVA);
             }
         }
     }
@@ -287,7 +288,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORK, 3, 20);
         FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
                                                                        .withColor(Color.WHITE)
                                                                        .with(FireworkEffect.Type.STAR)
@@ -323,7 +324,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 12;
 
         public GroundShred() {
-            super("Ground Shred", 8, 50);
+            super(AbstractAbilityBuilder.create("narmerEventGroundShred").pve());
         }
 
         @Override
@@ -331,8 +332,8 @@ public class EventNarmer extends AbstractMob implements BossMob {
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(wp)

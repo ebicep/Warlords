@@ -1,7 +1,11 @@
 package com.ebicep.warlords.database.leaderboards.stats;
 
+import com.ebicep.holograms.Hologram;
+import com.ebicep.holograms.HologramDataText;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.guilds.Guild;
@@ -9,17 +13,14 @@ import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.GuildTag;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Pair;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.HologramLines;
-import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
+import org.bukkit.entity.Display;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
@@ -31,6 +32,12 @@ public class StatsLeaderboard {
 
     public static final int MAX_PAGES = 3;
     public static final int PLAYERS_PER_PAGE = 10;
+    public static final HologramDataText LOADING = new HologramDataText.Builder<>(ComponentBuilder
+            .create("Loading...", NamedTextColor.GRAY)
+            .build()
+    )
+            .setBillboard(Display.Billboard.FIXED)
+            .build();
     private final String title;
     private final Location location;
     private final HashMap<PlayersCollections, List<DatabasePlayer>> sortedTimedPlayers = new HashMap<>();
@@ -137,21 +144,67 @@ public class StatsLeaderboard {
         }
         //creating leaderboard
         List<Hologram> holograms = new ArrayList<>();
+        List<HologramDataText> pageHologramData = new ArrayList<>();
         for (int i = 0; i < StatsLeaderboard.MAX_PAGES; i++) {
-            holograms.add(createHologram(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
+            pageHologramData.add(getPageHologramData(collection, i, subTitle + " - " + (categoryName.isEmpty() ? "" : categoryName + " - ") + collection.name));
         }
-        getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::delete);
+        Hologram board = new Hologram.Builder(
+                subTitle,
+                location,
+                p -> {
+                    PlayerLeaderboardInfo playerInfo = StatsLeaderboardManager.getPlayerInfo(p);
+                    int page = playerInfo.getPage();
+                    return pageHologramData.get(page);
+                }
+        ).build();
+        List<DatabasePlayer> databasePlayers = getSortedPlayers(collection);
+        Hologram playerPosition = new Hologram.Builder(
+                "playerPosition" + title + subTitle.replaceAll(" ", ""),
+                location.clone().add(0, -0.5, 0),
+                p -> {
+                    for (int i = 0; i < databasePlayers.size(); i++) {
+                        DatabasePlayer databasePlayer = databasePlayers.get(i);
+                        if (!databasePlayer.getUuid().equals(p.getUniqueId())) {
+                            continue;
+                        }
+                        Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
+                        Component guildTag = Component.empty();
+                        if (guildPlayerPair != null) {
+                            GuildTag tag = guildPlayerPair.getA().getTag();
+                            if (tag != null) {
+                                guildTag = tag.getTag(false);
+                            }
+                        }
+                        return new HologramDataText.Builder<>(ComponentBuilder
+                                .create((i + 1) + ". ", NamedTextColor.YELLOW, TextDecoration.BOLD)
+                                .text(databasePlayer.getName(), Permissions.getColor(databasePlayer))
+                                .space()
+                                .append(guildTag)
+                                .text(" - ", NamedTextColor.GRAY)
+                                .text(stringFunction.apply(databasePlayer))
+                                .build()
+                        )
+                                .setBillboard(Display.Billboard.FIXED)
+                                .build();
+                    }
+                    return LOADING;
+                }
+        ).build();
+        HologramManager.addHologram(board);
+        HologramManager.addHologram(playerPosition);
+        getSortedHolograms(collection).stream().flatMap(Collection::stream).forEach(Hologram::deleteHologram);
         getSortedHolograms(collection).clear();
         getSortedHolograms(collection).add(holograms);
     }
 
-    public Hologram createHologram(PlayersCollections collection, int page, String subTitle) {
+    public HologramDataText getPageHologramData(PlayersCollections collection, int page, String subTitle) {
         List<DatabasePlayer> databasePlayers = getSortedPlayers(collection);
 
-        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
-        HologramLines hologramLines = hologram.getLines();
-        hologramLines.appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + collection.name + " " + title);
-        hologramLines.appendText(ChatColor.GRAY + subTitle);
+        ComponentBuilder componentBuilder = ComponentBuilder
+                .create(title + "_" + collection.name + "_" + page)
+                .newLine(collection.name + " " + title, NamedTextColor.AQUA, TextDecoration.BOLD)
+                .newLine(subTitle, NamedTextColor.GRAY);
+
         for (int i = page * PLAYERS_PER_PAGE; i < (page + 1) * PLAYERS_PER_PAGE && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             Pair<Guild, GuildPlayer> guildPlayerPair = GuildManager.getGuildAndGuildPlayerFromPlayer(databasePlayer.getUuid());
@@ -162,26 +215,24 @@ public class StatsLeaderboard {
                     guildTag = tag.getTag(false);
                 }
             }
-            hologramLines.appendText(LegacyComponentSerializer.legacySection().serialize(
-                    Component.text((i + 1) + ". ", NamedTextColor.YELLOW)
-                             .append(Component.text(databasePlayer.getName(), Permissions.getColor(databasePlayer)))
-                             .append(Component.space())
-                             .append(guildTag)
-                             .append(Component.text(" - ", NamedTextColor.GRAY))
-                             .append(Component.text(stringFunction.apply(databasePlayer)))
-            ));
+            componentBuilder.newLine((i + 1) + ". ", NamedTextColor.YELLOW)
+                            .text(databasePlayer.getName(), Permissions.getColor(databasePlayer))
+                            .space()
+                            .append(guildTag)
+                            .text(" - ", NamedTextColor.GRAY)
+                            .text(stringFunction.apply(databasePlayer));
         }
-        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-
-        return hologram;
-    }
-
-    public List<List<Hologram>> getSortedHolograms(PlayersCollections collections) {
-        return sortedTimedHolograms.get(collections);
+        return new HologramDataText.Builder<>(componentBuilder.build())
+                .setBillboard(Display.Billboard.VERTICAL)
+                .build();
     }
 
     public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
         return sortedTimedPlayers.get(collections);
+    }
+
+    public List<List<Hologram>> getSortedHolograms(PlayersCollections collections) {
+        return sortedTimedHolograms.get(collections);
     }
 
     public <T extends Number> T[] getTopThreeValues() {

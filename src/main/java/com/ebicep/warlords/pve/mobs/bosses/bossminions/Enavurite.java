@@ -19,7 +19,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -184,7 +184,7 @@ public class Enavurite extends AbstractMob implements ChampionMob {
 
             private void getDisplayParticle(float size) {
                 EffectUtils.displayParticle(
-                        Particle.REDSTONE,
+                        Particle.DUST,
                         particleLocation,
                         2,
                         0, 0, 0,

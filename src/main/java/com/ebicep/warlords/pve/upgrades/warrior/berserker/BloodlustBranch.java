@@ -34,7 +34,10 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
         masterUpgrade = new Upgrade(
                 "Sanguineous",
                 "Blood Lust - Master Upgrade",
-                "+5s Duration\n\nWhile Blood Lust is active, increase all damage against bleeding or wounded targets by 30%",
+                """
+                        +5s Duration
+                        
+                        While Blood Lust is active, increase all damage against bleeding or wounded targets by 30%""",
                 50000,
                 () -> {
                     ability.setTickDuration(ability.getTickDuration() + 100);
@@ -46,8 +49,8 @@ public class BloodlustBranch extends AbstractUpgradeBranch<BloodLust> {
                 "Blood Lust - Master Upgrade",
                 """
                         +5s Duration
-                                                
-                        While Blood Lust is active, each kill will reduce the cooldown of Berserk by 0.5, max 5s.
+                        
+                        While Bloodlust is active, each strike hits again for 20% of the original damage (Additional strikes don't heal with Bloodlust) and enemies affected by BLEED take 30% more damage.
                         """,
                 50000,
                 () -> {

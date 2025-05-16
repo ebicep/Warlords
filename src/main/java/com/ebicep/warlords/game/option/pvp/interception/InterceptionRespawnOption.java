@@ -121,7 +121,7 @@ public class InterceptionRespawnOption implements Option {
                         Component.empty(),
                         Component.text("SELECTED", NamedTextColor.GREEN, TextDecoration.BOLD)
                 );
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
             player.getInventory().setItem(start + i + (numberOfPoints % 2 == 0 && i > numberOfPoints / 2 ? 1 : 0), itemBuilder.get());
         }

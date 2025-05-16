@@ -9,7 +9,10 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.settings.ParticleQuality;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -31,7 +34,6 @@ import java.util.function.Consumer;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.general.ArmorManager.*;
-import static com.ebicep.warlords.player.general.Settings.ParticleQuality;
 
 public class WarlordsShopMenu {
 
@@ -106,7 +108,7 @@ public class WarlordsShopMenu {
             itemBuilder.addLore(Component.empty());
             if (spec == selectedSpec) {
                 itemBuilder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 itemBuilder.addLore(Component.text("> Click to activate <", NamedTextColor.YELLOW));
             }
@@ -153,11 +155,11 @@ public class WarlordsShopMenu {
                     .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
                             skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
                     ));
-            List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description, 130));
+            List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.getSelectedDescription() : skillBoost.getUnselectedDescription(), 130));
             lore.add(Component.empty());
             if (skillBoost == selectedBoost) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
             }
@@ -196,7 +198,7 @@ public class WarlordsShopMenu {
             } else {
                 icon = ability.getAbilityIcon();
             }
-            ability2.boostSkill(selectedBoost, apc2);
+            ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
             ability.updateDescription(player);
             ability2.updateDescription(player);
             menu.setItem(3,
@@ -229,15 +231,14 @@ public class WarlordsShopMenu {
             Weapons weapon = values.get(i);
             ItemBuilder builder;
 
-            if (weapon.isUnlocked) {
-
+            if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
                 builder = new ItemBuilder(weapon.getItem())
                         .name(Component.text(weapon.getName(), NamedTextColor.GREEN));
                 List<Component> lore = new ArrayList<>();
 
                 if (weapon == selectedWeapon) {
                     lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
                 }
@@ -252,7 +253,7 @@ public class WarlordsShopMenu {
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     builder.get(),
                     (m, e) -> {
-                        if (weapon.isUnlocked) {
+                        if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
                             player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
                                                         .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
                                                         .append(Component.text("'s weapon skin to: "))
@@ -324,7 +325,7 @@ public class WarlordsShopMenu {
                     .addLore(Component.empty());
             if (selectedHelmet.contains(helmet)) {
                 builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
             }
@@ -353,7 +354,7 @@ public class WarlordsShopMenu {
                     .addLore(Component.empty());
             if (playerSettings.getArmorSet(classes) == armorSet) {
                 builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
             }
@@ -496,7 +497,7 @@ public class WarlordsShopMenu {
             List<Component> lore = new ArrayList<>();
             if (team == selectedTeam) {
                 lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                builder.enchant(Enchantment.OXYGEN, 1);
+                builder.enchant(Enchantment.RESPIRATION, 1);
             } else {
                 lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
             }
@@ -557,16 +558,16 @@ public class WarlordsShopMenu {
                          .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
                 Component.empty(),
                 Component.text("Energy: ", NamedTextColor.GRAY)
-                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.YELLOW))
                          .append(Component.text(" / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.YELLOW))
                          .append(Component.text(" per sec / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.YELLOW))
                          .append(Component.text(" per hit"))
         );
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
                                       noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
                               ))
         );

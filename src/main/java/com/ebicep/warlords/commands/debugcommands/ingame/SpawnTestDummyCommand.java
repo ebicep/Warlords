@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -16,7 +15,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 @CommandAlias("spawntestdummy")
 @CommandPermission("warlords.game.spawndummy")
 public class SpawnTestDummyCommand extends BaseCommand {
-
     @Default
     @CommandCompletion("@gameteams @boolean")
     @Syntax("<team> <takeDamage>")
@@ -27,19 +25,25 @@ public class SpawnTestDummyCommand extends BaseCommand {
             @Values("@boolean") Boolean takeDamage
     ) {
         Game game = warlordsPlayer.getGame();
-        for (Option option : game.getOptions()) {
-            if (option instanceof PveOption pveOption) {
-                ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvE TestDummy", NamedTextColor.RED));
-                pveOption.spawnNewMob(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()), team);
-                return;
-            }
-        }
-        WarlordsEntity testDummy = game.addNPC(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()).toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null)));
-        testDummy.setTakeDamage(true);
-        testDummy.updateHealth();
-        testDummy.setRegenTickTimer(Integer.MAX_VALUE);
-        testDummy.setTakeDamage(takeDamage);
-        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvP TestDummy", NamedTextColor.RED));
+        game.getOption(PveOption.class)
+            .stream()
+            .findFirst()
+            .ifPresentOrElse(
+                    pveOption -> {
+                        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvE TestDummy", NamedTextColor.RED));
+                        pveOption.spawnNewMob(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation()), team);
+                    },
+                    () -> {
+                        WarlordsEntity testDummy = game.addNPC(Mob.TEST_DUMMY.createMob(warlordsPlayer.getLocation())
+                                                                             .toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null)));
+                        testDummy.setTakeDamage(true);
+                        testDummy.updateHealth();
+                        testDummy.setRegenTickTimer(Integer.MAX_VALUE);
+                        testDummy.setTakeDamage(takeDamage);
+                        ChatChannels.sendDebugMessage(warlordsPlayer, Component.text("Spawned PvP TestDummy", NamedTextColor.RED));
+                    }
+            );
     }
+
 
 }

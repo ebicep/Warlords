@@ -5,6 +5,7 @@ import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.Field
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffectOption;
 import com.ebicep.warlords.player.ingame.PlayerStatisticsMinute;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import net.kyori.adventure.text.Component;
@@ -37,6 +38,9 @@ public class AccumulatingKnowledge implements FieldEffect {
 
     @Override
     public void onWarlordsEntityCreated(WarlordsEntity player) {
+        if (!(player instanceof WarlordsPlayer)) {
+            return;
+        }
         AtomicInteger multiplier = new AtomicInteger(1);
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Accumulating Knowledge",

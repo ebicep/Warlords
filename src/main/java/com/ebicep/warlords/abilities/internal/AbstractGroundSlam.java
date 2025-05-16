@@ -1,62 +1,56 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon, HitBox {
+public abstract class AbstractGroundSlam extends AbstractAbility implements PurpleAbilityIcon, HitBox, AbilityStats<AbstractGroundSlam, AbstractGroundSlam.AbstractGroundSlamStats> {
 
-    public int playersHit = 0;
-    public int carrierHit = 0;
-    public int warpsKnockbacked = 0;
-
+    protected boolean trueDamage = false;
+    private final AbstractGroundSlamStats stats = new AbstractGroundSlamStats();
     private FloatModifiable slamSize = new FloatModifiable(6);
     private float velocity = 1.25f;
-    protected boolean trueDamage = false;
 
-    public AbstractGroundSlam(float cooldown, float energyCost) {
-        this(cooldown, energyCost, 0);
+    public AbstractGroundSlam(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
-    public AbstractGroundSlam(float cooldown, float energyCost, float startCooldown) {
-        super("Ground Slam", cooldown, energyCost, startCooldown);
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
+        this.slamSize = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slamSize"), float.class));
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Slam the ground, creating a shockwave around you that deals ")
-                               .append(Damages.formatDamage(getSlamDamage()))
-                               .append(Component.text(" damage and knocks enemies back slightly."));
+        description = AbilityDescriptionBuilder
+                .create("Slam the ground, creating a shockwave around you that deals ")
+                .damage(getSlamDamage())
+                .text(" damage and knocks enemies back slightly.")
+                .build();
 
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.groundslam.activation", 2, 1);
 
         UUID abilityUUID = UUID.randomUUID();
@@ -120,13 +114,13 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                 .aliveEnemiesOf(wp)
                                 .excluding(currentPlayersHit)
                         ) {
-                            playersHit++;
+                            stats.playersHit++;
                             if (slamTarget.hasFlag()) {
-                                carrierHit++;
+                                stats.carrierHit++;
                             }
 
-                            if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(slamTarget)) {
-                                warpsKnockbacked++;
+                            if (slamTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(slamTarget)) {
+                                stats.warpsKnockbacked++;
                             }
 
                             currentPlayersHit.add(slamTarget);
@@ -140,6 +134,7 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
                                     .source(wp)
                                     .min(slamDamage.getMinValue() * damageMultiplier)
                                     .max(slamDamage.getMaxValue() * damageMultiplier)
+                                    .crit(slamDamage)
                                     .flag(InstanceFlags.TRUE_DAMAGE, trueDamage)
                                     .uuid(abilityUUID)
                             );
@@ -161,8 +156,6 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         }.runTaskTimer(0, 2);
     }
 
-    public abstract Value.RangedValueCritable getSlamDamage();
-
     protected void onSecondSlamHit(WarlordsEntity wp, Set<WarlordsEntity> playersHit) {
 
     }
@@ -171,6 +164,18 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
         slamSize.tick();
         super.runEveryTick(warlordsEntity);
+    }
+
+    public abstract Value.RangedValueCritable getSlamDamage();
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return slamSize;
+    }
+
+    @Override
+    public AbstractGroundSlamStats getAbilityStats() {
+        return stats;
     }
 
     public float getVelocity() {
@@ -185,9 +190,43 @@ public abstract class AbstractGroundSlam extends AbstractAbility implements Purp
         this.trueDamage = trueDamage;
     }
 
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return slamSize;
-    }
-}
+    public static class AbstractGroundSlamStats extends AbstractAbilityStats<AbstractGroundSlam, AbstractGroundSlamStats> {
 
+        @Field("targets_hit")
+        private int playersHit = 0;
+        @Field("carrier_hit")
+        private int carrierHit = 0;
+        @Field("warps_knockbacked")
+        private int warpsKnockbacked = 0;
+
+        @Override
+        public Class<AbstractGroundSlamStats> getClazz() {
+            return AbstractGroundSlamStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Carrier Hit", carrierHit));
+            statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractGroundSlamStats merge(AbstractGroundSlamStats other, int multiplier) {
+            AbstractGroundSlamStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.carrierHit = this.carrierHit + other.carrierHit * multiplier;
+            stats.warpsKnockbacked = this.warpsKnockbacked + other.warpsKnockbacked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public AbstractGroundSlamStats create() {
+            return new AbstractGroundSlamStats();
+        }
+
+    }
+
+}

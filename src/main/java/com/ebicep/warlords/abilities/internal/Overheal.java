@@ -4,6 +4,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 
 public interface Overheal {
+
     Overheal OVERHEAL_MARKER = new Overheal() {};
     int OVERHEAL_DURATION = 15;
 
@@ -21,4 +22,5 @@ public interface Overheal {
                 Overheal.OVERHEAL_DURATION * 20
         );
     }
+
 }

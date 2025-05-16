@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.ProjectileAbility;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
@@ -25,7 +26,6 @@ import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.MountTrait;
 import net.citizensnpcs.trait.SlimeSize;
 import net.kyori.adventure.text.Component;
@@ -49,7 +49,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Function;
 
 public class MagmaticOoze extends AbstractMob implements BossMob {
 
@@ -114,7 +113,6 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
     public void onNPCCreate() {
         super.onNPCCreate();
         npc.getOrAddTrait(SlimeSize.class).setSize(6 - splitNumber);
-        npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> 0f);
     }
 
     @Override
@@ -250,7 +248,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private final double kbVelocity = 1.2;
 
         public FieryProjectile(float minDamageHeal, float maxDamageHeal) {
-            super("Fiery Projectile", minDamageHeal, maxDamageHeal, 5, 50, 10, 200);
+            super(AbstractAbilityBuilder.create("magmaticOozeFieryProjectile").pve());
             this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
@@ -359,7 +357,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private boolean launched = false;
 
         public FlamingSlam(float minDamageHeal, float maxDamageHeal) {
-            super("Flaming Slam", minDamageHeal, maxDamageHeal, 12, 50, 15, 175);
+            super(AbstractAbilityBuilder.create("magmaticOozeFlamingSlam").pve());
             this.damageValues = new DamageValues(minDamageHeal, maxDamageHeal);
         }
 
@@ -500,9 +498,10 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
 
         private final int hitbox;
         private float damageIncrese = 1;
+        private int timesUsed = 0;
 
         public HeatAura(float startDamage, int hitbox) {
-            super("Heat Aura", startDamage, startDamage, 2, 50, 25, 175);
+            super(AbstractAbilityBuilder.create("magmaticOozeHeatAura").pve());
             this.hitbox = hitbox;
             this.damageValues = new DamageValues(startDamage);
         }
@@ -510,7 +509,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
             // increase heat / damage on every use
-            if (this.timesUsed <= 40) { // ~700 max at split 0
+            if (timesUsed++ <= 40) { // ~700 max at split 0
                 damageIncrese += .05f;
                 damageValues.heatAuraDamage.value().addMultiplicativeModifierAdd(name, damageIncrese);
             }
@@ -557,7 +556,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         private int failedAttempts = 0;
 
         public MoltenFissure(Map<LocationUtils.TimedLocationBlockHolder, Material> previousBlocks) {
-            super("Molten Fissure", 12, 50);
+            super(AbstractAbilityBuilder.create("magmaticOozeMoltenFissure").pve());
             this.previousBlocks = previousBlocks;
         }
 
@@ -600,7 +599,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
                         cancel();
                     }
                     EffectUtils.displayParticle(
-                            Particle.BLOCK_CRACK,
+                            Particle.BLOCK,
                             groundLocation,
                             300,
                             5,

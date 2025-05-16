@@ -118,6 +118,11 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.source = source;
     }
 
+    @Nullable
+    public AbstractAbility getAbility() {
+        return ability;
+    }
+
     public String getCause() {
         return cause;
     }

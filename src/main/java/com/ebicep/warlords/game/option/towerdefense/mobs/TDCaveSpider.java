@@ -34,7 +34,7 @@ public class TDCaveSpider extends TowerDefenseMob implements BasicMob {
                                 .damage()
                                 .cause("Poison")
                                 .source(from)
-                                .value(50)
+                                .value(5)
                                 .flags(InstanceFlags.CANT_KILL)
                         );
                     }
@@ -70,7 +70,7 @@ public class TDCaveSpider extends TowerDefenseMob implements BasicMob {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         super.onAttack(attacker, receiver, event);
-        poison(attacker, receiver, 20 * 10);
+        poison(attacker, receiver, 20 * 8);
     }
 
     @Override

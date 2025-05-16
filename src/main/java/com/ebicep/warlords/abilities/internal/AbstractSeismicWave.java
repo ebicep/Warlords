@@ -1,95 +1,59 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.customentities.nms.SelfRemovingFallingBlock;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon {
-
-    public int playersHit = 0;
-    public int carrierHit = 0;
-    public int warpsKnockbacked = 0;
+public abstract class AbstractSeismicWave extends AbstractAbility implements RedAbilityIcon, AbilityStats<AbstractSeismicWave, AbstractSeismicWave.AbstractSeismicWaveStats> {
 
     protected float velocity = 1.25f;
-    private int waveLength = 8; // foward amount
-    private int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
+    protected int waveLength = 8; // foward amount
+    protected int waveWidth = 2; // sideways amount (2 => 2 to left and 2 to right)
+    private final AbstractSeismicWaveStats stats = new AbstractSeismicWaveStats();
 
-    public AbstractSeismicWave(float cooldown, float energyCost) {
-        super("Seismic Wave", cooldown, energyCost);
+    public AbstractSeismicWave(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
+        this.waveLength = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveLength"), int.class);
+        this.waveWidth = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("waveWidth"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Send a wave of incredible force forward that deals ")
-                               .append(Damages.formatDamage(getWaveDamage()))
-                               .append(Component.text(" damage to all enemies hit and knocks them back slightly."));
+        description = AbilityDescriptionBuilder
+                .create("Send a wave of incredible force forward that deals ")
+                .damage(getWaveDamage())
+                .text(" damage to all enemies hit and knocks them back slightly.")
+                .build();
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Carriers Hit", "" + carrierHit));
-        info.add(new Pair<>("Warps Knockbacked", "" + warpsKnockbacked));
-
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.seismicwave.activation", 2, 1);
 
-        List<List<Location>> fallingBlockLocations = new ArrayList<>();
-        List<SelfRemovingFallingBlock> selfRemovingFallingBlocks = new ArrayList<>();
+        List<List<Location>> fallingBlockLocations = getWaveLocations(wp.getLocation());
 
-        Location location = wp.getLocation();
-        for (int i = 0; i < waveLength; i++) {
-            fallingBlockLocations.add(getWaveSideLocations(location, i));
-        }
+        doWaveDamage(wp, fallingBlockLocations, UUID.randomUUID());
 
-        UUID abilityUUID = UUID.randomUUID();
-        List<WarlordsEntity> playersHit = new ArrayList<>();
-        for (int i = 0; i < fallingBlockLocations.size(); i++) {
-            List<Location> fallingBlockLocation = fallingBlockLocations.get(i);
-            for (Location loc : fallingBlockLocation) {
-                for (WarlordsEntity waveTarget : PlayerFilter
-                        .entitiesAroundRectangle(loc, .6, 4, .6)
-                        .aliveEnemiesOf(wp)
-                        .excluding(playersHit)
-                        .closestFirst(wp)
-                ) {
-                    this.playersHit++;
-                    if (waveTarget.hasFlag()) {
-                        carrierHit++;
-                    }
-                    if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(waveTarget)) {
-                        warpsKnockbacked++;
-                    }
-
-                    playersHit.add(waveTarget);
-                    final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
-                    waveTarget.setVelocity(name, v, false, false);
-
-                    onHit(wp, abilityUUID, playersHit, i, waveTarget);
-                }
-            }
-        }
         new GameRunnable(wp.getGame()) {
 
             @Override
@@ -101,12 +65,49 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
                     fallingBlockLocations.remove(fallingBlockLocation);
                     break;
                 }
-                if (fallingBlockLocations.isEmpty() && selfRemovingFallingBlocks.isEmpty()) {
+                if (fallingBlockLocations.isEmpty()) {
                     this.cancel();
                 }
             }
         }.runTaskTimer(0, 0);
         return true;
+    }
+
+    private List<List<Location>> getWaveLocations(Location location) {
+        List<List<Location>> fallingBlockLocations = new ArrayList<>();
+        for (int i = 0; i < waveLength; i++) {
+            fallingBlockLocations.add(getWaveSideLocations(location, i));
+        }
+        return fallingBlockLocations;
+    }
+
+    protected void doWaveDamage(@Nonnull WarlordsEntity wp, List<List<Location>> fallingBlockLocations, UUID abilityUUID) {
+        List<WarlordsEntity> playersHit = new ArrayList<>();
+        for (int i = 0; i < fallingBlockLocations.size(); i++) {
+            List<Location> fallingBlockLocation = fallingBlockLocations.get(i);
+            for (Location loc : fallingBlockLocation) {
+                for (WarlordsEntity waveTarget : PlayerFilter
+                        .entitiesAroundRectangle(loc, .6, 4, .6)
+                        .aliveEnemiesOf(wp)
+                        .excluding(playersHit)
+                        .closestFirst(wp)
+                ) {
+                    stats.playersHit++;
+                    if (waveTarget.hasFlag()) {
+                        stats.carrierHit++;
+                    }
+                    if (waveTarget.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(waveTarget)) {
+                        stats.warpsKnockbacked++;
+                    }
+
+                    playersHit.add(waveTarget);
+                    final Vector v = wp.getLocation().toVector().subtract(waveTarget.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
+                    waveTarget.setVelocity(name, v, false, false);
+
+                    onHit(wp, abilityUUID, i, waveTarget);
+                }
+            }
+        }
     }
 
     private List<Location> getWaveSideLocations(Location center, int distance) {
@@ -122,10 +123,15 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
         return locations;
     }
 
-    protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, List<WarlordsEntity> playersHit, int i, WarlordsEntity waveTarget) {
+    protected void onHit(@Nonnull WarlordsEntity wp, UUID abilityUUID, int i, WarlordsEntity waveTarget) {
     }
 
     public abstract Value.RangedValueCritable getWaveDamage();
+
+    @Override
+    public AbstractSeismicWaveStats getAbilityStats() {
+        return stats;
+    }
 
     public float getVelocity() {
         return velocity;
@@ -150,4 +156,44 @@ public abstract class AbstractSeismicWave extends AbstractAbility implements Red
     public void setWaveWidth(int waveWidth) {
         this.waveWidth = waveWidth;
     }
+
+    public static class AbstractSeismicWaveStats extends AbstractAbilityStats<AbstractSeismicWave, AbstractSeismicWaveStats> {
+
+        @Field("targets_hit")
+        private int playersHit = 0;
+        @Field("carrier_hit")
+        private int carrierHit = 0;
+        @Field("warps_knockbacked")
+        private int warpsKnockbacked = 0;
+
+        @Override
+        public Class<AbstractSeismicWaveStats> getClazz() {
+            return AbstractSeismicWaveStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
+            statsDisplay.add(new AbilityStatDisplay("Carriers Hit", carrierHit));
+            statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractSeismicWaveStats merge(AbstractSeismicWaveStats other, int multiplier) {
+            AbstractSeismicWaveStats stats = super.merge(other, multiplier);
+            stats.playersHit = this.playersHit + other.playersHit * multiplier;
+            stats.carrierHit = this.carrierHit + other.carrierHit * multiplier;
+            stats.warpsKnockbacked = this.warpsKnockbacked + other.warpsKnockbacked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public AbstractSeismicWaveStats create() {
+            return new AbstractSeismicWaveStats();
+        }
+
+    }
+
 }

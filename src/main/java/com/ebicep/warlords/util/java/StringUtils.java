@@ -1,8 +1,12 @@
 package com.ebicep.warlords.util.java;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class StringUtils {
+
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("[\\s_-]+");
+    private static final Pattern NON_ALPHANUMERIC_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
 
     /**
      * Splits string n times, if n is greater than string length then it will return string split its length times
@@ -28,6 +32,12 @@ public class StringUtils {
         return result;
     }
 
+    public static String formatTimeLeft(long seconds) {
+        StringBuilder message = new StringBuilder();
+        formatTimeLeft(message, seconds);
+        return message.toString();
+    }
+
     public static void formatTimeLeft(StringBuilder message, long seconds) {
         long minute = seconds / 60;
         long second = seconds % 60;
@@ -40,12 +50,6 @@ public class StringUtils {
             message.append('0');
         }
         message.append(second == -1 ? 0 : second);
-    }
-
-    public static String formatTimeLeft(long seconds) {
-        StringBuilder message = new StringBuilder();
-        formatTimeLeft(message, seconds);
-        return message.toString();
     }
 
     public static String toTitleCase(Object input) {
@@ -66,5 +70,40 @@ public class StringUtils {
 
     public static boolean startsWithIgnoreCase(String str, String prefix) {
         return str.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    public static String toCamelCase(String input) {
+        if (input == null || input.isEmpty()) {
+            return "";
+        }
+
+        String processed = WHITESPACE_PATTERN.matcher(input.trim()).replaceAll(" ");
+
+        String[] words = processed.split(" ");
+        StringBuilder result = new StringBuilder();
+
+        if (words.length > 0) {
+            // first word lowercase
+            String firstWord = NON_ALPHANUMERIC_PATTERN.matcher(words[0]).replaceAll("");
+            if (!firstWord.isEmpty()) {
+                result.append(Character.toLowerCase(firstWord.charAt(0)));
+                if (firstWord.length() > 1) {
+                    result.append(firstWord.substring(1).toLowerCase());
+                }
+            }
+
+            // other words uppercase
+            for (int i = 1; i < words.length; i++) {
+                String word = NON_ALPHANUMERIC_PATTERN.matcher(words[i]).replaceAll("");
+                if (!word.isEmpty()) {
+                    result.append(Character.toUpperCase(word.charAt(0)));
+                    if (word.length() > 1) {
+                        result.append(word.substring(1).toLowerCase());
+                    }
+                }
+            }
+        }
+
+        return result.toString();
     }
 }

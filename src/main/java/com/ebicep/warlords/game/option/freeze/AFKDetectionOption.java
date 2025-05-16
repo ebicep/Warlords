@@ -9,6 +9,7 @@ import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
@@ -28,6 +29,7 @@ import java.util.List;
 public class AFKDetectionOption implements Option {
 
     public static boolean enabled = true;
+    private static final int COUNTER_CHECK = 5;
 
     private final HashMap<WarlordsPlayer, List<Location>> playerLocations = new HashMap<>();
 
@@ -96,70 +98,30 @@ public class AFKDetectionOption implements Option {
                         }
                         playerLocations.computeIfAbsent((WarlordsPlayer) we, k -> new ArrayList<>()).add(we.getLocation());
                         List<Location> locations = playerLocations.get(we);
-                        if (locations.size() >= 2) {
-                            Location lastLocation = locations.get(locations.size() - 1);
-                            Location secondLastLocation = locations.get(locations.size() - 2);
-                            if (locations.size() >= 3) {
-                                Location thirdLastLocation = locations.get(locations.size() - 3);
-                                if (locations.size() >= 4) {
-                                    Location fourthLastLocation = locations.get(locations.size() - 4);
-                                    if (locations.size() >= 5) {
-                                        Location fifthLastLocation = locations.get(locations.size() - 5);
-                                        if (lastLocation.equals(secondLastLocation) && lastLocation.equals(thirdLastLocation) && lastLocation.equals(
-                                                fourthLastLocation) && lastLocation.equals(fifthLastLocation)) {
-                                            //hasnt moved for 12.5 seconds
-                                            for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                                Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                                Permissions.sendMessageToDebug(wp,
-                                                        Component.text(we.getName(), NamedTextColor.AQUA)
-                                                                 .append(Component.text(" is AFK. (Hasn't moved for 12.5 seconds)", NamedTextColor.RED))
-                                                );
-                                                Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                            }
-                                            game.addFrozenCause(Component.text(we.getName(), NamedTextColor.AQUA)
-                                                                         .append(Component.text(" has been detected as AFK.", NamedTextColor.RED))
-                                            );
-                                            wasFrozen = true;
-                                            continue;
-                                        }
-                                    }
-                                    if (thirdLastLocation.equals(fourthLastLocation)) {
-                                        //hasnt moved for 10 seconds
-                                        for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                            Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                            Permissions.sendMessageToDebug(wp,
-                                                    Component.text(we.getName(), NamedTextColor.AQUA)
-                                                             .append(Component.text(" is AFK. (Hasn't moved for 10 seconds)", NamedTextColor.RED))
-                                            );
-                                            Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                        }
-                                    }
-                                    continue;
-                                }
-                                if (secondLastLocation.equals(thirdLastLocation)) {
-                                    //hasnt moved for 7.5 seconds
-                                    for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                        Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                        Permissions.sendMessageToDebug(wp,
-                                                Component.text(we.getName(), NamedTextColor.AQUA)
-                                                         .append(Component.text(" is AFK. (Hasn't moved for 7.5 seconds)", NamedTextColor.RED))
-                                        );
-                                        Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                    }
-                                }
-                                continue;
+                        List<Location> lastLocations = locations.subList(Math.max(locations.size() - COUNTER_CHECK, 0), locations.size());
+                        int counter = 0;
+                        for (int i = lastLocations.size() - 1; i >= 1; i--) {
+                            if (lastLocations.get(i).equals(lastLocations.get(i - 1))) {
+                                counter++;
+                            } else {
+                                break;
                             }
-                            if (lastLocation.equals(secondLastLocation)) {
-                                //hasnt moved for 5 seconds
-                                for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
-                                    Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                    Permissions.sendMessageToDebug(wp,
-                                            Component.text(we.getName(), NamedTextColor.AQUA)
-                                                     .append(Component.text(" is AFK. (Hasn't moved for 5 seconds)", NamedTextColor.RED))
-                                    );
-                                    Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
-                                }
-                            }
+                        }
+                        if (counter == 0) {
+                            continue;
+                        }
+                        String message = " is AFK. (Hasn't moved for " + NumberFormat.formatOptionalTenths(counter * 2.5) + " seconds)";
+                        for (WarlordsEntity wp : PlayerFilter.playingGame(game)) {
+                            Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
+                            Permissions.sendMessageToDebug(wp, Component.text(we.getName(), NamedTextColor.AQUA).append(Component.text(message, NamedTextColor.RED)));
+                            Permissions.sendMessageToDebug(wp, Component.text("----------------------------------------", NamedTextColor.RED));
+                        }
+                        if (counter == COUNTER_CHECK - 1) {
+                            game.getOption(GameFreezeOption.class).forEach(freezeOption -> {
+                                freezeOption.addFrozenCause(Component.text(we.getName(), NamedTextColor.AQUA)
+                                                                     .append(Component.text(" has been detected as AFK.", NamedTextColor.RED)));
+                                wasFrozen = true;
+                            });
                         }
                     }
                 });

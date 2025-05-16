@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.blaze;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -82,11 +83,11 @@ public class BlazingKindle extends AbstractMob implements IntermediateMob {
     private static class KindleWave extends AbstractAbility implements Damages<KindleWave.DamageValues> {
 
         public KindleWave() {
-            super("Kindle Wave", 8, 100);
+            super(AbstractAbilityBuilder.create("blazingKindleKindleWave").pve());
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             Location loc = wp.getLocation();
             EffectUtils.playSphereAnimation(loc, kindleRadius, Particle.FLAME, 1);
             Utils.playGlobalSound(loc, "mage.inferno.activation", 2, 0.2f);

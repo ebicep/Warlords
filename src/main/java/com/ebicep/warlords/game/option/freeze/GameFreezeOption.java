@@ -7,7 +7,6 @@ import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.java.JavaUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -24,9 +23,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Supports actually freezing the internalPlayers in the game
@@ -34,22 +32,11 @@ import java.util.UUID;
 public class GameFreezeOption implements Option, Listener {
 
     public static final int RESUME_TIME = 5;
+    public static final String KEY_UPDATED_FROZEN = "frozen";
 
-    private static Listener GLOBAL_LISTENER = new Listener() {
-        @EventHandler
-        public void onEvent(PlayerMoveEvent e) {
-            WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
-            if (wp != null && wp.getGame().isFrozen() && JavaUtils.collectionHasItem(wp.getGame().getOptions(), o -> o instanceof GameFreezeOption)) {
-                if (wp.isDead()) {
-                    e.getPlayer().teleport(e.getPlayer().getLocation());
-                } else if (e.getPlayer().getVehicle() == null) {
-                    e.setTo(e.getFrom());
-                } else {
-                    e.setCancelled(true);
-                }
-            }
-        }
-    };
+    public static boolean isGameFrozen(Game game) {
+        return game.getOption(GameFreezeOption.class).stream().anyMatch(GameFreezeOption::isFrozen);
+    }
 
     public static void resumeGame(Game game) {
         for (Option option : game.getOptions()) {
@@ -59,12 +46,15 @@ public class GameFreezeOption implements Option, Listener {
         }
     }
 
+    private final List<Component> frozenCauses = new CopyOnWriteArrayList<>();
+    private boolean unfreezeCooldown = false;
+
     private void resume() {
         //Do nothing while the game is being resumed
-        if (game.isUnfreezeCooldown()) {
+        if (unfreezeCooldown) {
             return;
         }
-        game.setUnfreezeCooldown(true);
+        unfreezeCooldown = true;
         new BukkitRunnable() {
 
             int timer = RESUME_TIME;
@@ -80,8 +70,8 @@ public class GameFreezeOption implements Option, Listener {
                         ))
                 );
                 if (timer == 0) {
-                    game.clearFrozenCauses();
-                    game.setUnfreezeCooldown(false);
+                    clearFrozenCauses();
+                    setUnfreezeCooldown(false);
                     for (Option option : game.getOptions()) {
                         if (option instanceof PveOption pveOption) {
                             pveOption.getMobs().forEach(mob -> mob.toggleStun(true));
@@ -102,10 +92,6 @@ public class GameFreezeOption implements Option, Listener {
         this.game = game;
 
         game.registerEvents(this);
-        if (GLOBAL_LISTENER != null) {
-            Bukkit.getPluginManager().registerEvents(GLOBAL_LISTENER, Warlords.getInstance());
-            GLOBAL_LISTENER = null;
-        }
     }
 
     @EventHandler
@@ -114,19 +100,33 @@ public class GameFreezeOption implements Option, Listener {
             return;
         }
         switch (evt.getKey()) {
-            case Game.KEY_UPDATED_FROZEN -> {
-                if (game.isFrozen()) {
+            case KEY_UPDATED_FROZEN -> {
+                if (isFrozen()) {
                     freeze();
                 }
-                if (!game.isFrozen()) {
+                if (!isFrozen()) {
                     unfreeze();
                 }
             }
         }
     }
 
+    @EventHandler
+    public void onEvent(PlayerMoveEvent e) {
+        WarlordsEntity wp = Warlords.getPlayer(e.getPlayer());
+        if (wp != null && isFrozen()) {
+            if (wp.isDead()) {
+                e.getPlayer().teleport(e.getPlayer().getLocation());
+            } else if (e.getPlayer().getVehicle() == null) {
+                e.setTo(e.getFrom());
+            } else {
+                e.setCancelled(true);
+            }
+        }
+    }
+
     private void freeze() {
-        if (game.getFrozenCauses().isEmpty()) {
+        if (getFrozenCauses().isEmpty()) {
             throw new IllegalStateException("Game is not marked as frozen");
         }
         for (Option option : game.getOptions()) {
@@ -134,7 +134,7 @@ public class GameFreezeOption implements Option, Listener {
                 pveOption.getMobs().forEach(mob -> mob.toggleStun(false));
             }
         }
-        Component message = game.getFrozenCauses().get(0);
+        Component message = getFrozenCauses().get(0);
         playersWithHorsePreFreeze.clear();
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> freezePlayer(p, message));
     }
@@ -170,12 +170,49 @@ public class GameFreezeOption implements Option, Listener {
     public void onJoin(PlayerJoinEvent evt) {
         Player p = evt.getPlayer();
         if (game.getPlayerTeam(evt.getPlayer().getUniqueId()) != null) {
-            if (game.isFrozen()) {
-                freezePlayer(p, game.getFrozenCauses().get(0));
+            if (isFrozen()) {
+                freezePlayer(p, getFrozenCauses().get(0));
             } else {
                 unfreezePlayer(p);
             }
         }
+    }
+
+    /**
+     * Check if the game is frozen
+     *
+     * @return true if the game is frozen
+     */
+    public boolean isFrozen() {
+        return !frozenCauses.isEmpty();
+    }
+
+    @Nonnull
+    public List<Component> getFrozenCauses() {
+        return Collections.unmodifiableList(frozenCauses);
+    }
+
+    public void addFrozenCause(Component cause) {
+        frozenCauses.add(cause);
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(game, KEY_UPDATED_FROZEN));
+    }
+
+    public void removeFrozenCause(Component cause) {
+        frozenCauses.remove(cause);
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(game, KEY_UPDATED_FROZEN));
+    }
+
+    public void clearFrozenCauses() {
+        frozenCauses.clear();
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(game, KEY_UPDATED_FROZEN));
+    }
+
+    public boolean isUnfreezeCooldown() {
+        return unfreezeCooldown;
+    }
+
+    public void setUnfreezeCooldown(boolean unfreezeCooldown) {
+        this.unfreezeCooldown = unfreezeCooldown;
     }
 
 }

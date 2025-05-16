@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -80,7 +81,7 @@ public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Sp
     private static class WoundAll extends AbstractPveAbility {
 
         public WoundAll() {
-            super("Wound ALl", 7, 50);
+            super(AbstractAbilityBuilder.create("forsakenRespiteWoundAll").pve());
         }
 
         @Override
@@ -95,7 +96,7 @@ public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Sp
                                            name,
                                            "WND",
                                            WoundingStrikeBerserker.class,
-                                           new WoundingStrikeBerserker(),
+                                           null,
                                            wp,
                                            CooldownTypes.DEBUFF,
                                            cooldownManager -> {

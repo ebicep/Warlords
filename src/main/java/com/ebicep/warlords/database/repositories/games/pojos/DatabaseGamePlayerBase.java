@@ -1,5 +1,9 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.player.general.ExperienceManager;
@@ -15,11 +19,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DatabaseGamePlayerBase {
 
+    @Id
+    private String id;
     protected UUID uuid;
     protected String name;
     protected Specializations spec;
@@ -53,8 +60,8 @@ public class DatabaseGamePlayerBase {
     protected long experienceEarnedSpec;
     @Field("experience_earned_universal")
     protected long experienceEarnedUniversal;
-    @Id
-    private String id;
+    @Field("ability_stats")
+    protected Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new LinkedHashMap<>();
 
     public DatabaseGamePlayerBase() {
     }
@@ -96,6 +103,15 @@ public class DatabaseGamePlayerBase {
         }
         this.experienceEarnedSpec = experienceEarnedSpec;
         this.experienceEarnedUniversal = experienceEarnedUniversal;
+        for (AbstractAbility ability : warlordsPlayer.getAbilities()) {
+            if (ability instanceof AbilityStats<?, ?> stats) {
+                this.abilityStats.merge(
+                        Ability.getAbility(ability.getClass()),
+                        stats.getAbilityStats(),
+                        (abstractAbilityStats, abstractAbilityStats2) -> AbstractAbilityStats.merge(abstractAbilityStats, abstractAbilityStats2, 1)
+                );
+            }
+        }
     }
 
     public UUID getUuid() {
@@ -188,5 +204,9 @@ public class DatabaseGamePlayerBase {
 
     public long getExperienceEarnedUniversal() {
         return experienceEarnedUniversal;
+    }
+
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
     }
 }

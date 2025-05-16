@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.abilities.ImpalingStrike;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -68,7 +69,7 @@ public class EventForsakenRespite extends AbstractMob implements BossMinionMob, 
     private static class LeechAll extends AbstractPveAbility {
 
         public LeechAll() {
-            super("Leech All", 7, 50);
+            super(AbstractAbilityBuilder.create("forsakenRespiteLeechAll").pve());
         }
 
         @Override

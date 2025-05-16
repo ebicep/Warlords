@@ -111,7 +111,7 @@ public class NarmersDeathCharge extends AbstractMob implements BossMinionMob, No
             );
         });
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 500, 1);
-        EffectUtils.displayParticle(Particle.EXPLOSION_NORMAL, warlordsNPC.getLocation(), 1, 0, 0, 0, 0.5);
+        EffectUtils.displayParticle(Particle.POOF, warlordsNPC.getLocation(), 1, 0, 0, 0, 0.5);
         warlordsNPC.die(warlordsNPC);
     }
 

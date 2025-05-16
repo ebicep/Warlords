@@ -16,20 +16,42 @@ import org.bukkit.entity.Player;
 public class GameEventTrait extends WarlordsTrait {
 
 
+    private int ticks = 0;
+    private long lastPlayerCount = 0;
+    private long lastPlayerCountInLobby = 0;
+
     public GameEventTrait() {
         super("GameEventTrait");
     }
 
     @Override
+    public void onAttach() {
+        updateHologram(true);
+    }
+
+    @Override
     public void run() {
+        if (ticks++ % 20 != 0) {
+            return;
+        }
+        updateHologram(false);
+    }
+
+    private void updateHologram(boolean init) {
         DatabaseGameEvent currentGameEvent = DatabaseGameEvent.currentGameEvent;
+        long playerCount = Warlords.getGameManager().getPlayerCount(GameMode.EVENT_WAVE_DEFENSE);
+        long playerCountInLobby = Warlords.getGameManager().getPlayerCountInLobby(GameMode.EVENT_WAVE_DEFENSE);
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
-        hologramTrait.setLine(0,
-                ChatColor.YELLOW.toString() + ChatColor.BOLD + Warlords.getGameManager().getPlayerCount(GameMode.EVENT_WAVE_DEFENSE) + " Players"
-        );
-        hologramTrait.setLine(1, ChatColor.GRAY.toString() + Warlords.getGameManager().getPlayerCountInLobby(GameMode.EVENT_WAVE_DEFENSE) + " in Lobby");
-        hologramTrait.setLine(2, ChatColor.RED + currentGameEvent.getEvent().name);
-        hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+        if (init || playerCount != lastPlayerCount || playerCountInLobby != lastPlayerCountInLobby) {
+            lastPlayerCount = playerCount;
+            lastPlayerCountInLobby = playerCountInLobby;
+            hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + playerCount + " Players");
+            hologramTrait.setLine(1, ChatColor.GRAY.toString() + playerCountInLobby + " in Lobby");
+            if (init) {
+                hologramTrait.setLine(2, ChatColor.RED + currentGameEvent.getEvent().name);
+                hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+            }
+        }
         String timeTill = DateUtil.getTimeTill(currentGameEvent.getEndDate(),
                 true,
                 true,
@@ -62,6 +84,7 @@ public class GameEventTrait extends WarlordsTrait {
             hologramTrait.setLine(4, ChatColor.GOLD.toString() + ChatColor.BOLD + "Ends in " + timeTill);
         }
     }
+
 
     @Override
     public void rightClick(NPCRightClickEvent event) {

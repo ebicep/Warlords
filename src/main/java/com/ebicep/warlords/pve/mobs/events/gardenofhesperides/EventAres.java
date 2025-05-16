@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -44,7 +45,7 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new SpawnMobAbility(10, Mob.INTERMEDIATE_WARRIOR_BERSERKER, 10) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("aresSpawnIntermediateWarriorBerserker").pve().startCooldown(10), Mob.INTERMEDIATE_WARRIOR_BERSERKER) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));
@@ -55,7 +56,7 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
                         return (int) (pveOption.getGame().warlordsPlayers().count() + 1);
                     }
                 },
-                new SpawnMobAbility(10, Mob.ADVANCED_WARRIOR_BERSERKER, 10) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("aresSpawnAdvancedWarriorBerserker").pve().startCooldown(10), Mob.ADVANCED_WARRIOR_BERSERKER) {
                     @Override
                     public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
                         return mobToSpawn.createMob(pveOption.getRandomSpawnLocation((WarlordsEntity) null));

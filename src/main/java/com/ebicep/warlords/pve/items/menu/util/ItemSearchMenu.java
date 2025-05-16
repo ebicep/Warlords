@@ -284,7 +284,7 @@ public class ItemSearchMenu extends Menu {
         ),
         BLESSED("Blessed",
                 new ItemBuilder(Material.PAPER)
-                        .enchant(Enchantment.OXYGEN, 1)
+                        .enchant(Enchantment.RESPIRATION, 1)
                         .get(),
                 item -> item.getModifier() > 0
         ),

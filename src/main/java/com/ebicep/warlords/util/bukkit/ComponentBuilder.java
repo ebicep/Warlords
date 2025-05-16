@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util.bukkit;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -12,14 +13,27 @@ public class ComponentBuilder {
     }
 
     public static ComponentBuilder create(String text) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         return new ComponentBuilder(text);
     }
 
+    public static ComponentBuilder create(TextComponent component) {
+        return new ComponentBuilder(component);
+    }
+
     public static ComponentBuilder create(String text, TextColor textColor) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         return new ComponentBuilder(text, textColor);
     }
 
     public static ComponentBuilder create(String text, TextColor textColor, TextDecoration... textDecoration) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         return new ComponentBuilder(text, textColor, textDecoration);
     }
 
@@ -30,7 +44,14 @@ public class ComponentBuilder {
     private final TextComponent.Builder componentBuilder;
 
     public ComponentBuilder(String text) {
+        if (text == null) {
+            text = "UNKNOWN";
+        }
         this.componentBuilder = Component.text(text).toBuilder();
+    }
+
+    public ComponentBuilder(TextComponent component) {
+        this.componentBuilder = component.toBuilder();
     }
 
     public ComponentBuilder(String text, TextColor textColor) {
@@ -71,13 +92,50 @@ public class ComponentBuilder {
         return this;
     }
 
+    public ComponentBuilder text(int text, TextColor textColor) {
+        componentBuilder.append(Component.text(text, textColor));
+        return this;
+    }
+
     public ComponentBuilder text(float text, TextColor textColor, TextDecoration... textDecoration) {
         componentBuilder.append(Component.text(text, textColor, textDecoration));
         return this;
     }
 
+    public ComponentBuilder newLine() {
+        componentBuilder.append(Component.newline());
+        return this;
+    }
+
+    public ComponentBuilder newLine(String text) {
+        componentBuilder.append(Component.newline());
+        componentBuilder.append(Component.text(text));
+        return this;
+    }
+
+    public ComponentBuilder newLine(String text, TextColor textColor) {
+        componentBuilder.append(Component.newline());
+        componentBuilder.append(Component.text(text, textColor));
+        return this;
+    }
+
+    public ComponentBuilder newLine(String text, TextColor textColor, TextDecoration... textDecoration) {
+        componentBuilder.append(Component.newline());
+        componentBuilder.append(Component.text(text, textColor, textDecoration));
+        return this;
+    }
+
+    public ComponentBuilder space() {
+        componentBuilder.append(Component.space());
+        return this;
+    }
+
     public TextComponent build() {
         return componentBuilder.build();
+    }
+
+    public AbilityDescriptionBuilder abilityDescriptionBuilder() {
+        return new AbilityDescriptionBuilder(this);
     }
 
 }

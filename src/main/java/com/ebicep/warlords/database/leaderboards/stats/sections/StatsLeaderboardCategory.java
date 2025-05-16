@@ -1,12 +1,12 @@
 package com.ebicep.warlords.database.leaderboards.stats.sections;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboard;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.Stats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,14 +28,19 @@ public class StatsLeaderboardCategory<
     private final String categoryName;
     private final String shortName;
     private final List<StatsLeaderboard> statsLeaderboards = new ArrayList<>();
+    private boolean active;
 
-    public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName, String shortName) {
+    public StatsLeaderboardCategory(Function<DatabasePlayer, T> statFunction, String categoryName, String shortName, boolean active) {
         this.statFunction = statFunction;
         this.categoryName = categoryName;
         this.shortName = shortName;
+        this.active = active;
     }
 
     public void resetLeaderboards(PlayersCollections collection, Predicate<DatabasePlayer> externalFilter, String subTitle) {
+        if (!active) {
+            return;
+        }
         getStatsLeaderboards().parallelStream().forEach(statsLeaderboard -> statsLeaderboard.resetHolograms(collection, externalFilter, getShortName(), subTitle));
     }
 

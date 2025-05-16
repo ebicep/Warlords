@@ -43,10 +43,12 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 "Intrusive Hex",
                 "Poisonous Hex - Master Upgrade",
                 """
+                        -5 Energy cost
                         Poisonous Hex now pierces through all enemies.
                         """,
                 50000,
                 () -> {
+                    ability.getEnergyCost().addAdditiveModifier("Master Upgrade Branch", -5);
                     ability.setMaxEnemiesHit(200);
                 }
         );
@@ -55,15 +57,16 @@ public class PoisonousHexBranch extends AbstractUpgradeBranch<PoisonousHex> {
                 "Poisonous Hex - Master Upgrade",
                 """
                         +35% Damage
-                                                
-                        Poisonous Hex damage occurs every 1s instead of 2s.
+                        +10 Pierce
+                        Poisonous Hex damage occurs every 0.5s instead of 2s.
                         """,
                 50000,
                 () -> {
                     Value.RangedValueCritable damage = ability.getDamageValues().getHexDamage();
                     damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
                     damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", .35f);
-                    ability.setTicksBetweenDot(20);
+                    ability.setMaxEnemiesHit(ability.getMaxEnemiesHit() + 10);
+                    ability.setTicksBetweenDot(10);
                 }
         );
     }

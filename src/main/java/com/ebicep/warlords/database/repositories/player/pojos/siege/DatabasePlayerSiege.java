@@ -1,15 +1,22 @@
 package com.ebicep.warlords.database.repositories.player.pojos.siege;
 
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGamePlayerSiege;
 import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameSiege;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
+import java.util.HashMap;
+import java.util.Map;
+
+public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses, TracksAbilityStats {
 
     private DatabaseMageSiege mage = new DatabaseMageSiege();
     private DatabaseWarriorSiege warrior = new DatabaseWarriorSiege();
@@ -17,6 +24,13 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
     private DatabaseShamanSiege shaman = new DatabaseShamanSiege();
     private DatabaseRogueSiege rogue = new DatabaseRogueSiege();
     private DatabaseArcanistSiege arcanist = new DatabaseArcanistSiege();
+    @Field("ability_stats")
+    private Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
+    }
 
     @Override
     public void updateSpecStats(
@@ -38,6 +52,7 @@ public class DatabasePlayerSiege implements SiegeStatsWarlordsClasses {
                           multiplier,
                           playersCollection
                   ));
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     @Override

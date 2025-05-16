@@ -1,11 +1,14 @@
 package com.ebicep.warlords.party;
 
+import com.ebicep.jda.queuesystem.QueueManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -30,9 +33,9 @@ public class Party {
     }
 
     public Party(UUID leader, boolean open) {
-        partyPlayers.add(new PartyPlayer(leader, PartyPlayerType.LEADER));
+        this.partyPlayers.add(new PartyPlayer(leader, PartyPlayerType.LEADER));
         this.open = open;
-        partyTask = new BukkitRunnable() {
+        this.partyTask = new BukkitRunnable() {
 
             @Override
             public void run() {
@@ -49,7 +52,19 @@ public class Party {
                 });
                 for (int i = 0; i < partyPlayers.size(); i++) {
                     PartyPlayer partyPlayer = partyPlayers.get(i);
-                    if (partyPlayer != null && partyPlayer.getOfflineTimeLeft() != -1) {
+                    if (partyPlayer.isAFK()) {
+                        Player player = Bukkit.getPlayer(partyPlayer.getUUID());
+                        if (player != null) {
+                            player.showTitle(
+                                    Title.title(
+                                            Component.text("You are AFK", NamedTextColor.RED),
+                                            Component.text("SNEAK to auto unafk", NamedTextColor.YELLOW),
+                                            Title.Times.times(Ticks.duration(0), Ticks.duration(21), Ticks.duration(0))
+                                    )
+                            );
+                        }
+                    }
+                    if (partyPlayer.getOfflineTimeLeft() != -1) {
                         int offlineTimeLeft = partyPlayer.getOfflineTimeLeft();
                         partyPlayer.setOfflineTimeLeft(offlineTimeLeft - 1);
                         if (offlineTimeLeft == 0) {
@@ -85,6 +100,8 @@ public class Party {
             promote(uuid);
         }
         Bukkit.getPlayer(uuid).sendMessage(getPartyList());
+        QueueManager.removePlayerFromQueue(uuid);
+        QueueManager.removePlayerFromFutureQueue(uuid);
     }
 
     public void leave(UUID uuid) {

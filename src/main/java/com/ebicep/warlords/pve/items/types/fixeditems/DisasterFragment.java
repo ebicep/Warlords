@@ -88,7 +88,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 "Disaster Fragment - Wounding",
                                 "WND",
                                 DisasterFragment.class,
-                                new DisasterFragment(),
+                                null,
                                 attacker,
                                 CooldownTypes.DEBUFF,
                                 cooldownManager -> {
@@ -116,7 +116,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 "Disaster Fragment - Burn",
                                 "BRN",
                                 DisasterFragment.class,
-                                new DisasterFragment(),
+                                null,
                                 attacker,
                                 CooldownTypes.DEBUFF,
                                 cooldownManager -> {
@@ -147,7 +147,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 "Disaster Fragment - Bleed",
                                 "BLEED",
                                 DisasterFragment.class,
-                                new DisasterFragment(),
+                                null,
                                 attacker,
                                 CooldownTypes.DEBUFF,
                                 cooldownManager -> {
@@ -180,7 +180,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 "Disaster Fragment - Leech",
                                 "LCH",
                                 DisasterFragment.class,
-                                new DisasterFragment(),
+                                null,
                                 attacker,
                                 CooldownTypes.DEBUFF,
                                 cooldownManager -> {
@@ -217,7 +217,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 "Disaster Fragment - Silence",
                                 "SILENCE",
                                 SoulShackle.class,
-                                new SoulShackle(),
+                                null,
                                 attacker,
                                 CooldownTypes.DEBUFF,
                                 cooldownManager -> {
@@ -245,7 +245,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                                 particleLoc.getWorld().spawnParticle(
-                                                        Particle.REDSTONE,
+                                                        Particle.DUST,
                                                         particleLoc,
                                                         1,
                                                         0,

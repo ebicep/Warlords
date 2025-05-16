@@ -6,17 +6,10 @@ import org.bukkit.block.Block;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractProjectile extends AbstractPiercingProjectile {
+public abstract class AbstractProjectile<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> {
 
-    public AbstractProjectile(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates
-    ) {
-        super(name, cooldown, energyCost, projectileSpeed, maxDistance, hitTeammates);
+    public AbstractProjectile(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

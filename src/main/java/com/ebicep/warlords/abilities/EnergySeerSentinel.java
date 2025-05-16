@@ -1,106 +1,45 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractEnergySeer;
 import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
-import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.sentinel.EnergySeerBranchSentinel;
-import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Particle;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
+import net.kyori.adventure.text.TextComponent;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Objects;
+public class EnergySeerSentinel extends AbstractEnergySeer<AbstractEnergySeer.EnergySeerData> implements Heals<EnergySeerSentinel.HealingValues> {
 
-public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> implements Heals<EnergySeerSentinel.HealingValues> {
+    private int damageResistance = 5;
 
-    private final HealingValues healingValues = new HealingValues();
-    private int damageResistance = 2;
+    public EnergySeerSentinel() {
+        super(AbstractAbilityBuilder.create("energySeerSentinel").pvp());
+    }
 
     @Override
-    public Component getBonus() {
-        return Component.text("your Fortifying Hexes gain an additional ")
-                        .append(Component.text(damageResistance + "%", NamedTextColor.YELLOW))
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageResistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageResistance"), int.class);
+    }
+
+    @Override
+    public EnergySeerData getDataObject() {
+        return new EnergySeerData();
+    }
+
+    @Override
+    public Class<EnergySeerData> getDataClass() {
+        return EnergySeerData.class;
+    }
+
+    @Override
+    public TextComponent getBonus() {
+        return Component.text("Your Fortifying Hexes gain an additional ")
+                        .append(Component.text(damageResistance + "%", AbilityDescriptionBuilder.COLOR_BROWN))
                         .append(Component.text(" damage resistance"));
-    }
-
-    @Override
-    public Class<EnergySeerSentinel> getEnergySeerClass() {
-        return EnergySeerSentinel.class;
-    }
-
-    @Override
-    public EnergySeerSentinel getObject() {
-        return new EnergySeerSentinel();
-    }
-
-    @Override
-    public Value.SetValue getHealMultiplier() {
-        return healingValues.seerHealingMultiplier;
-    }
-
-    @Override
-    public RegularCooldown<EnergySeerSentinel> getBonusCooldown(@Nonnull WarlordsEntity wp) {
-        return new RegularCooldown<>(
-                name,
-                "SEER",
-                getEnergySeerClass(),
-                getObject(),
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-
-                },
-                bonusDuration
-        ) {
-            @Override
-            protected Listener getListener() {
-                return new Listener() {
-                    @EventHandler
-                    public void onCooldownAdd(WarlordsAddCooldownEvent event) {
-                        AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-                        if (!Objects.equals(cooldown.getFrom(), wp)) {
-                            return;
-                        }
-                        if (cooldown.getCooldownObject() instanceof FortifyingHex fortifyingHex) {
-                            fortifyingHex.getDamageReduction().addAdditiveModifier(name, damageResistance, getTicksLeft());
-                        }
-                    }
-                };
-            }
-        };
-    }
-
-    @Override
-    protected void onEnd(WarlordsEntity wp, EnergySeerSentinel cooldownObject) {
-        PlayerFilter.playingGame(wp.getGame())
-                    .teammatesOf(wp)
-                    .forEach(teammate -> {
-                        new CooldownFilter<>(teammate, RegularCooldown.class)
-                                .filterCooldownFrom(wp)
-                                .filterCooldownClassAndMapToObjectsOfClass(FortifyingHex.class)
-                                .forEach(fortifyingHex -> fortifyingHex.getDamageReduction().addAdditiveModifier(name, damageResistance, bonusDuration));
-                    });
-        if (pveMasterUpgrade2) {
-            PlayerFilter.entitiesAround(wp, 10, 10, 10)
-                        .aliveTeammatesOfExcludingSelf(wp)
-                        .forEach(warlordsEntity -> {
-                            warlordsEntity.getCooldownManager().addCooldown(getBonusCooldown(wp));
-                            EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), wp.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
-                        });
-        }
     }
 
     @Override
@@ -116,20 +55,4 @@ public class EnergySeerSentinel extends AbstractEnergySeer<EnergySeerSentinel> i
         this.damageResistance = damageResistance;
     }
 
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    public static class HealingValues implements Value.ValueHolder {
-
-        private final Value.SetValue seerHealingMultiplier = new Value.SetValue(4);
-        private final List<Value> values = List.of(seerHealingMultiplier);
-
-        @Override
-        public List<Value> getValues() {
-            return values;
-        }
-
-    }
 }

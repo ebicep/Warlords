@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 import com.ebicep.warlords.abilities.CripplingStrike;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -28,10 +29,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 10,
                 930,
                 1210,
-                new FlameBurst() {{
-                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
-                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
-                }},
+                new FlameBurst(AbstractAbilityBuilder.create("djetFlameBurst").pve()),
                 new SilenceCrippleAll()
         );
     }
@@ -52,10 +50,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst() {{
-                    this.getDamageValues().getFlameBurstDamage().min().setBaseValue(1200);
-                    this.getDamageValues().getFlameBurstDamage().max().setBaseValue(1380);
-                }},
+                new FlameBurst(AbstractAbilityBuilder.create("djetFlameBurst").pve()),
                 new SilenceCrippleAll()
         );
     }
@@ -99,7 +94,7 @@ public class EventDjet extends AbstractMob implements BossMinionMob {
     private static class SilenceCrippleAll extends AbstractPveAbility {
 
         public SilenceCrippleAll() {
-            super("Djet", 5, 50);
+            super(AbstractAbilityBuilder.create("djetDjet").pve());
         }
 
         @Override

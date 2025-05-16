@@ -12,41 +12,45 @@ public class EnergySeerBranchSentinel extends AbstractUpgradeBranch<EnergySeerSe
 
         UpgradeTreeBuilder
                 .create(abilityTree, this)
+                .addUpgradeDuration(ability, 10f)
+                .addTo(treeA);
+
+        UpgradeTreeBuilder
+                .create(abilityTree, this)
                 .addUpgrade(new UpgradeTypes.HealingUpgradeType() {
                     @Override
                     public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
                         modifier.setModifier(value / 100);
                     }
-                }, ability.getHealMultiplier().value().addAdditiveModifier("Upgrade Branch", 0), 25f)
-                .addTo(treeA);
-
-        UpgradeTreeBuilder
-                .create(abilityTree, this)
-                .addUpgradeDuration(ability::setBonusDuration, ability::getBonusDuration, 10f)
+                }, ability.getHealValues().getSeerHealingMultiplier().value().addAdditiveModifier("Upgrade Branch", 0), 25f)
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(
                 "Energizing Clairvoyant",
                 "Energy Seer - Master Upgrade",
                 """
-                        Increase damage reduction by 15% and triple the energy restored.
+                        Remove energy loss.
+                        Increase damage reduction by 3% and double the energy restored.
                         """,
                 50000,
                 () -> {
-                    ability.setDamageResistance(ability.getDamageResistance() + 15);
-                    ability.setEnergyRestore(ability.getEnergyRestore() * 3);
+                    ability.setEpsDecrease(0);
+                    ability.setDamageResistance(ability.getDamageResistance() + 3);
+                    ability.setEnergyRestore(ability.getEnergyRestore() * 2);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Collective Vaticinator",
                 "Energy Seer - Master Upgrade",
                 """
+                        Remove energy loss.
+                        +5s duration.
                         +20% Additional Cooldown Reduction
-                                                
-                        When Energy Seer expires, apply the benefits to all nearby allies within a 10 block radius.
                         """,
                 50000,
                 () -> {
+                    ability.setEpsDecrease(0);
+                    ability.setTickDuration(ability.getTickDuration() + 100);
                     ability.getCooldown().addMultiplicativeModifierMult("Collective Vaticinator", 0.8f);
                 }
         );

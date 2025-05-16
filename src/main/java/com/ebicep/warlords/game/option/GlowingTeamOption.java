@@ -9,7 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.GlowingMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import org.bukkit.entity.Player;
@@ -21,12 +21,11 @@ import java.util.Objects;
 
 public class GlowingTeamOption implements Option {
 
-    private Game game;
+    private PacketAdapter packetListener;
 
     @Override
     public void register(@Nonnull Game game) {
-        this.game = game;
-        PacketUtils.PROTOCOL_MANAGER.addPacketListener(new PacketAdapter(Warlords.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_METADATA) {
+        packetListener = new PacketAdapter(Warlords.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_METADATA) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 Player playerReceiving = event.getPlayer();
@@ -35,7 +34,7 @@ public class GlowingTeamOption implements Option {
                     return;
                 }
                 DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                    if (databasePlayer.getGlowingMode() == Settings.GlowingMode.OFF) {
+                    if (databasePlayer.getGlowingMode() == GlowingMode.OFF) {
                         return;
                     }
 
@@ -64,7 +63,14 @@ public class GlowingTeamOption implements Option {
                     event.setPacket(packet);
                 });
             }
-        });
+        };
+        PacketUtils.PROTOCOL_MANAGER.addPacketListener(packetListener);
         //TODO fix changing teams and not moving still showing glow
     }
+
+    @Override
+    public void onGameCleanup(@Nonnull Game game) {
+        PacketUtils.PROTOCOL_MANAGER.removePacketListener(packetListener);
+    }
+
 }

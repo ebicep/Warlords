@@ -82,4 +82,9 @@ public class Shield implements Listener {
             shieldHealth = maxShieldHealth;
         }
     }
+
+    public boolean isBroken() {
+        return shieldHealth < 0;
+    }
+
 }

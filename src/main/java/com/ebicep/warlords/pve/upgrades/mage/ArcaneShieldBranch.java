@@ -21,7 +21,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                     @Override
                     public void run(float value) {
                         ability.setShieldPercentage(shieldPercentage + (int) value);
-                        ability.updateCustomStats(abilityTree.getWarlordsPlayer().getSpec());
+                        ability.updateCustomStats(abilityTree.getWarlordsPlayer());
                     }
                 }, 5f)
                 .addTo(treeA);
@@ -44,7 +44,7 @@ public class ArcaneShieldBranch extends AbstractUpgradeBranch<ArcaneShield> {
                 "Arcane Energy",
                 "Arcane Shield - Master Upgrade",
                 """
-                        When arcane shield ends or breaks, gain the ARC status for 5s reducing the energy cost of Right-Click attacks by 15%.
+                        When arcane shield ends or breaks, gain the ARC status for 6s reducing the energy cost of Right-Click attacks by 25%.
                         """,
                 50000,
                 () -> {

@@ -2,7 +2,6 @@ package com.ebicep.warlords.events;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.IceBarrier;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
@@ -24,7 +23,7 @@ import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.CustomScoreboard;
 import com.ebicep.warlords.player.general.ExperienceManager;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.HotkeyMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -60,6 +59,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -166,11 +166,11 @@ public class WarlordsEvents implements Listener {
 
     public static void joinInteraction(Player player, boolean fromGame) {
         player.playerListName(null);
-        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+        AttributeInstance attribute = player.getAttribute(Attribute.ATTACK_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(1024); // remove attack charge up / recoil
         }
-        attribute = player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION);
+        attribute = player.getAttribute(Attribute.MAX_ABSORPTION);
         if (attribute != null) {
             attribute.setBaseValue(Integer.MAX_VALUE); // give absorption capability
         }
@@ -189,7 +189,7 @@ public class WarlordsEvents implements Listener {
         }
         if (isSpawnWorld) {
             player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.removePotionEffect(PotionEffectType.SLOW);
+            player.removePotionEffect(PotionEffectType.SLOWNESS);
             player.removePotionEffect(PotionEffectType.ABSORPTION);
 
             List<BossBar> bossBars = new ArrayList<>();
@@ -201,6 +201,7 @@ public class WarlordsEvents implements Listener {
             player.setHealth(20);
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+            player.resetTitle();
             PlayerHotBarItemListener.giveLobbyHotBar(player, fromGame);
 
             DatabaseManager.getPlayer(uuid, databasePlayer -> {
@@ -235,8 +236,13 @@ public class WarlordsEvents implements Listener {
                 CustomScoreboard.updateLobbyPlayerNames();
                 ExperienceManager.giveExperienceBar(player);
                 if (StatsLeaderboardManager.loaded) {
-                    StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
-                    DatabaseGameBase.setGameHologramVisibility(player);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            StatsLeaderboardManager.setLeaderboardHologramVisibility(player);
+                            DatabaseGameBase.setGameHologramVisibility(player);
+                        }
+                    }.runTaskLater(Warlords.getInstance(), 20);
                 }
             }, () -> {
                 if (!fromGame) {
@@ -298,7 +304,7 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().getVehicle().remove();
         }
         //removing player position boards
-        StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
+//        StatsLeaderboardManager.removePlayerSpecificHolograms(e.getPlayer()); TODO
 
         sendHeaderFooterToAll(true);
 
@@ -374,10 +380,6 @@ public class WarlordsEvents implements Listener {
             }
         }
         wpVictim.updateHealth();
-
-        if (wpVictim.getCooldownManager().hasCooldown(IceBarrier.class)) {
-            wpAttacker.addSpeedModifier(wpVictim, "Ice Barrier", -20, 2 * 20);
-        }
     }
 
     @EventHandler
@@ -396,7 +398,7 @@ public class WarlordsEvents implements Listener {
                     } else if (wp.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class)) {
                         player.sendMessage(Component.text("You cannot drop the flag with a Time Warp active!", NamedTextColor.RED));
                     } else {
-                        FlagHolder.dropFlagForPlayer(wp);
+                        FlagHolder.dropFlagForPlayer(wp, true);
                         wp.setFlagDropCooldown(5);
                     }
                     return;
@@ -409,7 +411,6 @@ public class WarlordsEvents implements Listener {
                         player.getInventory().remove(UndyingArmy.BONE);
                         wp.addInstance(InstanceBuilder
                                 .melee()
-                                .cause("God")
                                 .source(wp)
                                 .value(100000)
                         );
@@ -423,7 +424,7 @@ public class WarlordsEvents implements Listener {
                         ((WarlordsPlayer) wp).getAbilityTree().openAbilityTree();
                     }
                     default -> DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+                        if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
                             if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                                 AbstractWeapon weapon = warlordsPlayer.getWeapon();
                                 if (weapon instanceof AbstractLegendaryWeapon) {
@@ -465,7 +466,7 @@ public class WarlordsEvents implements Listener {
         }
         int heldItemSlot = player.getInventory().getHeldItemSlot();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-            if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == Settings.HotkeyMode.CLASSIC_MODE) {
+            if (heldItemSlot == 0 || databasePlayer.getHotkeyMode() == HotkeyMode.CLASSIC_MODE) {
                 if (heldItemSlot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {
                     AbstractWeapon weapon = warlordsPlayer.getWeapon();
                     if (weapon instanceof AbstractLegendaryWeapon) {
@@ -505,7 +506,7 @@ public class WarlordsEvents implements Listener {
         }
         List<AbstractAbility> abilities = wp.getAbilities();
         DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-            if (databasePlayer.getHotkeyMode() == Settings.HotkeyMode.NEW_MODE) {
+            if (databasePlayer.getHotkeyMode() == HotkeyMode.NEW_MODE) {
                 if (1 <= slot && slot <= 4 && slot < abilities.size()) {
                     wp.getSpec().onRightClick(wp, player, slot, true);
                 } else if (slot == 8 && wp instanceof WarlordsPlayer warlordsPlayer) {

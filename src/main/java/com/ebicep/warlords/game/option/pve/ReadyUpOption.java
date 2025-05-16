@@ -234,7 +234,7 @@ public class ReadyUpOption implements Option {
                             Component.text("Click to toggle", NamedTextColor.YELLOW)
                     );
             if (tartarusAutoReady) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
             menu.setItem(5, 4,
                     itemBuilder.get(),

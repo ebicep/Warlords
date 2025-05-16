@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Shield;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -111,7 +110,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.abilityTree.getUpgradeBranches().clear();
         this.abilityTree.setMaxMasterUpgrades(3);
         this.spec.setUpgradeBranches(this);
-        DatabaseManager.getPlayer(uuid, this.abilityTree::resetAutoUpgradeProfile);
+        this.abilityTree.resetAutoUpgradeProfile(getDatabasePlayer());
     }
 
     public WarlordsPlayer(
@@ -201,11 +200,11 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                                           NamedTextColor.RED
                                   ))); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
-        AttributeInstance attribute = jimmy.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+        AttributeInstance attribute = jimmy.getAttribute(Attribute.MOVEMENT_SPEED);
         if (attribute != null) {
             attribute.setBaseValue(0);
         }
-        attribute = jimmy.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
+        attribute = jimmy.getAttribute(Attribute.FOLLOW_RANGE);
         if (attribute != null) {
             attribute.setBaseValue(0);
         }
@@ -296,12 +295,12 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             //Soulbinding weapon enchant
             ItemStack firstItem = playerInventory.getItem(0);
             if (firstItem != null) {
-                if (getCooldownManager().hasCooldown(Soulbinding.class)) {
+                if (getCooldownManager().hasCooldown(Soulbinding.SoulbindingData.class)) {
                     ItemMeta itemMeta = firstItem.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                    itemMeta.addEnchant(Enchantment.RESPIRATION, 1, true);
                     firstItem.setItemMeta(itemMeta);
                 } else {
-                    firstItem.removeEnchantment(Enchantment.OXYGEN);
+                    firstItem.removeEnchantment(Enchantment.RESPIRATION);
                 }
             }
 
@@ -364,7 +363,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             } else {
                 getEntity().customName(Component.textOfChildren(
                         Component.text("[", NamedTextColor.DARK_GRAY)
-                                 .append(Component.text(getSpec().getClassNameShort(), NamedTextColor.GOLD))
+                                 .append(Component.text(getSpec().getClassNameShort(), getSpecClass().specType.getTextColor()))
                                  .append(Component.text("] ")),
                         getColoredName(),
                         Component.text(" " + Math.round(getCurrentHealth()) + "❤", NamedTextColor.RED)
@@ -452,7 +451,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     public void applySkillBoost(Player player) {
         for (AbstractAbility ability : spec.getAbilities()) {
             if (ability.getClass() == skillBoost.ability) {
-                ability.boostSkill(skillBoost, spec);
+                ability.boostSkill(skillBoost, this);
                 ability.updateDescription(player);
                 updateItem(ability);
                 break;
@@ -469,6 +468,15 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             }
         } else {
             return ability.getAbilityIcon();
+        }
+    }
+
+    @Override
+    public void sendMessage(Component component, boolean isDamageHealMessage) {
+        super.sendMessage(component, isDamageHealMessage);
+        debugMessageLog.add(component);
+        if (isInPve() && debugMessageLog.size() > 200) {
+            debugMessageLog.subList(0, 100).clear();
         }
     }
 

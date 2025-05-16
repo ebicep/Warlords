@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -24,44 +25,43 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> extends AbstractAbility implements Duration, HitBox {
+public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T, R>, R extends AbstractBeaconAbility.BeaconData> extends AbstractAbility implements Duration, HitBox {
 
-    protected Location groundLocation; // not static
-    protected CircleEffect effect; // not static
-    protected FloatModifiable radius; // not static
+    protected FloatModifiable radius;
     protected int tickDuration;
-    private int maxBeaconsAtATime = 1;
+    private int maxBeaconsAtATime = 2;
 
-    public AbstractBeaconAbility(
-            String name,
-            float cooldown,
-            float energyCost,
-            Location groundLocation,
-            float radius,
-            int secondDuration,
-            CircleEffect effect
-    ) {
-        super(name, cooldown, energyCost);
-        this.groundLocation = groundLocation;
-        this.radius = new FloatModifiable(radius);
-        this.tickDuration = secondDuration * 20;
-        this.effect = effect;
+    public AbstractBeaconAbility(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Place a stationary beacon on the ground that lasts ")
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. "))
-                               .append(getBonusDescription());
+        description = AbilityDescriptionBuilder
+                .create("Place a stationary beacon on the ground that lasts ")
+                .durationTicks(tickDuration)
+                .text(". ")
+                .append(getBonusDescription())
+                .emptyLine()
+                .text("Up to ")
+                .text(maxBeaconsAtATime, NamedTextColor.BLUE)
+                .text(" beacons can be present on the field at once.")
+                .build();
     }
 
     public abstract Component getBonusDescription();
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
 
-        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, AbstractBeaconAbility.class, maxBeaconsAtATime);
+        wp.getCooldownManager().limitCooldowns(RegularCooldown.class, getDataClass(), maxBeaconsAtATime);
         Location groundLocation = LocationUtils.getGroundLocation(wp.getLocation());
 
         Utils.playGlobalSound(groundLocation, "arcanist.beacon.impact", 0.3f, 1);
@@ -72,7 +72,7 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
                 wp.getTeam(),
                 groundLocation,
                 radius.getCalculatedValue(),
-                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST),
                 getLineEffect(groundLocation)
         );
 
@@ -103,27 +103,25 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
 
         Utils.playGlobalSound(beacon.getLocation(), Sound.AMBIENT_SOUL_SAND_VALLEY_MOOD, 0.2f, 0.5f);
 
+        R dataObject = getDataObject(wp, beacon, groundLocation, teamCircleEffect, radius.getCalculatedValue());
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 getAbbreviation(),
-                getBeaconClass(),
-                getObject(wp, groundLocation, teamCircleEffect),
+                getDataClass(),
+                dataObject,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
                 },
                 cooldownManager -> {
                     beacon.remove();
-                    if (getCrystal() != null) {
-                        getCrystal().remove();
-                    }
-                    onRemove();
+                    onRemove(dataObject);
                 },
                 false,
                 tickDuration + 1,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     //particle effects
-                    if (ticksElapsed % 2 == 0) {
+                    if ((inPve && ticksElapsed % 3 == 0) || (!inPve && ticksElapsed % 2 == 0)) {
                         teamCircleEffect.playEffects();
                     }
                     whileActive(wp, cooldown, ticksLeft, ticksElapsed);
@@ -132,21 +130,19 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         return true;
     }
 
+    public abstract Class<R> getDataClass();
+
     public abstract LineEffect getLineEffect(Location target);
+
+    public abstract R getDataObject(WarlordsEntity wp, ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius);
 
     public abstract String getAbbreviation();
 
-    public abstract Class<T> getBeaconClass();
-
-    public abstract T getObject(WarlordsEntity warlordsEntity, Location groundLocation, CircleEffect effect);
-
-    public abstract ArmorStand getCrystal();
-
-    public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<T> cooldown, Integer ticksLeft, Integer ticksElapsed);
-
-    protected void onRemove() {
+    protected void onRemove(R data) {
 
     }
+
+    public abstract void whileActive(@Nonnull WarlordsEntity wp, RegularCooldown<R> cooldown, Integer ticksLeft, Integer ticksElapsed);
 
     @Override
     public int getTickDuration() {
@@ -158,10 +154,6 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
         this.tickDuration = tickDuration;
     }
 
-    public Location getGroundLocation() {
-        return groundLocation;
-    }
-
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
@@ -170,4 +162,37 @@ public abstract class AbstractBeaconAbility<T extends AbstractBeaconAbility<T>> 
     public void setMaxBeaconsAtATime(int maxBeaconsAtATime) {
         this.maxBeaconsAtATime = maxBeaconsAtATime;
     }
+
+    public static class BeaconData {
+
+        private final ArmorStand beacon;
+        private final Location groundLocation;
+        private final CircleEffect effect;
+        private final FloatModifiable radius;
+
+        public BeaconData(ArmorStand beacon, Location groundLocation, CircleEffect effect, float radius) {
+            this.beacon = beacon;
+            this.groundLocation = groundLocation;
+            this.effect = effect;
+            this.radius = new FloatModifiable(radius);
+        }
+
+        public Location getGroundLocation() {
+            return groundLocation;
+        }
+
+        public ArmorStand getBeacon() {
+            return beacon;
+        }
+
+        public CircleEffect getEffect() {
+            return effect;
+        }
+
+        public FloatModifiable getRadius() {
+            return radius;
+        }
+
+    }
+
 }

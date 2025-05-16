@@ -93,11 +93,11 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(45);
 
         public HexAttack() {
-            super("Hex Attack", 3, 0);
+            super(AbstractAbilityBuilder.create("hexAttack").td().cooldown(3).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getAllyMobs(range, 1).forEach(target -> {
                     EffectUtils.playChainAnimation(warlordsTower, target, RayOfLight.BEAM_ITEM, 3);
@@ -144,11 +144,11 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable buffValue = new FloatModifiable(30); // 30% faster
 
         public BuffTowers() {
-            super("Buff Towers", 20, 0);
+            super(AbstractAbilityBuilder.create("buffTowers").td().cooldown(20).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower abstractTower = warlordsTower.getTower();
                 abstractTower.getTowers(range)
@@ -184,11 +184,11 @@ public class LuminaryTower extends AbstractTower implements Upgradeable.Path2 {
         private final FloatModifiable range = new FloatModifiable(20);
 
         public MercifulHex() {
-            super("Merciful Hex", 3, 0);
+            super(AbstractAbilityBuilder.create("mercifulHex").td().cooldown(3).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 warlordsTower.getTower().getAllyMobs(range).forEach(target -> {
                     target.addInstance(InstanceBuilder

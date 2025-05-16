@@ -65,7 +65,7 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
 
     @Override
     public void onNPCCreate() {
-        npc.getOrAddTrait(Gravity.class).gravitate(true);
+        npc.getOrAddTrait(Gravity.class).setHasGravity(false);
     }
 
     @Override

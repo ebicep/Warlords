@@ -12,9 +12,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.interception.Databa
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.*;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.duel.DatabasePlayerDuel;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
@@ -29,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class TournamentStats implements MultiStatsGeneral {
+public class TournamentStats implements MultiStatsGeneral, TracksMultiAbilityStats {
 
     @Field("tournament_1_stats") // june 2022
     private DatabasePlayerTournamentStats tournament1Stats = new DatabasePlayerTournamentStats();
@@ -65,7 +63,14 @@ public class TournamentStats implements MultiStatsGeneral {
         getCurrentTournamentStats().updateStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
     }
 
-    public static class DatabasePlayerTournamentStats implements MultiStatsGeneral {
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return Stream.of(tournament1Stats, tournament2Stats, tournament3Stats)
+                     .flatMap(s -> s.getAllAbilityStats().stream())
+                     .collect(Collectors.toList());
+    }
+
+    public static class DatabasePlayerTournamentStats implements MultiStatsGeneral, TracksMultiAbilityStats {
         @Field("ctf_stats")
         private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
         @Field("tdm_stats")
@@ -127,6 +132,11 @@ public class TournamentStats implements MultiStatsGeneral {
             stats.add((StatsWarlordsClasses<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>, StatsWarlordsSpecs<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase, Stats<DatabaseGameBase<DatabaseGamePlayerBase>, DatabaseGamePlayerBase>>>)
                     (Object) interceptionStats);
             return stats;
+        }
+
+        @Override
+        public Collection<TracksAbilityStats> getAllAbilityStats() {
+            return List.of(ctfStats, tdmStats, interceptionStats);
         }
     }
 }

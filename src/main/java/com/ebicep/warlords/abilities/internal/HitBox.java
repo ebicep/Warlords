@@ -11,13 +11,11 @@ import org.bukkit.entity.Player;
  */
 public interface HitBox {
 
-    FloatModifiable getHitBoxRadius();
-
     default void renderHitBox(Location center, Player... players) {
         for (Player player : players) {
             EffectUtils.playCircularEffectAround(
                     player,
-                    Particle.VILLAGER_HAPPY,
+                    Particle.HAPPY_VILLAGER,
                     center.clone(),
                     getHitBoxRadius().getCalculatedValue(),
                     200
@@ -26,10 +24,12 @@ public interface HitBox {
 //        EffectUtils.playSphereAnimation(
 //                center,
 //                getHitBoxRadius().getCalculatedValue(),
-//                Particle.VILLAGER_HAPPY,
+//                Particle.HAPPY_VILLAGER,
 //                1,
 //                4
 //        );
     }
+
+    FloatModifiable getHitBoxRadius();
 
 }

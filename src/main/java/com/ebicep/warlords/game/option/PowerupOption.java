@@ -172,7 +172,7 @@ public class PowerupOption implements Option {
             ));
             textDisplay.setBillboard(Display.Billboard.CENTER);
             textDisplay.setAlignment(TextDisplay.TextAlignment.CENTER);
-            textDisplay.setViewRange(.05f);
+            textDisplay.setViewRange(.2f);
             textDisplay.setSeeThrough(true);
             textDisplay.setBackgroundColor(Color.fromARGB(0, 0, 0, 0));
         });
@@ -224,7 +224,7 @@ public class PowerupOption implements Option {
     }
 
     public enum PowerUp {
-        SPEED("SPEED", NamedTextColor.YELLOW, 10, Material.YELLOW_WOOL) {
+        SPEED("SPEED", NamedTextColor.WHITE, 10, Material.WHITE_WOOL) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
                 we.getCooldownManager().removeCooldown(SpeedPowerup.class, false);
@@ -243,7 +243,7 @@ public class PowerupOption implements Option {
                         getTickDuration()
                 );
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
-                                        .append(Component.text("SPEED", NamedTextColor.YELLOW, TextDecoration.BOLD))
+                                        .append(Component.text("SPEED", NamedTextColor.WHITE, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
                                         .append(Component.text("+40% ", NamedTextColor.GREEN))
                                         .append(Component.text("Speed for "))
@@ -255,8 +255,8 @@ public class PowerupOption implements Option {
 
             @Override
             public void setNameAndItem(PowerupOption option, ArmorStand armorStand) {
-                armorStand.customName(Component.text("SPEED", NamedTextColor.AQUA, TextDecoration.BOLD));
-                armorStand.getEquipment().setHelmet(new ItemStack(Material.YELLOW_WOOL));
+                armorStand.customName(Component.text("SPEED", NamedTextColor.WHITE, TextDecoration.BOLD));
+                armorStand.getEquipment().setHelmet(new ItemStack(Material.WHITE_WOOL));
             }
         },
         HEALING("HEALING", NamedTextColor.GREEN, 5, Material.GREEN_WOOL) {
@@ -325,15 +325,15 @@ public class PowerupOption implements Option {
                         getTickDuration()
                 ) {
                     @Override
-                    public float multiplyEnergyGainPerTick(float energyGainPerTick) {
-                        return energyGainPerTick * 1.5f;
+                    public float addEnergyGainPerTick(float energyGainPerTick) {
+                        return energyGainPerTick + .5f;
                     }
                 });
                 we.sendMessage(Component.text("You activated the ", NamedTextColor.GOLD)
                                         .append(Component.text("ENERGY", NamedTextColor.GOLD, TextDecoration.BOLD))
                                         .append(Component.text(" powerup! "))
-                                        .append(Component.text("+50% ", NamedTextColor.GREEN))
-                                        .append(Component.text("Energy gain for "))
+                                        .append(Component.text("+10 ", NamedTextColor.GREEN))
+                                        .append(Component.text("Energy per second for "))
                                         .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
             }

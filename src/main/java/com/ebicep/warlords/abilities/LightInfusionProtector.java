@@ -1,5 +1,6 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractLightInfusion;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -20,73 +21,37 @@ import java.util.Collections;
 
 public class LightInfusionProtector extends AbstractLightInfusion {
 
-    public LightInfusionProtector(float cooldown) {
-        super(cooldown);
-    }
-
     public LightInfusionProtector() {
-        super(15.66f);
+        super(AbstractAbilityBuilder.create("lightInfusionProtector").pvp());
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
-
         Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
-
-        LightInfusionProtector tempLightInfusion = new LightInfusionProtector(cooldown.getBaseValue());
-        wp.getCooldownManager().addRegularCooldown(
-                name,
-                "INF",
-                LightInfusionProtector.class,
-                tempLightInfusion,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
+        wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusionProtector.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                }, cooldownManager -> {
                     cancelSpeed.run();
-                },
-                tickDuration,
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
-                        wp.getWorld().spawnParticle(
-                                Particle.SPELL,
-                                wp.getLocation().add(0, 1.2, 0),
-                                2,
-                                0.3,
-                                0.1,
-                                0.3,
-                                0.2,
-                                null,
-                                true
-                        );
+                        wp.getWorld().spawnParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, null, true);
                     }
                 })
         );
-
         if (pveMasterUpgrade) {
             for (HolyRadianceProtector holyRadiance : wp.getAbilitiesMatching(HolyRadianceProtector.class)) {
                 holyRadiance.setCurrentCooldown(0);
             }
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "INF GRACE",
-                    LightInfusionProtector.class,
-                    tempLightInfusion,
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
-                    },
-                    4 * 20,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (ticksElapsed % 2 == 0) {
-                            wp.getSpeed().removeSlownessModifiers();
-                            wp.getCooldownManager().removeDebuffCooldowns();
-                        }
-                    })
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "INF GRACE", LightInfusionProtector.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+            }, 4 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                if (ticksElapsed % 2 == 0) {
+                    wp.getSpeed().removeSlownessModifiers();
+                    wp.getCooldownManager().removeDebuffCooldowns();
+                }
+            })
             ) {
+
                 @Override
                 public void multiplyKB(Vector currentVector) {
                     currentVector.multiply(0.5);
@@ -98,17 +63,10 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                 }
             });
         } else if (pveMasterUpgrade2) {
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Chiron Light",
-                    "CHIRON",
-                    LightInfusionProtector.class,
-                    tempLightInfusion,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {
-                    },
-                    tickDuration
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>("Chiron Light", "CHIRON", LightInfusionProtector.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
+            }, tickDuration
             ) {
+
                 @Override
                 public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
                     if (event.getCause().equals("Protector's Strike")) {
@@ -117,36 +75,30 @@ public class LightInfusionProtector extends AbstractLightInfusion {
                     return currentHealValue;
                 }
             });
-            for (WarlordsEntity infusionTarget : PlayerFilter
-                    .entitiesAround(wp, 5, 5, 5)
-                    .aliveTeammatesOfExcludingSelf(wp)
-            ) {
+            for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveTeammatesOfExcludingSelf(wp)) {
                 playCastEffect(infusionTarget);
                 infusionTarget.getSpeed().removeSlownessModifiers();
                 infusionTarget.getCooldownManager().removeDebuffCooldowns();
                 infusionTarget.addSpeedModifier(wp, "Chiron Light", speedBuff, tickDuration);
-                infusionTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                        "Chiron Light",
-                        "CHIRON",
-                        LightInfusionProtector.class,
-                        tempLightInfusion,
-                        wp,
-                        CooldownTypes.ABILITY,
-                        cooldownManager -> {
-                        },
-                        4 * 20
-                ) {
-                    @Override
-                    protected Listener getListener() {
-                        return CooldownManager.getDefaultDebuffImmunityListener(infusionTarget);
-                    }
-                });
+                infusionTarget.getCooldownManager()
+                              .addCooldown(new RegularCooldown<>("Chiron Light", "CHIRON", LightInfusionProtector.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                              }, 4 * 20
+                              ) {
+
+                                  @Override
+                                  protected Listener getListener() {
+                                      return CooldownManager.getDefaultDebuffImmunityListener(infusionTarget);
+                                  }
+                              });
             }
         }
-
         playCastEffect(wp);
-
         return true;
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     @Override
@@ -155,4 +107,3 @@ public class LightInfusionProtector extends AbstractLightInfusion {
     }
 
 }
-

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.slime;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -83,8 +84,8 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     hitRadius,
-                    new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE).particlesPerCircumference(0.75),
-                    new DoubleLineEffect(Particle.SPELL)
+                    new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(0.75),
+                    new DoubleLineEffect(Particle.EFFECT)
             ).playEffects();
         }
     }
@@ -111,7 +112,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                             Location location = enemy.getLocation();
                             location.add(0, 1.5, 0);
                             location.getWorld().spawnParticle(
-                                    Particle.SMOKE_NORMAL,
+                                    Particle.SMOKE,
                                     location,
                                     1,
                                     0.3F,
@@ -122,7 +123,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                                     true
                             );
                             location.getWorld().spawnParticle(
-                                    Particle.SLIME,
+                                    Particle.ITEM_SLIME,
                                     location,
                                     1,
                                     0.3F,
@@ -163,11 +164,11 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
     private static class Shimmer extends AbstractAbility implements Damages<Shimmer.DamageValues> {
 
         public Shimmer() {
-            super("Shimmer", 0.3f, 50);
+            super(AbstractAbilityBuilder.create("slimyAnomalyShimmer").pve());
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
 
 
             for (WarlordsEntity enemy : PlayerFilter

@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
@@ -67,7 +68,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new FlameBurst(15),
+                new FlameBurst(AbstractAbilityBuilder.create("narmerFlameBurst").pve()),
                 new GroundShred()
         );
     }
@@ -108,7 +109,12 @@ public class Narmer extends AbstractMob implements BossMob {
             case EXTREME -> 8;
             default -> 10;
         };
-        this.playerClass.addAbility(new SpawnMobAbility(Math.max(6, startingCooldown - playerCount + 1), Mob.ZOMBIE_LANCER, true) {
+        this.playerClass.addAbility(new SpawnMobAbility(AbstractAbilityBuilder.create("narmerSpawnZombieLancer")
+                                                                              .pve()
+                                                                              .cooldown(Math.max(6, startingCooldown - playerCount + 1))
+                                                                              .startNoCooldown()
+                , Mob.ZOMBIE_LANCER
+        ) {
 
             @Override
             public AbstractMob createMob(@Nonnull WarlordsEntity wp) {
@@ -168,7 +174,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 Location location = warlordsNPC.getLocation();
 
                 if (dead.isTeammate(warlordsNPC) && minionsCanHeal.contains(dead.getUuid())) {
-                    EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.VILLAGER_HAPPY, 1, 2, -1);
+                    EffectUtils.playParticleLinkAnimation(dead.getLocation(), location, Particle.HAPPY_VILLAGER, 1, 2, -1);
                     float healing = warlordsNPC.getCurrentHealth() * 1.1f;
                     warlordsNPC.addInstance(InstanceBuilder
                             .healing()
@@ -186,7 +192,7 @@ public class Narmer extends AbstractMob implements BossMob {
                 EffectUtils.playHelixAnimation(
                         location.add(0, 0.15, 0),
                         12,
-                        Particle.SPELL,
+                        Particle.EFFECT,
                         3,
                         60
                 );
@@ -273,7 +279,7 @@ public class Narmer extends AbstractMob implements BossMob {
 
         if (ticksElapsed % 15 == 0) {
             for (WarlordsEntity acolyte : acolytes) {
-                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIP_LAVA);
+                EffectUtils.playParticleLinkAnimation(loc, acolyte.getLocation(), Particle.DRIPPING_LAVA);
             }
         }
     }
@@ -286,12 +292,13 @@ public class Narmer extends AbstractMob implements BossMob {
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORKS_SPARK, 3, 20);
+        EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), 6, Particle.FIREWORK, 3, 20);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
                                                               .withColor(Color.WHITE)
                                                               .with(FireworkEffect.Type.STAR)
                                                               .withTrail()
-                                                              .build());
+                                                              .build()
+        );
 
         if (timesMegaEarthQuakeActivated >= 2) {
             ChallengeAchievements.checkForAchievement(killer, ChallengeAchievements.NEAR_DEATH_EXPERIENCE);
@@ -317,7 +324,7 @@ public class Narmer extends AbstractMob implements BossMob {
         private final List<WarlordsEntity> selfAcolytes = new ArrayList<>(); // spawned acolytes using this ability
 
         public SpawnNarmerAcolyteAbility(Narmer narmer) {
-            super("Narmer Acolyte", 15, false);
+            super(AbstractAbilityBuilder.create("narmerSpawnAcolyte").pve().startFullCooldown());
             this.narmer = narmer;
             this.pveOption = narmer.pveOption;
         }
@@ -344,20 +351,16 @@ public class Narmer extends AbstractMob implements BossMob {
         public List<WarlordsEntity> getSelfAcolytes() {
             return selfAcolytes;
         }
+
     }
 
     private static class GroundShred extends AbstractPveAbility implements Damages<GroundShred.DamageValues> {
 
         private final int earthQuakeRadius = 12;
+        private final DamageValues damageValues = new DamageValues();
 
         public GroundShred() {
-            super(
-                    "Ground Shred",
-                    750,
-                    900,
-                    8,
-                    100
-            );
+            super(AbstractAbilityBuilder.create("narmerGroundShred").pve());
         }
 
         @Override
@@ -365,8 +368,8 @@ public class Narmer extends AbstractMob implements BossMob {
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(wp)
@@ -381,8 +384,6 @@ public class Narmer extends AbstractMob implements BossMob {
             }
             return true;
         }
-
-        private final DamageValues damageValues = new DamageValues();
 
         @Override
         public DamageValues getDamageValues() {
@@ -400,5 +401,7 @@ public class Narmer extends AbstractMob implements BossMob {
             }
 
         }
+
     }
+
 }

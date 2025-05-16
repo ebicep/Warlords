@@ -1,13 +1,13 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.1.2" // Creates a fat jar
+    id("com.gradleup.shadow") version "8.3.5" // Creates a fat jar
     java
     `maven-publish`
     `java-library`
-    id("io.papermc.paperweight.userdev") version "1.5.5"
-    id("xyz.jpenilla.run-paper") version "2.2.0" // Adds runServer and runMojangMappedServer tasks for testing
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0" // Generates plugin.yml
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.10"
+    id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
+    id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0" // Generates plugin.yml based on the Gradle config
 }
 
 group = "com.ebicep"
@@ -16,11 +16,14 @@ description = "Warlords"
 
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 17 on systems that only have JDK 8 installed for example.
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 repositories {
     mavenLocal()
+    mavenCentral()
+    google()
+
     maven {
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
@@ -70,27 +73,50 @@ repositories {
     maven {
         url = uri("https://maven.enginehub.org/repo")
     }
+
+    maven {
+        url = uri("https://repo.onarandombox.com/content/groups/public/")
+    }
+
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT")
+    pluginRemapper("net.fabricmc:tiny-remapper:0.10.4:fat")
+    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+
     implementation("co.aikar:taskchain-bukkit:3.7.2")
+
     implementation("net.dv8tion:JDA:4.4.0_350")
+
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.4")
+
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
+
 //    implementation("com.github.Rapha149.SignGUI:signgui:5232fbd3f6")
-    implementation("io.github.rapha149.signgui:signgui:2.2.1")
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
-    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.4-SNAPSHOT")
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.17")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.33-SNAPSHOT") {
+    implementation("de.rapha149.signgui:signgui:2.5.0")
+
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
+
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.0")
+    implementation("com.google.guava:guava:32.1.3-jre")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("it.unimi.dsi:fastutil:8.5.12")
+
+    compileOnly("net.citizensnpcs:citizens-main:2.0.37-SNAPSHOT") {
         exclude(group = "*", module = "*")
     }
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
+
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.3.0")
+
     compileOnly("net.luckperms:api:5.4")
-    compileOnlyApi("LibsDisguises:LibsDisguises:10.0.38") {
+
+    compileOnlyApi("LibsDisguises:LibsDisguises:10.0.44") {
         exclude("org.spigotmc", "spigot")
     }
+
+    compileOnly("com.onarandombox.multiversecore:multiverse-core:4.3.16")
+
+    implementation("fr.skytasul:guardianbeam:2.4.0")
 }
 
 publishing {
@@ -111,13 +137,14 @@ tasks {
 
         // Set the release flag. This configures what version bytecode the compiler will emit, as well as what JDK APIs are usable.
         // See https://openjdk.java.net/jeps/247 for more information.
-        options.release.set(17)
+        options.release.set(21)
     }
 
 
     javadoc {
         options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
+
     processResources {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
     }
@@ -142,11 +169,10 @@ tasks {
     }
 
     runServer {
-        version.set("1.20.1")
+        version.set("1.21.4")
     }
 
 }
-
 
 tasks.withType<JavaCompile>().configureEach {
 //    doFirst {
@@ -160,20 +186,20 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs.add("-parameters")
     options.isFork = true
+    options.release = 21
 //    options.forkOptions.executable = "javac"
 }
 
-// Configure plugin.yml generation https://github.com/Minecrell/plugin-yml
-bukkit {
-    load = BukkitPluginDescription.PluginLoadOrder.POSTWORLD
+bukkitPluginYaml {
+    load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
     main = "com.ebicep.warlords.Warlords"
-    apiVersion = "1.20"
+    apiVersion = "1.21.4"
     authors = listOf("ebicep", "Plikie")
-    depend = listOf("ProtocolLib", "HolographicDisplays", "Citizens", "Multiverse-Core")
+    depend = listOf("ProtocolLib", "Citizens", "Multiverse-Core")
     commands {
         register("oldtest") {
-            description = "Old test command"
             aliases = listOf("oldtest")
+            description = "Old test command"
             permission = "group.administrator"
         }
     }

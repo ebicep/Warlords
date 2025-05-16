@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -8,12 +9,8 @@ import javax.annotation.Nonnull;
 
 public class RemoveTarget extends AbstractPveAbility {
 
-    public RemoveTarget(float cooldown) {
-        super(
-                "Remove Target",
-                cooldown,
-                100
-        );
+    public RemoveTarget(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override

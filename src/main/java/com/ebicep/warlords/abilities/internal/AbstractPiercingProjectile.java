@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -15,65 +16,122 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
+public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractAbility implements
+        ProjectileAbility,
+        HitBox,
+        AbilityStats<T, R> {
 
-public abstract class AbstractPiercingProjectile extends AbstractAbility implements ProjectileAbility, HitBox {
-
-    public int playersHit = 0;
-    public int playersHitBySplash = 0;
-    public int directHits = 0;
-    public int numberOfDismounts = 0;
-    protected final boolean hitTeammates;
-    protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
-    protected int maxTicks;
+    protected double projectileSpeed;
     protected double maxDistance;
+    protected int maxTicks;
+    protected boolean hitTeammates;
+    protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected float forwardTeleportAmount = 0;
     protected int maxAngleOfShots = 45;
     protected int shotsFiredAtATime = 1;
     protected HashMap<InternalProjectile, List<InternalProjectile>> internalProjectileGroup = new HashMap<>();
-    protected double projectileSpeed;
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
-    public AbstractPiercingProjectile(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates
-    ) {
-        super(name, cooldown, energyCost);
-        this.projectileSpeed = projectileSpeed;
-        this.maxDistance = maxDistance;
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-        this.hitTeammates = hitTeammates;
+    public AbstractPiercingProjectile(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
-    public AbstractPiercingProjectile(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates,
-            float startCooldown
-    ) {
-        super(name, cooldown, energyCost, startCooldown);
-        this.projectileSpeed = projectileSpeed;
-        this.maxDistance = maxDistance;
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), double.class);
+        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), double.class);
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-        this.hitTeammates = hitTeammates;
+        this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        fire(shooter, shooter.getEyeLocation());
+        return true;
+    }
+
+    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
+        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
+        List<InternalProjectile> internalProjectiles = new ArrayList<>();
+        for (Location projectileLocation : projectileLocations) {
+            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
+            internalProjectiles.add(projectile);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            internalProjectileGroup.put(projectile, internalProjectiles);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            onSpawn(projectile);
+            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
+        }
+    }
+
+    /**
+     * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
+     */
+    public List<Location> getLocationsToFireShots(Location startingLocation) {
+        List<Location> locations = new ArrayList<>();
+
+        Location playerLocation = new LocationBuilder(startingLocation.clone()).backward(forwardTeleportAmount);
+        double beginningYaw = playerLocation.getYaw() - (maxAngleOfShots / 2d);
+        double angleBetweenShots = (double) maxAngleOfShots / (shotsFiredAtATime + 1);
+        for (int i = 1; i <= shotsFiredAtATime; i++) {
+            Location locationToAdd = new LocationBuilder(playerLocation.clone())
+                    .yaw((float) (beginningYaw + (angleBetweenShots * i)))
+                    .forward(forwardTeleportAmount);
+            locations.add(locationToAdd);
+        }
+
+        return locations;
+    }
+
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        playSound(projectile);
+    }
+
+    protected void playSound(@Nonnull InternalProjectile projectile) {
+        final String activationSound = getActivationSound();
+        if (activationSound != null) {
+            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, getSoundVolume(), getSoundPitch());
+        }
+    }
+
+    /**
+     * Gets the sound used when this projectile is activated
+     *
+     * @return
+     */
+    @Nullable
+    protected abstract String getActivationSound();
+
+    protected abstract float getSoundVolume();
+
+    protected abstract float getSoundPitch();
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        hitboxInflation.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitboxInflation;
     }
 
     /**
@@ -115,6 +173,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      * @param currentLocation The current location of the projectile
      * @param speed           The speed of the projectile
      * @param shooter         The shooter of the projectile
+     *
      * @return The hit result = block or entity hit or null
      */
     @Nullable
@@ -156,12 +215,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
                 }
             } else {
                 PENDING_HITS.add(new PendingHit(
-                        new Location(
-                                currentLocation.getWorld(),
-                                vec.x,
-                                vec.y,
-                                vec.z
-                        ), distance, wp)
+                                new Location(
+                                        currentLocation.getWorld(),
+                                        vec.x,
+                                        vec.y,
+                                        vec.z
+                                ), distance, wp
+                        )
                 );
             }
         }
@@ -237,11 +297,8 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
     @Nullable
     protected WarlordsEntity getFromEntity(Entity e) {
-        if (e instanceof Horse) {
-            List<Entity> passengers = e.getPassengers();
-            return Warlords.getPlayer(passengers.isEmpty() ? null : passengers.get(0));
-        }
-        return Warlords.getPlayer(e);
+        List<Entity> passengers = e.getPassengers();
+        return Warlords.getPlayer(passengers.isEmpty() ? e : passengers.get(0));
     }
 
     /**
@@ -249,6 +306,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      *
      * @param projectile
      * @param wp
+     *
      * @return true if it should destroy itself
      */
     protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
@@ -258,6 +316,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      *
      * @param projectile
      * @param block
+     *
      * @return true if it should destroy itself
      */
     protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
@@ -280,6 +339,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      *
      * @param shooter
      * @param startingLocation
+     *
      * @return
      */
     protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
@@ -292,86 +352,11 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
      *
      * @param shooter
      * @param startingLocation
+     *
      * @return
      */
     protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
         return startingLocation.getDirection().multiply(projectileSpeed);
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        fire(shooter, shooter.getEyeLocation());
-        return true;
-    }
-
-    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
-        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
-        List<InternalProjectile> internalProjectiles = new ArrayList<>();
-        for (Location projectileLocation : projectileLocations) {
-            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
-            internalProjectiles.add(projectile);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            internalProjectileGroup.put(projectile, internalProjectiles);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            onSpawn(projectile);
-            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
-        }
-    }
-
-    /**
-     * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
-     */
-    public List<Location> getLocationsToFireShots(Location startingLocation) {
-        List<Location> locations = new ArrayList<>();
-
-        Location playerLocation = new LocationBuilder(startingLocation.clone()).backward(forwardTeleportAmount);
-        double beginningYaw = playerLocation.getYaw() - (maxAngleOfShots / 2d);
-        double angleBetweenShots = (double) maxAngleOfShots / (shotsFiredAtATime + 1);
-        for (int i = 1; i <= shotsFiredAtATime; i++) {
-            Location locationToAdd = new LocationBuilder(playerLocation.clone())
-                    .yaw((float) (beginningYaw + (angleBetweenShots * i)))
-                    .forward(forwardTeleportAmount);
-            locations.add(locationToAdd);
-        }
-
-        return locations;
-    }
-
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        playSound(projectile);
-    }
-
-    protected void playSound(@Nonnull InternalProjectile projectile) {
-        final String activationSound = getActivationSound();
-        if (activationSound != null) {
-            Utils.playGlobalSound(projectile.getStartingLocation(), activationSound, getSoundVolume(), getSoundPitch());
-        }
-    }
-
-    /**
-     * Gets the sound used when this projectile is activated
-     *
-     * @return
-     */
-    @Nullable
-    protected abstract String getActivationSound();
-
-    protected abstract float getSoundVolume();
-
-    protected abstract float getSoundPitch();
-
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitboxInflation.tick();
-        super.runEveryTick(warlordsEntity);
-    }
-
-    public int getDirectHits() {
-        return directHits;
     }
 
     public void setShotsFiredAtATime(int shotsFiredAtATime) {
@@ -410,16 +395,13 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return hitboxInflation;
-    }
-
     public interface InternalProjectileTask {
-        void run(InternalProjectile projectile);
 
-        default void onDestroy(InternalProjectile projectile) {
+        void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile);
+
+        default void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
         }
+
     }
 
     private record PendingHit(Location loc, double distance, WarlordsEntity hit) implements Comparable<PendingHit> {
@@ -437,9 +419,64 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
                     ", hit=" + hit +
                     '}';
         }
+
+    }
+
+    public static abstract class AbstractPiercingProjectileStats<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectileStats<T, R>> extends AbstractAbilityStats<T, R> {
+
+        @Field("targets_hit")
+        protected int targetsHit = 0;
+        @Field("targets_hit_by_splash")
+        protected int targetsHitBySplash = 0;
+        @Field("direct_hits")
+        protected int directHits = 0;
+        @Field("number_of_dismounts")
+        protected int numberOfDismounts = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", targetsHit));
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit By Splash", targetsHitBySplash));
+            statsDisplay.add(new AbilityStatDisplay("Direct Hits", directHits));
+            statsDisplay.add(new AbilityStatDisplay("Number of Dismounts", numberOfDismounts));
+            return statsDisplay;
+        }
+
+        @Override
+        public R merge(R other, int multiplier) {
+            R stats = super.merge(other, multiplier);
+            stats.targetsHit = this.targetsHit + other.targetsHit * multiplier;
+            stats.targetsHitBySplash = this.targetsHitBySplash + other.targetsHitBySplash * multiplier;
+            stats.directHits = this.directHits + other.directHits * multiplier;
+            stats.numberOfDismounts = this.numberOfDismounts + other.numberOfDismounts * multiplier;
+            return stats;
+        }
+
+        public int getTargetsHit() {
+            return targetsHit;
+        }
+
+        public void addPlayersHit() {
+            this.targetsHit++;
+        }
+
+        public void addPlayersHitBySplash() {
+            this.targetsHitBySplash++;
+        }
+
+        public void addDirectHits() {
+            this.directHits++;
+        }
+
+        public void addNumberOfDismounts() {
+            this.numberOfDismounts++;
+        }
+
     }
 
     public class InternalProjectile extends BukkitRunnable {
+
         private final List<WarlordsEntity> hit = new ArrayList<>();
         private final List<InternalProjectileTask> tasks = new ArrayList<>();
         private final Location startingLocation;
@@ -494,33 +531,34 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
 
         @Override
         public void run() {
-            if (!shooter.getGame().isFrozen()) {
-                updateSpeed(this);
-                currentLocation.setDirection(speed);
-                HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
-                if (hitResult != null) {
-                    int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
-                                                  getFromEntity(entityHitResult.getEntity().getBukkitEntity()) :
-                                                  null
-                    );
-                    if (hitResult.getType() == HitResult.Type.ENTITY) {
-                        directHits++;
-                    }
-                    if (hitBySplash > 0) {
-                        playersHit++;
-                        playersHitBySplash += hitBySplash;
-                    }
+            if (shooter.getGame().isFrozen()) {
+                return;
+            }
+            updateSpeed(this);
+            currentLocation.setDirection(speed);
+            HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
+            if (hitResult != null) {
+                int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
+                                              getFromEntity(entityHitResult.getEntity().getBukkitEntity()) :
+                                              null
+                );
+                if (hitResult.getType() == HitResult.Type.ENTITY) {
+                    getAbilityStats().directHits++;
+                }
+                if (hitBySplash > 0) {
+                    getAbilityStats().targetsHit++;
+                    getAbilityStats().targetsHitBySplash += hitBySplash;
+                }
+                cancel();
+            } else if (ticksLived >= maxTicks) {
+                cancel();
+            } else {
+                playEffect(this);
+                ticksLived++;
+                blocksTravelled += speed.length();
+                //cancel after 15 seconds
+                if (ticksLived > 15 * 20) {
                     cancel();
-                } else if (ticksLived >= maxTicks) {
-                    cancel();
-                } else {
-                    playEffect(this);
-                    ticksLived++;
-                    blocksTravelled += speed.length();
-                    //cancel after 15 seconds
-                    if (ticksLived > 15 * 20) {
-                        cancel();
-                    }
                 }
             }
         }
@@ -531,6 +569,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
             for (InternalProjectileTask task : tasks) {
                 task.onDestroy(this);
             }
+            internalProjectileGroup.remove(this);
         }
 
         public int getTicksLived() {
@@ -576,5 +615,7 @@ public abstract class AbstractPiercingProjectile extends AbstractAbility impleme
         public double getBlocksTravelled() {
             return blocksTravelled;
         }
+
     }
+
 }

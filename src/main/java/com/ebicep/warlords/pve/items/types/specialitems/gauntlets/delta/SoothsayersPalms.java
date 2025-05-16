@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.items.types.specialitems.gauntlets.delta;
 
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -66,9 +67,10 @@ public class SoothsayersPalms extends SpecialDeltaGauntlet implements AppliesToW
                 //picking random ability
                 AbstractAbility ability = abilities.get(ThreadLocalRandom.current().nextInt(abilities.size()));
                 Player player = event.getPlayer();
-                //temp scuffed account for energy cost
                 ability.onActivate(warlordsPlayer);
-                ability.addTimesUsed();
+                if (ability instanceof AbilityStats<?, ?> abilityStats) {
+                    abilityStats.getAbilityStats().addTimesUsed();
+                }
                 AbstractPlayerClass.sendRightClickPacket(warlordsPlayer);
                 AbstractItem.sendItemMessage(
                         player,

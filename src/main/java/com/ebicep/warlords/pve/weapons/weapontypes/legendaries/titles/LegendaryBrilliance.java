@@ -9,6 +9,7 @@ import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.PassiveCounter;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
@@ -27,10 +28,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class LegendaryBrilliance extends AbstractLegendaryWeapon implements PassiveCounter, EventTitle {
 
+    public static final int HEALTH_THRESHOLD = 55;
+    public static final float HEALTH_THRESHOLD_PER_UPGRADE = 5;
     public static final int HEALING_BOOST = 40;
-    public static final float HEALING_BOOST_PER_UPGRADE = 6.25f;
+    public static final float HEALING_BOOST_PER_UPGRADE = 5f;
     public static final int COOLDOWN = 30;
-    public static final float COOLDOWN_INCREASE_PER_UPGRADE = -1.5f;
+//    public static final float COOLDOWN_INCREASE_PER_UPGRADE = -1.5f;
 
     @Transient
     private final AtomicReference<Instant> lastActivated = new AtomicReference<>(Instant.now().minus(COOLDOWN, ChronoUnit.SECONDS));
@@ -58,6 +61,7 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
         super.applyToWarlordsPlayer(player, pveOption);
 
         float healBoost = 1 + (HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel()) / 100f;
+        float healthThreshold = (HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevel()) / 100f;
         // using runnable not on dmg event bc player can have <30% hp without taking dmg after cooldown is refreshed
         new GameRunnable(player.getGame()) {
 
@@ -66,13 +70,13 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                 if (Instant.now().isBefore(lastActivated.get())) {
                     return;
                 }
-                if (player.getCurrentHealth() < player.getMaxHealth() * .3) {
+                if (player.getCurrentHealth() < player.getMaxHealth() * healthThreshold) {
                     giveHealingBoostCooldown();
                 }
             }
 
             private void giveHealingBoostCooldown() {
-                lastActivated.set(Instant.now().plus((long) (COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel()), ChronoUnit.SECONDS));
+                lastActivated.set(Instant.now().plus(COOLDOWN, ChronoUnit.SECONDS));
                 player.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Brilliance",
                         "BRILL",
@@ -106,13 +110,14 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
 
     @Override
     public TextComponent getPassiveEffect() {
+        float threshold = HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevel();
         float outgoingHealingBoost = HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevel();
-        float cooldown = COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel();
-        return Component.text("When your health falls below 30%, incoming and outgoing healing increases by ", NamedTextColor.GRAY)
-                        .append(formatTitleUpgrade(outgoingHealingBoost, "%"))
-                        .append(Component.text(" for 10s. Can be triggered once every "))
-                        .append(formatTitleUpgrade(cooldown, "s"))
-                        .append(Component.text("."));
+        return ComponentBuilder.create("When your health falls below ", NamedTextColor.GRAY)
+                               .append(formatTitleUpgrade(threshold, "%"))
+                               .text(", incoming and outgoing healing increases by ")
+                               .append(formatTitleUpgrade(outgoingHealingBoost, "%"))
+                               .text(" for 10s. Can be triggered once every " + COOLDOWN + " seconds.")
+                               .build();
     }
 
     @Override
@@ -167,8 +172,8 @@ public class LegendaryBrilliance extends AbstractLegendaryWeapon implements Pass
                         formatTitleUpgrade(HEALING_BOOST + HEALING_BOOST_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
                 new Pair<>(
-                        formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(COOLDOWN + COOLDOWN_INCREASE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+                        formatTitleUpgrade(HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(HEALTH_THRESHOLD + HEALTH_THRESHOLD_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 )
         );
     }

@@ -95,7 +95,9 @@ public class AdminCommand extends BaseCommand {
     public void togglePlayerServiceMessages(CommandIssuer issuer, ChatUtils.MessageType messageType) {
         messageType.setEnabled(!messageType.isEnabled());
         ChatChannels.sendDebugMessage(issuer,
-                Component.text((messageType.isEnabled() ? "Enabled" : "Disabled") + " PlayerService messages.", messageType.isEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED)
+                Component.text((messageType.isEnabled() ? "Enabled" : "Disabled") + " " + messageType.name + " messages.",
+                        messageType.isEnabled() ? NamedTextColor.GREEN : NamedTextColor.RED
+                )
         );
     }
 
@@ -121,16 +123,13 @@ public class AdminCommand extends BaseCommand {
 
     @Subcommand("bypassinteract")
     @Description("Bypasses interact cancel")
-    public void bypassInteract(CommandIssuer issuer) {
-        if (issuer.isPlayer()) {
-            Player player = issuer.getIssuer();
-            if (BYPASS_INTERACT_CANCEL.contains(player.getUniqueId())) {
-                BYPASS_INTERACT_CANCEL.remove(player.getUniqueId());
-                ChatChannels.sendDebugMessage(player, Component.text("Disabled Bypassing Interact Cancel", NamedTextColor.GREEN));
-            } else {
-                BYPASS_INTERACT_CANCEL.add(player.getUniqueId());
-                ChatChannels.sendDebugMessage(player, Component.text("Enabled Bypassing Interact Cancel", NamedTextColor.GREEN));
-            }
+    public void bypassInteract(CommandIssuer issuer, @Flags("other") Player target) {
+        if (BYPASS_INTERACT_CANCEL.contains(target.getUniqueId())) {
+            BYPASS_INTERACT_CANCEL.remove(target.getUniqueId());
+            ChatChannels.sendDebugMessage(target, Component.text("Disabled Bypassing Interact Cancel for " + target.getName(), NamedTextColor.GREEN));
+        } else {
+            BYPASS_INTERACT_CANCEL.add(target.getUniqueId());
+            ChatChannels.sendDebugMessage(target, Component.text("Enabled Bypassing Interact Cancel for " + target.getName(), NamedTextColor.GREEN));
         }
     }
 

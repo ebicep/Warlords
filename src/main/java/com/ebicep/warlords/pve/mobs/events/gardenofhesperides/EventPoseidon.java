@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -58,13 +59,9 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new EarthenSpike(6, 6) {
-                    {
-                        this.getDamageValues().getSpikeDamage().min().setBaseValue(600);
-                        this.getDamageValues().getSpikeDamage().max().setBaseValue(700);
-                    }
+                new EarthenSpike(AbstractAbilityBuilder.create("poseidonEarthenSpike").pve().startCooldown(6)) {
                     @Override
-                    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+                    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
                         List<WarlordsEntity> spiked = new ArrayList<>();
                         float rad = 10;
                         for (WarlordsEntity spikeTarget : PlayerFilter
@@ -79,7 +76,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                             spikeTarget(wp, spikeTarget);
 
                             if (spiked.size() >= 3) {
-                                addTimesUsed();
+                                getAbilityStats().addTimesUsed();
                                 break;
                             }
                         }
@@ -103,7 +100,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                             int newCrippleCounter = Math.min(data.consecutiveStrikeCounter() + 1, 2);
                             CripplingStrike.cripple(caster,
                                     spikeTarget,
-                                    name,
+                                    null, name,
                                     newCrippleCounter,
                                     2 * 20,
                                     convertToDivisionDecimal(10) - newCrippleCounter * convertToPercent(5)
@@ -116,11 +113,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         }
                     }
                 },
-                new Boulder(5, 5) {
-                    {
-                        this.getDamageValues().getBoulderDamage().min().setBaseValue(551);
-                        this.getDamageValues().getBoulderDamage().max().setBaseValue(773);
-                    }
+                new Boulder(AbstractAbilityBuilder.create("poseidonBoulder").pve().startCooldown(5)) {
                     @Override
                     protected Vector calculateSpeed(WarlordsEntity we) {
                         Location location = we.getLocation();
@@ -136,11 +129,8 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                         return speed;
                     }
                 },
-                new GroundSlamBerserker(10, 10) {{
-                    this.getDamageValues().getSlamDamage().min().setBaseValue(558);
-                    this.getDamageValues().getSlamDamage().max().setBaseValue(616);
-                }},
-                new LastStand(60f, 60)
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("poseidonGroundSlamBerserker").pve().startCooldown(10)),
+                new LastStand(AbstractAbilityBuilder.create("poseidonLastStand").pve().startCooldown(60))
         );
     }
 

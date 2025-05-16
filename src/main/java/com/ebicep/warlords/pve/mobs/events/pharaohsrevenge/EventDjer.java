@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.pharaohsrevenge;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -126,7 +127,7 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
         private final int earthQuakeRadius = 12;
 
         public GroundShred() {
-            super("Ground Shred", 5, 50);
+            super(AbstractAbilityBuilder.create("djerGroundShred").pve());
         }
 
         @Override
@@ -134,8 +135,8 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORK, 2, 40);
             List<WarlordsPlayer> warlordsPlayers = PlayerFilterGeneric
                     .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(wp)

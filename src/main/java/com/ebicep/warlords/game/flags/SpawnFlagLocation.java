@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FlagMessageMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -20,26 +20,31 @@ import java.util.List;
 
 public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
 
+    private static final int INITIAL_MULTIPLIER_DECREASE = 20;
+    private static final int MULTIPLIER_DECAY_PERIOD = 20; // ticks
+    private static final int MULTIPLIER_DECAY_AMOUNT = 5;
+
     @Nullable
     private final WarlordsEntity flagReturner;
+    private int ticksElapsed = 0;
+    private int flagMultiplier;
 
     public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsEntity flagReturner) {
-        super(location);
-        this.flagReturner = flagReturner;
+        this(location, flagReturner, 0);
     }
 
-    /**
-     * Get the player who returned the flag
-     *
-     * @return the flag returner, or null is the flag automatically moved back
-     */
-    @Nullable
-    public WarlordsEntity getFlagReturner() {
-        return flagReturner;
+    public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsEntity flagReturner, int flagMultiplier) {
+        super(location);
+        this.flagReturner = flagReturner;
+        this.flagMultiplier = flagMultiplier;
     }
 
     @Override
-    public FlagLocation update(@Nonnull FlagInfo info) {
+    public FlagLocation update(Game game, @Nonnull FlagInfo info) {
+        this.ticksElapsed++;
+//        if (ticksElapsed % MULTIPLIER_DECAY_PERIOD == 0) {
+//            flagMultiplier = Math.max(0, flagMultiplier - MULTIPLIER_DECAY_AMOUNT);
+//        }
         return null;
     }
 
@@ -59,7 +64,6 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
         NamedTextColor teamColor = eventTeam.getTeamColor();
         Component coloredPrefix = eventTeam.coloredPrefix();
 
-
         WarlordsEntity toucher = getFlagReturner();
         if (event.getOld() instanceof GroundFlagLocation) {
             if (toucher != null) {
@@ -72,7 +76,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                                                      .append(Component.text(" has returned the "))
                                                      .append(coloredPrefix)
                                                      .append(Component.text(" flag!"));
-                    if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                         if (sameTeam) {
                             flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                    .append(toucherColoredName)
@@ -100,7 +104,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                 }));
             } else {
                 game.forEachOnlinePlayer((p, t) -> DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> {
-                    if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                    if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                         if (t == eventTeam) {
                             p.sendMessage(Component.text("", NamedTextColor.YELLOW)
                                                    .append(Component.text("YOUR", teamColor))
@@ -121,5 +125,23 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
                 }));
             }
         }
+    }
+
+    /**
+     * Get the player who returned the flag
+     *
+     * @return the flag returner, or null is the flag automatically moved back
+     */
+    @Nullable
+    public WarlordsEntity getFlagReturner() {
+        return flagReturner;
+    }
+
+    public int getFlagMultiplier() {
+        return flagMultiplier;
+    }
+
+    public void setFlagMultiplier(int flagMultiplier) {
+        this.flagMultiplier = flagMultiplier;
     }
 }

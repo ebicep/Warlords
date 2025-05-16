@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.HitBox;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.towerdefense.attributes.upgradeable.TowerUpgrade;
@@ -90,11 +87,11 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public BoltAttack() {
-            super("Bolt Attack", 1, 0);
+            super(AbstractAbilityBuilder.create("boltAttack").td().cooldown(1).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 AbstractTower tower = warlordsTower.getTower();
                 tower.getEnemyMobs(range, 1).forEach(warlordsNPC -> {
@@ -120,7 +117,7 @@ public class AquamancerTower extends AbstractTower implements Upgradeable.Path2 
 //                Location effectLocation = warlordsNPC.getLocation().add(0, npcEntity.getHeight(), 0);
 //                Utils.playGlobalSound(effectLocation, "mage.waterbolt.impact", 2, 1);
 //                EffectUtils.playCircularEffectAround(
-//                        Particle.DRIP_WATER,
+//                        Particle.DRIPPING_WATER,
 //                        effectLocation,
 //                        npcEntity.getBoundingBox().getWidthX()
 //                );

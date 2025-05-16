@@ -4,6 +4,7 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.customentities.npc.traits.GameEventTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.commands.debugcommands.game.GameStartCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.events.EventLeaderboard;
@@ -155,6 +156,8 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 1000L);
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
+                    put(Currencies.TITLE_TOKEN_JUGGERNAUT, 1L);
                 }};
             }
             if (11 <= position && position <= 20) {
@@ -1005,6 +1008,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 1_000L);
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
                     put(Currencies.TITLE_TOKEN_GARDEN_OF_HESPERIDES, 1L);
                 }};
             }
@@ -1260,6 +1264,7 @@ public enum GameEvents {
                     put(Currencies.LEGEND_FRAGMENTS, 1_000L);
                     put(Currencies.FAIRY_ESSENCE, 500L);
                     put(Currencies.RARE_STAR_PIECE, 5L);
+                    put(Currencies.LIMIT_BREAKER, 1L);
                     put(Currencies.TITLE_TOKEN_LIBRARY_ARCHIVES, 1L);
                 }};
             }
@@ -1450,15 +1455,17 @@ public enum GameEvents {
                                 Component.text(unlocked ? codexForSpec.name : "???????????", NamedTextColor.GRAY)
                                          .decoration(TextDecoration.OBFUSCATED, !unlocked)
                         ));
-                for (Ability ability : codexForSpec.abilities) {
+                for (Ability<?> ability : codexForSpec.abilities) {
+                    AbstractAbility abstractAbility = ability.create.get();
+                    abstractAbility.init(abstractAbility.getBuilder());
                     itemBuilder.addLore(Component.textOfChildren(
                             Component.text(" - ", NamedTextColor.DARK_GRAY),
-                            Component.text(unlocked ? ability.create.get().getName() : "??????????", NamedTextColor.GOLD)
+                            Component.text(unlocked ? abstractAbility.getName() : "??????????", NamedTextColor.GOLD)
                                      .decoration(TextDecoration.OBFUSCATED, !unlocked)
                     ));
                 }
                 if (unlocked) {
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                 }
                 menu.setItem(x, y, itemBuilder.get(), (m, e) -> {});
                 y++;

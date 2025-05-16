@@ -239,8 +239,8 @@ public class TowerBuildOption implements Option, Listener {
         LocationBuilder bottomRightCorner = new LocationBuilder(location).yaw(0); // facing south
         TowerDefenseUtils.alignToBottomRightCorner(tower, type, bottomRightCorner);
 
-        debugParticle(location.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
-        debugParticle(bottomRightCorner.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
+        debugParticle(location.clone().add(.5, 1, .5), Particle.HAPPY_VILLAGER);
+        debugParticle(bottomRightCorner.clone().add(.5, 1, .5), Particle.HAPPY_VILLAGER);
 
         int plotSize = TowerRegistry.getTowerSize(bottomRightCorner, b -> b.getType() != type);
         if (plotSize < tower.getSize()) {
@@ -291,7 +291,7 @@ public class TowerBuildOption implements Option, Listener {
                         debugParticle(locationToCheck.clone().add(.5, 2, .5), Particle.FLAME);
                         return false;
                     } else {
-                        debugParticle(locationToCheck.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
+                        debugParticle(locationToCheck.clone().add(.5, 1, .5), Particle.HAPPY_VILLAGER);
                     }
                 }
             }
@@ -331,7 +331,7 @@ public class TowerBuildOption implements Option, Listener {
                     debugParticle(locationToCheck.clone().add(.5, 1, .5), Particle.FLAME);
                     return false;
                 } else {
-                    debugParticle(locationToCheck.clone().add(.5, 1, .5), Particle.VILLAGER_HAPPY);
+                    debugParticle(locationToCheck.clone().add(.5, 1, .5), Particle.HAPPY_VILLAGER);
                 }
                 if (lowestX == null || locationToCheck.getX() < lowestX) {
                     lowestX = locationToCheck.getBlockX();

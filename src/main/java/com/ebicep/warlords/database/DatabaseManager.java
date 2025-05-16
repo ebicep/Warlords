@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.PlayerLeaderboardInfo;
 import com.ebicep.warlords.database.leaderboards.guilds.GuildLeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.events.GameEventsService;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GameService;
@@ -39,6 +40,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -50,6 +52,7 @@ public class DatabaseManager {
             put(value, new ConcurrentHashMap<>());
         }
     }};
+    public static final DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
     private static final AtomicInteger UPDATE_COOLDOWN = new AtomicInteger(0);
     private static final ConcurrentHashMap<PlayersCollections, Set<DatabasePlayer>> PLAYERS_TO_UPDATE = new ConcurrentHashMap<>() {{
         for (PlayersCollections value : PlayersCollections.VALUES) {
@@ -80,7 +83,6 @@ public class DatabaseManager {
     public static WeeklyBlessingsService weeklyBlessingsService;
     public static IllusionVendorService illusionVendorService;
     public static boolean enabled = true;
-    private static DatabasePlayer CACHED_MOB_DATABASEPLAYER = new DatabasePlayer();
 
     public static void init() {
         if (!enabled) {
@@ -109,6 +111,7 @@ public class DatabaseManager {
             gameEventsService = context.getBean("gameEventsService", GameEventsService.class);
             weeklyBlessingsService = context.getBean("itemsWeeklyBlessingsService", WeeklyBlessingsService.class);
             illusionVendorService = context.getBean("illusionVendorService", IllusionVendorService.class);
+            ConfigManager.loadConfigs(warlordsDatabase);
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
             return;
@@ -133,6 +136,12 @@ public class DatabaseManager {
                     DatabaseTiming.checkTimings();
                     GuildLeaderboardManager.recalculateAllLeaderboards();
                     GuildManager.reloadPlayerCaches();
+                })
+                .delay(20, TimeUnit.SECONDS)
+                .sync(() -> {
+                    if (!StatsLeaderboardManager.enabled) {
+                        DatabaseTiming.checkLeaderboardResets();
+                    }
                 })
                 .execute();
 
@@ -159,12 +168,13 @@ public class DatabaseManager {
         ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loading Last Games");
         long gameStart = System.nanoTime();
         Warlords.newChain()
-                .asyncFirst(() -> gameService.getLastGames(15))
+                .asyncFirst(() -> gameService.getLastGames(DatabaseGameBase.MAX_GAMES))
                 .syncLast((games) -> {
                     ChatUtils.MessageType.GAME_SERVICE.sendMessage("Loaded Last Games in " + (System.nanoTime() - gameStart) / 1000000 + "ms");
                     DatabaseGameBase.previousGames.addAll(games);
                     StatsLeaderboardManager.PLAYER_LEADERBOARD_INFOS.values().forEach(PlayerLeaderboardInfo::resetGameHologram);
                     Bukkit.getOnlinePlayers().forEach(DatabaseGameBase::setGameHologramVisibility);
+                    DatabaseGameBase.createGameSwitcherHologram();
                     ChatUtils.MessageType.GAME_SERVICE.sendMessage("Set Game Hologram Visibility");
                 })
                 .execute();

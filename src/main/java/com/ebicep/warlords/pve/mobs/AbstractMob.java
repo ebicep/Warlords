@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.customentities.nms.pve.pathfindergoals.NPCTargetAggroWarlordsEntityGoal;
 import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
@@ -63,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public abstract class AbstractMob implements Mob {
 
@@ -146,7 +148,7 @@ public abstract class AbstractMob implements Mob {
         defaultParameters.attackStrategy(CustomAttackStrategy.ATTACK_STRATEGY);
         defaultParameters.attackRange(getDefaultAttackRange())
                          .stuckAction(null) // disable tping to player if too far away
-                         .updatePathRate(5)
+                         .updatePathRate(6)
                          .distanceMargin(.5)
                          .speedModifier(.9f)
                          .range(100);
@@ -170,6 +172,7 @@ public abstract class AbstractMob implements Mob {
             }
         }
 
+        this.npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> 0f);
         this.npc.data().set(NPC.Metadata.COLLIDABLE, true);
         this.npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, entityType != EntityType.PLAYER);
         this.npc.data().set(NPC.Metadata.KEEP_CHUNK_LOADED, true);
@@ -212,7 +215,7 @@ public abstract class AbstractMob implements Mob {
                 meleeCritMutiplier,
                 this,
                 playerClass,
-                new MobHologram.TextDisplayHologram(.1f) {
+                new MobHologram.TextDisplayHologram(.5f) {
 
                     @Nullable
                     @Override
@@ -247,6 +250,10 @@ public abstract class AbstractMob implements Mob {
         }
 
         return warlordsNPC;
+    }
+
+    public double getDefaultAttackRange() {
+        return 2;
     }
 
     public void giveGoals() {
@@ -294,6 +301,10 @@ public abstract class AbstractMob implements Mob {
         handleAspects(option);
     }
 
+    public Component getColoredName() {
+        return Component.text(name, getColor());
+    }
+
     protected void handleAspects(PveOption option) {
         // null checks to handle manual spawns with aspects
         if (this.aspect == null &&
@@ -305,10 +316,6 @@ public abstract class AbstractMob implements Mob {
         if (this.aspect != null) {
             this.aspect.apply(warlordsNPC);
         }
-    }
-
-    public Component getColoredName() {
-        return Component.text(name, getColor());
     }
 
     public void whileAlive(int ticksElapsed, PveOption option) {
@@ -336,7 +343,9 @@ public abstract class AbstractMob implements Mob {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(warlordsNPC, null, ability, -1);
                 Bukkit.getPluginManager().callEvent(post);
 
-                ability.addTimesUsed();
+                if (ability instanceof AbilityStats<?, ?> abilityStats) {
+                    abilityStats.getAbilityStats().addTimesUsed();
+                }
                 if (!warlordsNPC.isDisableCooldowns()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());
                 }
@@ -372,6 +381,12 @@ public abstract class AbstractMob implements Mob {
         dropWeapon(killer);
         dropMobDrop(killer);
         dropItem(killer);
+    }
+
+    /**
+     * Method is guaranteed to be called after the mob has been killed/removed from game
+     */
+    public void cleanup(PveOption pveOption) {
     }
 
     public void dropWeapon(WarlordsEntity killer) {
@@ -641,16 +656,6 @@ public abstract class AbstractMob implements Mob {
 
     public PveOption getPveOption() {
         return pveOption;
-    }
-
-    /**
-     * Method is guaranteed to be called after the mob has been killed/removed from game
-     */
-    public void cleanup(PveOption pveOption) {
-    }
-
-    public double getDefaultAttackRange() {
-        return 2;
     }
 
 }

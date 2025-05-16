@@ -2,6 +2,7 @@ package com.ebicep.warlords.achievements.types;
 
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.GameMode;
@@ -226,7 +227,7 @@ public enum ChallengeAchievements implements Achievement {
                                    .enemiesOf(warlordsEntity)
                                    .filter(enemy -> new CooldownFilter<>(enemy, RegularCooldown.class)
                                            .filterCooldownFrom(warlordsEntity)
-                                           .filterCooldownClassAndMapToObjectsOfClass(ImpalingStrike.class)
+                                           .filterCooldownClassAndMapToObjectsOfClass(ImpalingStrike.ImpalingStrikeData.class)
                                            .anyMatch(impalingStrike -> impalingStrike.getHealingDoneFromEnemyCarrier() >= 3000))
                                    .findAny()
                                    .isPresent();
@@ -264,7 +265,7 @@ public enum ChallengeAchievements implements Achievement {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
                         .filter(regularCooldown -> regularCooldown.getStartingTicks() - regularCooldown.getTicksLeft() <= 20)
-                        .filterCooldownClassAndMapToObjectsOfClass(Intervene.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(Intervene.InterveneData.class)
                         .anyMatch(intervene -> intervene.getDamagePrevented() >= 2000);
             }
     ),
@@ -278,7 +279,7 @@ public enum ChallengeAchievements implements Achievement {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent != null && lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
                     return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.UndyingArmyData.class)
                             .anyMatch(undyingArmy -> undyingArmy.getPlayersPopped().getOrDefault(warlordsEntity, false));
                 }
                 return false;
@@ -326,7 +327,7 @@ public enum ChallengeAchievements implements Achievement {
                 WarlordsDamageHealingFinalEvent lastDamageEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 if (lastDamageEvent != null && lastDamageEvent.isDead() && lastDamageEvent.isHasFlag()) {
                     return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.InspiringPresenceData.class)
                             .anyMatch(inspiringPresence -> inspiringPresence.getPlayersAffected().size() >= 4);
                 }
                 return false;
@@ -348,9 +349,9 @@ public enum ChallengeAchievements implements Achievement {
                                                   .filter(RegularCooldown.class::isInstance)
                                                   .map(RegularCooldown.class::cast)
                                                   .anyMatch(regularCooldown ->
-                                                          regularCooldown.getCooldownObject() instanceof ArcaneShield ||
-                                                                  regularCooldown.getCooldownObject() instanceof IceBarrier ||
-                                                                  regularCooldown.getCooldownObject() instanceof LastStand
+                                                          regularCooldown.getCooldownClass().equals(Shield.class) ||
+                                                                  regularCooldown.getCooldownClass().equals(IceBarrier.class) ||
+                                                                  regularCooldown.getCooldownClass().equals(LastStand.LastStandData.class)
                                                   )
                     ) {
                         carrier = event.getWarlordsEntity();
@@ -408,8 +409,8 @@ public enum ChallengeAchievements implements Achievement {
                                     .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
                                     .filter(PersistentCooldown.class::isInstance)
                                     .map(PersistentCooldown.class::cast)
-                                    .filter(persistentCooldown -> Objects.equals(persistentCooldown.getCooldownClass(), Soulbinding.class))
-                                    .map(persistentCooldown -> ((Soulbinding) persistentCooldown.getCooldownObject()))
+                                    .filter(persistentCooldown -> Objects.equals(persistentCooldown.getCooldownClass(), Soulbinding.SoulbindingData.class))
+                                    .map(persistentCooldown -> ((Soulbinding.SoulbindingData) persistentCooldown.getCooldownObject()))
                                     .anyMatch(soulbinding -> soulbinding.getAllProcedPlayers().stream()
                                                                         .filter(wp -> wp == event.getWarlordsEntity())
                                                                         .count() >= 10
@@ -606,8 +607,8 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.class)
-                        .anyMatch(avengersWrath -> avengersWrath.getPlayersStruckDuringWrath() >= 40 && avengersWrath.getPlayersKilledDuringWrath() >= 12);
+                        .filterCooldownClassAndMapToObjectsOfClass(AvengersWrath.AvengersWrathData.class)
+                        .anyMatch(avengersWrath -> avengersWrath.getTargetsStruckDuringWrath() >= 40 && avengersWrath.getTargetsKilledDuringWrath() >= 12);
             }
     ),
     PORTABLE_ENERGIZER("Portable Energizer",
@@ -619,7 +620,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(InspiringPresence.InspiringPresenceData.class)
                         .anyMatch(inspiringPresence -> inspiringPresence.getEnergyGivenFromStrikeAndPresence() >= 800);
             }
     ),
@@ -632,7 +633,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                         .anyMatch(hammerOfLight -> hammerOfLight.getAmountHealed() >= 15000);
             }
     ),
@@ -645,7 +646,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(BloodLust.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(BloodLust.BloodLustData.class)
                         .anyMatch(bloodLust -> bloodLust.getAmountHealed() >= 18000);
             }
     ),
@@ -658,7 +659,7 @@ public enum ChallengeAchievements implements Achievement {
             warlordsEntity -> {
                 return new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
                         .filterCooldownFrom(warlordsEntity)
-                        .filterCooldownClassAndMapToObjectsOfClass(LastStand.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(LastStand.LastStandData.class)
                         .anyMatch(lastStand -> lastStand.getAmountPrevented() >= 30000);
             }
     ),

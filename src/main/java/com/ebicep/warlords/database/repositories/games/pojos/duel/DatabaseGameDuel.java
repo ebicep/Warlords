@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.duel;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -7,8 +8,8 @@ import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.StringUtils;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
@@ -73,11 +74,10 @@ public class DatabaseGameDuel extends DatabaseGameBase<DatabaseGamePlayerDuel> {
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        hologram.getLines().appendText(ChatColor.GRAY + date);
-        hologram.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
-        hologram.getLines().appendText(ChatColor.YELLOW + "Winner: " + winner.getTeamColor() + winner.name);
+    public void appendLastGameStats(ComponentBuilder componentBuilder) {
+        componentBuilder.newLine(ChatColor.GRAY + date);
+        componentBuilder.newLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
+        componentBuilder.newLine(ChatColor.YELLOW + "Winner: " + winner.getTeamColor() + winner.name);
     }
 
     @Override

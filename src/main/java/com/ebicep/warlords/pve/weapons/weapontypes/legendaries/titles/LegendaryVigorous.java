@@ -1,11 +1,13 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.LegendaryTitles;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -14,15 +16,16 @@ import org.bukkit.entity.Player;
 import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     public static final int EPS = 25;
-    public static final int EPS_PER_UPGRADE = 4;
+    public static final int EPS_PER_UPGRADE = 3;
     public static final int DURATION = 10;
+    public static final int DURATION_PER_UPGRADE = 1;
 
     @Transient
     private LegendaryVigorousAbility ability;
@@ -39,10 +42,19 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
     }
 
     @Override
+    public void cleanup() {
+        super.cleanup();
+        ability = null;
+    }
+
+    @Override
     public TextComponent getPassiveEffect() {
-        return Component.text("", NamedTextColor.GRAY)
-                        .append(formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()))
-                        .append(Component.text(" energy per second for " + DURATION + " seconds. Can be triggered every 30 seconds."));
+        return ComponentBuilder.create("", NamedTextColor.GRAY)
+                               .append(formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()))
+                               .text(" energy per second for ")
+                               .append(formatTitleUpgrade(DURATION + DURATION_PER_UPGRADE * getTitleLevel(), "s"))
+                               .text(". Can be triggered every 30 seconds.")
+                               .build();
     }
 
     @Override
@@ -57,7 +69,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public void resetAbility() {
-        ability = new LegendaryVigorousAbility(EPS + EPS_PER_UPGRADE * getTitleLevel());
+        ability = new LegendaryVigorousAbility(EPS + EPS_PER_UPGRADE * getTitleLevel(), DURATION + DURATION_PER_UPGRADE * getTitleLevel());
     }
 
     @Override
@@ -77,7 +89,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     protected float getEnergyPerSecondBonusValue() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -97,19 +109,27 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Collections.singletonList(new Pair<>(
-                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()),
-                formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevelUpgraded())
-        ));
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevel()),
+                        formatTitleUpgrade("+", EPS + EPS_PER_UPGRADE * getTitleLevelUpgraded())
+                ),
+                new Pair<>(
+                        formatTitleUpgrade(DURATION + DURATION_PER_UPGRADE * getTitleLevel(), "s"),
+                        formatTitleUpgrade(DURATION + DURATION_PER_UPGRADE * getTitleLevelUpgraded(), "s")
+                )
+        );
     }
 
     static class LegendaryVigorousAbility extends AbstractAbility {
 
         private final float energyPerSecond;
+        private final int duration;
 
-        public LegendaryVigorousAbility(float energyPerSecond) {
-            super("Vigorous", 30, 0);
+        public LegendaryVigorousAbility(float energyPerSecond, int duration) {
+            super(AbstractAbilityBuilder.create("vigorous").weapon());
             this.energyPerSecond = energyPerSecond;
+            this.duration = duration;
         }
 
         @Override
@@ -121,7 +141,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "LegendaryVigorous",
                     "VIGOR",
@@ -131,7 +151,7 @@ public class LegendaryVigorous extends AbstractLegendaryWeapon {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    DURATION * 20
+                    duration * 20
             ) {
                 @Override
                 public float addEnergyGainPerTick(float energyGainPerTick) {

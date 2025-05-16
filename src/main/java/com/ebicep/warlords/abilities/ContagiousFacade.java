@@ -1,9 +1,8 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -11,11 +10,9 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.arcanist.conjurer.ContagiousFacadeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -26,6 +23,8 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,65 +32,70 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration {
+public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon, Duration, AbilityStats<ContagiousFacade, ContagiousFacade.ContagiousFacadeStats> {
 
+    private final ContagiousFacadeStats stats = new ContagiousFacadeStats();
     private FloatModifiable damageAbsorption = new FloatModifiable(30);
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
     private double poisonRadius = 8;
     private int speedIncrease = 40;
     private int speedIncreaseDuration = 100;
-
-    public int timesReactivated = 0;
-    public int totalHexesInflicted = 0;
-    public float totalShieldGained = 0;
+    private int stacksGranted = 2;
+    private int infectedPlayers = 2;
 
     public ContagiousFacade() {
-        super("Contagious Facade", 30, 20);
+        super(AbstractAbilityBuilder.create("contagiousFacade").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.damageAbsorption = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageAbsorption"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.shieldTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldTickDuration"), int.class);
+        this.poisonRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("poisonRadius"), float.class);
+        this.speedIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedIncrease"), int.class);
+        this.speedIncreaseDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedIncreaseDuration"), int.class);
+        this.stacksGranted = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stacksGranted"), int.class);
+        this.infectedPlayers = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("infectedPlayers"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Cover yourself in a protective layer that absorbs ")
-                               .append(Component.text(format(damageAbsorption.getCalculatedValue()) + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" of all incoming damage for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. "))
-                               .append(Component.text("\n\nReactivate the ability to increase your speed by"))
-                               .append(Component.text(speedIncrease + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(speedIncreaseDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text("seconds and inflict "))
-                               .append(Component.text("3", NamedTextColor.BLUE))
-                               .append(Component.text(" stacks of Poisonous Hex on "))
-                               .append(Component.text("2", NamedTextColor.RED))
-                               .append(Component.text(" nearby enemies in an "))
-                               .append(Component.text(format(poisonRadius), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks radius."))
-                               .append(Component.text("\n\nNot reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts "))
-                               .append(Component.text(format(shieldTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
+        description = AbilityDescriptionBuilder.create("Cover yourself in a protective layer that absorbs ")
+                                               .percent(damageAbsorption, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" of all incoming damage for ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Reactivate the ability to increase your speed by")
+                                               .percent(speedIncrease, NamedTextColor.WHITE)
+                                               .text(" for ")
+                                               .durationTicks(speedIncreaseDuration)
+                                               .text(" and inflict ")
+                                               .text(stacksGranted, NamedTextColor.BLUE)
+                                               .text(" stacks of ")
+                                               .text("PHEX", NamedTextColor.DARK_RED)
+                                               .text(" on ")
+                                               .text(infectedPlayers, NamedTextColor.BLUE)
+                                               .text(" enemies within ")
+                                               .blocks(poisonRadius)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Not reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts ")
+                                               .durationTicks(shieldTickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Times Reactivated", "" + timesReactivated));
-        info.add(new Pair<>("Total Hexes Inflicted", "" + totalHexesInflicted));
-        info.add(new Pair<>("Total Shield Gained", "" + Math.round(totalShieldGained)));
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "arcanist.contagiousfacade.activation", 2, 1.4f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_CAST_SPELL, 2, 0.7f);
         EffectUtils.playHelixAnimation(wp.getLocation().add(0, 0.25, 0), 3, Particle.CHERRY_LEAVES, 3, 20);
         AtomicDouble totalAbsorbed = new AtomicDouble(0);
-        RegularCooldown<ContagiousFacade> protectiveLayerCooldown = new RegularCooldown<>(
-                name,
+        RegularCooldown<ContagiousFacade> protectiveLayerCooldown = new RegularCooldown<>(name,
                 "FACADE",
                 ContagiousFacade.class,
                 new ContagiousFacade(),
@@ -101,34 +105,24 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                     if (!wp.isAlive()) {
                         return;
                     }
-
                     Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.4f);
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
                     float shieldHealth = (float) totalAbsorbed.get();
-                    totalShieldGained += shieldHealth;
+                    stats.totalShieldGained += shieldHealth;
                     Shield shield = new Shield(name, shieldHealth);
-                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                            name + " Shield",
-                            "SHIELD",
-                            Shield.class,
-                            shield,
-                            wp,
-                            CooldownTypes.ABILITY,
-                            cooldownManager1 -> {
-                            },
-                            cooldownManager1 -> {
-                            },
-                            shieldTickDuration,
-                            Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                                if (ticksElapsed % 3 == 0) {
-                                    Location location = wp.getLocation();
-                                    location.add(0, 1.5, 0);
-                                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
-                                    EffectUtils.displayParticle(Particle.FIREWORKS_SPARK, location, 1, 0.3, 0.3, 0.3, 0.0001);
-                                    EffectUtils.displayParticle(Particle.SPELL_WITCH, location, 1, 0.3, 0.3, 0.3, 0);
-                                }
-                            })
+                    wp.getCooldownManager().addCooldown(new RegularCooldown<>(name + " Shield", "SHIELD", Shield.class, shield, wp, CooldownTypes.ABILITY, cooldownManager1 -> {
+                    }, cooldownManager1 -> {
+                    }, shieldTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        if (ticksElapsed % 3 == 0) {
+                            Location location = wp.getLocation();
+                            location.add(0, 1.5, 0);
+                            EffectUtils.displayParticle(Particle.CHERRY_LEAVES, location, 2, 0.15, 0.3, 0.15, 0.01);
+                            EffectUtils.displayParticle(Particle.FIREWORK, location, 1, 0.3, 0.3, 0.3, 0.0001);
+                            EffectUtils.displayParticle(Particle.WITCH, location, 1, 0.3, 0.3, 0.3, 0);
+                        }
+                    })
                     ) {
+
                         @Override
                         public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                             event.getWarlordsEntity().getCooldownManager().queueUpdatePlayerNames();
@@ -136,53 +130,20 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
 
                         @Override
                         public PlayerNameData addPrefixFromOther() {
-                            return new PlayerNameData(
-                                    Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW),
-                                    we -> we.isTeammate(wp)
-                            );
+                            return new PlayerNameData(Component.text((int) (shield.getShieldHealth()), NamedTextColor.YELLOW), we -> we.isTeammate(wp));
                         }
                     });
-                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                            .append(Component.text(" Your ", NamedTextColor.GRAY))
-                            .append(Component.text(name, NamedTextColor.YELLOW))
-                            .append(Component.text(" is now shielding you!", NamedTextColor.GRAY))
-                    );
-                    if (pveMasterUpgrade) {
-                        PlayerFilter.entitiesAround(wp, 4, 4, 4)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(enemy -> {
-                                        enemy.addInstance(InstanceBuilder
-                                                .damage()
-                                                .ability(this)
-                                                .source(wp)
-                                                .value(shieldHealth)
-                                        );
-                                        enemy.addSpeedModifier(wp, name, -50, 60, "BASE");
-                                    });
-                    }
+                    wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
+                                                                  .append(Component.text(name, NamedTextColor.YELLOW))
+                                                                  .append(Component.text(" is now shielding you!", NamedTextColor.GRAY)));
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    EffectUtils.displayParticle(
-                            Particle.CRIMSON_SPORE,
-                            wp.getLocation(),
-                            1,
-                            0.05,
-                            0.1,
-                            0.05,
-                            0.25
-                    );
-                    EffectUtils.displayParticle(
-                            Particle.CHERRY_LEAVES,
-                            wp.getLocation(),
-                            2,
-                            0.15,
-                            0.3,
-                            0.15,
-                            0
-                    );
+                    EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 1, 0.05, 0.1, 0.05, 0.25);
+                    EffectUtils.displayParticle(Particle.CHERRY_LEAVES, wp.getLocation(), 2, 0.15, 0.3, 0.15, 0);
                 })
         ) {
+
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 float afterValue = currentDamageValue * convertToDivisionDecimal(damageAbsorption.getCalculatedValue());
@@ -193,63 +154,55 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 totalAbsorbed.addAndGet(absorbedAmount);
                 return afterValue;
             }
+
+            @Override
+            public void multiplyKB(Vector currentVector) {
+                if (pveMasterUpgrade2) {
+                    currentVector.zero();
+                }
+            }
         };
         wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
-        addSecondaryAbility(
-                5,
-                () -> {
+        addSecondaryAbility(5, () -> {
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);
                     wp.addSpeedModifier(wp, name, speedIncrease, speedIncreaseDuration, "BASE");
                     Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_EVOKER_PREPARE_ATTACK, 2, 2);
-                    new CircleEffect(
-                            wp.getGame(),
+                    new CircleEffect(wp.getGame(),
                             wp.getTeam(),
                             wp.getLocation(),
                             poisonRadius,
-                            new CircumferenceEffect(Particle.REDSTONE, Particle.REDSTONE).particlesPerCircumference(1)
+                            new CircumferenceEffect(Particle.DUST, Particle.DUST).particlesPerCircumference(1)
                     ).playEffects();
-                    for (WarlordsEntity hexTarget : PlayerFilter
-                            .entitiesAround(wp, poisonRadius, poisonRadius, poisonRadius)
-                            .aliveEnemiesOf(wp)
-                            .closestFirst(wp)
-                            .limit(2)
-                    ) {
-                        EffectUtils.playParticleLinkAnimation(
-                                wp.getLocation(),
-                                hexTarget.getLocation(),
-                                180,
-                                0,
-                                0,
-                                2
-                        );
-                        for (int i = 0; i < 3; i++) {
+                    for (WarlordsEntity hexTarget : PlayerFilter.entitiesAround(wp, poisonRadius, poisonRadius, poisonRadius)
+                                                                .aliveEnemiesOf(wp)
+                                                                .closestFirst(wp)
+                                                                .limit(pveMasterUpgrade ? Integer.MAX_VALUE : infectedPlayers)) {
+                        EffectUtils.playParticleLinkAnimation(wp.getLocation(), hexTarget.getLocation(), 180, 0, 0, 2);
+                        for (int i = 0; i < stacksGranted; i++) {
                             PoisonousHex.givePoisonousHex(wp, hexTarget);
-                            EffectUtils.displayParticle(
-                                    Particle.CRIMSON_SPORE,
-                                    wp.getLocation(),
-                                    20,
-                                    0.05,
-                                    0.1,
-                                    0.05,
-                                    0.25
-                            );
+                            EffectUtils.displayParticle(Particle.CRIMSON_SPORE, wp.getLocation(), 20, 0.05, 0.1, 0.05, 0.25);
                         }
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                                .append(Component.text(" Your ", NamedTextColor.GRAY))
-                                .append(Component.text(name, NamedTextColor.YELLOW))
-                                .append(Component.text(" has infected " + hexTarget.getName() + "!", NamedTextColor.GRAY))
-                        );
-                        hexTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                                .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                .append(Component.text(name, NamedTextColor.YELLOW))
-                                .append(Component.text(" has infected you!", NamedTextColor.GRAY))
-                        );
-                        totalHexesInflicted++;
+                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
+                                                                      .append(Component.text(name, NamedTextColor.YELLOW))
+                                                                      .append(Component.text(" has infected " + hexTarget.getName() + "!", NamedTextColor.GRAY)));
+                        hexTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                                                                              .append(Component.text(name, NamedTextColor.YELLOW))
+                                                                              .append(Component.text(" has infected you!", NamedTextColor.GRAY)));
+                        stats.totalHexesInflicted++;
                     }
-                    timesReactivated++;
-                },
-                false,
-                secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)
+                    if (pveMasterUpgrade) {
+                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FACADE", ContagiousFacade.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                        }, 20 * 5
+                        ) {
+
+                            @Override
+                            public float addEnergyGainPerTick(float energyGainPerTick) {
+                                return energyGainPerTick + 0.5f;
+                            }
+                        });
+                    }
+                    stats.timesReactivated++;
+                }, false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(protectiveLayerCooldown)
         );
         return true;
     }
@@ -275,6 +228,11 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         this.tickDuration = tickDuration;
     }
 
+    @Override
+    public ContagiousFacadeStats getAbilityStats() {
+        return stats;
+    }
+
     public FloatModifiable getDamageAbsorption() {
         return damageAbsorption;
     }
@@ -286,4 +244,62 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     public void setShieldTickDuration(int shieldTickDuration) {
         this.shieldTickDuration = shieldTickDuration;
     }
+
+    public int getStacksGranted() {
+        return stacksGranted;
+    }
+
+    public void setStacksGranted(int stacksGranted) {
+        this.stacksGranted = stacksGranted;
+    }
+
+    public int getInfectedPlayers() {
+        return infectedPlayers;
+    }
+
+    public void setInfectedPlayers(int infectedPlayers) {
+        this.infectedPlayers = infectedPlayers;
+    }
+
+    public static class ContagiousFacadeStats extends AbstractAbilityStats<ContagiousFacade, ContagiousFacadeStats> {
+
+        @Field("times_reactivated")
+        private int timesReactivated = 0;
+
+        @Field("total_hexes_inflicted")
+        private int totalHexesInflicted = 0;
+
+        @Field("total_shield_gained")
+        private float totalShieldGained = 0;
+
+        @Override
+        public Class<ContagiousFacadeStats> getClazz() {
+            return ContagiousFacadeStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Reactivated", timesReactivated));
+            statsDisplay.add(new AbilityStatDisplay("Total Hexes Inflicted", totalHexesInflicted));
+            statsDisplay.add(new AbilityStatDisplay("Total Shield Gained", Math.round(totalShieldGained)));
+            return statsDisplay;
+        }
+
+        @Override
+        public ContagiousFacadeStats merge(ContagiousFacadeStats other, int multiplier) {
+            ContagiousFacadeStats stats = super.merge(other, multiplier);
+            stats.timesReactivated = this.timesReactivated + other.timesReactivated * multiplier;
+            stats.totalHexesInflicted = this.totalHexesInflicted + other.totalHexesInflicted * multiplier;
+            stats.totalShieldGained = this.totalShieldGained + other.totalShieldGained * multiplier;
+            return stats;
+        }
+
+        @Override
+        public ContagiousFacadeStats create() {
+            return new ContagiousFacadeStats();
+        }
+
+    }
+
 }

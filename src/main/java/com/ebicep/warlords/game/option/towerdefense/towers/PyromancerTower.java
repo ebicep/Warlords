@@ -96,11 +96,11 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
         private final FloatModifiable range = new FloatModifiable(30);
 
         public FlameAttack() {
-            super("Flame Attack", 10, 0);
+            super(AbstractAbilityBuilder.create("flameAttack").td().cooldown(10).energyCost(0));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 // TODO spread priority
                 warlordsTower.getTower().getEnemyMobs(EnemyTargetPriority.FIRST, range, 1).forEach(target -> attack(warlordsTower, target));
@@ -206,7 +206,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
             LocationBuilder end = new LocationBuilder(endLocation).direction(start.getDirection());
             ItemStack item = new ItemStack(Material.TIPPED_ARROW);
             PotionMeta itemMeta = (PotionMeta) item.getItemMeta();
-            itemMeta.setBasePotionType(PotionType.INSTANT_HEAL);
+            itemMeta.setBasePotionType(PotionType.HEALING);
             item.setItemMeta(itemMeta);
             ItemDisplay arrow = startLocation.getWorld().spawn(
                     start,

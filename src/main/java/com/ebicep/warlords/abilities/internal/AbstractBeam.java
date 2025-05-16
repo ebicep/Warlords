@@ -9,23 +9,30 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public abstract class AbstractBeam extends AbstractPiercingProjectile implements RedAbilityIcon {
+public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R extends AbstractPiercingProjectile.AbstractPiercingProjectileStats<T, R>> extends AbstractPiercingProjectile<T, R> implements RedAbilityIcon, AbilityStats<T, R> {
 
-    public AbstractBeam(
-            String name,
-            float cooldown,
-            float energyCost,
-            double projectileSpeed,
-            double maxDistance,
-            boolean hitTeammates
-    ) {
-        super(name, cooldown, energyCost, projectileSpeed, maxDistance, hitTeammates);
+    public AbstractBeam(AbstractAbilityBuilder builder) {
+        super(builder);
         this.maxTicks = 0;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .6f);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
+        List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
+        for (Location locationsToFireShot : locationsToFireShots) {
+            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
+            EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
+        }
+        return super.onActivateInternal(shooter);
     }
 
     @Override
@@ -48,15 +55,33 @@ public abstract class AbstractBeam extends AbstractPiercingProjectile implements
         return new LocationBuilder(startingLocation).backward(.5f);
     }
 
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity shooter) {
-        List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
-        for (Location locationsToFireShot : locationsToFireShots) {
-            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
-            EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
+    public abstract ItemStack getBeamItem();
+
+    public static abstract class AbstractBeamStats<T extends AbstractPiercingProjectile<T, R>, R extends AbstractBeamStats<T, R>> extends AbstractPiercingProjectileStats<T, R> {
+
+        @Field("stacks_removed")
+        protected Map<Integer, Integer> stacksRemoved = new HashMap<>();
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>();
+            statsDisplay.add(new AbilityStatDisplay("Times Used", timesUsed));
+            stacksRemoved.forEach((key, value) -> statsDisplay.add(new AbilityStatDisplay("Stacks Removed (" + key + ")", value)));
+            return statsDisplay;
         }
-        return super.onActivate(shooter);
+
+        @Override
+        public R merge(R other, int multiplier) {
+            R stats = super.merge(other, multiplier);
+            this.stacksRemoved.forEach((key, value) -> stats.stacksRemoved.merge(key, value * multiplier, Integer::sum));
+            other.stacksRemoved.forEach((key, value) -> stats.stacksRemoved.merge(key, value * multiplier, Integer::sum));
+            return stats;
+        }
+
+        public Map<Integer, Integer> getStacksRemoved() {
+            return stacksRemoved;
+        }
+
     }
 
-    public abstract ItemStack getBeamItem();
 }

@@ -1,7 +1,8 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
+import com.ebicep.warlords.abilities.GroundSlamBerserker;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractGroundSlam;
-import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -265,19 +266,16 @@ public class EventMithra extends AbstractMob implements BossMob {
         }
     }
 
-    private void groundSlam() {
-        AbstractGroundSlam groundSlam = new AbstractGroundSlam(0, 0) {
-            {
-                setTrueDamage(true);
-                getHitBoxRadius().setBaseValue(9);
-            }
-
-            @Override
-            public Value.RangedValueCritable getSlamDamage() {
-                return new Value.RangedValueCritable(100, 100, 0, 0);
-            }
-        };
-        groundSlam.onActivate(warlordsNPC);
+    @Override
+    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
+        super.onDeath(killer, deathLocation, option);
+        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
+                                                                       .withColor(Color.BLACK)
+                                                                       .withColor(Color.WHITE)
+                                                                       .with(FireworkEffect.Type.BALL_LARGE)
+                                                                       .build()
+        );
+        EffectUtils.strikeLightning(deathLocation, false, 2);
     }
 
     private void enrage() {
@@ -296,7 +294,7 @@ public class EventMithra extends AbstractMob implements BossMob {
                     if (ticks % 3 == 0) {
                         Location location = warlordsNPC.getLocation();
                         location.getWorld().spawnParticle(
-                                Particle.VILLAGER_ANGRY,
+                                Particle.ANGRY_VILLAGER,
                                 location,
                                 1,
                                 0,
@@ -379,14 +377,12 @@ public class EventMithra extends AbstractMob implements BossMob {
         }.runTaskTimer(40, 5);
     }
 
-    @Override
-    public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
-        super.onDeath(killer, deathLocation, option);
-        FireWorkEffectPlayer.playFirework(deathLocation, FireworkEffect.builder()
-                                                                       .withColor(Color.BLACK)
-                                                                       .withColor(Color.WHITE)
-                                                                       .with(FireworkEffect.Type.BALL_LARGE)
-                                                                       .build());
-        EffectUtils.strikeLightning(deathLocation, false, 2);
+    private void groundSlam() {
+        AbstractGroundSlam groundSlam = new GroundSlamBerserker(AbstractAbilityBuilder.create("mithraGroundSlamBerserker").pve().startCooldown(10).startCooldown(5)) {{
+            setTrueDamage(true);
+        }};
+        groundSlam.init(groundSlam.getBuilder());
+        groundSlam.onActivate(warlordsNPC);
     }
+
 }

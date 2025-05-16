@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public abstract class MobHologram {
@@ -101,14 +102,16 @@ public abstract class MobHologram {
                     TextDisplay textDisplay = location.getWorld().spawn(location, TextDisplay.class, display -> {
                         display.setBillboard(Display.Billboard.CENTER);
                         display.text(customHologramLine.getText());
-                        display.setCustomNameVisible(true);
+                        display.setCustomNameVisible(false);
                         display.setSeeThrough(false);
                         display.setTeleportDuration(3); // SMOOTH TELEPORTATION
                         display.setViewRange(viewRange);
                     });
                     customHologramLine.setEntity(textDisplay);
                 } else if (customHologramLine.getEntity() instanceof TextDisplay textDisplay) {
-                    textDisplay.text(customHologramLine.getText());
+                    if (!Objects.equals(textDisplay.text(), customHologramLine.getText())) {
+                        textDisplay.text(customHologramLine.getText());
+                    }
                     textDisplay.teleport(location.add(0, .325, 0));
                 }
             }
@@ -129,6 +132,16 @@ public abstract class MobHologram {
 
         public CustomHologramLine(Supplier<Component> textSupplier) {
             this.textSupplier = textSupplier;
+        }
+
+        @Override
+        public String toString() {
+            return "CustomHologramLine{" +
+                    "text=" + text +
+                    ", textSupplier=" + textSupplier.get().toString() +
+                    ", delete=" + delete +
+                    ", entity=" + entity +
+                    '}';
         }
 
         public Component getText() {

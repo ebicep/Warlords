@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance, PlayerNameInstance, SpecDamageReductionInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
 
     public static final TextColor PSEUDO_DEBUFF_COLOR = TextColor.color(255, 50, 50);
     public static List<AbstractCooldown<?>> COOLDOWNS_WITH_LISTENERS = new ArrayList<>();
@@ -63,7 +63,14 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             Consumer<CooldownManager> onRemoveForce,
             boolean removeOnDeath
     ) {
-        this.name = name;
+        if (name == null) {
+            try {
+                throw new Exception("NULL cooldown name");
+            } catch (Exception e) {
+                ChatUtils.MessageType.GAME.sendErrorMessage(e);
+            }
+        }
+        this.name = name == null ? "UNKNOWN" : name;
         this.nameAbbreviation = nameAbbreviation;
         this.cooldownClass = cooldownClass;
         this.cooldownObject = cooldownObject;
@@ -74,11 +81,9 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.activeListener = getListener();
         if (activeListener != null) {
             COOLDOWNS_WITH_LISTENERS.add(this);
-            ChatUtils.MessageType.WARLORDS.sendMessage("*Registering listener " + getName() + " - " + this + " - " + cooldownObject);
             from.getGame().registerEvents(activeListener);
             this.onRemoveForce = cooldownManager -> {
                 COOLDOWNS_WITH_LISTENERS.remove(this);
-                ChatUtils.MessageType.WARLORDS.sendMessage("*Unregistering listener " + getName() + " - " + this + " - " + cooldownObject);
                 HandlerList.unregisterAll(activeListener);
                 onRemoveForce.accept(cooldownManager);
                 if (changesPlayerName()) {

@@ -33,7 +33,7 @@ public class LostBuff implements FieldEffect {
                         float damage = warlordsEntity.getMaxHealth() * .01f;
                         warlordsEntity.resetRegenTimer();
                         if (warlordsEntity.getCurrentHealth() - damage <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                            warlordsEntity.setCurrentHealth(0);
+
                             warlordsEntity.die(warlordsEntity);
                         } else {
                             warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damage);

@@ -30,7 +30,7 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
         masterUpgrade = new Upgrade(
                 "Blazing Curse",
                 "Incendiary Curse - Master Upgrade",
-                "All enemies hit become disoriented. Increase the damage they take by 50% for 5 seconds.",
+                "All enemies hit become disoriented. Increase the damage they take by 30% for 5 seconds.",
                 50000,
                 () -> {
 
@@ -40,10 +40,11 @@ public class IncendiaryCurseBranch extends AbstractUpgradeBranch<IncendiaryCurse
                 "Unforeseen Curse",
                 "Incendiary Curse - Master Upgrade",
                 """
-                        Increase the stun duration by 2s. Additionally, every enemy stunned gives 5 energy (Max 50).
+                        Increase the block radius by 3. Additionally, every enemy stunned gives 10 energy (Max 200).
                         """,
                 50000,
                 () -> {
+                    ability.getHitBoxRadius().addAdditiveModifier("Master Upgrade", 3);
                     ability.setBlindDurationInTicks(ability.getBlindDurationInTicks() + 40);
                 }
         );

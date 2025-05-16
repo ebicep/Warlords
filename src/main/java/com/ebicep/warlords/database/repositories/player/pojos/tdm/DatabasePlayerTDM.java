@@ -1,16 +1,23 @@
 package com.ebicep.warlords.database.repositories.player.pojos.tdm;
 
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.tdm.classes.*;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabasePlayerTDM implements TDMStatsWarlordsClasses {
+import java.util.HashMap;
+import java.util.Map;
+
+public class DatabasePlayerTDM implements TDMStatsWarlordsClasses, TracksAbilityStats {
 
     private DatabaseMageTDM mage = new DatabaseMageTDM();
     private DatabaseWarriorTDM warrior = new DatabaseWarriorTDM();
@@ -18,6 +25,13 @@ public class DatabasePlayerTDM implements TDMStatsWarlordsClasses {
     private DatabaseShamanTDM shaman = new DatabaseShamanTDM();
     private DatabaseRogueTDM rogue = new DatabaseRogueTDM();
     private DatabaseArcanistTDM arcanist = new DatabaseArcanistTDM();
+    @Field("ability_stats")
+    private Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
+    }
 
     @Override
     public StatsWarlordsSpecs<DatabaseGameTDM, DatabaseGamePlayerTDM, TDMStats> getClass(Classes classes) {
@@ -42,5 +56,6 @@ public class DatabasePlayerTDM implements TDMStatsWarlordsClasses {
             PlayersCollections playersCollection
     ) {
         updateSpecStats(databasePlayer, databaseGame, gameMode, gamePlayer, result, multiplier, playersCollection);
+        updateAbilityStats(gamePlayer, multiplier);
     }
 }

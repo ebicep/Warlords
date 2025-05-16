@@ -1,10 +1,8 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,7 +10,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.BoulderBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -23,103 +20,73 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<Boulder.DamageValues> {
+public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<Boulder.DamageValues>, AbilityStats<Boulder, Boulder.BoulderStats> {
 
-    public int playersHit = 0;
-    public int carrierHit = 0;
-    public int warpsKnockbacked = 0;
-
-    private final DamageValues damageValues = new DamageValues();
     private final double boulderGravity = -0.0059;
+    private final BoulderStats stats = new BoulderStats();
+    private final DamageValues damageValues = new DamageValues();
     private double boulderSpeed = 0.290;
     private double hitbox = 5.5;
     private double velocity = 1.15;
 
     public Boulder() {
-        this(7.05f, 0);
+        super(AbstractAbilityBuilder.create("boulder").pvp());
     }
 
-    public Boulder(float cooldown, float startCooldown) {
-        super("Boulder", cooldown, 80, startCooldown);
+    public Boulder(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.boulderSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("boulderSpeed"), float.class);
+        this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
+        this.velocity = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("velocity"), float.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Launch a giant boulder that shatters and deals")
-                               .append(Damages.formatDamage(damageValues.boulderDamage))
-                               .append(Component.text("damage to all enemies near the impact point and knocks them back slightly."));
+        description = AbilityDescriptionBuilder.create("Launch a giant boulder that shatters and deals")
+                                               .damage(damageValues.boulderDamage)
+                                               .text("damage to all enemies near the impact point and knocks them back slightly.")
+                                               .build();
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Hit", "" + playersHit));
-        info.add(new Pair<>("Carriers Hit", "" + carrierHit));
-        info.add(new Pair<>("Warps Knockbacked", "" + warpsKnockbacked));
-
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.boulder.activation", 2, 1);
-
         Location location = wp.getLocation();
         Vector speed = calculateSpeed(wp);
-
         Location initialCastLocation = wp.getLocation();
-
-        Utils.spawnThrowableProjectile(
-                wp.getGame(),
+        Utils.spawnThrowableProjectile(wp.getGame(),
                 Utils.spawnArmorStand(location, armorStand -> {
-                    armorStand.getEquipment().setHelmet(new ItemStack(Material.TALL_GRASS));
-                    armorStand.customName(Component.text("Boulder"));
-                    armorStand.setCustomNameVisible(false);
-                }),
+                            armorStand.getEquipment().setHelmet(new ItemStack(Material.TALL_GRASS));
+                            armorStand.customName(Component.text("Boulder"));
+                            armorStand.setCustomNameVisible(false);
+                        }
+                ),
                 speed,
                 boulderGravity,
                 boulderSpeed,
-                (newLoc, integer) -> wp.getLocation().getWorld().spawnParticle(
-                        Particle.CRIT,
-                        newLoc.clone().add(0, -1, 0),
-                        6,
-                        0.3F,
-                        0.3F,
-                        0.3F,
-                        0.1F,
-                        null,
-                        true
-                ),
-                newLoc -> PlayerFilter
-                        .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                        .aliveEnemiesOf(wp)
-                        .findFirstOrNull(),
+                (newLoc, integer) -> wp.getLocation().getWorld().spawnParticle(Particle.CRIT, newLoc.clone().add(0, -1, 0), 6, 0.3F, 0.3F, 0.3F, 0.1F, null, true),
+                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(),
                 (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "shaman.boulder.impact", 2, 1);
-
                     // this was previously delayed by a tick idk why, if something breaks, you know why
-                    for (WarlordsEntity p : PlayerFilter
-                            .entitiesAround(newLoc, hitbox, hitbox, hitbox)
-                            .aliveEnemiesOf(wp)
-                    ) {
-                        playersHit++;
+                    for (WarlordsEntity p : PlayerFilter.entitiesAround(newLoc, hitbox, hitbox, hitbox).aliveEnemiesOf(wp)) {
+                        stats.targetsHit++;
                         if (p.hasFlag()) {
-                            carrierHit++;
+                            stats.carrierHit++;
                         }
-                        if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerTryingToPick(p)) {
-                            warpsKnockbacked++;
+                        if (p.getCooldownManager().hasCooldownExtends(AbstractTimeWarp.class) && FlagHolder.playerNearFlag(p)) {
+                            stats.warpsKnockbacked++;
                         }
                         Vector v;
                         if (p == directHit) {
@@ -128,48 +95,29 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
                             v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(velocity).setY(0.2);
                         }
                         p.setVelocity(name, v, false, false);
-                        p.addInstance(InstanceBuilder
-                                .damage()
-                                .ability(this)
-                                .source(wp)
-                                .value(damageValues.boulderDamage)
-                        );
+                        p.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.boulderDamage));
                     }
-
                     newLoc.setPitch(-12);
                     Location impactLocation = newLoc.clone().subtract(speed);
                     Utils.spawnFallingBlocks(impactLocation, 3, 10);
-
                     new GameRunnable(wp.getGame()) {
 
                         @Override
                         public void run() {
                             Utils.spawnFallingBlocks(impactLocation, 3.5, 20);
                         }
-
                     }.runTaskLater(1);
-
                     if (pveMasterUpgrade2) {
                         new FallingBlockWaveEffect(impactLocation.clone().add(0, 1, 0), 4, 1.2, Material.COARSE_DIRT).play();
                         Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 2, .1f);
                         Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 2, .1f);
                         Utils.playGlobalSound(impactLocation, "arcanist.beacon.impact", 2, .1f);
-                        for (WarlordsEntity enemy : PlayerFilter
-                                .entitiesAround(impactLocation, 5, 5, 5)
-                                .aliveEnemiesOf(wp)
-                        ) {
-                            enemy.addInstance(InstanceBuilder
-                                    .damage()
-                                    .ability(this)
-                                    .source(wp)
-                                    .value(damageValues.earthquakeDamage)
-                            );
+                        for (WarlordsEntity enemy : PlayerFilter.entitiesAround(impactLocation, 5, 5, 5).aliveEnemiesOf(wp)) {
+                            enemy.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.earthquakeDamage));
                         }
                     }
-
                 }
         );
-
         return true;
     }
 
@@ -186,6 +134,16 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new BoulderBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public BoulderStats getAbilityStats() {
+        return stats;
     }
 
     public double getVelocity() {
@@ -214,17 +172,67 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable boulderDamage = new Value.RangedValueCritable(509, 686, 15, 175);
-        private final Value.RangedValue earthquakeDamage = new Value.RangedValue(450, 630);
-        private final List<Value> values = List.of(boulderDamage, earthquakeDamage);
+        private Value.RangedValueCritable boulderDamage = new Value.RangedValueCritable(509, 686, 15, 175);
+
+        private Value.RangedValue earthquakeDamage = new Value.RangedValue(450, 630);
+
+        private List<Value> values = List.of(boulderDamage, earthquakeDamage);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.boulderDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boulderDamage"), Value.RangedValueCritable.class);
+            this.earthquakeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("earthquakeDamage"), Value.RangedValue.class);
+            this.values = List.of(boulderDamage, earthquakeDamage);
+        }
 
         public Value.RangedValueCritable getBoulderDamage() {
             return boulderDamage;
         }
 
+    }
+
+    public static class BoulderStats extends AbstractAbilityStats<Boulder, BoulderStats> {
+
+        @Field("targets_hit")
+        private int targetsHit = 0;
+
+        @Field("carrier_hit")
+        private int carrierHit = 0;
+
+        @Field("warps_knockbacked")
+        private int warpsKnockbacked = 0;
+
         @Override
-        public List<Value> getValues() {
-            return values;
+        public Class<BoulderStats> getClazz() {
+            return BoulderStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Hit", targetsHit));
+            statsDisplay.add(new AbilityStatDisplay("Carriers Hit", carrierHit));
+            statsDisplay.add(new AbilityStatDisplay("Warps Knockbacked", warpsKnockbacked));
+            return statsDisplay;
+        }
+
+        @Override
+        public BoulderStats merge(BoulderStats other, int multiplier) {
+            BoulderStats stats = super.merge(other, multiplier);
+            stats.targetsHit = this.targetsHit + other.targetsHit * multiplier;
+            stats.carrierHit = this.carrierHit + other.carrierHit * multiplier;
+            stats.warpsKnockbacked = this.warpsKnockbacked + other.warpsKnockbacked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public BoulderStats create() {
+            return new BoulderStats();
         }
 
     }

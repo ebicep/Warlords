@@ -23,7 +23,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                     public void run(float value) {
                         ability.setFlatHealing(flatHealing + value);
                     }
-                }, 25f)
+                }, 50f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -34,15 +34,14 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
         masterUpgrade = new Upgrade(
                 "Relentless Army",
                 "Undying Army - Master Upgrade",
-                "Double the range of Undying Army. Additionally, while dead, take half the damage you would normally take" +
-                        " and gain 40% speed and deal 458-612 + 2% of the " +
-                        "enemy’s maximum health to all enemies within a 6 block radius. " +
-                        "Each enemy hit this way can also proc Orbs of Life.",
+                """
+                        Double the range of Undying Army.
+                        Undying Army healing occurs every 0.5 seconds instead of 1 second.
+                        Additionally, reduce the Cooldown of Reckless Charge and Ground Slam by 50% for the duration of Undying Army.""",
                 50000,
                 () -> {
                     ability.setRadius(ability.getRadius() * 2);
-                    ability.setMaxHealthDamage((int) (ability.getMaxHealthDamage() * 0.5f));
-
+                    ability.setHealPeriod(10);
                 }
         );
         masterUpgrade2 = new Upgrade(
@@ -50,7 +49,7 @@ public class UndyingArmyBranch extends AbstractUpgradeBranch<UndyingArmy> {
                 "Undying Army - Master Upgrade",
                 """
                         Upon casting, enemies within the radius are marked for the duration of Undying Army.
-                        Marked enemies build up stacks of Vengeance that accrue every second, each stack equals 100hp.
+                        Marked enemies build up stacks of Vengeance that accrue every second, each stack equals 200hp.
                         After 10s marked enemies pop taking damage based on stacks accrued as well as 10% of their max hp.
                         If Orbs of Life is active, marked enemies that are killed will produce an orb.
                         """,

@@ -10,6 +10,7 @@ import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.player.general.Specializations;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -17,7 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @CommandAlias("streamchapters")
-@CommandPermission("group.administrator")
+@CommandPermission("group.streamer")
 public class StreamChaptersCommand extends BaseCommand {
 
     public static final HashMap<UUID, Instant> PLAYER_TIME_START = new HashMap<>();
@@ -42,20 +43,10 @@ public class StreamChaptersCommand extends BaseCommand {
         chapters.append(seconds);
     }
 
-    @Subcommand("start")
-    @Description("Mark start of stream")
-    public void start(Player player) {
-        PLAYER_TIME_START.put(player.getUniqueId(), Instant.now());
-        GAME_TIMES.put(player.getUniqueId(), new ArrayList<>());
-        player.sendMessage(Component.text("Began recording game time", NamedTextColor.GREEN));
-    }
-
-    @Subcommand("get")
-    @Description("Prints stream chapters")
-    public void get(Player player) {
+    public static void print(UUID uuid) {
         StringBuilder chapters = new StringBuilder("00:00:00 - Lobby");
-        Instant startTime = PLAYER_TIME_START.get(player.getUniqueId());
-        GAME_TIMES.get(player.getUniqueId()).forEach(gameTime -> {
+        Instant startTime = PLAYER_TIME_START.get(uuid);
+        GAME_TIMES.get(uuid).forEach(gameTime -> {
             Instant gameStartTime = gameTime.getStart();
             Instant gameEndTime = gameTime.getEnd();
             if (gameEndTime != null && ChronoUnit.SECONDS.between(gameStartTime, gameEndTime) > 10) {
@@ -72,9 +63,35 @@ public class StreamChaptersCommand extends BaseCommand {
             }
         });
         System.out.println(chapters);
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.sendMessage(Component.text(chapters.toString(), NamedTextColor.GREEN));
+        }
         BotManager.getTextChannelCompsByName("bot-testing").ifPresent(textChannel -> {
             textChannel.sendMessage(chapters.toString()).queue();
         });
+    }
+
+    @Subcommand("start")
+    @Description("Mark start of stream")
+    public void start(Player player) {
+        PLAYER_TIME_START.put(player.getUniqueId(), Instant.now());
+        GAME_TIMES.put(player.getUniqueId(), new ArrayList<>());
+        player.sendMessage(Component.text("Began recording game time", NamedTextColor.GREEN));
+    }
+
+    @Subcommand("startoffset")
+    @Description("Mark start of stream with offset (how long ago stream started)")
+    public void startOffset(Player player, Integer hour, Integer minute, Integer second) {
+        PLAYER_TIME_START.put(player.getUniqueId(), Instant.now().minus(hour, ChronoUnit.HOURS).minus(minute, ChronoUnit.MINUTES).minus(second, ChronoUnit.SECONDS));
+        GAME_TIMES.put(player.getUniqueId(), new ArrayList<>());
+        player.sendMessage(Component.text("Began recording game time", NamedTextColor.GREEN));
+    }
+
+    @Subcommand("get")
+    @Description("Prints stream chapters")
+    public void get(Player player) {
+        print(player.getUniqueId());
     }
 
     @HelpCommand

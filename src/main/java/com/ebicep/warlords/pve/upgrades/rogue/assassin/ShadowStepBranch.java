@@ -36,9 +36,9 @@ public class ShadowStepBranch extends AbstractUpgradeBranch<ShadowStep> {
                 "Shadow Step - Master Upgrade",
                 """
                         +10% Cooldown Reduction
-                         
+                        
                         Instead of leaping forward gain 75% damage resistance and instantly dash forward +8 blocks dealing damage to enemies passed through.
-                        For every enemy hit, increase your crit chance by 2.5% for 5s (Max 25%).
+                        For every enemy hit, increase your crit multiplier by 2% for 5s (Max 20%).
                         """,
                 50000,
                 () -> {

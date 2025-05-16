@@ -4,12 +4,15 @@ import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
 import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.holograms.HologramManager;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
+import com.ebicep.warlords.abilities.EarthenSpike;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.commands.CommandManager;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.commands.debugcommands.misc.OldTestCommand;
+import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.stats.StatsLeaderboardManager;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
@@ -38,8 +41,7 @@ import com.ebicep.warlords.util.java.DateUtil;
 import com.ebicep.warlords.util.java.MemoryManager;
 import com.ebicep.warlords.util.java.Priority;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.LuckPerms;
@@ -48,7 +50,8 @@ import net.luckperms.api.event.user.UserDataRecalculateEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
@@ -66,13 +69,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ebicep.warlords.util.java.JavaUtils.iterable;
 
 public class Warlords extends JavaPlugin {
     public static final HashMap<UUID, Location> SPAWN_POINTS = new HashMap<>();
-    public static final AtomicInteger LOOP_TICK_COUNTER = new AtomicInteger(0);
     public static final AtomicBoolean SENT_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_HALF_HOUR_REMINDER = new AtomicBoolean(false);
     public static final AtomicBoolean SENT_FIFTEEN_MINUTE_REMINDER = new AtomicBoolean(false);
@@ -80,8 +81,9 @@ public class Warlords extends JavaPlugin {
     public static String VERSION = "";
     public static NamedTextColor VERSION_COLOR = NamedTextColor.RED;
     public static String serverIP;
-    public static boolean holographicDisplaysEnabled;
+    public static boolean hologramsEnabled = true;
     public static boolean citizensEnabled;
+    public static MultiverseCore multiverseCore;
     private static Warlords instance;
     private static TaskChainFactory taskChainFactory;
 
@@ -182,6 +184,7 @@ public class Warlords extends JavaPlugin {
                 p.teleport(getRejoinPoint(player));
             }
         }
+        EarthenSpike.PLAYER_SPIKE_COOLDOWN.remove(player);
     }
 
     public static Warlords getInstance() {
@@ -207,6 +210,7 @@ public class Warlords extends JavaPlugin {
         if (p != null) {
             p.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
         }
+        EarthenSpike.PLAYER_SPIKE_COOLDOWN.remove(player);
     }
 
     public static void setRejoinPoint(@Nonnull UUID key, @Nonnull Location value) {
@@ -281,6 +285,7 @@ public class Warlords extends JavaPlugin {
             server.getEntityMetadata().invalidateAll(this);
             server.getWorldMetadata().invalidateAll(this);
             server.getPlayerMetadata().invalidateAll(this);
+            server.getWorlds().forEach(world -> ((CraftWorld) world).getBlockMetadata().invalidateAll(this));
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
@@ -290,15 +295,12 @@ public class Warlords extends JavaPlugin {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
-            if (holographicDisplaysEnabled) {
-                ChatUtils.MessageType.WARLORDS.sendMessage("Deleting holograms...");
-                HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
-            }
+            NPCManager.destroyNPCs();
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
         try {
-            NPCManager.destroyNPCs();
+            StreamChaptersCommand.PLAYER_TIME_START.forEach((uuid, instant) -> StreamChaptersCommand.print(uuid));
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
@@ -307,6 +309,11 @@ public class Warlords extends JavaPlugin {
             if (BotManager.jda != null) {
                 BotManager.jda.shutdownNow();
             }
+        } catch (Exception e) {
+            ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
+        }
+        try {
+            HologramManager.cleanup();
         } catch (Exception e) {
             ChatUtils.MessageType.WARLORDS.sendErrorMessage(e);
         }
@@ -386,8 +393,7 @@ public class Warlords extends JavaPlugin {
         ConfigUtil.loadConfigs(this);
 
         TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-
-        holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
+        multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         ChatUtils.MessageType.WARLORDS.sendMessage("citizensEnabled: " + citizensEnabled);
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
@@ -422,6 +428,7 @@ public class Warlords extends JavaPlugin {
         }
 
         PacketUtils.init(this);
+        HologramManager.init(this);
 
         startWarlordsEntitiesLoop();
         startRestartReminderLoop();
@@ -460,18 +467,20 @@ public class Warlords extends JavaPlugin {
     private void startWarlordsEntitiesLoop() {
         new BukkitRunnable() {
 
+            int ticksElapsed = 0;
+
             @Override
             public void run() {
                 // Every 1 tick - 0.05 seconds.
                 for (WarlordsEntity we : PLAYERS.values()) {
                     // Checks whether the game is paused.
-                    if (we.getGame().isFrozen()) {
+                    Game game = we.getGame();
+                    if (game.isFrozen()) {
                         continue;
                     }
                     we.runEveryTick();
-                }
-                if (LOOP_TICK_COUNTER.get() % 5 == 0) {
-                    for (WarlordsEntity we : PLAYERS.values()) {
+                    int loopTickCounter = game.getLoopTickCounter();
+                    if (loopTickCounter % 5 == 0) {
                         Player player = we.getEntity() instanceof Player ? (Player) we.getEntity() : null;
                         if (player != null) {
                             //ACTION BAR
@@ -479,32 +488,25 @@ public class Warlords extends JavaPlugin {
                                 we.displayCompassActionBar(player);
                             } else {
                                 we.displayActionBar();
+                                game.spectators()
+                                    .map(Bukkit::getPlayer)
+                                    .filter(Objects::nonNull)
+                                    .forEach(p -> {
+                                        if (Objects.equals(p.getSpectatorTarget(), player)) {
+                                            DatabaseManager.getPlayer(p.getUniqueId(), databasePlayer -> p.sendActionBar(we.getActionBar(databasePlayer)));
+                                        } else {
+                                            p.sendActionBar(Component.empty());
+                                        }
+                                    });
                             }
                         }
                     }
-                }
-                // Every 20 ticks - 1 second.
-                if (LOOP_TICK_COUNTER.get() % 20 == 0) {
-                    // Removes leftover horses if there are any.
-//                    RemoveEntities.removeHorsesInGame();
-
-                    for (WarlordsEntity we : PLAYERS.values()) {
-                        // Checks whether the game is paused.
-                        if (we.getGame().isFrozen()) {
-                            continue;
-                        }
+                    // Every 20 ticks - 1 second.
+                    if (loopTickCounter % 20 == 0) {
                         we.runEverySecond();
                     }
-
-                    // for removing falling blocks that didnt get removed prior
-                    GeneralEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
-                }
-                // Loops every 50 ticks - 2.5 seconds.
-                if (LOOP_TICK_COUNTER.get() % 50 == 0) {
-                    for (WarlordsEntity we : PLAYERS.values()) {
-                        if (we.getGame().isFrozen()) {
-                            continue;
-                        }
+                    // Loops every 50 ticks - 2.5 seconds.
+                    if (loopTickCounter % 50 == 0) {
                         if (we instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob().getMobRegistry() == Mob.TEST_DUMMY) {
                             continue;
                         }
@@ -517,7 +519,22 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 }
-                LOOP_TICK_COUNTER.getAndIncrement();
+                if (ticksElapsed % 100 == 0) {
+                    // Removes leftover horses if there are any.
+//                    RemoveEntities.removeHorsesInGame();
+                    // for removing falling blocks that didnt get removed prior
+                    GeneralEvents.FALLING_BLOCK_ENTITIES.removeIf(e -> !e.isValid());
+                }
+
+                for (GameManager.GameHolder gameHolder : gameManager.getGames()) {
+                    Game game = gameHolder.getGame();
+                    if (game == null) {
+                        continue;
+                    }
+                    game.addTickCounter();
+                }
+
+                ticksElapsed++;
             }
         }.runTaskTimer(this, 0, 0);
     }

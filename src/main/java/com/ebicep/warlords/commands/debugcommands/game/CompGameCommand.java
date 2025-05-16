@@ -2,10 +2,7 @@ package com.ebicep.warlords.commands.debugcommands.game;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager;
 import com.ebicep.warlords.game.GameMap;
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 @CommandAlias("compgame")
-@CommandPermission("group.administrator")
+@CommandPermission("group.gamestarter")
 public class CompGameCommand extends BaseCommand {
 
     private static final List<GameMap> MAP_ROTATION = new ArrayList<>(List.of(GameMap.RIFT, GameMap.CROSSFIRE, GameMap.APERTURE));
@@ -122,6 +119,7 @@ public class CompGameCommand extends BaseCommand {
 
     @Subcommand("setmap")
     @Description("Sets map at given index")
+    @CommandCompletion("@maps")
     public void setRotationIndex(CommandIssuer issuer, GameMap gameMap, int index) {
         if (index < 0 || index > MAP_ROTATION.size()) {
             ChatChannels.sendDebugMessage(issuer, Component.text("Index out of bounds", NamedTextColor.RED));

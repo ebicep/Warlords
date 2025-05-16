@@ -32,9 +32,8 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                     @Override
                     public void run(float value) {
                         ability.setSelfDamageReductionPercent((int) (selfDamageReduction + value));
-                        ability.setTeammateDamageReductionPercent((int) (allyDamageReduction + value));
                     }
-                }, 3f)
+                }, 5f)
                 .addTo(treeA);
 
         UpgradeTreeBuilder
@@ -46,13 +45,15 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "Final Stand",
                 "Last Stand - Master Upgrade",
                 """
-                        +20% Cooldown Reduction
-                                                
+                        +30% Cooldown Reduction
+                        +25% Self Damage Reduction
+                        
                         Double the radius of Last Stand and take 50% less knockback while active.
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Final Stand", 0.8f);
+                    ability.getCooldown().addMultiplicativeModifierMult("Final Stand", 0.7f);
+                    ability.setSelfDamageReductionPercent(ability.getSelfDamageReduction() + 25);
                     ability.setRadius(ability.getRadius() * 2);
                 }
         );
@@ -60,13 +61,15 @@ public class LastStandBranch extends AbstractUpgradeBranch<LastStand> {
                 "Enduring Defense",
                 "Last Stand - Master Upgrade",
                 """
-                        +20% Cooldown Reduction
-                                                
+                        +30% Cooldown Reduction
+                        +15% Ally Damage Reduction
+                        
                         Double the radius of Last Stand and Seismic Wave and Ground Slam cooldowns' are reduced by 50% and Seismic Wave's energy cost is reduced to 30 while active.
                         """,
                 50000,
                 () -> {
-                    ability.getCooldown().addMultiplicativeModifierMult("Enduring Defense", 0.8f);
+                    ability.getCooldown().addMultiplicativeModifierMult("Enduring Defense", 0.7f);
+                    ability.setTeammateDamageReductionPercent(ability.getTeammateDamageReduction() + 15);
                     ability.setRadius(ability.getRadius() * 2);
                 }
         );

@@ -83,7 +83,7 @@ public class PayloadSpawns {
 
     public void renderSpawnLocations() {
         for (Location spawnLocation : spawnLocations) {
-            EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, spawnLocation.clone().add(0, .5, 0), 1);
+            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, spawnLocation.clone().add(0, .5, 0), 1);
         }
     }
 

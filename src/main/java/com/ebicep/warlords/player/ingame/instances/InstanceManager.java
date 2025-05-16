@@ -1,6 +1,9 @@
 package com.ebicep.warlords.player.ingame.instances;
 
-import com.ebicep.warlords.abilities.*;
+import com.ebicep.warlords.abilities.Intervene;
+import com.ebicep.warlords.abilities.OrderOfEviscerate;
+import com.ebicep.warlords.abilities.Repentance;
+import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -8,15 +11,17 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -223,7 +228,6 @@ public class InstanceManager {
                                      .append(Component.text(" melee damage and died.")),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                     ));
-                    warlordsEntity.setCurrentHealth(0);
                     warlordsEntity.die(attacker);
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - min);
@@ -241,15 +245,14 @@ public class InstanceManager {
                                      .append(Component.text(" fall damage and died.")),
                             Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
                     ));
-                    warlordsEntity.setCurrentHealth(0);
                     warlordsEntity.die(attacker);
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damageValue);
                     warlordsEntity.playHurtAnimation(attacker);
                 }
 
-                for (OrderOfEviscerate orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
-                        .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.class)
+                for (OrderOfEviscerate.OrderOfEviscerateData orderOfEviscerate : new CooldownFilter<>(attacker, RegularCooldown.class)
+                        .filterCooldownClassAndMapToObjectsOfClass(OrderOfEviscerate.OrderOfEviscerateData.class)
                         .toList()
                 ) {
                     orderOfEviscerate.addAndCheckDamageThreshold(damageValue, attacker);
@@ -262,7 +265,7 @@ public class InstanceManager {
         float previousDamageValue = damageValue;
         // Flag carrier multiplier.
         double flagMultiplier = warlordsEntity.getFlagDamageMultiplier();
-        if (flagMultiplier != 1) {
+        if (flagMultiplier != 1 && !trueDamage) {
             damageValue *= (float) flagMultiplier;
             debugMessage.appendTitle(ComponentBuilder
                     .create("Flag Damage Multiplier: ", NamedTextColor.AQUA)
@@ -329,56 +332,65 @@ public class InstanceManager {
 
         final float damageHealValueBeforeInterveneReduction = damageValue;
         // Intervene
-        Optional<RegularCooldown> optionalInterveneCooldown = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                .filterCooldownClass(Intervene.class)
+        Optional<LinkedCooldown> optionalInterveneCooldown = new CooldownFilter<>(warlordsEntity, LinkedCooldown.class)
+                .filterCooldownClass(Intervene.InterveneData.class)
                 .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), warlordsEntity))
                 .findFirst();
-        if (!trueDamage && !pierceDamage &&
+        boolean intervened = !trueDamage && !pierceDamage &&
                 optionalInterveneCooldown.isPresent() && optionalInterveneCooldown.get().getTicksLeft() > 0 &&
-                warlordsEntity.isEnemy(attacker)
-        ) {
+                warlordsEntity.isEnemy(attacker);
+        if (intervened && optionalInterveneCooldown.get().getFrom() == attacker) {
+            ChatUtils.MessageType.GAME.sendErrorMessage("Intervene Overflow? " + warlordsEntity.getName() + " intervened from " + attacker.getName() + " - " + event);
+            intervened = false;
+        }
+        if (intervened) {
             debugMessage.appendTitle("Intervene", NamedTextColor.AQUA);
 
-            Intervene intervene = (Intervene) optionalInterveneCooldown.get().getCooldownObject();
+            Intervene.InterveneData data = (Intervene.InterveneData) optionalInterveneCooldown.get().getCooldownObject();
+            float maxDamagePrevented = data.getMaxDamagePrevented();
+            float preDamagePrevented = data.getDamagePrevented();
             WarlordsEntity intervenedBy = optionalInterveneCooldown.get().getFrom();
-            damageValue *= (intervene.getDamageReduction() / 100f);
-            debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                    .create(1)
-                    .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
-                    .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
-            );
-            intervenedBy.addAbsorbed(damageValue);
             intervenedBy.resetRegenTimer();
-            intervene.addDamagePrevented(damageValue);
             // Break Intervene if above damage threshold
-            if (intervene.getDamagePrevented() >= intervene.getMaxDamagePrevented() / 2f) {
-                //defender
-                new CooldownFilter<>(intervenedBy, RegularCooldown.class)
-                        .filterCooldownObject(intervene)
-                        .findFirst()
-                        .ifPresent(regularCooldown -> regularCooldown.setTicksLeft(0));
-                //vene target
+            if (preDamagePrevented + damageValue > maxDamagePrevented) {
                 optionalInterveneCooldown.get().setTicksLeft(0);
+                //extra overVeneDamage to target
+                float overVeneDamage = preDamagePrevented + damageValue - maxDamagePrevented;
                 //remaining vene prevent damage
-                float remainingVeneDamage = (intervene.getMaxDamagePrevented() / 2) - (intervene.getDamagePrevented() - damageValue);
+                float leftOverPrevented = maxDamagePrevented - preDamagePrevented;
+                data.addDamagePrevented(leftOverPrevented);
+                intervenedBy.addAbsorbed(leftOverPrevented * (1 - data.getIntervene().getDamageReduction() / 100f));
+                damageValue = leftOverPrevented * (data.getIntervene().getDamageReduction() / 100f);
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(1)
+                        .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                );
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")
                         .source(attacker)
-                        .value(remainingVeneDamage)
+                        .value(damageValue)
                         .showAsCrit(isCrit)
                         .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
-                //extra overVeneDamage to target
-                float overVeneDamage = intervene.getDamagePrevented() - intervene.getMaxDamagePrevented() / 2f;
                 warlordsEntity.addInstance(InstanceBuilder
                         .damage()
                         .cause(ability)
                         .source(attacker)
                         .value(overVeneDamage)
                         .showAsCrit(isCrit)
+                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 ).ifPresent(finalEvent::set);
             } else {
+                damageValue *= data.getIntervene().getDamageReduction() / 100f;
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(1)
+                        .prefix(ComponentBuilder.create("Damage Value: ", NamedTextColor.GREEN))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(damageValue), NamedTextColor.GOLD))
+                );
+                data.addDamagePrevented(damageHealValueBeforeInterveneReduction);
+                intervenedBy.addAbsorbed(damageHealValueBeforeInterveneReduction - damageValue);
                 intervenedBy.addInstance(InstanceBuilder
                         .damage()
                         .cause("Intervene")
@@ -499,18 +511,18 @@ public class InstanceManager {
             ) {
                 RegularCooldown cooldown = shieldCooldown.get();
                 Shield shield = (Shield) cooldown.getCooldownObject();
-                debugMessage.appendTitle("Shield" + shield.getName() + ")", NamedTextColor.AQUA);
+                debugMessage.appendTitle("Shield (" + shield.getName() + ")", NamedTextColor.AQUA);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Pre Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(String.valueOf(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
                 );
                 //adding dmg to shield
                 shield.addShieldHealth(-damageValue);
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Post Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(String.valueOf(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
                 );
                 //check if broken
                 TextComponent.Builder ownMessage = Component.text();
@@ -518,7 +530,7 @@ public class InstanceManager {
                 if (shield.getShieldHealth() <= 0) {
                     cooldown.setTicksLeft(0);
                 }
-                if (shield.getShieldHealth() < 0) {
+                if (shield.isBroken()) {
                     float newDamage = -shield.getShieldHealth();
                     addDamageInstance(warlordsEntity, new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
                             warlordsEntity,
@@ -529,13 +541,12 @@ public class InstanceManager {
                             isCrit ? 100 : 0,
                             100,
                             true,
-                            EnumSet.of(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY, InstanceFlags.IGNORE_SELF_RES, InstanceFlags.IGNORE_CRIT_MODIFIERS),
+                            EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
                             customFlags
                     ));
 
                     cooldown.getFrom().addAbsorbed(-(shield.getShieldHealth()));
 
-                    warlordsEntity.doOnStaticAbility(ArcaneShield.class, ArcaneShield::addTimesBroken);
                     return Optional.empty();
                 } else {
                     double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
@@ -759,8 +770,8 @@ public class InstanceManager {
 
                     warlordsEntity.getGame().forEachOnlinePlayer((p, t) -> {
                         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
-                        Settings.ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
-                        if (killsMode != Settings.ChatSettings.ChatKills.ALL && killsMode != Settings.ChatSettings.ChatKills.NO_ASSISTS) {
+                        ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+                        if (killsMode != ChatSettings.ChatKills.ALL && killsMode != ChatSettings.ChatKills.NO_ASSISTS) {
                             return;
                         }
                         if (p == warlordsEntity.getEntity()) {
@@ -814,7 +825,7 @@ public class InstanceManager {
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsEntity.getUuid(),
                 warlordsEntity instanceof WarlordsPlayer && warlordsEntity.getEntity() instanceof Player
         );
-        if (databasePlayer.getChatDamageMode() == Settings.ChatSettings.ChatDamage.ALL) {
+        if (databasePlayer.getChatDamageMode() == ChatSettings.ChatDamage.ALL) {
             Component component = WarlordsEntity.RECEIVE_ARROW_RED
                     .append(Component.text(" You took ", NamedTextColor.GRAY))
                     .append(Component.text(Math.round(damage), NamedTextColor.RED))

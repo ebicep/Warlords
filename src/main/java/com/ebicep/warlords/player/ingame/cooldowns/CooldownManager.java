@@ -85,7 +85,7 @@ public class CooldownManager {
                 }
                 PotionEffect potionEffect = event.getPotionEffect();
                 if (PotionEffectType.BLINDNESS.equals(potionEffect.getType()) ||
-                        PotionEffectType.CONFUSION.equals(potionEffect.getType())
+                        PotionEffectType.NAUSEA.equals(potionEffect.getType())
                 ) {
                     event.setCancelled(true);
                 }
@@ -228,7 +228,6 @@ public class CooldownManager {
             abstractCooldown.getOnRemoveForce().accept(this);
             Listener activeListener = abstractCooldown.getActiveListener();
             if (activeListener != null) {
-                ChatUtils.MessageType.WARLORDS.sendMessage("Unregistering listener " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
                 HandlerList.unregisterAll(activeListener);
             }
         }
@@ -286,6 +285,12 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getAbilityCooldowns() {
         return abstractCooldowns.stream()
                                 .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY)
+                                .toList();
+    }
+
+    public List<AbstractCooldown<?>> getNonDebuffCooldowns() {
+        return abstractCooldowns.stream()
+                                .filter(cooldown -> cooldown.getCooldownType() != CooldownTypes.DEBUFF)
                                 .toList();
     }
 
@@ -408,7 +413,6 @@ public class CooldownManager {
         WarlordsAddCooldownEvent event = new WarlordsAddCooldownEvent(warlordsEntity, abstractCooldown);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            ChatUtils.MessageType.WARLORDS.sendMessage("****CD SKIP " + abstractCooldown.getName() + " - " + abstractCooldown + " - " + abstractCooldown.getCooldownObject());
             abstractCooldown.getOnRemoveForce().accept(this);
             return;
         }
@@ -549,28 +553,32 @@ public class CooldownManager {
     }
 
     public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
-        for (Soulbinding soulbinding : new CooldownFilter<>(this, PersistentCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+        for (Soulbinding.SoulbindingData data : new CooldownFilter<>(this, PersistentCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                 .toList()
         ) {
-            if (soulbinding.hasBoundPlayer(warlordsPlayer)) {
+            if (data.hasBoundPlayer(warlordsPlayer)) {
                 return true;
             }
         }
         return false;
     }
 
-    public List<Soulbinding> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
-        List<Soulbinding> soulbindings = new ArrayList<>();
-        for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+    public List<Soulbinding.SoulbindingData> getNumberOfBoundPlayersLink(WarlordsEntity warlordsPlayer) {
+        List<Soulbinding.SoulbindingData> soulbindings = new ArrayList<>();
+        for (Soulbinding.SoulbindingData data : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
                 .toList()
         ) {
-            if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
-                this.warlordsEntity.doOnStaticAbility(Soulbinding.class, Soulbinding::addLinkProcs);
-                soulbindings.add(soulbinding);
+            if (data.hasBoundPlayerLink(warlordsPlayer)) {
+                soulbindings.add(data);
             }
         }
+        new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
+                .forEachOrdered(data -> {
+
+                });
         int counter = soulbindings.size();
         incrementCooldown(
                 new RegularCooldown<Void>("KB Resistance",
@@ -617,21 +625,21 @@ public class CooldownManager {
     }
 
     public boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
-        for (UndyingArmy undyingArmy : new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
+        for (UndyingArmy.UndyingArmyData data : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.UndyingArmyData.class)
                 .toList()
         ) {
-            if (Objects.equals(undyingArmy, exclude)) {
+            if (Objects.equals(data.getUndyingArmy(), exclude)) {
                 continue;
             }
             if (popped) {
                 //returns true if any undying is popped
-                if (undyingArmy.isArmyDead(warlordsEntity)) {
+                if (data.isArmyDead(warlordsEntity)) {
                     return true;
                 }
             } else {
                 //return true if theres any unpopped armies
-                if (!undyingArmy.isArmyDead(warlordsEntity)) {
+                if (!data.isArmyDead(warlordsEntity)) {
                     return true;
                 }
             }

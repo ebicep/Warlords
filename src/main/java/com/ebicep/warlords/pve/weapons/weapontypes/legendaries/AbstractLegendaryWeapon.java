@@ -341,6 +341,7 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
         resetAbility();
         AbstractAbility ability = getAbility();
         if (ability != null) {
+            ability.init(ability.getBuilder());
             ability.updateDescription(null);
             new GameRunnable(player.getGame()) {
 
@@ -359,6 +360,12 @@ public abstract class AbstractLegendaryWeapon extends AbstractWeapon implements 
                 }
             }.runTaskTimer(20, 10);
         }
+    }
+
+    @Override
+    public void cleanup() {
+        this.warlordsPlayer = null;
+        this.pveOption = null;
     }
 
     @Override

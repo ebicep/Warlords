@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +27,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.DayOfWeek;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,10 +44,6 @@ public class DatabaseGameEvent implements Listener {
     public static final HashMap<GameEvents, List<Long>> ALL_GAME_EVENT_TIMES = new HashMap<>();
     public static DatabaseGameEvent currentGameEvent = null;
     private static BukkitTask eventChecker = null;
-
-    public static boolean eventIsActive() {
-        return currentGameEvent != null && currentGameEvent.isActive();
-    }
 
     public static void sendGameEventMessage(Player player, String message) {
         player.sendMessage(Component.text("Game Events", NamedTextColor.GOLD)
@@ -73,6 +73,9 @@ public class DatabaseGameEvent implements Listener {
                                 ChatUtils.MessageType.GAME_EVENTS.sendMessage("New Event Detected! Starting...");
                                 gameEvent.setStarted(true);
                                 Warlords.newChain().async(() -> DatabaseManager.gameEventsService.update(gameEvent)).execute();
+                                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                                    DatabaseManager.getPlayer(onlinePlayer.getUniqueId(), DatabaseGameEvent::checkPlayerEventCurrency);
+                                }
                             }
                             gameEvent.start();
                             if (eventChecker != null) {
@@ -98,6 +101,33 @@ public class DatabaseGameEvent implements Listener {
                             }
                         } else {
                             ChatUtils.MessageType.GAME_EVENTS.sendMessage("Last game event was over 7 days ago, not starting");
+                            LocalDate today = LocalDate.now();
+                            LocalDate firstFridayOfMonth = getFirstFridayOfMonth();
+                            if (today.equals(firstFridayOfMonth)) {
+                                ChatUtils.MessageType.GAME_EVENTS.sendMessage("First Friday of the month, queuing new event...");
+                                GameEvents previousEvent = gameEvent.getEvent();
+                                GameEvents nextEvent = GameEvents.VALUES[(previousEvent.ordinal() + 1) % GameEvents.VALUES.length];
+                                Instant firstFridayInstant = firstFridayOfMonth
+                                        .atTime(10, 0)
+                                        .atZone(ZoneOffset.UTC)
+                                        .toInstant();
+                                Instant nextNextMondayInstant = firstFridayOfMonth
+                                        .plusDays(10)
+                                        .atTime(10, 0)
+                                        .atZone(ZoneOffset.UTC)
+                                        .toInstant();
+                                Warlords.newChain()
+                                        .async(() -> {
+                                            DatabaseGameEvent newEvent = new DatabaseGameEvent(
+                                                    nextEvent,
+                                                    firstFridayInstant,
+                                                    nextNextMondayInstant
+                                            );
+                                            DatabaseManager.gameEventsService.create(newEvent);
+                                            ChatUtils.MessageType.GAME_EVENTS.sendMessage("Queued new event: " + nextEvent);
+                                        })
+                                        .execute();
+                            }
                             if (eventChecker == null) {
                                 ChatUtils.MessageType.GAME_EVENTS.sendMessage("Starting event checker...");
                                 eventChecker = new BukkitRunnable() {
@@ -114,12 +144,20 @@ public class DatabaseGameEvent implements Listener {
                 .execute();
     }
 
-    @EventHandler
-    public void onDatabasePlayerLoad(DatabasePlayerFirstLoadEvent event) {
-        if (!eventIsActive()) {
-            return;
+    public static LocalDate getFirstFridayOfMonth() {
+        LocalDate today = LocalDate.now();
+        LocalDate firstFriday = today.withDayOfMonth(1);
+        while (firstFriday.getDayOfWeek() != DayOfWeek.FRIDAY) {
+            firstFriday = firstFriday.plusDays(1);
         }
-        DatabasePlayer databasePlayer = event.getDatabasePlayer();
+        return firstFriday;
+    }
+
+    public static boolean eventIsActive() {
+        return currentGameEvent != null && currentGameEvent.isActive();
+    }
+
+    private static void checkPlayerEventCurrency(DatabasePlayer databasePlayer) {
         GameEvents gameEvent = currentGameEvent.getEvent();
         EventMode eventMode = gameEvent.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats()).get(currentGameEvent.getStartDateSecond());
         if (eventMode != null && eventMode.getEventPlays() != 0) {
@@ -132,7 +170,41 @@ public class DatabaseGameEvent implements Listener {
         }
         databasePlayer.getPveStats().subtractCurrency(currency, currencyValue);
         DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-        ChatUtils.MessageType.GAME_EVENTS.sendMessage("New event, cleared " + event.getPlayer().getName() + " " + currency.name + " currency.");
+        ChatUtils.MessageType.GAME_EVENTS.sendMessage("New event, cleared " + databasePlayer.getName() + " " + currency.name + " currency.");
+    }
+
+    @Id
+    protected String id;
+    private GameEvents event;
+    @Field("start_date")
+    private Instant startDate;
+    @Field("end_date")
+    private Instant endDate;
+    private boolean started;
+
+    @Field("gave_rewards")
+    private boolean gaveRewards;
+
+    public DatabaseGameEvent() {
+    }
+
+    public DatabaseGameEvent(GameEvents event, Instant startDate, Instant endDate) {
+        this.event = event;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    @EventHandler
+    public void onDatabasePlayerLoad(DatabasePlayerFirstLoadEvent event) {
+        if (!eventIsActive()) {
+            return;
+        }
+        DatabasePlayer databasePlayer = event.getDatabasePlayer();
+        checkPlayerEventCurrency(databasePlayer);
+    }
+
+    public boolean isActive() {
+        return getEndDate().isAfter(Instant.now()); //getStartDate().isBefore(Instant.now()) &&
     }
 
     public GameEvents getEvent() {
@@ -143,16 +215,12 @@ public class DatabaseGameEvent implements Listener {
         return startDate.getEpochSecond();
     }
 
-    public Instant getStartDate() {
-        return startDate;
-    }
-
     public Instant getEndDate() {
         return endDate;
     }
 
-    public boolean isActive() {
-        return getEndDate().isAfter(Instant.now()); //getStartDate().isBefore(Instant.now()) &&
+    public Instant getStartDate() {
+        return startDate;
     }
 
     public Boolean getStarted() {
@@ -173,17 +241,6 @@ public class DatabaseGameEvent implements Listener {
         ChatUtils.MessageType.GAME_EVENTS.sendMessage("Creating new Game Event NPC...");
         getEvent().createNPC();
     }
-
-    @Id
-    protected String id;
-    private GameEvents event;
-    @Field("start_date")
-    private Instant startDate;
-    @Field("end_date")
-    private Instant endDate;
-    private boolean started;
-    @Field("gave_rewards")
-    private boolean gaveRewards;
 
     public void giveRewards() {
         //player rewards
@@ -220,7 +277,8 @@ public class DatabaseGameEvent implements Listener {
                             Component.text(" - ", NamedTextColor.GRAY),
                             Component.text(NumberFormat.addCommas(event.eventsStatsFunction.apply(databasePlayer.getPveStats().getEventStats())
                                                                                            .get(getStartDateSecond())
-                                                                                           .getEventPointsCumulative()) + " Points", NamedTextColor.YELLOW)
+                                                                                           .getEventPointsCumulative()) + " Points", NamedTextColor.YELLOW
+                            )
                     )
             );
             playerMessages.put(databasePlayer, messages);

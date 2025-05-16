@@ -20,10 +20,6 @@ import java.util.Optional;
 
 public abstract class AbstractTotem extends AbstractAbility implements OrangeAbilityIcon {
 
-    public ArmorStand getTotem() {
-        return totem;
-    }
-
     public static <T extends TotemData<?>> Optional<T> getTotemDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
         List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
@@ -40,27 +36,12 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
                 .toList();
     }
 
-    protected WarlordsEntity owner;
-    protected ArmorStand totem;
-
-    public AbstractTotem(String name, float cooldown, float energyCost) {
-        super(name, cooldown, energyCost);
-    }
-
-    public AbstractTotem(
-            String name,
-            float cooldown,
-            float energyCost,
-            ArmorStand totem,
-            WarlordsEntity owner
-    ) {
-        super(name, cooldown, energyCost);
-        this.totem = totem;
-        this.owner = owner;
+    public AbstractTotem(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location standLocation = LocationUtils.getGroundLocation(wp.getLocation());
         standLocation.setYaw(0);
         standLocation.setY(standLocation.getY() - 0.46);
@@ -68,9 +49,10 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
         playSound(wp, standLocation);
 
         ArmorStand totemStand = Utils.spawnArmorStand(standLocation, armorStand -> {
-            armorStand.getEquipment().setHelmet(getTotemItemStack());
-            armorStand.setSmall(true);
-        });
+                    armorStand.getEquipment().setHelmet(getTotemItemStack());
+                    armorStand.setSmall(true);
+                }
+        );
 
         onActivation(wp, totemStand);
 

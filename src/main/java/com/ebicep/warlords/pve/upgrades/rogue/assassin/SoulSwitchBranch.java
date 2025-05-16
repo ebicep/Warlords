@@ -41,7 +41,7 @@ public class SoulSwitchBranch extends AbstractUpgradeBranch<SoulSwitch> {
                 "Soul Switch - Master Upgrade",
                 """
                         While swapping and upon landing, gain 50% damage reduction and become invisible for 5s.
-                        Additionally, at the start and end locations of the swap, increase movement speed by 25% for self and allies within a 3-block radius for 3s and for every 1% speed bonus granted to the Animus, increase the damage of its Judgment Strike by 1%.
+                        Additionally, at the start and end locations of the swap, increase movement speed by 25% for self and allies within a 3-block radius for 3s and for every 1% speed bonus granted to the Animus, increase the damage of your Judgment Strike by 0.5% (Max 10%).
                         """,
                 50000,
                 () -> {

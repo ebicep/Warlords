@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FlagMessageMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -20,17 +20,17 @@ import java.util.List;
 
 public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 
-    private int despawnTimer;
+    private int ticksUntilSpawn;
     private final WarlordsEntity scorer;
 
     public WaitingFlagLocation(Location location, WarlordsEntity scorer) {
         super(location);
-        this.despawnTimer = 15 * 20;
+        this.ticksUntilSpawn = 15 * 20;
         this.scorer = scorer;
     }
 
-    public int getDespawnTimer() {
-        return despawnTimer;
+    public int getTicksUntilSpawn() {
+        return ticksUntilSpawn;
     }
 
     @Deprecated
@@ -44,9 +44,9 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
     }
 
     @Override
-    public FlagLocation update(@Nonnull FlagInfo info) {
-        this.despawnTimer--;
-        return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
+    public FlagLocation update(Game game, @Nonnull FlagInfo info) {
+        this.ticksUntilSpawn--;
+        return this.ticksUntilSpawn <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
 
     @Nonnull
@@ -55,7 +55,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
         return Arrays.asList(
                 Component.text("Type: " + this.getClass().getSimpleName()),
                 Component.text("scorer: " + getScorer()),
-                Component.text("despawnTimer: " + getDespawnTimer())
+                Component.text("ticksUntilSpawn: " + getTicksUntilSpawn())
         );
     }
 
@@ -77,7 +77,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
                                                  .append(Component.text(" has captured the "))
                                                  .append(coloredPrefix)
                                                  .append(Component.text(" flag!"));
-                if (databasePlayer.getFlagMessageMode() == Settings.FlagMessageMode.RELATIVE) {
+                if (databasePlayer.getFlagMessageMode() == FlagMessageMode.RELATIVE) {
                     if (sameTeam) {
                         flagMessage = Component.text("", NamedTextColor.YELLOW)
                                                .append(coloredName)

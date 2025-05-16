@@ -144,11 +144,11 @@ public abstract class GameMap {
         }
     }
 
-    private final String mapName;
+    private final @Nonnull String mapName;
     private final int maxPlayers;
     private final int minPlayers;
     private final int lobbyCountdown;
-    private final String fileName;
+    private final @Nonnull String fileName;
     private final int numberOfMaps;
     private final List<GameMode> gameMode;
 
@@ -157,7 +157,7 @@ public abstract class GameMap {
             int maxPlayers,
             int minPlayers,
             int lobbyCountdown,
-            String fileName,
+            @Nonnull String fileName,
             int numberOfMaps,
             @Nonnull GameMode... gameMode
     ) {
@@ -185,6 +185,7 @@ public abstract class GameMap {
         return new PreLobbyState(game);
     }
 
+    @Nonnull
     public String getMapName() {
         return mapName;
     }
@@ -203,6 +204,15 @@ public abstract class GameMap {
 
     public List<GameMode> getGameModes() {
         return gameMode;
+    }
+
+    @Nonnull
+    public String getFileName() {
+        return fileName;
+    }
+
+    public int getNumberOfMaps() {
+        return numberOfMaps;
     }
 
     public String getDatabaseName() {

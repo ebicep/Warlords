@@ -63,7 +63,7 @@ public class EventExiledCore extends AbstractEventCore {
                 .2
         );
         EffectUtils.displayParticle(
-                Particle.SPELL,
+                Particle.EFFECT,
                 floorLocation,
                 1000,
                 10,

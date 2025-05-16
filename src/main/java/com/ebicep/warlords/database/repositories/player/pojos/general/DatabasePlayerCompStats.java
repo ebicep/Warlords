@@ -12,9 +12,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.siege.DatabaseGameS
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGamePlayerTDM;
 import com.ebicep.warlords.database.repositories.games.pojos.tdm.DatabaseGameTDM;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.*;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.interception.DatabasePlayerInterception;
 import com.ebicep.warlords.database.repositories.player.pojos.siege.DatabasePlayerSiege;
@@ -27,7 +25,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class DatabasePlayerCompStats implements MultiStatsGeneral {
+public class DatabasePlayerCompStats implements MultiStatsGeneral, TracksMultiAbilityStats {
+
     @Field("ctf_stats")
     private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
     @Field("tdm_stats")
@@ -107,5 +106,11 @@ public class DatabasePlayerCompStats implements MultiStatsGeneral {
                 (Object) siegeStats);
         return stats;
     }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return List.of(ctfStats, tdmStats, interceptionStats, siegeStats);
+    }
+
 }
 

@@ -44,26 +44,28 @@ public class Warsong extends GameMap {
         List<Option> options = category.initMap(this, loc, addons);
 
         options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(71.5, 40, -71.5, 90, 0), Team.BLUE).asOption());
-        options.add(LobbyLocationMarker.create(loc.addXYZ(73.5, 41, 213.5, -90, 0), Team.RED).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(56.5, 39, -69.5, 0, 0), Team.BLUE).asOption());
+        options.add(LobbyLocationMarker.create(loc.addXYZ(88.5, 39, 213.5, -180, 0), Team.RED).asOption());
 
         options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupOption.PowerUp.ENERGY));
         options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupOption.PowerUp.ENERGY));
 
-        options.add(new PowerupOption(loc.addXYZ(63.5, 33.5, -31.5), PowerupOption.PowerUp.SPEED));
-        options.add(new PowerupOption(loc.addXYZ(79.5, 32.5, 167.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(79.5, 34.5, 167.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(45.5, 37.5, 157.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(65.5, 34.5, -23.5), PowerupOption.PowerUp.SPEED));
+        options.add(new PowerupOption(loc.addXYZ(99.5, 37.5, -13.5), PowerupOption.PowerUp.SPEED));
 
         options.add(new PowerupOption(loc.addXYZ(44.5, 20.5, 42.5), PowerupOption.PowerUp.HEALING));
         options.add(new PowerupOption(loc.addXYZ(100.5, 20.5, 101.5), PowerupOption.PowerUp.HEALING));
 
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(45.5, 29.5, 15.5, -30, 0), Team.BLUE));
-        options.add(SpawnpointOption.forTeam(loc.addXYZ(99.5, 29.5, 128.5, 150, 0), Team.RED));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(20.5, 39, -13.5, -35, 0), Team.BLUE));
+        options.add(SpawnpointOption.forTeam(loc.addXYZ(124.5, 39, 157.5, 145, 0), Team.RED));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(56.5, 39.5, -76.5), Team.BLUE));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(56.5, 39.5, -76.5), Team.BLUE));
+        options.add(new FlagCapturePointOption(loc.addXYZ(56.5, 39, -74.5), Team.BLUE));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(56.5, 39, -74.5), Team.BLUE));
 
-        options.add(new FlagCapturePointOption(loc.addXYZ(88.5, 39.5, 218.5, 180, 0), Team.RED));
-        options.add(new FlagSpawnPointOption(loc.addXYZ(88.5, 39.5, 218.5, 180, 0), Team.RED));
+        options.add(new FlagCapturePointOption(loc.addXYZ(88.5, 39, 218.5, 180, 0), Team.RED));
+        options.add(new FlagSpawnPointOption(loc.addXYZ(88.5, 39, 218.5, 180, 0), Team.RED));
 
         options.add(new GateOption(loc.addXYZ(42, 39, -52), loc.addXYZ(47, 45, -52)));
         options.add(new GateOption(loc.addXYZ(69, 35, -52), loc.addXYZ(75, 43, -52)));

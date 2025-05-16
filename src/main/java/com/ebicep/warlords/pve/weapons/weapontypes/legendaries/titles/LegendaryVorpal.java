@@ -126,7 +126,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     protected float getMeleeDamageMinValue() {
-        return 180;
+        return 200;
     }
 
     @Override
@@ -151,7 +151,7 @@ public class LegendaryVorpal extends AbstractLegendaryWeapon implements PassiveC
 
     @Override
     protected float getMeleeDamageMaxValue() {
-        return 200;
+        return 220;
     }
 
     @Override

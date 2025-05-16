@@ -2,12 +2,17 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -17,12 +22,10 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.paladin.protector.HammerOfLightBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,91 +39,69 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues> {
+public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon, Duration, Damages<HammerOfLight.DamageValues>, Heals<HammerOfLight.HealingValues>, AbilityStats<HammerOfLight, HammerOfLight.HammerOfLightStats> {
 
-    public int playersHealed = 0;
-    public int playersDamaged = 0;
-    protected float amountHealed = 0;
-    private final FloatModifiable radius = new FloatModifiable(6);
+    private final HammerOfLightStats stats = new HammerOfLightStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
-    private boolean isCrownOfLight = false;
-    private Location location;
+    private FloatModifiable radius = new FloatModifiable(6);
     private int tickDuration = 200;
+    private int crownEnergyReduction = 10;
     private float crownBonusHealing = 35;
 
     public HammerOfLight() {
-        super("Hammer of Light", 65.25f, 50);
-    }
-
-    public HammerOfLight(Location location) {
-        super("Hammer of Light", 65.25f, 50);
-        this.location = location;
+        super(AbstractAbilityBuilder.create("hammerOfLight").pvp());
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
-    }
-
-    public boolean isHammer() {
-        return !isCrownOfLight;
-    }
-
-    public Location getLocation() {
-        return location;
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.crownEnergyReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("crownEnergyReduction"), int.class);
+        this.crownBonusHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("crownBonusHealing"), float.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Throw down a Hammer of Light on the ground, dealing ")
-                               .append(Damages.formatDamage(damageValues.hammerDamage))
-                               .append(Component.text(" damage every second to nearby enemies and healing nearby allies for "))
-                               .append(Heals.formatHealing(healingValues.hammerHealing))
-                               .append(Component.text(" every second in a "))
-                               .append(Component.text(format(radius.getCalculatedValue()), NamedTextColor.YELLOW))
-                               .append(Component.text(" block radius. Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."))
-                               .append(Component.newline())
-                               .append(Component.newline())
-                               .append(Component.text("Recast to turn your hammer into Crown of Light. Removing the damage and piercing BUT increasing the healing by "))
-                               .append(Component.text(crownBonusHealing + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" and reducing the energy cost of your Protector's Strike by "))
-                               .append(Component.text("10", NamedTextColor.YELLOW))
-                               .append(Component.text(" energy. You cannot put the Hammer of Light back down after you converted it."));
+        description = AbilityDescriptionBuilder.create("Throw down a Hammer of Light on the ground, dealing ")
+                                               .damage(damageValues.hammerDamage)
+                                               .text(" damage every ")
+                                               .durationSeconds(1)
+                                               .text(" to enemies and healing allies for ")
+                                               .heal(healingValues.hammerHealing)
+                                               .text(" every ")
+                                               .durationSeconds(1)
+                                               .text(" within ")
+                                               .blocks(radius)
+                                               .text(". Your attacks pierces shields and defenses of enemies standing on top of the Hammer of Light. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Recast to turn your hammer into Crown of Light. Removing the damage and piercing BUT increasing the healing by ")
+                                               .percent(crownBonusHealing, NamedTextColor.GREEN)
+                                               .text(" and reducing the energy cost of your Protector's Strike by ")
+                                               .energy(crownEnergyReduction)
+                                               .text(". You cannot put the Hammer of Light back down after you converted it.")
+                                               .build();
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Healed", "" + playersHealed));
-        info.add(new Pair<>("Players Damaged", "" + playersDamaged));
-
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        Block targetBlock = !(wp.getEntity() instanceof Player) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        Block targetBlock = !(wp.getEntity() instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
-
         Utils.playGlobalSound(wp.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
-
         Location location = targetBlock.getLocation().clone().add(.6, 0, .6).clone();
         if (location.clone().add(0, 1, 0).getBlock().getType() != Material.AIR) {
             if (location.clone().add(1, 0, 0).getBlock().getType() == Material.AIR) {
@@ -133,25 +114,21 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 location.add(0, 0, -.6);
             }
         }
-
         float rad = radius.getCalculatedValue();
-        CircleEffect circleEffect = new CircleEffect(
-                wp.getGame(),
+        CircleEffect circleEffect = new CircleEffect(wp.getGame(),
                 wp.getTeam(),
                 location,
                 rad,
-                new CircumferenceEffect(Particle.VILLAGER_HAPPY, Particle.REDSTONE),
-                new LineEffect(location.clone().add(0, 2.3, 0), Particle.SPELL)
+                new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST),
+                new LineEffect(location.clone().add(0, 2.3, 0), Particle.EFFECT)
         );
         BukkitTask particleTask = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
         ArmorStand hammer = spawnHammer(location);
-
-        HammerOfLight tempHammerOfLight = new HammerOfLight(location);
-        RegularCooldown<HammerOfLight> hammerOfLightCooldown = new RegularCooldown<>(
-                name,
+        HammerOfLightData data = new HammerOfLightData(location);
+        RegularCooldown<HammerOfLightData> hammerOfLightCooldown = new RegularCooldown<>(name,
                 "HAMMER",
-                HammerOfLight.class,
-                tempHammerOfLight,
+                HammerOfLightData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -159,7 +136,6 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 cooldownManager -> {
                     hammer.remove();
                     particleTask.cancel();
-
                     for (ProtectorsStrike protectorsStrike : wp.getAbilitiesMatching(ProtectorsStrike.class)) {
                         protectorsStrike.getEnergyCost().removeModifier("Hammer of Light");
                     }
@@ -168,55 +144,46 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveMasterUpgrade2 && ticksElapsed % 5 == 0) {
-                        for (WarlordsEntity allyTarget : PlayerFilter
-                                .entitiesAround(wp.getLocation(), rad, rad, rad)
-                                .aliveTeammatesOfExcludingSelf(wp)
-                        ) {
+                        for (WarlordsEntity allyTarget : PlayerFilter.entitiesAround(data.getLocation(), rad, rad, rad).aliveTeammatesOfExcludingSelf(wp)) {
                             allyTarget.getSpeed().removeSlownessModifiers();
                             CooldownManager allyTargetCooldownManager = allyTarget.getCooldownManager();
                             allyTargetCooldownManager.removeDebuffCooldowns();
-                            allyTargetCooldownManager.removeCooldownByObject(tempHammerOfLight);
-                            allyTargetCooldownManager.addCooldown(new RegularCooldown<>(
-                                    "Hammer of Disillusion",
+                            allyTargetCooldownManager.removeCooldownByObject(data);
+                            allyTargetCooldownManager.addCooldown(new RegularCooldown<>("Hammer of Disillusion",
                                     null,
-                                    HammerOfLight.class,
-                                    tempHammerOfLight,
+                                    HammerOfLightData.class,
+                                    data,
                                     wp,
                                     CooldownTypes.ABILITY,
                                     cooldownManager -> {
                                     },
                                     5
                             ) {
+
                                 @Override
                                 protected Listener getListener() {
                                     return CooldownManager.getDefaultDebuffImmunityListener(allyTarget);
                                 }
                             });
                         }
-
                     }
                     if (ticksElapsed % 20 != 0) {
                         return;
                     }
-                    if (tempHammerOfLight.isCrownOfLight()) {
+                    if (data.isCrownOfLight()) {
                         if (!wp.isAlive()) {
                             return;
                         }
-                        for (WarlordsEntity crownTarget : PlayerFilter
-                                .entitiesAround(wp.getLocation(), rad, rad, rad)
-                                .isAlive()
-                        ) {
+                        for (WarlordsEntity crownTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad, rad, rad).isAlive()) {
                             if (wp.isTeammate(crownTarget)) {
-                                playersHealed++;
-                                crownTarget.addInstance(InstanceBuilder
-                                        .healing()
-                                        .cause("Crown of Light")
-                                        .source(wp)
-                                        .min(healingValues.hammerHealing.getMinValue() * convertToMultiplicationDecimal(crownBonusHealing))
-                                        .max(healingValues.hammerHealing.getMaxValue() * convertToMultiplicationDecimal(crownBonusHealing))
-                                        .crit(healingValues.hammerHealing)
-                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                stats.targetsHealed++;
+                                crownTarget.addInstance(InstanceBuilder.healing()
+                                                                       .cause("Crown of Light")
+                                                                       .source(wp)
+                                                                       .min(healingValues.hammerHealing.getMinValue() * convertToMultiplicationDecimal(crownBonusHealing))
+                                                                       .max(healingValues.hammerHealing.getMaxValue() * convertToMultiplicationDecimal(crownBonusHealing))
+                                                                       .crit(healingValues.hammerHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                                    data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                                 });
                             } else {
                                 if (pveMasterUpgrade2) {
@@ -225,28 +192,16 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                             }
                         }
                     } else {
-                        for (WarlordsEntity hammerTarget : PlayerFilter
-                                .entitiesAround(location, rad, rad, rad)
-                                .isAlive()
-                        ) {
+                        for (WarlordsEntity hammerTarget : PlayerFilter.entitiesAround(location, rad, rad, rad).isAlive()) {
                             if (wp.isTeammate(hammerTarget)) {
-                                playersHealed++;
-                                hammerTarget.addInstance(InstanceBuilder
-                                        .healing()
-                                        .ability(this)
-                                        .source(wp)
-                                        .value(healingValues.hammerHealing)
-                                ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                                    tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
-                                });
+                                stats.targetsHealed++;
+                                hammerTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.hammerHealing))
+                                            .ifPresent(warlordsDamageHealingFinalEvent -> {
+                                                data.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                                            });
                             } else {
-                                playersDamaged++;
-                                hammerTarget.addInstance(InstanceBuilder
-                                        .damage()
-                                        .ability(this)
-                                        .source(wp)
-                                        .value(damageValues.hammerDamage)
-                                );
+                                stats.targetsDamaged++;
+                                hammerTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.hammerDamage));
                                 if (pveMasterUpgrade2) {
                                     giveHammerOfDisillusionEffect(hammerTarget, wp);
                                 }
@@ -255,6 +210,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                     }
                 })
         ) {
+
             @Override
             protected Listener getListener() {
                 return new Listener() {
@@ -264,31 +220,51 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                         if (!event.isDamageInstance() || !event.getSource().equals(wp)) {
                             return;
                         }
-                        if (tempHammerOfLight.isCrownOfLight) {
+                        if (data.isCrownOfLight) {
+                            return;
+                        }
+                        if (event.getWarlordsEntity().getLocation().distanceSquared(location) > rad * rad) {
                             return;
                         }
                         event.getFlags().add(InstanceFlags.PIERCE);
                     }
+
+                    @EventHandler
+                    public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
+                        if (event.getAttacker() != wp) {
+                            return;
+                        }
+                        if (!event.getInstanceFlags().contains(InstanceFlags.PIERCE)) {
+                            return;
+                        }
+                        WarlordsEntity target = event.getWarlordsEntity();
+                        List<AbstractCooldown<?>> cooldowns = event.getPlayerCooldowns()
+                                                                   .stream()
+                                                                   .map(WarlordsDamageHealingFinalEvent.CooldownRecord::getAbstractCooldown)
+                                                                   .collect(Collectors.toList());
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Intervene.class)
+                                                                                  .filter(regularCooldown -> !Objects.equals(regularCooldown.getFrom(), target))
+                                                                                  .findAny()
+                                                                                  .isPresent()) {
+                            stats.intervenesPierced++;
+                        }
+                        if (new CooldownFilter<>(cooldowns, RegularCooldown.class).filterCooldownClass(Shield.class).filter(RegularCooldown::hasTicksLeft).findAny().isPresent()) {
+                            stats.shieldsPierced++;
+                        }
+                    }
                 };
             }
         };
-
         wp.getCooldownManager().addCooldown(hammerOfLightCooldown);
-
         location.add(0, 1, 0);
-
-        addSecondaryAbility(
-                3,
-                () -> {
+        addSecondaryAbility(3, () -> {
                     if (!wp.isAlive() || !wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
                         return;
                     }
                     hammer.remove();
                     particleTask.cancel();
-
                     Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
                     Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
-
                     hammerOfLightCooldown.setRemoveOnDeath(true);
                     hammerOfLightCooldown.addTriConsumer((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 6 == 0) {
@@ -299,48 +275,30 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                                 angle += 40;
                                 Vector v = new Vector(x, 2, z);
                                 Location loc = wp.getLocation().clone().add(v);
-                                loc.getWorld().spawnParticle(
-                                        Particle.SPELL,
-                                        loc,
-                                        1,
-                                        0,
-                                        0,
-                                        0,
-                                        0,
-                                        null,
-                                        true
-                                );
+                                loc.getWorld().spawnParticle(Particle.EFFECT, loc, 1, 0, 0, 0, 0, null, true);
                             }
-
-                            new CircleEffect(
-                                    wp.getGame(),
+                            new CircleEffect(wp.getGame(),
                                     wp.getTeam(),
                                     wp.getLocation().add(0, 0.75f, 0),
                                     rad / 2f,
-                                    new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(0.5f)
+                                    new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(0.5f)
                             ).playEffects();
                         }
                     });
-
-                    tempHammerOfLight.setCrownOfLight(true);
+                    data.setCrownOfLight(true);
                     hammerOfLightCooldown.setNameAbbreviation("CROWN");
-
                     // prot strike energy reduction
                     for (ProtectorsStrike protectorsStrike : wp.getAbilitiesMatching(ProtectorsStrike.class)) {
-                        protectorsStrike.getEnergyCost().addAdditiveModifier("Hammer of Light", -10);
+                        protectorsStrike.getEnergyCost().addAdditiveModifier("Hammer of Light", -crownEnergyReduction);
                     }
-
                     if (pveMasterUpgrade) {
-                        pulseHeal(wp, 20, 1.5, tempHammerOfLight);
-                        pulseHeal(wp, 40, 2.5, tempHammerOfLight);
-                        pulseHeal(wp, 60, 3.5, tempHammerOfLight);
-                        pulseHeal(wp, 80, 4.5, tempHammerOfLight);
+                        pulseHeal(wp, 20, 1.5, data);
+                        pulseHeal(wp, 40, 2.5, data);
+                        pulseHeal(wp, 60, 3.5, data);
+                        pulseHeal(wp, 80, 4.5, data);
                     }
-                },
-                false,
-                secondaryAbility -> !wp.getCooldownManager().hasCooldown(hammerOfLightCooldown) || wp.isDead()
+                }, false, secondaryAbility -> !wp.getCooldownManager().hasCooldown(hammerOfLightCooldown) || wp.isDead()
         );
-
         return true;
     }
 
@@ -352,93 +310,64 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
             }
         }
         newLocation.add(0, -1, 0);
-
         return Utils.spawnArmorStand(newLocation.clone().add(.25, 1.9, -.25), armorStand -> {
-            armorStand.setRightArmPose(new EulerAngle(20.25, 0, 0));
-            armorStand.getEquipment().setItemInMainHand(new ItemStack(Material.STRING));
-            armorStand.setMarker(true);
-        });
-    }
-
-    public boolean isCrownOfLight() {
-        return isCrownOfLight;
-    }
-
-    public void setCrownOfLight(boolean crownOfLight) {
-        isCrownOfLight = crownOfLight;
-    }
-
-    public void addAmountHealed(float amount) {
-        this.amountHealed += amount;
+                    armorStand.setRightArmPose(new EulerAngle(20.25, 0, 0));
+                    armorStand.getEquipment().setItemInMainHand(new ItemStack(Material.STRING));
+                    armorStand.setMarker(true);
+                }
+        );
     }
 
     private static void giveHammerOfDisillusionEffect(WarlordsEntity hammerTarget, @Nonnull WarlordsEntity wp) {
         hammerTarget.getCooldownManager().removeCooldownByName("Hammer of Disillusion");
-        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
-                "Hammer of Disillusion",
-                null,
-                HammerOfLight.class,
-                null,
-                wp,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                20
+        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>("Hammer of Disillusion", null, HammerOfLight.class, null, wp, CooldownTypes.DEBUFF, cooldownManager -> {
+        }, 20
         ) {
+
             @Override
             public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * 1.1f;
+                return currentDamageValue * 1.15f;
             }
         });
     }
 
-    private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier, HammerOfLight tempHammerOfLight) {
+    private void pulseHeal(WarlordsEntity wp, int delay, double radiusMultiplier, HammerOfLightData hammerOfLightData) {
         new GameRunnable(wp.getGame()) {
+
             @Override
             public void run() {
                 Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.4f);
                 EffectUtils.strikeLightning(wp.getLocation(), false, delay / 10);
                 float rad = radius.getCalculatedValue();
-                EffectUtils.playHelixAnimation(wp.getLocation(), rad * radiusMultiplier, Particle.SPELL_WITCH, 1, 20);
-                new CircleEffect(
-                        wp.getGame(),
+                EffectUtils.playHelixAnimation(wp.getLocation(), rad * radiusMultiplier, Particle.WITCH, 1, 20);
+                new CircleEffect(wp.getGame(),
                         wp.getTeam(),
                         wp.getLocation().add(0, 0.75f, 0),
                         rad * radiusMultiplier,
-                        new CircumferenceEffect(Particle.SPELL).particlesPerCircumference(1)
+                        new CircumferenceEffect(Particle.EFFECT).particlesPerCircumference(1)
                 ).playEffects();
-
-                for (WarlordsEntity allyTarget : PlayerFilter
-                        .entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
-                        .aliveTeammatesOf(wp)
-                ) {
-                    playersHealed++;
-                    allyTarget.addInstance(InstanceBuilder
-                            .healing()
-                            .cause("Hammer of Illusion")
-                            .source(wp)
-                            .min(healingValues.hammerHealing.getMinValue() * 5)
-                            .max(healingValues.hammerHealing.getMaxValue() * 5)
-                            .critChance(20)
-                            .critMultiplier(150)
-                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
-                        tempHammerOfLight.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
+                for (WarlordsEntity allyTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
+                                                             .aliveTeammatesOf(wp)) {
+                    stats.targetsHealed++;
+                    allyTarget.addInstance(InstanceBuilder.healing()
+                                                          .cause("Hammer of Illusion")
+                                                          .source(wp)
+                                                          .min(healingValues.hammerHealing.getMinValue() * 5)
+                                                          .max(healingValues.hammerHealing.getMaxValue() * 5)
+                                                          .critChance(20)
+                                                          .critMultiplier(150)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                        hammerOfLightData.addAmountHealed(warlordsDamageHealingFinalEvent.getValue());
                     });
                 }
-
-                for (WarlordsEntity enemyTarget : PlayerFilter
-                        .entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
-                        .aliveEnemiesOf(wp)
-                ) {
-                    enemyTarget.addInstance(InstanceBuilder
-                            .damage()
-                            .cause("Hammer of Illusion")
-                            .source(wp)
-                            .min(damageValues.hammerDamage.getMinValue() * 5)
-                            .max(damageValues.hammerDamage.getMaxValue() * 5)
-                            .critChance(20)
-                            .critMultiplier(150)
-                    );
+                for (WarlordsEntity enemyTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad * radiusMultiplier, rad * radiusMultiplier, rad * radiusMultiplier)
+                                                              .aliveEnemiesOf(wp)) {
+                    enemyTarget.addInstance(InstanceBuilder.damage()
+                                                           .cause("Hammer of Illusion")
+                                                           .source(wp)
+                                                           .min(damageValues.hammerDamage.getMinValue() * 5)
+                                                           .max(damageValues.hammerDamage.getMaxValue() * 5)
+                                                           .critChance(20)
+                                                           .critMultiplier(150));
                 }
             }
         }.runTaskLater(delay);
@@ -449,8 +378,14 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         return new HammerOfLightBranch(abilityTree, this);
     }
 
-    public FloatModifiable getRadius() {
-        return radius;
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     @Override
@@ -463,38 +398,149 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         this.tickDuration = tickDuration;
     }
 
-    public float getAmountHealed() {
-        return amountHealed;
+    @Override
+    public HammerOfLightStats getAbilityStats() {
+        return stats;
+    }
+
+    public FloatModifiable getRadius() {
+        return radius;
+    }
+
+    public static class HammerOfLightData {
+
+        private final Location location;
+
+        private boolean isCrownOfLight;
+
+        private float amountHealed;
+
+        public HammerOfLightData(Location location) {
+            this.location = location;
+        }
+
+        public boolean isHammer() {
+            return !isCrownOfLight;
+        }
+
+        public boolean isCrownOfLight() {
+            return isCrownOfLight;
+        }
+
+        public void setCrownOfLight(boolean crownOfLight) {
+            isCrownOfLight = crownOfLight;
+        }
+
+        public Location getLocation() {
+            return location;
+        }
+
+        public float getAmountHealed() {
+            return amountHealed;
+        }
+
+        public void addAmountHealed(float amountHealed) {
+            this.amountHealed += amountHealed;
+        }
+
     }
 
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hammerDamage = new Value.RangedValueCritable(178, 244, 20, 175);
-        private final List<Value> values = List.of(hammerDamage);
+        private Value.RangedValueCritable hammerDamage = new Value.RangedValueCritable(178, 244, 20, 175);
 
-        public Value.RangedValueCritable getHammerDamage() {
-            return hammerDamage;
-        }
+        private List<Value> values = List.of(hammerDamage);
 
         @Override
         public List<Value> getValues() {
             return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.hammerDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hammerDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(hammerDamage);
+        }
+
+        public Value.RangedValueCritable getHammerDamage() {
+            return hammerDamage;
         }
 
     }
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable hammerHealing = new Value.RangedValueCritable(178, 244, 20, 175);
-        private final List<Value> values = List.of(hammerHealing);
+        private Value.RangedValueCritable hammerHealing = new Value.RangedValueCritable(178, 244, 20, 175);
+
+        private List<Value> values = List.of(hammerHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.hammerHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameHealing("hammerHealing"),
+                    Value.RangedValueCritable.class
+            );
+            this.values = List.of(hammerHealing);
+        }
 
         public Value.RangedValueCritable getHammerHealing() {
             return hammerHealing;
         }
 
+    }
+
+    public static class HammerOfLightStats extends AbstractAbilityStats<HammerOfLight, HammerOfLightStats> {
+
+        @Field("times_crowned")
+        private int timesCrowned = 0;
+
+        @Field("targets_healed")
+        private int targetsHealed = 0;
+
+        @Field("targets_damaged")
+        private int targetsDamaged = 0;
+
+        @Field("shields_pierced")
+        private int shieldsPierced = 0;
+
+        @Field("intervenes_pierced")
+        private int intervenesPierced = 0;
+
         @Override
-        public List<Value> getValues() {
-            return values;
+        public Class<HammerOfLightStats> getClazz() {
+            return HammerOfLightStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Crowned", timesCrowned));
+            statsDisplay.add(new AbilityStatDisplay("Targets Healed", targetsHealed));
+            statsDisplay.add(new AbilityStatDisplay("Targets Damaged", targetsDamaged));
+            statsDisplay.add(new AbilityStatDisplay("Shields Pierced", shieldsPierced));
+            statsDisplay.add(new AbilityStatDisplay("Intervenes Pierced", intervenesPierced));
+            return statsDisplay;
+        }
+
+        @Override
+        public HammerOfLightStats merge(HammerOfLightStats other, int multiplier) {
+            HammerOfLightStats stats = super.merge(other, multiplier);
+            stats.targetsHealed = this.targetsHealed + other.targetsHealed * multiplier;
+            stats.targetsDamaged = this.targetsDamaged + other.targetsDamaged * multiplier;
+            stats.timesCrowned = this.timesCrowned + other.timesCrowned * multiplier;
+            stats.shieldsPierced = this.shieldsPierced + other.shieldsPierced * multiplier;
+            stats.intervenesPierced = this.intervenesPierced + other.intervenesPierced * multiplier;
+            return stats;
+        }
+
+        @Override
+        public HammerOfLightStats create() {
+            return new HammerOfLightStats();
         }
 
     }

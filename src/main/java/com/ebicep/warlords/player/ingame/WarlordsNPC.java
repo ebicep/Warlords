@@ -166,11 +166,19 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     public void cleanup() {
+        entity.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
+        entity.remove();
+        npc.data().remove(WARLORDS_ENTITY_METADATA);
         npc.destroy();
         if (playerHealthDisplay != null) {
             playerHealthDisplay.remove();
         }
-        mobHologram.getCustomHologramLines().forEach(customHologramLine -> customHologramLine.getEntity().remove());
+        mobHologram.getCustomHologramLines().forEach(customHologramLine -> {
+            Entity lineEntity = customHologramLine.getEntity();
+            if (lineEntity != null) {
+                lineEntity.remove();
+            }
+        });
     }
 
     @Override
@@ -221,7 +229,7 @@ public class WarlordsNPC extends WarlordsEntity {
 
     @Override
     public void updateHealth() {
-        if (isDead() || entity == null) {
+        if (isDead() || entity == null || !entity.isValid()) {
             return;
         }
         mobHologram.update();

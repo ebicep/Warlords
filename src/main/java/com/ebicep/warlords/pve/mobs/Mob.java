@@ -467,7 +467,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 0, 15),
             Weapons.DEMONBLADE.getItem()
     )),
-    NARMERS_DEATH_CHARGE(EntityType.PRIMED_TNT, NarmersDeathCharge.class, NarmersDeathCharge::new, NarmersDeathCharge::new, new Utils.SimpleEntityEquipment(
+    NARMERS_DEATH_CHARGE(EntityType.TNT, NarmersDeathCharge.class, NarmersDeathCharge::new, NarmersDeathCharge::new, new Utils.SimpleEntityEquipment(
             new ItemStack(Material.TNT),
             Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 30, 0, 15),
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 30, 0, 15),
@@ -654,7 +654,7 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 140, 0),
             Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 140, 0),
             new ItemBuilder(Material.BOW)
-                    .enchant(Enchantment.OXYGEN, 1)
+                    .enchant(Enchantment.RESPIRATION, 1)
                     .get()
     )),
     EVENT_ARES(EntityType.ZOMBIE, EventAres.class, EventAres::new, EventAres::new, new Utils.SimpleEntityEquipment(

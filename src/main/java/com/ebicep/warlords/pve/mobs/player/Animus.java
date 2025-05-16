@@ -3,7 +3,6 @@ package com.ebicep.warlords.pve.mobs.player;
 import com.ebicep.warlords.abilities.JudgementStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -93,36 +92,25 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
 
             // copy strike stats
             for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {
-                playerClass.addAbility(new JudgementStrike() {{
-                    getCooldown().setBaseValue(2);
-                    Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
-                    Value.RangedValueCritable newStrikeDamage = getDamageValues().getStrikeDamage();
-                    newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
-                    newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
-                    newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
-                    newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
-                    getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
-                    setInPve(judgementStrike.isInPve());
-                    setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
-                    setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
-                }});
+                JudgementStrike ability = new JudgementStrike();
+                ability.init(ability.getBuilder());
+                ability.getCooldown().setBaseValue(2);
+                ability.setSpeedOnCrit(judgementStrike.getSpeedOnCrit());
+                ability.setSpeedOnCritDuration(judgementStrike.getSpeedOnCritDuration());
+                ability.setStrikeCritInterval(judgementStrike.getStrikeCritInterval());
+                Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
+                Value.RangedValueCritable newStrikeDamage = ability.getDamageValues().getStrikeDamage();
+                newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
+                newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
+                newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
+                newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
+                ability.getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
+                ability.setInPve(judgementStrike.isInPve());
+                ability.setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
+                ability.setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
+                playerClass.addAbility(ability);
                 break;
             }
-        }
-    }
-
-    @Override
-    public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        if (event.getCause().equals("Judgement Strike")) {
-            double speed = attacker.getSpeed()
-                                   .getModifiers()
-                                   .stream()
-                                   .filter(modifier -> modifier.getModifier() > 0)
-                                   .mapToDouble(value -> value.getModifier())
-                                   .sum();
-            float damageBoost = (float) (1 + speed / 100);
-            event.setMin(event.getMin() * damageBoost);
-            event.setMax(event.getMax() * damageBoost);
         }
     }
 

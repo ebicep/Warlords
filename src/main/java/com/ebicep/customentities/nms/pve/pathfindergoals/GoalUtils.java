@@ -45,7 +45,7 @@ public class GoalUtils {
         return PlayerFilter.entitiesAround(entity, distance, distance, distance)
                            .filter(warlordsEntity ->
                                    !warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
-                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE
+                                           (!(warlordsEntity.getEntity() instanceof Player player) || player.getGameMode() != GameMode.CREATIVE)
                            )
                            .stream()
                            .map(WarlordsEntity::getEntity)
@@ -59,7 +59,7 @@ public class GoalUtils {
                            .aliveEnemiesOf(thisWarlordsEntity)
                            .filter(warlordsEntity ->
                                    !warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
-                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE &&
+                                           (!(warlordsEntity.getEntity() instanceof Player player) || player.getGameMode() != GameMode.CREATIVE) &&
                                            !(warlordsEntity instanceof WarlordsNPC npc && npc.getMob() instanceof Untargetable)
                            )
                            .filter(warlordsEntity -> extraFilters.stream().allMatch(filter -> filter.test(warlordsEntity)))
@@ -73,7 +73,7 @@ public class GoalUtils {
                            .aliveMatchingTeam(team)
                            .filter(warlordsEntity ->
                                    !warlordsEntity.hasPotionEffect(PotionEffectType.INVISIBILITY) &&
-                                           !(warlordsEntity.getEntity() instanceof Player) || ((Player) warlordsEntity.getEntity()).getGameMode() != GameMode.CREATIVE
+                                           (!(warlordsEntity.getEntity() instanceof Player player) || player.getGameMode() != GameMode.CREATIVE)
                            )
                            .stream()
                            .map(WarlordsEntity::getEntity)

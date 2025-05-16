@@ -1,10 +1,13 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.wavedefense;
 
 import co.aikar.commands.CommandIssuer;
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePvEWaveDefense;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.pve.DifficultyIndex;
@@ -14,9 +17,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
-public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats {
+public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats, TracksAbilityStats {
 
     @Field("easy_stats")
     private DatabasePlayerPvEWaveDefenseDifficultyStats easyStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
@@ -28,6 +33,13 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats 
     private DatabasePlayerPvEWaveDefenseDifficultyStats extremeStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
     @Field("endless_stats")
     private DatabasePlayerPvEWaveDefenseDifficultyStats endlessStats = new DatabasePlayerPvEWaveDefenseDifficultyStats();
+    @Field("ability_stats")
+    private Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
+    }
 
     public DatabasePlayerWaveDefenseStats() {
     }
@@ -48,6 +60,7 @@ public class DatabasePlayerWaveDefenseStats implements MultiPvEWaveDefenseStats 
         } else {
             ChatChannels.sendDebugMessage((CommandIssuer) null, Component.text("Error: Difficulty stats is null", NamedTextColor.GREEN));
         }
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEWaveDefenseDifficultyStats getDifficultyStats(DifficultyIndex difficultyIndex) {

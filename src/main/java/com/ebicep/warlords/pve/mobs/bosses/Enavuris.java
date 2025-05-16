@@ -2,9 +2,7 @@ package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.customentities.nms.pve.CustomBat;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractProjectile;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -34,7 +32,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.MultipleFacing;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -103,7 +101,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 maxMeleeDamage,
                 new EnderStones(),
                 new Imprisonment(),
-                new SpawnMobAbility(12, Mob.ENAVURITE) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("narmerSpawnZombieLancer").pve(), Mob.ENAVURITE) {
                     @Override
                     public int getSpawnAmount() {
                         int playerCount = pveOption.playerCount();
@@ -116,7 +114,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         return 8;
                     }
                 },
-                new SpawnMobAbility(18, Mob.VANISHING_ENAVURITE) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("enavurisSpawnVanishingEnavurite").pve(), Mob.VANISHING_ENAVURITE) {
                     @Override
                     public int getSpawnAmount() {
                         int playerCount = pveOption.playerCount();
@@ -289,20 +287,13 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         return leashHolder;
     }
 
-    public static class EnderStones extends AbstractProjectile implements PvEAbility, Damages<EnderStones.DamageValues> {
+    public static class EnderStones extends AbstractProjectile<EnderStones, EnderStones.EnderStonesStats> implements PvEAbility, Damages<EnderStones.DamageValues> {
 
         private final int radius = 3;
         private PveOption pveOption;
 
         public EnderStones() {
-            super(
-                    "Ender Stones",
-                    10,
-                    50,
-                    2,
-                    50,
-                    false
-            );
+            super(AbstractAbilityBuilder.create("enavurisEnderStones").pve().startFullCooldown());
         }
 
         @Override
@@ -393,7 +384,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity shooter) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
             new GameRunnable(shooter.getGame()) {
                 int fired = 0;
 
@@ -419,7 +410,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             });
             projectile.addTask(new InternalProjectileTask() {
                 @Override
-                public void run(InternalProjectile projectile) {
+                public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                     armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
                             PlayerTeleportEvent.TeleportCause.PLUGIN,
                             TeleportFlag.EntityState.RETAIN_PASSENGERS
@@ -427,7 +418,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                 }
 
                 @Override
-                public void onDestroy(InternalProjectile projectile) {
+                public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
                     armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -.5, 0),
                             PlayerTeleportEvent.TeleportCause.PLUGIN,
                             TeleportFlag.EntityState.RETAIN_PASSENGERS
@@ -447,7 +438,11 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         @Nullable
         @Override
         protected String getActivationSound() {
-            return Sound.ENTITY_ENDER_DRAGON_SHOOT.getKey().getKey();
+            NamespacedKey key = Registry.SOUNDS.getKey(Sound.ENTITY_ENDER_DRAGON_SHOOT);
+            if (key == null) {
+                return "";
+            }
+            return key.getKey();
         }
 
         @Override
@@ -481,13 +476,33 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         public static class DamageValues implements Value.ValueHolder {
 
             private final Value.RangedValue enderStonesDamage = new Value.RangedValue(500, 600);
-            private final List<Value> values = List.of(enderStonesDamage);
 
+            private final List<Value> values = List.of(enderStonesDamage);
             @Override
             public List<Value> getValues() {
                 return values;
             }
 
+        }
+
+        private final EnderStonesStats stats = new EnderStonesStats();
+
+        @Override
+        public EnderStonesStats getAbilityStats() {
+            return stats;
+        }
+
+        public static class EnderStonesStats extends AbstractPiercingProjectileStats<EnderStones, EnderStonesStats> {
+
+            @Override
+            public Class<EnderStonesStats> getClazz() {
+                return EnderStonesStats.class;
+            }
+
+            @Override
+            public EnderStonesStats create() {
+                return new EnderStonesStats();
+            }
         }
     }
 
@@ -502,7 +517,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
         private List<BlockDisplay> blockDisplays = new ArrayList<>();
 
         public Imprisonment() {
-            super("Imprisonment", 20, 50, true);
+            super(AbstractAbilityBuilder.create("enavurisImprisonment").pve().startNoCooldown());
         }
 
         @Override

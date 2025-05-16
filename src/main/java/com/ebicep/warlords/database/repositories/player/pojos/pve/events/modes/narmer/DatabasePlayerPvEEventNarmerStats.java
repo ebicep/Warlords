@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerR
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.DatabaseGamePlayerPvEEventNarmer;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.narmer.DatabaseGamePvEEventNarmer;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -22,7 +24,8 @@ public class DatabasePlayerPvEEventNarmerStats implements MultiPvEEventNarmerSta
         DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>,
         DatabaseGamePlayerPvEEventNarmer,
         PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>,
-        PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>> {
+        PvEEventNarmerStatsWarlordsSpecs<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer, PvEEventNarmerStats<DatabaseGamePvEEventNarmer<DatabaseGamePlayerPvEEventNarmer>, DatabaseGamePlayerPvEEventNarmer>>>,
+        TracksMultiAbilityStats {
 
 
     @Field("events")
@@ -41,12 +44,12 @@ public class DatabasePlayerPvEEventNarmerStats implements MultiPvEEventNarmerSta
         getEvent(DatabaseGameEvent.currentGameEvent.getStartDateSecond()).updateStats(databasePlayer, databaseGame, gamePlayer, multiplier, playersCollection);
     }
 
-    public Map<Long, DatabasePlayerPvEEventNarmerDifficultyStats> getEventStats() {
-        return eventStats;
-    }
-
     public DatabasePlayerPvEEventNarmerDifficultyStats getEvent(long epochSecond) {
         return eventStats.computeIfAbsent(epochSecond, k -> new DatabasePlayerPvEEventNarmerDifficultyStats());
+    }
+
+    public Map<Long, DatabasePlayerPvEEventNarmerDifficultyStats> getEventStats() {
+        return eventStats;
     }
 
     @Override
@@ -55,5 +58,10 @@ public class DatabasePlayerPvEEventNarmerStats implements MultiPvEEventNarmerSta
                          .stream()
                          .flatMap(stats -> stats.getStats().stream())
                          .toList();
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return eventStats.values().stream().flatMap(stats -> stats.getAllAbilityStats().stream()).toList();
     }
 }

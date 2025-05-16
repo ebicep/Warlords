@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="StructuralSearch">
+    <replaceConfiguration name="AbilityDescriptionBuilder" text="description = $Instance$.$MethodCall$($Parameter$)" recursive="false" caseInsensitive="false" type="JAVA" pattern_context="default" search_injected="false" reformatAccordingToStyle="true" shortenFQN="true" replacement="description = com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder.create($Parameter$)">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Instance" minCount="0" within="" contains="" />
+      <constraint name="MethodCall" within="" contains="" />
+      <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+    </replaceConfiguration>
+    <searchConfiguration name="1" text="description = $Instance$.$d$($text$)" recursive="true" caseInsensitive="false" type="JAVA" pattern_context="default">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Instance" minCount="0" within="" contains="" />
+      <constraint name="text" nameOfExprType="(\w+)" within="" contains="" />
+      <constraint name="d" reference="all fields of a class" within="" contains="" />
+    </searchConfiguration>
+  </component>
+</project>

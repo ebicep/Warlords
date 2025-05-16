@@ -27,7 +27,7 @@ import com.ebicep.warlords.guilds.Guild;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.guilds.GuildPlayer;
 import com.ebicep.warlords.guilds.upgrades.AbstractGuildUpgrade;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.FastWaveMode;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -123,6 +123,9 @@ public class WaveDefenseOption implements PveOption {
             @EventHandler
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                 WarlordsEntity attacker = event.getAttacker();
+                if (!(attacker instanceof WarlordsPlayer)) {
+                    return;
+                }
                 waveDefenseRewards.getPlayerRewards(attacker.getUuid())
                                   .getWaveDamage()
                                   .merge(waveCounter, (long) event.getValue(), Long::sum);
@@ -254,7 +257,7 @@ public class WaveDefenseOption implements PveOption {
     public List<Component> getWaveScoreboard(WarlordsPlayer player) {
         TextComponent.Builder waveScoreboard = Component.text();
         waveScoreboard.append(Component.text("Wave: "))
-                      .append(Component.text(waveCounter, NamedTextColor.GREEN));
+                      .append(Component.text(Math.min(waveCounter, maxWave), NamedTextColor.GREEN));
         if (maxWave != Integer.MAX_VALUE) {
             waveScoreboard.append(Component.text("/"))
                           .append(Component.text(maxWave, NamedTextColor.GREEN));
@@ -282,10 +285,13 @@ public class WaveDefenseOption implements PveOption {
             }
         }
         waveCounter++;
+        if (waveCounter > maxWave) {
+            return;
+        }
         currentWave = waves.getWave(waveCounter, new Random());
         spawnCount = currentWave.getMonsterCount();
         int spawns = spawnCount;
-        spawns *= getSpawnCountMultiplier((int) game.warlordsPlayers().count());
+        spawns *= (int) getSpawnCountMultiplier((int) game.warlordsPlayers().count());
 
         for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
             if (currentWave.getMessage() != null) {
@@ -404,14 +410,12 @@ public class WaveDefenseOption implements PveOption {
                     return;
                 }
 
-                if (spawnTaskTicksElapsed++ % spawnTickPeriod == 0) {
-                    if (spawnTickPeriod < 0) {
-                        for (int i = 0; i < spawnCount; i++) {
-                            spawnMob();
-                        }
-                    } else {
+                if (spawnTickPeriod < 0) {
+                    for (int i = 0; i < spawnCount; i++) {
                         spawnMob();
                     }
+                } else if (spawnTaskTicksElapsed++ % spawnTickPeriod == 0) {
+                    spawnMob();
                 }
 
                 currentWave.tick(WaveDefenseOption.this, spawnTaskTicksElapsed);
@@ -459,7 +463,7 @@ public class WaveDefenseOption implements PveOption {
             AtomicBoolean fastWave = new AtomicBoolean(true);
             getGame().warlordsPlayers().forEach(warlordsPlayer -> {
                 DatabaseManager.getPlayer(warlordsPlayer.getUuid(), databasePlayer -> {
-                    if (databasePlayer.getFastWaveMode() == Settings.FastWaveMode.OFF) {
+                    if (databasePlayer.getFastWaveMode() == FastWaveMode.OFF) {
                         fastWave.set(false);
                     }
                 });

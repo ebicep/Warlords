@@ -5,9 +5,9 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.miscellaneouscommands.SpectateCommand;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.game.AbstractWarlordsGameEvent;
-import com.ebicep.warlords.events.game.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.events.game.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.game.option.Option;
+import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
 import com.ebicep.warlords.game.option.marker.GameMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
@@ -44,7 +44,6 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -61,8 +60,6 @@ import java.util.stream.Stream;
  */
 public final class Game implements Runnable, AutoCloseable {
 
-    public static final String KEY_UPDATED_FROZEN = "frozen";
-
     private final UUID gameId = UUID.randomUUID();
     private final Instant startTime = Instant.now();
 
@@ -78,17 +75,16 @@ public final class Game implements Runnable, AutoCloseable {
     private final GameMode gameMode;
     @Nonnull
     private final EnumSet<GameAddon> addons;
-    private final List<Component> frozenCauses = new CopyOnWriteArrayList<>();
     private final LocationFactory locations;
     private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
     @Nonnull
     private List<Option> options;
+    private final Map<Class<? extends Option>, List<Option>> cachedOptions = new HashMap<>();
     @Nullable
     private State state = null;
     @Nullable
     private State nextState = null;
     private boolean closed = false;
-    private boolean unfreezeCooldown = false;
     private int maxPlayers;
     private int minPlayers;
     private boolean acceptsPlayers;
@@ -96,6 +92,7 @@ public final class Game implements Runnable, AutoCloseable {
     private Set<WarlordsPlayer> cachedPlayers = new HashSet<>();
     private Map<LocationUtils.LocationBlockHolder, Material> previousBlocks = new HashMap<>(); // for when world blocks are changed and needs to be revertd later
 
+    private int loopTickCounter = 0;
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, GameMode gameMode, LocationFactory locations) {
         this(gameAddons, map, gameMode, locations, map.initMap(gameMode, locations, gameAddons));
@@ -107,6 +104,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.map = map;
         this.gameMode = gameMode;
         this.options = new ArrayList<>(options);
+        options.forEach(option -> this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option));
         this.minPlayers = map.getMinPlayers();
         this.maxPlayers = map.getMaxPlayers();
         for (GameAddon addon : gameAddons) {
@@ -213,43 +211,6 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     /**
-     * Check if the game is frozen
-     *
-     * @return true if the game is frozen
-     */
-    public boolean isFrozen() {
-        return !frozenCauses.isEmpty();
-    }
-
-    @Nonnull
-    public List<Component> getFrozenCauses() {
-        return Collections.unmodifiableList(frozenCauses);
-    }
-
-    public void addFrozenCause(Component cause) {
-        frozenCauses.add(cause);
-        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
-    }
-
-    public void removeFrozenCause(Component cause) {
-        frozenCauses.remove(cause);
-        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
-    }
-
-    public void clearFrozenCauses() {
-        frozenCauses.clear();
-        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
-    }
-
-    public boolean isUnfreezeCooldown() {
-        return unfreezeCooldown;
-    }
-
-    public void setUnfreezeCooldown(boolean unfreezeCooldown) {
-        this.unfreezeCooldown = unfreezeCooldown;
-    }
-
-    /**
      * An unique id assigned to this game.
      *
      * @return The UUID belonging to this game
@@ -270,6 +231,11 @@ public final class Game implements Runnable, AutoCloseable {
     @Nonnull
     public List<Option> getOptions() {
         return options;
+    }
+
+    public void addOption(Option option) {
+        this.options.add(option);
+        this.cachedOptions.computeIfAbsent(option.getClass(), k -> new ArrayList<>()).add(option);
     }
 
     /**
@@ -609,6 +575,23 @@ public final class Game implements Runnable, AutoCloseable {
         return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
     }
 
+    // TODO convert option calls to use this
+    @Nonnull
+    public <T extends Option> List<T> getOption(@Nonnull Class<T> clazz) {
+        if (!cachedOptions.containsKey(clazz)) {
+            List<Option> newList = new ArrayList<>();
+            for (Option option : options) {
+                if (clazz.isInstance(option)) {
+                    newList.add(option);
+                }
+            }
+            if (newList.size() > 0) {
+                cachedOptions.put(clazz, newList);
+            }
+        }
+        return (List<T>) cachedOptions.getOrDefault(clazz, Collections.emptyList());
+    }
+
     @Deprecated
     public void registerScoreboardHandler(@Nonnull ScoreboardHandler handler) {
         this.registerGameMarker(ScoreboardHandler.class, handler);
@@ -851,7 +834,6 @@ public final class Game implements Runnable, AutoCloseable {
                 + ",\nstate=" + state
                 + ",\nnextState=" + nextState
                 + ",\nclosed=" + closed
-                + ",\nfrozenCauses=" + frozenCauses
                 + ",\nmaxPlayers=" + maxPlayers
                 + ",\nminPlayers=" + minPlayers
                 + ",\nacceptsPlayers=" + acceptsPlayers
@@ -910,4 +892,25 @@ public final class Game implements Runnable, AutoCloseable {
     public Map<LocationUtils.LocationBlockHolder, Material> getPreviousBlocks() {
         return previousBlocks;
     }
+
+    public <T extends Option> void doOnOption(Class<T> clazz, Consumer<T> consumer) {
+        options.stream()
+               .filter(clazz::isInstance)
+               .map(clazz::cast)
+               .findFirst()
+               .ifPresent(consumer);
+    }
+
+    public boolean isFrozen() {
+        return getOption(GameFreezeOption.class).stream().anyMatch(GameFreezeOption::isFrozen);
+    }
+
+    public int getLoopTickCounter() {
+        return loopTickCounter;
+    }
+
+    public void addTickCounter() {
+        this.loopTickCounter++;
+    }
+
 }

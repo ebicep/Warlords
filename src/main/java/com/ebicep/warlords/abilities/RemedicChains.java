@@ -1,10 +1,8 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Heals;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -16,7 +14,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.RemedicChainsBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -25,15 +22,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues> {
+public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, Duration, Heals<RemedicChains.HealingValues>, AbilityStats<RemedicChains, RemedicChains.RemedicChainsStats> {
 
-    public int playersLinked = 0;
-    public int numberOfBrokenLinks = 0;
+    private final RemedicChainsStats stats = new RemedicChainsStats();
     private final HealingValues healingValues = new HealingValues();
     private float healingMultiplier = 12.5f; // %
     private float allyDamageIncrease = 12; // %
@@ -43,89 +40,83 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     private int castRange = 10;
 
     public RemedicChains() {
-        super("Remedic Chains", 16, 50);
+        super(AbstractAbilityBuilder.create("remedicChains").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.healingMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingMultiplier"), float.class);
+        this.allyDamageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyDamageIncrease"), float.class);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.alliesAffected = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("alliesAffected"), int.class);
+        this.linkBreakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkBreakRadius"), int.class);
+        this.castRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castRange"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Bind yourself to ")
-                               .append(Component.text(alliesAffected, NamedTextColor.YELLOW))
-                               .append(Component.text(" allies near you, increasing the damage they deal to leeched targets by "))
-                               .append(Component.text(format(allyDamageIncrease) + "%", NamedTextColor.RED))
-                               .append(Component.text(" as long as the link is active. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f) + " ", NamedTextColor.GOLD))
-                               .append(Component.text("seconds.\n\nWhen the link expires you and the allies are healed for "))
-                               .append(Heals.formatHealing(healingValues.chainHealing))
-                               .append(Component.text(" health. Breaking the link early will only heal the allies for "))
-                               .append(Component.text(format(healingMultiplier) + "%", NamedTextColor.GREEN))
-                               .append(Component.text(" of the original amount for each second they have been linked.\n\nThe link will break if you are "))
-                               .append(Component.text(linkBreakRadius + " ", NamedTextColor.YELLOW))
-                               .append(Component.text("blocks apart."));
+        description = AbilityDescriptionBuilder.create("Bind yourself to up to ")
+                                               .text(alliesAffected, NamedTextColor.BLUE)
+                                               .text(" allies near you, increasing the damage they deal to leeched targets by ")
+                                               .percent(allyDamageIncrease, NamedTextColor.RED)
+                                               .text(" while the link is active. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("When the link expires you and the allies are healed for ")
+                                               .heal(healingValues.chainHealing)
+                                               .text(" health. Breaking the link early will only heal the allies for ")
+                                               .percent(healingMultiplier, NamedTextColor.GREEN)
+                                               .text(" of the original amount for each second they have been linked.")
+                                               .emptyLine()
+                                               .text("The link will break if you are more than ")
+                                               .blocks(linkBreakRadius)
+                                               .text(" apart.")
+                                               .build();
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Linked", "" + playersLinked));
-        info.add(new Pair<>("Times Link Broke", "" + numberOfBrokenLinks));
-
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-        Set<WarlordsEntity> teammatesNear = PlayerFilter
-                .entitiesAround(wp, castRange, castRange, castRange)
-                .aliveTeammatesOfExcludingSelf(wp)
-                .closestFirst(wp)
-                .limit(alliesAffected)
-                .stream()
-                .collect(Collectors.toSet());
-
-        if (teammatesNear.size() < 1) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        Set<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, castRange, castRange, castRange)
+                                                        .aliveTeammatesOfExcludingSelf(wp)
+                                                        .closestFirst(wp)
+                                                        .limit(alliesAffected)
+                                                        .stream()
+                                                        .collect(Collectors.toSet());
+        if (teammatesNear.isEmpty()) {
             wp.sendMessage(Component.text("There are no allies nearby to link!", NamedTextColor.RED));
             return false;
         }
-
-
+        stats.targetsLinked += teammatesNear.size();
         Utils.playGlobalSound(wp.getLocation(), "rogue.remedicchains.activation", 2, 0.2f);
-
         Map<WarlordsEntity, FloatModifiable.FloatModifier> healthBoosts = new HashMap<>();
         teammatesNear.forEach(warlordsEntity -> {
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" Your Remedic Chains is now protecting ", NamedTextColor.GRAY))
-                    .append(Component.text(warlordsEntity.getName(), NamedTextColor.YELLOW))
-                    .append(Component.text("!", NamedTextColor.GRAY))
-            );
-            warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
-                    .append(Component.text(" " + wp.getName() + "'s", NamedTextColor.GRAY))
-                    .append(Component.text(" Remedic Chains", NamedTextColor.YELLOW))
-                    .append(Component.text(" is now increasing your ", NamedTextColor.GRAY))
-                    .append(Component.text("damage", NamedTextColor.RED))
-                    .append(Component.text(" for ", NamedTextColor.GRAY))
-                    .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                    .append(Component.text(" seconds!", NamedTextColor.GRAY))
-            );
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Remedic Chains is now protecting ", NamedTextColor.GRAY))
+                                                          .append(Component.text(warlordsEntity.getName(), NamedTextColor.YELLOW))
+                                                          .append(Component.text("!", NamedTextColor.GRAY)));
+            warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + "'s", NamedTextColor.GRAY))
+                                                                         .append(Component.text(" Remedic Chains", NamedTextColor.YELLOW))
+                                                                         .append(Component.text(" is now increasing your ", NamedTextColor.GRAY))
+                                                                         .append(Component.text("damage", NamedTextColor.RED))
+                                                                         .append(Component.text(" for ", NamedTextColor.GRAY))
+                                                                         .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
+                                                                         .append(Component.text(" seconds!", NamedTextColor.GRAY)));
             float healthIncrease = warlordsEntity.getMaxHealth() * .25f;
             if (pveMasterUpgrade) {
                 healthBoosts.put(warlordsEntity, warlordsEntity.getHealth().addAdditiveModifier("Remedic Chains", healthIncrease));
                 warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() + healthIncrease);
             }
         });
-
         if (pveMasterUpgrade) {
             float healthIncrease = wp.getMaxHealth() * .25f;
             healthBoosts.put(wp, wp.getHealth().addAdditiveModifier("Remedic Chains", healthIncrease));
             wp.setCurrentHealth(wp.getCurrentHealth() + healthIncrease);
         }
-
-        RemedicChains tempRemedicChain = new RemedicChains();
-        LinkedCooldown<RemedicChains> remedicChainsCooldown = new LinkedCooldown<>(
-                name,
+        LinkedCooldown<RemedicChains> remedicChainsCooldown = new LinkedCooldown<>(name,
                 "REMEDIC",
                 RemedicChains.class,
-                tempRemedicChain,
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 (cooldownManager, linkedCooldown) -> {
@@ -135,19 +126,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     if (wp.isDead()) {
                         return;
                     }
-                    wp.addInstance(InstanceBuilder
-                            .healing()
-                            .ability(this)
-                            .source(wp)
-                            .value(healingValues.chainHealing)
-                    );
+                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.chainHealing));
                     for (WarlordsEntity linkedEntity : linkedCooldown.getLinkedEntities()) {
-                        linkedEntity.addInstance(InstanceBuilder
-                                .healing()
-                                .ability(this)
-                                .source(wp)
-                                .value(healingValues.chainHealing)
-                        );
+                        linkedEntity.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.chainHealing));
                     }
                 },
                 (cooldownManager, linkedCooldown) -> {
@@ -170,28 +151,15 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                         if (outOfRange) {
                             linked.getCooldownManager().removeCooldownNoForce(cooldown);
                             Utils.playGlobalSound(linked.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
-                            linked.getWorld().spawnParticle(
-                                    Particle.VILLAGER_HAPPY,
-                                    linked.getLocation().add(0, 1, 0),
-                                    10,
-                                    0.5,
-                                    0.5,
-                                    0.5,
-                                    1,
-                                    null,
-                                    true
-                            );
+                            linked.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, linked.getLocation().add(0, 1, 0), 10, 0.5, 0.5, 0.5, 1, null, true);
                             // Ally is out of range, break link
-                            numberOfBrokenLinks++;
-
+                            stats.numberOfBrokenLinks++;
                             float totalHealingMultiplier = ((healingMultiplier / 100f) * (ticksElapsed / 20f));
-                            wp.addInstance(InstanceBuilder
-                                    .healing()
-                                    .ability(this)
-                                    .source(wp)
-                                    .min(healingValues.chainHealing.getMinValue() * totalHealingMultiplier)
-                                    .max(healingValues.chainHealing.getMaxValue() * totalHealingMultiplier)
-                            );
+                            linked.addInstance(InstanceBuilder.healing()
+                                                              .ability(this)
+                                                              .source(wp)
+                                                              .min(healingValues.chainHealing.getMinValue() * totalHealingMultiplier)
+                                                              .max(healingValues.chainHealing.getMaxValue() * totalHealingMultiplier));
                         }
                         EffectUtils.playParticleLinkAnimation(wp.getLocation(), linked.getLocation(), 250, 200, 250, 1);
                         if (outOfRange || linked.isDead()) {
@@ -208,6 +176,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 }),
                 teammatesNear
         ) {
+
             private final ImpalingStrike impalingStrike = new ImpalingStrike();
 
             @Override
@@ -228,8 +197,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                     return;
                 }
                 switch (Specializations.getClass(event.getSource().getSpecClass())) {
-                    case WARRIOR, PALADIN, ROGUE -> ImpalingStrike.giveLeechCooldown(
-                            event.getSource(),
+                    case WARRIOR, PALADIN, ROGUE -> ImpalingStrike.giveLeechCooldown(event.getSource(),
                             event.getWarlordsEntity(),
                             impalingStrike.getLeechDuration(),
                             impalingStrike.getLeechSelfAmount() / 100f,
@@ -258,21 +226,12 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         teammatesNear.forEach(entity -> entity.getCooldownManager().removeCooldown(RemedicChains.class, false));
         teammatesNear.forEach(entity -> entity.getCooldownManager().addCooldown(remedicChainsCooldown));
         Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, teammatesNear));
-
         return true;
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new RemedicChainsBranch(abilityTree, this);
-    }
-
-    public int getLinkBreakRadius() {
-        return linkBreakRadius;
-    }
-
-    public void setLinkBreakRadius(int linkBreakRadius) {
-        this.linkBreakRadius = linkBreakRadius;
     }
 
     @Override
@@ -285,27 +244,87 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
-    public void setAllyDamageIncrease(float allyDamageIncrease) {
-        this.allyDamageIncrease = allyDamageIncrease;
-    }
-
     @Override
     public HealingValues getHealValues() {
         return healingValues;
     }
 
+    @Override
+    public RemedicChainsStats getAbilityStats() {
+        return stats;
+    }
+
+    public int getLinkBreakRadius() {
+        return linkBreakRadius;
+    }
+
+    public void setLinkBreakRadius(int linkBreakRadius) {
+        this.linkBreakRadius = linkBreakRadius;
+    }
+
+    public float getAllyDamageIncrease() {
+        return allyDamageIncrease;
+    }
+
+    public void setAllyDamageIncrease(float allyDamageIncrease) {
+        this.allyDamageIncrease = allyDamageIncrease;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
-        private final List<Value> values = List.of(chainHealing);
+        private Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
+
+        private List<Value> values = List.of(chainHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("chainHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(chainHealing);
+        }
 
         public Value.RangedValueCritable getChainHealing() {
             return chainHealing;
         }
 
+    }
+
+    public static class RemedicChainsStats extends AbstractAbilityStats<RemedicChains, RemedicChainsStats> {
+
+        @Field("targets_linked")
+        private int targetsLinked = 0;
+
+        @Field("number_of_broken_links")
+        private int numberOfBrokenLinks = 0;
+
         @Override
-        public List<Value> getValues() {
-            return values;
+        public Class<RemedicChainsStats> getClazz() {
+            return RemedicChainsStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Linked", targetsLinked));
+            statsDisplay.add(new AbilityStatDisplay("Times Link Broken", numberOfBrokenLinks));
+            return statsDisplay;
+        }
+
+        @Override
+        public RemedicChainsStats merge(RemedicChainsStats other, int multiplier) {
+            RemedicChainsStats stats = super.merge(other, multiplier);
+            stats.targetsLinked = this.targetsLinked + other.targetsLinked * multiplier;
+            stats.numberOfBrokenLinks = this.numberOfBrokenLinks + other.numberOfBrokenLinks * multiplier;
+            return stats;
+        }
+
+        @Override
+        public RemedicChainsStats create() {
+            return new RemedicChainsStats();
         }
 
     }

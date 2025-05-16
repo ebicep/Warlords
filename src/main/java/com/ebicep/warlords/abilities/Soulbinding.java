@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities;
 
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -10,7 +11,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.spiritguard.SoulbindingWeaponBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -20,142 +20,106 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues> {
+public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, Duration, CanReduceCooldowns, Heals<Soulbinding.HealingValues>, AbilityStats<Soulbinding, Soulbinding.SoulbindingStats> {
 
-    public int playersBinded = 0;
-    public int soulProcs = 0;
-    public int linkProcs = 0;
-    public int soulTeammatesCDReductions = 0;
-    public int linkTeammatesHealed = 0;
-    private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
-    private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
+    private final SoulbindingStats stats = new SoulbindingStats();
     private final HealingValues healingValues = new HealingValues();
     private int tickDuration = 240;
     private float selfCooldownReduction = 1.5f;
-    private int bindDuration = 40;
+    private float allyCooldownReduction = .75f;
+    private int bindDuration = 60;
     private int radius = 8;
     private int maxAlliesHit = 2;
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 21.92f, 30);
+        super(AbstractAbilityBuilder.create("soulbindingWeapon").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.selfCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfCooldownReduction"), float.class);
+        this.allyCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyCooldownReduction"), float.class);
+        this.bindDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bindDuration"), int.class);
+        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
+        this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Your melee attacks ")
-                               .append(Component.text("BIND", NamedTextColor.LIGHT_PURPLE))
-                               .append(Component.text(" enemies for "))
-                               .append(Component.text(format(bindDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. Against "))
-                               .append(Component.text("BOUND", NamedTextColor.LIGHT_PURPLE))
-                               .append(Component.text(" targets, your next Spirit Link will heal you for "))
-                               .append(Heals.formatHealing(healingValues.selfHealing))
-                               .append(Component.text(" health and "))
-                               .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
-                               .append(Component.text(" nearby allies for "))
-                               .append(Heals.formatHealing(healingValues.allyHealing))
-                               .append(Component.text(". Your next Fallen Souls will reduce the cooldown of all abilities by "))
-                               .append(Component.text(format(selfCooldownReduction), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. ("))
-                               .append(Component.text("1", NamedTextColor.GOLD))
-                               .append(Component.text(" second for "))
-                               .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
-                               .append(Component.text(" nearby allies). Both buffs may be activated for every melee hit. Lasts "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."))
-                               .append(Component.newline())
-                               .append(Component.text("Successful soulbind procs will grant you "))
-                               .append(Component.text("25%", NamedTextColor.GOLD))
-                               .append(Component.text(" knockback resistance for "))
-                               .append(Component.text("1.2", NamedTextColor.GOLD))
-                               .append(Component.text(" seconds (Max "))
-                               .append(Component.text("3.6 ", NamedTextColor.GOLD))
-                               .append(Component.text("seconds)."));
+        description = AbilityDescriptionBuilder.create("Your melee attacks give enemies ")
+                                               .text("BOUND", NamedTextColor.LIGHT_PURPLE)
+                                               .text(" for ")
+                                               .durationTicks(bindDuration)
+                                               .text(". Against ")
+                                               .text("BOUND", NamedTextColor.LIGHT_PURPLE)
+                                               .text(" targets, your next Spirit Link will heal you for ")
+                                               .heal(healingValues.selfHealing)
+                                               .text(" health and ")
+                                               .text(maxAlliesHit, NamedTextColor.BLUE)
+                                               .text(" nearby allies for ")
+                                               .heal(healingValues.allyHealing)
+                                               .text(". Your next Fallen Souls will reduce the cooldown of all abilities by ")
+                                               .durationSeconds(selfCooldownReduction)
+                                               .text(". (")
+                                               .durationSeconds(allyCooldownReduction)
+                                               .text(" for ")
+                                               .text(maxAlliesHit, NamedTextColor.BLUE)
+                                               .text(" nearby allies). Both buffs may be activated for every melee hit. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Successful soulbind procs will grant you ")
+                                               .percent(25, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" knockback resistance for ")
+                                               .durationSeconds(1.2f)
+                                               .text(" (Max ")
+                                               .durationSeconds(3.6f)
+                                               .text(").")
+                                               .build();
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        info.add(new Pair<>("Players Binded", "" + playersBinded));
-        info.add(new Pair<>("Soul Procs", "" + soulProcs));
-        info.add(new Pair<>("Soul Teammates CD Reductions", "" + soulTeammatesCDReductions));
-        info.add(new Pair<>("Link Procs", "" + linkProcs));
-        info.add(new Pair<>("Link Teammates Healed", "" + linkTeammatesHealed));
-
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
-
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         activeSoulbinding(wp);
-
         return true;
     }
 
-    public Soulbinding activeSoulbinding(@Nonnull WarlordsEntity wp) {
+    public SoulbindingData activeSoulbinding(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
-
-        Soulbinding tempSoulBinding = new Soulbinding();
-        tempSoulBinding.setMaxAlliesHit(maxAlliesHit);
-        tempSoulBinding.setRadius(radius);
-        tempSoulBinding.setInPve(inPve);
-        tempSoulBinding.setPveMasterUpgrade(pveMasterUpgrade);
-        tempSoulBinding.setPveMasterUpgrade2(pveMasterUpgrade2);
         if (wp.isInPve()) {
-            wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.class, 2);
+            wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, 2);
         }
-        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(
-                name,
-                "SOUL",
-                Soulbinding.class,
-                tempSoulBinding,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).stream().count() == 1) {
-                        if (wp.getEntity() instanceof Player) {
-                            ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
-                            if (item != null) {
-                                item.removeEnchantment(Enchantment.OXYGEN);
-                            }
-                        }
+        SoulbindingData data = new SoulbindingData(this);
+        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(name, "SOUL", SoulbindingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
+                if (wp.getEntity() instanceof Player) {
+                    ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
+                    if (item != null) {
+                        item.removeEnchantment(Enchantment.RESPIRATION);
                     }
-                },
-                tickDuration,
-                soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
-                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 4 == 0) {
-                        Location location = wp.getLocation();
-                        location.add(0, 1.2, 0);
-                        location.getWorld().spawnParticle(
-                                Particle.SPELL_WITCH,
-                                location,
-                                2,
-                                0.2,
-                                0,
-                                0.2,
-                                0.1,
-                                null,
-                                true
-                        );
-                    }
-                    tempSoulBinding.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
-                    tempSoulBinding.getSoulBindedPlayers().removeIf(soulBoundPlayer ->
-                            soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink())
-                    );
-                })
+                }
+            }
+        }, tickDuration, soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(), Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+            if (ticksElapsed % 4 == 0) {
+                Location location = wp.getLocation();
+                location.add(0, 1.2, 0);
+                location.getWorld().spawnParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1, null, true);
+            }
+            data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
+            data.getSoulBindedPlayers().removeIf(soulBoundPlayer -> soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()));
+        })
         ) {
+
             @Override
             public void damageDoBeforeVariableSetFromAttacker(WarlordsDamageHealingEvent event) {
                 WarlordsEntity wpAttacker = event.getSource();
@@ -163,136 +127,30 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {
                     return;
                 }
-                tempSoulBinding.bindPlayer(wpAttacker, wpVictim);
+                data.bindPlayer(wpAttacker, wpVictim);
             }
 
             @Override
             public PlayerNameData addSuffixFromSelf() {
-                return new PlayerNameData(
-                        Component.text("BOUND", NamedTextColor.LIGHT_PURPLE),
-                        we -> tempSoulBinding.getSoulBindedPlayers().stream().anyMatch(soulBoundPlayer -> soulBoundPlayer.getBoundPlayer() == we)
+                return new PlayerNameData(Component.text("BOUND", NamedTextColor.LIGHT_PURPLE),
+                        we -> data.getSoulBindedPlayers().stream().anyMatch(soulBoundPlayer -> soulBoundPlayer.getBoundPlayer() == we)
                 );
             }
         });
-
         if (wp.getEntity() instanceof Player player) {
             ItemStack item = player.getInventory().getItem(0);
             if (item != null) {
                 ItemMeta newItemMeta = item.getItemMeta();
-                newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+                newItemMeta.addEnchant(Enchantment.RESPIRATION, 1, true);
                 item.setItemMeta(newItemMeta);
             }
         }
-
-        return tempSoulBinding;
-    }
-
-    public List<SoulBoundPlayer> getSoulBindedPlayers() {
-        return soulBindedPlayers;
-    }
-
-    public void bindPlayer(WarlordsEntity wpAttacker, WarlordsEntity wpVictim) {
-        addPlayersBinded();
-        if (hasBoundPlayer(wpVictim)) {
-            getSoulBindedPlayers()
-                    .stream()
-                    .filter(p -> p.getBoundPlayer() == wpVictim)
-                    .forEach(boundPlayer -> {
-                        boundPlayer.setHitWithSoul(false);
-                        boundPlayer.setHitWithLink(false);
-                        boundPlayer.setTicksLeft(bindDuration);
-                    });
-        } else {
-            wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
-                    .append(Component.text(" You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
-                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                    .append(Component.text("!", NamedTextColor.GRAY))
-            );
-            wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
-                    .append(Component.text(" Your ", NamedTextColor.GRAY))
-                    .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
-                    .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY))
-            );
-            getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, bindDuration));
-            Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-        }
-    }
-
-    public void addPlayersBinded() {
-        playersBinded++;
-    }
-
-    public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
-        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
-            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
-                return true;
-            }
-        }
-        return false;
+        return data;
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new SoulbindingWeaponBranch(abilityTree, this);
-    }
-
-    public void addSoulProcs() {
-        soulProcs++;
-    }
-
-    public void addLinkProcs() {
-        linkProcs++;
-    }
-
-    public void addSoulTeammatesCDReductions() {
-        soulTeammatesCDReductions++;
-    }
-
-    public void addLinkTeammatesHealed() {
-        linkTeammatesHealed++;
-    }
-
-    public boolean hasBoundPlayerSoul(WarlordsEntity warlordsPlayer) {
-        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
-            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
-                if (!soulBindedPlayer.isHitWithSoul()) {
-                    soulBindedPlayer.setHitWithSoul(true);
-                    playersProcedBySouls.add(warlordsPlayer);
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasBoundPlayerLink(WarlordsEntity warlordsPlayer) {
-        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
-            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
-                if (!soulBindedPlayer.isHitWithLink()) {
-                    soulBindedPlayer.setHitWithLink(true);
-                    playersProcedByLink.add(warlordsPlayer);
-                    return true;
-                }
-                break;
-            }
-        }
-        return false;
-    }
-
-    public int getBindDuration() {
-        return bindDuration;
-    }
-
-    public void setBindDuration(int bindDuration) {
-        this.bindDuration = bindDuration;
-    }
-
-    public List<WarlordsEntity> getAllProcedPlayers() {
-        List<WarlordsEntity> procedPlayers = new ArrayList<>();
-        procedPlayers.addAll(playersProcedBySouls);
-        procedPlayers.addAll(playersProcedByLink);
-        return procedPlayers;
     }
 
     @Override
@@ -305,12 +163,58 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.tickDuration = tickDuration;
     }
 
+    @Override
+    public HealingValues getHealValues() {
+        return healingValues;
+    }
+
+    @Override
+    public SoulbindingStats getAbilityStats() {
+        return stats;
+    }
+
+    public void addPlayersBinded() {
+        stats.playersBinded++;
+    }
+
+    public void addSoulProcs() {
+        stats.soulProcs++;
+    }
+
+    public void addLinkProcs() {
+        stats.linkProcs++;
+    }
+
+    public void addSoulTeammatesCDReductions() {
+        stats.soulTeammatesCDReductions++;
+    }
+
+    public void addLinkTeammatesHealed() {
+        stats.linkTeammatesHealed++;
+    }
+
+    public int getBindDuration() {
+        return bindDuration;
+    }
+
+    public void setBindDuration(int bindDuration) {
+        this.bindDuration = bindDuration;
+    }
+
     public float getSelfCooldownReduction() {
         return selfCooldownReduction;
     }
 
     public void setSelfCooldownReduction(float selfCooldownReduction) {
         this.selfCooldownReduction = selfCooldownReduction;
+    }
+
+    public float getAllyCooldownReduction() {
+        return allyCooldownReduction;
+    }
+
+    public void setAllyCooldownReduction(float allyCooldownReduction) {
+        this.allyCooldownReduction = allyCooldownReduction;
     }
 
     public int getRadius() {
@@ -329,15 +233,112 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.maxAlliesHit = maxAlliesHit;
     }
 
-    @Override
-    public HealingValues getHealValues() {
-        return healingValues;
+    public static class SoulbindingData {
+
+        private final Soulbinding soulbinding;
+
+        private final List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
+
+        private final List<WarlordsEntity> playersProcedBySouls = new ArrayList<>();
+
+        private final List<WarlordsEntity> playersProcedByLink = new ArrayList<>();
+
+        public SoulbindingData(Soulbinding soulbinding) {
+            this.soulbinding = soulbinding;
+        }
+
+        public void bindPlayer(WarlordsEntity wpAttacker, WarlordsEntity wpVictim) {
+            soulbinding.addPlayersBinded();
+            if (hasBoundPlayer(wpVictim)) {
+                getSoulBindedPlayers().stream().filter(p -> p.getBoundPlayer() == wpVictim).forEach(boundPlayer -> {
+                    boundPlayer.setHitWithSoul(false);
+                    boundPlayer.setHitWithLink(false);
+                    boundPlayer.setTicksLeft(soulbinding.bindDuration);
+                });
+            } else {
+                wpVictim.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" You have been bound by " + wpAttacker.getName() + "'s ", NamedTextColor.GRAY))
+                                                                     .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                                                                     .append(Component.text("!", NamedTextColor.GRAY)));
+                wpAttacker.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
+                                                                      .append(Component.text("Soulbinding Weapon", NamedTextColor.LIGHT_PURPLE))
+                                                                      .append(Component.text(" has bound " + wpVictim.getName() + "!", NamedTextColor.GRAY)));
+                getSoulBindedPlayers().add(new SoulBoundPlayer(wpVictim, soulbinding.bindDuration));
+                Utils.playGlobalSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+            }
+        }
+
+        public boolean hasBoundPlayer(WarlordsEntity warlordsPlayer) {
+            for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public List<SoulBoundPlayer> getSoulBindedPlayers() {
+            return soulBindedPlayers;
+        }
+
+        public boolean hasBoundPlayerSoul(WarlordsEntity warlordsPlayer) {
+            for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                    if (!soulBindedPlayer.isHitWithSoul()) {
+                        soulBindedPlayer.setHitWithSoul(true);
+                        playersProcedBySouls.add(warlordsPlayer);
+                        soulbinding.addSoulProcs();
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        public boolean hasBoundPlayerLink(WarlordsEntity warlordsPlayer) {
+            for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                    if (!soulBindedPlayer.isHitWithLink()) {
+                        soulBindedPlayer.setHitWithLink(true);
+                        playersProcedByLink.add(warlordsPlayer);
+                        soulbinding.addLinkProcs();
+                        return true;
+                    }
+                    break;
+                }
+            }
+            return false;
+        }
+
+        public List<WarlordsEntity> getAllProcedPlayers() {
+            List<WarlordsEntity> procedPlayers = new ArrayList<>();
+            procedPlayers.addAll(playersProcedBySouls);
+            procedPlayers.addAll(playersProcedByLink);
+            return procedPlayers;
+        }
+
+        public Soulbinding getSoulbinding() {
+            return soulbinding;
+        }
+
+        public List<WarlordsEntity> getPlayersProcedBySouls() {
+            return playersProcedBySouls;
+        }
+
+        public List<WarlordsEntity> getPlayersProcedByLink() {
+            return playersProcedByLink;
+        }
+
     }
 
     public static class SoulBoundPlayer {
+
         private WarlordsEntity boundPlayer;
+
         private int ticksLeft;
+
         private boolean hitWithLink;
+
         private boolean hitWithSoul;
 
         public SoulBoundPlayer(WarlordsEntity boundPlayer, int timeLeft) {
@@ -380,13 +381,28 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         public void setHitWithSoul(boolean hitWithSoul) {
             this.hitWithSoul = hitWithSoul;
         }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {
 
-        private final Value.SetValue allyHealing = new Value.SetValue(300);
-        private final Value.SetValue selfHealing = new Value.SetValue(400);
-        private final List<Value> values = List.of(allyHealing, selfHealing);
+        private Value.SetValue allyHealing = new Value.SetValue(200);
+
+        private Value.SetValue selfHealing = new Value.SetValue(300);
+
+        private List<Value> values = List.of(allyHealing, selfHealing);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("allyHealing"), Value.SetValue.class);
+            this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("selfHealing"), Value.SetValue.class);
+            this.values = List.of(allyHealing, selfHealing);
+        }
 
         public Value.SetValue getAllyHealing() {
             return allyHealing;
@@ -396,10 +412,57 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             return selfHealing;
         }
 
+    }
+
+    public static class SoulbindingStats extends AbstractAbilityStats<Soulbinding, SoulbindingStats> {
+
+        @Field("targets_binded")
+        private int playersBinded = 0;
+
+        @Field("soul_procs")
+        private int soulProcs = 0;
+
+        @Field("link_procs")
+        private int linkProcs = 0;
+
+        @Field("soul_teammates_cd_reductions")
+        private int soulTeammatesCDReductions = 0;
+
+        @Field("link_teammates_healed")
+        private int linkTeammatesHealed = 0;
+
         @Override
-        public List<Value> getValues() {
-            return values;
+        public Class<SoulbindingStats> getClazz() {
+            return SoulbindingStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Targets Binded", playersBinded));
+            statsDisplay.add(new AbilityStatDisplay("Soul Procs", soulProcs));
+            statsDisplay.add(new AbilityStatDisplay("Soul Teammates CD Reductions", soulTeammatesCDReductions));
+            statsDisplay.add(new AbilityStatDisplay("Link Procs", linkProcs));
+            statsDisplay.add(new AbilityStatDisplay("Link Teammates Healed", linkTeammatesHealed));
+            return statsDisplay;
+        }
+
+        @Override
+        public SoulbindingStats merge(SoulbindingStats other, int multiplier) {
+            SoulbindingStats stats = super.merge(other, multiplier);
+            stats.playersBinded = this.playersBinded + other.playersBinded * multiplier;
+            stats.soulProcs = this.soulProcs + other.soulProcs * multiplier;
+            stats.linkProcs = this.linkProcs + other.linkProcs * multiplier;
+            stats.soulTeammatesCDReductions = this.soulTeammatesCDReductions + other.soulTeammatesCDReductions * multiplier;
+            stats.linkTeammatesHealed = this.linkTeammatesHealed + other.linkTeammatesHealed * multiplier;
+            return stats;
+        }
+
+        @Override
+        public SoulbindingStats create() {
+            return new SoulbindingStats();
         }
 
     }
+
 }

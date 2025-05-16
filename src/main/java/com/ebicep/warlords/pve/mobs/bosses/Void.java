@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.PrismGuard;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -44,9 +45,7 @@ public class Void extends AbstractMob implements BossMob {
     private boolean timedDamageTriggerTwo = false;
     private boolean preventArmageddon = false;
     private boolean boltaroPhaseTrigger = false;
-    private PrismGuard prismGuard = new PrismGuard() {{
-        setTickDuration(200);
-    }};
+    private PrismGuard prismGuard = null;
 
     public Void(Location spawnLocation) {
         this(spawnLocation, "Void", 100000, 0.24f, 20, 3000, 4000);
@@ -70,7 +69,7 @@ public class Void extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new GroundShred(),
-                new SpawnSouls(20) {
+                new SpawnSouls(AbstractAbilityBuilder.create("voidSpawnSouls").pve()) {
                     @Override
                     public int getSpawnAmount() {
                         int spawnAmount = 2 * pveOption.playerCount();
@@ -82,7 +81,7 @@ public class Void extends AbstractMob implements BossMob {
                     }
                 },
                 new ThunderCloudAbility(
-                        10,
+                        AbstractAbilityBuilder.create("voidThunderCloud").pve(),
                         false,
                         21, 30,
                         7, 12
@@ -108,6 +107,8 @@ public class Void extends AbstractMob implements BossMob {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
+        prismGuard = new PrismGuard(AbstractAbilityBuilder.create("voidPrismGuard").pve());
+        prismGuard.init(prismGuard.getBuilder());
 
         if (option.getDifficulty() == DifficultyIndex.EXTREME) {
             float newHealth = 55000;
@@ -259,7 +260,7 @@ public class Void extends AbstractMob implements BossMob {
                 double radius = (4 * counter);
                 Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 500, 0.1f);
                 Utils.playGlobalSound(loc, "warrior.laststand.activation", 500, 0.2f);
-                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, Particle.SMOKE_LARGE, 1, counter);
+                EffectUtils.playHelixAnimation(warlordsNPC.getLocation(), radius, Particle.LARGE_SMOKE, 1, counter);
                 for (WarlordsEntity flameTarget : PlayerFilter
                         .entitiesAround(warlordsNPC, radius, radius, radius)
                         .aliveEnemiesOf(warlordsNPC)
@@ -371,7 +372,7 @@ public class Void extends AbstractMob implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
-                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
+                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.HAPPY_VILLAGER);
                         we.addInstance(InstanceBuilder
                                 .damage()
                                 .cause("Death Ray")
@@ -435,7 +436,7 @@ public class Void extends AbstractMob implements BossMob {
         private final int earthQuakeRadius = 10;
 
         public GroundShred() {
-            super("Ground Shred", 900, 1200, 8, 50);
+            super(AbstractAbilityBuilder.create("voidGroundShred").pve());
         }
 
         @Override
@@ -443,8 +444,8 @@ public class Void extends AbstractMob implements BossMob {
             Location loc = wp.getLocation();
             Utils.playGlobalSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 2, 0.4f);
             EffectUtils.strikeLightning(loc, false);
-            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.SPELL_WITCH, 2);
-            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORKS_SPARK, 2, 40);
+            EffectUtils.playSphereAnimation(loc, earthQuakeRadius, Particle.WITCH, 2);
+            EffectUtils.playHelixAnimation(loc, earthQuakeRadius, Particle.FIREWORK, 2, 40);
             for (WarlordsEntity enemy : PlayerFilter
                     .entitiesAround(wp, earthQuakeRadius, earthQuakeRadius, earthQuakeRadius)
                     .aliveEnemiesOf(wp)

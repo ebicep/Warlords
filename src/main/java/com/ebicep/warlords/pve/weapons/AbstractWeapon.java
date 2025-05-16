@@ -82,6 +82,9 @@ public abstract class AbstractWeapon {
         player.getHealth().addAdditiveModifier("Weapon Health (Base)", getHealthBonus());
     }
 
+    public void cleanup() {
+    }
+
     public abstract float getHealthBonus();
 
     public abstract WeaponsPvE getRarity();
@@ -111,7 +114,7 @@ public abstract class AbstractWeapon {
         if (isBound) {
             lore.add(Component.text("BOUND", NamedTextColor.AQUA));
             if (enchantIfBound) {
-                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.enchant(Enchantment.RESPIRATION, 1);
             }
         }
         return itemBuilder

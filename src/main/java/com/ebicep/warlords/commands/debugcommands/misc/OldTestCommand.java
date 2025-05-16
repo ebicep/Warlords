@@ -1,10 +1,15 @@
 package com.ebicep.warlords.commands.debugcommands.misc;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
+import com.ebicep.warlords.pve.mobs.AbstractMob;
+import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.StringUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -113,9 +118,114 @@ public class OldTestCommand implements CommandExecutor {
                 return true;
             }
         }
-
         int level = 20;
         if (commandSender instanceof Player player) {
+//            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
+//            System.out.println(strikeDamage);
+            Document document = new Document();
+//            for (Ability<?> value : Ability.ABILITY_MAP.values()) {
+//                AbstractAbility ability = value.create.get();
+//                System.out.println(ability.getClass().getSimpleName());
+//                System.out.println(ability.getCooldownValue());
+//                System.out.println(ability.getEnergyCostValue());
+//                document.append(ability.getClass().getSimpleName(), new Document()
+//                        .append("cooldown", ability.getCooldownValue())
+//                        .append("energyCost", ability.getEnergyCostValue())
+//                );
+////                break;
+//            }
+
+            for (Mob value : Mob.VALUES) {
+//                if (value != Mob.ARACHNO_VENERATUS) {
+//                    continue;
+//                }
+//                System.out.println(value);
+                AbstractMob mob = value.createMobLegacy.apply(null);
+                for (AbstractAbility ability : mob.getPlayerClass().getAbilities()) {
+                    AbstractAbilityBuilder builder = ability.getBuilder();
+                    String str = StringUtils.toCamelCase(mob.getName()) + builder.getFieldName().substring(0, 1).toUpperCase() + builder.getFieldName().substring(1);
+//                    if (builder.getEnergyCost() != null) {
+//                        str += "(energyCost: " + builder.getEnergyCost() + ")";
+//                    }
+//                    if (builder.getCooldown() != null) {
+//                        str += "(cooldown: " + builder.getCooldown() + ")";
+//                    }
+                    if (builder.getCooldown() != null && builder.getEnergyCost() != null) {
+//                        System.out.println(str);
+                    }
+//                    Float cd = ConfigManager.getAbilityConfigValue(List.of("pve"), StringUtils.toCamelCase(mob.getName()) + builder.getFieldName().substring(0, 1).toUpperCase() + builder.getFieldName().substring(1) + ".cooldown", float.class, -1f);
+//                    Float energy = ConfigManager.getAbilityConfigValue(List.of("pve"), StringUtils.toCamelCase(mob.getName()) + builder.getFieldName().substring(0, 1).toUpperCase() + builder.getFieldName().substring(1) + ".energyCost", float.class, -1f);
+//                    if (builder.getEnergyCost() != null && builder.getCooldown() != null && (!Objects.equals(cd, builder.getCooldown()) || !Objects.equals(energy, builder.getEnergyCost()))) {
+//                        System.out.println("DIFFERENT: " + str);
+//                    }
+//                    if (cd == -1 || energy == -1) {
+//                        Float energyCost = builder.getEnergyCost();
+//                        str += "(energyCost: " + ability.getEnergyCostValue() + ")";
+//                        Float cooldown = builder.getCooldown();
+//                        str += "(cooldown: " + ability.getCooldownValue() + ")";
+//                        System.out.println(str);
+//                    }
+                }
+            }
+
+//            System.out.println(document.toJson());
+//            TextComponent component = ComponentBuilder.create()
+//                                                      .text("HELLO")
+//                                                      .text(ChatColor.GOLD + "WORLD")
+//                                                      .build();
+//            component = component.decorate(TextDecoration.UNDERLINED);
+//            player.sendMessage(component);
+
+//            Hologram hologram = new Hologram.Builder("test",
+//                    player.getLocation(),
+//                    p -> new HologramDataText.Builder<>(ComponentBuilder.create(p.getName().equals("sumSmash") ? "HELLO" : "WORLD", NamedTextColor.GREEN)
+//                                                                        .newLine()
+//                                                                        .text("NEW LINE", NamedTextColor.YELLOW)
+//                                                                        .build())
+//                            .setViewRange(20)
+//                            .setBillboard(Display.Billboard.FIXED)
+//                            .build()
+//            ).setInteract(p -> {
+//                p.sendMessage(ComponentBuilder.create("Interacted with hologram", NamedTextColor.GREEN).build());
+//                return false;
+//            }).build();
+//            hologram.getVisibilityManager().addViewer(player.getUniqueId());
+//            HologramManager.addHologram("test", hologram);
+
+
+//            HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+//
+//            String name = "testhologram2";
+//            TextHologramData hologramData = new TextHologramData(name, player.getLocation());
+//            hologramData.setPersistent(false);
+//            hologramData.removeLine(0);
+//            hologramData.addLine("Hello World");
+//            hologramData.setVisibility(Visibility.MANUAL);
+//
+//            Hologram hologram = manager.create(hologramData);
+//            hologram.showHologram(player);
+//            Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
+//            manager.addHologram(hologram);
+//
+//            FancyHologramsPlugin.get().getHologramManager().getHologram(name).ifPresent(h -> {
+//                h.showHologram(player);
+//                Visibility.ManualVisibility.addDistantViewer(h, player.getUniqueId());
+//                System.out.println(Visibility.ManualVisibility.canSee(player, h));
+//            });
+
+
+//            player.setHealth(0);
+//            DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
+//                for (Ability<?> value : Ability.VALUES) {
+//                    AbstractAbility abstractAbility = value.create.get();
+//                    if (abstractAbility instanceof AbilityStats<?, ?> abilityStats) {
+//                        if (abstractAbility.getClass() == null) {
+//                            System.out.println("NULL: " + abilityStats.getName());
+//                        }
+//                    }
+//                }
+//                DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+//            });
 //            player.setPose(Pose.DYING);
 //            player.playHurtAnimation(270);
 //            ServerLevel serverLevel = ((CraftWorld) player.getWorld()).getHandle();
@@ -148,7 +258,7 @@ public class OldTestCommand implements CommandExecutor {
 //                                    EffectUtils.playParticleLinkAnimation(
 //                                            storedLocation,
 //                                            location,
-//                                            Particle.VILLAGER_HAPPY
+//                                            Particle.HAPPY_VILLAGER
 //                                    );
 //                                }
 //                            }
@@ -165,12 +275,13 @@ public class OldTestCommand implements CommandExecutor {
 //                    ItemDisplay.class,
 //                    d -> {
 //                        d.setTransformation(new Transformation(
-//                                new Vector3f(0, 2, 0),
+//                                new Vector3f(0, 0, 0),
 //                                new AxisAngle4f(),
-//                                new Vector3f(1.5f),
+//                                new Vector3f(1),
 //                                new AxisAngle4f()
 //                        ));
-//                        d.setItemStack(new ItemStack(Material.BROWN_MUSHROOM));
+//                        d.setItemStack(new ItemStack(Material.GLOWSTONE_DUST));
+//                        d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.GUI);
 //                    }
 //            );
 //            new BukkitRunnable() {
@@ -235,7 +346,7 @@ public class OldTestCommand implements CommandExecutor {
                 d.setTeleportDuration(maxTicks - 2);
             });
 
-            EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, locationBuilder, 20);
+            EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, locationBuilder, 20);
 
 
 
@@ -275,7 +386,7 @@ public class OldTestCommand implements CommandExecutor {
 
                     if (tpCounter < quarterCircle.size()) {
                         Location loc = quarterCircle.get(tpCounter++);
-                        EffectUtils.displayParticle(Particle.VILLAGER_HAPPY, loc, 1);
+                        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, loc, 1);
 //                        display.teleport(loc);
                     }
 
@@ -365,7 +476,7 @@ public class OldTestCommand implements CommandExecutor {
 //                        if (mob instanceof Chessking) {
 //                            Entity entity = mob.getWarlordsNPC().getEntity();
 //                            if (entity instanceof LivingEntity living) {
-//                                living.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1);
+//                                living.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(0.1);
 //                            }
 //                        }
 //                    }
@@ -535,7 +646,7 @@ public class OldTestCommand implements CommandExecutor {
 //            }
 //
 //            EffectUtils.displayParticle(
-//                    Particle.SPELL_WITCH,
+//                    Particle.WITCH,
 //                    player.getLocation().subtract(0, 3, 0),
 //                    1000,
 //                    10,

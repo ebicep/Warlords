@@ -2,6 +2,7 @@ package com.ebicep.warlords.game.option.towerdefense.towers;
 
 import com.ebicep.warlords.abilities.ProtectorsStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.HitBox;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -100,12 +101,12 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
         private int maxSpawnCount = 1;
 
         public SpawnTroops(AbstractTower tower) {
-            super("Spawn Troops", 5, 0);
+            super(AbstractAbilityBuilder.create("spawnTroops").td().cooldown(5).energyCost(0));
             this.mobSpawnLocations = Spawner.getBlockSpawnLocations(tower, range);
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             if (wp instanceof WarlordsTower warlordsTower) {
                 spawnedMobs.removeIf(mob -> mob.getWarlordsNPC() != null && mob.getWarlordsNPC().isDead());
                 if (spawnedMobs.size() >= maxSpawnCount) {
@@ -179,7 +180,7 @@ public class ProtectorTower extends AbstractTower implements Upgradeable.Path2 {
                     damageResistance,
                     minMeleeDamage,
                     maxMeleeDamage,
-                    new ProtectorsStrike()
+                    new ProtectorsStrike(AbstractAbilityBuilder.create("protectorProtectorsStrike").td())
             );
         }
 

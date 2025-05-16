@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -50,21 +51,13 @@ public class Chessking extends AbstractMob implements BossMob {
                 minMeleeDamage,
                 maxMeleeDamage,
                 new Belch(),
-                new SpawnMobAbility(
-                        20,
-                        Mob.SLIME_GUARD,
-                        5
-                ) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("chesskingSpawnSlimeGuard").pve().startCooldown(5), Mob.SLIME_GUARD) {
                     @Override
                     public int getSpawnAmount() {
                         return (int) pveOption.getGame().warlordsPlayers().count();
                     }
                 },
-                new SpawnMobAbility(
-                        40,
-                        Mob.SLIMY_CHESS,
-                        15
-                ) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("chesskingSpawnSlimyChess").pve().startCooldown(15), Mob.SLIMY_CHESS) {
                     @Override
                     public int getSpawnAmount() {
                         int slimyChessCount = pveOption.getMobs().stream()
@@ -133,11 +126,11 @@ public class Chessking extends AbstractMob implements BossMob {
         private float range = 9;
 
         public Belch() {
-            super("Belch", 10, 100);
+            super(AbstractAbilityBuilder.create("chesskingBelch").pve());
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             for (WarlordsEntity we : PlayerFilter
                     .entitiesAround(wp, range, range, range)
                     .aliveEnemiesOf(wp)

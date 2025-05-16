@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -65,11 +66,11 @@ public class ZombieKnight extends AbstractMob implements AdvancedMob {
     private static class ReduceWeaponCooldowns extends AbstractAbility {
 
         public ReduceWeaponCooldowns() {
-            super("Reduce Weapon", 6, 100);
+            super(AbstractAbilityBuilder.create("zombieKnightReduceWeapon").pve());
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
 
 
             for (WarlordsEntity we : PlayerFilter

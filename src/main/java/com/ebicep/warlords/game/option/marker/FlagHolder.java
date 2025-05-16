@@ -98,7 +98,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         return newLocations;
     }
 
-    static boolean dropFlagForPlayer(WarlordsEntity player) {
+    static boolean dropFlagForPlayer(WarlordsEntity player, boolean manual) {
         for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
             FlagInfo info = holder.getInfo();
             boolean drop = info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer().equals(player);
@@ -109,14 +109,14 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
                         public void run() {
                             holder.update(i ->
                                     i.getFlag() instanceof PlayerFlagLocation &&
-                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null
+                                            ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
                             );
                         }
                     }.runTaskLater(Warlords.getInstance(), 1);
                 } else {
                     holder.update(i ->
                             i.getFlag() instanceof PlayerFlagLocation &&
-                            ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag()) : null
+                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
                     );
                 }
                 return true;
@@ -135,11 +135,11 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
         return false;
     }
 
-    static boolean playerTryingToPick(WarlordsEntity player) {
+    static boolean playerNearFlag(WarlordsEntity player) {
         for (FlagHolder flagHolder : player.getGame().getMarkers(FlagHolder.class)) {
             FlagInfo flagInfo = flagHolder.getInfo();
             if (flagInfo.getFlag() instanceof SpawnFlagLocation && flagInfo.getTeam() != player.getTeam()) {
-                if (flagInfo.getFlag().getLocation().distanceSquared(player.getLocation()) < 12 * 12) {
+                if (flagInfo.getFlag().getLocation().distanceSquared(player.getLocation()) < 15 * 15) {
                     return true;
                 }
             }

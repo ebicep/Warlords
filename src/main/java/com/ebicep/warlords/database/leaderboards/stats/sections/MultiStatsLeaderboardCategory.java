@@ -25,7 +25,7 @@ public class MultiStatsLeaderboardCategory<
         extends StatsLeaderboardCategory<DatabaseGameT, DatabaseGamePlayerT, MultiStat> {
 
     public MultiStatsLeaderboardCategory(Function<DatabasePlayer, MultiStat> statFunction, String categoryName, String shortName) {
-        super(statFunction, categoryName, shortName);
+        super(statFunction, categoryName, shortName, false);
     }
 
 }

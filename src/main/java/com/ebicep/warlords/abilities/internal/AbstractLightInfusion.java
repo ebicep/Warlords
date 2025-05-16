@@ -1,10 +1,9 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.util.java.Pair;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -13,12 +12,12 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractLightInfusion extends AbstractAbility implements PurpleAbilityIcon, Duration {
+public abstract class AbstractLightInfusion extends AbstractAbility implements PurpleAbilityIcon, Duration, AbilityStats<AbstractLightInfusion, AbstractLightInfusion.AbstractLightInfusionStats> {
 
     protected static void playCastEffect(@Nonnull WarlordsEntity wp) {
         for (int i = 0; i < 10; i++) {
             EffectUtils.displayParticle(
-                    Particle.SPELL,
+                    Particle.EFFECT,
                     wp.getLocation().add(0, 1.5, 0),
                     3,
                     1,
@@ -32,28 +31,31 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     protected int tickDuration = 60;
     protected int speedBuff = 40;
     protected int energyGiven = 120;
+    private final AbstractLightInfusionStats stats = new AbstractLightInfusionStats();
 
-    public AbstractLightInfusion(float cooldown) {
-        super("Light Infusion", cooldown, 0);
+    public AbstractLightInfusion(AbstractAbilityBuilder builder) {
+        super(builder);
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("You become infused with light, restoring ")
-                               .append(Component.text(energyGiven, NamedTextColor.YELLOW))
-                               .append(Component.text(" energy and increasing your movement speed by "))
-                               .append(Component.text(speedBuff + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" for "))
-                               .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds."));
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
+        description = AbilityDescriptionBuilder
+                .create("You become infused with light, restoring ")
+                .energy(energyGiven)
+                .text(" and increasing your movement speed by ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -64,6 +66,11 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     @Override
     public void setTickDuration(int tickDuration) {
         this.tickDuration = tickDuration;
+    }
+
+    @Override
+    public AbstractLightInfusionStats getAbilityStats() {
+        return stats;
     }
 
     public int getSpeedBuff() {
@@ -82,5 +89,30 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
         this.energyGiven = energyGiven;
     }
 
+    public static class AbstractLightInfusionStats extends AbstractAbilityStats<AbstractLightInfusion, AbstractLightInfusionStats> {
+
+        @Override
+        public Class<AbstractLightInfusionStats> getClazz() {
+            return AbstractLightInfusionStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public AbstractLightInfusionStats merge(AbstractLightInfusionStats other, int multiplier) {
+            AbstractLightInfusionStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public AbstractLightInfusionStats create() {
+            return new AbstractLightInfusionStats();
+        }
+
+    }
 
 }

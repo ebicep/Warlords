@@ -148,12 +148,14 @@ public abstract class TowerDefenseMob extends AbstractMob {
                             case TD_PHYSICAL_RES_REDUCTION -> valued.floatModifiableConsumer().accept(physicalResistance);
                             case TD_MAGIC_RES_REDUCTION -> valued.floatModifiableConsumer().accept(magicResistance);
                         }
+                        physicalResistance.refresh();
+                        magicResistance.refresh();
                     }
                 }
                 if (flags.contains(InstanceFlags.TD_PHYSICAL)) {
-                    return currentDamageValue * (1 - physicalResistance.getCalculatedValue());
+                    currentDamageValue *= (1 - physicalResistance.getCalculatedValue());
                 } else if (flags.contains(InstanceFlags.TD_MAGIC)) {
-                    return currentDamageValue * (1 - magicResistance.getCalculatedValue());
+                    currentDamageValue *= (1 - magicResistance.getCalculatedValue());
                 }
                 physicalResistance.tick();
                 magicResistance.tick();

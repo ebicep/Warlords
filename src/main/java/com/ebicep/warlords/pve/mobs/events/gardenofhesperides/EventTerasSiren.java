@@ -48,9 +48,11 @@ public class EventTerasSiren extends AbstractMob implements BossMinionMob, Teras
     @Override
     public void giveGoals() {
         super.giveGoals();
-        GoalController goalController = npc.getDefaultGoalController();
-        goalController.clear();
-        goalController.addBehavior(new NPCGuardWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 10), 2);
+        if (cronus != null) {
+            GoalController goalController = npc.getDefaultGoalController();
+            goalController.clear();
+            goalController.addBehavior(new NPCGuardWarlordsEntityGoal(npc, cronus.getWarlordsNPC(), 10), 2);
+        }
     }
 
     @Override

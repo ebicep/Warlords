@@ -1,11 +1,12 @@
 package com.ebicep.warlords.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,8 +24,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotAShield extends AbstractPiercingProjectile {
+public class NotAShield extends AbstractPiercingProjectile<NotAShield, NotAShield.NotAShieldStats> {
 
+    private final NotAShieldStats stats = new NotAShieldStats();
     private double hitBox = 3;
     private float runeTickIncrease = 1.5f;
     private int allyHitDamageReduction = 10;
@@ -33,40 +35,62 @@ public class NotAShield extends AbstractPiercingProjectile {
     private int maxAlliesHit = 10;
 
     public NotAShield() {
-        super("Not A Shield", 12, 45, 1, 20, true);
+        super(AbstractAbilityBuilder.create("notAShield").pvp());
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = Component.text("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
-//                               .append(Damages.formatDamage(damageValues.))
-                               .append(Component.text(" damage and have their rune timers increase by "))
-                               .append(Component.text(format(runeTickIncrease), NamedTextColor.GOLD))
-                               .append(Component.text(". Allies hit pick up a piece of the shield, reducing its damage by "))
-                               .append(Component.text(allyHitDamageReduction + "%", NamedTextColor.RED))
-                               .append(Component.text(" while giving them "))
-                               .append(Component.text(allyHexStacks, NamedTextColor.BLUE))
-                               .append(Component.text(" stack of Fortifying Hex that lasts "))
-                               .append(Component.text(format(allyHexTickDuration / 20f), NamedTextColor.GOLD))
-                               .append(Component.text("seconds. Has a range of "))
-                               .append(Component.text(format(maxDistance / 2), NamedTextColor.YELLOW))
-                               .append(Component.text("blocks.\n\nAfter traveling "))
-                               .append(Component.text(format(maxDistance / 2), NamedTextColor.YELLOW))
-                               .append(Component.text(" blocks, the shield returns to the location you threw it at, hitting all possible targets again. If "))
-                               .append(Component.text(maxAlliesHit, NamedTextColor.YELLOW))
-                               .append(Component.text(" allies are hit with this shield, the shield shatters, ending its trajectory."));
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.hitBox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitBox"), float.class);
+        this.runeTickIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("runeTickIncrease"), float.class);
+        this.allyHitDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHitDamageReduction"), int.class);
+        this.allyHexStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHexStacks"), int.class);
+        this.allyHexTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHexTickDuration"), int.class);
+        this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-        return info;
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
+                    armorStand.setMarker(true);
+                    armorStand.getEquipment().setHelmet(new ItemStack(Material.SHIELD));
+                }
+        );
+        projectile.addTask(new InternalProjectileTask() {
+
+            @Override
+            public void run(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                projectile.getCurrentLocation().getWorld().spawnParticle(Particle.CRIT, projectile.getCurrentLocation().clone().add(0, 0, 0), 2, 0, 0, 0, 0, null, true);
+            }
+
+            @Override
+            public void onDestroy(AbstractPiercingProjectile<?, ?>.InternalProjectile projectile) {
+                fallenSoul.remove();
+                projectile.getCurrentLocation().getWorld().spawnParticle(Particle.ENCHANTED_HIT, projectile.getCurrentLocation(), 1, 0, 0, 0, 0.7f, null, true);
+            }
+        });
+    }
+
+    @Nullable
+    @Override
+    protected String getActivationSound() {
+        return null;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0;
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 0;
     }
 
     @Override
     protected void playEffect(@Nonnull Location currentLocation, int ticksLived) {
-
     }
 
     @Override
@@ -99,10 +123,9 @@ public class NotAShield extends AbstractPiercingProjectile {
     protected void onNonCancellingHit(@Nonnull InternalProjectile projectile, @Nonnull WarlordsEntity hit, @Nonnull Location impactLocation) {
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
-
         getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
         if (hit.onHorse()) {
-            numberOfDismounts++;
+            stats.addNumberOfDismounts();
         }
         List<WarlordsEntity> hits = projectile.getHit();
         boolean isTeammate = hit.isTeammate(wp);
@@ -115,14 +138,14 @@ public class NotAShield extends AbstractPiercingProjectile {
             }
         } else {
             float reduction = 1 - (teammatesHit * allyHitDamageReduction / 100f);
-//            hit.addDamageInstance(
-//                    wp,
-//                    name,
-//                    minDamageHeal.getCalculatedValue() * reduction,
-//                    maxDamageHeal.getCalculatedValue() * reduction,
-//                    critChance,
-//                    critMultiplier
-//            );
+            //            hit.addDamageInstance(
+            //                    wp,
+            //                    name,
+            //                    minDamageHeal.getCalculatedValue() * reduction,
+            //                    maxDamageHeal.getCalculatedValue() * reduction,
+            //                    critChance,
+            //                    critMultiplier
+            //            );
             hit.getSpec().increaseAllCooldownTimersBy(runeTickIncrease);
             wp.playSound(impactLocation, Sound.ITEM_SHIELD_BLOCK, 1, 1);
         }
@@ -134,61 +157,56 @@ public class NotAShield extends AbstractPiercingProjectile {
     }
 
     @Override
-    protected void onSpawn(@Nonnull InternalProjectile projectile) {
-        super.onSpawn(projectile);
-        ArmorStand fallenSoul = Utils.spawnArmorStand(projectile.getStartingLocation().clone().add(0, -1.7, 0), armorStand -> {
-            armorStand.setMarker(true);
-            armorStand.getEquipment().setHelmet(new ItemStack(Material.SHIELD));
-        });
-
-        projectile.addTask(new InternalProjectileTask() {
-            @Override
-            public void run(InternalProjectile projectile) {
-                fallenSoul.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.CRIT,
-                        projectile.getCurrentLocation().clone().add(0, 0, 0),
-                        2,
-                        0,
-                        0,
-                        0,
-                        0,
-                        null,
-                        true
-                );
-            }
-
-            @Override
-            public void onDestroy(InternalProjectile projectile) {
-                fallenSoul.remove();
-                projectile.getCurrentLocation().getWorld().spawnParticle(
-                        Particle.CRIT_MAGIC,
-                        projectile.getCurrentLocation(),
-                        1,
-                        0,
-                        0,
-                        0,
-                        0.7f,
-                        null,
-                        true
-                );
-            }
-        });
-    }
-
-    @Nullable
-    @Override
-    protected String getActivationSound() {
-        return null;
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Throw a large shield forward that cuts through all enemies and allies. Enemies hit take ")
+                                               .text(" damage and have their rune timers increase by ")
+                                               .text(format(runeTickIncrease), NamedTextColor.GOLD)
+                                               .text(". Allies hit pick up a piece of the shield, reducing its damage by ")
+                                               .percent(allyHitDamageReduction, NamedTextColor.RED)
+                                               .text(" while giving them ")
+                                               .text(allyHexStacks, NamedTextColor.BLUE)
+                                               .text(" stack of Fortifying Hex that lasts ")
+                                               .durationTicks(allyHexTickDuration)
+                                               .text("seconds.")
+                                               .maxRange(maxDistance)
+                                               .emptyLine()
+                                               .text("After traveling ")
+                                               .blocks(maxDistance / 2)
+                                               .text(", the shield returns to the location you threw it at, hitting all possible targets again. If ")
+                                               .text(maxAlliesHit, NamedTextColor.BLUE)
+                                               .text(" allies are hit with this shield, the shield shatters, ending its trajectory.")
+                                               .build();
     }
 
     @Override
-    protected float getSoundVolume() {
-        return 0;
+    public NotAShieldStats getAbilityStats() {
+        return stats;
     }
 
-    @Override
-    protected float getSoundPitch() {
-        return 0;
+    public static class NotAShieldStats extends AbstractPiercingProjectileStats<NotAShield, NotAShieldStats> {
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public NotAShieldStats merge(NotAShieldStats other, int multiplier) {
+            NotAShieldStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public Class<NotAShieldStats> getClazz() {
+            return NotAShieldStats.class;
+        }
+
+        @Override
+        public NotAShieldStats create() {
+            return new NotAShieldStats();
+        }
+
     }
+
 }

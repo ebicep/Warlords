@@ -272,7 +272,7 @@ public class CommandManager {
         manager.getCommandContexts().registerContext(GameMap.class, command -> {
             String map = command.popFirstArg();
             for (GameMap value : GameMap.VALUES) {
-                if (value.getMapName().equalsIgnoreCase(map)) {
+                if (value.getMapName().replaceAll(" ", "_").equalsIgnoreCase(map)) {
                     return value;
                 }
             }
@@ -325,6 +325,7 @@ public class CommandManager {
         commandCompletions.registerAsyncCompletion("maps", command ->
                 Arrays.stream(GameMap.VALUES)
                       .map(GameMap::getMapName)
+                      .map(s -> s.replaceAll(" ", "_"))
                       .toList());
         commandCompletions.registerAsyncCompletion("gamemodes", command ->
                 Arrays.stream(GameMode.VALUES)
@@ -597,6 +598,7 @@ public class CommandManager {
         manager.registerCommand(new AbilityCommand());
         manager.registerCommand(new GameLeaveCommand());
         manager.registerCommand(new ImposterCommand());
+        manager.registerCommand(new PlayerCooldownDisplayCommand());
         manager.registerCommand(new PrintFloatModifiableCommand());
         manager.registerCommand(new PrintSpecStatsCommand());
         manager.registerCommand(new StunClearCommand());
@@ -607,6 +609,7 @@ public class CommandManager {
         manager.registerCommand(new UnstuckCommand(), true);
 
         manager.registerCommand(new AdminCommand());
+        manager.registerCommand(new BuilderCommand());
         manager.registerCommand(new DatabaseCommand());
         manager.registerCommand(new DebugValueCommand());
         manager.registerCommand(new EditStatsCommand());
@@ -619,6 +622,8 @@ public class CommandManager {
         manager.registerCommand(new MuteCommand());
         manager.registerCommand(new PatchCommand());
         manager.registerCommand(new LocationCommand());
+        manager.registerCommand(new MemoryCommand());
+        manager.registerCommand(new MountCommand());
         manager.registerCommand(new PatreonCommand());
         manager.registerCommand(new PvECurrencyCommand());
         manager.registerCommand(new RecordGamesCommand());
@@ -632,6 +637,7 @@ public class CommandManager {
         manager.registerCommand(new AchievementsCommand(), true);
         manager.registerCommand(new ChatCommand());
         manager.registerCommand(new ClassCommand());
+        manager.registerCommand(new CooldownDisplayModeCommand());
         manager.registerCommand(new DiscordCommand());
         manager.registerCommand(new FastWaveModeCommand());
         manager.registerCommand(new FlagMessageModeCommand());

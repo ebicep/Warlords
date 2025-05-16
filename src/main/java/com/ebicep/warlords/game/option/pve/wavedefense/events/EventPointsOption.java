@@ -14,7 +14,7 @@ import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.game.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.game.option.pve.CurrencyOnEventOption;
 import com.ebicep.warlords.game.option.win.WinByAllDeathOption;
-import com.ebicep.warlords.player.general.Settings;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -152,7 +152,7 @@ public class EventPointsOption implements Option, Listener {
     public void addTo(WarlordsPlayer warlordsPlayer, int amount) {
         points.merge(warlordsPlayer.getUuid(), amount, Integer::sum);
         DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid(), warlordsPlayer.getEntity() instanceof Player);
-        if (databasePlayer.getChatEventPointsMode() == Settings.ChatSettings.ChatEventPoints.ALL) {
+        if (databasePlayer.getChatEventPointsMode() == ChatSettings.ChatEventPoints.ALL) {
             warlordsPlayer.sendMessage(Component.text("+" + amount + " ✪ Points", NamedTextColor.YELLOW));
         }
     }
@@ -205,7 +205,7 @@ public class EventPointsOption implements Option, Listener {
             WarlordsEntity warlordsPlayer = Warlords.getPlayer(uuid);
             if (warlordsPlayer != null) {
                 DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsPlayer.getUuid(), warlordsPlayer.getEntity() instanceof Player);
-                if (databasePlayer.getChatEventPointsMode() == Settings.ChatSettings.ChatEventPoints.ALL) {
+                if (databasePlayer.getChatEventPointsMode() == ChatSettings.ChatEventPoints.ALL) {
                     warlordsPlayer.sendMessage(Component.text("+" + points + " ✪ Points", NamedTextColor.YELLOW));
                 }
             }

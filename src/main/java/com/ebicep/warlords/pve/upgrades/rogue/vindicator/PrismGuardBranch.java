@@ -10,6 +10,7 @@ public class PrismGuardBranch extends AbstractUpgradeBranch<PrismGuard> {
     public void runOnce() {
         ability.setTickDuration(120);
         ability.setProjectileDamageReduction(75);
+        ability.setMaxHealing(ability.getMaxHealing() * 3);
     }
 
     public PrismGuardBranch(AbilityTree abilityTree, PrismGuard ability) {

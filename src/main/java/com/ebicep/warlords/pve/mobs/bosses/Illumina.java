@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.bosses;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -56,7 +57,7 @@ public class Illumina extends AbstractMob implements BossMob {
                 3000,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility(30, Mob.SKELETAL_SORCERER) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("illuminaSpawnSkeletalSorcerer").pve(), Mob.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();
@@ -85,7 +86,7 @@ public class Illumina extends AbstractMob implements BossMob {
                 maxMeleeDamage,
                 new Bramble(),
                 new BrambleSlowness(),
-                new SpawnMobAbility(30, Mob.SKELETAL_SORCERER) {
+                new SpawnMobAbility(AbstractAbilityBuilder.create("illuminaSpawnSkeletalSorcerer").pve(), Mob.SKELETAL_SORCERER) {
                     @Override
                     public int getSpawnAmount() {
                         long playerCount = pveOption.getGame().warlordsPlayers().count();
@@ -287,7 +288,7 @@ public class Illumina extends AbstractMob implements BossMob {
                             .aliveEnemiesOf(warlordsNPC)
                     ) {
                         Utils.addKnockback(name, warlordsNPC.getLocation(), we, -2, 0.4);
-                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.VILLAGER_HAPPY);
+                        EffectUtils.playParticleLinkAnimation(we.getLocation(), warlordsNPC.getLocation(), Particle.HAPPY_VILLAGER);
                         we.addInstance(InstanceBuilder
                                 .damage()
                                 .cause("Death Ray")
@@ -318,7 +319,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class Bramble extends AbstractPveAbility implements Damages<Bramble.DamageValues> {
 
         public Bramble() {
-            super("Bramble", 1200, 1800, 5, 100);
+            super(AbstractAbilityBuilder.create("illuminaBramble").pve());
         }
 
         @Override
@@ -366,7 +367,7 @@ public class Illumina extends AbstractMob implements BossMob {
     public static class BrambleSlowness extends AbstractPveAbility {
 
         public BrambleSlowness() {
-            super("Bramble Slowness", 5, 100);
+            super(AbstractAbilityBuilder.create("illuminaBrambleSlowness").pve());
         }
 
         @Override

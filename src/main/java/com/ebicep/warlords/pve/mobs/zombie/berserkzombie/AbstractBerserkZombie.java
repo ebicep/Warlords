@@ -1,13 +1,14 @@
 package com.ebicep.warlords.pve.mobs.zombie.berserkzombie;
 
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.DifficultyIndex;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -50,12 +51,12 @@ public abstract class AbstractBerserkZombie extends AbstractMob {
     public static class BerserkerZombieWoundingStrike extends WoundingStrikeBerserker {
 
         public BerserkerZombieWoundingStrike() {
-            super("Wounding Strike", 5, 100);
+            super(AbstractAbilityBuilder.create("berserkerZombieWoundingStrikeBerserker").pve().startNoCooldown());
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
-            boolean onActivate = super.onActivate(wp);
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+            boolean onActivate = super.onActivateInternal(wp);
             if (onActivate) {
                 PacketUtils.playRightClickAnimationForPlayer(((CraftEntity) wp.getEntity()).getHandle(),
                         wp.getGame()

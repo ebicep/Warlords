@@ -2,16 +2,16 @@ package com.ebicep.warlords.commands.debugcommands.game;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.*;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
+import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.java.StringUtils;
+import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -77,6 +77,23 @@ public class GameListCommand extends BaseCommand {
                 issuer.sendMessage(PlainTextComponentSerializer.plainText().serialize(message.build()));
             }
         }
+    }
+
+    @Subcommand("addgameholder")
+    @Description("Adds a game holder")
+    public void addGameHolder(CommandIssuer issuer, String mapName, GameMap gameMap) {
+        MVWorldManager mvWorldManager = Warlords.multiverseCore.getMVWorldManager();
+        if (!mvWorldManager.hasUnloadedWorld(mapName, false)) {
+            ChatChannels.sendDebugMessage(issuer, Component.text("There is already a game holder for: ", NamedTextColor.GREEN)
+                                                           .append(Component.text(mapName, NamedTextColor.YELLOW))
+            );
+            return;
+        }
+        mvWorldManager.loadWorld(mapName);
+        Warlords.getGameManager().addGameHolder(mapName, gameMap);
+        ChatChannels.sendDebugMessage(issuer, Component.text("Created game holder for: ", NamedTextColor.GREEN)
+                                                       .append(Component.text(mapName, NamedTextColor.YELLOW))
+        );
     }
 
 }

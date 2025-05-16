@@ -10,9 +10,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePla
 import com.ebicep.warlords.database.repositories.games.pojos.pve.DatabaseGamePvEBase;
 import com.ebicep.warlords.database.repositories.items.pojos.WeeklyBlessings;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.Stats;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsClasses;
-import com.ebicep.warlords.database.repositories.player.pojos.StatsWarlordsSpecs;
+import com.ebicep.warlords.database.repositories.player.pojos.*;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.*;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.DatabasePlayerPvE;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStats;
@@ -21,8 +19,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.pve.PvEStatsWarlor
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.player.general.Classes;
-import com.ebicep.warlords.player.general.Settings;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.settings.*;
+import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
 import com.ebicep.warlords.pve.items.ItemsManager;
@@ -39,9 +38,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Document(collection = "Players_Information")
-public class DatabasePlayer implements MultiStatsGeneral {
+public class DatabasePlayer implements MultiStatsGeneral, TracksMultiAbilityStats {
 
     @Id
     private String id;
@@ -81,29 +82,33 @@ public class DatabasePlayer implements MultiStatsGeneral {
     @Field("spec_boosts")
     private Map<Specializations, Integer> specBoosts = new HashMap<>();
     @Field("hotkeymode")
-    private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
+    private HotkeyMode hotkeyMode = HotkeyMode.NEW_MODE;
     @Field("particle_quality")
-    private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
+    private ParticleQuality particleQuality = ParticleQuality.HIGH;
     @Field("flag_message")
-    private Settings.FlagMessageMode flagMessageMode = Settings.FlagMessageMode.ABSOLUTE;
+    private FlagMessageMode flagMessageMode = FlagMessageMode.ABSOLUTE;
     @Field("glowing_mode")
-    private Settings.GlowingMode glowingMode = Settings.GlowingMode.ON;
+    private GlowingMode glowingMode = GlowingMode.ON;
     @Field("fast_wave_mode")
-    private Settings.FastWaveMode fastWaveMode = Settings.FastWaveMode.OFF;
+    private FastWaveMode fastWaveMode = FastWaveMode.OFF;
     @Field("chat_damage")
-    private Settings.ChatSettings.ChatDamage chatDamageMode = Settings.ChatSettings.ChatDamage.ALL;
+    private ChatSettings.ChatDamage chatDamageMode = ChatSettings.ChatDamage.ALL;
     @Field("chat_healing")
-    private Settings.ChatSettings.ChatHealing chatHealingMode = Settings.ChatSettings.ChatHealing.ALL;
+    private ChatSettings.ChatHealing chatHealingMode = ChatSettings.ChatHealing.ALL;
     @Field("chat_energy")
-    private Settings.ChatSettings.ChatEnergy chatEnergyMode = Settings.ChatSettings.ChatEnergy.ALL;
+    private ChatSettings.ChatEnergy chatEnergyMode = ChatSettings.ChatEnergy.ALL;
     @Field("chat_kills")
-    private Settings.ChatSettings.ChatKills chatKillsMode = Settings.ChatSettings.ChatKills.ALL;
+    private ChatSettings.ChatKills chatKillsMode = ChatSettings.ChatKills.ALL;
     @Field("chat_insignia")
-    private Settings.ChatSettings.ChatInsignia chatInsigniaMode = Settings.ChatSettings.ChatInsignia.ALL;
+    private ChatSettings.ChatInsignia chatInsigniaMode = ChatSettings.ChatInsignia.ALL;
     @Field("chat_event_points")
-    private Settings.ChatSettings.ChatEventPoints chatEventPointsMode = Settings.ChatSettings.ChatEventPoints.ALL;
+    private ChatSettings.ChatEventPoints chatEventPointsMode = ChatSettings.ChatEventPoints.ALL;
     @Field("chat_upgrade")
-    private Settings.ChatSettings.ChatUpgrade chatUpgradeMode = Settings.ChatSettings.ChatUpgrade.ALL;
+    private ChatSettings.ChatUpgrade chatUpgradeMode = ChatSettings.ChatUpgrade.ALL;
+    @Field("cooldown_display_settings")
+    private CooldownDisplaySettings cooldownDisplaySettings = new CooldownDisplaySettings();
+    @Field("action_bar_settings")
+    private ActionBarSettings actionBarSettings = new ActionBarSettings();
 
     private List<Achievement.AbstractAchievementRecord<?>> achievements = new ArrayList<>();
     private List<UUID> ignored = new ArrayList<>();
@@ -182,6 +187,28 @@ public class DatabasePlayer implements MultiStatsGeneral {
         }
     }
 
+    public DatabaseSpecialization getSpec(Specializations specializations) {
+        return switch (specializations) {
+            case PYROMANCER -> mage.getPyromancer();
+            case CRYOMANCER -> mage.getCryomancer();
+            case AQUAMANCER -> mage.getAquamancer();
+            case BERSERKER -> warrior.getBerserker();
+            case DEFENDER -> warrior.getDefender();
+            case REVENANT -> warrior.getRevenant();
+            case AVENGER -> paladin.getAvenger();
+            case CRUSADER -> paladin.getCrusader();
+            case PROTECTOR -> paladin.getProtector();
+            case THUNDERLORD -> shaman.getThunderlord();
+            case SPIRITGUARD -> shaman.getSpiritguard();
+            case EARTHWARDEN -> shaman.getEarthwarden();
+            case ASSASSIN -> rogue.getAssassin();
+            case VINDICATOR -> rogue.getVindicator();
+            case APOTHECARY -> rogue.getApothecary();
+            case CONJURER -> arcanist.getConjurer();
+            case SENTINEL -> arcanist.getSentinel();
+            case LUMINARY -> arcanist.getLuminary();
+        };
+    }
 
     public String getName() {
         if (name == null) {
@@ -244,29 +271,6 @@ public class DatabasePlayer implements MultiStatsGeneral {
         }
     }
 
-    public DatabaseSpecialization getSpec(Specializations specializations) {
-        return switch (specializations) {
-            case PYROMANCER -> mage.getPyromancer();
-            case CRYOMANCER -> mage.getCryomancer();
-            case AQUAMANCER -> mage.getAquamancer();
-            case BERSERKER -> warrior.getBerserker();
-            case DEFENDER -> warrior.getDefender();
-            case REVENANT -> warrior.getRevenant();
-            case AVENGER -> paladin.getAvenger();
-            case CRUSADER -> paladin.getCrusader();
-            case PROTECTOR -> paladin.getProtector();
-            case THUNDERLORD -> shaman.getThunderlord();
-            case SPIRITGUARD -> shaman.getSpiritguard();
-            case EARTHWARDEN -> shaman.getEarthwarden();
-            case ASSASSIN -> rogue.getAssassin();
-            case VINDICATOR -> rogue.getVindicator();
-            case APOTHECARY -> rogue.getApothecary();
-            case CONJURER -> arcanist.getConjurer();
-            case SENTINEL -> arcanist.getSentinel();
-            case LUMINARY -> arcanist.getLuminary();
-        };
-    }
-
     public DatabaseBaseGeneral getClass(Classes classes) {
         return switch (classes) {
             case MAGE -> mage;
@@ -326,43 +330,43 @@ public class DatabasePlayer implements MultiStatsGeneral {
         return specBoosts.computeIfAbsent(specializations, k -> 0);
     }
 
-    public Settings.HotkeyMode getHotkeyMode() {
+    public HotkeyMode getHotkeyMode() {
         return hotkeyMode;
     }
 
-    public void setHotkeyMode(Settings.HotkeyMode hotkeyMode) {
+    public void setHotkeyMode(HotkeyMode hotkeyMode) {
         this.hotkeyMode = hotkeyMode;
     }
 
-    public Settings.ParticleQuality getParticleQuality() {
+    public ParticleQuality getParticleQuality() {
         return particleQuality;
     }
 
-    public void setParticleQuality(Settings.ParticleQuality particleQuality) {
+    public void setParticleQuality(ParticleQuality particleQuality) {
         this.particleQuality = particleQuality;
     }
 
-    public Settings.FlagMessageMode getFlagMessageMode() {
+    public FlagMessageMode getFlagMessageMode() {
         return flagMessageMode;
     }
 
-    public void setFlagMessageMode(Settings.FlagMessageMode flagMessageMode) {
+    public void setFlagMessageMode(FlagMessageMode flagMessageMode) {
         this.flagMessageMode = flagMessageMode;
     }
 
-    public Settings.GlowingMode getGlowingMode() {
+    public GlowingMode getGlowingMode() {
         return glowingMode;
     }
 
-    public void setGlowingMode(Settings.GlowingMode glowingMode) {
+    public void setGlowingMode(GlowingMode glowingMode) {
         this.glowingMode = glowingMode;
     }
 
-    public Settings.FastWaveMode getFastWaveMode() {
+    public FastWaveMode getFastWaveMode() {
         return fastWaveMode;
     }
 
-    public void setFastWaveMode(Settings.FastWaveMode fastWaveMode) {
+    public void setFastWaveMode(FastWaveMode fastWaveMode) {
         this.fastWaveMode = fastWaveMode;
     }
 
@@ -390,60 +394,68 @@ public class DatabasePlayer implements MultiStatsGeneral {
                                         ((ChallengeAchievements.ChallengeAchievementRecord) achievementRecord).getAchievement() == achievement);
     }
 
-    public Settings.ChatSettings.ChatDamage getChatDamageMode() {
+    public ChatSettings.ChatDamage getChatDamageMode() {
         return chatDamageMode;
     }
 
-    public void setChatDamageMode(Settings.ChatSettings.ChatDamage chatDamageMode) {
+    public void setChatDamageMode(ChatSettings.ChatDamage chatDamageMode) {
         this.chatDamageMode = chatDamageMode;
     }
 
-    public Settings.ChatSettings.ChatHealing getChatHealingMode() {
+    public ChatSettings.ChatHealing getChatHealingMode() {
         return chatHealingMode;
     }
 
-    public void setChatHealingMode(Settings.ChatSettings.ChatHealing chatHealingMode) {
+    public void setChatHealingMode(ChatSettings.ChatHealing chatHealingMode) {
         this.chatHealingMode = chatHealingMode;
     }
 
-    public Settings.ChatSettings.ChatEnergy getChatEnergyMode() {
+    public ChatSettings.ChatEnergy getChatEnergyMode() {
         return chatEnergyMode;
     }
 
-    public void setChatEnergyMode(Settings.ChatSettings.ChatEnergy chatEnergyMode) {
+    public void setChatEnergyMode(ChatSettings.ChatEnergy chatEnergyMode) {
         this.chatEnergyMode = chatEnergyMode;
     }
 
-    public Settings.ChatSettings.ChatKills getChatKillsMode() {
+    public ChatSettings.ChatKills getChatKillsMode() {
         return chatKillsMode;
     }
 
-    public void setChatKillsMode(Settings.ChatSettings.ChatKills chatKillsMode) {
+    public void setChatKillsMode(ChatSettings.ChatKills chatKillsMode) {
         this.chatKillsMode = chatKillsMode;
     }
 
-    public Settings.ChatSettings.ChatInsignia getChatInsigniaMode() {
+    public ChatSettings.ChatInsignia getChatInsigniaMode() {
         return chatInsigniaMode;
     }
 
-    public void setChatInsigniaMode(Settings.ChatSettings.ChatInsignia chatInsigniaMode) {
+    public void setChatInsigniaMode(ChatSettings.ChatInsignia chatInsigniaMode) {
         this.chatInsigniaMode = chatInsigniaMode;
     }
 
-    public Settings.ChatSettings.ChatEventPoints getChatEventPointsMode() {
+    public ChatSettings.ChatEventPoints getChatEventPointsMode() {
         return chatEventPointsMode;
     }
 
-    public void setChatEventPointsMode(Settings.ChatSettings.ChatEventPoints chatEventPointsMode) {
+    public void setChatEventPointsMode(ChatSettings.ChatEventPoints chatEventPointsMode) {
         this.chatEventPointsMode = chatEventPointsMode;
     }
 
-    public Settings.ChatSettings.ChatUpgrade getChatUpgradeMode() {
+    public ChatSettings.ChatUpgrade getChatUpgradeMode() {
         return chatUpgradeMode;
     }
 
-    public void setChatUpgradeMode(Settings.ChatSettings.ChatUpgrade chatUpgradeMode) {
+    public void setChatUpgradeMode(ChatSettings.ChatUpgrade chatUpgradeMode) {
         this.chatUpgradeMode = chatUpgradeMode;
+    }
+
+    public CooldownDisplaySettings getCooldownDisplaySettings() {
+        return cooldownDisplaySettings;
+    }
+
+    public ActionBarSettings getActionBarSettings() {
+        return actionBarSettings;
     }
 
     public String getId() {
@@ -493,6 +505,13 @@ public class DatabasePlayer implements MultiStatsGeneral {
 
     public void setExperience(long experience) {
         this.experience = experience;
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return Stream.of(pubStats, compStats, tournamentStats, pveStats)
+                     .flatMap(s -> s.getAllAbilityStats().stream())
+                     .collect(Collectors.toList());
     }
 
     public enum Patches {

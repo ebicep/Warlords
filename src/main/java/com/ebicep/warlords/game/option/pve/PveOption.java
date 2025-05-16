@@ -29,6 +29,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.citizensnpcs.trait.RotationTrait;
 import net.kyori.adventure.text.Component;
@@ -270,8 +271,20 @@ public interface PveOption extends Option {
     }
 
     @Override
+    default void onGameEnding(@Nonnull Game game) {
+        game.warlordsPlayers().forEach(warlordsPlayer -> {
+            AbstractWeapon weapon = warlordsPlayer.getWeapon();
+            if (weapon != null) {
+                weapon.cleanup();
+            }
+        });
+    }
+
+    @Override
     default void onGameCleanup(@Nonnull Game game) {
-        getMobs().forEach(mob -> mob.getNpc().destroy());
+        ChatUtils.MessageType.GAME.sendMessage("Cleaning up " + this + " - " + mobCount());
+        getMobs().forEach(this::despawnMob);
+        ChatUtils.MessageType.GAME.sendMessage("Cleaned up " + this + " - " + mobCount());
     }
 
     @Override
@@ -299,7 +312,7 @@ public interface PveOption extends Option {
                     warlordsPlayer.setWeapon(abstractWeapon);
                     abstractWeapon.applyToWarlordsPlayer(warlordsPlayer, this);
                     player.updateEntity();
-                    player.getSpec().updateCustomStats();
+                    player.getSpec().updateCustomStats(warlordsPlayer);
                 });
             });
             AbilityTree.handleAutoUpgrade(player);

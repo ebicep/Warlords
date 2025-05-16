@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.witch;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -75,8 +76,8 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
                     warlordsNPC.getTeam(),
                     warlordsNPC.getLocation(),
                     9,
-                    new CircumferenceEffect(Particle.SPELL_WITCH, Particle.REDSTONE).particlesPerCircumference(1),
-                    new DoubleLineEffect(Particle.SPELL)
+                    new CircumferenceEffect(Particle.WITCH, Particle.DUST).particlesPerCircumference(1),
+                    new DoubleLineEffect(Particle.EFFECT)
             ).playEffects();
         }
     }
@@ -84,15 +85,15 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
     @Override
     public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
         Utils.playGlobalSound(self.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.7f);
-        EffectUtils.playRandomHitEffect(self.getLocation(), 0, 120, 255, 4);
-        EffectUtils.playRandomHitEffect(attacker.getLocation(), 0, 120, 255, 4);
+        EffectUtils.playRandomHitEffect(self.getLocation(), 0, 120, 255, 2);
+        EffectUtils.playRandomHitEffect(attacker.getLocation(), 0, 120, 255, 2);
         attacker.getCooldownManager().subtractTicksOnRegularCooldowns(5, CooldownTypes.ABILITY);
     }
 
     private static class WitchBuff extends AbstractPveAbility {
 
         public WitchBuff() {
-            super("Witch Buff", 0, 100);
+            super(AbstractAbilityBuilder.create("witchDeaconWitchBuff").pve());
         }
 
         @Override

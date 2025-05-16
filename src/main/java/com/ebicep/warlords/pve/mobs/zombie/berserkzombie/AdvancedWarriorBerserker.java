@@ -74,7 +74,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         warlordsNPC.getWorld().spawnParticle(
-                                Particle.VILLAGER_ANGRY,
+                                Particle.ANGRY_VILLAGER,
                                 warlordsNPC.getLocation().add(0, 1.75, 0),
                                 1,
                                 0,
@@ -95,8 +95,8 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
         warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 name,
                 "LUST",
-                BloodLust.class,
-                new BloodLust(),
+                BloodLust.BloodLustData.class,
+                null,
                 warlordsNPC,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -105,7 +105,7 @@ public class AdvancedWarriorBerserker extends AbstractBerserkZombie implements A
                 (cooldown, ticksElapsed) -> {
                     if (ticksElapsed % 3 == 0) {
                         warlordsNPC.getWorld().spawnParticle(
-                                Particle.REDSTONE,
+                                Particle.DUST,
                                 warlordsNPC.getLocation().add(
                                         (Math.random() - 0.5) * 1,
                                         1.2,

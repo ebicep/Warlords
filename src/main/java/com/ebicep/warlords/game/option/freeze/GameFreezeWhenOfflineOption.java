@@ -12,6 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,24 @@ public class GameFreezeWhenOfflineOption implements Option {
 
     private static final Component FROZEN_MESSAGE = Component.text("Missing player detected!", NamedTextColor.YELLOW);
     public static boolean enabled = true;
+    @Nullable
+    private GameFreezeOption gameFreezeOption = null;
+
+    @Override
+    public void register(@Nonnull Game game) {
+        for (Option option : game.getOptions()) {
+            if (option instanceof GameFreezeOption freezeOption) {
+                this.gameFreezeOption = freezeOption;
+                return;
+            }
+        }
+    }
 
     @Override
     public void start(@Nonnull Game game) {
+        if (gameFreezeOption == null) {
+            return;
+        }
         new GameRunnable(game, true) {
 
             final HashMap<UUID, Integer> offlineDuration = new HashMap<>();
@@ -45,8 +61,8 @@ public class GameFreezeWhenOfflineOption implements Option {
 
                 boolean anyOffline = game.offlineWarlordsPlayersWithoutSpectators().anyMatch(e -> !e.getKey().isOnline());
 
-                if (game.isFrozen()) {
-                    if (!anyOffline && game.getFrozenCauses().stream().allMatch(s -> s.equals(FROZEN_MESSAGE))) {
+                if (gameFreezeOption.isFrozen()) {
+                    if (!anyOffline && gameFreezeOption.getFrozenCauses().stream().allMatch(s -> s.equals(FROZEN_MESSAGE))) {
                         GameFreezeOption.resumeGame(game);
                         cooldown = 20; //5 second cooldown + 5 seconds for resume delay
                     }
@@ -60,7 +76,7 @@ public class GameFreezeWhenOfflineOption implements Option {
                             if (offlineDuration.get(player.getKey().getUniqueId()) > leaveCheckDuration.getOrDefault(player.getKey().getUniqueId(), 4)) {
                                 offlineDuration.put(player.getKey().getUniqueId(), 0);
                                 leaveCheckDuration.put(player.getKey().getUniqueId(), leaveCheckDuration.getOrDefault(player.getKey().getUniqueId(), 4) + 4);
-                                game.addFrozenCause(FROZEN_MESSAGE);
+                                gameFreezeOption.addFrozenCause(FROZEN_MESSAGE);
 
                                 ChatChannels.sendDebugMessage(
                                         (CommandIssuer) null,

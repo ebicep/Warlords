@@ -19,11 +19,14 @@ public class MobPlayerClass extends AbstractPlayerClass {
     ) {
         this(name,
                 maxHealth,
-                (int) Math.round(Arrays.stream(abilities)
-                                       .mapToDouble(AbstractAbility::getEnergyCostValue)
-                                       .sum()),
+                0,
                 damageResistance,
                 abilities
+        );
+        this.maxEnergy = (int) Math.round(
+                Arrays.stream(abilities)
+                      .mapToDouble(AbstractAbility::getEnergyCostValue)
+                      .sum()
         );
     }
 
@@ -37,21 +40,27 @@ public class MobPlayerClass extends AbstractPlayerClass {
         super(name,
                 maxHealth,
                 maxEnergy,
-                (int) Math.round(Arrays.stream(abilities)
-                                       .mapToDouble(ability -> {
-                                           if (ability.getCooldownValue() == 0) {
-                                               return ability.getEnergyCostValue();
-                                           }
-                                           return ability.getEnergyCostValue() / ability.getCooldownValue();
-                                       })
-                                       .sum()),
+                0,
                 0,
                 damageResistance,
                 abilities
         );
+        this.energyPerSec = (int) Math.round(
+                Arrays.stream(abilities)
+                      .mapToDouble(ability -> {
+                          if (ability.getCooldownValue() == 0) {
+                              return ability.getEnergyCostValue();
+                          }
+                          return ability.getEnergyCostValue() / ability.getCooldownValue();
+                      })
+                      .sum()
+        );
     }
 
     public void addAbility(AbstractAbility abilityToAdd) {
+        if (!abilityToAdd.isInitialized()) {
+            abilityToAdd.init(abilityToAdd.getBuilder());
+        }
         abilities.add(abilityToAdd);
         maxEnergy = (int) Math.round(abilities
                 .stream()

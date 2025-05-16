@@ -15,6 +15,7 @@ import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.springframework.data.annotation.Transient;
@@ -24,9 +25,12 @@ import java.util.*;
 public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listener, LibraryArchivesTitle {
 
     private static final int CRIT_CHANCE = 5;
-    private static final float CRIT_CHANCE_PER_UPGRADE = 1;
+    //    private static final float CRIT_CHANCE_PER_UPGRADE = 1;
+    private static final int CRIT_MULTIPLIER = 8;
+    private static final float CRIT_MULTIPLIER_PER_UPGRADE = 1.25f;
     private static final int MAX_STACKS = 5;
     private static final float MAX_STACKS_PER_UPGRADE = 1;
+
     @Transient
     public List<String> abilityNames;
     @Transient
@@ -55,16 +59,24 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
     @Override
     public void applyToWarlordsPlayer(WarlordsPlayer player, PveOption pveOption) {
         super.applyToWarlordsPlayer(player, pveOption);
-        cooldown = null;
         abilityNames = player.getAbilities().stream().map(AbstractAbility::getName).toList();
+        cooldown = null;
         stacks = 0;
     }
 
     @Override
+    public void cleanup() {
+        super.cleanup();
+        abilityNames = null;
+        cooldown = null;
+    }
+
+    @Override
     public TextComponent getPassiveEffect() {
-        return ComponentBuilder.create("Upon damaging an enemy, all abilities gain a ")
-                               .append(formatTitleUpgrade(CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevel(), "%"))
-                               .text(" crit chance and 10% crit multiplier. Maximum ")
+        return ComponentBuilder.create("Upon damaging an enemy, all abilities gain a " + CRIT_CHANCE + "% crit chance and ", NamedTextColor.GRAY)
+                               .text(" crit chance and ")
+                               .append(formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel(), "%"))
+                               .text(" crit multiplier. Maximum ")
                                .append(formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()))
                                .text(" stacks. Once an ability crit occurs, all stacks are removed.")
                                .build();
@@ -117,9 +129,10 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
 
     @Override
     public List<Pair<Component, Component>> getPassiveEffectUpgrade() {
-        return Arrays.asList(new Pair<>(
-                        formatTitleUpgrade(CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevel(), "%"),
-                        formatTitleUpgrade(CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevelUpgraded(), "%")
+        return Arrays.asList(
+                new Pair<>(
+                        formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel(), "%"),
+                        formatTitleUpgrade(CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevelUpgraded(), "%")
                 ),
                 new Pair<>(
                         formatTitleUpgrade(MAX_STACKS + MAX_STACKS_PER_UPGRADE * getTitleLevel()),
@@ -167,7 +180,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                     if (!abilityNames.contains(event.getCause())) {
                         return currentCritChance;
                     }
-                    return currentCritChance + (CRIT_CHANCE + CRIT_CHANCE_PER_UPGRADE * getTitleLevel()) * stacks;
+                    return currentCritChance + CRIT_CHANCE * stacks;
                 }
 
                 @Override
@@ -175,7 +188,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
                     if (!abilityNames.contains(event.getCause())) {
                         return currentCritMultiplier;
                     }
-                    return currentCritMultiplier + 10 * stacks;
+                    return currentCritMultiplier + (CRIT_MULTIPLIER + CRIT_MULTIPLIER_PER_UPGRADE * getTitleLevel()) * stacks;
                 }
             });
         } else {

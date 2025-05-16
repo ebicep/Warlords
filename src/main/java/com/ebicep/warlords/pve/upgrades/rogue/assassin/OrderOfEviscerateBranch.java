@@ -26,17 +26,22 @@ public class OrderOfEviscerateBranch extends AbstractUpgradeBranch<OrderOfEvisce
         masterUpgrade = new Upgrade(
                 "Killing Order",
                 "Order of Eviscerate - Master Upgrade",
-                "Kills while Order of Eviscerate is active reduce the cooldown by an additional 4 seconds. Additionally, attacks from behind deal 70% more damage.",
+                """
+                        +4s Duration
+                        Increase damage vulnerable enemies take by 10%
+                        Kills while Order of Eviscerate is active reduce the cooldown by an additional 4 seconds. Additionally, attacks from behind deal 70% more damage.
+                        """,
                 50000,
                 () -> {
-
+                    ability.setTickDuration(ability.getTickDuration() + 100);
+                    ability.setVulnerableDamageBonus(ability.getVulnerableDamageBonus() + 10);
                 }
         );
         masterUpgrade2 = new Upgrade(
                 "Cloaked Engagement",
                 "Order of Eviscerate - Master Upgrade",
                 """
-                        Killing your mark will now increase your damage by 45% for 8s, max 2 stacks.
+                        Killing your mark will now increase your damage by 30% for 8s, max 2 stacks.
                         """,
                 50000,
                 () -> {

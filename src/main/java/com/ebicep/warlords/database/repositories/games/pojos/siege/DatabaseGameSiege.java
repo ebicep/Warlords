@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.repositories.games.pojos.siege;
 
+import com.ebicep.holograms.Hologram;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerBase;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
@@ -8,10 +9,11 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pvp.siege.SiegeOption;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.StringUtils;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -85,19 +87,16 @@ public class DatabaseGameSiege extends DatabaseGameBase<DatabaseGamePlayerSiege>
     }
 
     @Override
-    public void appendLastGameStats(Hologram hologram) {
-        hologram.getLines().appendText(ChatColor.GRAY + date);
-        hologram.getLines()
-                .appendText(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeElapsed / 60 + ":" + timeElapsed % 60 + (timeElapsed % 60 < 10 ? "0" : ""));
-        hologram.getLines().appendText(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
+    public void appendLastGameStats(ComponentBuilder componentBuilder) {
+        componentBuilder.newLine(ChatColor.GRAY + date);
+        componentBuilder.newLine(ChatColor.GREEN + map.getMapName() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeElapsed / 60 + ":" + timeElapsed % 60 + (timeElapsed % 60 < 10 ? "0" : ""));
+        componentBuilder.newLine(ChatColor.BLUE.toString() + bluePoints + ChatColor.GRAY + "  -  " + ChatColor.RED + redPoints);
     }
 
     @Override
     public void addCustomHolograms(List<Hologram> holograms) {
-//        Hologram topDHPPerMinute = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGameBase.TOP_DHP_PER_MINUTE_LOCATION);
-//        holograms.add(topDHPPerMinute);
-//        topDHPPerMinute.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
-//
+        ComponentBuilder topDHPPerMinuteComponent = ComponentBuilder.create("Top DHP per Minute", NamedTextColor.AQUA, TextDecoration.BOLD);
+
 //        List<String> topDHPPerGamePlayers = new ArrayList<>();
 //
 //        int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
@@ -137,7 +136,7 @@ public class DatabaseGameSiege extends DatabaseGameBase<DatabaseGamePlayerSiege>
 //                              ChatColor.YELLOW + NumberFormat.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
 //                  });
 //
-//        topDHPPerGamePlayers.forEach(s -> topDHPPerMinute.getLines().appendText(s));
+//        topDHPPerGamePlayers.forEach(s -> hologramData.addLine(s));
     }
 
 

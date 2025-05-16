@@ -1,10 +1,8 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Duration;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -16,10 +14,9 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityConcoctionBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -27,104 +24,77 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, Damages<VitalityConcoction.DamageValues> {
+public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, AbilityStats<VitalityConcoction, VitalityConcoction.VitalityConcoctionStats> {
 
-    private final DamageValues damageValues = new DamageValues();
+    private final VitalityConcoctionStats stats = new VitalityConcoctionStats();
     private int tickDuration = 15;
     private int damageResistance = 80;
     private int speedBoost = 150;
 
     public VitalityConcoction() {
-        super("Vitality Concoction", 12, 20);
+        super(AbstractAbilityBuilder.create("vitalityConcoction").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.damageResistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageResistance"), int.class);
+        this.speedBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBoost"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = Component.text("Consume a powerful concoction, granting yourself an additional ")
-                               .append(Component.text(speedBoost + "%", NamedTextColor.YELLOW))
-                               .append(Component.text(" movement speed, ")
-                                                .append(Component.text(damageResistance + "%", NamedTextColor.YELLOW))
-                                                .append(Component.text(" damage reduction, and an immunity to de-buffs for "))
-                                                .append(Component.text(format(tickDuration / 20f), NamedTextColor.GOLD))
-                                                .append(Component.text(" seconds.\n\nVitality Concoction has reduced effectiveness when holding a flag.")));
-
+        description = AbilityDescriptionBuilder.create("Consume a powerful concoction, granting yourself an additional ")
+                                               .percent(speedBoost, NamedTextColor.WHITE)
+                                               .text(" movement speed, ")
+                                               .percent(damageResistance, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" damage reduction, and an immunity to de-buffs for ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Vitality Concoction has reduced effectiveness when holding a flag.")
+                                               .build();
     }
 
     @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Times Used", "" + timesUsed));
-
-        return info;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull WarlordsEntity wp) {
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.BLOCK_GLASS_BREAK, 2, 0.1f);
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_BLAZE_DEATH, 2, 0.7f);
+        wp.setFlagPickCooldown(1);
         new FallingBlockWaveEffect(wp.getLocation(), 4, 1, Material.BIRCH_SAPLING).play();
-
-        List<WarlordsEntity> playersHit = new ArrayList<>();
-        Set<WarlordsEntity> targets = new HashSet<>();
-        targets.add(wp);
+        List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade2) {
-            targets.addAll(PlayerFilterGeneric
-                    .entitiesAround(wp, 5, 5, 5)
-                    .aliveTeammatesOfExcludingSelf(wp)
-                    .toList()
+            wp.doOnStaticAbility(ImpalingStrike.class, impalingStrike -> {
+                        modifiers.add(impalingStrike.getEnergyCost().addMultiplicativeModifierAdd("Concoction Party", -.75f));
+                    }
             );
         }
-        for (WarlordsEntity target : targets) {
-            target.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
-            target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    name,
-                    "STIM",
-                    VitalityConcoction.class,
-                    new VitalityConcoction(),
-                    wp,
-                    CooldownTypes.ABILITY,
-                    cooldownManager -> {
+        wp.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "STIM", VitalityConcoction.class, new VitalityConcoction(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, cooldownManager -> {
+            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+        }, tickDuration
+        ) {
 
-                    },
-                    tickDuration,
-                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                        if (!pveMasterUpgrade) {
-                            return;
-                        }
-                        if (ticksElapsed % 5 != 0) {
-                            return;
-                        }
-                        for (WarlordsNPC we : PlayerFilterGeneric
-                                .entitiesAround(wp, 3, 3, 3)
-                                .aliveEnemiesOf(wp)
-                                .excluding(playersHit)
-                                .warlordsNPCs()
-                        ) {
-                            playersHit.add(we);
-                            we.addInstance(InstanceBuilder
-                                    .damage()
-                                    .ability(this)
-                                    .source(wp)
-                                    .value(damageValues.concoctionZoneDamage)
-                            );
-                        }
-                    })
-            ) {
-                @Override
-                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * convertToDivisionDecimal(damageResistance);
-                }
+            @Override
+            protected Listener getListener() {
+                return CooldownManager.getDefaultDebuffImmunityListener(wp);
+            }
 
-                @Override
-                protected Listener getListener() {
-                    return CooldownManager.getDefaultDebuffImmunityListener(target);
-                }
-
-            });
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * convertToDivisionDecimal(damageResistance);
+            }
+        });
+        if (pveMasterUpgrade) {
+            for (WarlordsNPC we : PlayerFilterGeneric.entitiesAround(wp, 5, 5, 5).aliveTeammatesOfExcludingSelf(wp).warlordsNPCs()) {
+                we.addInstance(InstanceBuilder.healing().ability(this).source(wp).min(1045).max(1425));
+            }
         }
-
         return true;
     }
 
@@ -144,18 +114,32 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     }
 
     @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
+    public VitalityConcoctionStats getAbilityStats() {
+        return stats;
     }
 
-    public static class DamageValues implements Value.ValueHolder {
-
-        private final Value.RangedValue concoctionZoneDamage = new Value.RangedValue(1245, 1625);
-        private final List<Value> values = List.of(concoctionZoneDamage);
+    public static class VitalityConcoctionStats extends AbstractAbilityStats<VitalityConcoction, VitalityConcoctionStats> {
 
         @Override
-        public List<Value> getValues() {
-            return values;
+        public Class<VitalityConcoctionStats> getClazz() {
+            return VitalityConcoctionStats.class;
+        }
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            return statsDisplay;
+        }
+
+        @Override
+        public VitalityConcoctionStats merge(VitalityConcoctionStats other, int multiplier) {
+            VitalityConcoctionStats stats = super.merge(other, multiplier);
+            return stats;
+        }
+
+        @Override
+        public VitalityConcoctionStats create() {
+            return new VitalityConcoctionStats();
         }
 
     }

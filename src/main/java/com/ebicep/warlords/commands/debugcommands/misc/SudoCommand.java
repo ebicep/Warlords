@@ -6,12 +6,10 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Flags;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 @CommandAlias("sudo")
 @CommandPermission("group.administrator")
@@ -25,12 +23,7 @@ public class SudoCommand extends BaseCommand {
                          .append(Component.text(" - ", NamedTextColor.GRAY))
                          .append(Component.text(toSay, NamedTextColor.WHITE))
         );
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.chat(toSay);
-            }
-        }.runTaskLaterAsynchronously(Warlords.getInstance(), 10);
+        player.chat(toSay);
     }
 
 

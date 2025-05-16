@@ -8,7 +8,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameManager.GameHolder;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.game.Team;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.pve.wavedefense.WaveDefenseOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
@@ -123,29 +122,22 @@ public class BotManager {
                 OptionalInt timeLeft = WinAfterTimeoutOption.getTimeRemaining(game);
                 String time = StringUtils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
-                boolean pve = false;
-                for (Option option : game.getOptions()) {
-                    if (!(option instanceof PveOption)) {
-                        continue;
-                    }
-                    pve = true;
+                game.getOption(PveOption.class).stream().findFirst().ifPresentOrElse(pveOption -> {
                     eb.appendDescription("**Game**: " + game.getGameMode().name + " - " +
                             game.getMap().getMapName() + " - " +
                             time + word);
-                    if (option instanceof WaveDefenseOption waveDefenseOption) {
+                    if (pveOption instanceof WaveDefenseOption waveDefenseOption) {
                         eb.appendDescription(" - " +
                                 waveDefenseOption.getDifficulty().getName() + " - Wave " + waveDefenseOption.getWaveCounter() + "\n");
                     } else {
                         eb.appendDescription("\n");
                     }
-                    break;
-                }
-                if (!pve) {
+                }, () -> {
                     eb.appendDescription("**Game**: " + game.getGameMode().abbreviation + " - " +
                             game.getMap().getMapName() + " - " +
                             time + word + " - " +
                             game.getPoints(Team.BLUE) + ":" + game.getPoints(Team.RED) + "\n");
-                }
+                });
             }
         }
         StringBuilder stringBuilder = new StringBuilder("**Parties**: ");

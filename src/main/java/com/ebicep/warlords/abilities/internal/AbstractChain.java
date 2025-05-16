@@ -1,55 +1,44 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractChain extends AbstractAbility {
+public abstract class AbstractChain<T extends AbstractChain<T, R>, R extends AbstractChain.AbstractChainStats<T, R>> extends AbstractAbility implements AbilityStats<T, R> {
 
-    public int playersHit = 0;
     protected int radius;
     protected int bounceRange;
     protected int additionalBounces;
 
-    public AbstractChain(
-            String name,
-            float cooldown,
-            float energyCost,
-            int radius,
-            int bounceRange,
-            int additionalBounces
-    ) {
-        this(name, cooldown, energyCost, radius, bounceRange, additionalBounces, 0);
-    }
-
-    public AbstractChain(
-            String name,
-            float cooldown,
-            float energyCost,
-            int radius,
-            int bounceRange,
-            int additionalBounces,
-            float startCooldown
-    ) {
-        super(name, cooldown, energyCost, startCooldown);
-        this.radius = radius;
-        this.bounceRange = bounceRange;
-        this.additionalBounces = additionalBounces;
+    public AbstractChain(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public boolean onActivate(@Nonnull WarlordsEntity warlordsPlayer) {
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
+        this.bounceRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bounceRange"), int.class);
+        this.additionalBounces = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalBounces"), int.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity warlordsPlayer) {
         Set<WarlordsEntity> entitiesHit = getEntitiesHitAndActivate(warlordsPlayer);
         int hitCounter = entitiesHit.size();
         if (hitCounter != 0) {
-            playersHit += hitCounter;
+            getAbilityStats().playersHit += hitCounter;
 
             AbstractPlayerClass.sendRightClickPacket(warlordsPlayer);
 
@@ -91,7 +80,6 @@ public abstract class AbstractChain extends AbstractAbility {
         this.bounceRange = bounceRange;
     }
 
-
     public int getAdditionalBounces() {
         return additionalBounces;
     }
@@ -100,5 +88,30 @@ public abstract class AbstractChain extends AbstractAbility {
         this.additionalBounces = additionalBounces;
     }
 
+    public static abstract class AbstractChainStats<T extends AbstractChain<T, R>, R extends AbstractChainStats<T, R>> extends AbstractAbilityStats<T, R> {
+
+        @Field("targets_hit")
+        protected int playersHit;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statDisplay = new ArrayList<>(super.getStatsDisplay());
+            statDisplay.add(new AbilityStatDisplay("Targets Hit", playersHit));
+            return statDisplay;
+
+        }
+
+        @Override
+        public R merge(R other, int multiplier) {
+            R r = super.merge(other, multiplier);
+            r.playersHit = playersHit + other.playersHit * multiplier;
+            return r;
+        }
+
+        public void addPlayersHit() {
+            playersHit++;
+        }
+
+    }
 
 }

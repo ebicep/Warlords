@@ -9,9 +9,9 @@ import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class EventGrimoire extends AbstractMob implements BossMinionMob {
@@ -31,14 +31,17 @@ public abstract class EventGrimoire extends AbstractMob implements BossMinionMob
         super(spawnLocation, name, maxHealth, walkSpeed, damageResistance, minMeleeDamage, maxMeleeDamage, abilities);
         getAbilities().forEach(ability -> {
             AbstractAbility abstractAbility = ability.create.get();
+            abstractAbility.init(abstractAbility.getBuilder());
             this.abilities.put(abstractAbility, 0);
         });
         getAbilitiesM1().forEach(ability -> {
             AbstractAbility abstractAbility = ability.create.get();
+            abstractAbility.init(abstractAbility.getBuilder());
             this.abilities.put(abstractAbility, 1);
         });
         getAbilitiesM2().forEach(ability -> {
             AbstractAbility abstractAbility = ability.create.get();
+            abstractAbility.init(abstractAbility.getBuilder());
             abstractAbility.setPveMasterUpgrade2(true);
             this.abilities.put(abstractAbility, 2);
         });
@@ -59,10 +62,10 @@ public abstract class EventGrimoire extends AbstractMob implements BossMinionMob
 
     public abstract int getAbilityActivationPeriod();
 
-    public abstract EnumSet<Ability> getAbilities();
+    public abstract Set<Ability<?>> getAbilities();
 
-    public abstract EnumSet<Ability> getAbilitiesM1();
+    public abstract Set<Ability<?>> getAbilitiesM1();
 
-    public abstract EnumSet<Ability> getAbilitiesM2();
+    public abstract Set<Ability<?>> getAbilitiesM2();
 
 }

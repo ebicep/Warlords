@@ -42,19 +42,15 @@ public class GetPlayerLastAbilityStatsCommand extends BaseCommand {
     public static void sendLastAbilityStats(Player player, UUID uuid) {
         TextComponent.Builder formattedData = Component.text();
         List<Component> components = PLAYER_LAST_ABILITY_STATS.get(uuid);
-        for (int i = 0; i < components.size() && i < 3; i++) {
-            formattedData.append(components.get(i));
-            if (i < 2) {
+        for (int i = 0; i < components.size(); i++) {
+            if (i % 3 == 0 && i != 0) {
+                ChatUtils.sendCenteredMessage(player, formattedData.build());
+                formattedData = Component.text();
+            }
+            if (i % 3 == 1 || i % 3 == 2) {
                 formattedData.append(ChatUtils.SPACER);
             }
-        }
-        ChatUtils.sendCenteredMessage(player, formattedData.build());
-        formattedData = Component.text();
-        for (int i = 3; i < components.size(); i++) {
             formattedData.append(components.get(i));
-            if (i < 4) {
-                formattedData.append(ChatUtils.SPACER);
-            }
         }
         ChatUtils.sendCenteredMessage(player, formattedData.build());
     }

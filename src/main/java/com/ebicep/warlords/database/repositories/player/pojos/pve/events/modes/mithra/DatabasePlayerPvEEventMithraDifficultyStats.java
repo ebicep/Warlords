@@ -6,6 +6,8 @@ import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.D
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePlayerPvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.mithra.spidersdwelling.DatabaseGamePvEEventSpidersDwelling;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksMultiAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.EventMode;
 import com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.mithra.spidersdwelling.DatabasePlayerPvEEventMithraSpidersDwellingDifficultyStats;
@@ -28,7 +30,8 @@ public class DatabasePlayerPvEEventMithraDifficultyStats implements MultiPvEEven
         PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>,
         PvEEventMithraStatsWarlordsSpecs<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra,
                 PvEEventMithraStats<DatabaseGamePvEEventMithra<DatabaseGamePlayerPvEEventMithra>, DatabaseGamePlayerPvEEventMithra>>>,
-        EventMode {
+        EventMode,
+        TracksMultiAbilityStats {
 
     @Field("spiders_dwelling_stats")
     private DatabasePlayerPvEEventMithraSpidersDwellingDifficultyStats spidersDwellingStats = new DatabasePlayerPvEEventMithraSpidersDwellingDifficultyStats();
@@ -127,5 +130,10 @@ public class DatabasePlayerPvEEventMithraDifficultyStats implements MultiPvEEven
     @Override
     public long getEventPointsCumulative() {
         return MultiPvEEventMithraStats.super.getEventPointsCumulative();
+    }
+
+    @Override
+    public Collection<TracksAbilityStats> getAllAbilityStats() {
+        return List.of(spidersDwellingStats);
     }
 }

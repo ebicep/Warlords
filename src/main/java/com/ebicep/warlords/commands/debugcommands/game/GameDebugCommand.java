@@ -8,7 +8,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.GameMap;
 import com.ebicep.warlords.game.GameMode;
-import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
 import com.ebicep.warlords.game.state.PreLobbyState;
@@ -48,11 +47,10 @@ public class GameDebugCommand extends BaseCommand {
             queueEntryBuilder.setMap(GameMap.ILLUSION_CROSSFIRE);
             queueEntryBuilder.setOnResult((queueResult, game) -> {
                 game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
-                for (Option option : game.getOptions()) {
-                    if (option instanceof PveOption pveOption) {
-                        pveOption.setPauseMobSpawn(true);
-                    }
-                }
+                game.getOption(PveOption.class)
+                    .stream()
+                    .findFirst()
+                    .ifPresent(pveOption -> pveOption.setPauseMobSpawn(true));
                 new BukkitRunnable() {
 
                     @Override
@@ -81,11 +79,10 @@ public class GameDebugCommand extends BaseCommand {
             queueEntryBuilder.setMap(GameMap.ILLUSION_CROSSFIRE);
             queueEntryBuilder.setOnResult((queueResult, game) -> {
                 game.getState(PreLobbyState.class).ifPresent(PreLobbyState::skipTimer);
-                for (Option option : game.getOptions()) {
-                    if (option instanceof PveOption pveOption) {
-                        pveOption.setPauseMobSpawn(true);
-                    }
-                }
+                game.getOption(PveOption.class)
+                    .stream()
+                    .findFirst()
+                    .ifPresent(pveOption -> pveOption.setPauseMobSpawn(true));
                 Integer branchNumber = branch;
                 new BukkitRunnable() {
 
@@ -217,13 +214,13 @@ public class GameDebugCommand extends BaseCommand {
     @Description("Sets timer of game to 00:01")
     public void endTimer(@Conditions("requireGame") Player player) {
         Game game = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get();
-        for (Option option : game.getOptions()) {
-            if (option instanceof WinAfterTimeoutOption) {
-                ((WinAfterTimeoutOption) option).setTimeRemaining(1);
+        game.getOption(WinAfterTimeoutOption.class)
+            .stream()
+            .findFirst()
+            .ifPresent(winAfterTimeoutOption -> {
+                winAfterTimeoutOption.setTimeRemaining(1);
                 sendDebugMessage(player, Component.text("Set timer of game " + game.getGameId() + " to 00:01", NamedTextColor.GREEN));
-                break;
-            }
-        }
+            });
     }
 
 

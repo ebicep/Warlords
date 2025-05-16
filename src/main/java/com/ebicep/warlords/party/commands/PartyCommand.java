@@ -14,6 +14,7 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.poll.polls.PartyPoll;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
+import com.ebicep.warlords.util.java.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -47,13 +48,17 @@ public class PartyCommand extends BaseCommand {
     }
 
     @Subcommand("debugcreate")
-    @CommandPermission("group.administrator")
+    @CommandPermission("group.gamestarter")
     @Description("Creates a party with all players on server")
     public void debugCreate(@Conditions("party:false") Player player) {
         Party party = new Party(player.getUniqueId(), false);
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (onlinePlayer.getUniqueId().equals(player.getUniqueId())) {
                 continue;
+            }
+            Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(onlinePlayer.getUniqueId());
+            if (partyPlayerPair != null) {
+                partyPlayerPair.getA().leave(onlinePlayer.getUniqueId());
             }
             party.join(onlinePlayer.getUniqueId());
         }
@@ -134,7 +139,7 @@ public class PartyCommand extends BaseCommand {
                                       .equals(playerUUID) ?
                                  Component.text("their party!") :
                                  Component.textOfChildren(
-                                         Permissions.getPrefixWithColor(player, true),
+                                         Permissions.getPrefixWithColor(party.getPartyLeader().getUUID(), true),
                                          Component.text("'s party!")
                                  ))
                          .build()

@@ -36,9 +36,9 @@ public class TeamBasedEffect {
 
     public TeamBasedEffect(@Nonnull Particle ownTeam, @Nullable Object ownTeamData, @Nonnull Particle enemyTeam, @Nullable Object enemyTeamData) {
         this.ownTeam = ownTeam;
-        this.ownTeamData = ownTeam == Particle.REDSTONE && ownTeamData == null ? new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1) : ownTeamData;
+        this.ownTeamData = ownTeam == Particle.DUST && ownTeamData == null ? new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1) : ownTeamData;
         this.enemyTeam = enemyTeam;
-        this.enemyTeamData = enemyTeam == Particle.REDSTONE && enemyTeamData == null ? new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1) : enemyTeamData;
+        this.enemyTeamData = enemyTeam == Particle.DUST && enemyTeamData == null ? new Particle.DustOptions(Color.fromRGB(255, 0, 0), 1) : enemyTeamData;
     }
 
     public void display(GameTeamContainer teams, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center) {

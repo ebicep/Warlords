@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.HealingRain;
 import com.ebicep.warlords.abilities.LightningBolt;
 import com.ebicep.warlords.abilities.LightningRod;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
@@ -54,14 +55,11 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                 damageResistance,
                 minMeleeDamage,
                 maxMeleeDamage,
-                new LightningBolt(3, 3),
-                new ChainLightning(7, 7) {{
-                    this.setTickDuration(40);
-                }},
+                new LightningBolt(AbstractAbilityBuilder.create("zeusLightningBolt").pve().startCooldown(3)),
+                new ChainLightning(AbstractAbilityBuilder.create("zeusChainLightning").pve().startCooldown(7)),
                 new ZeusLightningRod(),
-                new HealingRain(60, 60) {{
+                new HealingRain(AbstractAbilityBuilder.create("zeusHealingRain").pve().startCooldown(60)) {{
                     this.setPveMasterUpgrade(true);
-                    this.setTickDuration(320);
                 }}
         );
     }
@@ -152,12 +150,11 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
         private float damageBuff = 1.15f;
 
         public ZeusLightningRod() {
-            super(15, 15);
-            this.getHealValues().getHealthRestore().value().setBaseValue(0);
+            super(AbstractAbilityBuilder.create("zeusLightningRod").pve().startCooldown(15));
         }
 
         @Override
-        public boolean onActivate(@Nonnull WarlordsEntity wp) {
+        protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     name,
                     "ROD DMG",
@@ -177,7 +174,7 @@ public class EventZeus extends AbstractMob implements BossMob, God, Unsilencable
                     return currentDamageValue * damageBuff;
                 }
             });
-            return super.onActivate(wp);
+            return super.onActivateInternal(wp);
         }
 
         public float getDamageBuff() {

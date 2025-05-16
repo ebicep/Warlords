@@ -1,8 +1,7 @@
 package com.ebicep.warlords.abilities;
 
-import com.ebicep.warlords.abilities.internal.AbstractStrike;
-import com.ebicep.warlords.abilities.internal.Damages;
-import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
@@ -14,102 +13,81 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.CripplingStrikeBranch;
-import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-public class CripplingStrike extends AbstractStrike implements Damages<CripplingStrike.DamageValues> {
+public class CripplingStrike extends AbstractStrike<CripplingStrike, CripplingStrike.CripplingStrikeStats> implements Damages<CripplingStrike.DamageValues> {
 
     public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration) {
-        cripple(from, target, name, 0, tickDuration, .9f);
+        cripple(from, target, null, name, 0, tickDuration, .9f);
     }
 
     public static void cripple(
             WarlordsEntity from,
             WarlordsEntity target,
+            CripplingStrike cripplingStrike,
             String name,
             int consecutiveStrikeCounter,
             int tickDuration,
             float crippleAmount
     ) {
         CripplingStrikeData cripplingStrikeData = new CripplingStrikeData(consecutiveStrikeCounter);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>(
-                name,
-                "CRIP",
-                CripplingStrikeData.class,
-                cripplingStrikeData,
-                from,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
-                        target.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
-                                                    .append(Component.text("crippled", NamedTextColor.RED))
-                                                    .append(Component.text(".", NamedTextColor.GRAY)));
-                    }
-                },
-                tickDuration
+        target.getCooldownManager().addCooldown(new RegularCooldown<>(name, "CRIP", CripplingStrikeData.class, cripplingStrikeData, from, CooldownTypes.DEBUFF, cooldownManager -> {
+        }, cooldownManager -> {
+            if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
+                target.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
+                                            .append(Component.text("crippled", NamedTextColor.RED))
+                                            .append(Component.text(".", NamedTextColor.GRAY)));
+            }
+        }, tickDuration
         ) {
+
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * crippleAmount;
+                float afterValue = currentDamageValue * crippleAmount;
+                if (cripplingStrike != null) {
+                    cripplingStrike.stats.damageReduced += currentDamageValue - afterValue;
+                }
+                return afterValue;
             }
 
             @Override
             public PlayerNameData addSuffixFromOther() {
-                return new PlayerNameData(Component.text("CRIP", NamedTextColor.RED),
-                        we -> we == from || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER)
-                );
+                return new PlayerNameData(Component.text("CRIP", NamedTextColor.RED), we -> we == from || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER));
             }
         });
+        if (cripplingStrike != null) {
+            cripplingStrike.stats.crippleStacks.merge(0, 1, Integer::sum);
+        }
     }
 
-    private final int crippleDuration = 3;
+    private final CripplingStrikeStats stats = new CripplingStrikeStats();
     private final DamageValues damageValues = new DamageValues();
+    private int crippleDuration = 3;
     private int cripple = 10;
     private int cripplePerStrike = 5;
 
     public CripplingStrike() {
-        super("Crippling Strike", 0, 100);
+        super(AbstractAbilityBuilder.create("cripplingStrike").pvp());
+    }
+
+    public CripplingStrike(AbstractAbilityBuilder builder) {
+        super(builder);
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = Component.text("Strike the targeted enemy player, causing ")
-                               .append(Damages.formatDamage(damageValues.strikeDamage))
-                               .append(Component.text(" damage and "))
-                               .append(Component.text("crippling ", NamedTextColor.RED))
-                               .append(Component.text("them for "))
-                               .append(Component.text(format(crippleDuration), NamedTextColor.GOLD))
-                               .append(Component.text(" seconds. A "))
-                               .append(Component.text("crippled ", NamedTextColor.RED))
-                               .append(Component.text("player deals "))
-                               .append(Component.text(format(cripple) + "%", NamedTextColor.RED))
-                               .append(Component.text(" less damage for the duration of the effect. Adds "))
-                               .append(Component.text(format(cripplePerStrike) + "%", NamedTextColor.RED))
-                               .append(Component.text(" less damage dealt per additional strike. (Max " + format(cripple + (cripplePerStrike * 2)) + "%" + ")"));
-    }
-
-    @Override
-    public List<Pair<String, String>> getAbilityInfo() {
-        List<Pair<String, String>> info = new ArrayList<>();
-        info.add(new Pair<>("Players Struck", "" + timesUsed));
-
-        return info;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new CripplingStrikeBranch(abilityTree, this);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.crippleDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("crippleDuration"), int.class);
+        this.cripple = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cripple"), int.class);
+        this.cripplePerStrike = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cripplePerStrike"), int.class);
     }
 
     @Override
@@ -120,24 +98,15 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
 
     @Override
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
-        nearPlayer.addInstance(InstanceBuilder
-                .damage()
-                .ability(this)
-                .source(wp)
-                .value(damageValues.strikeDamage)
-        ).ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
-
+        nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage))
+                  .ifPresent(finalEvent -> onFinalEvent(wp, nearPlayer, finalEvent));
         if (pveMasterUpgrade || pveMasterUpgrade2) {
-            additionalHit(1, wp, nearPlayer, warlordsEntity -> {
-                warlordsEntity.addInstance(InstanceBuilder
-                        .damage()
-                        .ability(this)
-                        .source(wp)
-                        .value(damageValues.strikeDamage)
-                ).ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event));
-            });
+            additionalHit(2, wp, nearPlayer, warlordsEntity -> {
+                        warlordsEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage))
+                                      .ifPresent(event -> onFinalEvent(wp, event.getWarlordsEntity(), event));
+                    }
+            );
         }
-
         return true;
     }
 
@@ -149,16 +118,15 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
             }
             return;
         }
-
-        Optional<CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(CripplingStrikeData.class)
-                .findAny();
+        Optional<CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class).filterCooldownClassAndMapToObjectsOfClass(
+                CripplingStrikeData.class).findAny();
         if (optionalCripplingStrike.isPresent()) {
             CripplingStrikeData data = optionalCripplingStrike.get();
             nearPlayer.getCooldownManager().removeCooldown(CripplingStrikeData.class, true);
             int newCrippleCounter = Math.min(data.consecutiveStrikeCounter + 1, 2);
             cripple(wp,
                     nearPlayer,
+                    null,
                     name,
                     newCrippleCounter,
                     crippleDuration * 20,
@@ -172,14 +140,41 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
         }
     }
 
-    public static void cripple(
-            WarlordsEntity from,
-            WarlordsEntity target,
-            String name,
-            int tickDuration,
-            float crippleAmount
-    ) {
-        cripple(from, target, name, 0, tickDuration, crippleAmount);
+    public static void cripple(WarlordsEntity from, WarlordsEntity target, String name, int tickDuration, float crippleAmount) {
+        cripple(from, target, null, name, 0, tickDuration, crippleAmount);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
+    }
+
+    @Override
+    public CripplingStrikeStats getAbilityStats() {
+        return stats;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Strike the targeted enemy player, causing ")
+                                               .damage(damageValues.strikeDamage)
+                                               .text(" damage and inflicting them with ")
+                                               .text("CRIP", NamedTextColor.DARK_RED)
+                                               .text(" for ")
+                                               .durationSeconds(crippleDuration)
+                                               .text(", reducing their damage by ")
+                                               .percent(cripple, NamedTextColor.RED)
+                                               .text(". Adds ")
+                                               .percent(cripplePerStrike, NamedTextColor.RED)
+                                               .text(" less damage dealt per additional strike (max ")
+                                               .percent(cripple + (cripplePerStrike * 2), NamedTextColor.RED)
+                                               .text(").")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new CripplingStrikeBranch(abilityTree, this);
     }
 
     public int getCripple() {
@@ -198,28 +193,66 @@ public class CripplingStrike extends AbstractStrike implements Damages<Crippling
         this.cripplePerStrike = cripplePerStrike;
     }
 
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
-    }
-
     public static class DamageValues implements Value.ValueHolder {
 
-        private final Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362.25f, 498, 20, 175);
-        private final List<Value> values = List.of(strikeDamage);
+        private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(362, 498, 20, 175);
 
-        public Value.RangedValueCritable getStrikeDamage() {
-            return strikeDamage;
-        }
+        private List<Value> values = List.of(strikeDamage);
 
         @Override
         public List<Value> getValues() {
             return values;
         }
 
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(strikeDamage);
+        }
+
+        public Value.RangedValueCritable getStrikeDamage() {
+            return strikeDamage;
+        }
+
     }
 
     public record CripplingStrikeData(int consecutiveStrikeCounter) {
+    }
+
+    public static class CripplingStrikeStats extends AbstractStrikeStats<CripplingStrike, CripplingStrikeStats> {
+
+        @Field("damage_reduced")
+        private float damageReduced = 0;
+
+        @Field("cripple_stacks")
+        private Map<Integer, Integer> crippleStacks = new HashMap<>();
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Damage Reduced", damageReduced));
+            crippleStacks.forEach((key, value) -> statsDisplay.add(new AbilityStatDisplay("Cripple Stacks (" + key + ")", value)));
+            return statsDisplay;
+        }
+
+        @Override
+        public CripplingStrikeStats merge(CripplingStrikeStats other, int multiplier) {
+            CripplingStrikeStats stats = super.merge(other, multiplier);
+            stats.damageReduced = this.damageReduced + other.damageReduced * multiplier;
+            this.crippleStacks.forEach((key, value) -> stats.crippleStacks.merge(key, value * multiplier, Integer::sum));
+            other.crippleStacks.forEach((key, value) -> stats.crippleStacks.merge(key, value * multiplier, Integer::sum));
+            return stats;
+        }
+
+        @Override
+        public Class<CripplingStrikeStats> getClazz() {
+            return CripplingStrikeStats.class;
+        }
+
+        @Override
+        public CripplingStrikeStats create() {
+            return new CripplingStrikeStats();
+        }
 
     }
 

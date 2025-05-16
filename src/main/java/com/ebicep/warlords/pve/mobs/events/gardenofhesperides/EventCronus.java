@@ -1,6 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.GroundSlamBerserker;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.Damages;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -147,7 +148,7 @@ public class EventCronus extends AbstractMob implements BossMob, LesserGod {
         private float radius = 20;
 
         public HeavenlyDamage() {
-            super("Heavenly Damage", 950, 1100, 10, 100, false);
+            super(AbstractAbilityBuilder.create("cronusHeavenlyDamage").pve().startFullCooldown());
         }
 
         @Override

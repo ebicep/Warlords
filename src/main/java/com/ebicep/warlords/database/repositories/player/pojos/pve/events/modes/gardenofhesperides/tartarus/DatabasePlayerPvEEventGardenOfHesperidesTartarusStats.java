@@ -1,20 +1,24 @@
 package com.ebicep.warlords.database.repositories.player.pojos.pve.events.modes.gardenofhesperides.tartarus;
 
 
+import com.ebicep.warlords.abilities.internal.Ability;
+import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayerResult;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.tartarus.DatabaseGamePlayerPvEEventTartarus;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.events.gardenofhesperides.tartarus.DatabaseGamePvEEventTartarus;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.TracksAbilityStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.GameMode;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabasePlayerPvEEventGardenOfHesperidesTartarusStats implements MultiPvEEventGardenOfHesperidesTartarusStats {
+public class DatabasePlayerPvEEventGardenOfHesperidesTartarusStats implements MultiPvEEventGardenOfHesperidesTartarusStats, TracksAbilityStats {
 
     @Field("player_count_stats")
     private Map<Integer, DatabasePlayerPvEEventGardenOfHesperidesTartarusPlayerCountStats> playerCountStats = new LinkedHashMap<>() {{
@@ -23,6 +27,13 @@ public class DatabasePlayerPvEEventGardenOfHesperidesTartarusStats implements Mu
         put(3, new DatabasePlayerPvEEventGardenOfHesperidesTartarusPlayerCountStats());
         put(4, new DatabasePlayerPvEEventGardenOfHesperidesTartarusPlayerCountStats());
     }};
+    @Field("ability_stats")
+    private Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = new HashMap<>();
+
+    @Override
+    public Map<Ability<?>, AbstractAbilityStats<?, ?>> getAbilityStats() {
+        return abilityStats;
+    }
 
     public DatabasePlayerPvEEventGardenOfHesperidesTartarusStats() {
     }
@@ -44,6 +55,7 @@ public class DatabasePlayerPvEEventGardenOfHesperidesTartarusStats implements Mu
         } else {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Invalid player count = " + playerCount);
         }
+        updateAbilityStats(gamePlayer, multiplier);
     }
 
     public DatabasePlayerPvEEventGardenOfHesperidesTartarusPlayerCountStats getPlayerCountStats(int playerCount) {

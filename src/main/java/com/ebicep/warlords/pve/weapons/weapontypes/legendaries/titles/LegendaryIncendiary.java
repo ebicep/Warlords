@@ -23,9 +23,9 @@ import java.util.UUID;
 public class LegendaryIncendiary extends AbstractLegendaryWeapon implements EventTitle {
 
     public static final int CRIT_CHANCE_BOOST = 15;
-    public static final float CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE = 0.5f;
-    public static final int EPH_PERCENT_INCREASE = 20;
-    public static final float EPH_PERCENT_INCREASE_PER_UPGRADE = 2.5f;
+    public static final float CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE = 1f;
+    public static final int EPH_PERCENT_INCREASE = 50;
+    public static final float EPH_PERCENT_INCREASE_PER_UPGRADE = 10f;
 
 
     public LegendaryIncendiary() {
@@ -115,7 +115,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
 
     @Override
     protected float getSkillCritMultiplierBonusValue() {
-        return 20;
+        return 25;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
 
     @Override
     protected float getCritMultiplierValue() {
-        return 180;
+        return 205;
     }
 
     @Override

@@ -142,7 +142,7 @@ public class Torment extends AbstractMob implements BossMob {
                         15 * 20,
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed2) -> {
                             if (ticksLeft % 10 == 0) {
-                                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIP_LAVA);
+                                EffectUtils.playParticleLinkAnimation(warlordsNPC.getLocation(), we.getLocation(), Particle.DRIPPING_LAVA);
                                 EffectUtils.playSphereAnimation(we.getLocation(), 3, Particle.FLAME, 1);
                             }
 

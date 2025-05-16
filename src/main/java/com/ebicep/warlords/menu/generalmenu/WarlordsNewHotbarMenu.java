@@ -12,7 +12,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSp
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
+import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.settings.ChatSettings;
+import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
+import com.ebicep.warlords.player.general.settings.ParticleQuality;
+import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -95,16 +100,16 @@ public class WarlordsNewHotbarMenu {
                 Component.text("Health: ", NamedTextColor.GRAY).append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxHealth()), NamedTextColor.GREEN)),
                 Component.empty(),
                 Component.text("Energy: ", NamedTextColor.GRAY)
-                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.GREEN))
+                         .append(Component.text(NumberFormat.formatOptionalHundredths(apc.getMaxEnergy()), NamedTextColor.YELLOW))
                          .append(Component.text(" / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerSec()), NamedTextColor.YELLOW))
                          .append(Component.text(" per sec / "))
-                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.GREEN))
+                         .append(Component.text("+" + NumberFormat.formatOptionalHundredths(apc.getEnergyPerHit()), NamedTextColor.YELLOW))
                          .append(Component.text(" per hit"))
         );
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
-                              .append(Component.text(noDamageResistance ? "None" : apc.getDamageResistance() + "%",
+                              .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
                                       noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
                               ))
         );
@@ -200,7 +205,7 @@ public class WarlordsNewHotbarMenu {
                     itemBuilder.addLore(WordWrap.wrap(Component.text("Click here to select a " + value.name + " specialization or claim rewards", NamedTextColor.YELLOW), 170));
                     if (hasRewards) {
                         itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
-                        itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                        itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                         hasRewardsForAny = true;
                     }
                     menu.setItem(
@@ -294,7 +299,7 @@ public class WarlordsNewHotbarMenu {
                         );
                 if (hasRewards) {
                     itemBuilder.addLore(Component.empty(), Component.text("You have unclaimed rewards!", NamedTextColor.GREEN));
-                    itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                    itemBuilder.enchant(Enchantment.RESPIRATION, 1);
                     hasRewardsForAny = true;
                 }
                 menu.setItem(
@@ -630,15 +635,14 @@ public class WarlordsNewHotbarMenu {
                 Weapons weapon = values.get(i);
                 ItemBuilder builder;
 
-                if (weapon.isUnlocked) {
-
+                if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
                     builder = new ItemBuilder(weapon.getItem())
                             .name(Component.text(weapon.getName(), NamedTextColor.GREEN));
                     List<Component> lore = new ArrayList<>();
 
                     if (weapon == selectedWeapon) {
                         lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                        builder.enchant(Enchantment.OXYGEN, 1);
+                        builder.enchant(Enchantment.RESPIRATION, 1);
                     } else {
                         lore.add(Component.text("Click to select", NamedTextColor.YELLOW));
                     }
@@ -653,7 +657,7 @@ public class WarlordsNewHotbarMenu {
                         (i - (pageNumber - 1) * 21) / 7 + 1,
                         builder.get(),
                         (m, e) -> {
-                            if (weapon.isUnlocked) {
+                            if (weapon.isUnlocked && (!weapon.patreonExclusive || Permissions.PATREON.contains(player))) {
                                 player.sendMessage(Component.text("You have changed your ", NamedTextColor.GREEN)
                                                             .append(Component.text(selectedSpec.name, NamedTextColor.AQUA))
                                                             .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
@@ -721,7 +725,7 @@ public class WarlordsNewHotbarMenu {
                         .addLore(Component.empty());
                 if (selectedHelmet.contains(helmet)) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
@@ -750,7 +754,7 @@ public class WarlordsNewHotbarMenu {
                         .addLore(Component.empty());
                 if (playerSettings.getArmorSet(classes) == armorSet) {
                     builder.addLore(Component.text(">>> ACTIVE <<<", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     builder.addLore(Component.text("> Click to activate! <", NamedTextColor.YELLOW));
                 }
@@ -826,13 +830,13 @@ public class WarlordsNewHotbarMenu {
                         .name(Component.text(skillBoost.name + " (" + selectedSpec.name + ")",
                                 skillBoost == selectedBoost ? NamedTextColor.GREEN : NamedTextColor.RED
                         ));
-                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description,
+                List<Component> lore = new ArrayList<>(WordWrap.wrap(skillBoost == selectedBoost ? skillBoost.getSelectedDescription() : skillBoost.getUnselectedDescription(),
                         130
                 ));
                 lore.add(Component.empty());
                 if (skillBoost == selectedBoost) {
                     lore.add(Component.text("Currently selected!", NamedTextColor.GREEN));
-                    builder.enchant(Enchantment.OXYGEN, 1);
+                    builder.enchant(Enchantment.RESPIRATION, 1);
                 } else {
                     lore.add(Component.text("Click to select!", NamedTextColor.YELLOW));
                 }
@@ -873,7 +877,7 @@ public class WarlordsNewHotbarMenu {
                 } else {
                     icon = ability.getAbilityIcon();
                 }
-                ability2.boostSkill(selectedBoost, apc2);
+                ability2.boostSkill(selectedBoost, new WarlordsPlayer(player, selectedSpec));
                 ability.updateDescription(player);
                 ability2.updateDescription(player);
                 menu.setItem(3,
@@ -1012,7 +1016,7 @@ public class WarlordsNewHotbarMenu {
         @Default
         public static void openSettingsMenu(Player player) {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                Menu menu = new Menu("Settings", 9 * 4);
+                Menu menu = new Menu("Settings", 9 * 5);
                 menu.setItem(
                         1,
                         1,
@@ -1060,25 +1064,41 @@ public class WarlordsNewHotbarMenu {
                         1,
                         MENU_SETTINGS_CHAT_SETTINGS,
                         (m, e) -> {
-                            Settings.ChatSettings.openChatSettingsMenu(player);
+                            ChatSettings.openChatSettingsMenu(player);
+                        }
+                );
+                menu.setItem(
+                        7,
+                        1,
+                        CooldownDisplaySettings.ITEM,
+                        (m, e) -> {
+                            CooldownDisplaySettings.openMenu(player, databasePlayer);
+                        }
+                );
+                menu.setItem(
+                        1,
+                        2,
+                        ActionBarSettings.ITEM,
+                        (m, e) -> {
+                            ActionBarSettings.openMenu(player, databasePlayer);
                         }
                 );
 
-                menu.setItem(3, 3, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
-                menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+                menu.setItem(3, 4, MENU_BACK, (m, e) -> WarlordsNewHotbarMenu.SelectionMenu.openWarlordsMenu(player));
+                menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
                 menu.openForPlayer(player);
             });
         }
 
         public static void openParticleQualityMenu(Player player) {
             DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-                Settings.ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
+                ParticleQuality selectedParticleQuality = databasePlayer.getParticleQuality();
 
                 Menu menu = new Menu("Particle Quality", 9 * 4);
 
-                Settings.ParticleQuality[] particleQualities = Settings.ParticleQuality.values();
+                ParticleQuality[] particleQualities = ParticleQuality.values();
                 for (int i = 0; i < particleQualities.length; i++) {
-                    Settings.ParticleQuality particleQuality = particleQualities[i];
+                    ParticleQuality particleQuality = particleQualities[i];
 
                     menu.setItem(
                             i + 3,

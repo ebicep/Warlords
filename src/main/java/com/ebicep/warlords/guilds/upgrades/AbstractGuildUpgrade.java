@@ -23,7 +23,7 @@ public abstract class AbstractGuildUpgrade<T extends Enum<T> & GuildUpgrade> {
     public abstract void addItemClickLore(ItemBuilder itemBuilder);
 
     public void modifyItem(ItemBuilder itemBuilder) {
-        itemBuilder.enchant(Enchantment.OXYGEN, 1);
+        itemBuilder.enchant(Enchantment.RESPIRATION, 1);
         itemBuilder.lore(getLore());
     }
 

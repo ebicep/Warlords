@@ -1,13 +1,9 @@
 package com.ebicep.customentities.nms.pve.pathfindergoals;
 
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
-import net.minecraft.world.level.pathfinder.NodeEvaluator;
 
 import java.util.EnumSet;
 
@@ -111,19 +107,19 @@ public class StrafeGoal extends Goal {
         }
     }
 
-    private boolean isWalkable(float x, float z) {
-        PathNavigation pathNavigation = this.mob.getNavigation();
-        if (pathNavigation != null) {
-            NodeEvaluator nodeEvaluator = pathNavigation.getNodeEvaluator();
-            if (nodeEvaluator != null && nodeEvaluator.getBlockPathType(this.mob.level(),
-                    Mth.floor(this.mob.getX() + (double) x),
-                    this.mob.getBlockY(),
-                    Mth.floor(this.mob.getZ() + (double) z)
-            ) != BlockPathTypes.WALKABLE) {
-                return false;
-            }
-        }
-
-        return true;
-    }
+//    private boolean isWalkable(float x, float z) {
+//        PathNavigation pathNavigation = this.mob.getNavigation();
+//        if (pathNavigation != null) {
+//            NodeEvaluator nodeEvaluator = pathNavigation.getNodeEvaluator();
+//            if (nodeEvaluator != null && nodeEvaluator.getBlockPathType(this.mob.level(),
+//                    Mth.floor(this.mob.getX() + (double) x),
+//                    this.mob.getBlockY(),
+//                    Mth.floor(this.mob.getZ() + (double) z)
+//            ) != BlockPathTypes.WALKABLE) {
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
 }

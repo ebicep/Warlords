@@ -9,6 +9,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.freeze.GameFreezeOption;
+import com.ebicep.warlords.game.option.pvp.DebugLogOption;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.debugmenu.DebugMenu;
@@ -16,6 +17,7 @@ import com.ebicep.warlords.menu.debugmenu.DebugMenuPlayerOptions;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -31,6 +33,50 @@ public class DebugCommand extends BaseCommand {
     @Default
     public void openDebugMenu(Player player) {
         DebugMenu.openDebugMenu(player);
+    }
+
+    @Subcommand("getlog")
+    @CommandCompletion("@warlordsplayers")
+    @Description("Gets the last messages sent to player")
+    public void getLog(Player player, WarlordsPlayer target, @Default("50") @Conditions("limits:min=0,max=100000") Integer amount) {
+        int size = target.getDebugMessageLog().size();
+        int max = Math.max(0, size - amount);
+        sendDebugMessage(player, ComponentBuilder
+                .create("Showing last ", NamedTextColor.GREEN)
+                .text(amount, NamedTextColor.YELLOW)
+                .text(" messages from ")
+                .append(target.getColoredName())
+                .build()
+        );
+        for (int i = max; i < size; i++) {
+            player.sendMessage(target.getDebugMessageLog().get(i));
+        }
+    }
+
+    @Subcommand("getcachedlog")
+    @Description("Gets the last messages sent to player")
+    public void getCachedLog(Player player, String target, @Default("50") @Conditions("limits:min=0,max=100000") Integer amount) {
+        DebugLogOption.DebugLog debugLog = DebugLogOption.CACHED_DEBUG_LOG.get(target.toLowerCase());
+        if (debugLog == null) {
+            sendDebugMessage(player, ComponentBuilder
+                    .create("No cached log found for ", NamedTextColor.RED)
+                    .text(target, NamedTextColor.YELLOW)
+                    .build()
+            );
+            return;
+        }
+        int size = debugLog.debugLog().size();
+        int max = Math.max(0, size - amount);
+        sendDebugMessage(player, ComponentBuilder
+                .create("Showing last ", NamedTextColor.GREEN)
+                .text(amount, NamedTextColor.YELLOW)
+                .text(" messages from ")
+                .text(target, NamedTextColor.AQUA)
+                .build()
+        );
+        for (int i = max; i < size; i++) {
+            player.sendMessage(debugLog.debugLog().get(i));
+        }
     }
 
     @Subcommand("printclassinfo")
@@ -70,21 +116,25 @@ public class DebugCommand extends BaseCommand {
             sendDebugMessage(player, Component.text("Cannot freeze game in end state", NamedTextColor.RED));
             return;
         }
-        if (!game.isUnfreezeCooldown()) {
-            if (game.isFrozen()) {
-                GameFreezeOption.resumeGame(game);
-            } else {
-                if (message != null) {
-                    message = message.replaceAll("&", "§");
-                    game.addFrozenCause(Component.text(message, NamedTextColor.GOLD));
+        game.getOption(GameFreezeOption.class)
+            .stream()
+            .findFirst()
+            .ifPresentOrElse(gameFreezeOption -> {
+                if (!gameFreezeOption.isUnfreezeCooldown()) {
+                    if (gameFreezeOption.isFrozen()) {
+                        GameFreezeOption.resumeGame(game);
+                    } else {
+                        if (message != null) {
+                            gameFreezeOption.addFrozenCause(Component.text(message.replaceAll("&", "§"), NamedTextColor.GOLD));
+                        } else {
+                            gameFreezeOption.addFrozenCause(Component.text("Manually paused by §c" + player.getName(), NamedTextColor.GOLD));
+                        }
+                        sendDebugMessage(player, Component.text("The game has been frozen!", NamedTextColor.GREEN));
+                    }
                 } else {
-                    game.addFrozenCause(Component.text("Manually paused by §c" + player.getName(), NamedTextColor.GOLD));
+                    sendDebugMessage(player, Component.text("The game is currently unfreezing!", NamedTextColor.RED));
                 }
-                sendDebugMessage(player, Component.text("The game has been frozen!", NamedTextColor.GREEN));
-            }
-        } else {
-            sendDebugMessage(player, Component.text("The game is currently unfreezing!", NamedTextColor.RED));
-        }
+            }, () -> sendDebugMessage(player, Component.text("GameFreezeOption is not enabled!", NamedTextColor.RED)));
     }
 
     @Subcommand("timer")

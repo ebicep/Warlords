@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.abilities;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -28,17 +29,13 @@ public class ThunderCloudAbility extends AbstractPveAbility {
     private int sizeMin = 5;
     private int sizeMax = 10;
 
-    public ThunderCloudAbility(float cooldown, boolean canHitAllies, int secondsToLiveMin, int secondsToLiveMax, int sizeMin, int sizeMax) {
-        this(cooldown);
+    public ThunderCloudAbility(AbstractAbilityBuilder builder, boolean canHitAllies, int secondsToLiveMin, int secondsToLiveMax, int sizeMin, int sizeMax) {
+        super(builder);
         this.canHitAllies = canHitAllies;
         this.secondsToLiveMin = secondsToLiveMin;
         this.secondsToLiveMax = secondsToLiveMax;
         this.sizeMin = sizeMin;
         this.sizeMax = sizeMax;
-    }
-
-    public ThunderCloudAbility(float cooldown) {
-        super("Thunder Cloud", cooldown, 50);
     }
 
     @Override
@@ -98,7 +95,7 @@ public class ThunderCloudAbility extends AbstractPveAbility {
                     this.size,
                     new AreaEffect(
                             yOffset,
-                            Particle.REDSTONE,
+                            Particle.DUST,
                             new Particle.DustOptions(Color.fromRGB(cloudColor, cloudColor, cloudColor), 5)
                     ).particlesPerSurface(.4)
             ));

@@ -49,7 +49,7 @@ public class Acropolis extends GameMap {
                 1,
                 120 * SECOND,
                 "Acropolis",
-                3,
+                2,
                 GameMode.EVENT_WAVE_DEFENSE
         );
     }
