@@ -3,8 +3,10 @@ package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -26,7 +28,7 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 "The Archivist",
                 125000,
                 0.24f,
-                25,
+                30,
                 0,
                 0
         );
@@ -52,12 +54,12 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
                 new CripplingStrike(AbstractAbilityBuilder.create("theArchivistCripplingStrike").pve()) {{
                     this.pveMasterUpgrade = true;
                 }},
-                new ChainLightning(AbstractAbilityBuilder.create("theArchivistChainLightning").pve().startCooldown(5)) {{
+                new ChainLightning(AbstractAbilityBuilder.create("theArchivistChainLightning").pve().startCooldown(4)) {{
                     this.pveMasterUpgrade2 = true;
                 }},
-                new GroundSlamBerserker(AbstractAbilityBuilder.create("theArchivistGroundSlamBerserker").pve().startCooldown(8)),
-                new PrismGuard(AbstractAbilityBuilder.create("theArchivistPrismGuard").pve().startCooldown(18)),
-                new Inferno(AbstractAbilityBuilder.create("theArchivistInferno").pve().startCooldown(25))
+                new GroundSlamBerserker(AbstractAbilityBuilder.create("theArchivistGroundSlamBerserker").pve().startCooldown(6)),
+                new PrismGuard(AbstractAbilityBuilder.create("theArchivistPrismGuard").pve().startCooldown(13)),
+                new Inferno(AbstractAbilityBuilder.create("theArchivistInferno").pve().startCooldown(20))
         );
     }
 
@@ -85,7 +87,6 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
 
             final FloatModifiable.FloatModifier modifier = warlordsNPC.getHealth().addAdditiveModifier(name + " (Base)", 0);
 
-
             @EventHandler
             public void onAbilityUse(WarlordsAbilityActivateEvent.Post event) {
                 if (event.getWarlordsEntity().equals(warlordsNPC)) {
@@ -108,6 +109,11 @@ public class EventTheArchivist extends AbstractMob implements BossMob, Unsilenca
     @Override
     public double weaponDropRate() {
         return BossMob.super.weaponDropRate() * 1.5;
+    }
+
+    @Override
+    public void onDamageTaken(WarlordsEntity self, WarlordsEntity attacker, WarlordsDamageHealingEvent event) {
+        event.setCritChance(0);
     }
 
 }

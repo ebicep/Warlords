@@ -233,14 +233,14 @@ public class GrimoiresGraveyard extends GameMap {
                             pveOption.spawnNewMob(archivist);
                         }
                         if (archivist == null || archivist.getWarlordsNPC().isAlive()) {
-                            if (ticksElapsed % 440 == 0) {
+                            if (ticksElapsed % 400 == 0) {
                                 List<Location> spawnLocations = new ArrayList<>(necronomiconSpawnLocations);
                                 Collections.shuffle(spawnLocations);
                                 for (int i = 0; i < pveOption.playerCount() - 2; i++) {
                                     pveOption.spawnNewMob(new EventNecronomiconGrimoire(spawnLocations.removeFirst()));
                                 }
                             }
-                            if (ticksElapsed % 340 == 0) {
+                            if (ticksElapsed % 300 == 0) {
                                 Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
                                     case 0 -> Mob.EVENT_ROUGE_GRIMOIRE;
                                     case 1 -> Mob.EVENT_VIOLETTE_GRIMOIRE;
@@ -249,7 +249,7 @@ public class GrimoiresGraveyard extends GameMap {
                                 };
                                 pveOption.spawnNewMob(minionGrimoire.createMob(getSpawnLocation()));
                             }
-                            if (ticksElapsed % 200 == 0) {
+                            if (ticksElapsed % 160 == 0) {
                                 pveOption.spawnNewMob(new EventScriptedGrimoire(getSpawnLocation()));
                             }
                         } else {
