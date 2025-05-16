@@ -265,7 +265,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
 
         private Value.RangedValueCritable flameBurstDamage = new Value.RangedValueCritable(557, 753, 25, 185);
 
-        private final List<Value> values = List.of(flameBurstDamage);
+        private List<Value> values = List.of(flameBurstDamage);
 
         @Override
         public List<Value> getValues() {
@@ -278,6 +278,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
                     builder.getAppendedFieldNameDamage("flameBurstDamage"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(flameBurstDamage);
         }
 
         public Value.RangedValueCritable getFlameBurstDamage() {

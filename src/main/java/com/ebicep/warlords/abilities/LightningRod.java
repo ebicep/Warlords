@@ -184,7 +184,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
 
         private Value.SetValue healthRestore = new Value.SetValue(30);
 
-        private final List<Value> values = List.of(healthRestore);
+        private List<Value> values = List.of(healthRestore);
 
         @Override
         public List<Value> getValues() {
@@ -194,6 +194,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.healthRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("healthRestore"), Value.SetValue.class);
+            this.values = List.of(healthRestore);
         }
 
         public Value.SetValue getHealthRestore() {

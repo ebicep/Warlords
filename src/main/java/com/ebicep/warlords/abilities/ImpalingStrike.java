@@ -199,7 +199,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(323, 427, 20, 175);
 
-        private final List<Value> values = List.of(strikeDamage);
+        private List<Value> values = List.of(strikeDamage);
 
         @Override
         public List<Value> getValues() {
@@ -209,6 +209,7 @@ public class ImpalingStrike extends AbstractStrike<ImpalingStrike, ImpalingStrik
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(strikeDamage);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

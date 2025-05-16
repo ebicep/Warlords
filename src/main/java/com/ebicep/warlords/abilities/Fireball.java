@@ -212,7 +212,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
 
         private Value.RangedValue igniteDamage = new Value.RangedValue(450, 650);
 
-        private final List<Value> values = List.of(fireballDamage, igniteDamage);
+        private List<Value> values = List.of(fireballDamage, igniteDamage);
 
         @Override
         public List<Value> getValues() {
@@ -226,6 +226,7 @@ public class Fireball extends AbstractProjectile<Fireball, Fireball.FireballStat
                     Value.RangedValueCritable.class
             );
             this.igniteDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("igniteDamage"), Value.RangedValue.class);
+            this.values = List.of(fireballDamage, igniteDamage);
         }
 
         public Value.RangedValueCritable getFireballDamage() {

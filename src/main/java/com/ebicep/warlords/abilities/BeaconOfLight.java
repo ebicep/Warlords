@@ -93,7 +93,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
 
         private Value.RangedValueCritable beaconHealing = new Value.RangedValueCritable(170, 230, 25, 175);
 
-        private final List<Value> values = List.of(beaconHealing);
+        private List<Value> values = List.of(beaconHealing);
 
         @Override
         public List<Value> getValues() {
@@ -106,6 +106,7 @@ public class BeaconOfLight extends AbstractBeaconAbility<BeaconOfLight, BeaconOf
                     builder.getAppendedFieldNameHealing("beaconHealing"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(beaconHealing);
         }
 
     }

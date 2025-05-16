@@ -227,7 +227,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
 
         private Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(252, 340, 25, 180);
 
-        private final List<Value> values = List.of(boltDamage);
+        private List<Value> values = List.of(boltDamage);
 
         @Override
         public List<Value> getValues() {
@@ -237,6 +237,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boltDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(boltDamage);
         }
 
         public Value.RangedValueCritable getBoltDamage() {

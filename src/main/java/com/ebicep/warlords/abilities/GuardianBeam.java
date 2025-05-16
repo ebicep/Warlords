@@ -238,7 +238,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
 
         private Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(282, 381, 20, 175);
 
-        private final List<Value> values = List.of(beamDamage);
+        private List<Value> values = List.of(beamDamage);
 
         @Override
         public List<Value> getValues() {
@@ -248,6 +248,7 @@ public class GuardianBeam extends AbstractBeam<GuardianBeam, GuardianBeam.Guardi
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("beamDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(beamDamage);
         }
 
         public Value.RangedValueCritable getBeamDamage() {

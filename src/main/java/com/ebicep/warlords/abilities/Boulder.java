@@ -176,7 +176,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
 
         private Value.RangedValue earthquakeDamage = new Value.RangedValue(450, 630);
 
-        private final List<Value> values = List.of(boulderDamage, earthquakeDamage);
+        private List<Value> values = List.of(boulderDamage, earthquakeDamage);
 
         @Override
         public List<Value> getValues() {
@@ -187,6 +187,7 @@ public class Boulder extends AbstractAbility implements RedAbilityIcon, Damages<
         public void init(AbstractAbilityBuilder builder) {
             this.boulderDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boulderDamage"), Value.RangedValueCritable.class);
             this.earthquakeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("earthquakeDamage"), Value.RangedValue.class);
+            this.values = List.of(boulderDamage, earthquakeDamage);
         }
 
         public Value.RangedValueCritable getBoulderDamage() {

@@ -251,7 +251,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
 
         private Value.RangedValueCritable fallenSoulDamage = new Value.RangedValueCritable(140, 181, 20, 180);
 
-        private final List<Value> values = List.of(fallenSoulDamage);
+        private List<Value> values = List.of(fallenSoulDamage);
 
         @Override
         public List<Value> getValues() {
@@ -264,6 +264,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
                     builder.getAppendedFieldNameDamage("fallenSoulDamage"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(fallenSoulDamage);
         }
 
         public Value.RangedValueCritable getFallenSoulDamage() {

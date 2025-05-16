@@ -103,7 +103,7 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
 
         private Value.RangedValueCritable waveDamage = new Value.RangedValueCritable(557, 753, 25, 200);
 
-        private final List<Value> values = List.of(waveDamage);
+        private List<Value> values = List.of(waveDamage);
 
         @Override
         public List<Value> getValues() {
@@ -113,6 +113,7 @@ public class SeismicWaveBerserker extends AbstractSeismicWave implements Damages
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.waveDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("waveDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(waveDamage);
         }
 
         public Value.RangedValueCritable getWaveDamage() {

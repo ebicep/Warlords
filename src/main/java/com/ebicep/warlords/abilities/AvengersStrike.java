@@ -127,7 +127,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(359, 485, 25, 185);
 
-        private final List<Value> values = List.of(strikeDamage);
+        private List<Value> values = List.of(strikeDamage);
 
         @Override
         public List<Value> getValues() {
@@ -137,6 +137,7 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(strikeDamage);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {

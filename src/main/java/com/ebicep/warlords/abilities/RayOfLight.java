@@ -159,7 +159,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
 
         private Value.RangedValueCritable rayHealing = new Value.RangedValueCritable(389, 523, 20, 150);
 
-        private final List<Value> values = List.of(rayHealing);
+        private List<Value> values = List.of(rayHealing);
 
         @Override
         public List<Value> getValues() {
@@ -169,6 +169,7 @@ public class RayOfLight extends AbstractBeam<RayOfLight, RayOfLight.RayOfLightSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.rayHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("rayHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(rayHealing);
         }
 
         public Value.RangedValueCritable getRayHealing() {

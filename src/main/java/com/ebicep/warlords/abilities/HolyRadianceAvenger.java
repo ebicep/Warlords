@@ -168,7 +168,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
 
         private Value.RangedValueCritable radianceHealing = new Value.RangedValueCritable(582, 760, 15, 175);
 
-        private final List<Value> values = List.of(radianceHealing);
+        private List<Value> values = List.of(radianceHealing);
 
         @Override
         public List<Value> getValues() {
@@ -181,6 +181,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                     builder.getAppendedFieldNameHealing("radianceHealing"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(radianceHealing);
         }
 
     }

@@ -248,7 +248,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
 
         private Value.RangedValueCritable earthlivingHealing = new Value.RangedValueCritable(132, 179, 25, 200);
 
-        private final List<Value> values = List.of(earthlivingHealing);
+        private List<Value> values = List.of(earthlivingHealing);
 
         @Override
         public List<Value> getValues() {
@@ -261,6 +261,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                     builder.getAppendedFieldNameHealing("earthlivingHealing"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(earthlivingHealing);
         }
 
     }

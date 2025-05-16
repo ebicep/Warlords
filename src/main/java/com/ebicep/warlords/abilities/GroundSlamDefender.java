@@ -69,7 +69,7 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
 
         private Value.RangedValueCritable slamDamage = new Value.RangedValueCritable(293, 397, 20, 175);
 
-        private final List<Value> values = List.of(slamDamage);
+        private List<Value> values = List.of(slamDamage);
 
         @Override
         public List<Value> getValues() {
@@ -79,6 +79,7 @@ public class GroundSlamDefender extends AbstractGroundSlam implements Damages<Gr
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.slamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("slamDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(slamDamage);
         }
 
     }

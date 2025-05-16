@@ -274,7 +274,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
 
         private Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(728, 815, 20, 200);
 
-        private final List<Value> values = List.of(chainHealing);
+        private List<Value> values = List.of(chainHealing);
 
         @Override
         public List<Value> getValues() {
@@ -284,6 +284,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("chainHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(chainHealing);
         }
 
         public Value.RangedValueCritable getChainHealing() {

@@ -161,7 +161,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
 
         private Value.RangedValueCritable beamDamage = new Value.RangedValueCritable(376, 508, 20, 175);
 
-        private final List<Value> values = List.of(beamDamage);
+        private List<Value> values = List.of(beamDamage);
 
         @Override
         public List<Value> getValues() {
@@ -171,6 +171,7 @@ public class SoulfireBeam extends AbstractBeam<SoulfireBeam, SoulfireBeam.Soulfi
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.beamDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("beamDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(beamDamage);
         }
 
         public List<Float> getDamageMultipliers() {

@@ -55,7 +55,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.SetValue zombificationHealing = new Value.SetValue(0);
-        private final List<Value> values = List.of(zombificationHealing);
+        private List<Value> values = List.of(zombificationHealing);
 
         @Override
         public List<Value> getValues() {
@@ -68,6 +68,7 @@ public class PigZombieHealing extends AbstractAbility implements Heals<PigZombie
                     builder.getAppendedFieldNameHealing("zombificationHealing"),
                     Value.SetValue.class
             );
+            this.values = List.of(zombificationHealing);
         }
 
     }

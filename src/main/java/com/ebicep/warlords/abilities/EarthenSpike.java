@@ -231,7 +231,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
 
         private Value.RangedValue earthenRuptureDamage = new Value.RangedValue(548, 695);
 
-        private final List<Value> values = List.of(spikeDamage, earthenRuptureDamage);
+        private List<Value> values = List.of(spikeDamage, earthenRuptureDamage);
 
         @Override
         public List<Value> getValues() {
@@ -245,6 +245,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                     builder.getAppendedFieldNameDamage("earthenRuptureDamage"),
                     Value.RangedValue.class
             );
+            this.values = List.of(spikeDamage, earthenRuptureDamage);
         }
 
         public Value.RangedValueCritable getSpikeDamage() {

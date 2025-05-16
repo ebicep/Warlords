@@ -390,7 +390,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
         private Value.SetValue selfHealing = new Value.SetValue(300);
 
-        private final List<Value> values = List.of(allyHealing, selfHealing);
+        private List<Value> values = List.of(allyHealing, selfHealing);
 
         @Override
         public List<Value> getValues() {
@@ -401,6 +401,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         public void init(AbstractAbilityBuilder builder) {
             this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("allyHealing"), Value.SetValue.class);
             this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("selfHealing"), Value.SetValue.class);
+            this.values = List.of(allyHealing, selfHealing);
         }
 
         public Value.SetValue getAllyHealing() {

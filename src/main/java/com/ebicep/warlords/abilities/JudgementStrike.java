@@ -136,7 +136,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
         private Value.RangedValueCritable strikeDamage = new Value.RangedValueCritable(326, 441, 20, 185);
 
-        private final List<Value> values = List.of(strikeDamage);
+        private List<Value> values = List.of(strikeDamage);
 
         @Override
         public List<Value> getValues() {
@@ -146,6 +146,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("strikeDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(strikeDamage);
         }
 
         public Value.RangedValueCritable getStrikeDamage() {
@@ -158,7 +159,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
         private Value.SetValue strikeHealing = new Value.SetValue(0);
 
-        private final List<Value> values = List.of(strikeHealing);
+        private List<Value> values = List.of(strikeHealing);
 
         @Override
         public List<Value> getValues() {
@@ -168,6 +169,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.strikeHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("strikeHealing"), Value.SetValue.class);
+            this.values = List.of(strikeHealing);
         }
 
         public Value.SetValue getStrikeHealing() {

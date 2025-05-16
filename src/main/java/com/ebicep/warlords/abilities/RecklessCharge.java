@@ -245,7 +245,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
 
         private Value.RangedValueCritable chargeDamage = new Value.RangedValueCritable(457, 601, 20, 200);
 
-        private final List<Value> values = List.of(chargeDamage);
+        private List<Value> values = List.of(chargeDamage);
 
         @Override
         public List<Value> getValues() {
@@ -255,6 +255,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chargeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("chargeDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(chargeDamage);
         }
 
         public Value.RangedValueCritable getChargeDamage() {

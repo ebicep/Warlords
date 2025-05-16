@@ -163,7 +163,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
 
         private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(186, 250, 20, 180);
 
-        private final List<Value> values = List.of(hexDamage);
+        private List<Value> values = List.of(hexDamage);
 
         @Override
         public List<Value> getValues() {
@@ -173,6 +173,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(hexDamage);
         }
 
         public Value.RangedValueCritable getHexDamage() {
@@ -189,7 +190,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
 
         private Value.RangedValue hexDOTHealing = new Value.RangedValue(20, 30);
 
-        private final List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
+        private List<Value> values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
 
         @Override
         public List<Value> getValues() {
@@ -204,6 +205,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
                     Value.RangedValueCritable.class
             );
             this.hexDOTHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("hexDOTHealing"), Value.RangedValue.class);
+            this.values = List.of(hexHealing, hexSelfHealing, hexDOTHealing);
         }
 
         public Value.RangedValueCritable getHexHealing() {

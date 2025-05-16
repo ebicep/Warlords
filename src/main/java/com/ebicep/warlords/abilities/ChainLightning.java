@@ -251,7 +251,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
 
         private Value.RangedValueCritable chainDamage = new Value.RangedValueCritable(370, 499, 20, 175);
 
-        private final List<Value> values = List.of(chainDamage);
+        private List<Value> values = List.of(chainDamage);
 
         @Override
         public List<Value> getValues() {
@@ -261,6 +261,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chainDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("chainDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(chainDamage);
         }
 
         public Value.RangedValueCritable getChainDamage() {

@@ -162,7 +162,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
 
         private Value.RangedValueCritable totemDamage = new Value.RangedValueCritable(404, 523, 20, 200);
 
-        private final List<Value> values = List.of(totemDamage);
+        private List<Value> values = List.of(totemDamage);
 
         @Override
         public List<Value> getValues() {
@@ -172,6 +172,7 @@ public class CapacitorTotem extends AbstractTotem implements Duration, Damages<C
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.totemDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("totemDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(totemDamage);
         }
 
         public Value.RangedValueCritable getTotemDamage() {

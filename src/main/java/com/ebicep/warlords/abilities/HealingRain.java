@@ -259,7 +259,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
         private Value.RangedValue rainStrikeDamage = new Value.RangedValue(224, 377);
 
-        private final List<Value> values = List.of(rainStrikeDamage);
+        private List<Value> values = List.of(rainStrikeDamage);
 
         @Override
         public List<Value> getValues() {
@@ -269,6 +269,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.rainStrikeDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("rainStrikeDamage"), Value.RangedValue.class);
+            this.values = List.of(rainStrikeDamage);
         }
 
     }
@@ -277,7 +278,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
         private Value.RangedValueCritable rainHealing = new Value.RangedValueCritable(100, 125, 25, 180);
 
-        private final List<Value> values = List.of(rainHealing);
+        private List<Value> values = List.of(rainHealing);
 
         @Override
         public List<Value> getValues() {
@@ -287,6 +288,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.rainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("rainHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(rainHealing);
         }
 
         public Value.RangedValueCritable getRainHealing() {

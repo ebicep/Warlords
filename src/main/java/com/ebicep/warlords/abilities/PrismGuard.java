@@ -307,7 +307,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
 
         private Value.SetValue bubbleMissingHealthHealing = new Value.SetValue(1.5f);
 
-        private final List<Value> values = List.of(bubbleMissingHealthHealing, bubbleMissingHealthHealing);
+        private List<Value> values = List.of(bubbleMissingHealthHealing, bubbleMissingHealthHealing);
 
         @Override
         public List<Value> getValues() {
@@ -321,6 +321,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                     builder.getAppendedFieldNameHealing("bubbleMissingHealthHealing"),
                     Value.SetValue.class
             );
+            this.values = List.of(bubbleMissingHealthHealing, bubbleMissingHealthHealing);
         }
 
         public Value.SetValue getBubbleBaseHealing() {

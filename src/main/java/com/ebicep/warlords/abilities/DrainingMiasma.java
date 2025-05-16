@@ -256,7 +256,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
         private Value.SetValue miasmaDamage = new Value.SetValue(50);
 
-        private final List<Value> values = List.of(miasmaDamage);
+        private List<Value> values = List.of(miasmaDamage);
 
         @Override
         public List<Value> getValues() {
@@ -266,6 +266,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.miasmaDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("miasmaDamage"), Value.SetValue.class);
+            this.values = List.of(miasmaDamage);
         }
 
         public Value.SetValue getMiasmaDamage() {

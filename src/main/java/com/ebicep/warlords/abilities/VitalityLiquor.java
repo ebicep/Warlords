@@ -181,7 +181,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
 
         private Value.RangedValueCritable waveHealing = new Value.RangedValueCritable(268, 324, 25, 175);
 
-        private final List<Value> values = List.of(liquorHealing, waveHealing);
+        private List<Value> values = List.of(liquorHealing, waveHealing);
 
         @Override
         public List<Value> getValues() {
@@ -195,6 +195,7 @@ public class VitalityLiquor extends AbstractAbility implements PurpleAbilityIcon
                     Value.RangedValueCritable.class
             );
             this.waveHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("waveHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(liquorHealing, waveHealing);
         }
 
         public Value.RangedValueCritable getLiquorHealing() {

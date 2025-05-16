@@ -116,7 +116,7 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
 
         private Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(144, 194, 20, 175);
 
-        private final List<Value> values = List.of(consecrateDamage);
+        private List<Value> values = List.of(consecrateDamage);
 
         @Override
         public List<Value> getValues() {
@@ -129,6 +129,7 @@ public class ConsecrateCrusader extends AbstractConsecrate implements Damages<Co
                     builder.getAppendedFieldNameDamage("consecrateDamage"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(consecrateDamage);
         }
 
         public Value.RangedValueCritable getConsecrateDamage() {

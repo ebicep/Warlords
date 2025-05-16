@@ -267,7 +267,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
 
         private Value.RangedValueCritable freezingBreathDamage = new Value.RangedValueCritable(443, 614, 20, 175);
 
-        private final List<Value> values = List.of(freezingBreathDamage);
+        private List<Value> values = List.of(freezingBreathDamage);
 
         @Override
         public List<Value> getValues() {
@@ -280,6 +280,7 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                     builder.getAppendedFieldNameDamage("freezingBreathDamage"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(freezingBreathDamage);
         }
 
         public Value.RangedValueCritable getFreezingBreathDamage() {

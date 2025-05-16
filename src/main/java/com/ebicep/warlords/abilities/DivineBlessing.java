@@ -273,7 +273,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
 
         private Value.SetValue divineBlessingPostHeal = new Value.SetValue(800);
 
-        private final List<Value> values = List.of(divineBlessingPostHeal);
+        private List<Value> values = List.of(divineBlessingPostHeal);
 
         @Override
         public List<Value> getValues() {
@@ -286,6 +286,7 @@ public class DivineBlessing extends AbstractAbility implements OrangeAbilityIcon
                     builder.getAppendedFieldNameHealing("divineBlessingPostHeal"),
                     Value.SetValue.class
             );
+            this.values = List.of(divineBlessingPostHeal);
         }
 
     }

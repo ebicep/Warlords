@@ -209,7 +209,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
         private Value.RangedValue heartOfHeartsDamage = new Value.RangedValue(1635, 2096);
 
-        private final List<Value> values = List.of(heartOfHeartsDamage);
+        private List<Value> values = List.of(heartOfHeartsDamage);
 
         @Override
         public List<Value> getValues() {
@@ -222,6 +222,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                     builder.getAppendedFieldNameDamage("heartOfHeartsDamage"),
                     Value.RangedValue.class
             );
+            this.values = List.of(heartOfHeartsDamage);
         }
 
     }
@@ -230,7 +231,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
 
         private Value.SetValue heartToHeartHealing = new Value.SetValue(600);
 
-        private final List<Value> values = List.of(heartToHeartHealing);
+        private List<Value> values = List.of(heartToHeartHealing);
 
         @Override
         public List<Value> getValues() {
@@ -243,6 +244,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                     builder.getAppendedFieldNameHealing("heartToHeartHealing"),
                     Value.SetValue.class
             );
+            this.values = List.of(heartToHeartHealing);
         }
 
         public Value.SetValue getHeartToHeartHealing() {

@@ -250,7 +250,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
 
         private Value.RangedValueCritable shackleDamage = new Value.RangedValueCritable(446, 589, 20, 175);
 
-        private final List<Value> values = List.of(shackleDamage);
+        private List<Value> values = List.of(shackleDamage);
 
         @Override
         public List<Value> getValues() {
@@ -260,6 +260,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.shackleDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("shackleDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(shackleDamage);
         }
 
         public Value.RangedValueCritable getShackleDamage() {

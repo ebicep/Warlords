@@ -284,7 +284,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
 
         private Value.RangedValue shatterBoltDamage = new Value.RangedValue(409, 554);
 
-        private final List<Value> values = List.of(boltDamage, shatterBoltDamage);
+        private List<Value> values = List.of(boltDamage, shatterBoltDamage);
 
         @Override
         public List<Value> getValues() {
@@ -295,6 +295,7 @@ public class FrostBolt extends AbstractPiercingProjectile<FrostBolt, FrostBolt.F
         public void init(AbstractAbilityBuilder builder) {
             this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boltDamage"), Value.RangedValueCritable.class);
             this.shatterBoltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("shatterBoltDamage"), Value.RangedValue.class);
+            this.values = List.of(boltDamage, shatterBoltDamage);
         }
 
         public Value.RangedValueCritable getBoltDamage() {

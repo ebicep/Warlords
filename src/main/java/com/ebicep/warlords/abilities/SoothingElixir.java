@@ -210,7 +210,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
         private Value.RangedValueCritable elixirDamage = new Value.RangedValueCritable(235, 342, 25, 175);
 
-        private final List<Value> values = List.of(elixirDamage);
+        private List<Value> values = List.of(elixirDamage);
 
         @Override
         public List<Value> getValues() {
@@ -220,6 +220,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.elixirDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("elixirDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(elixirDamage);
         }
 
     }
@@ -227,7 +228,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable elixirHealing = new Value.RangedValueCritable(551, 648, 25, 175);
-        private final List<Value> values = List.of(elixirHealing, elixirHealing);
+        private List<Value> values = List.of(elixirHealing, elixirHealing);
         private Value.RangedValueCritable elixirDOTHealing = new Value.RangedValueCritable(158, 204, 25, 175);
 
         @Override
@@ -245,6 +246,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                     builder.getAppendedFieldNameHealing("elixirDOTHealing"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(elixirHealing, elixirHealing);
         }
 
         public Value.RangedValueCritable getElixirHealing() {

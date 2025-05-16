@@ -368,7 +368,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
 
         private Value.SetValue orbHealing = new Value.SetValue(225);
 
-        private final List<Value> values = List.of(orbHealing);
+        private List<Value> values = List.of(orbHealing);
 
         @Override
         public List<Value> getValues() {
@@ -378,6 +378,7 @@ public class OrbsOfLife extends AbstractAbility implements BlueAbilityIcon, Dura
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.orbHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("orbHealing"), Value.SetValue.class);
+            this.values = List.of(orbHealing);
         }
 
         public Value.SetValue getOrbHealing() {

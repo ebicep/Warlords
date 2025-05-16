@@ -235,7 +235,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
 
         private Value.RangedValueCritable boltDamage = new Value.RangedValueCritable(231, 299, 20, 175);
 
-        private final List<Value> values = List.of(boltDamage);
+        private List<Value> values = List.of(boltDamage);
 
         @Override
         public List<Value> getValues() {
@@ -245,6 +245,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.boltDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("boltDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(boltDamage);
         }
 
         public Value.RangedValueCritable getBoltDamage() {
@@ -257,7 +258,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
 
         private Value.RangedValueCritable boltHealing = new Value.RangedValueCritable(315, 434, 20, 175);
 
-        private final List<Value> values = List.of(boltHealing);
+        private List<Value> values = List.of(boltHealing);
 
         @Override
         public List<Value> getValues() {
@@ -267,6 +268,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.boltHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("boltHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(boltHealing);
         }
 
         public Value.RangedValueCritable getBoltHealing() {

@@ -214,7 +214,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
 
         private Value.RangedValueCritable linkDamage = new Value.RangedValueCritable(276, 372, 20, 175);
 
-        private final List<Value> values = List.of(linkDamage);
+        private List<Value> values = List.of(linkDamage);
 
         @Override
         public List<Value> getValues() {
@@ -224,6 +224,7 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.linkDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("linkDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(linkDamage);
         }
 
         public Value.RangedValueCritable getLinkDamage() {

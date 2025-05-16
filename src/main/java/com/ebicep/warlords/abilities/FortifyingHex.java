@@ -384,7 +384,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
 
         private Value.RangedValueCritable hexDamage = new Value.RangedValueCritable(271, 365, 20, 175);
 
-        private final List<Value> values = List.of(hexDamage);
+        private List<Value> values = List.of(hexDamage);
 
         @Override
         public List<Value> getValues() {
@@ -394,6 +394,7 @@ public class FortifyingHex extends AbstractPiercingProjectile<FortifyingHex, For
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(hexDamage);
         }
 
         public Value.RangedValueCritable getHexDamage() {

@@ -297,7 +297,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
 
         private Value.RangedValueCritable totemHealing = new Value.RangedValueCritable(621, 728, 25, 175);
 
-        private final List<Value> values = List.of(totemHealing);
+        private List<Value> values = List.of(totemHealing);
 
         @Override
         public List<Value> getValues() {
@@ -307,6 +307,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.totemHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("totemHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(totemHealing);
         }
 
         public Value.RangedValueCritable getTotemHealing() {

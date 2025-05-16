@@ -150,7 +150,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
 
         private Value.RangedValueCritable curseDamage = new Value.RangedValueCritable(408, 552, 20, 175);
 
-        private final List<Value> values = List.of(curseDamage);
+        private List<Value> values = List.of(curseDamage);
 
         @Override
         public List<Value> getValues() {
@@ -160,6 +160,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.curseDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("curseDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(curseDamage);
         }
 
         public Value.RangedValueCritable getCurseDamage() {

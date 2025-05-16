@@ -449,7 +449,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
         private Value.RangedValueCritable hammerDamage = new Value.RangedValueCritable(178, 244, 20, 175);
 
-        private final List<Value> values = List.of(hammerDamage);
+        private List<Value> values = List.of(hammerDamage);
 
         @Override
         public List<Value> getValues() {
@@ -459,6 +459,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.hammerDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hammerDamage"), Value.RangedValueCritable.class);
+            this.values = List.of(hammerDamage);
         }
 
         public Value.RangedValueCritable getHammerDamage() {
@@ -471,7 +472,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
         private Value.RangedValueCritable hammerHealing = new Value.RangedValueCritable(178, 244, 20, 175);
 
-        private final List<Value> values = List.of(hammerHealing);
+        private List<Value> values = List.of(hammerHealing);
 
         @Override
         public List<Value> getValues() {
@@ -484,6 +485,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                     builder.getAppendedFieldNameHealing("hammerHealing"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(hammerHealing);
         }
 
         public Value.RangedValueCritable getHammerHealing() {

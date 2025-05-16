@@ -169,7 +169,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
 
         private Value.RangedValue unrivalledRadianceHealing = new Value.RangedValue(150, 350);
 
-        private final List<Value> values = List.of(radianceHealing, unrivalledRadianceHealing);
+        private List<Value> values = List.of(radianceHealing, unrivalledRadianceHealing);
 
         @Override
         public List<Value> getValues() {
@@ -186,6 +186,7 @@ public class HolyRadianceProtector extends AbstractHolyRadiance implements Heals
                     builder.getAppendedFieldNameHealing("unrivalledRadianceHealing"),
                     Value.RangedValue.class
             );
+            this.values = List.of(radianceHealing, unrivalledRadianceHealing);
         }
 
         public Value.RangedValueCritable getRadianceHealing() {

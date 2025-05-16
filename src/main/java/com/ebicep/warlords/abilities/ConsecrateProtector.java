@@ -119,7 +119,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
 
         private Value.RangedValueCritable consecrateDamage = new Value.RangedValueCritable(96, 130, 20, 175);
 
-        private final List<Value> values = List.of(consecrateDamage);
+        private List<Value> values = List.of(consecrateDamage);
 
         @Override
         public List<Value> getValues() {
@@ -132,6 +132,7 @@ public class ConsecrateProtector extends AbstractConsecrate implements CanReduce
                     builder.getAppendedFieldNameDamage("consecrateDamage"),
                     Value.RangedValueCritable.class
             );
+            this.values = List.of(consecrateDamage);
         }
 
     }

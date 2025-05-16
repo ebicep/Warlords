@@ -318,7 +318,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
 
         private Value.RangedValue hexDOTDamage = new Value.RangedValue(25, 35);
 
-        private final List<Value> values = List.of(hexDamage, hexDOTDamage);
+        private List<Value> values = List.of(hexDamage, hexDOTDamage);
 
         @Override
         public List<Value> getValues() {
@@ -329,6 +329,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         public void init(AbstractAbilityBuilder builder) {
             this.hexDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDamage"), Value.RangedValueCritable.class);
             this.hexDOTDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("hexDOTDamage"), Value.RangedValue.class);
+            this.values = List.of(hexDamage, hexDOTDamage);
         }
 
         public Value.RangedValueCritable getHexDamage() {

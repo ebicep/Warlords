@@ -189,7 +189,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
 
         private Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);
 
-        private final List<Value> values = List.of(chainHealing);
+        private List<Value> values = List.of(chainHealing);
 
         @Override
         public List<Value> getValues() {
@@ -199,6 +199,7 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.chainHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameHealing("chainHealing"), Value.RangedValueCritable.class);
+            this.values = List.of(chainHealing);
         }
 
         public Value.RangedValueCritable getChainHealing() {

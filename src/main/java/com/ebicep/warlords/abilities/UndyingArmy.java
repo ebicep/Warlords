@@ -408,7 +408,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
         private Value.RangedValue relentlessArmy = new Value.RangedValue(458, 612);
 
-        private final List<Value> values = List.of(relentlessArmy);
+        private List<Value> values = List.of(relentlessArmy);
 
         @Override
         public List<Value> getValues() {
@@ -418,6 +418,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.relentlessArmy = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldNameDamage("relentlessArmy"), Value.RangedValue.class);
+            this.values = List.of(relentlessArmy);
         }
 
     }
