@@ -115,7 +115,9 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                 if (pveMasterUpgrade2) {
                     List<Soulbinding> soulbindings = wp.getAbilitiesMatching(Soulbinding.class);
                     if (soulbindings.isEmpty()) {
-                        soulbindings.add(new Soulbinding());
+                        Soulbinding soulbinding = new Soulbinding();
+                        soulbinding.init(soulbinding.getBuilder());
+                        soulbindings.add(soulbinding);
                     }
                     List<Soulbinding.SoulbindingData> soulbindingData = soulbindings.stream().map(soulbinding -> soulbinding.activeSoulbinding(wp)).toList();
                     float damageReduction = 1;
