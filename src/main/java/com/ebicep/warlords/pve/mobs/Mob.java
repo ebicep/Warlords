@@ -488,11 +488,11 @@ public enum Mob {
             Utils.applyColorTo(Material.LEATHER_BOOTS, 30, 30, 30),
             Weapons.TENDERIZER.getItem()
     )),
-    MITHRA_EGG_SAC(EntityType.ZOMBIE, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.EGG_SAC),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+    MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EggSac.class, EggSac::new, EggSac::new, new Utils.SimpleEntityEquipment(
+            EggSac.EGG_SAC_ITEM,
+            null,
+            null,
+            null,
             null
     )),
     ARACHNO_VENERATUS(EntityType.SPIDER, ArachnoVeneratus.class, ArachnoVeneratus::new, ArachnoVeneratus::new, null),
@@ -617,10 +617,10 @@ public enum Mob {
             null
     )),
     EVENT_MITHRA_EGG_SAC(EntityType.ARMOR_STAND, EventEggSac.class, EventEggSac::new, EventEggSac::new, new Utils.SimpleEntityEquipment(
-            SkullUtils.getSkullFrom(SkullID.EGG_SAC),
-            Utils.applyColorTo(Material.LEATHER_CHESTPLATE, 255, 255, 255),
-            Utils.applyColorTo(Material.LEATHER_LEGGINGS, 255, 255, 255),
-            Utils.applyColorTo(Material.LEATHER_BOOTS, 255, 255, 255),
+            EggSac.EGG_SAC_ITEM,
+            null,
+            null,
+            null,
             null
     )),
     EVENT_ILLUSION_CORE(EntityType.ARMOR_STAND, EventIllusionCore.class, EventIllusionCore::new, EventIllusionCore::new, new Utils.SimpleEntityEquipment(
@@ -862,7 +862,6 @@ public enum Mob {
     )),
 
     ;
-
 
     public static final Mob[] VALUES = values();
     public static final Mob[] BASIC = {

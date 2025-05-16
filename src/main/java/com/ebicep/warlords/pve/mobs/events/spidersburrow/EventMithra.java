@@ -219,9 +219,7 @@ public class EventMithra extends AbstractMob implements BossMob {
                         WarlordsNPC eggSacWarlordsNPC = eggSac.getWarlordsNPC();
                         eggSacWarlordsNPC.die(eggSacWarlordsNPC);
                         Location location = eggSacWarlordsNPC.getLocation();
-                        if (EventEggSac.ARMOR_STAND) {
-                            location.add(0, 1.31, 0);
-                        }
+                        location.add(0, 1.31, 0);
                         for (int i = 0; i < 3; i++) {
                             option.spawnNewMob(new EventPoisonousSpider(location));
                         }

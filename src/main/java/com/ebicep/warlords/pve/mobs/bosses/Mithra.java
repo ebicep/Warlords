@@ -15,7 +15,6 @@ import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
 import com.ebicep.warlords.pve.mobs.abilities.SpawnMobAbility;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.ArachnoVeneratus;
 import com.ebicep.warlords.pve.mobs.bosses.bossminions.EggSac;
-import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.pve.mobs.tiers.BossMob;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -288,9 +287,7 @@ public class Mithra extends AbstractMob implements BossMob {
                         WarlordsNPC eggSacWarlordsNPC = eggSac.getWarlordsNPC();
                         eggSacWarlordsNPC.die(eggSacWarlordsNPC);
                         Location location = eggSacWarlordsNPC.getLocation();
-                        if (EventEggSac.ARMOR_STAND) {
-                            location.add(0, 1.31, 0);
-                        }
+                        location.add(0, 1.31, 0);
                         for (int i = 0; i < pveOption.playerCount() * 1.5; i++) {
                             Location spawnLocation = location.clone().add(ThreadLocalRandom.current().nextDouble(), 0, ThreadLocalRandom.current().nextDouble());
                             pveOption.spawnNewMob(new ArachnoVeneratus(spawnLocation));
