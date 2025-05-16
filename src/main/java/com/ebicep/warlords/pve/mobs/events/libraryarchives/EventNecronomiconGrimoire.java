@@ -164,7 +164,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
-        if (laser != null) {
+        if (laser != null && laser.isStarted()) {
             laser.stop();
         }
     }
