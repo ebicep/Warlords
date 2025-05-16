@@ -3,9 +3,13 @@ package com.ebicep.warlords.pve.mobs.events.libraryarchives;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -24,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 
 public class EventNecronomiconGrimoire extends AbstractMob implements BossMinionMob {
 
@@ -79,7 +84,26 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
         Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.ENTITY_WITHER_SPAWN, 500, 1.3f);
-        targetPlayer(option);
+        targetPlayer(option).ifPresent(this::setTarget);
+        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Damage Reduction",
+                null,
+                EventNecronomiconGrimoire.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {
+                },
+                false
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                if (currentDamageValue > warlordsNPC.getMaxHealth() * .1) {
+                    return currentDamageValue * .3f;
+                }
+                return currentDamageValue;
+            }
+        });
     }
 
     @Override
@@ -92,6 +116,12 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         if (targetWarlordsEntity == null) {
             return;
         }
+        targetPlayer(option).ifPresent(warlordsPlayer -> {
+            if (target != targetWarlordsEntity) {
+                setTarget(targetWarlordsEntity);
+                targetWarlordsEntity = warlordsPlayer;
+            }
+        });
         if (smiteTickCooldown > 0) {
             smiteTickCooldown--;
             if (laser == null) {
@@ -154,7 +184,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                 .damage()
                 .cause("Smite")
                 .source(warlordsNPC)
-                .value(targetWarlordsEntity.getMaxHealth() * .9f)
+                .value(targetWarlordsEntity.getMaxHealth() + 1)
                 .flags(InstanceFlags.TRUE_DAMAGE)
         ).ifPresent(event -> {
             if (!event.isDead()) {
@@ -168,7 +198,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                     .value(2000)
             );
             smiteTickCooldown = 5 * 20;
-            targetPlayer(pveOption);
+            targetPlayer(pveOption).ifPresent(this::setTarget);
         });
         EffectUtils.playParticleLinkAnimation(targetWarlordsEntity.getLocation(), warlordsNPC.getLocation(), 255, 0, 0, 2, 2);
         EffectUtils.strikeLightning(targetWarlordsEntity.getLocation(), false);
@@ -177,8 +207,8 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
         }
     }
 
-    private void targetPlayer(PveOption option) {
-        option.getGame()
+    private Optional<WarlordsPlayer> targetPlayer(PveOption option) {
+        return option.getGame()
               .warlordsPlayers()
               .filter(WarlordsEntity::isAlive)
               .min(Comparator.comparing(warlordsPlayer -> {
@@ -188,8 +218,7 @@ public class EventNecronomiconGrimoire extends AbstractMob implements BossMinion
                           SpecType.TANK, 2
                   );
                   return orderMap.get(warlordsPlayer.getSpecClass().specType);
-              }))
-              .ifPresent(this::setTarget);
+              }));
     }
 
 }
