@@ -236,9 +236,7 @@ public class GrimoiresGraveyard extends GameMap {
                             if (ticksElapsed % 400 == 0) {
                                 List<Location> spawnLocations = new ArrayList<>(necronomiconSpawnLocations);
                                 Collections.shuffle(spawnLocations);
-                                for (int i = 0; i < pveOption.playerCount() - 2; i++) {
-                                    pveOption.spawnNewMob(new EventNecronomiconGrimoire(spawnLocations.removeFirst()));
-                                }
+                                pveOption.spawnNewMob(new EventNecronomiconGrimoire(spawnLocations.removeFirst()));
                             }
                             if (ticksElapsed % 300 == 0) {
                                 Mob minionGrimoire = switch (ThreadLocalRandom.current().nextInt(4)) {
