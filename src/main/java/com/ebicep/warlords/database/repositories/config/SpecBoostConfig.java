@@ -1,24 +1,25 @@
 package com.ebicep.warlords.database.repositories.config;
 
 import com.ebicep.warlords.abilities.internal.Value;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import org.bson.Document;
 
 import java.util.List;
 
-public class AbilitiesConfig implements ConfigManager.Config {
+public class SpecBoostConfig implements ConfigManager.Config {
 
-    public Document abilitiesConfig;
-    // TODO cache
+    public Document specBoostConfig;
 
     @Override
     public String getName() {
-        return "ABILITIES";
+        return "SPEC_BOOSTS";
     }
 
     @Override
     public void load(Document doc) {
-        this.abilitiesConfig = doc;
+        this.specBoostConfig = doc;
+        SpecBoostManager.init();
     }
 
     public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType) {
@@ -26,7 +27,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
     }
 
     public <T> T getValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue) {
-        if (abilitiesConfig == null) {
+        if (specBoostConfig == null) {
             ChatUtils.MessageType.CONFIG.sendErrorMessage("Config document not set");
             return defaultValue;
         }
@@ -96,7 +97,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
      */
     private <T> Result<T> getValue(String namespace, String key, Class<T> fieldType) {
         // Get the namespace document
-        Document namespaceDoc = abilitiesConfig.get(namespace, Document.class);
+        Document namespaceDoc = specBoostConfig.get(namespace, Document.class);
         if (namespaceDoc == null) {
             return new Result<>(ValueResult.INVALID_NAMESPACE);
         }
@@ -128,7 +129,7 @@ public class AbilitiesConfig implements ConfigManager.Config {
 
         // If the value is a document and we're expecting a complex type, build the object
         if (value instanceof Document && !isSimpleType(fieldType)) {
-            return buildValueObject(fieldType, (Document) value);
+            return new Result<>(ValueResult.INVALID_OBJECT);
         }
 
         return new Result<>(cast(value, fieldType), ValueResult.SUCCESS);
@@ -142,35 +143,6 @@ public class AbilitiesConfig implements ConfigManager.Config {
                 type.equals(Double.class) ||
                 type.equals(Boolean.class) ||
                 type.equals(Long.class);
-    }
-
-    private <T> Result<T> buildValueObject(Class<T> type, Document doc) {
-        try {
-            T value = null;
-            if (type.equals(Value.RangedValue.class)) {
-                value = type.getConstructor(float.class, float.class)
-                            .newInstance(
-                                    getFloatValue(doc.get("min")),
-                                    getFloatValue(doc.get("max"))
-                            );
-            } else if (type.equals(Value.RangedValueCritable.class)) {
-                value = type.getConstructor(float.class, float.class, float.class, float.class)
-                            .newInstance(
-                                    getFloatValue(doc.get("min")),
-                                    getFloatValue(doc.get("max")),
-                                    getFloatValue(doc.get("critChance")),
-                                    getFloatValue(doc.get("critMultiplier"))
-                            );
-            } else if (type.equals(Value.SetValue.class)) {
-                value = type.getConstructor(float.class)
-                            .newInstance(getFloatValue(doc.get("value")));
-            } else {
-                return new Result<>(ValueResult.INVALID_OBJECT);
-            }
-            return new Result<>(value, ValueResult.SUCCESS);
-        } catch (Exception e) {
-            return new Result<>(ValueResult.INVALID_OBJECT);
-        }
     }
 
     @SuppressWarnings("unchecked")

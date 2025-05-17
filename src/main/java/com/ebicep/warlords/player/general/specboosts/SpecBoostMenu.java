@@ -20,22 +20,29 @@ public class SpecBoostMenu {
             Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
 
             Menu menu = new Menu("Spec Boosts", 9 * 5);
-            List<SpecBoost> specBoosts = SpecBoost.getSpecBoosts(selectedSpec);
+            List<SpecBoostManager.SpecBoost> specBoosts = SpecBoostManager.getSpecBoosts(selectedSpec);
             for (int i = 0; i < specBoosts.size(); i++) {
-                SpecBoost specBoost = specBoosts.get(i);
+                SpecBoostManager.SpecBoost specBoost = specBoosts.get(i);
+                boolean selected = selectedBoosts.computeIfAbsent(selectedSpec, k -> 0) == i;
                 int finalI = i;
+                ItemBuilder itemBuilder = new ItemBuilder(selectedSpec.specType.itemStack)
+                        .name(specBoost.getName())
+                        .lore(WordWrap.wrap(specBoost.getDescription(), 150))
+                        .glow(selected);
+                if (selected) {
+                    itemBuilder.addLore(
+                            Component.empty(),
+                            Component.text("ACTIVE", NamedTextColor.GREEN)
+                    );
+                }
                 menu.setItem(i + 1, 1,
-                        new ItemBuilder(selectedSpec.specType.itemStack)
-                                .name(Component.text(specBoost.getName(), NamedTextColor.GREEN))
-                                .lore(WordWrap.wrap(specBoost.getDescription(), 150))
-                                .get(),
+                        itemBuilder.get(),
                         (m, e) -> {
-                            if (selectedBoosts.computeIfAbsent(selectedSpec, k -> 0) == finalI) {
+                            if (selected) {
                                 return;
                             }
                             selectedBoosts.put(selectedSpec, finalI);
                             player.sendMessage(Component.text("You have selected the " + specBoost.getName(), NamedTextColor.GREEN)
-                                                        .append(Component.text(specBoost.getName(), NamedTextColor.AQUA))
                                                         .append(Component.text(" spec boost!", NamedTextColor.GRAY))
                             );
                         }

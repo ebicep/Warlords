@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands.misc;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostMenu;
 import com.ebicep.warlords.pve.items.ItemTier;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.mongodb.client.MongoCollection;
@@ -115,7 +116,7 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
-
+            SpecBoostMenu.open(player);
 //            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
 //            System.out.println(strikeDamage);
 //            Document document = new Document();
