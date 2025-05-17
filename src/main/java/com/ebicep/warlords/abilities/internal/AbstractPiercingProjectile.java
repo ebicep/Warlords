@@ -485,6 +485,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         private final WarlordsEntity shooter;
         private int ticksLived = 0;
         private double blocksTravelled = 0;
+        private final UUID uuid = UUID.randomUUID();
 
         private InternalProjectile(WarlordsEntity shooter, Location startingLocation) {
             this.currentLocation = modifyProjectileStartingLocation(shooter, startingLocation);
@@ -614,6 +615,10 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
         public double getBlocksTravelled() {
             return blocksTravelled;
+        }
+
+        public UUID getUuid() {
+            return uuid;
         }
 
     }

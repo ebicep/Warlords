@@ -20,9 +20,9 @@ public class SpecBoostMenu {
                     Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
 
                     Menu menu = new Menu("Spec Boosts", 9 * 5);
-                    List<SpecBoostManager.SpecBoost> specBoosts = SpecBoostManager.getSpecBoosts(selectedSpec);
+            List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(selectedSpec);
                     for (int i = 0; i < specBoosts.size(); i++) {
-                        SpecBoostManager.SpecBoost specBoost = specBoosts.get(i);
+                        SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
                         boolean selected = selectedBoosts.computeIfAbsent(selectedSpec, k -> 0) == i;
                         int finalI = i;
                         ItemBuilder itemBuilder = new ItemBuilder(selectedSpec.specType.itemStack)

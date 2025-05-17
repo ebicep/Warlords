@@ -82,8 +82,16 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         Utils.playGlobalSound(wp.getLocation(), "mage.waterbreath.activation", 2, 1);
         wp.getWorld().spawnParticle(Particle.HEART, wp.getLocation().add(0, 0.7, 0), 2, 0.6, 0.6, 0.6, 1, null, true);
         Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
-        EffectUtils.playSpiralAnimation(wp, playerLoc, maxAnimationEffects, maxAnimationTime, (center, animationTimer) -> {
-                }, Particle.DRIPPING_WATER, Particle.ENCHANT, Particle.HAPPY_VILLAGER
+        EffectUtils.playSpiralAnimation(
+                wp,
+                playerLoc,
+                maxAnimationEffects,
+                maxAnimationTime,
+                (center, animationTimer) -> {
+                },
+                Particle.DRIPPING_WATER,
+                Particle.ENCHANT,
+                Particle.HAPPY_VILLAGER
         );
         int previousDebuffsRemoved = stats.debuffsRemoved;
         stats.debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();

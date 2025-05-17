@@ -3,9 +3,7 @@ package com.ebicep.warlords.player.general.specboosts;
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.specboosts.boosts.ArcaneShatter;
-import com.ebicep.warlords.player.general.specboosts.boosts.DimensionalWarp;
-import com.ebicep.warlords.player.general.specboosts.boosts.Meteor;
+import com.ebicep.warlords.player.general.specboosts.boosts.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -16,13 +14,18 @@ import java.util.*;
 
 public class SpecBoostManager {
 
-    private static final Map<Specializations, List<SpecBoost>> SPEC_BOOSTS = new HashMap<>();
+    public static final SpecBoost<Meteor> METEOR = new Meteor();
+    public static final SpecBoost<ArcaneShatter> ARCANE_SHATTER = new ArcaneShatter();
+    public static final SpecBoost<DimensionalWarp> DIMENSIONAL_WARP = new DimensionalWarp();
+    public static final SpecBoost<BurstChain> BURST_CHAIN = new BurstChain();
+    public static final SpecBoost<FlameBreath> FLAME_BREATH = new FlameBreath();
+    private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
 
     static {
-        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(new Meteor(), new ArcaneShatter(), new DimensionalWarp()));
+        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, ARCANE_SHATTER, DIMENSIONAL_WARP, BURST_CHAIN, FLAME_BREATH));
     }
 
-    public static List<SpecBoost> getSpecBoosts(Specializations specializations) {
+    public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
         return SPEC_BOOSTS.getOrDefault(specializations, new ArrayList<>());
     }
 
@@ -30,7 +33,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.values().stream().flatMap(List::stream).forEach(SpecBoost::init);
     }
 
-    public interface SpecBoost {
+    public interface SpecBoost<S extends SpecBoost<S>> {
 
         List<String> NAMESPACES = List.of("pvp");
 
@@ -83,7 +86,7 @@ public class SpecBoostManager {
                         String type = customValue.substring(0, customValue.indexOf(":"));
                         String value = customValue.substring(customValue.indexOf(":") + 1);
                         // {{type:value;prefix}}
-                        abilityDescriptionBuilder.autoFormat(type, prefix, value);
+                        abilityDescriptionBuilder.autoFormat(type, prefix, value.isEmpty() ? variables.poll() : value);
                     } else {
                         abilityDescriptionBuilder.autoFormat(customValue, prefix, variables.poll());
                     }
@@ -97,6 +100,8 @@ public class SpecBoostManager {
         List<Object> getVariables();
 
         Boost create();
+
+        S get();
 
     }
 

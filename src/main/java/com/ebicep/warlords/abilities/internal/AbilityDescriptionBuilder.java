@@ -68,9 +68,7 @@ public class AbilityDescriptionBuilder {
     }
 
     public AbilityDescriptionBuilder durationSeconds(int seconds) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
-        parentBuilder.text(seconds == 1 ? " second" : " seconds");
-        return this;
+        return durationSeconds(seconds, "");
     }
 
     public AbilityDescriptionBuilder percent(int percent, TextColor color) {
@@ -88,15 +86,13 @@ public class AbilityDescriptionBuilder {
         return this;
     }
 
-    public AbilityDescriptionBuilder blocks(FloatModifiable blocks) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks.getCalculatedValue()), NamedTextColor.AQUA);
-        parentBuilder.text(blocks.getCalculatedValue() == 1 ? " block" : " blocks");
-        return this;
-    }
-
-    public AbilityDescriptionBuilder blocks(double blocks) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
-        parentBuilder.text(blocks == 1 ? " block" : " blocks");
+    public AbilityDescriptionBuilder durationSeconds(float seconds, String prefix) {
+        if (prefix.isEmpty()) {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
+            parentBuilder.text(seconds == 1 ? " second" : " seconds");
+        } else {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(seconds) + prefix, NamedTextColor.GOLD);
+        }
         return this;
     }
 
@@ -154,6 +150,45 @@ public class AbilityDescriptionBuilder {
         return range(range, "Has an initial cast range of ");
     }
 
+    public AbilityDescriptionBuilder blocks(FloatModifiable blocks) {
+        return blocks(blocks.getCalculatedValue(), "");
+    }
+
+    public AbilityDescriptionBuilder damage(Value.RangedValue rangedValue) {
+        parentBuilder.append(Damages.formatDamage(rangedValue));
+        return this;
+    }
+
+    public AbilityDescriptionBuilder damage(Value.SetValue setValue) {
+        parentBuilder.append(Damages.formatDamage(setValue));
+        return this;
+    }
+
+    public AbilityDescriptionBuilder heal(Value.RangedValue rangedValue) {
+        parentBuilder.append(Heals.formatHealing(rangedValue));
+        return this;
+    }
+
+    public AbilityDescriptionBuilder heal(Value.SetValue setValue) {
+        parentBuilder.append(Heals.formatHealing(setValue));
+        return this;
+    }
+
+    public AbilityDescriptionBuilder durationTicks(int ticks, String prefix) {
+        return durationSeconds(ticks / 20f, prefix);
+    }
+
+    public AbilityDescriptionBuilder blocks(float blocks, String prefix) {
+        if (prefix.isEmpty()) {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
+            parentBuilder.text(blocks == 1 ? " block" : " blocks");
+            return this;
+        } else {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(blocks) + prefix, NamedTextColor.AQUA);
+        }
+        return this;
+    }
+
     public void autoFormat(String formatKey, String prefix, @Nonnull Object value) {
         switch (formatKey) {
             case "damage" -> {
@@ -207,7 +242,14 @@ public class AbilityDescriptionBuilder {
             default -> {
                 NamedTextColor color = NamedTextColor.NAMES.value(formatKey);
                 if (color != null) {
-                    parentBuilder.text(value.toString(), color);
+                    // check if value is int or float then format
+                    if (value instanceof Integer intValue) {
+                        parentBuilder.text(NumberFormat.formatOptionalTenths(intValue) + prefix, color);
+                    } else if (value instanceof Float floatValue) {
+                        parentBuilder.text(NumberFormat.formatOptionalTenths(floatValue) + prefix, color);
+                    } else {
+                        parentBuilder.text(value.toString(), color);
+                    }
                 } else {
                     // check if type is hex color then covert to text color
                     try {
@@ -221,57 +263,34 @@ public class AbilityDescriptionBuilder {
         }
     }
 
-    public AbilityDescriptionBuilder damage(Value.RangedValue rangedValue) {
-        parentBuilder.append(Damages.formatDamage(rangedValue));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder damage(Value.SetValue setValue) {
-        parentBuilder.append(Damages.formatDamage(setValue));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder heal(Value.RangedValue rangedValue) {
-        parentBuilder.append(Heals.formatHealing(rangedValue));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder heal(Value.SetValue setValue) {
-        parentBuilder.append(Heals.formatHealing(setValue));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder durationTicks(int ticks, String prefix) {
-        return durationSeconds(ticks / 20f, prefix);
-    }
-
-    public AbilityDescriptionBuilder durationSeconds(float seconds, String prefix) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
-        parentBuilder.text((seconds == 1 ? " second" : " seconds") + prefix);
-        return this;
-    }
-
     public AbilityDescriptionBuilder energy(int energy, String prefix) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
-        parentBuilder.text(" energy" + prefix);
+        if (prefix.isEmpty()) {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
+            parentBuilder.text(" energy");
+        } else {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(energy) + prefix, NamedTextColor.YELLOW);
+        }
         return this;
     }
 
     public AbilityDescriptionBuilder energy(float energy, String prefix) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
-        parentBuilder.text(" energy" + prefix);
+        if (prefix.isEmpty()) {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
+            parentBuilder.text(" energy");
+        } else {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(energy) + prefix, NamedTextColor.YELLOW);
+        }
         return this;
     }
 
     public AbilityDescriptionBuilder blocks(int blocks, String prefix) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
-        parentBuilder.text(blocks == 1 ? " block" : " blocks" + prefix);
-        return this;
-    }
-
-    public AbilityDescriptionBuilder blocks(float blocks, String prefix) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
-        parentBuilder.text(blocks == 1 ? " block" : " blocks" + prefix);
+        if (prefix.isEmpty()) {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
+            parentBuilder.text(blocks == 1 ? " block" : " blocks");
+            return this;
+        } else {
+            parentBuilder.text(NumberFormat.formatOptionalTenths(blocks) + prefix, NamedTextColor.AQUA);
+        }
         return this;
     }
 

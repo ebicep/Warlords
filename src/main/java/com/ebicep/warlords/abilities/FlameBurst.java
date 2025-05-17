@@ -4,6 +4,8 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
+import com.ebicep.warlords.player.general.specboosts.boosts.FlameBreath;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -34,6 +36,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
     private FloatModifiable splash = new FloatModifiable(5.125f);
     private double acceleration = 1.0275;
     private double projectileWidth = 0.24D;
+    private boolean isBreath = false;
 
     public FlameBurst() {
         super(AbstractAbilityBuilder.create("flameBurst").pvp());
@@ -49,6 +52,49 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         this.splash = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("splash"), float.class));
         this.acceleration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("acceleration"), float.class);
         this.projectileWidth = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileWidth"), float.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        if (!isBreath) {
+            return super.onActivateInternal(wp);
+        }
+        FlameBreath flameBreath = SpecBoostManager.FLAME_BREATH.get();
+        int maxAnimationTime = flameBreath.getMaxAnimationTime();
+        int maxAnimationEffects = flameBreath.getMaxAnimationEffects();
+        float hitbox = flameBreath.getHitbox();
+        double velocity = flameBreath.getVelocity();
+        Utils.playGlobalSound(wp.getLocation(), "mage.fireball.activation", 2, .6f);
+        Location playerLoc = new LocationBuilder(wp.getLocation()).pitch(0).add(0, 1.7, 0);
+        EffectUtils.playSpiralAnimation(
+                wp,
+                playerLoc,
+                maxAnimationEffects,
+                maxAnimationTime,
+                (center, animationTimer) -> {
+                },
+                Particle.DRIPPING_LAVA,
+                Particle.FLAME
+        );
+        Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
+        Vector viewDirection = playerLoc.getDirection();
+        for (WarlordsEntity breathTarget : PlayerFilter.entitiesAroundRectangle(wp, hitbox - 2.5, hitbox, hitbox - 2.5).aliveEnemiesOf(wp)) {
+            Vector direction = breathTarget.getLocation().subtract(playerEyeLoc).toVector().normalize();
+            if (!(viewDirection.dot(direction) > .68)) {
+                continue;
+            }
+            stats.addPlayersHit();
+            breathTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .cause("Flame Breath")
+                    .source(wp)
+                    .value(damageValues.flameBurstDamage)
+            );
+            final Location loc = breathTarget.getLocation();
+            final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-velocity).setY(0.2);
+            breathTarget.setVelocity(name, v, false);
+        }
+        return true;
     }
 
     @Override
@@ -118,25 +164,31 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
         }
         if (pveMasterUpgrade) {
             int damageIncrease = (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.685);
-            nearEntity.addInstance(InstanceBuilder.damage()
-                                                  .ability(this)
-                                                  .source(shooter)
-                                                  .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
-                                                  .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
-                                                  .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
-                                                  .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease));
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() + damageIncrease)
+                    .max(damageValues.flameBurstDamage.getMaxValue() + damageIncrease)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + damageIncrease)
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue() + damageIncrease)
+                    .uuid(projectile.getUuid())
+            );
         } else {
             float damageBoost = 1;
             if (pveMasterUpgrade2) {
                 damageBoost += Math.min(.75f, (projectile.getHit().size() - 1) * .05f);
             }
-            nearEntity.addInstance(InstanceBuilder.damage()
-                                                  .ability(this)
-                                                  .source(shooter)
-                                                  .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
-                                                  .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
-                                                  .critChance(damageValues.flameBurstDamage.getCritChanceValue())
-                                                  .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue()));
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(shooter)
+                    .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
+                    .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue())
+                    .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue())
+                    .uuid(projectile.getUuid())
+            );
         }
     }
 
@@ -259,6 +311,14 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
 
     public void setProjectileWidth(double projectileWidth) {
         this.projectileWidth = projectileWidth;
+    }
+
+    public boolean isBreath() {
+        return isBreath;
+    }
+
+    public void setBreath(boolean breath) {
+        isBreath = breath;
     }
 
     public static class DamageValues implements Value.ValueHolder {

@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler;
 
 import java.util.List;
 
-public class ArcaneShatter implements SpecBoostManager.SpecBoost {
+public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> {
 
     private float energyPerMelee;
     private float healthIncrease;
@@ -41,6 +41,11 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost {
     @Override
     public SpecBoostManager.Boost create() {
         return new Boost();
+    }
+
+    @Override
+    public ArcaneShatter get() {
+        return this;
     }
 
     public class Boost implements SpecBoostManager.Boost {

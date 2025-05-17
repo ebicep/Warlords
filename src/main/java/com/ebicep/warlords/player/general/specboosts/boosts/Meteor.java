@@ -6,7 +6,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
 import java.util.List;
 
-public class Meteor implements SpecBoostManager.SpecBoost {
+public class Meteor implements SpecBoostManager.SpecBoost<Meteor> {
 
     private float damageIncrease;
 
@@ -28,6 +28,11 @@ public class Meteor implements SpecBoostManager.SpecBoost {
     @Override
     public SpecBoostManager.Boost create() {
         return new Boost();
+    }
+
+    @Override
+    public Meteor get() {
+        return this;
     }
 
     public class Boost implements SpecBoostManager.Boost {

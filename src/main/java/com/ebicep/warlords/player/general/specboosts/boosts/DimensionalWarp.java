@@ -15,7 +15,7 @@ import org.bukkit.event.EventHandler;
 
 import java.util.List;
 
-public class DimensionalWarp implements SpecBoostManager.SpecBoost {
+public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWarp> {
 
     private float healthRestorePercent;
     private int ticks;
@@ -48,6 +48,11 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost {
     @Override
     public SpecBoostManager.Boost create() {
         return new Boost();
+    }
+
+    @Override
+    public DimensionalWarp get() {
+        return this;
     }
 
     public class Boost implements SpecBoostManager.Boost {
