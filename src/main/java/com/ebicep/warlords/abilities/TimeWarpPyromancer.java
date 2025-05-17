@@ -134,7 +134,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
 
             @Override
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade2) {
+                if (pveMasterUpgrade) {
                     return currentDamageValue * convertToMultiplicationDecimal(wp.getBlocksTravelled() - startingBlocksTravelled);
                 }
                 return currentDamageValue;
