@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -35,15 +37,27 @@ public class ItemBuilder {
         if (item.getType() == Material.AIR) {
             return;
         }
+        removeAllAttributes();
         meta().addItemFlags(
                 ItemFlag.HIDE_ENCHANTS,
                 ItemFlag.HIDE_ATTRIBUTES,
                 ItemFlag.HIDE_UNBREAKABLE,
                 ItemFlag.HIDE_DESTROYS,
                 ItemFlag.HIDE_PLACED_ON,
-                ItemFlag.HIDE_ITEM_SPECIFICS,
+                ItemFlag.HIDE_ADDITIONAL_TOOLTIP,
                 ItemFlag.HIDE_DYE,
-                ItemFlag.HIDE_ARMOR_TRIM
+                ItemFlag.HIDE_ARMOR_TRIM,
+                ItemFlag.HIDE_STORED_ENCHANTS
+        );
+    }
+
+    private void removeAllAttributes() {
+        meta().setAttributeModifiers(null);
+        meta().addAttributeModifier(Attribute.LUCK, new AttributeModifier(
+                        new NamespacedKey(Warlords.getInstance(), "dummy"),
+                        0,
+                        AttributeModifier.Operation.ADD_NUMBER
+                )
         );
     }
 
@@ -194,4 +208,5 @@ public class ItemBuilder {
         }
         return this.item;
     }
+
 }

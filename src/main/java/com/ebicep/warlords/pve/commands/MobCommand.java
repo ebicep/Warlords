@@ -15,7 +15,6 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.WarlordsPlayerDisguised;
 import com.ebicep.warlords.pve.mobs.*;
-import com.ebicep.warlords.pve.mobs.events.spidersburrow.EventEggSac;
 import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.warlords.ConfigUtil;
@@ -123,16 +122,6 @@ public class MobCommand extends BaseCommand {
                 ChatChannels.sendDebugMessage(player, Component.text((pveOption.isPauseMobSpawn() ? "Disabled" : "Enabled") + " mob spawning", NamedTextColor.GREEN));
                 return;
             }
-        }
-    }
-
-    @Subcommand("togglearmorstandeggsac")
-    public void toggleArmorStandEggSac(CommandIssuer issuer) {
-        EventEggSac.ARMOR_STAND = !EventEggSac.ARMOR_STAND;
-        if (EventEggSac.ARMOR_STAND) {
-            ChatChannels.sendDebugMessage(issuer, Component.text("Enabled armor stand egg sac", NamedTextColor.GREEN));
-        } else {
-            ChatChannels.sendDebugMessage(issuer, Component.text("Disabled armor stand egg sac", NamedTextColor.RED));
         }
     }
 

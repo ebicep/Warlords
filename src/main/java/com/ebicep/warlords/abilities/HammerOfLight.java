@@ -97,7 +97,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Block targetBlock = !(wp.getEntity() instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).getBlock() : Utils.getTargetBlock(wp, 25);
+        Block targetBlock = !(wp instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).add(0, -1, 0).getBlock() : Utils.getTargetBlock(wp, 25);
         if (targetBlock.getType() == Material.AIR) {
             return false;
         }
