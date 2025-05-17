@@ -30,14 +30,14 @@ public class Meteor implements SpecBoostManager.SpecBoost {
         return new Boost();
     }
 
-    public static class Boost implements SpecBoostManager.Boost {
+    public class Boost implements SpecBoostManager.Boost {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(Fireball.class).forEach(fireball ->
                     fireball.getDamageValues()
                             .getFireballDamage()
-                            .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", .2f))
+                            .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100))
             );
         }
 

@@ -24,6 +24,7 @@ import java.util.Objects;
 
 public abstract class AbstractPlayerClass {
 
+    // TODO to floatmodifiable
     protected int maxHealth;
     protected int maxEnergy;
     protected float energyPerSec;

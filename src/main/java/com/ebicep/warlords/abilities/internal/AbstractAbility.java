@@ -79,6 +79,20 @@ public abstract class AbstractAbility implements AbilityIcon {
         return input / 100f;
     }
 
+    /**
+     * @return returns the input subtracted from 100 and then divided by 100
+     */
+    public static float convertToDivisionDecimal(float input) {
+        return (100 - input) / 100f;
+    }
+
+    /**
+     * @return returns the input divided by 100 and then added on 1
+     */
+    public static float convertToMultiplicationDecimal(float input) {
+        return 1 + (input / 100f);
+    }
+
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected String name;
@@ -93,7 +107,6 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected boolean pveMasterUpgrade2 = false;
     private final AbstractAbilityBuilder builder;
     private boolean updateItem = true;
-
     private boolean initialized = false;
 
     public AbstractAbility(AbstractAbilityBuilder builder) {
@@ -110,14 +123,6 @@ public abstract class AbstractAbility implements AbilityIcon {
             init(builder);
         }
         return onActivateInternal(wp);
-    }
-
-    public AbstractAbilityBuilder getBuilder() {
-        return builder;
-    }
-
-    public void updateDescription(Player player) {
-
     }
 
     public void init(AbstractAbilityBuilder builder) {
@@ -141,14 +146,22 @@ public abstract class AbstractAbility implements AbilityIcon {
         initialized = true;
     }
 
-    public boolean isInitialized() {
-        return initialized;
-    }
-
     /**
      * @return whether the ability has to go on cooldown after activation.
      */
     protected abstract boolean onActivateInternal(@Nonnull WarlordsEntity wp);
+
+    public AbstractAbilityBuilder getBuilder() {
+        return builder;
+    }
+
+    public void updateDescription(Player player) {
+
+    }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
 
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return null;
@@ -218,20 +231,6 @@ public abstract class AbstractAbility implements AbilityIcon {
                 queueUpdateItem();
             }
         }
-    }
-
-    /**
-     * @return returns the input subtracted from 100 and then divided by 100
-     */
-    public float convertToDivisionDecimal(float input) {
-        return (100 - input) / 100f;
-    }
-
-    /**
-     * @return returns the input divided by 100 and then added on 1
-     */
-    public float convertToMultiplicationDecimal(float input) {
-        return 1 + (input / 100f);
     }
 
     public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {

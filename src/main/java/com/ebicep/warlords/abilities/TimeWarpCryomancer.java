@@ -77,7 +77,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                          .addCooldown(new RegularCooldown<>("Freezing Cold",
                                  "COLD",
                                  TimeWarpCryomancer.class,
-                                 new TimeWarpCryomancer(),
+                                 null,
                                  wp,
                                  CooldownTypes.ABILITY,
                                  cooldownManager -> {
@@ -97,7 +97,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
         RegularCooldown<TimeWarpCryomancer> timeWarpCooldown = new RegularCooldown<>(name,
                 "TIME",
                 TimeWarpCryomancer.class,
-                new TimeWarpCryomancer(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

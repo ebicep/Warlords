@@ -1,8 +1,16 @@
 package com.ebicep.warlords.player.ingame.instances.type;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface HealingInstance extends Instance {
+
+    @Nullable
+    default List<HealingInstance> getExtraHealingInstances() {
+        return null;
+    }
 
     /**
      * Calls before variables are declared - based on self cooldowns

@@ -3,6 +3,8 @@ package com.ebicep.warlords.player.general.specboosts;
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.general.specboosts.boosts.ArcaneShatter;
+import com.ebicep.warlords.player.general.specboosts.boosts.DimensionalWarp;
 import com.ebicep.warlords.player.general.specboosts.boosts.Meteor;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
@@ -17,7 +19,7 @@ public class SpecBoostManager {
     private static final Map<Specializations, List<SpecBoost>> SPEC_BOOSTS = new HashMap<>();
 
     static {
-        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(new Meteor()));
+        SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(new Meteor(), new ArcaneShatter(), new DimensionalWarp()));
     }
 
     public static List<SpecBoost> getSpecBoosts(Specializations specializations) {
@@ -35,8 +37,11 @@ public class SpecBoostManager {
         void init();
 
         default TextComponent getName() {
-            String name = getValue("name", String.class);
-            return Component.text(name, NamedTextColor.GREEN);
+            return Component.text(getStringName(), NamedTextColor.GREEN);
+        }
+
+        default String getStringName() {
+            return getValue("name", String.class);
         }
 
         default <T> T getValue(String fieldName, Class<T> clazz) {
@@ -55,22 +60,36 @@ public class SpecBoostManager {
             AbilityDescriptionBuilder abilityDescriptionBuilder = AbilityDescriptionBuilder.create("", NamedTextColor.GRAY);
             for (int i = 0; i < descriptionFormat.length(); i++) {
                 int nextCustomIndex = descriptionFormat.indexOf("{{");
-                if (nextCustomIndex != 1 && nextCustomIndex != 0 || variables.isEmpty()) {
+                if (nextCustomIndex == -1) {
+                    abilityDescriptionBuilder.text(descriptionFormat);
+                    break;
+                }
+                if (nextCustomIndex != 0 || variables.isEmpty()) {
                     String text = descriptionFormat.substring(0, nextCustomIndex - 1);
                     abilityDescriptionBuilder.text(text);
                     descriptionFormat = descriptionFormat.substring(nextCustomIndex);
                 } else {
                     int endIndex = descriptionFormat.indexOf("}}");
                     String customValue = descriptionFormat.substring(2, endIndex);
+                    int prefixIndex = customValue.indexOf(";");
+                    String prefix;
+                    if (prefixIndex == -1) {
+                        prefix = "";
+                    } else {
+                        prefix = customValue.substring(prefixIndex + 1);
+                        customValue = customValue.substring(0, prefixIndex);
+                    }
                     if (customValue.contains(":")) {
                         String type = customValue.substring(0, customValue.indexOf(":"));
                         String value = customValue.substring(customValue.indexOf(":") + 1);
-                        abilityDescriptionBuilder.autoFormat(type, value);
+                        // {{type:value;prefix}}
+                        abilityDescriptionBuilder.autoFormat(type, prefix, value);
                     } else {
-                        abilityDescriptionBuilder.autoFormat(customValue, variables.poll());
+                        abilityDescriptionBuilder.autoFormat(customValue, prefix, variables.poll());
                     }
                     descriptionFormat = descriptionFormat.substring(endIndex + 2);
                 }
+                i--;
             }
             return abilityDescriptionBuilder.build();
         }

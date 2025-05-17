@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected Consumer<CooldownManager> onRemove;
     protected Consumer<CooldownManager> onRemoveForce;
     protected boolean removeOnDeath;
+    private List<DamageInstance> extraDamageInstances = null;
+    private List<HealingInstance> extraHealingInstances = null;
     private final Listener activeListener;
 
     public AbstractCooldown(
@@ -181,6 +184,30 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
 
     public void setOnRemoveForce(Consumer<CooldownManager> onRemoveForce) {
         this.onRemoveForce = onRemoveForce;
+    }
+
+    @Override
+    public @Nullable List<DamageInstance> getExtraDamageInstances() {
+        return extraDamageInstances;
+    }
+
+    @Override
+    public @Nullable List<HealingInstance> getExtraHealingInstances() {
+        return extraHealingInstances;
+    }
+
+    public void addExtraDamageInstance(DamageInstance extraDamageInstance) {
+        if (extraDamageInstances == null) {
+            extraDamageInstances = new ArrayList<>();
+        }
+        extraDamageInstances.add(extraDamageInstance);
+    }
+
+    public void addExtraHealingInstance(HealingInstance extraHealingInstance) {
+        if (extraHealingInstances == null) {
+            extraHealingInstances = new ArrayList<>();
+        }
+        extraHealingInstances.add(extraHealingInstance);
     }
 
     public Listener getActiveListener() {

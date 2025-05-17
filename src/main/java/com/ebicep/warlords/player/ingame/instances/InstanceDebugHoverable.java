@@ -2,11 +2,15 @@ package com.ebicep.warlords.player.ingame.instances;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
+import com.ebicep.warlords.player.ingame.instances.type.HealingInstance;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+
+import java.util.List;
 
 public class InstanceDebugHoverable {
 
@@ -118,13 +122,26 @@ public class InstanceDebugHoverable {
         }
 
         public LevelBuilder value(float before, float after, AbstractCooldown<?> cooldown) {
-            ComponentBuilder builder = ComponentBuilder.create(NumberFormat.formatOptionalHundredths(after), NamedTextColor.GOLD)
-                                                       .text(" (", NamedTextColor.DARK_GRAY)
-                                                       .text(NumberFormat.formatOptionalHundredths(after / before) + "x", NamedTextColor.RED)
-                                                       .text(")", NamedTextColor.DARK_GRAY)
-                                                       .text(" (", NamedTextColor.DARK_GRAY)
-                                                       .text(cooldown.getName(), NamedTextColor.GRAY)
-                                                       .text(")", NamedTextColor.DARK_GRAY);
+            List<DamageInstance> extraDamageInstances = cooldown.getExtraDamageInstances();
+            List<HealingInstance> extraHealingInstances = cooldown.getExtraHealingInstances();
+            ComponentBuilder builder = ComponentBuilder
+                    .create(NumberFormat.formatOptionalHundredths(after), NamedTextColor.GOLD)
+                    .text(" (", NamedTextColor.DARK_GRAY)
+                    .text(NumberFormat.formatOptionalHundredths(after / before) + "x", NamedTextColor.RED)
+                    .text(")", NamedTextColor.DARK_GRAY)
+                    .text(" (", NamedTextColor.DARK_GRAY)
+                    .text(cooldown.getName(), NamedTextColor.GRAY)
+                    .text(")", NamedTextColor.DARK_GRAY);
+            if (extraDamageInstances != null) {
+                builder.text(" (", NamedTextColor.DARK_GRAY)
+                       .text(extraDamageInstances.size(), NamedTextColor.RED)
+                       .text(")", NamedTextColor.DARK_GRAY);
+            }
+            if (extraHealingInstances != null) {
+                builder.text(" (", NamedTextColor.DARK_GRAY)
+                       .text(extraHealingInstances.size(), NamedTextColor.RED)
+                       .text(")", NamedTextColor.DARK_GRAY);
+            }
             this.value = builder.build();
             return this;
         }

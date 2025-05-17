@@ -516,6 +516,7 @@ public enum GameMode {
             options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
+            options.add(new ApplySpecBoostsOption());
 
             return options;
         }

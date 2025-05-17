@@ -62,7 +62,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
         RegularCooldown<TimeWarpAquamancer> timeWarpCooldown = new RegularCooldown<>(name,
                 "TIME",
                 TimeWarpAquamancer.class,
-                new TimeWarpAquamancer(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -76,7 +76,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     warpTrail.clear();
                     if (pveMasterUpgrade2) {
                         wp.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>("Cyclone", "CYC", TimeWarpAquamancer.class, new TimeWarpAquamancer(), wp, CooldownTypes.ABILITY, cooldownManager1 -> {
+                          .addCooldown(new RegularCooldown<>("Cyclone", "CYC", TimeWarpAquamancer.class, null, wp, CooldownTypes.ABILITY, cooldownManager1 -> {
                           }, 5 * 20
                           ) {
 

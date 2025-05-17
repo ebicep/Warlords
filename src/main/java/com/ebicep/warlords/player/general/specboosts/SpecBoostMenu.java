@@ -16,41 +16,44 @@ public class SpecBoostMenu {
 
     public static void open(Player player) {
         DatabaseManager.getPlayer(player.getUniqueId(), databasePlayer -> {
-            Specializations selectedSpec = databasePlayer.getLastSpec();
-            Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
+                    Specializations selectedSpec = databasePlayer.getLastSpec();
+                    Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
 
-            Menu menu = new Menu("Spec Boosts", 9 * 5);
-            List<SpecBoostManager.SpecBoost> specBoosts = SpecBoostManager.getSpecBoosts(selectedSpec);
-            for (int i = 0; i < specBoosts.size(); i++) {
-                SpecBoostManager.SpecBoost specBoost = specBoosts.get(i);
-                boolean selected = selectedBoosts.computeIfAbsent(selectedSpec, k -> 0) == i;
-                int finalI = i;
-                ItemBuilder itemBuilder = new ItemBuilder(selectedSpec.specType.itemStack)
-                        .name(specBoost.getName())
-                        .lore(WordWrap.wrap(specBoost.getDescription(), 150))
-                        .glow(selected);
-                if (selected) {
-                    itemBuilder.addLore(
-                            Component.empty(),
-                            Component.text("ACTIVE", NamedTextColor.GREEN)
-                    );
-                }
-                menu.setItem(i + 1, 1,
-                        itemBuilder.get(),
-                        (m, e) -> {
-                            if (selected) {
-                                return;
-                            }
-                            selectedBoosts.put(selectedSpec, finalI);
-                            player.sendMessage(Component.text("You have selected the " + specBoost.getName(), NamedTextColor.GREEN)
-                                                        .append(Component.text(" spec boost!", NamedTextColor.GRAY))
+                    Menu menu = new Menu("Spec Boosts", 9 * 5);
+                    List<SpecBoostManager.SpecBoost> specBoosts = SpecBoostManager.getSpecBoosts(selectedSpec);
+                    for (int i = 0; i < specBoosts.size(); i++) {
+                        SpecBoostManager.SpecBoost specBoost = specBoosts.get(i);
+                        boolean selected = selectedBoosts.computeIfAbsent(selectedSpec, k -> 0) == i;
+                        int finalI = i;
+                        ItemBuilder itemBuilder = new ItemBuilder(selectedSpec.specType.itemStack)
+                                .name(specBoost.getName())
+                                .lore(WordWrap.wrap(specBoost.getDescription(), 150))
+                                .glow(selected);
+                        if (selected) {
+                            itemBuilder.addLore(
+                                    Component.empty(),
+                                    Component.text("ACTIVE", NamedTextColor.GREEN)
                             );
                         }
-                );
-            }
+                        menu.setItem(i + 1, 1,
+                                itemBuilder.get(),
+                                (m, e) -> {
+                                    if (selected) {
+                                        return;
+                                    }
+                                    selectedBoosts.put(selectedSpec, finalI);
+                                    player.sendMessage(Component.text("You have selected the ", NamedTextColor.GREEN)
+                                                                .append(specBoost.getName())
+                                                                .append(Component.text(" spec boost!", NamedTextColor.GREEN))
+                                    );
+                                    open(player);
+                                }
+                        );
+                    }
 
-            menu.openForPlayer(player);
-        });
+                    menu.openForPlayer(player);
+                }
+        );
     }
 
 }

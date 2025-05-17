@@ -8,76 +8,12 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
-import java.util.Map;
-import java.util.function.BiConsumer;
+import javax.annotation.Nonnull;
 import java.util.function.UnaryOperator;
 
 public class AbilityDescriptionBuilder {
 
     final public static TextColor COLOR_BROWN = TextColor.color(100, 66, 33);
-
-    private static final Map<String, BiConsumer<AbilityDescriptionBuilder, Object>> CUSTOM_FORMATS = Map.of(
-            "damage", (builder, o) -> {
-                if (o instanceof Value.RangedValue rangedValue) {
-                    builder.damage(rangedValue);
-                } else if (o instanceof Value.SetValue setValue) {
-                    builder.damage(setValue);
-                } else {
-                    builder.text(o.toString(), NamedTextColor.RED);
-                }
-            },
-            "damage%", (builder, o) -> {
-                if (o instanceof Value.RangedValue rangedValue) {
-                    builder.damage(rangedValue);
-                } else if (o instanceof Value.SetValue setValue) {
-                    builder.damage(setValue);
-                } else {
-                    // try parse to float
-                    try {
-                        float value = Float.parseFloat(o.toString());
-                        builder.text(NumberFormat.formatOptionalHundredths(value) + "%", NamedTextColor.RED);
-                    } catch (NumberFormatException e) {
-                        builder.text(o + "%", NamedTextColor.RED);
-                    }
-                }
-            },
-            "heal", (builder, o) -> {
-                if (o instanceof Value.RangedValue rangedValue) {
-                    builder.heal(rangedValue);
-                } else if (o instanceof Value.SetValue setValue) {
-                    builder.heal(setValue);
-                } else {
-                    builder.text(o.toString(), NamedTextColor.RED);
-                }
-            },
-            "ticks", (builder, o) -> {
-                if (o instanceof Integer ticks) {
-                    builder.durationTicks(ticks);
-                } else if (o instanceof Float seconds) {
-                    builder.durationSeconds(seconds);
-                } else {
-                    builder.text(o.toString(), NamedTextColor.RED);
-                }
-            },
-            "energy", (builder, o) -> {
-                if (o instanceof Integer energy) {
-                    builder.energy(energy);
-                } else if (o instanceof Float energy) {
-                    builder.energy(energy);
-                } else {
-                    builder.text(o.toString(), NamedTextColor.RED);
-                }
-            },
-            "blocks", (builder, o) -> {
-                if (o instanceof Integer blocks) {
-                    builder.blocks(blocks);
-                } else if (o instanceof Float blocks) {
-                    builder.blocks(blocks);
-                } else {
-                    builder.text(o.toString(), NamedTextColor.RED);
-                }
-            }
-    );
 
     //TODO: auto space
     public static AbilityDescriptionBuilder create(String text) {
@@ -126,56 +62,14 @@ public class AbilityDescriptionBuilder {
         return text(NumberFormat.formatOptionalTenths(text.getCalculatedValue()), textColor);
     }
 
-    public AbilityDescriptionBuilder damage(Value.RangedValue rangedValue) {
-        parentBuilder.append(Damages.formatDamage(rangedValue));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder damage(Value.SetValue setValue) {
-        parentBuilder.append(Damages.formatDamage(setValue));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder heal(Value.RangedValue rangedValue) {
-        parentBuilder.append(Heals.formatHealing(rangedValue));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder heal(Value.SetValue setValue) {
-        parentBuilder.append(Heals.formatHealing(setValue));
-        return this;
-    }
-
     public AbilityDescriptionBuilder heal(Value.SetValue setValue, UnaryOperator<Float> modifier) {
         parentBuilder.append(Heals.formatHealingPercent(setValue, modifier));
-        return this;
-    }
-
-    public AbilityDescriptionBuilder durationTicks(int ticks) {
-        return durationSeconds(ticks / 20f);
-    }
-
-    public AbilityDescriptionBuilder durationSeconds(float seconds) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
-        parentBuilder.text(seconds == 1 ? " second" : " seconds");
         return this;
     }
 
     public AbilityDescriptionBuilder durationSeconds(int seconds) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
         parentBuilder.text(seconds == 1 ? " second" : " seconds");
-        return this;
-    }
-
-    public AbilityDescriptionBuilder energy(int energy) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
-        parentBuilder.text(" energy");
-        return this;
-    }
-
-    public AbilityDescriptionBuilder energy(float energy) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
-        parentBuilder.text(" energy");
         return this;
     }
 
@@ -191,18 +85,6 @@ public class AbilityDescriptionBuilder {
 
     public AbilityDescriptionBuilder percent(FloatModifiable percent, TextColor color) {
         parentBuilder.text(NumberFormat.formatOptionalTenths(percent.getCalculatedValue()) + "%", color);
-        return this;
-    }
-
-    public AbilityDescriptionBuilder blocks(int blocks) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
-        parentBuilder.text(blocks == 1 ? " block" : " blocks");
-        return this;
-    }
-
-    public AbilityDescriptionBuilder blocks(float blocks) {
-        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
-        parentBuilder.text(blocks == 1 ? " block" : " blocks");
         return this;
     }
 
@@ -272,24 +154,158 @@ public class AbilityDescriptionBuilder {
         return range(range, "Has an initial cast range of ");
     }
 
-    public AbilityDescriptionBuilder autoFormat(String type, Object object) {
-        if (CUSTOM_FORMATS.containsKey(type)) {
-            CUSTOM_FORMATS.get(type).accept(this, object);
-        } else {
-            NamedTextColor color = NamedTextColor.NAMES.value(type);
-            if (color != null) {
-                parentBuilder.text(object.toString(), color);
-            } else {
-                // check if type is hex color then covert to text color
-                try {
-                    int hex = Integer.parseInt(type, 16);
-                    parentBuilder.text(object.toString(), TextColor.fromHexString("#" + type));
-                } catch (NumberFormatException e) {
-                    parentBuilder.text(object.toString(), NamedTextColor.DARK_GRAY);
+    public void autoFormat(String formatKey, String prefix, @Nonnull Object value) {
+        switch (formatKey) {
+            case "damage" -> {
+                switch (value) {
+                    case Value.RangedValue rangedValue -> damage(rangedValue);
+                    case Value.SetValue setValue -> damage(setValue);
+                    case Float floatValue -> text(NumberFormat.formatOptionalHundredths(floatValue) + prefix, NamedTextColor.RED);
+                    case Integer intValue -> text(NumberFormat.formatOptionalHundredths(intValue) + prefix, NamedTextColor.RED);
+                    default -> text(value + prefix, NamedTextColor.RED);
+                }
+            }
+            case "heal" -> {
+                switch (value) {
+                    case Value.RangedValue rangedValue -> heal(rangedValue);
+                    case Value.SetValue setValue -> heal(setValue);
+                    case Float floatValue -> text(NumberFormat.formatOptionalHundredths(floatValue) + prefix, NamedTextColor.GREEN);
+                    case Integer intValue -> text(NumberFormat.formatOptionalHundredths(intValue) + prefix, NamedTextColor.GREEN);
+                    default -> text(value + prefix, NamedTextColor.GREEN);
+                }
+            }
+            case "ticks" -> {
+                switch (value) {
+                    case Integer ticks -> durationTicks(ticks, prefix);
+                    case Float seconds -> durationSeconds(seconds, prefix);
+                    case String stringValue -> text(stringValue + prefix, NamedTextColor.GOLD);
+                    default -> text(value + prefix, NamedTextColor.GOLD);
+                }
+            }
+            case "energy" -> {
+                switch (value) {
+                    case Integer energy -> energy(energy, prefix);
+                    case Float energy -> energy(energy, prefix);
+                    default -> text(value + prefix, NamedTextColor.YELLOW);
+                }
+            }
+            case "blocks" -> {
+                switch (value) {
+                    case Integer blocks -> blocks(blocks, prefix);
+                    case Float blocks -> blocks(blocks, prefix);
+                    default -> text(value + prefix, NamedTextColor.AQUA);
+                }
+            }
+            case "speed" -> {
+                switch (value) {
+                    case Integer speed -> speed(speed, prefix);
+                    case Float speed -> speed(speed, prefix);
+                    default -> text(value + prefix, NamedTextColor.WHITE);
+                }
+            }
+            case null -> text("Null formatKey", NamedTextColor.GRAY);
+            default -> {
+                NamedTextColor color = NamedTextColor.NAMES.value(formatKey);
+                if (color != null) {
+                    parentBuilder.text(value.toString(), color);
+                } else {
+                    // check if type is hex color then covert to text color
+                    try {
+                        int hex = Integer.parseInt(formatKey, 16);
+                        parentBuilder.text(value.toString(), TextColor.fromHexString("#" + formatKey));
+                    } catch (NumberFormatException e) {
+                        parentBuilder.text(value.toString(), NamedTextColor.DARK_GRAY);
+                    }
                 }
             }
         }
+    }
+
+    public AbilityDescriptionBuilder damage(Value.RangedValue rangedValue) {
+        parentBuilder.append(Damages.formatDamage(rangedValue));
         return this;
+    }
+
+    public AbilityDescriptionBuilder damage(Value.SetValue setValue) {
+        parentBuilder.append(Damages.formatDamage(setValue));
+        return this;
+    }
+
+    public AbilityDescriptionBuilder heal(Value.RangedValue rangedValue) {
+        parentBuilder.append(Heals.formatHealing(rangedValue));
+        return this;
+    }
+
+    public AbilityDescriptionBuilder heal(Value.SetValue setValue) {
+        parentBuilder.append(Heals.formatHealing(setValue));
+        return this;
+    }
+
+    public AbilityDescriptionBuilder durationTicks(int ticks, String prefix) {
+        return durationSeconds(ticks / 20f, prefix);
+    }
+
+    public AbilityDescriptionBuilder durationSeconds(float seconds, String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
+        parentBuilder.text((seconds == 1 ? " second" : " seconds") + prefix);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder energy(int energy, String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
+        parentBuilder.text(" energy" + prefix);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder energy(float energy, String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
+        parentBuilder.text(" energy" + prefix);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder blocks(int blocks, String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
+        parentBuilder.text(blocks == 1 ? " block" : " blocks" + prefix);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder blocks(float blocks, String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(blocks), NamedTextColor.AQUA);
+        parentBuilder.text(blocks == 1 ? " block" : " blocks" + prefix);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder speed(float speed, String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(speed) + prefix, NamedTextColor.WHITE);
+        return this;
+    }
+
+    public AbilityDescriptionBuilder durationTicks(int ticks) {
+        return durationTicks(ticks, "");
+    }
+
+    public AbilityDescriptionBuilder durationSeconds(float seconds) {
+        return durationSeconds(seconds, "");
+    }
+
+    public AbilityDescriptionBuilder energy(int energy) {
+        return energy(energy, "");
+    }
+
+    public AbilityDescriptionBuilder energy(float energy) {
+        return energy(energy, "");
+    }
+
+    public AbilityDescriptionBuilder blocks(int blocks) {
+        return blocks(blocks, "");
+    }
+
+    public AbilityDescriptionBuilder blocks(float blocks) {
+        return blocks(blocks, "");
+    }
+
+    public AbilityDescriptionBuilder speed(float speed) {
+        return speed(speed, "");
     }
 
     public ComponentBuilder end() {
