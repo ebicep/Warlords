@@ -18,6 +18,7 @@ import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.general.settings.CooldownDisplaySettings;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostMenu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.Currencies;
 import com.ebicep.warlords.pve.Spendable;
@@ -598,6 +599,17 @@ public class WarlordsNewHotbarMenu {
                         Component.text("Click to change skill boost!", NamedTextColor.YELLOW)
                 )
                 .get();
+        public static final ItemStack MENU_SPEC_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
+                .name(Component.text("Spec Boosts", NamedTextColor.AQUA))
+                .lore(
+                        Component.text("Choose which of your spec boost", NamedTextColor.GRAY),
+                        Component.text("you want to equip.", NamedTextColor.GRAY),
+                        Component.empty(),
+                        Component.text("WARNING:", NamedTextColor.RED).append(Component.text(" This does not apply to PvE.", NamedTextColor.GRAY)),
+                        Component.empty(),
+                        Component.text("Click to change skill boost!", NamedTextColor.YELLOW)
+                )
+                .get();
         public static final ItemStack MENU_BACK_PVP = new ItemBuilder(Material.ARROW)
                 .name(Component.text("Back", NamedTextColor.GREEN))
                 .lore(Component.text("To PvP Menu", NamedTextColor.GRAY))
@@ -618,6 +630,7 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(2, 1, MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
             menu.setItem(3, 1, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
             menu.setItem(4, 1, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec()));
+            menu.setItem(5, 1, MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
 
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
 

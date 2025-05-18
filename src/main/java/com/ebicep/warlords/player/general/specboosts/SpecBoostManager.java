@@ -19,10 +19,18 @@ public class SpecBoostManager {
     public static final SpecBoost<DimensionalWarp> DIMENSIONAL_WARP = new DimensionalWarp();
     public static final SpecBoost<BurstChain> BURST_CHAIN = new BurstChain();
     public static final SpecBoost<FlameBreath> FLAME_BREATH = new FlameBreath();
+    public static final SpecBoost<FrostMissile> FROST_MISSILE = new FrostMissile();
+    public static final SpecBoost<ArcaneRecluse> ARCANE_RECLUSE = new ArcaneRecluse();
+    public static final SpecBoost<ChillyAura> CHILLY_AURA = new ChillyAura();
+    public static final SpecBoost<BlizzardBreath> BLIZZARD_BREATH = new BlizzardBreath();
+    public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
+    public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
     private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
 
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, ARCANE_SHATTER, DIMENSIONAL_WARP, BURST_CHAIN, FLAME_BREATH));
+        SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, ARCANE_RECLUSE, CHILLY_AURA, BLIZZARD_BREATH, STEADFAST_WARP));
+        SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(VIGOROUS_INFUSION));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {

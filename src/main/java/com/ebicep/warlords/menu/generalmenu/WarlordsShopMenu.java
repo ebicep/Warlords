@@ -12,6 +12,7 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.general.settings.ParticleQuality;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostMenu;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -79,6 +80,8 @@ public class WarlordsShopMenu {
         menu.setItem(1, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
         menu.setItem(3, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
         menu.setItem(5, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, selectedSpec));
+        menu.setItem(5, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
+
         menu.setItem(7, 3, WarlordsNewHotbarMenu.SettingsMenu.MENU_SETTINGS, (m, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(4, 2, WarlordsNewHotbarMenu.PvPMenu.MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player));

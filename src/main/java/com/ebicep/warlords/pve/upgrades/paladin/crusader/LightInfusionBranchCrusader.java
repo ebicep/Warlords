@@ -5,7 +5,7 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class LightInfusionBranchCrusader extends AbstractUpgradeBranch<LightInfusionCrusader> {
 
-    int speedBuff = ability.getSpeedBuff();
+    float speedBuff = ability.getSpeedBuff();
     int energyGiven = ability.getEnergyGiven();
 
     public LightInfusionBranchCrusader(AbilityTree abilityTree, LightInfusionCrusader ability) {

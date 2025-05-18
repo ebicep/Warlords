@@ -513,7 +513,7 @@ public enum GameMode {
             ));
             options.add(new FlagOption());
             options.add(new WeaponOption());
-            options.add(new ApplySkillBoostOption());
+//            options.add(new ApplySkillBoostOption());
             options.add(new HorseOption());
             options.add(new PlayerCooldownDisplayOption());
             options.add(new ApplySpecBoostsOption());

@@ -22,14 +22,14 @@ public class ApplySpecBoostsOption implements Option {
         Specializations newSpec = wp.getSpecClass();
         if (wp instanceof WarlordsPlayer warlordsPlayer) {
             DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                        SpecBoostManager.SpecBoost specBoost = SpecBoostManager.getSpecBoosts(newSpec).get(databasePlayer.getSelectedSpecBoost(newSpec));
+                SpecBoostManager.SpecBoost<?> specBoost = SpecBoostManager.getSpecBoosts(newSpec).get(databasePlayer.getSelectedSpecBoost(newSpec));
                         applyBoost(warlordsPlayer, specBoost);
                     }
             );
         }
     }
 
-    private void applyBoost(WarlordsPlayer warlordsPlayer, SpecBoostManager.SpecBoost specBoost) {
+    private void applyBoost(WarlordsPlayer warlordsPlayer, SpecBoostManager.SpecBoost<?> specBoost) {
         SpecBoostManager.Boost boost = specBoost.create();
         boost.apply(warlordsPlayer);
         warlordsPlayer.getGame().registerEvents(boost);
@@ -49,7 +49,7 @@ public class ApplySpecBoostsOption implements Option {
                             HandlerList.unregisterAll(oldBoost);
                             oldBoost.unapply(warlordsPlayer);
                         }
-                        SpecBoostManager.SpecBoost specBoost = SpecBoostManager.getSpecBoosts(newSpec).get(databasePlayer.getSelectedSpecBoost(newSpec));
+                SpecBoostManager.SpecBoost<?> specBoost = SpecBoostManager.getSpecBoosts(newSpec).get(databasePlayer.getSelectedSpecBoost(newSpec));
                         applyBoost(warlordsPlayer, specBoost);
                     }
             );

@@ -37,7 +37,7 @@ public class LightInfusionBranchProtector extends AbstractUpgradeBranch<LightInf
 
                             @Override
                             public void run(float value) {
-                                ability.setSpeedBuff((int) (ability.getSpeedBuff() + value));
+                                ability.setSpeedBuff(ability.getSpeedBuff() + value);
                             }
                         }, 20f, 4
                 )

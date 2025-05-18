@@ -34,7 +34,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
 
     private final ArcaneShieldStats stats = new ArcaneShieldStats();
     private int maxShieldHealth;
-    private int shieldPercentage = 50;
+    private float shieldPercentage = 50;
     private int tickDuration = 120;
 
     public ArcaneShield() {
@@ -114,7 +114,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.shieldPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldPercentage"), int.class);
+        this.shieldPercentage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("shieldPercentage"), float.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
     }
 
@@ -208,11 +208,11 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
         this.maxShieldHealth = maxShieldHealth;
     }
 
-    public int getShieldPercentage() {
+    public float getShieldPercentage() {
         return shieldPercentage;
     }
 
-    public void setShieldPercentage(int shieldPercentage) {
+    public void setShieldPercentage(float shieldPercentage) {
         this.shieldPercentage = shieldPercentage;
     }
 

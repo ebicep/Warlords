@@ -29,7 +29,7 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     }
 
     protected int tickDuration = 60;
-    protected int speedBuff = 40;
+    protected float speedBuff = 40;
     protected int energyGiven = 120;
     private final AbstractLightInfusionStats stats = new AbstractLightInfusionStats();
 
@@ -41,7 +41,7 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), float.class);
         this.energyGiven = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyGiven"), int.class);
     }
 
@@ -73,11 +73,11 @@ public abstract class AbstractLightInfusion extends AbstractAbility implements P
         return stats;
     }
 
-    public int getSpeedBuff() {
+    public float getSpeedBuff() {
         return speedBuff;
     }
 
-    public void setSpeedBuff(int speedBuff) {
+    public void setSpeedBuff(float speedBuff) {
         this.speedBuff = speedBuff;
     }
 
