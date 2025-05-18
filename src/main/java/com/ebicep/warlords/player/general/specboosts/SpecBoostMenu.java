@@ -46,6 +46,7 @@ public class SpecBoostMenu {
                                                                 .append(specBoost.getName())
                                                                 .append(Component.text(" spec boost!", NamedTextColor.GREEN))
                                     );
+                                    DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
                                     open(player);
                                 }
                         );
