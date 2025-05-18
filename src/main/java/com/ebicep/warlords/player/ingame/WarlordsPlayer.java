@@ -161,6 +161,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public boolean setStunTicks(int stunTicks) {
         WarlordsPlayerStunEvent stunEvent = new WarlordsPlayerStunEvent(this);
+        Bukkit.getPluginManager().callEvent(stunEvent);
         if (stunEvent.isCancelled()) {
             return false;
         }
