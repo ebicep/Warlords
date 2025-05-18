@@ -26,9 +26,10 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     protected Consumer<CooldownManager> onRemove;
     protected Consumer<CooldownManager> onRemoveForce;
     protected boolean removeOnDeath;
+    private final Listener activeListener;
     private List<DamageInstance> extraDamageInstances = null;
     private List<HealingInstance> extraHealingInstances = null;
-    private final Listener activeListener;
+    private List<KnockbackInstance> extraKnockbackInstances = null;
 
     public AbstractCooldown(
             String name,
@@ -120,6 +121,21 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this(name, nameAbbreviation, cooldownClass, cooldownObject, from, cooldownType, onRemove, onRemoveForce, true);
     }
 
+    @Override
+    public @Nullable List<DamageInstance> getExtraDamageInstances() {
+        return extraDamageInstances;
+    }
+
+    @Override
+    public @Nullable List<HealingInstance> getExtraHealingInstances() {
+        return extraHealingInstances;
+    }
+
+    @Override
+    public @Nullable List<KnockbackInstance> getExtraKnockbackInstances() {
+        return extraKnockbackInstances;
+    }
+
     public abstract Component getNameAbbreviation();
 
     public void setNameAbbreviation(String nameAbbreviation) {
@@ -186,16 +202,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.onRemoveForce = onRemoveForce;
     }
 
-    @Override
-    public @Nullable List<DamageInstance> getExtraDamageInstances() {
-        return extraDamageInstances;
-    }
-
-    @Override
-    public @Nullable List<HealingInstance> getExtraHealingInstances() {
-        return extraHealingInstances;
-    }
-
     public void addExtraDamageInstance(DamageInstance extraDamageInstance) {
         if (extraDamageInstances == null) {
             extraDamageInstances = new ArrayList<>();
@@ -210,7 +216,15 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         extraHealingInstances.add(extraHealingInstance);
     }
 
+    public void addExtraKnockbackInstance(KnockbackInstance extraKnockbackInstance) {
+        if (extraKnockbackInstances == null) {
+            extraKnockbackInstances = new ArrayList<>();
+        }
+        extraKnockbackInstances.add(extraKnockbackInstance);
+    }
+
     public Listener getActiveListener() {
         return activeListener;
     }
+
 }

@@ -44,6 +44,11 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
         Game game = wp.getGame();
         PveOption pveOption = game.getOption(PveOption.class).stream().findFirst().orElse(null);
         CryoPod cryoPod;
+        TimeWarpPyromancerData data = new TimeWarpPyromancerData(
+                warpLocation,
+                this,
+                () -> wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)))
+        );
         if (pveMasterUpgrade && pveOption != null) {
             cryoPod = new CryoPod(warpLocation, wp.getName()) {
 
@@ -76,8 +81,8 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                     enemy.getCooldownManager()
                          .addCooldown(new RegularCooldown<>("Freezing Cold",
                                  "COLD",
-                                 TimeWarpCryomancer.class,
-                                 null,
+                                 TimeWarpPyromancerData.class,
+                                 data,
                                  wp,
                                  CooldownTypes.ABILITY,
                                  cooldownManager -> {
@@ -94,10 +99,10 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                 EffectUtils.displayParticle(Particle.SNOWFLAKE, wp.getLocation().add(0, .2, 0), 1700, 15, 0, 15, 0);
             }
         }
-        RegularCooldown<TimeWarpCryomancer> timeWarpCooldown = new RegularCooldown<>(name,
+        RegularCooldown<TimeWarpPyromancerData> timeWarpCooldown = new RegularCooldown<>(name,
                 "TIME",
-                TimeWarpCryomancer.class,
-                null,
+                TimeWarpPyromancerData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -106,12 +111,11 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                     }
                     getAbilityStats().addTimesSuccessful();
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)));
+                    data.getWarpHeal().run();
                     wp.getEntity().teleport(warpLocation);
-                    warpTrail.clear();
                     if (pveMasterUpgrade) {
                         wp.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>("Frostbite Leap", "WARP RES", TimeWarpCryomancer.class, null, wp, CooldownTypes.ABILITY, cooldownManager2 -> {
+                          .addCooldown(new RegularCooldown<>("Frostbite Leap", "WARP RES", TimeWarpPyromancerData.class, data, wp, CooldownTypes.ABILITY, cooldownManager2 -> {
                           }, cooldownManager2 -> {
                           }, 5 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                           })
@@ -125,6 +129,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                     }
                 },
                 cooldownManager -> {
+                    warpTrail.clear();
                     if (pveOption != null && cryoPod != null && pveOption.getMobs().contains(cryoPod)) {
                         cryoPod.getWarlordsNPC().die(cryoPod.getWarlordsNPC());
                     }
@@ -169,13 +174,43 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
     }
 
     @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new TimeWarpBranchCryomancer(abilityTree, this);
+    }
+
+    @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
     }
 
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new TimeWarpBranchCryomancer(abilityTree, this);
+    public static class TimeWarpPyromancerData {
+
+        private final Location warpLocation;
+        private final TimeWarpCryomancer staticAbility;
+        private Runnable warpHeal;
+
+        public TimeWarpPyromancerData(Location warpLocation, TimeWarpCryomancer staticAbility, Runnable warpHeal) {
+            this.warpLocation = warpLocation;
+            this.staticAbility = staticAbility;
+            this.warpHeal = warpHeal;
+        }
+
+        public Location getWarpLocation() {
+            return warpLocation;
+        }
+
+        public TimeWarpCryomancer getStaticAbility() {
+            return staticAbility;
+        }
+
+        public Runnable getWarpHeal() {
+            return warpHeal;
+        }
+
+        public void setWarpHeal(Runnable warpHeal) {
+            this.warpHeal = warpHeal;
+        }
+
     }
 
 }

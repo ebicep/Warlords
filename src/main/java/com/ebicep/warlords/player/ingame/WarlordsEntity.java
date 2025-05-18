@@ -32,6 +32,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
+import com.ebicep.warlords.player.ingame.instances.type.KnockbackInstance;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
@@ -1118,6 +1119,12 @@ public abstract class WarlordsEntity {
             if (!ignoreModifications) {
                 for (AbstractCooldown<?> abstractCooldown : cooldownManager.getCooldownsDistinct()) {
                     abstractCooldown.multiplyKB(v);
+                    List<KnockbackInstance> extraKnockbackInstances = abstractCooldown.getExtraKnockbackInstances();
+                    if (extraKnockbackInstances != null) {
+                        for (KnockbackInstance extraKnockbackInstance : extraKnockbackInstances) {
+                            extraKnockbackInstance.multiplyKB(v);
+                        }
+                    }
                 }
             }
             if (Double.isNaN(v.getX())) {

@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
-import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -95,14 +94,13 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
                 @Override
                 public float modifyDamageAfterAllFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                     if (warlordsEntity.getCurrentHealth() - currentDamageValue < 0) {
-                        warlordsEntity.getCooldownManager().removeCooldown(cooldown);
-                        Utils.playGlobalSound(warlordsEntity.getLocation(), "mage.timewarp.teleport", 1, 1);
-                        warlordsEntity.addInstance(InstanceBuilder
+                        data.setWarpHeal(() -> warlordsEntity.addInstance(InstanceBuilder
                                 .healing()
                                 .cause(getStringName())
                                 .source(warlordsEntity)
-                                .value(warlordsEntity.getMaxBaseHealth() * (healthRestorePercent / 100f)));
-                        warlordsEntity.getEntity().teleport(data.getWarpLocation());
+                                .value(warlordsEntity.getMaxBaseHealth() * (healthRestorePercent / 100f)))
+                        );
+                        warlordsEntity.getCooldownManager().removeCooldown(cooldown);
                     }
                     return currentDamageValue;
                 }

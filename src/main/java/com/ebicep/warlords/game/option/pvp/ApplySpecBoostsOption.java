@@ -11,6 +11,7 @@ import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ApplySpecBoostsOption implements Option {
@@ -22,7 +23,11 @@ public class ApplySpecBoostsOption implements Option {
         Specializations newSpec = wp.getSpecClass();
         if (wp instanceof WarlordsPlayer warlordsPlayer) {
             DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                SpecBoostManager.SpecBoost<?> specBoost = SpecBoostManager.getSpecBoosts(newSpec).get(databasePlayer.getSelectedSpecBoost(newSpec));
+                List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
+                if (specBoosts.isEmpty()) {
+                    return;
+                }
+                SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
                         applyBoost(warlordsPlayer, specBoost);
                     }
             );

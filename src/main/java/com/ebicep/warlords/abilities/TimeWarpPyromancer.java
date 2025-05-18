@@ -47,7 +47,10 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
         int startingBlocksTravelled = wp.getBlocksTravelled();
         // pveMasterUpgrade2
         List<WarlordsEntity> linkedPlayers = new ArrayList<>();
-        TimeWarpPyromancerData data = new TimeWarpPyromancerData(wp.getLocation());
+        TimeWarpPyromancerData data = new TimeWarpPyromancerData(
+                wp.getLocation(),
+                () -> wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)))
+        );
         RegularCooldown<TimeWarpPyromancerData> timeWarpCooldown = new RegularCooldown<>(name,
                 "TIME",
                 TimeWarpPyromancerData.class,
@@ -60,7 +63,7 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
                     }
                     getAbilityStats().addTimesSuccessful();
                     Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
-                    wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(wp.getMaxHealth() * (warpHealPercentage / 100f)));
+                    data.getWarpHeal().run();
                     wp.getEntity().teleport(data.warpLocation);
                     if (pveMasterUpgrade2) {
                         float cooldownReduction = 0;
@@ -150,25 +153,35 @@ public class TimeWarpPyromancer extends AbstractTimeWarp {
     }
 
     @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new TimeWarpBranchPyromancer(abilityTree, this);
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new TimeWarpBranchPyromancer(abilityTree, this);
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
     }
 
     public static class TimeWarpPyromancerData {
 
         private final Location warpLocation;
+        private Runnable warpHeal;
 
-        public TimeWarpPyromancerData(Location warpLocation) {
+        public TimeWarpPyromancerData(Location warpLocation, Runnable warpHeal) {
             this.warpLocation = warpLocation;
+            this.warpHeal = warpHeal;
         }
 
         public Location getWarpLocation() {
             return warpLocation;
+        }
+
+        public Runnable getWarpHeal() {
+            return warpHeal;
+        }
+
+        public void setWarpHeal(Runnable warpHeal) {
+            this.warpHeal = warpHeal;
         }
 
     }
