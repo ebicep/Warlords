@@ -3,15 +3,12 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unimmobilizable;
 import com.ebicep.warlords.pve.mobs.tiers.BossMinionMob;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -130,21 +127,13 @@ public class CursedPsion extends AbstractMob implements BossMinionMob, Unimmobil
             warlordsNPC.addSpeedModifier(warlordsNPC, "Melee", 30, 2 * 20, "BASE");
         }
         if (receiver.hasPotionEffect(PotionEffectType.DARKNESS) && crit) {
-            if (receiver instanceof WarlordsPlayer warlordsPlayer) {
-                warlordsPlayer.stun();
-                new GameRunnable(warlordsPlayer.getGame()) {
-                    @Override
-                    public void run() {
-                        warlordsPlayer.unstun();
-                    }
-                }.runTaskLater(STUN_TICKS);
-                warlordsPlayer.getEntity().showTitle(Title.title(
+            boolean stunned = receiver.setStunTicks(STUN_TICKS);
+            if (stunned) {
+                receiver.getEntity().showTitle(Title.title(
                         Component.empty(),
                         Component.text("STUNNED", NamedTextColor.LIGHT_PURPLE),
                         Title.Times.times(Ticks.duration(0), Ticks.duration(STUN_TICKS), Ticks.duration(0))
                 ));
-            } else if (receiver instanceof WarlordsNPC wNPC) {
-                wNPC.setStunTicks(STUN_TICKS);
             }
         }
     }

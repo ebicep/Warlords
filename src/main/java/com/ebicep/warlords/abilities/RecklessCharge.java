@@ -6,13 +6,10 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.pve.mobs.flags.Unimmobilizable;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.warrior.revenant.RecklessChargeBranch;
@@ -153,17 +150,8 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                                                                .min(damageValues.chargeDamage.getMinValue() * damageMultiplier)
                                                                .max(damageValues.chargeDamage.getMaxValue() * damageMultiplier)
                                                                .crit(damageValues.chargeDamage));
-                        if (otherPlayer instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof Unimmobilizable)) {
-                            warlordsNPC.setStunTicks(getStunTimeInTicks());
-                        } else if (otherPlayer instanceof WarlordsPlayer warlordsPlayer) {
-                            warlordsPlayer.stun();
-                            new GameRunnable(wp.getGame()) {
-
-                                @Override
-                                public void run() {
-                                    warlordsPlayer.unstun();
-                                }
-                            }.runTaskLater(getStunTimeInTicks());
+                        boolean stunned = otherPlayer.setStunTicks(getStunTimeInTicks());
+                        if (stunned) {
                             otherPlayer.getEntity()
                                        .showTitle(Title.title(Component.empty(),
                                                Component.text("IMMOBILIZED", NamedTextColor.LIGHT_PURPLE),

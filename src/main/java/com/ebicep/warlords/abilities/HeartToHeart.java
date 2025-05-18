@@ -7,7 +7,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -18,7 +17,6 @@ import com.ebicep.warlords.util.bukkit.Matrix4d;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -172,7 +170,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                              );
                 }
                 if (pveMasterUpgrade) {
-                    for (WarlordsNPC we : PlayerFilterGeneric.entitiesAround(wp, 3, 3, 3).aliveEnemiesOf(wp).excluding(playersHit).warlordsNPCs()) {
+                    for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 3, 3, 3).aliveEnemiesOf(wp).excluding(playersHit)) {
                         playersHit.add(we);
                         we.setStunTicks(GameRunnable.SECOND);
                         we.addInstance(InstanceBuilder.damage().cause("Heart of Hearts").source(wp).value(damageValues.heartOfHeartsDamage));

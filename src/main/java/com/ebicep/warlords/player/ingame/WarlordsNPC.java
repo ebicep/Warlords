@@ -33,17 +33,17 @@ import java.util.function.Consumer;
 
 public class WarlordsNPC extends WarlordsEntity {
 
-    private final MobHologram mobHologram;
-    private float minMeleeDamage;
-    private float maxMeleeDamage;
     protected float meleeCritChance;
     protected float meleeCritMultiplier;
     protected NPC npc;
     protected AbstractMob mob;
     protected Component mobNamePrefix = Component.empty();
-    private ArmorStand playerHealthDisplay; // used for player entity type npcs
     @Nonnull
     protected TextColor nameColor = NamedTextColor.GRAY;
+    private final MobHologram mobHologram;
+    private float minMeleeDamage;
+    private float maxMeleeDamage;
+    private ArmorStand playerHealthDisplay; // used for player entity type npcs
     private int stunTicks;
 
     public WarlordsNPC(
@@ -114,44 +114,10 @@ public class WarlordsNPC extends WarlordsEntity {
         return builder.build();
     }
 
-    public Component getMobNamePrefix() {
-        return mobNamePrefix;
-    }
-
-    public void setNameColor(@Nonnull TextColor nameColor) {
-        this.nameColor = nameColor;
-    }
-
-    public float getMinMeleeDamage() {
-        return minMeleeDamage;
-    }
-
-    public void setMinMeleeDamage(int minMeleeDamage) {
-        this.minMeleeDamage = minMeleeDamage;
-    }
-
-    public float getMaxMeleeDamage() {
-        return maxMeleeDamage;
-    }
-
-    public void setMaxMeleeDamage(int maxMeleeDamage) {
-        this.maxMeleeDamage = maxMeleeDamage;
-    }
-
-    public float getMeleeCritChance() {
-        return meleeCritChance;
-    }
-
-    public float getMeleeCritMultiplier() {
-        return meleeCritMultiplier;
-    }
-
-    public NPC getNpc() {
-        return npc;
-    }
-
-    public MobHologram getMobHologram() {
-        return mobHologram;
+    @Override
+    public void die(@Nullable WarlordsEntity attacker) {
+        super.die(attacker);
+        cleanup();
     }
 
     @Override
@@ -160,41 +126,35 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void die(@Nullable WarlordsEntity attacker) {
-        super.die(attacker);
-        cleanup();
-    }
-
-    public void cleanup() {
-        entity.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
-        entity.remove();
-        npc.data().remove(WARLORDS_ENTITY_METADATA);
-        npc.destroy();
-        if (playerHealthDisplay != null) {
-            playerHealthDisplay.remove();
-        }
-        mobHologram.getCustomHologramLines().forEach(customHologramLine -> {
-            Entity lineEntity = customHologramLine.getEntity();
-            if (lineEntity != null) {
-                lineEntity.remove();
-            }
-        });
+    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
+        // override to do nothing, npcs dont need stats, save memory
     }
 
     @Override
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
-        if (modifier != -99) {
-            if (getMob() instanceof BossLike) {
-                if (modifier < 0) {
-                    modifier *= .4;
-                }
-            } else {
-                if (modifier < 0) {
-                    modifier *= .7;
-                }
+    public boolean setStunTicks(int stunTicks) {
+        AtomicReference<Boolean> noAI = new AtomicReference<>();
+        if (mob == null) {
+            return false;
+        }
+        if (stunTicks > 0) {
+            if (this.stunTicks <= 0) {
+                npc.data().set(NPC.Metadata.COLLIDABLE, false);
+                noAI.set(true);
+            }
+        } else {
+            noAI.set(false);
+        }
+        if (noAI.get() != null) {
+            mob.toggleStun(noAI.get());
+            if (!noAI.get()) {
+                unstun();
             }
         }
-        return super.addSpeedModifier(from, name, modifier, duration, toDisable);
+        //stun needs to be longer to override current
+        if (this.stunTicks < stunTicks) {
+            this.stunTicks = stunTicks;
+        }
+        return true;
     }
 
     @Override
@@ -215,39 +175,30 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void runEveryTick() {
-        // updating entity reference in case it was unloaded
-        Entity updatedEntity = npc.getEntity();
-        if (updatedEntity != null && !Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity || (isAlive() && entity != null && !entity.isValid())) {
-            this.entity = updatedEntity;
-        }
-        super.runEveryTick();
-        if (getStunTicks() > 0) {
-            setStunTicks(getStunTicks() - 1, true);
-        }
+    public void unstun() {
+        //tick later to prevent collision issues
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                npc.data().set(NPC.Metadata.COLLIDABLE, true);
+            }
+        }.runTaskLater(1);
     }
 
     @Override
-    public void updateHealth() {
-        if (isDead() || entity == null || !entity.isValid()) {
-            return;
-        }
-        mobHologram.update();
-        if (entity instanceof Player player) {
-            double healthDisplayY = player.getEyeHeight() + 0.15;
-            if (playerHealthDisplay == null) {
-                playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
-                    armorStand.setMarker(true);
-                    armorStand.customName(getNameComponent());
-                    armorStand.setCustomNameVisible(true);
-                });
+    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
+        if (modifier != -99) {
+            if (getMob() instanceof BossLike) {
+                if (modifier < 0) {
+                    modifier *= .4f;
+                }
             } else {
-                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
-                playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
+                if (modifier < 0) {
+                    modifier *= .7f;
+                }
             }
-        } else {
-            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
         }
+        return super.addSpeedModifier(from, name, modifier, duration, toDisable);
     }
 
     @Override
@@ -301,42 +252,43 @@ public class WarlordsNPC extends WarlordsEntity {
         return npc.getOrAddTrait(Equipment.class).get(Equipment.EquipmentSlot.HAND);
     }
 
-    public int getStunTicks() {
-        return stunTicks;
+    @Override
+    public void runEveryTick() {
+        // updating entity reference in case it was unloaded
+        Entity updatedEntity = npc.getEntity();
+        if (updatedEntity != null && !Objects.equals(updatedEntity, entity) && updatedEntity instanceof LivingEntity || (isAlive() && entity != null && !entity.isValid())) {
+            this.entity = updatedEntity;
+        }
+        super.runEveryTick();
+        if (stunTicks > 0) {
+            stunTicks--;
+            if (stunTicks == 0) {
+                unstun();
+            }
+        }
     }
 
-    public void setStunTicks(int stunTicks) {
-        setStunTicks(stunTicks, false);
-    }
-
-    public void setStunTicks(int stunTicks, boolean decrement) {
-        AtomicReference<Boolean> noAI = new AtomicReference<>();
-        if (mob == null) {
+    @Override
+    public void updateHealth() {
+        if (isDead() || entity == null || !entity.isValid()) {
             return;
         }
-        if (stunTicks > 0) {
-            if (this.stunTicks <= 0) {
-                npc.data().set(NPC.Metadata.COLLIDABLE, false);
-                noAI.set(true);
+        mobHologram.update();
+        if (entity instanceof Player player) {
+            double healthDisplayY = player.getEyeHeight() + 0.15;
+            if (playerHealthDisplay == null) {
+                playerHealthDisplay = Utils.spawnArmorStand(getLocation().add(0, healthDisplayY, 0), armorStand -> {
+                            armorStand.setMarker(true);
+                            armorStand.customName(getNameComponent());
+                            armorStand.setCustomNameVisible(true);
+                        }
+                );
+            } else {
+                playerHealthDisplay.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
+                playerHealthDisplay.teleport(entity.getLocation().add(0, healthDisplayY, 0));
             }
         } else {
-            noAI.set(false);
-        }
-        if (noAI.get() != null) {
-            mob.toggleStun(noAI.get());
-            //tick later to prevent collision issues
-            if (!noAI.get()) {
-                new GameRunnable(game) {
-                    @Override
-                    public void run() {
-                        npc.data().set(NPC.Metadata.COLLIDABLE, true);
-                    }
-                }.runTaskLater(1);
-            }
-        }
-        //stun needs to be longer to override current
-        if (decrement || this.stunTicks < stunTicks) {
-            this.stunTicks = stunTicks;
+            entity.customName(Component.text(NumberFormat.addCommaAndRound(this.getCurrentHealth()) + "❤", NamedTextColor.RED));
         }
     }
 
@@ -344,8 +296,64 @@ public class WarlordsNPC extends WarlordsEntity {
         return mob;
     }
 
-    @Override
-    protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
-        // override to do nothing, npcs dont need stats, save memory
+    public int getStunTicks() {
+        return stunTicks;
     }
+
+    public void cleanup() {
+        entity.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
+        entity.remove();
+        npc.data().remove(WARLORDS_ENTITY_METADATA);
+        npc.destroy();
+        if (playerHealthDisplay != null) {
+            playerHealthDisplay.remove();
+        }
+        mobHologram.getCustomHologramLines().forEach(customHologramLine -> {
+            Entity lineEntity = customHologramLine.getEntity();
+            if (lineEntity != null) {
+                lineEntity.remove();
+            }
+        });
+    }
+
+    public Component getMobNamePrefix() {
+        return mobNamePrefix;
+    }
+
+    public void setNameColor(@Nonnull TextColor nameColor) {
+        this.nameColor = nameColor;
+    }
+
+    public float getMinMeleeDamage() {
+        return minMeleeDamage;
+    }
+
+    public void setMinMeleeDamage(int minMeleeDamage) {
+        this.minMeleeDamage = minMeleeDamage;
+    }
+
+    public float getMaxMeleeDamage() {
+        return maxMeleeDamage;
+    }
+
+    public void setMaxMeleeDamage(int maxMeleeDamage) {
+        this.maxMeleeDamage = maxMeleeDamage;
+    }
+
+    public float getMeleeCritChance() {
+        return meleeCritChance;
+    }
+
+    public float getMeleeCritMultiplier() {
+        return meleeCritMultiplier;
+    }
+
+    public NPC getNpc() {
+        return npc;
+    }
+
+    public MobHologram getMobHologram() {
+        return mobHologram;
+    }
+
 }

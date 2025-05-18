@@ -1,5 +1,6 @@
 package com.ebicep.warlords.events.player.ingame;
 
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -18,8 +19,9 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
     private final List<CooldownRecord> playerCooldowns = new ArrayList<>();
     private final List<CooldownRecord> attackerCooldowns = new ArrayList<>();
     private final EnumSet<InstanceFlags> instanceFlags;
-    private final WarlordsEntity attacker;
-    private final String ability;
+    private final WarlordsEntity source;
+    private final AbstractAbility ability;
+    private final String cause;
     private final float initialHealth;
     private final float finalHealth;
     private final float valueBeforeAllReduction;
@@ -44,8 +46,9 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
             WarlordsDamageHealingEvent warlordsDamageHealingEvent,
             EnumSet<InstanceFlags> instanceFlags,
             WarlordsEntity player,
-            WarlordsEntity attacker,
-            String ability,
+            WarlordsEntity source,
+            AbstractAbility ability,
+            String cause,
             float initialHealth,
             float valueBeforeAllReduction,
             float valueBeforeInterveneReduction,
@@ -65,12 +68,13 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
                                           .map(CooldownRecord::new)
                                           .toList()
         );
-        this.attackerCooldowns.addAll(attacker.getCooldownManager().getCooldowns().stream()
-                                              .map(CooldownRecord::new)
-                                              .toList()
+        this.attackerCooldowns.addAll(source.getCooldownManager().getCooldowns().stream()
+                                            .map(CooldownRecord::new)
+                                            .toList()
         );
-        this.attacker = attacker;
         this.ability = ability;
+        this.source = source;
+        this.cause = cause;
         this.initialHealth = initialHealth;
         this.finalHealth = player.getCurrentHealth();
         this.valueBeforeAllReduction = valueBeforeAllReduction;
@@ -83,11 +87,41 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         this.hasFlag = player.hasFlag();
         this.isDead = isDamageInstance && player.getCurrentHealth() <= 0 && !player.getCooldownManager().checkUndyingArmy(false);
 
-        this.attackerInCombat = attacker.getRegenTickTimer() > 6 * 20;
+        this.attackerInCombat = source.getRegenTickTimer() > 6 * 20;
 
         this.isDamageInstance = isDamageInstance;
 
         this.inGameTick = player.getGame().getState().getTicksElapsed();
+    }
+
+    @Override
+    public String toString() {
+        return "WarlordsDamageHealingFinalEvent{" +
+                "warlordsDamageHealingEvent=" + warlordsDamageHealingEvent +
+                ", playerCooldowns=" + playerCooldowns +
+                ", attackerCooldowns=" + attackerCooldowns +
+                ", attacker=" + source +
+                ", ability='" + cause + '\'' +
+                ", initialHealth=" + initialHealth +
+                ", finalHealth=" + finalHealth +
+                ", valueBeforeAllReduction=" + valueBeforeAllReduction +
+                ", valueBeforeInterveneReduction=" + valueBeforeInterveneReduction +
+                ", valueBeforeShieldReduction=" + valueBeforeShieldReduction +
+                ", value=" + value +
+                ", critChance=" + critChance +
+                ", critMultiplier=" + critMultiplier +
+                ", isCrit=" + isCrit +
+                ", hasFlag=" + hasFlag +
+                ", isDead=" + isDead +
+                ", attackerInCombat=" + attackerInCombat +
+                ", isDamageInstance=" + isDamageInstance +
+                ", inGameTick=" + inGameTick +
+                ", finalEventFlag=" + finalEventFlag +
+                '}';
+    }
+
+    public WarlordsDamageHealingEvent getWarlordsDamageHealingEvent() {
+        return warlordsDamageHealingEvent;
     }
 
     public List<CooldownRecord> getPlayerCooldowns() {
@@ -102,12 +136,12 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         return instanceFlags;
     }
 
-    public WarlordsEntity getAttacker() {
-        return attacker;
+    public AbstractAbility getAbility() {
+        return ability;
     }
 
-    public String getAbility() {
-        return ability;
+    public WarlordsEntity getSource() {
+        return source;
     }
 
     public float getInitialHealth() {
@@ -180,30 +214,8 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         return handlers;
     }
 
-    @Override
-    public String toString() {
-        return "WarlordsDamageHealingFinalEvent{" +
-                "warlordsDamageHealingEvent=" + warlordsDamageHealingEvent +
-                ", playerCooldowns=" + playerCooldowns +
-                ", attackerCooldowns=" + attackerCooldowns +
-                ", attacker=" + attacker +
-                ", ability='" + ability + '\'' +
-                ", initialHealth=" + initialHealth +
-                ", finalHealth=" + finalHealth +
-                ", valueBeforeAllReduction=" + valueBeforeAllReduction +
-                ", valueBeforeInterveneReduction=" + valueBeforeInterveneReduction +
-                ", valueBeforeShieldReduction=" + valueBeforeShieldReduction +
-                ", value=" + value +
-                ", critChance=" + critChance +
-                ", critMultiplier=" + critMultiplier +
-                ", isCrit=" + isCrit +
-                ", hasFlag=" + hasFlag +
-                ", isDead=" + isDead +
-                ", attackerInCombat=" + attackerInCombat +
-                ", isDamageInstance=" + isDamageInstance +
-                ", inGameTick=" + inGameTick +
-                ", finalEventFlag=" + finalEventFlag +
-                '}';
+    public String getCause() {
+        return cause;
     }
 
     public FinalEventFlag getFinalEventFlag() {

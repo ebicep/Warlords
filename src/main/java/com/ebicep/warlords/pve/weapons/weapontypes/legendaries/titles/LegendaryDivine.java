@@ -70,7 +70,7 @@ public class LegendaryDivine extends AbstractLegendaryWeapon implements PassiveC
 
             @EventHandler
             public void onDamageHealing(WarlordsDamageHealingFinalEvent event) {
-                if (!event.getAttacker().equals(player)) {
+                if (!event.getSource().equals(player)) {
                     return;
                 }
                 if (event.isHealingInstance()) {

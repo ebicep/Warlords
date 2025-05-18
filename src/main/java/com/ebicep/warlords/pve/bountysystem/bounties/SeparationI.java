@@ -43,13 +43,13 @@ public class SeparationI extends AbstractBounty implements TracksDuringGame, Wee
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-        if (!Objects.equals(event.getAttacker().getUuid(), uuid)) {
+        if (!Objects.equals(event.getSource().getUuid(), uuid)) {
             return;
         }
         if (!event.isDead()) {
             return;
         }
-        String ability = event.getAbility();
+        String ability = event.getCause();
         if (!Utils.isProjectile(ability) && !ability.equals("Boulder")) {
             return;
         }

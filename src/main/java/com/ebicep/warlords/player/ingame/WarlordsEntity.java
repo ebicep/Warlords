@@ -637,6 +637,14 @@ public abstract class WarlordsEntity {
         }
     }
 
+    public boolean setStunTicks(int stunTicks) {
+        return false;
+    }
+
+    public void unstun() {
+
+    }
+
     public float getMaxHealth() {
         return health.getCalculatedValue();
     }

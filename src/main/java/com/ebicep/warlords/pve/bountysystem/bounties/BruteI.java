@@ -42,13 +42,13 @@ public class BruteI extends AbstractBounty implements TracksDuringGame, WeeklyCo
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-        if (!Objects.equals(event.getAttacker().getUuid(), uuid)) {
+        if (!Objects.equals(event.getSource().getUuid(), uuid)) {
             return;
         }
         if (!event.isDead()) {
             return;
         }
-        if (!event.getAbility().isEmpty()) {
+        if (!event.getCause().isEmpty()) {
             return;
         }
         newKills++;

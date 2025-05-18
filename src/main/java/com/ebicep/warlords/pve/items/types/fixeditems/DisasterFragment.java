@@ -6,7 +6,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -61,14 +60,14 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
             @EventHandler
             public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
                 WarlordsEntity victim = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getAttacker();
+                WarlordsEntity attacker = event.getSource();
                 if (!Objects.equals(attacker, warlordsPlayer)) {
                     return;
                 }
                 if (event.isHealingInstance()) {
                     return;
                 }
-                if (!event.getAbility().contains("Strike")) {
+                if (!event.getCause().contains("Strike")) {
                     return;
                 }
                 if (ThreadLocalRandom.current().nextDouble() > .2) {
@@ -262,9 +261,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                         );
                     }
                     case "Stun" -> {
-                        if (victim instanceof WarlordsNPC warlordsNPC) {
-                            warlordsNPC.setStunTicks(40);
-                        }
+                        victim.setStunTicks(40);
                     }
                 }
             }

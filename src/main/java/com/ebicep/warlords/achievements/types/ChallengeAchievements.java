@@ -135,7 +135,7 @@ public enum ChallengeAchievements implements Achievement {
                 WarlordsDamageHealingFinalEvent lastEvent = warlordsEntity.getSecondStats().getLastEventAsAttacker();
                 return lastEvent != null && lastEvent.isDead() && lastEvent.isHasFlag() && lastEvent.getWarlordsEntity()
                                                                                                     .getLocation()
-                                                                                                    .distanceSquared(lastEvent.getAttacker().getLocation()) > 900;
+                                                                                                    .distanceSquared(lastEvent.getSource().getLocation()) > 900;
             }
     ),
     DUCK_TANK("Duck Tank",
@@ -456,7 +456,7 @@ public enum ChallengeAchievements implements Achievement {
                     int numberOfAbilityAttackers = (int) events.subList(indexCarrier, indexCarrierKilled).stream()
                                                                .filter(warlordsDamageHealingFinalEvent -> warlordsDamageHealingFinalEvent.getWarlordsEntity()
                                                                                                                                          .equals(finalCarrier))
-                                                               .filter(warlordsDamageHealingFinalEvent -> !warlordsDamageHealingFinalEvent.getAbility()
+                                                               .filter(warlordsDamageHealingFinalEvent -> !warlordsDamageHealingFinalEvent.getCause()
                                                                                                                                           .isEmpty())
                                                                .count();
                     return numberOfAbilityAttackers >= 5;

@@ -146,7 +146,7 @@ public class LegendaryChaotic extends AbstractLegendaryWeapon implements Listene
         if (event.isHealingInstance()) {
             return;
         }
-        if (!Objects.equals(event.getAttacker(), warlordsPlayer)) {
+        if (!Objects.equals(event.getSource(), warlordsPlayer)) {
             return;
         }
         if (event.getInstanceFlags().contains(InstanceFlags.RECURSIVE)) {

@@ -1,21 +1,36 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.FreezingBreath;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath> {
 
     private float cooldownReductionPerEnemyHitPercent;
     private float breathRangeIncreaseBlocks;
-    private float immunityDurationSeconds;
+    private int immunityDurationTicks;
 
     @Override
     public void init() {
         this.cooldownReductionPerEnemyHitPercent = getValue("cooldownReductionPerEnemyHitPercent", float.class);
         this.breathRangeIncreaseBlocks = getValue("breathRangeIncreaseBlocks", float.class);
-        this.immunityDurationSeconds = getValue("immunityDurationSeconds", float.class);
+        this.immunityDurationTicks = getValue("immunityDurationTicks", int.class);
     }
 
     @Override
@@ -25,7 +40,7 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
 
     @Override
     public List<Object> getVariables() {
-        return List.of(cooldownReductionPerEnemyHitPercent, breathRangeIncreaseBlocks, immunityDurationSeconds);
+        return List.of(cooldownReductionPerEnemyHitPercent, breathRangeIncreaseBlocks, immunityDurationTicks);
     }
 
     @Override
@@ -40,15 +55,85 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
 
     public class Boost implements SpecBoostManager.Boost {
 
+        private final Map<UUID, Integer> breathTargetsHit = new HashMap<>();
+        private WarlordsEntity warlordsEntity;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-
+            this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getAbilitiesMatching(FreezingBreath.class).forEach(freezingBreath -> {
+                freezingBreath.setHitbox(freezingBreath.getHitbox() + breathRangeIncreaseBlocks);
+            });
         }
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getAbilitiesMatching(FreezingBreath.class).forEach(freezingBreath -> {
+                freezingBreath.setHitbox(freezingBreath.getHitbox() - breathRangeIncreaseBlocks);
+            });
+        }
 
+        @EventHandler
+        public void onDamageHealFinal(WarlordsDamageHealingFinalEvent event) {
+            WarlordsDamageHealingEvent damageHealingEvent = event.getWarlordsDamageHealingEvent();
+            if (!damageHealingEvent.getSource().equals(warlordsEntity)) {
+                return;
+            }
+            if (!damageHealingEvent.getCause().equals("Freezing Breath")) {
+                return;
+            }
+            UUID uuid = damageHealingEvent.getUUID();
+            if (breathTargetsHit.containsKey(uuid)) {
+                breathTargetsHit.compute(uuid, (k, hits) -> hits + 1);
+            } else {
+                breathTargetsHit.put(uuid, 1);
+            }
+        }
+
+        @EventHandler
+        public void onWarlordsAbilityActivatePostApplyEvent(WarlordsAbilityActivateEvent.PostApply event) {
+            if (!event.getWarlordsEntity().equals(warlordsEntity)) {
+                return;
+            }
+            if (!(event.getAbility() instanceof FreezingBreath)) {
+                return;
+            }
+            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    getStringName(),
+                    null,
+                    BlizzardBreath.Boost.class,
+                    null,
+                    warlordsEntity,
+                    CooldownTypes.SPEC_BOOST,
+                    cooldownManager -> {},
+                    immunityDurationTicks
+            ) {
+                @Override
+                protected Listener getListener() {
+                    return new Listener() {
+                        @EventHandler
+                        public void onWarlordsPlayerStunEvent(WarlordsPlayerStunEvent e) {
+                            if (e.getWarlordsEntity().equals(warlordsEntity)) {
+                                e.setCancelled(true);
+                            }
+                        }
+                    };
+                }
+
+                @Override
+                public void multiplyKB(Vector currentVector) {
+                    currentVector.zero();
+                }
+            });
+            if (breathTargetsHit.isEmpty()) {
+                return;
+            }
+            int hits = breathTargetsHit.values().stream().mapToInt(Integer::intValue).sum();
+            float reduction = hits * (cooldownReductionPerEnemyHitPercent / 100);
+            for (AbstractAbility ability : warlordsEntity.getAbilities()) {
+                ability.subtractCurrentCooldown(ability.getCooldownValue() * reduction);
+            }
+            breathTargetsHit.clear();
         }
 
     }

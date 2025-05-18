@@ -136,14 +136,14 @@ public class CodexCollector implements FieldEffect {
                 if (!event.isDead()) {
                     return;
                 }
-                if (!(event.getAttacker() instanceof WarlordsPlayer warlordsPlayer)) {
+                if (!(event.getSource() instanceof WarlordsPlayer warlordsPlayer)) {
                     return;
                 }
                 Map<String, AbstractAbility> abilityMap = new HashMap<>();
                 warlordsPlayer.getAbilities().forEach(ability -> abilityMap.put(ability.getName(), ability));
-                if (abilityMap.containsKey(event.getAbility())) {
+                if (abilityMap.containsKey(event.getCause())) {
                     if (ThreadLocalRandom.current().nextDouble() < 0.25) {
-                        AbstractAbility ability = abilityMap.get(event.getAbility());
+                        AbstractAbility ability = abilityMap.get(event.getCause());
                         ability.setCurrentCooldown(0);
                     }
                 }

@@ -101,7 +101,7 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
                                 SteadfastWarp.Boost.class,
                                 null,
                                 warlordsEntity,
-                                CooldownTypes.INTERNAL,
+                                CooldownTypes.SPEC_BOOST,
                                 cooldownManager -> {},
                                 remainingKbResTickDuration
                         ) {

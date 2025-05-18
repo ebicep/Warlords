@@ -166,7 +166,7 @@ public class Ghoulcaller extends AbstractMob implements BossMob {
             int attacksInLast5Seconds = (int) (
                     eventsInLast5Seconds.size() - eventsInLast5Seconds
                             .stream()
-                            .filter(event -> event.getAbility().equals("Windfury Weapon"))
+                            .filter(event -> event.getCause().equals("Windfury Weapon"))
                             .count() / 2
             );
             if (attacksInLast5Seconds > 20) {

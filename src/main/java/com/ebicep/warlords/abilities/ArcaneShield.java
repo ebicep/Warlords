@@ -7,13 +7,12 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.ArcaneShieldBranch;
-import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
@@ -49,7 +48,7 @@ public class ArcaneShield extends AbstractAbility implements BlueAbilityIcon, Du
             if (pveMasterUpgrade) {
                 Utils.playGlobalSound(wp.getLocation(), "mage.arcaneshield.activation", 2, 0.5f);
                 EffectUtils.strikeLightning(wp.getLocation(), false);
-                for (WarlordsNPC we : PlayerFilterGeneric.entitiesAround(wp, 6, 6, 6).aliveEnemiesOf(wp).closestFirst(wp).warlordsNPCs()) {
+                for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveEnemiesOf(wp).closestFirst(wp)) {
                     we.setStunTicks(6 * 20);
                 }
             } else if (pveMasterUpgrade2) {

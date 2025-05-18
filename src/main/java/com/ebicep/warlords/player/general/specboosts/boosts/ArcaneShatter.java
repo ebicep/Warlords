@@ -4,10 +4,7 @@ import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.mobs.flags.Unstunnable;
-import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
 
@@ -74,19 +71,7 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
             }
             PlayerFilter.entitiesAround(warlordsEntity, range, range, range)
                         .aliveEnemiesOf(warlordsEntity)
-                        .forEach(we -> {
-                            if (we instanceof WarlordsNPC warlordsNPC && !(warlordsNPC.getMob() instanceof Unstunnable)) {
-                                warlordsNPC.setStunTicks(stunTicks);
-                            } else if (we instanceof WarlordsPlayer warlordsPlayer) {
-                                warlordsPlayer.stun();
-                                new GameRunnable(warlordsPlayer.getGame()) {
-                                    @Override
-                                    public void run() {
-                                        warlordsPlayer.unstun();
-                                    }
-                                }.runTaskLater(stunTicks);
-                            }
-                        });
+                        .forEach(we -> we.setStunTicks(stunTicks));
         }
 
     }

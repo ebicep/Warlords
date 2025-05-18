@@ -7,7 +7,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -173,9 +172,7 @@ public class EarthlivingWeapon extends AbstractAbility implements PurpleAbilityI
                         ally.addEnergy(giver, "Loamliving Weapon", missingHealth / 20);
                     }
                 }, 2 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (target instanceof WarlordsNPC) {
-                        ((WarlordsNPC) target).setStunTicks(2);
-                    }
+            target.setStunTicks(2);
                     if (ticksElapsed % 5 == 0) {
                         EffectUtils.playCylinderAnimation(target.getLocation(), 1.05, Particle.HAPPY_VILLAGER, 1);
                     }

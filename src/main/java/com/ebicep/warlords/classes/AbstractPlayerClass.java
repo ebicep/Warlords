@@ -159,6 +159,8 @@ public abstract class AbstractPlayerClass {
                     ability.setCurrentCooldown(ability.getCooldownValue());
                 }
                 sendRightClickPacket(player);
+                WarlordsAbilityActivateEvent.PostApply postApply = new WarlordsAbilityActivateEvent.PostApply(wp, player, ability, slot);
+                Bukkit.getPluginManager().callEvent(postApply);
             }
             resetAbilityCD(wp);
         } else {

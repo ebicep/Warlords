@@ -157,19 +157,10 @@ public class EventDjer extends AbstractMob implements BossMinionMob {
                 @Override
                 public void run() {
                     for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                        warlordsPlayer.stun();
+                        warlordsPlayer.setStunTicks(50);
                     }
                 }
             }.runTaskLater(30);
-            new GameRunnable(pveOption.getGame()) {
-
-                @Override
-                public void run() {
-                    for (WarlordsPlayer warlordsPlayer : warlordsPlayers) {
-                        warlordsPlayer.unstun();
-                    }
-                }
-            }.runTaskLater(50);
             return true;
         }
 

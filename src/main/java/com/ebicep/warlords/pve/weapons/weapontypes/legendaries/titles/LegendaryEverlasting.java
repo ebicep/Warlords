@@ -136,8 +136,8 @@ public class LegendaryEverlasting extends AbstractLegendaryWeapon implements Lis
 
     @EventHandler
     public void onFinalDamageHeal(WarlordsDamageHealingFinalEvent event) {
-        WarlordsEntity attacker = event.getAttacker();
-        String ability = event.getAbility();
+        WarlordsEntity attacker = event.getSource();
+        String ability = event.getCause();
         if (event.isHealingInstance()) {
             return;
         }

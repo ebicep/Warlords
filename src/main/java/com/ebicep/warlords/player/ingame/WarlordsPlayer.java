@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
@@ -52,29 +53,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
 
-    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
-            zombie.setAdult();
-            zombie.setCustomNameVisible(true);
-
-            EntityEquipment zombieEquipment = zombie.getEquipment();
-            if (inv != null) {
-                zombieEquipment.setBoots(inv.getBoots());
-                zombieEquipment.setLeggings(inv.getLeggings());
-                zombieEquipment.setChestplate(inv.getChestplate());
-                zombieEquipment.setHelmet(inv.getHelmet());
-                zombieEquipment.setItemInMainHand(inv.getItemInMainHand());
-            } else {
-                zombieEquipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-            }
-            //prevents zombie from moving
-            zombie.setAI(false);
-        });
-    }
-
+    private int stunTicks = 0;
     protected final AbilityTree abilityTree = new AbilityTree(this);
     protected CosmeticSettings cosmeticSettings;
-
     //    @Override
 //    public void setWasSneaking(boolean wasSneaking) {
 //        super.setWasSneaking(wasSneaking);
@@ -86,6 +67,14 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Nullable
     protected AbstractWeapon weapon;
 
+    @Override
+    public void sendMessage(Component component, boolean isDamageHealMessage) {
+        super.sendMessage(component, isDamageHealMessage);
+        debugMessageLog.add(component);
+        if (isInPve() && debugMessageLog.size() > 200) {
+            debugMessageLog.subList(0, 100).clear();
+        }
+    }
     private boolean updateTabName = true;
 
     public WarlordsPlayer() {
@@ -169,73 +158,17 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         }
     }
 
-    public void stun() {
+    @Override
+    public boolean setStunTicks(int stunTicks) {
+        WarlordsPlayerStunEvent stunEvent = new WarlordsPlayerStunEvent(this);
+        if (stunEvent.isCancelled()) {
+            return false;
+        }
+        if (this.stunTicks < stunTicks) {
+            this.stunTicks = stunTicks;
+        }
         STUNNED_PLAYERS.add(uuid);
-    }
-
-    public void unstun() {
-        STUNNED_PLAYERS.remove(uuid);
-    }
-
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
-            if (
-                    (e.getFrom().getX() != e.getTo().getX() ||
-                            e.getFrom().getZ() != e.getTo().getZ()) &&
-                            !(e instanceof PlayerTeleportEvent)
-            ) {
-                e.getPlayer().teleport(e.getFrom());
-            }
-        }
-    }
-
-    public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        Zombie jimmy = spawnSimpleJimmy(loc, inv);
-        jimmy.customName(Component.empty()
-                                  .append(getSpec().getClassNameShortWithBrackets())
-                                  .append(Component.text(" "))
-                                  .append(this.getColoredName())
-                                  .append(Component.text(" " + Math.round(this.getCurrentHealth()) + "❤",
-                                          NamedTextColor.RED
-                                  ))); // TODO add level and class into the name of this jimmy
-        jimmy.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
-        AttributeInstance attribute = jimmy.getAttribute(Attribute.MOVEMENT_SPEED);
-        if (attribute != null) {
-            attribute.setBaseValue(0);
-        }
-        attribute = jimmy.getAttribute(Attribute.FOLLOW_RANGE);
-        if (attribute != null) {
-            attribute.setBaseValue(0);
-        }
-        //prevents jimmy from moving
-        jimmy.setAI(false);
-        if (isDead()) {
-            jimmy.remove();
-        }
-        return jimmy;
-    }
-
-    public void updatePlayerReference(@Nullable Player player) {
-        if (player == this.entity) {
-            return;
-        }
-        Location loc = this.getLocation();
-
-        if (player == null) {
-            if (this.entity instanceof Player p) {
-                p.getInventory().setHeldItemSlot(0);
-                this.entity = spawnJimmy(loc, p.getEquipment());
-                Warlords.setRejoinPoint(uuid, loc);
-            }
-        } else {
-            if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event
-                this.entity.remove();
-            }
-            player.teleport(loc);
-            this.entity = player;
-            updateEntity();
-        }
+        return true;
     }
 
     @Override
@@ -341,18 +274,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public void runEveryTick() {
-        super.runEveryTick();
-        int regenTickTimer = getRegenTickTimer();
-        setRegenTickTimer(regenTickTimer - 1);
-        if (regenTickTimer == 0) {
-            getHitBy().clear();
-        }
-        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
-        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
-            int healthToAdd = (int) (getMaxHealth() / 55.3);
-            setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + healthToAdd, getMaxHealth())));
-        }
+    public void unstun() {
+        STUNNED_PLAYERS.remove(uuid);
     }
 
     @Override
@@ -448,6 +371,109 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         return weapon == null ? null : weapon.getSelectedWeaponSkin().getItem();
     }
 
+    @Override
+    public void runEveryTick() {
+        super.runEveryTick();
+        if (stunTicks > 0) {
+            stunTicks--;
+            if (stunTicks == 0) {
+                unstun();
+            }
+        }
+        int regenTickTimer = getRegenTickTimer();
+        setRegenTickTimer(regenTickTimer - 1);
+        if (regenTickTimer == 0) {
+            getHitBy().clear();
+        }
+        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
+        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
+            int healthToAdd = (int) (getMaxHealth() / 55.3);
+            setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + healthToAdd, getMaxHealth())));
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if (STUNNED_PLAYERS.contains(e.getPlayer().getUniqueId())) {
+            if (
+                    (e.getFrom().getX() != e.getTo().getX() ||
+                            e.getFrom().getZ() != e.getTo().getZ()) &&
+                            !(e instanceof PlayerTeleportEvent)
+            ) {
+                e.getPlayer().teleport(e.getFrom());
+            }
+        }
+    }
+
+    public void updatePlayerReference(@Nullable Player player) {
+        if (player == this.entity) {
+            return;
+        }
+        Location loc = this.getLocation();
+
+        if (player == null) {
+            if (this.entity instanceof Player p) {
+                p.getInventory().setHeldItemSlot(0);
+                this.entity = spawnJimmy(loc, p.getEquipment());
+                Warlords.setRejoinPoint(uuid, loc);
+            }
+        } else {
+            if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event
+                this.entity.remove();
+            }
+            player.teleport(loc);
+            this.entity = player;
+            updateEntity();
+        }
+    }
+
+    public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
+        Zombie jimmy = spawnSimpleJimmy(loc, inv);
+        jimmy.customName(Component.empty()
+                                  .append(getSpec().getClassNameShortWithBrackets())
+                                  .append(Component.text(" "))
+                                  .append(this.getColoredName())
+                                  .append(Component.text(" " + Math.round(this.getCurrentHealth()) + "❤",
+                                          NamedTextColor.RED
+                                  ))); // TODO add level and class into the name of this jimmy
+        jimmy.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
+        AttributeInstance attribute = jimmy.getAttribute(Attribute.MOVEMENT_SPEED);
+        if (attribute != null) {
+            attribute.setBaseValue(0);
+        }
+        attribute = jimmy.getAttribute(Attribute.FOLLOW_RANGE);
+        if (attribute != null) {
+            attribute.setBaseValue(0);
+        }
+        //prevents jimmy from moving
+        jimmy.setAI(false);
+        if (isDead()) {
+            jimmy.remove();
+        }
+        return jimmy;
+    }
+
+    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
+        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
+                    zombie.setAdult();
+                    zombie.setCustomNameVisible(true);
+
+                    EntityEquipment zombieEquipment = zombie.getEquipment();
+                    if (inv != null) {
+                        zombieEquipment.setBoots(inv.getBoots());
+                        zombieEquipment.setLeggings(inv.getLeggings());
+                        zombieEquipment.setChestplate(inv.getChestplate());
+                        zombieEquipment.setHelmet(inv.getHelmet());
+                        zombieEquipment.setItemInMainHand(inv.getItemInMainHand());
+                    } else {
+                        zombieEquipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+                    }
+                    //prevents zombie from moving
+                    zombie.setAI(false);
+                }
+        );
+    }
+
     public void applySkillBoost(Player player) {
         for (AbstractAbility ability : spec.getAbilities()) {
             if (ability.getClass() == skillBoost.ability) {
@@ -468,15 +494,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             }
         } else {
             return ability.getAbilityIcon();
-        }
-    }
-
-    @Override
-    public void sendMessage(Component component, boolean isDamageHealMessage) {
-        super.sendMessage(component, isDamageHealMessage);
-        debugMessageLog.add(component);
-        if (isInPve() && debugMessageLog.size() > 200) {
-            debugMessageLog.subList(0, 100).clear();
         }
     }
 
@@ -508,4 +525,5 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     public void queueUpdateTabName() {
         this.updateTabName = true;
     }
+
 }

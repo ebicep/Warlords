@@ -6,7 +6,6 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -107,9 +106,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         List<WarlordsEntity> hit = PlayerFilter.entitiesAround(wp, knockbackRadius, knockbackRadius, knockbackRadius).aliveEnemiesOf(wp).toList();
         for (WarlordsEntity enemy : hit) {
             if (pveMasterUpgrade2) {
-                if (enemy instanceof WarlordsNPC warlordsNPC) {
-                    warlordsNPC.setStunTicks(60);
-                }
+                enemy.setStunTicks(60);
             } else {
                 final Location loc = enemy.getLocation();
                 final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.35);
