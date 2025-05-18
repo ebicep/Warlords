@@ -1,10 +1,13 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.FlameBurst;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
 
@@ -12,21 +15,11 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
     private float energyCostReductionPercent;
     private float damageIncrease;
 
-    private int maxAnimationTime = 12;
-    private int maxAnimationEffects = 4;
-    private float hitbox = 10;
-    private double velocity = 1.1;
-
     @Override
     public void init() {
         this.cooldownReductionPercent = getValue("cooldownReductionPercent", float.class);
         this.energyCostReductionPercent = getValue("energyCostReductionPercent", float.class);
         this.damageIncrease = getValue("damageIncrease", float.class);
-
-        this.maxAnimationTime = getValue("maxAnimationTime", int.class);
-        this.maxAnimationEffects = getValue("maxAnimationEffects", int.class);
-        this.hitbox = getValue("hitbox", float.class);
-        this.velocity = getValue("velocity", double.class);
     }
 
     @Override
@@ -49,46 +42,41 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
         return this;
     }
 
-    public int getMaxAnimationTime() {
-        return maxAnimationTime;
-    }
-
-    public int getMaxAnimationEffects() {
-        return maxAnimationEffects;
-    }
-
-    public float getHitbox() {
-        return hitbox;
-    }
-
-    public double getVelocity() {
-        return velocity;
-    }
-
     public class Boost implements SpecBoostManager.Boost {
+
+        private final Map<AbstractAbility, FlameBurst> swappedAbilities = new HashMap<>();
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                flameBurst.setBreath(true);
-                flameBurst.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -cooldownReductionPercent / 100);
-                flameBurst.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -energyCostReductionPercent / 100);
-                flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
-                );
-            });
+            List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
+            for (int i = 0; i < abilities.size(); i++) {
+                if (abilities.get(i) instanceof FlameBurst flameBurst) {
+                    com.ebicep.warlords.abilities.FlameBreath flameBreath = new com.ebicep.warlords.abilities.FlameBreath();
+                    flameBreath.init(flameBreath.getBuilder());
+                    flameBreath.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -cooldownReductionPercent / 100);
+                    flameBreath.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -energyCostReductionPercent / 100);
+                    flameBreath.getDamageValues().getFlameBreathDamage().forEachValue(floatModifiable ->
+                            floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
+                    );
+                    abilities.set(i, flameBreath);
+                    swappedAbilities.put(flameBreath, flameBurst);
+                }
+            }
+            warlordsPlayer.resetAbilityTree();
         }
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                flameBurst.setBreath(false);
-                flameBurst.getCooldown().removeModifier("Spec Boost");
-                flameBurst.getEnergyCost().removeModifier("Spec Boost");
-                flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-            });
+            List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
+            for (int i = 0; i < abilities.size(); i++) {
+                AbstractAbility ability = abilities.get(i);
+                FlameBurst flameBurst = swappedAbilities.get(ability);
+                if (flameBurst != null) {
+                    abilities.set(i, flameBurst);
+                    swappedAbilities.remove(ability);
+                }
+            }
+            warlordsPlayer.resetAbilityTree();
         }
 
     }

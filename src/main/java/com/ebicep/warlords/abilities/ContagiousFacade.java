@@ -38,7 +38,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
     private FloatModifiable damageAbsorption = new FloatModifiable(30);
     private int tickDuration = 100;
     private int shieldTickDuration = 100;
-    private double poisonRadius = 8;
+    private float poisonRadius = 8;
     private int speedIncrease = 40;
     private int speedIncreaseDuration = 100;
     private int stacksGranted = 2;

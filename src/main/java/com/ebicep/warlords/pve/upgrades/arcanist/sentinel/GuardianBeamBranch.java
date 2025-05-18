@@ -6,7 +6,7 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
-    double maxDistance = ability.getMaxDistance();
+    float maxDistance = ability.getMaxDistance();
 
     @Override
     public void runOnce() {
@@ -34,7 +34,7 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
 
                     @Override
                     public void run(float value) {
-                        ability.setMaxDistance(maxDistance + 15);
+                        ability.setMaxDistance(maxDistance + 15f);
                     }
                 }, 4)
                 .addTo(treeB);

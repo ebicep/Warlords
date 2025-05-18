@@ -47,6 +47,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<FallenSouls> FALLEN_SOULS = new Ability<>(FallenSouls.class, FallenSouls::new);
     public static final Ability<Fireball> FIREBALL = new Ability<>(Fireball.class, Fireball::new);
     public static final Ability<FlameBurst> FLAME_BURST = new Ability<>(FlameBurst.class, FlameBurst::new);
+    public static final Ability<FlameBreath> FLAME_BREATH = new Ability<>(FlameBreath.class, FlameBreath::new);
     public static final Ability<FortifyingHex> FORTIFYING_HEX = new Ability<>(FortifyingHex.class, FortifyingHex::new);
     public static final Ability<FreezingBreath> FREEZING_BREATH = new Ability<>(FreezingBreath.class, FreezingBreath::new);
     public static final Ability<FrostBolt> FROST_BOLT = new Ability<>(FrostBolt.class, FrostBolt::new);
@@ -142,6 +143,7 @@ public class Ability<T extends AbstractAbility> {
             FALLEN_SOULS,
             FIREBALL,
             FLAME_BURST,
+            FLAME_BREATH,
             FORTIFYING_HEX,
             FREEZING_BREATH,
             FROST_BOLT,

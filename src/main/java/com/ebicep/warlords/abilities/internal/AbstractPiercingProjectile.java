@@ -33,8 +33,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         HitBox,
         AbilityStats<T, R> {
 
-    protected double projectileSpeed;
-    protected double maxDistance;
+    protected float projectileSpeed;
+    protected float maxDistance;
     protected int maxTicks;
     protected boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
@@ -51,8 +51,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), double.class);
-        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), double.class);
+        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), float.class);
+        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), float.class);
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
         this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
     }
@@ -377,20 +377,20 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         return new ArrayList<>(internalProjectileGroup.get(internalProjectile));
     }
 
-    public double getProjectileSpeed() {
+    public float getProjectileSpeed() {
         return projectileSpeed;
     }
 
-    public void setProjectileSpeed(double projectileSpeed) {
+    public void setProjectileSpeed(float projectileSpeed) {
         this.projectileSpeed = projectileSpeed;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
-    public double getMaxDistance() {
+    public float getMaxDistance() {
         return maxDistance;
     }
 
-    public void setMaxDistance(double maxDistance) {
+    public void setMaxDistance(float maxDistance) {
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }

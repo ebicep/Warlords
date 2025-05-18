@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 
 public class LightningBoltBranch extends AbstractUpgradeBranch<LightningBolt> {
 
-    double projectileSpeed = ability.getProjectileSpeed();
+    float projectileSpeed = ability.getProjectileSpeed();
 
     public LightningBoltBranch(AbilityTree abilityTree, LightningBolt ability) {
         super(abilityTree, ability);

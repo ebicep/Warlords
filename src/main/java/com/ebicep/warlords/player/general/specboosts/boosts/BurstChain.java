@@ -52,7 +52,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
         private final Map<UUID, Integer> flameBurstHit = new HashMap<>();
         private WarlordsEntity warlordsEntity;
-        private double previousProjectileSpeed;
+        private float previousProjectileSpeed;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
