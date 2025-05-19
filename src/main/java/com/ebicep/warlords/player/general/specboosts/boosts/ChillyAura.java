@@ -18,14 +18,14 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
     private float slowAmountPercent;
     private float healthLossPercent;
     private float rangeBlocks;
-    private float healthLossTickPeriod;
+    private int healthLossTickPeriod;
 
     @Override
     public void init() {
         this.slowAmountPercent = getValue("slowAmountPercent", float.class);
         this.healthLossPercent = getValue("healthLossPercent", float.class);
         this.rangeBlocks = getValue("rangeBlocks", float.class);
-        this.healthLossTickPeriod = getValue("healthLossTickPeriod", float.class);
+        this.healthLossTickPeriod = getValue("healthLossTickPeriod", int.class);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
                                 .aliveEnemiesOf(warlordsEntity)
                                 .forEach(we -> {
                                     we.addSpeedModifier(warlordsEntity, getStringName(), -slowAmountPercent, 6);
-                                    if (ticksElapsed % 20 == 0) {
+                                    if (ticksElapsed % healthLossTickPeriod == 0) {
                                         float damage = we.getMaxHealth() * healthLossPercent / 100;
                                         we.addInstance(InstanceBuilder
                                                 .damage()
