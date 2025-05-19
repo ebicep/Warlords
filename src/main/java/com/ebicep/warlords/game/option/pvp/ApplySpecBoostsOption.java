@@ -54,7 +54,11 @@ public class ApplySpecBoostsOption implements Option {
                             HandlerList.unregisterAll(oldBoost);
                             oldBoost.unapply(warlordsPlayer);
                         }
-                SpecBoostManager.SpecBoost<?> specBoost = SpecBoostManager.getSpecBoosts(newSpec).get(databasePlayer.getSelectedSpecBoost(newSpec));
+                List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
+                if (specBoosts.isEmpty()) {
+                    return;
+                }
+                SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
                         applyBoost(warlordsPlayer, specBoost);
                     }
             );
