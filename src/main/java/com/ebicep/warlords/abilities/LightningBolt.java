@@ -13,6 +13,7 @@ import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.LightningBoltBranch;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -22,6 +23,7 @@ import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Transformation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 
@@ -34,8 +36,9 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
 
     private final LightningBoltStats stats = new LightningBoltStats();
     private final DamageValues damageValues = new DamageValues();
-    private double hitbox = 3;
+    private FloatModifiable hitbox = new FloatModifiable(3);
     private int cooldownReduction = 2;
+    private boolean explodeOnExpiration = false;
 
     public LightningBolt() {
         super(AbstractAbilityBuilder.create("lightningBolt").pvp());
@@ -48,8 +51,14 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.hitbox = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class);
+        this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
         this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), int.class);
+    }
+
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        this.hitbox.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     @Override
@@ -114,8 +123,14 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         WarlordsEntity wp = projectile.getShooter();
         Location currentLocation = projectile.getCurrentLocation();
         Utils.playGlobalSound(currentLocation, "shaman.lightningbolt.impact", 2, 1);
+        return explode(projectile, wp);
+    }
+
+    public int explode(@Nonnull InternalProjectile projectile, WarlordsEntity wp) {
+        Location currentLocation = projectile.getCurrentLocation();
         currentLocation.getWorld().spawnParticle(Particle.EXPLOSION, currentLocation, 1, 0, 0, 0, 0, null, true);
         int playersHit = 0;
+        float hitbox = this.hitbox.getCalculatedValue();
         for (WarlordsEntity enemy : PlayerFilter.entitiesAround(currentLocation, hitbox, hitbox, hitbox).aliveEnemiesOf(wp).excluding(projectile.getHit())) {
             getProjectiles(projectile).forEach(p -> p.getHit().add(enemy));
             playersHit++;
@@ -133,6 +148,25 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
             }
         }
         return playersHit;
+    }
+
+    private Optional<WarlordsDamageHealingFinalEvent> hit(@Nonnull WarlordsEntity hit, WarlordsEntity wp, InternalProjectile projectile) {
+        int playersHit = projectile.getHit().size();
+        float damageMultiplier = 1;
+        if (pveMasterUpgrade2) {
+            if (playersHit == 1) {
+                damageMultiplier = 1.35f;
+            } else {
+                damageMultiplier = 1.1f;
+            }
+            EffectUtils.displayParticle(Particle.ENCHANTED_HIT, hit.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
+        }
+        return hit.addInstance(InstanceBuilder.damage()
+                                              .ability(this)
+                                              .source(wp)
+                                              .min(damageValues.boltDamage.getMinValue() * damageMultiplier)
+                                              .max(damageValues.boltDamage.getMaxValue() * damageMultiplier)
+                                              .crit(damageValues.boltDamage));
     }
 
     @Override
@@ -170,25 +204,6 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         return new LocationBuilder(startingLocation.clone()).addY(-.1);
     }
 
-    private Optional<WarlordsDamageHealingFinalEvent> hit(@Nonnull WarlordsEntity hit, WarlordsEntity wp, InternalProjectile projectile) {
-        int playersHit = projectile.getHit().size();
-        float damageMultiplier = 1;
-        if (pveMasterUpgrade2) {
-            if (playersHit == 1) {
-                damageMultiplier = 1.35f;
-            } else {
-                damageMultiplier = 1.1f;
-            }
-            EffectUtils.displayParticle(Particle.ENCHANTED_HIT, hit.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);
-        }
-        return hit.addInstance(InstanceBuilder.damage()
-                                              .ability(this)
-                                              .source(wp)
-                                              .min(damageValues.boltDamage.getMinValue() * damageMultiplier)
-                                              .max(damageValues.boltDamage.getMaxValue() * damageMultiplier)
-                                              .crit(damageValues.boltDamage));
-    }
-
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Hurl a fast, piercing bolt of lightning that deals ")
@@ -215,12 +230,8 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
         return stats;
     }
 
-    public double getHitbox() {
+    public FloatModifiable getHitbox() {
         return hitbox;
-    }
-
-    public void setHitbox(double hitbox) {
-        this.hitbox = hitbox;
     }
 
     public static class DamageValues implements Value.ValueHolder {

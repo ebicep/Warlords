@@ -2,6 +2,7 @@ package com.ebicep.warlords.pve.upgrades.mage.pyromancer;
 
 import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
 
@@ -19,11 +20,11 @@ public class FireballBranch extends AbstractUpgradeBranch<Fireball> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setProjectileSpeed(ability.getProjectileSpeed() * value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value / 100);
                     }
-                }, 50f, 4)
+                            }, ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 50f, 4
+                )
                 .addTo(treeA);
 
         UpgradeTreeBuilder

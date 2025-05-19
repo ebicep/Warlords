@@ -2,6 +2,7 @@ package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.events.player.ingame.WarlordsProjectileFireEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Banner;
@@ -33,8 +35,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         HitBox,
         AbilityStats<T, R> {
 
-    protected float projectileSpeed;
-    protected float maxDistance;
+    protected FloatModifiable projectileSpeed;
+    protected FloatModifiable maxDistance;
     protected int maxTicks;
     protected boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
@@ -51,9 +53,10 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.projectileSpeed = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), float.class);
-        this.maxDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), float.class);
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
+        this.projectileSpeed = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), float.class));
+        this.projectileSpeed.addRefreshListener("Projectile Max Ticks", this::updateMaxTicks);
+        this.maxDistance = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), float.class));
+        this.maxDistance.addRefreshListener("Projectile Max Ticks", this::updateMaxTicks);
         this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
     }
 
@@ -63,22 +66,12 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         return true;
     }
 
-    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
-        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
-        List<InternalProjectile> internalProjectiles = new ArrayList<>();
-        for (Location projectileLocation : projectileLocations) {
-            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
-            internalProjectiles.add(projectile);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            internalProjectileGroup.put(projectile, internalProjectiles);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            onSpawn(projectile);
-            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
-        }
+    @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        projectileSpeed.tick();
+        maxDistance.tick();
+        hitboxInflation.tick();
+        super.runEveryTick(warlordsEntity);
     }
 
     /**
@@ -123,10 +116,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
     protected abstract float getSoundPitch();
 
-    @Override
-    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
-        hitboxInflation.tick();
-        super.runEveryTick(warlordsEntity);
+    private void updateMaxTicks() {
+        this.maxTicks = Math.min((int) (maxDistance.getCalculatedValue() / projectileSpeed.getCalculatedValue()), 1);
     }
 
     @Override
@@ -163,6 +154,78 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      * @param projectile
      */
     protected void updateSpeed(InternalProjectile projectile) {
+    }
+
+    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
+        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
+        List<InternalProjectile> internalProjectiles = new ArrayList<>();
+        for (Location projectileLocation : projectileLocations) {
+            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
+            internalProjectiles.add(projectile);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            internalProjectileGroup.put(projectile, internalProjectiles);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            onSpawn(projectile);
+            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
+        }
+        WarlordsProjectileFireEvent fireEvent = new WarlordsProjectileFireEvent(shooter, this, internalProjectiles);
+        Bukkit.getPluginManager().callEvent(fireEvent);
+    }
+
+    @Nullable
+    protected WarlordsEntity getFromEntity(Entity e) {
+        List<Entity> passengers = e.getPassengers();
+        return Warlords.getPlayer(passengers.isEmpty() ? e : passengers.get(0));
+    }
+
+    /**
+     * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
+     * @param projectile
+     * @param wp
+     *
+     * @return true if it should destroy itself
+     */
+    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
+
+    /**
+     * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
+     * @param projectile
+     * @param block
+     *
+     * @return true if it should destroy itself
+     */
+    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
+
+    /**
+     * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
+     *
+     * @param projectile
+     * @param hit
+     * @param impactLocation
+     */
+    protected abstract void onNonCancellingHit(
+            @Nonnull InternalProjectile projectile,
+            @Nonnull WarlordsEntity hit,
+            @Nonnull Location impactLocation
+    );
+
+    /**
+     * Calculated the initial projectile location
+     *
+     * @param shooter
+     * @param startingLocation
+     *
+     * @return
+     */
+    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
+        //return new LocationBuilder(startingLocation).backward(.5f);
+        return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
     }
 
     /**
@@ -236,7 +299,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
                     new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
                     speed,
                     0,
-                    (int) (projectileSpeed + 1)
+                    (int) (projectileSpeed.getCalculatedValue() + 1)
             );
             while (itr.hasNext()) {
                 Block block = itr.next();
@@ -295,70 +358,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         return hit;
     }
 
-    @Nullable
-    protected WarlordsEntity getFromEntity(Entity e) {
-        List<Entity> passengers = e.getPassengers();
-        return Warlords.getPlayer(passengers.isEmpty() ? e : passengers.get(0));
-    }
-
-    /**
-     * Should the collision with this object cause the projectile to consider itself destroyed?
-     *
-     * @param projectile
-     * @param wp
-     *
-     * @return true if it should destroy itself
-     */
-    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
-
-    /**
-     * Should the collision with this object cause the projectile to consider itself destroyed?
-     *
-     * @param projectile
-     * @param block
-     *
-     * @return true if it should destroy itself
-     */
-    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
-
-    /**
-     * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
-     *
-     * @param projectile
-     * @param hit
-     * @param impactLocation
-     */
-    protected abstract void onNonCancellingHit(
-            @Nonnull InternalProjectile projectile,
-            @Nonnull WarlordsEntity hit,
-            @Nonnull Location impactLocation
-    );
-
-    /**
-     * Calculated the initial projectile location
-     *
-     * @param shooter
-     * @param startingLocation
-     *
-     * @return
-     */
-    protected Location modifyProjectileStartingLocation(WarlordsEntity shooter, Location startingLocation) {
-        //return new LocationBuilder(startingLocation).backward(.5f);
-        return startingLocation.clone().add(startingLocation.getDirection().multiply(0.2));
-    }
-
-    /**
-     * Calculated the initial projectile speed
-     *
-     * @param shooter
-     * @param startingLocation
-     *
-     * @return
-     */
-    protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
-        return startingLocation.getDirection().multiply(projectileSpeed);
-    }
-
     public void setShotsFiredAtATime(int shotsFiredAtATime) {
         this.shotsFiredAtATime = shotsFiredAtATime;
     }
@@ -377,22 +376,24 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         return new ArrayList<>(internalProjectileGroup.get(internalProjectile));
     }
 
-    public float getProjectileSpeed() {
+    /**
+     * Calculated the initial projectile speed
+     *
+     * @param shooter
+     * @param startingLocation
+     *
+     * @return
+     */
+    protected Vector getProjectileStartingSpeed(WarlordsEntity shooter, Location startingLocation) {
+        return startingLocation.getDirection().multiply(projectileSpeed.getCalculatedValue());
+    }
+
+    public FloatModifiable getProjectileSpeed() {
         return projectileSpeed;
     }
 
-    public void setProjectileSpeed(float projectileSpeed) {
-        this.projectileSpeed = projectileSpeed;
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
-    }
-
-    public float getMaxDistance() {
+    public FloatModifiable getMaxDistance() {
         return maxDistance;
-    }
-
-    public void setMaxDistance(float maxDistance) {
-        this.maxDistance = maxDistance;
-        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
     }
 
     public interface InternalProjectileTask {

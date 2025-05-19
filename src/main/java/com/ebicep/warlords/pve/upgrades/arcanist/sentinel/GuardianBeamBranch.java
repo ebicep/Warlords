@@ -3,10 +3,9 @@ package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 import com.ebicep.warlords.abilities.GuardianBeam;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
-
-    float maxDistance = ability.getMaxDistance();
 
     @Override
     public void runOnce() {
@@ -33,10 +32,11 @@ public class GuardianBeamBranch extends AbstractUpgradeBranch<GuardianBeam> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        ability.setMaxDistance(maxDistance + 15f);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value);
                     }
-                }, 4)
+                            }, ability.getMaxDistance().addAdditiveModifier("Upgrade Branch", 0), 4
+                )
                 .addTo(treeB);
 
         masterUpgrade = new Upgrade(

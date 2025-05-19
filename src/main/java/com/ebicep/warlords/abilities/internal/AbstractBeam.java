@@ -29,7 +29,7 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
     protected boolean onActivateInternal(@Nonnull WarlordsEntity shooter) {
         List<Location> locationsToFireShots = getLocationsToFireShots(shooter.getEyeLocation());
         for (Location locationsToFireShot : locationsToFireShots) {
-            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance).clone().add(.5, -1, .5).clone();
+            Location location = Utils.getTargetLocation(locationsToFireShot, (int) maxDistance.getCalculatedValue()).clone().add(.5, -1, .5).clone();
             EffectUtils.playChainAnimation(shooter.getLocation(), location, getBeamItem(), 9);
         }
         return super.onActivateInternal(shooter);

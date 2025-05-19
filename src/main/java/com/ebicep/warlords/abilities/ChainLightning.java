@@ -17,6 +17,7 @@ import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.ChainLightningBranch;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -24,6 +25,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.*;
@@ -61,10 +63,10 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
 
     private final ChainLightningStats stats = new ChainLightningStats();
     private final DamageValues damageValues = new DamageValues();
-    private float damageReductionPerBounce = 10;
-    private float maxDamageReduction = 25;
+    private FloatModifiable damageReductionPerBounce = new FloatModifiable(10);
+    private FloatModifiable maxDamageReduction = new FloatModifiable(25);
+    private FloatModifiable damageDecreasePerBounce = new FloatModifiable(15);
     private int damageReductionTickDuration = 90;
-    private float damageDecreasePerBounce = 15;
 
     public ChainLightning() {
         super(AbstractAbilityBuilder.create("chainLightning").pvp());
@@ -75,12 +77,32 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     }
 
     @Override
+    public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
+        damageDecreasePerBounce.tick();
+        damageReductionPerBounce.tick();
+        maxDamageReduction.tick();
+        super.runEveryTick(warlordsEntity);
+    }
+
+    @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.damageReductionPerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionPerBounce"), float.class);
-        this.maxDamageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageReduction"), float.class);
+        this.damageReductionPerBounce = new FloatModifiable(ConfigManager.getAbilityConfigValue(
+                builder.getNamespaces(),
+                builder.getAppendedFieldName("damageReductionPerBounce"),
+                float.class
+        ));
+        this.maxDamageReduction = new FloatModifiable(ConfigManager.getAbilityConfigValue(
+                builder.getNamespaces(),
+                builder.getAppendedFieldName("maxDamageReduction"),
+                float.class
+        ));
+        this.damageDecreasePerBounce = new FloatModifiable(ConfigManager.getAbilityConfigValue(
+                builder.getNamespaces(),
+                builder.getAppendedFieldName("damageDecreasePerBounce"),
+                float.class
+        ));
         this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
-        this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
     }
 
     @Override
@@ -99,7 +121,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce, maxDamageReduction));
+                return currentDamageValue * convertToDivisionDecimal(Math.min(hitCounter * damageReductionPerBounce.getCalculatedValue(), maxDamageReduction.getCalculatedValue()));
             }
         });
     }
@@ -200,7 +222,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
         if (foundPlayer.isPresent()) {
             WarlordsEntity hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
-            float damageMultiplier = 1 - Math.min(playersSize, pveMasterUpgrade ? Integer.MAX_VALUE : 3) * damageDecreasePerBounce / 100f;
+            float damageMultiplier = 1 - Math.min(playersSize, pveMasterUpgrade ? Integer.MAX_VALUE : 3) * damageDecreasePerBounce.getCalculatedValue() / 100f;
             playersHit.add(hit);
             if (hit.onHorse()) {
                 stats.numberOfDismounts++;
@@ -239,12 +261,20 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
                                                                           .findFirst();
     }
 
-    public float getDamageDecreasePerBounce() {
+    public FloatModifiable getDamageReductionPerBounce() {
+        return damageReductionPerBounce;
+    }
+
+    public FloatModifiable getMaxDamageReduction() {
+        return maxDamageReduction;
+    }
+
+    public FloatModifiable getDamageDecreasePerBounce() {
         return damageDecreasePerBounce;
     }
 
-    public void setDamageDecreasePerBounce(float damageDecreasePerBounce) {
-        this.damageDecreasePerBounce = damageDecreasePerBounce;
+    public int getDamageReductionTickDuration() {
+        return damageReductionTickDuration;
     }
 
     public static class DamageValues implements Value.ValueHolder {

@@ -25,12 +25,14 @@ public class SpecBoostManager {
     public static final SpecBoost<BlizzardBreath> BLIZZARD_BREATH = new BlizzardBreath();
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
+    public static final SpecBoost<EyeOfTheStorm> EYE_OF_THE_STORM = new EyeOfTheStorm();
     private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
 
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, ARCANE_SHATTER, DIMENSIONAL_WARP, BURST_CHAIN, FLAME_BREATH));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, ARCANE_RECLUSE, CHILLY_AURA, BLIZZARD_BREATH, STEADFAST_WARP));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(VIGOROUS_INFUSION));
+        SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(EYE_OF_THE_STORM));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {

@@ -41,7 +41,7 @@ public class FlameburstBranch extends AbstractUpgradeBranch<FlameBurst> {
                 50000,
                 () -> {
                     ability.setProjectileWidth(0.72D);
-                    ability.setProjectileSpeed(ability.getProjectileSpeed() * 0.2f);
+                    ability.getProjectileSpeed().addMultiplicativeModifierMult("Master Upgrade Branch", .2f);
                     Value.RangedValueCritable damage = ability.getDamageValues().getFlameBurstDamage();
                     damage.min().addMultiplicativeModifierAdd("Master Upgrade Branch", 1f);
                     damage.max().addMultiplicativeModifierAdd("Master Upgrade Branch", 1f);

@@ -1,7 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.FlameBurst;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -52,14 +51,12 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
         private final Map<UUID, Integer> flameBurstHit = new HashMap<>();
         private WarlordsEntity warlordsEntity;
-        private float previousProjectileSpeed;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                previousProjectileSpeed = flameBurst.getProjectileSpeed();
-                flameBurst.setProjectileSpeed(previousProjectileSpeed * AbstractAbility.convertToMultiplicationDecimal(velocityIncreasePercentage + 100));
+                flameBurst.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", velocityIncreasePercentage + 100);
                 flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
                 );
@@ -70,7 +67,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                flameBurst.setProjectileSpeed(previousProjectileSpeed);
+                flameBurst.getProjectileSpeed().removeModifier("Spec Boost");
                 flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
                         floatModifiable.removeModifier("Spec Boost")
                 );

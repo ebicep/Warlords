@@ -53,7 +53,7 @@ public class ChainLightningBranch extends AbstractUpgradeBranch<ChainLightning> 
                         Chain Lightning now deals 10% more damage per bounce instead of less.""",
                 50000,
                 () -> {
-                    ability.setDamageDecreasePerBounce(-10);
+                    ability.getDamageDecreasePerBounce().addMultiplicativeModifierMult("Master Upgrade Branch", -1);
                     ability.setAdditionalBounces(ability.getAdditionalBounces() * 3);
                 }
         );

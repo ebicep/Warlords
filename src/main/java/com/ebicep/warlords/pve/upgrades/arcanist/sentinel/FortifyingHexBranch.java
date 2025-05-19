@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.upgrades.arcanist.sentinel;
 import com.ebicep.warlords.abilities.FortifyingHex;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.pve.upgrades.*;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 
 public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
 
@@ -28,11 +29,11 @@ public class FortifyingHexBranch extends AbstractUpgradeBranch<FortifyingHex> {
                     }
 
                     @Override
-                    public void run(float value) {
-                        value = 1 + value / 100;
-                        ability.setProjectileSpeed(ability.getProjectileSpeed() * value);
+                    public void modifyFloatModifiable(FloatModifiable.FloatModifier modifier, float value) {
+                        modifier.setModifier(value / 100);
                     }
-                }, 50f, 4)
+                            }, ability.getProjectileSpeed().addMultiplicativeModifierAdd("Upgrade Branch", 0), 50f, 4
+                )
                 .addTo(treeA);
 
         UpgradeTreeBuilder

@@ -35,7 +35,7 @@ public class SpecBoostMenu {
                                     Component.text("ACTIVE", NamedTextColor.GREEN)
                             );
                         }
-                        menu.setItem(i + 1, 1,
+                        menu.setItem(i + 2, 1,
                                 itemBuilder.get(),
                                 (m, e) -> {
                                     if (selected) {
