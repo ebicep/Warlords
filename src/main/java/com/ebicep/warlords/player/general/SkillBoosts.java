@@ -184,7 +184,7 @@ public enum SkillBoosts {
                              .forEachValue(floatModifiable -> {
                                  floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .1f);
                              });
-                    waterBolt.setDirectHitMultiplier(waterBolt.getDirectHitMultiplier() + 25);
+                    waterBolt.getDirectHitMultiplier().addAdditiveModifier("Skill Boost", 25);
                 }
             }
     ),

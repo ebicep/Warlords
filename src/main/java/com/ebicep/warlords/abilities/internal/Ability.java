@@ -29,6 +29,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<CapacitorTotem> CAPACITOR_TOTEM = new Ability<>(CapacitorTotem.class, CapacitorTotem::new);
     public static final Ability<ChainHeal> CHAIN_HEAL = new Ability<>(ChainHeal.class, ChainHeal::new);
     public static final Ability<ChainLightning> CHAIN_LIGHTNING = new Ability<>(ChainLightning.class, ChainLightning::new);
+    public static final Ability<Clairvoyance> CLAIRVOYANCE = new Ability<>(Clairvoyance.class, Clairvoyance::new);
     public static final Ability<ConsecrateAvenger> CONSECRATE_AVENGER = new Ability<>(ConsecrateAvenger.class, ConsecrateAvenger::new);
     public static final Ability<ConsecrateCrusader> CONSECRATE_CRUSADER = new Ability<>(ConsecrateCrusader.class, ConsecrateCrusader::new);
     public static final Ability<ConsecrateProtector> CONSECRATE_PROTECTOR = new Ability<>(ConsecrateProtector.class, ConsecrateProtector::new);
@@ -125,6 +126,7 @@ public class Ability<T extends AbstractAbility> {
             CAPACITOR_TOTEM,
             CHAIN_HEAL,
             CHAIN_LIGHTNING,
+            CLAIRVOYANCE,
             CONSECRATE_AVENGER,
             CONSECRATE_CRUSADER,
             CONSECRATE_PROTECTOR,

@@ -58,6 +58,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         this.maxDistance = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), float.class));
         this.maxDistance.addRefreshListener("Projectile Max Ticks", this::updateMaxTicks);
         this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
+        updateMaxTicks();
     }
 
     @Override
@@ -117,7 +118,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected abstract float getSoundPitch();
 
     private void updateMaxTicks() {
-        this.maxTicks = Math.min((int) (maxDistance.getCalculatedValue() / projectileSpeed.getCalculatedValue()), 1);
+        this.maxTicks = Math.max((int) (maxDistance.getCalculatedValue() / projectileSpeed.getCalculatedValue()), 1);
     }
 
     @Override

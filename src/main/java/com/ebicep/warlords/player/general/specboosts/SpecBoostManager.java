@@ -24,6 +24,9 @@ public class SpecBoostManager {
     public static final SpecBoost<ChillyAura> CHILLY_AURA = new ChillyAura();
     public static final SpecBoost<BlizzardBreath> BLIZZARD_BREATH = new BlizzardBreath();
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
+    public static final SpecBoost<FortifiedAegis> FORTIFIED_AEGIS = new FortifiedAegis();
+    public static final SpecBoost<TyphoonBolt> TYPHOON_BOLT = new TyphoonBolt();
+    public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
     public static final SpecBoost<EyeOfTheStorm> EYE_OF_THE_STORM = new EyeOfTheStorm();
     private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
@@ -31,6 +34,7 @@ public class SpecBoostManager {
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, ARCANE_SHATTER, DIMENSIONAL_WARP, BURST_CHAIN, FLAME_BREATH));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, ARCANE_RECLUSE, CHILLY_AURA, BLIZZARD_BREATH, STEADFAST_WARP));
+        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, FORTIFIED_AEGIS, CLAIRVOYANCE));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(VIGOROUS_INFUSION));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(EYE_OF_THE_STORM));
     }

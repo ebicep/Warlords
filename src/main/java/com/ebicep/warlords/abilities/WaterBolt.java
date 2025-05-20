@@ -33,7 +33,7 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private int maxFullDistance = 40;
-    private float directHitMultiplier = 15;
+    private FloatModifiable directHitMultiplier = new FloatModifiable(15);
     private FloatModifiable splashRadius = new FloatModifiable(4.125f);
 
     public WaterBolt() {
@@ -44,7 +44,10 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.maxFullDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxFullDistance"), int.class);
-        this.directHitMultiplier = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("directHitMultiplier"), float.class);
+        this.directHitMultiplier = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                builder.getAppendedFieldName("directHitMultiplier"),
+                float.class
+        ));
         this.splashRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("splashRadius"), float.class));
     }
 
@@ -97,13 +100,14 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
             getProjectiles(projectile).forEach(p -> p.getHit().add(hit));
             float cc = pveMasterUpgrade2 ? 100 : healingValues.boltHealing.getCritChanceValue();
             stats.addPlayersHit();
+            float directHitMultiplierCalculatedValue = directHitMultiplier.getCalculatedValue();
             if (hit.isTeammate(shooter)) {
                 stats.teammatesHit++;
                 hit.addInstance(InstanceBuilder.healing()
                                                .ability(this)
                                                .source(shooter)
-                                               .min(healingValues.boltHealing.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
-                                               .max(healingValues.boltHealing.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                                               .min(healingValues.boltHealing.getMinValue() * convertToMultiplicationDecimal(directHitMultiplierCalculatedValue) * toReduceBy)
+                                               .max(healingValues.boltHealing.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplierCalculatedValue) * toReduceBy)
                                                .critChance(cc)
                                                .critMultiplier(healingValues.boltHealing.getCritMultiplierValue())
                                                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
@@ -121,8 +125,8 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
                 hit.addInstance(InstanceBuilder.damage()
                                                .ability(this)
                                                .source(shooter)
-                                               .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
-                                               .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplier) * toReduceBy)
+                                               .min(damageValues.boltDamage.getMinValue() * convertToMultiplicationDecimal(directHitMultiplierCalculatedValue) * toReduceBy)
+                                               .max(damageValues.boltDamage.getMaxValue() * convertToMultiplicationDecimal(directHitMultiplierCalculatedValue) * toReduceBy)
                                                .critChance(cc)
                                                .critMultiplier(damageValues.boltDamage.getCritMultiplierValue()));
             }
@@ -223,12 +227,8 @@ public class WaterBolt extends AbstractProjectile<WaterBolt, WaterBolt.WaterBolt
         return stats;
     }
 
-    public float getDirectHitMultiplier() {
+    public FloatModifiable getDirectHitMultiplier() {
         return directHitMultiplier;
-    }
-
-    public void setDirectHitMultiplier(float directHitMultiplier) {
-        this.directHitMultiplier = directHitMultiplier;
     }
 
     public static class DamageValues implements Value.ValueHolder {

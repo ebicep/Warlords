@@ -10,6 +10,7 @@ import java.util.List;
 
 public class ConfigManager {
 
+    public static final List<String> DEFAULT_NAMESPACES = List.of("pvp", "pve", "weapon", "td");
     public static final AbilitiesConfig ABILITIES_CONFIG = new AbilitiesConfig();
     public static final SpecBoostConfig SPEC_BOOST_CONFIG = new SpecBoostConfig();
     public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG};

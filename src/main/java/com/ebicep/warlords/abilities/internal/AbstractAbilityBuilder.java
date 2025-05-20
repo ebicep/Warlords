@@ -1,5 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +12,7 @@ public class AbstractAbilityBuilder {
         return new AbstractAbilityBuilder(fieldName);
     }
 
-    private final List<String> namespaces = new ArrayList<>(List.of("pvp", "pve", "weapon", "td"));
+    private final List<String> namespaces = new ArrayList<>(ConfigManager.DEFAULT_NAMESPACES);
     private String fieldName;
     private String name;
     private Float cooldown;
