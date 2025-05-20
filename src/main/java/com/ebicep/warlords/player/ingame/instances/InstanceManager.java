@@ -479,7 +479,7 @@ public class InstanceManager {
                         .source(source)
                         .value(damageValue)
                         .showAsCrit(isCrit)
-                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                        .flags(InstanceFlags.TRUE_DAMAGE)
                 );
                 warlordsEntity.addInstance(InstanceBuilder
                         .damage()
@@ -487,7 +487,7 @@ public class InstanceManager {
                         .source(source)
                         .value(overVeneDamage)
                         .showAsCrit(isCrit)
-                        .flags(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS)
+                        .flags(InstanceFlags.TRUE_DAMAGE)
                 ).ifPresent(finalEvent::set);
             } else {
                 damageValue *= data.getIntervene().getDamageReduction() / 100f;
@@ -504,7 +504,6 @@ public class InstanceManager {
                         .source(source)
                         .value(damageValue)
                         .showAsCrit(isCrit)
-                        .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
                 );
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -716,41 +715,6 @@ public class InstanceManager {
                     cooldown.getFrom().addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
                 }
 
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(1)
-                        .prefix(ComponentBuilder.create("On Shield", NamedTextColor.DARK_GREEN))
-                );
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
-                );
-
-                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-                    abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
-                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                    if (extraDamageInstances != null) {
-                        for (DamageInstance damageInstance : extraDamageInstances) {
-                            damageInstance.onShieldFromSelf(event, damageValue, isCrit);
-                        }
-                    }
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(3)
-                            .prefix(abstractCooldown)
-                    );
-                }
-
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
-                );
-                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-//                    abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
-                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                            .create(3)
-                            .prefix(abstractCooldown)
-                    );
-                }
-
                 if (shield.getShieldHealth() >= 0) {
                     DatabasePlayer databasePlayer = DatabaseManager.getPlayer(warlordsEntity.getUuid(),
                             warlordsEntity instanceof WarlordsPlayer && warlordsEntity.getEntity() instanceof Player
@@ -792,6 +756,41 @@ public class InstanceManager {
                             }
                         }
                     }
+                }
+
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(1)
+                        .prefix(ComponentBuilder.create("On Shield", NamedTextColor.DARK_GREEN))
+                );
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
+                );
+
+                for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                    abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
+                    List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                    if (extraDamageInstances != null) {
+                        for (DamageInstance damageInstance : extraDamageInstances) {
+                            damageInstance.onShieldFromSelf(event, damageValue, isCrit);
+                        }
+                    }
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(3)
+                            .prefix(abstractCooldown)
+                    );
+                }
+
+                debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                        .create(2)
+                        .prefix(ComponentBuilder.create("Attackers Cooldowns", NamedTextColor.DARK_GREEN))
+                );
+                for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+//                    abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(3)
+                            .prefix(abstractCooldown)
+                    );
                 }
 
                 warlordsEntity.playHurtAnimation(source);
@@ -956,7 +955,7 @@ public class InstanceManager {
                                                                 .append(source.getColoredName()));
                         } else if (p == source.getEntity()) {
                             source.sendMessage(Component.text("You killed ", NamedTextColor.GRAY)
-                                                          .append(warlordsEntity.getColoredName()));
+                                                        .append(warlordsEntity.getColoredName()));
                         } else {
                             p.sendMessage(warlordsEntity.getColoredName()
                                                         .append(Component.text(" was killed by ", NamedTextColor.GRAY))

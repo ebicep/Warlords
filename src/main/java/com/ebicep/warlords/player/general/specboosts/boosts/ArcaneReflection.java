@@ -1,0 +1,112 @@
+package com.ebicep.warlords.player.general.specboosts.boosts;
+
+import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.WaterBolt;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.util.warlords.Utils;
+
+import java.util.List;
+
+public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflection> {
+
+    private int arcaneShieldDurationIncreaseTicks;
+    private float damageReflectionPercent;
+    private float meleeDamageIncreasePercent;
+    private float waterBoltDamageIncreasePercent;
+
+    @Override
+    public void init() {
+        this.arcaneShieldDurationIncreaseTicks = getValue("arcaneShieldDurationIncreaseTicks", int.class);
+        this.damageReflectionPercent = getValue("damageReflectionPercent", float.class);
+        this.meleeDamageIncreasePercent = getValue("meleeDamageIncreasePercent", float.class);
+        this.waterBoltDamageIncreasePercent = getValue("waterBoltDamageIncreasePercent", float.class);
+    }
+
+    @Override
+    public String getConfigFieldName() {
+        return "arcaneReflection";
+    }
+
+    @Override
+    public List<Object> getVariables() {
+        return List.of(arcaneShieldDurationIncreaseTicks, damageReflectionPercent, meleeDamageIncreasePercent, waterBoltDamageIncreasePercent);
+    }
+
+    @Override
+    public SpecBoostManager.Boost create() {
+        return new Boost();
+    }
+
+    @Override
+    public ArcaneReflection get() {
+        return this;
+    }
+
+    public class Boost implements SpecBoostManager.Boost {
+
+        @Override
+        public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+                arcaneShield.setTickDuration(arcaneShield.getTickDuration() + arcaneShieldDurationIncreaseTicks);
+            });
+            warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt ->
+                    waterBolt.getDamageValues()
+                             .getBoltDamage()
+                             .forEachValue(floatModifiable -> floatModifiable.addMultiplicativeModifierAdd("Arcane Reflection", waterBoltDamageIncreasePercent / 100))
+            );
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getStringName(),
+                    null,
+                    ArcaneReflection.Boost.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.SPEC_BOOST,
+                    cooldownManager -> {
+                    },
+                    false
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (event.getCause().isEmpty()) {
+                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent);
+                    }
+                    return currentDamageValue;
+                }
+
+                @Override
+                public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    WarlordsEntity attacker = event.getSource();
+                    attacker.addInstance(InstanceBuilder
+                            .damage()
+                            .cause(getStringName())
+                            .source(from)
+                            .value(currentDamageValue * damageReflectionPercent / 100)
+                            .showAsCrit(isCrit)
+                    );
+                    Utils.playGlobalSound(warlordsPlayer.getLocation(), "warrior.intervene.block", 2, 2);
+                }
+            });
+        }
+
+        @Override
+        public void unapply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
+                arcaneShield.setTickDuration(arcaneShield.getTickDuration() - arcaneShieldDurationIncreaseTicks);
+            });
+            warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt ->
+                    waterBolt.getDamageValues()
+                             .getBoltDamage()
+                             .forEachValue(floatModifiable -> floatModifiable.removeModifier("Arcane Reflection"))
+            );
+        }
+
+    }
+
+}

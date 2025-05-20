@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general.specboosts;
 
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.menu.Menu;
+import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -52,6 +53,7 @@ public class SpecBoostMenu {
                         );
                     }
 
+            menu.setItem(4, 4, WarlordsNewHotbarMenu.PvPMenu.MENU_BACK_PVP, (m, e) -> WarlordsNewHotbarMenu.PvPMenu.openPvPMenu(player));
                     menu.openForPlayer(player);
                 }
         );

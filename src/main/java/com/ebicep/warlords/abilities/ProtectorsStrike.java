@@ -83,7 +83,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                                           .source(wp)
                                           .value(currentDamageValue * selfHealingMultiplier)
                                           .showAsCrit(isCrit)
-                                          .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)).ifPresent(event -> {
+            ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp)
                                                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                                                                .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));
@@ -114,7 +114,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                                                     .source(wp)
                                                     .value(currentDamageValue * allyHealingMultiplier)
                                                     .showAsCrit(isCrit)
-                                                    .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)).ifPresent(event -> {
+                    ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp)
                                                                        .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
                                                                        .forEach(hammerOfLight -> hammerOfLight.addAmountHealed(event.getValue()));

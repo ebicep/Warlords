@@ -8,7 +8,6 @@ import com.ebicep.warlords.effects.ChasingBlockEffect;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.EarthenSpikeBranch;
@@ -172,7 +171,7 @@ public class EarthenSpike extends AbstractAbility implements WeaponAbilityIcon, 
                                               .source(caster)
                                               .value(healing)
                                               .showAsCrit(finalEvent.isCrit())
-                                              .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS));
+            );
             if (finalEvent.isCrit()) {
                 caster.addEnergy(caster, "Earthen Verdancy", 10);
             }

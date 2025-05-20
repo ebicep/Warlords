@@ -154,6 +154,7 @@ public class InstanceBuilder {
     }
 
     public InstanceBuilder showAsCrit(boolean showAsCrit) {
+        this.flags.add(InstanceFlags.IGNORE_CRIT_MODIFIERS);
         if (showAsCrit) {
             this.critChance = 100;
         }

@@ -149,7 +149,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                   .source(wp)
                                                   .value(amountPrevented)
                                                   .showAsCrit(isCrit)
-                                                  .flags(InstanceFlags.LAST_STAND_FROM_SHIELD, InstanceFlags.IGNORE_CRIT_MODIFIERS));
+                                                  .flags(InstanceFlags.LAST_STAND_FROM_SHIELD));
                 }
 
                 @Override
@@ -159,7 +159,7 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                   .source(wp)
                                                   .value(amountPrevented)
                                                   .showAsCrit(isCrit)
-                                                  .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS));
+                    );
                 }
             });
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Last Stand is now protecting ", NamedTextColor.GRAY))
