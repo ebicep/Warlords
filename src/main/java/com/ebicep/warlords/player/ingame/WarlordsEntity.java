@@ -24,7 +24,6 @@ import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.MinuteStats;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.general.settings.actionbar.ActionBarSettings;
@@ -625,7 +624,7 @@ public abstract class WarlordsEntity {
 
     }
 
-    public void setSpec(Specializations spec, SkillBoosts skillBoost) {
+    public void setSpec(Specializations spec) {
         this.spec = spec.create.get();
         this.spec.updateCustomStats(this);
         this.health.setBaseValue(this.spec.getMaxHealth());

@@ -116,7 +116,6 @@ public enum GameMode {
             options.add(new NoRespawnIfOfflineOption());
             options.add(new WeaponOption());
             options.add(new ApplySkillBoostOption());
-            options.add(new ApplySpecBoostsOption());
             options.add(new HorseOption());
             options.add(new FlagGlowOption());
             options.add(new PlayerCooldownDisplayOption());

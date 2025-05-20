@@ -4,13 +4,14 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.option.marker.GameMarker;
+import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -19,8 +20,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class WeaponOption implements Option {
@@ -40,7 +44,8 @@ public class WeaponOption implements Option {
                         ),
                         Component.text("stats!", NamedTextColor.GREEN)
                 )
-                .get());
+                .get()
+        );
     }
 
     private final BiConsumer<WarlordsPlayer, Player> leftClick;
@@ -55,11 +60,28 @@ public class WeaponOption implements Option {
         this.rightClick = rightClick;
     }
 
-    public static void showMaxWeapon(WarlordsPlayer wp, Player player) {
+    public static <T extends GameMarker> void showMaxWeapon(WarlordsPlayer wp, Player player) {
         AbstractPlayerClass spec = wp.getSpec();
         Weapons weaponSkin = wp.getCosmeticSettings().getWeaponSkin();
         if (weaponSkin == null) {
             return;
+        }
+        List<Component> description = new ArrayList<>();
+        for (WeaponDisplayMarker weaponDisplayMarker : wp.getGame()
+                                                         .getMarkers(WeaponDisplayMarker.class)
+                                                         .stream()
+                                                         .sorted((o1, o2) -> {
+                                                             if (o1.weaponDisplayPriority() == o2.weaponDisplayPriority()) {
+                                                                 return 0;
+                                                             }
+                                                             return o1.weaponDisplayPriority() > o2.weaponDisplayPriority() ? -1 : 1;
+                                                         })
+                                                         .toList()
+        ) {
+            @Nullable List<Component> component = weaponDisplayMarker.leftClickDescription(wp, player);
+            if (component != null) {
+                description = component;
+            }
         }
         player.getInventory().setItem(
                 0,
@@ -76,26 +98,10 @@ public class WeaponOption implements Option {
                                          .append(Component.text("25%", NamedTextColor.RED)),
                                 Component.text("Crit Multiplier: ", NamedTextColor.GRAY)
                                          .append(Component.text("200%", NamedTextColor.RED)),
-                                Component.text(""),
-                                Component.text(spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):", NamedTextColor.GREEN)
+                                Component.text("")
                         )
-                        .addLore(WordWrap.wrap(wp.getSkillBoost().getSelectedDescription(), 150))
+                        .addLore(description)
                         .addLore(
-                                Component.text(""),
-                                Component.text("Health: ", NamedTextColor.GRAY)
-                                         .append(Component.text("+800", NamedTextColor.GREEN)),
-                                Component.text("Max Energy: ", NamedTextColor.GRAY)
-                                         .append(Component.text("+35", NamedTextColor.GREEN)),
-                                Component.text("Cooldown Reduction: ", NamedTextColor.GRAY)
-                                         .append(Component.text("+13%", NamedTextColor.GREEN)),
-                                Component.text("Speed: ", NamedTextColor.GRAY)
-                                         .append(Component.text("+13%", NamedTextColor.GREEN)),
-                                Component.text(""),
-                                Component.text("Skill Boost Unlocked", NamedTextColor.GOLD),
-                                Component.text("Crafted", NamedTextColor.DARK_AQUA),
-                                Component.text("Void Forged [4/4]", NamedTextColor.LIGHT_PURPLE),
-                                Component.text("EQUIPPED", NamedTextColor.GREEN),
-                                Component.text("BOUND", NamedTextColor.AQUA),
                                 Component.text(""),
                                 Component.textOfChildren(
                                         Component.text("RIGHT-CLICK ", NamedTextColor.YELLOW, TextDecoration.BOLD),
@@ -185,4 +191,5 @@ public class WeaponOption implements Option {
             }.runTaskLater(Warlords.getInstance(), 1);
         }
     }
+
 }

@@ -14,7 +14,7 @@ import java.util.List;
 public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> {
 
     private int maxTravelBlocks;
-    private float velocityMultiplier;
+    private float velocityIncreasePercentage;
     private float splashRadiusBlocks;
     private float damageResistancePercentFirstHit;
     private float maxDamageResistancePercent;
@@ -22,7 +22,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
     @Override
     public void init() {
         this.maxTravelBlocks = getValue("maxTravelBlocks", int.class);
-        this.velocityMultiplier = getValue("velocityMultiplier", float.class);
+        this.velocityIncreasePercentage = getValue("velocityIncreasePercentage", float.class);
         this.splashRadiusBlocks = getValue("splashRadiusBlocks", float.class);
         this.damageResistancePercentFirstHit = getValue("damageResistancePercentFirstHit", float.class);
         this.maxDamageResistancePercent = getValue("maxDamageResistancePercent", float.class);
@@ -37,7 +37,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
     public List<Object> getVariables() {
         return List.of(
                 maxTravelBlocks,
-                velocityMultiplier,
+                velocityIncreasePercentage,
                 splashRadiusBlocks,
                 damageResistancePercentFirstHit,
                 maxDamageResistancePercent
@@ -65,7 +65,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(LightningBolt.class).forEach(lightningBolt -> {
                 lightningBolt.getMaxDistance().addOverridingModifier("Spec Boost", maxTravelBlocks);
-                lightningBolt.getProjectileSpeed().addMultiplicativeModifierMult("Spec Boost", velocityMultiplier);
+                lightningBolt.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
                 lightningBolt.getHitbox().addOverridingModifier("Spec Boost", splashRadiusBlocks);
             });
             warlordsPlayer.getAbilitiesMatching(ChainLightning.class).forEach(chainLightning -> {

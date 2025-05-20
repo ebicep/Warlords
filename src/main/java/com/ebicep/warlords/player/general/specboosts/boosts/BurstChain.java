@@ -56,7 +56,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                flameBurst.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", velocityIncreasePercentage + 100);
+                flameBurst.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
                 flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
                 );

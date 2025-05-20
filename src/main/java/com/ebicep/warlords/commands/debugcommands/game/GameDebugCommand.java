@@ -61,7 +61,7 @@ public class GameDebugCommand extends BaseCommand {
                             warlordsPlayer.setNoEnergyConsumption(true);
                             warlordsPlayer.addCurrency(1000000);
                             if (spec != null) {
-                                warlordsPlayer.setSpec(spec, spec.skillBoosts.get(0));
+                                warlordsPlayer.setSpec(spec);
                             }
                         });
                     }
@@ -93,7 +93,7 @@ public class GameDebugCommand extends BaseCommand {
                             warlordsPlayer.setDisableCooldowns(true);
                             warlordsPlayer.setNoEnergyConsumption(true);
                             warlordsPlayer.addCurrency(1000000);
-                            warlordsPlayer.setSpec(spec, spec.skillBoosts.get(0));
+                            warlordsPlayer.setSpec(spec);
                             if (branchNumber != null) {
                                 AbstractUpgradeBranch<?> branch = warlordsPlayer.getAbilityTree().getUpgradeBranches().get(branchNumber);
                                 branch.purchaseMasterUpgrade(warlordsPlayer, branch.getMasterUpgrade2(), true, true);

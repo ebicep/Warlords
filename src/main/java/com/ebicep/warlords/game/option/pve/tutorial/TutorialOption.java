@@ -14,7 +14,6 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.state.EndState;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -276,7 +275,7 @@ public class TutorialOption implements Option {
                     case 1 -> {
                         if (stageSectionCounter.get() == 0) {
                             warlordsPlayer.respawn();
-                            warlordsPlayer.setSpec(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
+                            warlordsPlayer.setSpec(Specializations.PYROMANCER);
                             spawnTestDummies(game, Collections.singletonList(dummySpawnLocation.clone()));
                             sendTutorialMessage(p,
                                     "Your spec has now been swapped to Pyromancer. Right-Click to shoot a projectile at your enemy."
@@ -305,7 +304,7 @@ public class TutorialOption implements Option {
                     case 1 -> {
                         if (stageSectionCounter.get() == 1) {
                             warlordsPlayer.respawn();
-                            warlordsPlayer.setSpec(Specializations.PYROMANCER, SkillBoosts.FIREBALL);
+                            warlordsPlayer.setSpec(Specializations.PYROMANCER);
                             spawnTestDummies(game, Arrays.asList(spawnLocation, spawnLocation.clone().right(3), spawnLocation.clone().left(3)));
 
                             sendTutorialMessage(p, "Activate your red rune (Slot 2) while aiming at a group of enemies to deal massive damage to them.");
@@ -393,7 +392,7 @@ public class TutorialOption implements Option {
                 player.setTeam(Team.BLUE);
                 player.updateArmor();
             }
-            player.setSpec(Specializations.AVENGER, SkillBoosts.AVENGER_STRIKE);
+            player.setSpec(Specializations.AVENGER);
         }
     }
 

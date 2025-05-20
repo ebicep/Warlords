@@ -13,7 +13,6 @@ import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -53,7 +52,26 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public static final Set<UUID> STUNNED_PLAYERS = new HashSet<>();
 
-    private int stunTicks = 0;
+    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
+        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
+                    zombie.setAdult();
+                    zombie.setCustomNameVisible(true);
+
+                    EntityEquipment zombieEquipment = zombie.getEquipment();
+                    if (inv != null) {
+                        zombieEquipment.setBoots(inv.getBoots());
+                        zombieEquipment.setLeggings(inv.getLeggings());
+                        zombieEquipment.setChestplate(inv.getChestplate());
+                        zombieEquipment.setHelmet(inv.getHelmet());
+                        zombieEquipment.setItemInMainHand(inv.getItemInMainHand());
+                    } else {
+                        zombieEquipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
+                    }
+                    //prevents zombie from moving
+                    zombie.setAI(false);
+                }
+        );
+    }
     protected final AbilityTree abilityTree = new AbilityTree(this);
     protected CosmeticSettings cosmeticSettings;
     //    @Override
@@ -63,18 +81,9 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 //            ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Player sneak " + name + " - " + specClass);
 //        }
 //    }
-    protected SkillBoosts skillBoost;
     @Nullable
     protected AbstractWeapon weapon;
-
-    @Override
-    public void sendMessage(Component component, boolean isDamageHealMessage) {
-        super.sendMessage(component, isDamageHealMessage);
-        debugMessageLog.add(component);
-        if (isInPve() && debugMessageLog.size() > 200) {
-            debugMessageLog.subList(0, 100).clear();
-        }
-    }
+    private int stunTicks = 0;
     private boolean updateTabName = true;
 
     public WarlordsPlayer() {
@@ -143,7 +152,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 settings.getHelmet(settings.getSelectedSpec()),
                 settings.getArmorSet(settings.getSelectedSpec())
         );
-        this.skillBoost = settings.getSkillBoostForClass();
 
         resetAbilityTree();
         if (isInPve()) {
@@ -159,17 +167,12 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public boolean setStunTicks(int stunTicks) {
-        WarlordsPlayerStunEvent stunEvent = new WarlordsPlayerStunEvent(this);
-        Bukkit.getPluginManager().callEvent(stunEvent);
-        if (stunEvent.isCancelled()) {
-            return false;
+    public void sendMessage(Component component, boolean isDamageHealMessage) {
+        super.sendMessage(component, isDamageHealMessage);
+        debugMessageLog.add(component);
+        if (isInPve() && debugMessageLog.size() > 200) {
+            debugMessageLog.subList(0, 100).clear();
         }
-        if (this.stunTicks < stunTicks) {
-            this.stunTicks = stunTicks;
-        }
-        STUNNED_PLAYERS.add(uuid);
-        return true;
     }
 
     @Override
@@ -199,14 +202,13 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public void setSpec(Specializations spec, SkillBoosts skillBoost) {
+    public void setSpec(Specializations spec) {
         Specializations oldSpec = this.specClass;
-        super.setSpec(spec, skillBoost);
+        super.setSpec(spec);
         if (weapon != null && weapon instanceof Listener listener) {
             HandlerList.unregisterAll(listener);
         }
         this.specClass = spec;
-        this.skillBoost = skillBoost;
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         cosmeticSettings.setWeaponSkin(playerSettings.getWeaponSkins().get(spec));
@@ -222,35 +224,23 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         updateInventory(true);
     }
 
-    public void resetPlayerAddons() {
-        if (getEntity() instanceof Player player) {
-            PlayerInventory playerInventory = player.getInventory();
-
-            //Soulbinding weapon enchant
-            ItemStack firstItem = playerInventory.getItem(0);
-            if (firstItem != null) {
-                if (getCooldownManager().hasCooldown(Soulbinding.SoulbindingData.class)) {
-                    ItemMeta itemMeta = firstItem.getItemMeta();
-                    itemMeta.addEnchant(Enchantment.RESPIRATION, 1, true);
-                    firstItem.setItemMeta(itemMeta);
-                } else {
-                    firstItem.removeEnchantment(Enchantment.RESPIRATION);
-                }
-            }
-
-            //Undying army bone
-            if (getCooldownManager().checkUndyingArmy(true)) {
-                playerInventory.setItem(5, UndyingArmy.BONE);
-            } else {
-                playerInventory.remove(UndyingArmy.BONE);
-            }
-
-            double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                    .mapToDouble(Shield::getShieldHealth)
-                    .sum();
-            giveAbsorption((float) (totalShieldHealth / getMaxHealth() * 40));
+    @Override
+    public boolean setStunTicks(int stunTicks) {
+        WarlordsPlayerStunEvent stunEvent = new WarlordsPlayerStunEvent(this);
+        Bukkit.getPluginManager().callEvent(stunEvent);
+        if (stunEvent.isCancelled()) {
+            return false;
         }
+        if (this.stunTicks < stunTicks) {
+            this.stunTicks = stunTicks;
+        }
+        STUNNED_PLAYERS.add(uuid);
+        return true;
+    }
+
+    @Override
+    public void unstun() {
+        STUNNED_PLAYERS.remove(uuid);
     }
 
     @Override
@@ -275,8 +265,24 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public void unstun() {
-        STUNNED_PLAYERS.remove(uuid);
+    public void runEveryTick() {
+        super.runEveryTick();
+        if (stunTicks > 0) {
+            stunTicks--;
+            if (stunTicks == 0) {
+                unstun();
+            }
+        }
+        int regenTickTimer = getRegenTickTimer();
+        setRegenTickTimer(regenTickTimer - 1);
+        if (regenTickTimer == 0) {
+            getHitBy().clear();
+        }
+        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
+        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
+            int healthToAdd = (int) (getMaxHealth() / 55.3);
+            setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + healthToAdd, getMaxHealth())));
+        }
     }
 
     @Override
@@ -372,24 +378,34 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         return weapon == null ? null : weapon.getSelectedWeaponSkin().getItem();
     }
 
-    @Override
-    public void runEveryTick() {
-        super.runEveryTick();
-        if (stunTicks > 0) {
-            stunTicks--;
-            if (stunTicks == 0) {
-                unstun();
+    public void resetPlayerAddons() {
+        if (getEntity() instanceof Player player) {
+            PlayerInventory playerInventory = player.getInventory();
+
+            //Soulbinding weapon enchant
+            ItemStack firstItem = playerInventory.getItem(0);
+            if (firstItem != null) {
+                if (getCooldownManager().hasCooldown(Soulbinding.SoulbindingData.class)) {
+                    ItemMeta itemMeta = firstItem.getItemMeta();
+                    itemMeta.addEnchant(Enchantment.RESPIRATION, 1, true);
+                    firstItem.setItemMeta(itemMeta);
+                } else {
+                    firstItem.removeEnchantment(Enchantment.RESPIRATION);
+                }
             }
-        }
-        int regenTickTimer = getRegenTickTimer();
-        setRegenTickTimer(regenTickTimer - 1);
-        if (regenTickTimer == 0) {
-            getHitBy().clear();
-        }
-        //negative regen tick timer means the player is regenning, cant check per second because not fine enough
-        if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
-            int healthToAdd = (int) (getMaxHealth() / 55.3);
-            setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + healthToAdd, getMaxHealth())));
+
+            //Undying army bone
+            if (getCooldownManager().checkUndyingArmy(true)) {
+                playerInventory.setItem(5, UndyingArmy.BONE);
+            } else {
+                playerInventory.remove(UndyingArmy.BONE);
+            }
+
+            double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
+                    .mapToDouble(Shield::getShieldHealth)
+                    .sum();
+            giveAbsorption((float) (totalShieldHealth / getMaxHealth() * 40));
         }
     }
 
@@ -454,38 +470,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         return jimmy;
     }
 
-    private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
-        return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
-                    zombie.setAdult();
-                    zombie.setCustomNameVisible(true);
-
-                    EntityEquipment zombieEquipment = zombie.getEquipment();
-                    if (inv != null) {
-                        zombieEquipment.setBoots(inv.getBoots());
-                        zombieEquipment.setLeggings(inv.getLeggings());
-                        zombieEquipment.setChestplate(inv.getChestplate());
-                        zombieEquipment.setHelmet(inv.getHelmet());
-                        zombieEquipment.setItemInMainHand(inv.getItemInMainHand());
-                    } else {
-                        zombieEquipment.setHelmet(new ItemStack(Material.DIAMOND_HELMET));
-                    }
-                    //prevents zombie from moving
-                    zombie.setAI(false);
-                }
-        );
-    }
-
-    public void applySkillBoost(Player player) {
-        for (AbstractAbility ability : spec.getAbilities()) {
-            if (ability.getClass() == skillBoost.ability) {
-                ability.boostSkill(skillBoost, this);
-                ability.updateDescription(player);
-                updateItem(ability);
-                break;
-            }
-        }
-    }
-
     public ItemStack getItemStackForAbility(AbstractAbility ability) {
         if (ability == spec.getWeapon()) {
             if (weapon == null) {
@@ -513,10 +497,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public CosmeticSettings getCosmeticSettings() {
         return cosmeticSettings;
-    }
-
-    public SkillBoosts getSkillBoost() {
-        return skillBoost;
     }
 
     public boolean isUpdateTabName() {

@@ -261,7 +261,7 @@ public class DebugCommand extends BaseCommand {
     @Description("Resets player spec to their spec again")
     public void resetSpec(Player player, @Optional WarlordsPlayer target) {
         Specializations spec = target.getSpecClass();
-        DebugMenuPlayerOptions.setSpec(player, target, spec, spec.skillBoosts.get(0));
+        DebugMenuPlayerOptions.setSpec(player, target, spec);
     }
 
     @Subcommand("clearcooldowns")
