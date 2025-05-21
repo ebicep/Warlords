@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.WoundingData;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
@@ -74,6 +75,9 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
                 return;
             }
             if (!event.getCause().equals("Seismic Wave") || !event.getAbility().getName().equals("Ground Slam")) {
+                return;
+            }
+            if (!warlordsPlayer.getCooldownManager().hasCooldown(Berserk.class)) {
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
