@@ -74,7 +74,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             if (!event.getSource().equals(warlordsPlayer)) {
                 return;
             }
-            if (!event.getCause().equals("Seismic Wave") || !event.getAbility().getName().equals("Ground Slam")) {
+            if (!event.getCause().equals("Seismic Wave") && !event.getAbility().getName().equals("Ground Slam")) {
                 return;
             }
             if (!warlordsPlayer.getCooldownManager().hasCooldown(Berserk.class)) {

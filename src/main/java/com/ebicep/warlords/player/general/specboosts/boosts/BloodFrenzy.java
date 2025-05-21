@@ -49,7 +49,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
                 bloodLust.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -bloodLustReductionPercent / 100);
                 bloodLust.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -bloodLustReductionPercent / 100);
                 previousTickDurations.put(bloodLust, bloodLust.getTickDuration());
-                bloodLust.multiplyTickDuration(-bloodLustReductionPercent / 100);
+                bloodLust.multiplyTickDuration((100 - bloodLustReductionPercent) / 100);
                 bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() + 5);
             });
         }
