@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
+import com.ebicep.warlords.abilities.internal.WoundingData;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
@@ -538,7 +539,7 @@ public class CooldownManager {
     }
 
     public void removePreviousWounding() {
-        removeCooldownByName("Wounding Strike", true);
+        removeCooldown(WoundingData.class, true);
     }
 
     public void removeCooldown(Class<?> cooldownClass, boolean noForce) {

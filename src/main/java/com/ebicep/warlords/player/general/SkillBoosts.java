@@ -356,7 +356,7 @@ public enum SkillBoosts {
                                           .forEachValue(floatModifiable -> {
                                               floatModifiable.addMultiplicativeModifierAdd("Skill Boost", .15f);
                                           });
-                    woundingStrikeDefender.setWounding(woundingStrikeDefender.getWounding() + 10);
+                    woundingStrikeDefender.getWounding().addAdditiveModifier("Skill Boost", 10);
                 }
             }
     ),

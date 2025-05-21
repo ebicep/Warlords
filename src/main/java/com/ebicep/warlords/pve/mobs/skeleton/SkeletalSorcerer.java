@@ -1,15 +1,14 @@
 package com.ebicep.warlords.pve.mobs.skeleton;
 
 import com.ebicep.warlords.abilities.Fireball;
-import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.WoundingData;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -19,13 +18,14 @@ import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+
+import static com.ebicep.warlords.abilities.internal.WoundingData.applyNewWoundingInit;
+import static com.ebicep.warlords.abilities.internal.WoundingData.sendWoundExpired;
 
 public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
     public SkeletalSorcerer(Location spawnLocation) {
@@ -100,25 +100,17 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.getCooldownManager().removePreviousWounding();
-        receiver.getCooldownManager().removeCooldownByName(name);
+        applyNewWoundingInit(receiver);
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "WND",
-                WoundingStrikeBerserker.class,
-                new WoundingStrikeBerserker(),
+                WoundingData.class,
+                null,
                 attacker,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
                 },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        receiver.sendMessage(Component.text("You are no longer ", NamedTextColor.GRAY)
-                                                      .append(Component.text("wounded", NamedTextColor.RED))
-                                                      .append(Component.text("."))
-                        );
-                    }
-                },
+                cooldownManager -> sendWoundExpired(receiver),
                 5 * 20
         ) {
             @Override

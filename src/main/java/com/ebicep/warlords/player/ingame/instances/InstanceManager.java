@@ -1064,6 +1064,7 @@ public class InstanceManager {
         EnumSet<InstanceFlags> flags = event.getFlags();
         boolean isLastStandFromShield = flags.contains(InstanceFlags.LAST_STAND_FROM_SHIELD);
         boolean pierce = flags.contains(InstanceFlags.PIERCE);
+        boolean trueHealing = flags.contains(InstanceFlags.TRUE_HEALING);
 
         WarlordsDamageHealingFinalEvent finalEvent;
         // Spawn Protection / Undying Army / Game State
@@ -1105,66 +1106,68 @@ public class InstanceManager {
                 .create(1)
                 .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
         );
-        for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
-            float newHealValue = abstractCooldown.modifyHealingFromSelf(event, healValue);
-            if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
-                continue;
-            }
-            healValue = newHealValue;
-            if (previousHealValue != healValue) {
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                        .value(previousHealValue, healValue, abstractCooldown)
-                );
-            }
-            previousHealValue = healValue;
-            List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
-            if (extraHealingInstances != null) {
-                for (HealingInstance healingInstance : extraHealingInstances) {
-                    newHealValue = healingInstance.modifyHealingFromSelf(event, newHealValue);
+        if (!trueHealing) {
+            for (AbstractCooldown<?> abstractCooldown : selfCooldownsDistinct) {
+                float newHealValue = abstractCooldown.modifyHealingFromSelf(event, healValue);
+                if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
+                    continue;
                 }
+                healValue = newHealValue;
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
+                List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
+                if (extraHealingInstances != null) {
+                    for (HealingInstance healingInstance : extraHealingInstances) {
+                        newHealValue = healingInstance.modifyHealingFromSelf(event, newHealValue);
+                    }
+                }
+                if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
+                    continue;
+                }
+                healValue = newHealValue;
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
             }
-            if (newHealValue < healValue && pierce) { // pierce ignores victim healing reduction
-                continue;
+            debugMessage.appendTitle("Attackers Cooldowns", NamedTextColor.AQUA);
+            for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
+                healValue = abstractCooldown.modifyHealingFromAttacker(event, healValue);
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
+                List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
+                if (extraHealingInstances != null) {
+                    for (HealingInstance healingInstance : extraHealingInstances) {
+                        healValue = healingInstance.modifyHealingFromAttacker(event, healValue);
+                    }
+                }
+                if (previousHealValue != healValue) {
+                    debugMessage.append(InstanceDebugHoverable.LevelBuilder
+                            .create(2)
+                            .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
+                            .value(previousHealValue, healValue, abstractCooldown)
+                    );
+                }
+                previousHealValue = healValue;
             }
-            healValue = newHealValue;
-            if (previousHealValue != healValue) {
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                        .value(previousHealValue, healValue, abstractCooldown)
-                );
-            }
-            previousHealValue = healValue;
         }
 
-        debugMessage.appendTitle("Attackers Cooldowns", NamedTextColor.AQUA);
-        for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
-            healValue = abstractCooldown.modifyHealingFromAttacker(event, healValue);
-            if (previousHealValue != healValue) {
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                        .value(previousHealValue, healValue, abstractCooldown)
-                );
-            }
-            previousHealValue = healValue;
-            List<HealingInstance> extraHealingInstances = abstractCooldown.getExtraHealingInstances();
-            if (extraHealingInstances != null) {
-                for (HealingInstance healingInstance : extraHealingInstances) {
-                    healValue = healingInstance.modifyHealingFromAttacker(event, healValue);
-                }
-            }
-            if (previousHealValue != healValue) {
-                debugMessage.append(InstanceDebugHoverable.LevelBuilder
-                        .create(2)
-                        .prefix(ComponentBuilder.create("Heal Value: ", NamedTextColor.GREEN))
-                        .value(previousHealValue, healValue, abstractCooldown)
-                );
-            }
-            previousHealValue = healValue;
-        }
         if (warlordsEntity == source || warlordsEntity.isTeammate(source)) {
             float maxHealth = warlordsEntity.getHealth().getCalculatedValue();
             boolean overhealSelf = warlordsEntity == source && flags.contains(InstanceFlags.CAN_OVERHEAL_SELF);

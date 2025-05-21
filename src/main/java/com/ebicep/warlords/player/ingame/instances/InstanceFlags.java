@@ -17,6 +17,7 @@ public enum InstanceFlags {
     IGNORE_SELF_RES,
     NO_DISMOUNT,
 
+    TRUE_HEALING, // does exact value healing regardless of modifications
     // Damage types - all effected by flag multiplier
     TRUE_DAMAGE, // does exact value damage regardless of shield/vene/reductions/dmg increase
     PIERCE, // ignores shield/vene, and victim dmg reductions
