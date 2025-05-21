@@ -104,7 +104,11 @@ public class ApplySpecBoostsOption implements Option {
         }
     }
 
-    record PlayerSpecAppliedBoost(SpecBoostManager.SpecBoost<?> specBoost, SpecBoostManager.Boost boost) {
+    public Map<WarlordsEntity, PlayerSpecAppliedBoost> getPlayerSpecBoosts() {
+        return playerSpecBoosts;
+    }
+
+    public record PlayerSpecAppliedBoost(SpecBoostManager.SpecBoost<?> specBoost, SpecBoostManager.Boost boost) {
     }
 
 }
