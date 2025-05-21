@@ -15,16 +15,16 @@ import java.util.List;
 
 public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
 
+    private float rangeBlocks;
     private float slowAmountPercent;
     private float healthLossPercent;
-    private float rangeBlocks;
     private int healthLossTickPeriod;
 
     @Override
     public void init() {
+        this.rangeBlocks = getValue("rangeBlocks", float.class);
         this.slowAmountPercent = getValue("slowAmountPercent", float.class);
         this.healthLossPercent = getValue("healthLossPercent", float.class);
-        this.rangeBlocks = getValue("rangeBlocks", float.class);
         this.healthLossTickPeriod = getValue("healthLossTickPeriod", int.class);
     }
 
@@ -35,7 +35,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(slowAmountPercent, healthLossPercent, rangeBlocks, healthLossTickPeriod);
+        return List.of(rangeBlocks, slowAmountPercent, healthLossPercent, healthLossTickPeriod);
     }
 
     @Override
