@@ -315,6 +315,14 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
             Location location = warlordsEntity.getLocation();
             int halfSize = cooldownEntities.size() / 2;
             double y = warlordsEntity.getLocation().getY() + 3;
+            Entity vehicle = warlordsEntity.getEntity().getVehicle();
+            if (vehicle != null) {
+                if (vehicle instanceof Horse) {
+                    y += vehicle.getHeight() / 2;
+                } else {
+                    y += vehicle.getHeight();
+                }
+            }
             double x = -((halfSize * .375) + ((halfSize - 1) * SPACE_BETWEEN_COOLDOWN)) + .5;
             for (CooldownEntities cooldownEntity : cooldownEntities) {
                 cooldownEntity.translateX((float) x);
