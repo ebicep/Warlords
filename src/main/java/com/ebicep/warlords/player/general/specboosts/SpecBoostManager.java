@@ -39,6 +39,7 @@ public class SpecBoostManager {
     public static final SpecBoost<FerventForce> FERVENT_FORCE = new FerventForce();
     public static final SpecBoost<VitalityBoost> VITALITY_BOOST = new VitalityBoost();
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
+    public static final SpecBoost<UndyingSteed> UNDYING_STEED = new UndyingSteed();
 
 
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
@@ -51,7 +52,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, FORTIFIED_AEGIS, CLAIRVOYANCE, ARCANE_REFLECTION));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(BERSERKERS_FURY, EFFICIENT_STRIKES, MIGHTY_FISTS, BLOOD_FRENZY, SEISMIC_SHIFT));
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(HEROIC_INTERVENTION, STRIKER, SOLITARY, FERVENT_FORCE, VITALITY_BOOST));
-        SPEC_BOOSTS.put(Specializations.REVENANT, List.of(RECKLESS_ASCENT));
+        SPEC_BOOSTS.put(Specializations.REVENANT, List.of(RECKLESS_ASCENT, UNDYING_STEED));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(VIGOROUS_INFUSION));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(EYE_OF_THE_STORM));
     }
