@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.Utils;
 
 import java.util.List;
@@ -82,6 +83,9 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
 
                 @Override
                 public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    if (event.getFlags().contains(InstanceFlags.RECURSIVE)) {
+                        return;
+                    }
                     WarlordsEntity attacker = event.getSource();
                     attacker.addInstance(InstanceBuilder
                             .damage()
@@ -89,6 +93,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                             .source(from)
                             .value(currentDamageValue * damageReflectionPercent / 100)
                             .showAsCrit(isCrit)
+                            .flags(InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
                     );
                     Utils.playGlobalSound(warlordsPlayer.getLocation(), "warrior.intervene.block", 2, 2);
                 }
