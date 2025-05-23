@@ -20,7 +20,7 @@ public class SpecBoostMenu {
                     Specializations selectedSpec = databasePlayer.getLastSpec();
                     Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
 
-                    Menu menu = new Menu("Spec Boosts", 9 * 5);
+            Menu menu = new Menu("Spec Boosts", 9 * 4);
             List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(selectedSpec);
                     for (int i = 0; i < specBoosts.size(); i++) {
                         SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
@@ -53,7 +53,7 @@ public class SpecBoostMenu {
                         );
                     }
 
-            menu.setItem(4, 4, WarlordsNewHotbarMenu.PvPMenu.MENU_BACK_PVP, (m, e) -> WarlordsNewHotbarMenu.PvPMenu.openPvPMenu(player));
+            menu.setItem(4, 3, WarlordsNewHotbarMenu.PvPMenu.MENU_BACK_PVP, (m, e) -> WarlordsNewHotbarMenu.PvPMenu.openPvPMenu(player));
                     menu.openForPlayer(player);
                 }
         );
