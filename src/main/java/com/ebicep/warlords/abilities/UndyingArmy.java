@@ -133,6 +133,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
     public void setMaxHealthDamage(int maxHealthDamage) {
         this.maxHealthDamage = maxHealthDamage;
     }
+
     private final DamageValues damageValues = new DamageValues();
     private final UndyingArmyStats stats = new UndyingArmyStats();
     private int radius = 12;
@@ -161,30 +162,6 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         this.flatHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flatHealing"), float.class);
         this.missingHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("missingHealing"), float.class);
         this.healPeriod = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healPeriod"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("You may chain up to ")
-                                               .text(maxArmyAllies, NamedTextColor.BLUE)
-                                               .text(" allies within ")
-                                               .blocks(radius)
-                                               .text(" to heal them for ")
-                                               .text(format(flatHealing), NamedTextColor.GREEN)
-                                               .text(" + ")
-                                               .percent(missingHealing, NamedTextColor.GREEN)
-                                               .text(" missing health every second. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Chained allies that take fatal damage will be revived with ")
-                                               .percent(100, NamedTextColor.GREEN)
-                                               .text(" of their max health and ")
-                                               .percent(50, NamedTextColor.YELLOW)
-                                               .text(" of their max energy. Revived allies take ")
-                                               .percent(maxHealthDamage, NamedTextColor.RED)
-                                               .text(" of their max health as damage every second.")
-                                               .build();
     }
 
     @Override
@@ -313,6 +290,30 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             }
         }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("You may chain up to ")
+                                               .text(maxArmyAllies, NamedTextColor.BLUE)
+                                               .text(" allies within ")
+                                               .blocks(radius)
+                                               .text(" to heal them for ")
+                                               .text(format(flatHealing), NamedTextColor.GREEN)
+                                               .text(" + ")
+                                               .percent(missingHealing, NamedTextColor.GREEN)
+                                               .text(" missing health every second. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Chained allies that take fatal damage will be revived with ")
+                                               .percent(100, NamedTextColor.GREEN)
+                                               .text(" of their max health and ")
+                                               .percent(50, NamedTextColor.YELLOW)
+                                               .text(" of their max energy. Revived allies take ")
+                                               .percent(maxHealthDamage, NamedTextColor.RED)
+                                               .text(" of their max health as damage every second.")
+                                               .build();
     }
 
     @Override

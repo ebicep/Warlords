@@ -57,6 +57,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<GroundSlamRevenant> GROUND_SLAM_REVENANT = new Ability<>(GroundSlamRevenant.class, GroundSlamRevenant::new);
     public static final Ability<GuardianBeam> GUARDIAN_BEAM = new Ability<>(GuardianBeam.class, GuardianBeam::new);
     public static final Ability<HammerOfLight> HAMMER_OF_LIGHT = new Ability<>(HammerOfLight.class, HammerOfLight::new);
+    public static final Ability<HealingLink> HEALING_LINK = new Ability<>(HealingLink.class, HealingLink::new);
     public static final Ability<HealingRain> HEALING_RAIN = new Ability<>(HealingRain.class, HealingRain::new);
     public static final Ability<HealingTotem> HEALING_TOTEM = new Ability<>(HealingTotem.class, HealingTotem::new);
     public static final Ability<HeartToHeart> HEART_TO_HEART = new Ability<>(HeartToHeart.class, HeartToHeart::new);
@@ -155,6 +156,7 @@ public class Ability<T extends AbstractAbility> {
             GROUND_SLAM_REVENANT,
             GUARDIAN_BEAM,
             HAMMER_OF_LIGHT,
+            HEALING_LINK,
             HEALING_RAIN,
             HEALING_TOTEM,
             HEART_TO_HEART,
