@@ -27,9 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -247,6 +245,7 @@ public class HorseOption implements Option, Listener {
                 npc.data().set(NPC.Metadata.NAMEPLATE_VISIBLE, false);
                 npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) n -> 0f);
                 npc.data().set(NPC.Metadata.FLYABLE, false);
+
                 HorseModifiers horseModifiers = npc.getOrAddTrait(HorseModifiers.class);
                 horseModifiers.setSaddle(SADDLE);
                 horseModifiers.setColor(Horse.Color.BROWN);
@@ -262,11 +261,13 @@ public class HorseOption implements Option, Listener {
                 npc.spawn(player.getLocation());
                 if (npc.getEntity() instanceof Horse h) {
                     h.setJumpStrength(0);
+                    h.getAttribute(Attribute.MAX_HEALTH).setBaseValue(health.getCalculatedValue() == 0 ? 0 : 40);
                 }
                 controllable.mount(player);
             } else {
                 CustomHorse customHorse = new CustomHorse(player.getLocation());
                 this.horse = (Horse) customHorse.getBukkitEntity();
+                horse.getAttribute(Attribute.MAX_HEALTH).setBaseValue(health.getCalculatedValue() == 0 ? 0 : 40);
                 horse.setTamed(true);
                 horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
                 horse.setOwner(player);
@@ -278,6 +279,7 @@ public class HorseOption implements Option, Listener {
                 ((CraftWorld) player.getWorld()).getHandle().addFreshEntity(customHorse, CreatureSpawnEvent.SpawnReason.CUSTOM);
                 horse.addPassenger(player); // not sure if including this in function above will cause issues
             }
+            updateHealthDisplay();
         }
 
         public void kill() {
@@ -289,16 +291,35 @@ public class HorseOption implements Option, Listener {
             }
         }
 
+        private void updateHealthDisplay() {
+            float maxHealth = health.getCalculatedValue();
+            if (maxHealth == 0) {
+                return;
+            }
+            float newHealth = currentHealth / maxHealth * 40;
+            if (newHealth <= 0) {
+                newHealth = 1;
+            }
+            if (horse != null) {
+                horse.setHealth(newHealth);
+            } else if (npc != null) {
+                Entity entity = npc.getEntity();
+                if (entity instanceof Damageable damageable) {
+                    damageable.setHealth(newHealth);
+                }
+            }
+        }
+
         public void damage(float damage) {
             currentHealth -= damage;
             if (currentHealth <= 0) {
                 if (horse != null) {
                     horse.remove();
-                }
-                if (npc != null) {
+                } else if (npc != null) {
                     npc.despawn();
                 }
             }
+            updateHealthDisplay();
         }
 
         public FloatModifiable getHealth() {
