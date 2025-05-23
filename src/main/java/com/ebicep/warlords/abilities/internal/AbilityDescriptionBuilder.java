@@ -9,6 +9,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 public class AbilityDescriptionBuilder {
@@ -100,15 +102,11 @@ public class AbilityDescriptionBuilder {
     }
 
     public AbilityDescriptionBuilder damageReduction(int value) {
-        return damageReduction(value, "");
+        return damageReduction(value, null);
     }
 
-    public AbilityDescriptionBuilder damageReduction(int value, String prefix) {
-        if (prefix.isEmpty()) {
-            parentBuilder.text(NumberFormat.formatOptionalTenths(value) + "%", COLOR_BROWN);
-        } else {
-            parentBuilder.text(NumberFormat.formatOptionalTenths(value) + prefix, COLOR_BROWN);
-        }
+    public AbilityDescriptionBuilder damageReduction(int value, @Nullable String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(value) + Objects.requireNonNullElse(prefix, "%"), COLOR_BROWN);
         return this;
     }
 
@@ -197,12 +195,8 @@ public class AbilityDescriptionBuilder {
         return range(range, "Has an optimal range of ");
     }
 
-    private AbilityDescriptionBuilder range(int range, String rangeText) {
-        emptyLine();
-        parentBuilder.text(rangeText);
-        parentBuilder.text(NumberFormat.formatOptionalTenths(range), NamedTextColor.AQUA);
-        parentBuilder.text(" blocks.");
-        return this;
+    public AbilityDescriptionBuilder initialRange(float range) {
+        return range(range, "Has an initial cast range of ");
     }
 
     public AbilityDescriptionBuilder emptyLine() {
@@ -241,6 +235,14 @@ public class AbilityDescriptionBuilder {
 
     public AbilityDescriptionBuilder initialRange(int range) {
         return range(range, "Has an initial cast range of ");
+    }
+
+    private AbilityDescriptionBuilder range(float range, String rangeText) {
+        emptyLine();
+        parentBuilder.text(rangeText);
+        parentBuilder.text(NumberFormat.formatOptionalTenths(range), NamedTextColor.AQUA);
+        parentBuilder.text(" blocks.");
+        return this;
     }
 
     public AbilityDescriptionBuilder initialRange(FloatModifiable range) {

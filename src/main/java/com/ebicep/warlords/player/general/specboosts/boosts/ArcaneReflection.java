@@ -97,6 +97,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getCooldownManager().removeCooldownByName(getStringName());
             warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.setTickDuration(arcaneShield.getTickDuration() - arcaneShieldDurationIncreaseTicks);
             });

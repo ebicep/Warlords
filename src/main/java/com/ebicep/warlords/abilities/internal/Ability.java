@@ -94,6 +94,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<SeismicWaveBerserker> SEISMIC_WAVE_BERSERKER = new Ability<>(SeismicWaveBerserker.class, SeismicWaveBerserker::new);
     public static final Ability<SeismicWaveDefender> SEISMIC_WAVE_DEFENDER = new Ability<>(SeismicWaveDefender.class, SeismicWaveDefender::new);
     public static final Ability<ShadowStep> SHADOW_STEP = new Ability<>(ShadowStep.class, ShadowStep::new);
+    public static final Ability<Solitary> SOLITARY = new Ability<>(Solitary.class, Solitary::new);
     public static final Ability<SoothingElixir> SOOTHING_ELIXIR = new Ability<>(SoothingElixir.class, SoothingElixir::new);
     public static final Ability<Soulbinding> SOULBINDING = new Ability<>(Soulbinding.class, Soulbinding::new);
     public static final Ability<SoulfireBeam> SOULFIRE_BEAM = new Ability<>(SoulfireBeam.class, SoulfireBeam::new);
@@ -191,6 +192,7 @@ public class Ability<T extends AbstractAbility> {
             SEISMIC_WAVE_BERSERKER,
             SEISMIC_WAVE_DEFENDER,
             SHADOW_STEP,
+            SOLITARY,
             SOOTHING_ELIXIR,
             SOULBINDING,
             SOULFIRE_BEAM,

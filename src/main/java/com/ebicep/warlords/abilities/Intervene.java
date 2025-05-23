@@ -36,8 +36,8 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
     private int tickDuration = 100;
     private float maxDamagePrevented = 3600;
     private int damageReduction = 50;
-    private int radius = 10;
-    private int breakRadius = 15;
+    private float radius = 10;
+    private float breakRadius = 15;
     private int maxTargets = 1;
 
     public Intervene() {
@@ -50,8 +50,8 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.maxDamagePrevented = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamagePrevented"), float.class);
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
-        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
-        this.breakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("breakRadius"), int.class);
+        this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class);
+        this.breakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("breakRadius"), float.class);
         this.maxTargets = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxTargets"), int.class);
     }
 
@@ -243,19 +243,19 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         this.maxDamagePrevented = maxDamagePrevented;
     }
 
-    public int getBreakRadius() {
+    public float getBreakRadius() {
         return breakRadius;
     }
 
-    public void setBreakRadius(int breakRadius) {
+    public void setBreakRadius(float breakRadius) {
         this.breakRadius = breakRadius;
     }
 
-    public int getRadius() {
+    public float getRadius() {
         return radius;
     }
 
-    public void setRadius(int radius) {
+    public void setRadius(float radius) {
         this.radius = radius;
     }
 
