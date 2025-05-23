@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerClassRightClickEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -24,6 +25,12 @@ import java.util.Objects;
 
 public abstract class AbstractPlayerClass {
 
+    public static void sendRightClickPacket(WarlordsEntity warlordsEntity) {
+        if (!(warlordsEntity.getEntity() instanceof Player player)) {
+            return;
+        }
+        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
+    }
     // TODO to floatmodifiable
     protected int maxHealth;
     protected int maxEnergy;
@@ -122,10 +129,7 @@ public abstract class AbstractPlayerClass {
 
             onRightClickAbility(ability, wp, player, slot);
 
-            if (player.getVehicle() != null) {
-                player.getVehicle().remove();
-            }
-
+            Bukkit.getPluginManager().callEvent(new WarlordsPlayerClassRightClickEvent(wp));
         }
         if (hotkeyMode) {
             player.getInventory().setHeldItemSlot(0);
@@ -134,9 +138,11 @@ public abstract class AbstractPlayerClass {
 
     public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player, int slot) {
         if (ability.getCurrentCooldown() != 0) {
-            if (secondaryAbilityCD) {
+            if (secondaryAbilityCD && !ability.getSecondaryAbilities().isEmpty()) {
                 ability.runSecondAbilities();
                 resetSecondaryAbilityCD(wp);
+            } else {
+                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
             return;
         }
@@ -180,13 +186,6 @@ public abstract class AbstractPlayerClass {
         }.runTaskLater(5);
     }
 
-    public static void sendRightClickPacket(WarlordsEntity warlordsEntity) {
-        if (!(warlordsEntity.getEntity() instanceof Player player)) {
-            return;
-        }
-        PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
-    }
-
     public static void sendRightClickPacket(Player player) {
         if (player == null) {
             return;
@@ -209,6 +208,7 @@ public abstract class AbstractPlayerClass {
      * https://www.spigotmc.org/attachments/23c935453df410b299e4aee3c8cca21ff94ea98d-png.474751/
      *
      * @param ability
+     *
      * @return
      */
     public Integer getInventoryAbilityIndex(AbstractAbility ability) {
@@ -307,4 +307,5 @@ public abstract class AbstractPlayerClass {
     public void decreaseAllCooldownTimersBy(float amount) {
         abilities.forEach(ability -> ability.subtractCurrentCooldown(amount));
     }
+
 }

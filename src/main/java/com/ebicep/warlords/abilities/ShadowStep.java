@@ -63,9 +63,6 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         Utils.playGlobalSound(playerLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 2);
         wp.setFlagPickCooldown(2);
         EffectUtils.playFirework(wp.getLocation().add(0, pveMasterUpgrade2 ? 1 : 0, 0), FireworkEffect.builder().withColor(Color.BLACK).with(FireworkEffect.Type.BALL).build());
-        if (wp.onHorse()) {
-            wp.removeHorse();
-        }
         if (pveMasterUpgrade2) {
             doShadowDash(wp);
         } else {

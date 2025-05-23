@@ -532,10 +532,6 @@ public class InstanceManager {
             warlordsEntity.playHurtAnimation(source);
             intervenedBy.playHurtAnimation(source);
             EffectUtils.playParticleLinkAnimation(warlordsEntity.getLocation(), intervenedBy.getLocation(), 255, 0, 0, 2);
-            // Remove horses.
-            if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
-                warlordsEntity.removeHorse();
-            }
 
             debugMessage.append(InstanceDebugHoverable.LevelBuilder
                     .create(1)
@@ -798,9 +794,6 @@ public class InstanceManager {
                 if (!flags.contains(InstanceFlags.NO_HIT_SOUND)) {
                     warlordsEntity.playHitSound(source);
                 }
-                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
-                    warlordsEntity.removeHorse();
-                }
 
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
@@ -863,9 +856,6 @@ public class InstanceManager {
                 //if (isEnemy(attacker)) {
                 warlordsEntity.getHitBy().put(source, 10);
                 warlordsEntity.cancelHealingPowerUp();
-                if (!flags.contains(InstanceFlags.NO_DISMOUNT)) {
-                    warlordsEntity.removeHorse();
-                }
 
                 float finalDamageValue = damageValue;
                 warlordsEntity.doOnStaticAbility(SoulShackle.class, soulShackle -> soulShackle.addToShacklePool(finalDamageValue));

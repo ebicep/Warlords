@@ -25,7 +25,9 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
             for (AbstractAbility ability : wp.getSpec().getAbilities()) {
                 ability.setCurrentCooldown(0);
             }
-            wp.setHorseCooldown(0);
+            for (HorseOption horseOption : wp.getGame().getOption(HorseOption.class)) {
+                horseOption.getHorseForPlayer(wp).setCurrentCooldown(0);
+            }
             wp.updateInventory(true);
         }
         preventPlayerMovement = true;
@@ -35,4 +37,5 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
     public void onRespawnEvent(WarlordsRespawnEvent e) {
         preventPlayerMovement = false;
     }
+
 }

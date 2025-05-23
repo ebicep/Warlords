@@ -121,11 +121,6 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void removeHorse() {
-
-    }
-
-    @Override
     protected void addToSpecMinuteStats(Consumer<PlayerStatisticsMinute> consumer) {
         // override to do nothing, npcs dont need stats, save memory
     }

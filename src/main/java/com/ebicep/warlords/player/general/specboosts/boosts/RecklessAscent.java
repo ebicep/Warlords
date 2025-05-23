@@ -80,7 +80,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
             if (event.getAbility() instanceof RecklessCharge) {
                 warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getStringName(),
-                        "BOOST",
+                        "ASC",
                         RecklessAscent.Boost.class,
                         null,
                         warlordsEntity,

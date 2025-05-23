@@ -20,7 +20,6 @@ import com.ebicep.warlords.events.GeneralEvents;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.game.*;
 import com.ebicep.warlords.game.option.LobbyGameOption;
-import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.guilds.GuildListener;
 import com.ebicep.warlords.guilds.GuildManager;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -355,7 +354,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PatreonReward(), this);
         getServer().getPluginManager().registerEvents(new MemoryManager(), this);
         getServer().getPluginManager().registerEvents(new Shield(), this);
-        getServer().getPluginManager().registerEvents(new HorseOption(), this);
+//        getServer().getPluginManager().registerEvents(new HorseOption(), this);
         getServer().getPluginManager().registerEvents(TracksOutsideGame.getListener(), this);
         getServer().getPluginManager().registerEvents(new DatabaseGameEvent(), this);
 

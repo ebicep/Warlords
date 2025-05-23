@@ -126,7 +126,6 @@ public abstract class WarlordsEntity {
     private int respawnTickTimer = -1;
     private boolean dead = false;
     private float energy = 0;
-    private float horseCooldown = 0;
     private float currentHealthModifier = 1;
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
@@ -279,8 +278,6 @@ public abstract class WarlordsEntity {
     public void die(@Nullable WarlordsEntity attacker) {
         dead = true;
 
-        removeHorse();
-
         getLocation(this.deathLocation);
 
         showDeathAnimation();
@@ -334,12 +331,6 @@ public abstract class WarlordsEntity {
         hitBy.clear();
         regenTickTimer = 0;
         heal();
-    }
-
-    public void removeHorse() {
-        if (entity.getVehicle() != null) {
-            entity.getVehicle().remove();
-        }
     }
 
     @Nonnull
@@ -813,14 +804,6 @@ public abstract class WarlordsEntity {
 
     public boolean onHorse() {
         return this.entity.getVehicle() != null;
-    }
-
-    public float getHorseCooldown() {
-        return horseCooldown;
-    }
-
-    public void setHorseCooldown(float horseCooldown) {
-        this.horseCooldown = horseCooldown;
     }
 
     public int getHitCooldown() {
