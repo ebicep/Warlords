@@ -277,8 +277,8 @@ public class LocationUtils {
     }
 
     public static boolean isMountableZone(Location location) {
-        if (location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(2)).getType() == Material.NETHERRACK) {
-            return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(4)).getType() == Material.SOUL_SAND && !insideTunnel(location);
+        if (location.getWorld().getBlockAt(location.getBlockX(), 2, location.getBlockZ()).getType() == Material.NETHERRACK) {
+            return location.getWorld().getBlockAt(location.getBlockX(), 4, location.getBlockZ()).getType() == Material.SOUL_SAND && !insideTunnel(location);
         }
         return true;
     }
