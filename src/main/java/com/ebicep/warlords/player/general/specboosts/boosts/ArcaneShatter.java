@@ -1,10 +1,14 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.ArcaneShield;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import org.bukkit.event.EventHandler;
 
@@ -15,6 +19,7 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
     private float energyPerMelee;
     private float healthIncrease;
     private float range;
+    private float damageIncrease;
     private int stunTicks;
 
     @Override
@@ -22,6 +27,7 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
         this.energyPerMelee = getValue("energyPerMelee", float.class);
         this.healthIncrease = getValue("healthIncrease", float.class);
         this.range = getValue("range", float.class);
+        this.damageIncrease = getValue("damageIncrease", float.class);
         this.stunTicks = getValue("stunTicks", int.class);
     }
 
@@ -32,7 +38,7 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(energyPerMelee, healthIncrease, range, stunTicks);
+        return List.of(energyPerMelee, healthIncrease, range, damageIncrease, stunTicks);
     }
 
     @Override
@@ -72,6 +78,21 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
             PlayerFilter.entitiesAround(warlordsEntity, range, range, range)
                         .aliveEnemiesOf(warlordsEntity)
                         .forEach(we -> we.setStunTicks(stunTicks));
+            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    getStringName(),
+                    null,
+                    Boost.class,
+                    null,
+                    warlordsEntity,
+                    CooldownTypes.SPEC_BOOST,
+                    cooldownManager -> {},
+                    stunTicks
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(damageIncrease);
+                }
+            });
         }
 
     }
