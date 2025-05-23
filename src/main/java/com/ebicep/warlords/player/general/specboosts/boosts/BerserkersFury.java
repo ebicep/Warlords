@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.Berserk;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -14,13 +15,15 @@ import java.util.List;
 public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury> {
 
     private int healthIncrease;
-    private float berserkCooldownIncreasePercent;
+    private int maxEnergyIncrease;
+    private float berserkCooldownIncreaseTicks;
     private int berserkActivationHeal;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
-        this.berserkCooldownIncreasePercent = getValue("berserkCooldownIncreasePercent", float.class);
+        this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
+        this.berserkCooldownIncreaseTicks = getValue("berserkCooldownIncreaseTicks", float.class);
         this.berserkActivationHeal = getValue("berserkActivationHeal", int.class);
     }
 
@@ -31,7 +34,7 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
 
     @Override
     public List<Object> getVariables() {
-        return List.of(healthIncrease, berserkCooldownIncreasePercent, berserkActivationHeal);
+        return List.of(healthIncrease, maxEnergyIncrease, berserkCooldownIncreaseTicks, berserkActivationHeal);
     }
 
     @Override
@@ -51,14 +54,17 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            AbstractPlayerClass spec = warlordsPlayer.getSpec();
+            spec.setMaxEnergy(spec.getMaxEnergy() + maxEnergyIncrease);
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(Berserk.class).forEach(berserk -> {
-                berserk.getCooldown().addMultiplicativeModifierAdd("Spec Boost", berserkCooldownIncreasePercent / 100);
+                berserk.getCooldown().addAdditiveModifier("Spec Boost", -berserkCooldownIncreaseTicks / 20);
             });
         }
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
+            // TODO unapply energy
             warlordsPlayer.getHealth().removeModifier("Spec Boost");
             warlordsPlayer.getAbilitiesMatching(Berserk.class).forEach(berserk -> {
                 berserk.getCooldown().removeModifier("Spec Boost");

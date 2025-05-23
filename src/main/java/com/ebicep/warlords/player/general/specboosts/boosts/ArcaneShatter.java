@@ -18,16 +18,16 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
 
     private float energyPerMelee;
     private float healthIncrease;
-    private float range;
     private float damageIncrease;
+    private float range;
     private int stunTicks;
 
     @Override
     public void init() {
         this.energyPerMelee = getValue("energyPerMelee", float.class);
         this.healthIncrease = getValue("healthIncrease", float.class);
-        this.range = getValue("range", float.class);
         this.damageIncrease = getValue("damageIncrease", float.class);
+        this.range = getValue("range", float.class);
         this.stunTicks = getValue("stunTicks", int.class);
     }
 
@@ -38,7 +38,7 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(energyPerMelee, healthIncrease, range, damageIncrease, stunTicks);
+        return List.of(energyPerMelee, healthIncrease, damageIncrease, range, stunTicks);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
             AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() - energyPerMelee);
+//            playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() - energyPerMelee); // TODO
             warlordsPlayer.getHealth().removeModifier("Spec Boost (Base)");
         }
 

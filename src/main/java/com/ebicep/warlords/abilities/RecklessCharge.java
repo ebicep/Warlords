@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -34,12 +35,15 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, Listener, Damages<RecklessCharge.DamageValues>, AbilityStats<RecklessCharge, RecklessCharge.RecklessChargeStats>, CanReduceCooldowns {
+public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, HitBox, Listener, Damages<RecklessCharge.DamageValues>, AbilityStats<RecklessCharge,
+        RecklessCharge.RecklessChargeStats>, CanReduceCooldowns {
 
     private final RecklessChargeStats stats = new RecklessChargeStats();
     private final DamageValues damageValues = new DamageValues();
+    private final FloatModifiable hitbox = new FloatModifiable(2.5f);
     private int stunTimeInTicks = 10;
-    private int additionalBlocks = 0;
+    private float additionalBlocks = 0;
+    private boolean verticalMovement = false;
 
     public RecklessCharge() {
         super(AbstractAbilityBuilder.create("recklessCharge").pvp());
@@ -50,18 +54,6 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         super.init(builder);
         this.stunTimeInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stunTimeInTicks"), int.class);
         this.additionalBlocks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalBlocks"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Charge forward, dealing ")
-                                               .damage(damageValues.chargeDamage)
-                                               .text(" damage to all enemies you pass through. Enemies hit are ")
-                                               .text("IMMOBILIZED", NamedTextColor.DARK_PURPLE)
-                                               .text(", preventing movement for ")
-                                               .durationTicks(stunTimeInTicks)
-                                               .text(".")
-                                               .build();
     }
 
     @Override
@@ -87,12 +79,14 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
               });
         }
         Location location = wp.getLocation();
-        location.setPitch(0);
+        if (!verticalMovement) {
+            location.setPitch(0);
+        }
         Location chargeLocation = location.clone();
-        double chargeDistance;
         List<WarlordsEntity> playersHit = new ArrayList<>();
         playersHit.add(wp);
         boolean inAir = false;
+        double chargeDistance;
         if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() != Material.AIR) {
             inAir = true;
             //travels 5 blocks
@@ -104,6 +98,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         chargeDistance += additionalBlocks;
         boolean finalInAir = inAir;
         double finalChargeDistance = chargeDistance;
+        float hitboxValue = hitbox.getCalculatedValue();
         new GameRunnable(wp.getGame()) {
 
             //safety precaution
@@ -112,16 +107,23 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
             @Override
             public void run() {
                 if (maxChargeDuration == 5) {
+                    Vector vector;
                     if (finalInAir) {
-                        wp.setVelocity(name, location.getDirection().multiply(2).setY(.2), true);
+                        vector = location.getDirection().multiply(2);
                     } else {
-                        wp.setVelocity(name, location.getDirection().multiply(1.5).setY(.2), true);
+                        vector = location.getDirection().multiply(1.5);
                     }
+                    if (!verticalMovement) {
+                        vector.setY(.2);
+                    }
+                    wp.setVelocity(name, vector, true);
                 }
                 //cancel charge if hit a block, making the player stand still
-                if (wp.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance || (wp.getEntity().getVelocity().getX() == 0 && wp.getEntity()
-                                                                                                                                                                   .getVelocity()
-                                                                                                                                                                   .getZ() == 0) || maxChargeDuration <= 0) {
+                if (wp.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance ||
+                        (!verticalMovement && wp.getEntity().getVelocity().getX() == 0 && wp.getEntity()
+                                                                                            .getVelocity()
+                                                                                            .getZ() == 0) || maxChargeDuration <= 0
+                ) {
                     wp.setVelocity(name, new Vector(0, 0, 0), true);
                     this.cancel();
                 }
@@ -139,7 +141,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
                               true
                       );
                 }
-                PlayerFilter.entitiesAround(wp, 2.5, 5, 2.5).excluding(playersHit).forEach(otherPlayer -> {
+                PlayerFilter.entitiesAround(wp, hitboxValue, hitboxValue + 2.5, hitboxValue).excluding(playersHit).forEach(otherPlayer -> {
                     playersHit.add(otherPlayer);
                     if (otherPlayer.isEnemyAlive(wp)) {
                         stats.targetsCharged++;
@@ -194,6 +196,18 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
     }
 
     @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Charge forward, dealing ")
+                                               .damage(damageValues.chargeDamage)
+                                               .text(" damage to all enemies you pass through. Enemies hit are ")
+                                               .text("IMMOBILIZED", NamedTextColor.DARK_PURPLE)
+                                               .text(", preventing movement for ")
+                                               .durationTicks(stunTimeInTicks)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new RecklessChargeBranch(abilityTree, this);
     }
@@ -221,12 +235,25 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, L
         return stats;
     }
 
-    public int getAdditionalBlocks() {
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return hitbox;
+    }
+
+    public float getAdditionalBlocks() {
         return additionalBlocks;
     }
 
-    public void setAdditionalBlocks(int additionalBlocks) {
+    public void setAdditionalBlocks(float additionalBlocks) {
         this.additionalBlocks = additionalBlocks;
+    }
+
+    public boolean isVerticalMovement() {
+        return verticalMovement;
+    }
+
+    public void setVerticalMovement(boolean verticalMovement) {
+        this.verticalMovement = verticalMovement;
     }
 
     public static class DamageValues implements Value.ValueHolder {
