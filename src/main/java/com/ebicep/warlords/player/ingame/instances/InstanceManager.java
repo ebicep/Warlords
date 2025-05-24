@@ -938,7 +938,6 @@ public class InstanceManager {
                     newHealth = Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth());
                 }
                 if (newHealth <= 0) {
-                    float finalDamageValue1 = damageValue;
                     warlordsEntity.die(
                             source,
                             WarlordsDeathEvent.DeathInfoBuilder
@@ -981,11 +980,11 @@ public class InstanceManager {
                                                                                 .toList()
                                         ) {
                                             for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
-                                                abstractCooldown.onDeathFromEnemies(event, finalDamageValue1, isCrit, enemy == source);
+                                                abstractCooldown.onDeathFromEnemies(event, finalDamageValue, isCrit, enemy == source);
                                                 List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
                                                 if (extraDamageInstances != null) {
                                                     for (DamageInstance damageInstance : extraDamageInstances) {
-                                                        damageInstance.onDeathFromEnemies(event, finalDamageValue1, isCrit, enemy == source);
+                                                        damageInstance.onDeathFromEnemies(event, finalDamageValue, isCrit, enemy == source);
                                                     }
                                                 }
                                             }
