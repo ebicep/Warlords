@@ -92,9 +92,8 @@ public class HealingLink extends AbstractAbility implements PurpleAbilityIcon, D
                                                               .source(wp)
                                                               .value(healingValues.linkHealing)
                             ).ifPresent(finalEvent -> {
-                                wp.addInstance(InstanceBuilder.damage()
-                                                              .ability(this)
-                                                              .source(linked)
+                                wp.addInstance(InstanceBuilder.melee()
+                                                              .source(wp)
                                                               .value(finalEvent.getValue() * damagePercentTaken / 100)
                                                               .showAsCrit(finalEvent.isCrit())
                                 );
