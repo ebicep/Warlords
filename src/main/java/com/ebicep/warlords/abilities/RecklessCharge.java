@@ -81,7 +81,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
               });
         }
         Location location = wp.getLocation();
-        if (!verticalMovement) {
+        if (!verticalMovement || Math.abs(location.getPitch()) < 50) {
             location.setPitch(0);
         }
         Location chargeLocation = location.clone();
