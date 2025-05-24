@@ -2,12 +2,12 @@ package com.ebicep.warlords.pve.items.types.fixeditems;
 
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
+import com.ebicep.warlords.abilities.internal.WoundingData;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.ebicep.warlords.abilities.internal.WoundingData.applyNewWoundingInit;
+import static com.ebicep.warlords.abilities.internal.WoundingData.sendWoundExpired;
 
 public class DisasterFragment extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
@@ -82,25 +85,17 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                 );
                 switch (debuff) {
                     case "Wound" -> {
-                        victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Wounding");
+                        applyNewWoundingInit(victim);
                         victim.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Disaster Fragment - Wounding",
                                 "WND",
-                                DisasterFragment.class,
+                                WoundingData.class,
                                 null,
                                 attacker,
                                 CooldownTypes.DEBUFF,
                                 cooldownManager -> {
                                 },
-                                cooldownManager -> {
-                                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                                        victim.sendMessage(
-                                                Component.text("You are no longer ", NamedTextColor.GRAY)
-                                                         .append(Component.text("wounded", NamedTextColor.RED))
-                                                         .append(Component.text(".", NamedTextColor.GRAY))
-                                        );
-                                    }
-                                },
+                                cooldownManager -> sendWoundExpired(victim),
                                 40
                         ) {
                             @Override

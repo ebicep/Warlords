@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
+import com.ebicep.warlords.abilities.internal.WoundingData;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -21,6 +21,9 @@ import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+
+import static com.ebicep.warlords.abilities.internal.WoundingData.applyNewWoundingInit;
+import static com.ebicep.warlords.abilities.internal.WoundingData.sendWoundExpired;
 
 public class EventAres extends AbstractMob implements BossMob, LesserGod {
 
@@ -94,25 +97,17 @@ public class EventAres extends AbstractMob implements BossMob, LesserGod {
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
         event.getFlags().add(InstanceFlags.PIERCE);
-        receiver.getCooldownManager().removeCooldownByName("Ares Wounding");
+        applyNewWoundingInit(receiver);
         receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
                 "Ares Wounding",
                 "WND",
-                EventAres.class,
+                WoundingData.class,
                 null,
                 attacker,
                 CooldownTypes.DEBUFF,
                 cooldownManager -> {
                 },
-                cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").stream().count() == 1) {
-                        receiver.sendMessage(
-                                Component.text("You are no longer ", NamedTextColor.GRAY)
-                                         .append(Component.text("wounded", NamedTextColor.RED))
-                                         .append(Component.text(".", NamedTextColor.GRAY))
-                        );
-                    }
-                },
+                cooldownManager -> sendWoundExpired(receiver),
                 60
         ) {
             @Override
