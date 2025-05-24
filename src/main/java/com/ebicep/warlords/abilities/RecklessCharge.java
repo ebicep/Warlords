@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -44,6 +45,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
     private int stunTimeInTicks = 10;
     private float additionalBlocks = 0;
     private boolean verticalMovement = false;
+    private int maxChargeDuration = 5;
 
     public RecklessCharge() {
         super(AbstractAbilityBuilder.create("recklessCharge").pvp());
@@ -85,45 +87,43 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
         Location chargeLocation = location.clone();
         List<WarlordsEntity> playersHit = new ArrayList<>();
         playersHit.add(wp);
-        boolean inAir = false;
+        boolean inAir;
         double chargeDistance;
         if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() != Material.AIR) {
             inAir = true;
             //travels 5 blocks
             chargeDistance = 5;
         } else {
+            inAir = false;
             //travels 7 at peak jump
             chargeDistance = Math.max(Math.min(LocationUtils.getDistance(wp, .1) * 5, 7.2), 6.3);
         }
         chargeDistance += additionalBlocks;
-        boolean finalInAir = inAir;
-        double finalChargeDistance = chargeDistance;
+        double chargeDistanceSquared = (float) (chargeDistance * chargeDistance);
         float hitboxValue = hitbox.getCalculatedValue();
         new GameRunnable(wp.getGame()) {
 
             //safety precaution
-            int maxChargeDuration = 5;
+            int chargeDuration = maxChargeDuration;
 
             @Override
             public void run() {
-                if (maxChargeDuration == 5) {
+                if (chargeDuration == maxChargeDuration) {
                     Vector vector;
-                    if (finalInAir) {
+                    if (inAir) {
                         vector = location.getDirection().multiply(2);
                     } else {
                         vector = location.getDirection().multiply(1.5);
                     }
-                    if (!verticalMovement) {
+                    if (!verticalMovement || FlagHolder.isPlayerHolderFlag(wp)) {
                         vector.setY(.2);
                     }
                     wp.setVelocity(name, vector, true);
                 }
                 //cancel charge if hit a block, making the player stand still
-                if (wp.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance ||
-                        (!verticalMovement && wp.getEntity().getVelocity().getX() == 0 && wp.getEntity()
-                                                                                            .getVelocity()
-                                                                                            .getZ() == 0) || maxChargeDuration <= 0
-                ) {
+                boolean reachedMaxDistance = wp.getLocation().distanceSquared(chargeLocation) > chargeDistanceSquared;
+                boolean hitWall = (!verticalMovement) && wp.getEntity().getVelocity().getX() == 0 && wp.getEntity().getVelocity().getZ() == 0;
+                if (reachedMaxDistance || hitWall || chargeDuration <= 0) {
                     wp.setVelocity(name, new Vector(0, 0, 0), true);
                     this.cancel();
                 }
@@ -189,7 +189,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                         EffectUtils.displayParticle(Particle.HEART, otherPlayer.getLocation().add(0, 2, 0), 10, .5, .25, .5, 0);
                     }
                 });
-                maxChargeDuration--;
+                chargeDuration--;
             }
         }.runTaskTimer(1, 0);
         return true;
@@ -254,6 +254,14 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
 
     public void setVerticalMovement(boolean verticalMovement) {
         this.verticalMovement = verticalMovement;
+    }
+
+    public int getMaxChargeDuration() {
+        return maxChargeDuration;
+    }
+
+    public void setMaxChargeDuration(int maxChargeDuration) {
+        this.maxChargeDuration = maxChargeDuration;
     }
 
     public static class DamageValues implements Value.ValueHolder {

@@ -60,6 +60,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
                 recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() + travelDistanceIncrease);
                 recklessCharge.getHitBoxRadius().addAdditiveModifier("Spec Boost", radiusIncrease);
                 recklessCharge.setVerticalMovement(true);
+                recklessCharge.setMaxChargeDuration(recklessCharge.getMaxChargeDuration() + 1);
             });
         }
 
@@ -69,6 +70,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
                 recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() - travelDistanceIncrease);
                 recklessCharge.getHitBoxRadius().removeModifier("Spec Boost");
                 recklessCharge.setVerticalMovement(false);
+                recklessCharge.setMaxChargeDuration(recklessCharge.getMaxChargeDuration() - 1);
             });
         }
 
