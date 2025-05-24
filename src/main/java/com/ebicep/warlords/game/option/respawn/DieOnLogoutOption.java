@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.respawn;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import org.bukkit.event.EventHandler;
@@ -21,7 +22,7 @@ public class DieOnLogoutOption implements Option {
                         .findAny()
                         .ifPresent(warlordsPlayer -> {
                             if (warlordsPlayer.isAlive()) {
-                                warlordsPlayer.die(null);
+                                warlordsPlayer.die(null, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                             }
                         });
             }

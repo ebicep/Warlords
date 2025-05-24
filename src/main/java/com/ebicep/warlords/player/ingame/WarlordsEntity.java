@@ -215,10 +215,6 @@ public abstract class WarlordsEntity {
         return isInPve;
     }
 
-    public List<Location> getLocations() {
-        return locations;
-    }
-
     @Override
     public String toString() {
         return "WarlordsEntity{" +
@@ -226,6 +222,10 @@ public abstract class WarlordsEntity {
                 ", uuid=" + uuid +
                 ", specClass=" + specClass +
                 '}';
+    }
+
+    public List<Location> getLocations() {
+        return locations;
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addInstance(InstanceBuilder instanceBuilder) {
@@ -275,8 +275,24 @@ public abstract class WarlordsEntity {
         return cooldownManager;
     }
 
-    public void die(@Nullable WarlordsEntity attacker) {
+    public void die(@Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+        WarlordsDeathEvent.DeathInfo deathInfo = deathInfoBuilder.createDeathInfo();
+        WarlordsDeathEvent deathEvent = new WarlordsDeathEvent(this, attacker, deathInfo);
+        Bukkit.getPluginManager().callEvent(deathEvent);
+        if (deathEvent.isCancelled() || deathInfo.forced()) { // TODO check forced
+            return;
+        }
+
         dead = true;
+
+        Title title = deathInfo.title();
+        if (title != null) {
+            entity.showTitle(title);
+        }
+        Runnable runnable = deathInfo.onDeathRunnable();
+        if (runnable != null) {
+            runnable.run();
+        }
 
         getLocation(this.deathLocation);
 
@@ -306,7 +322,6 @@ public abstract class WarlordsEntity {
         }
         //removing yellow hearts
         giveAbsorption(0);
-        Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
 
         //giving out assists
         hitBy.forEach((assisted, value) -> {
@@ -615,28 +630,12 @@ public abstract class WarlordsEntity {
 
     }
 
-    public void setSpec(Specializations spec) {
-        this.spec = spec.create.get();
-        this.spec.updateCustomStats(this);
-        this.health.setBaseValue(this.spec.getMaxHealth());
-        this.currentHealth = getMaxHealth();
-        heal();
-        this.energy = this.spec.getMaxEnergy();
-        if (this instanceof WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.queueUpdateTabName();
-        }
-    }
-
     public boolean setStunTicks(int stunTicks) {
         return false;
     }
 
     public void unstun() {
 
-    }
-
-    public float getMaxHealth() {
-        return health.getCalculatedValue();
     }
 
     public float getCurrentHealth() {
@@ -866,6 +865,7 @@ public abstract class WarlordsEntity {
      *
      * @param minuteStatsType The type of minute stats to get the hoverable text for
      * @param hoverable       if the text should be hoverable
+     *
      * @return List of hoverable minute stats that make up minuteStatsType.name
      */
     public Component getAllMinuteHoverableStats(MinuteStats minuteStatsType, boolean hoverable) {
@@ -882,7 +882,8 @@ public abstract class WarlordsEntity {
             if (size > MINUTE_STATS_SPLITS) {
                 int timesToSplit = size / MINUTE_STATS_SPLITS + 1;
                 String[] splitString = StringUtils.splitStringNTimes(minuteStatsTypeName + ": " + NumberFormat.addCommaAndRound(
-                        minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit);
+                        minuteStatsType.getValue.apply(minuteStats.total())), timesToSplit
+                );
                 int stringLength = 0;
                 for (int i = 0; i < splitString.length; i++) {
                     for (int j = 0; j < MINUTE_STATS_SPLITS; j++) {
@@ -1300,9 +1301,6 @@ public abstract class WarlordsEntity {
         } else if (newHealth > 40) {
             newHealth = 40;
         }
-        if (UndyingArmy.checkUndyingArmy(this, newHealth)) {
-            newHealth = 40;
-        }
 
         // Energy
         if (getEnergy() < getMaxEnergy()) {
@@ -1469,6 +1467,22 @@ public abstract class WarlordsEntity {
 
     public AbstractPlayerClass getSpec() {
         return spec;
+    }
+
+    public void setSpec(Specializations spec) {
+        this.spec = spec.create.get();
+        this.spec.updateCustomStats(this);
+        this.health.setBaseValue(this.spec.getMaxHealth());
+        this.currentHealth = getMaxHealth();
+        heal();
+        this.energy = this.spec.getMaxEnergy();
+        if (this instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.queueUpdateTabName();
+        }
+    }
+
+    public float getMaxHealth() {
+        return health.getCalculatedValue();
     }
 
     public void updateItems() {

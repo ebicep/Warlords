@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.FlameBurst;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -285,7 +286,7 @@ public class Mithra extends AbstractMob implements BossMob {
                             return;
                         }
                         WarlordsNPC eggSacWarlordsNPC = eggSac.getWarlordsNPC();
-                        eggSacWarlordsNPC.die(eggSacWarlordsNPC);
+                        eggSacWarlordsNPC.die(eggSacWarlordsNPC, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                         Location location = eggSacWarlordsNPC.getLocation();
                         location.add(0, 1.31, 0);
                         for (int i = 0; i < pveOption.playerCount() * 1.5; i++) {

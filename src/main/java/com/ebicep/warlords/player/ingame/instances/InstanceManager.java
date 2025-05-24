@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.general.settings.ChatSettings;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -105,7 +106,7 @@ public class InstanceManager {
 
         AtomicReference<WarlordsDamageHealingFinalEvent> finalEvent = new AtomicReference<>(null);
         // Spawn Protection / Undying Army / Game State
-        if ((warlordsEntity.isDead() && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) || !warlordsEntity.isActive()) {
+        if (warlordsEntity.isDead() || !warlordsEntity.isActive()) {
             return Optional.empty();
         }
 
@@ -239,10 +240,12 @@ public class InstanceManager {
         //crit
         float damageValue = (int) ((Math.random() * (max - min)) + min);
         double crit = ThreadLocalRandom.current().nextDouble(100);
-        boolean isCrit = false;
+        boolean isCrit;
         if (critChance > 0 && crit <= critChance && source.isCanCrit()) {
             isCrit = true;
             damageValue *= critMultiplier / 100f;
+        } else {
+            isCrit = false;
         }
         for (AbstractCooldown<?> abstractCooldown : attackersCooldownsDistinct) {
             abstractCooldown.onPostCritCalculationFromAttacker(event, damageValue, isCrit, critChance, critMultiplier);
@@ -285,15 +288,19 @@ public class InstanceManager {
                 // True damage
                 sendTookDamageMessage(warlordsEntity, debugMessage, min, "melee damage");
                 warlordsEntity.resetRegenTimer();
-                if (warlordsEntity.getCurrentHealth() - min <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                    warlordsEntity.getEntity().showTitle(Title.title(
-                            Component.text("YOU DIED!", NamedTextColor.RED),
-                            Component.text("You took ", NamedTextColor.GRAY)
-                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
-                                     .append(Component.text(" melee damage and died.")),
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                    ));
-                    warlordsEntity.die(source);
+                if (warlordsEntity.getCurrentHealth() - min <= 0) {
+                    warlordsEntity.die(
+                            source,
+                            WarlordsDeathEvent.DeathInfoBuilder
+                                    .create()
+                                    .setTitle(Title.title(
+                                            Component.text("YOU DIED!", NamedTextColor.RED),
+                                            Component.text("You took ", NamedTextColor.GRAY)
+                                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                                     .append(Component.text(" melee damage and died.")),
+                                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                                    ))
+                    );
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - min);
                     warlordsEntity.playHurtAnimation(source);
@@ -302,15 +309,19 @@ public class InstanceManager {
                 // Fall Damage
                 sendTookDamageMessage(warlordsEntity, debugMessage, damageValue, "fall damage");
                 warlordsEntity.resetRegenTimer();
-                if (warlordsEntity.getCurrentHealth() - damageValue <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                    warlordsEntity.getEntity().showTitle(Title.title(
-                            Component.text("YOU DIED!", NamedTextColor.RED),
-                            Component.text("You took ", NamedTextColor.GRAY)
-                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
-                                     .append(Component.text(" fall damage and died.")),
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                    ));
-                    warlordsEntity.die(source);
+                if (warlordsEntity.getCurrentHealth() - damageValue <= 0) {
+                    warlordsEntity.die(
+                            source,
+                            WarlordsDeathEvent.DeathInfoBuilder
+                                    .create()
+                                    .setTitle(Title.title(
+                                            Component.text("YOU DIED!", NamedTextColor.RED),
+                                            Component.text("You took ", NamedTextColor.GRAY)
+                                                     .append(Component.text(Math.round(min), NamedTextColor.RED))
+                                                     .append(Component.text(" fall damage and died.")),
+                                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                                    ))
+                    );
                 } else {
                     warlordsEntity.setCurrentHealth(warlordsEntity.getCurrentHealth() - damageValue);
                     warlordsEntity.playHurtAnimation(source);
@@ -901,17 +912,13 @@ public class InstanceManager {
                     source.getRecordDamage().add(cappedDamage);
                 }
 
-                // debt and healing
-                if (!debt && warlordsEntity.isTakeDamage()) {
-                    warlordsEntity.setCurrentHealth(Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth()));
-                }
-
                 finalEvent.set(new WarlordsDamageHealingFinalEvent(
                         event,
                         flags,
                         warlordsEntity,
                         source,
-                        ability, cause,
+                        ability,
+                        cause,
                         initialHealth,
                         damageHealValueBeforeAllReduction,
                         damageHealValueBeforeInterveneReduction,
@@ -926,55 +933,67 @@ public class InstanceManager {
                 warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
                 source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());
                 // The player died.
-                if (warlordsEntity.getCurrentHealth() <= 0 && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) {
-                    if (source.getEntity() instanceof Player player) {
-                        player.playSound(source.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 1);
-                        player.playSound(source.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 0.5f);
-                    }
+                float newHealth = warlordsEntity.getCurrentHealth();
+                if (!debt && warlordsEntity.isTakeDamage()) {
+                    newHealth = Math.min(warlordsEntity.getCurrentHealth() - damageValue, warlordsEntity.getMaxHealth());
+                }
+                if (newHealth <= 0) {
+                    float finalDamageValue1 = damageValue;
+                    warlordsEntity.die(
+                            source,
+                            WarlordsDeathEvent.DeathInfoBuilder
+                                    .create()
+                                    .setTitle(Title.title(
+                                            Component.text("YOU DIED!", NamedTextColor.RED),
+                                            Component.text(source.getName() + " killed you.", NamedTextColor.GRAY),
+                                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
+                                    ))
+                                    .setOnDeathRunnable(() -> {
+                                        if (source.getEntity() instanceof Player player) {
+                                            player.playSound(source.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 1);
+                                            player.playSound(source.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 500f, 0.5f);
+                                        }
 
-                    source.addKill();
+                                        source.addKill();
 
-                    warlordsEntity.getGame().forEachOnlinePlayer((p, t) -> {
-                        DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
-                        ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
-                        if (killsMode != ChatSettings.ChatKills.ALL && killsMode != ChatSettings.ChatKills.NO_ASSISTS) {
-                            return;
-                        }
-                        if (p == warlordsEntity.getEntity()) {
-                            warlordsEntity.sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
-                                                                .append(source.getColoredName()));
-                        } else if (p == source.getEntity()) {
-                            source.sendMessage(Component.text("You killed ", NamedTextColor.GRAY)
-                                                        .append(warlordsEntity.getColoredName()));
-                        } else {
-                            p.sendMessage(warlordsEntity.getColoredName()
-                                                        .append(Component.text(" was killed by ", NamedTextColor.GRAY))
-                                                        .append(source.getColoredName()));
-                        }
-                    });
+                                        warlordsEntity.getGame().forEachOnlinePlayer((p, t) -> {
+                                            DatabasePlayer databasePlayer = DatabaseManager.getPlayer(p.getUniqueId(), true);
+                                            ChatSettings.ChatKills killsMode = databasePlayer.getChatKillsMode();
+                                            if (killsMode != ChatSettings.ChatKills.ALL && killsMode != ChatSettings.ChatKills.NO_ASSISTS) {
+                                                return;
+                                            }
+                                            if (p == warlordsEntity.getEntity()) {
+                                                warlordsEntity.sendMessage(Component.text("You were killed by ", NamedTextColor.GRAY)
+                                                                                    .append(source.getColoredName()));
+                                            } else if (p == source.getEntity()) {
+                                                source.sendMessage(Component.text("You killed ", NamedTextColor.GRAY)
+                                                                            .append(warlordsEntity.getColoredName()));
+                                            } else {
+                                                p.sendMessage(warlordsEntity.getColoredName()
+                                                                            .append(Component.text(" was killed by ", NamedTextColor.GRAY))
+                                                                            .append(source.getColoredName()));
+                                            }
+                                        });
 
-                    for (WarlordsEntity enemy : PlayerFilter.playingGame(warlordsEntity.getGame())
-                                                            .enemiesOf(warlordsEntity)
-                                                            .stream()
-                                                            .toList()
-                    ) {
-                        for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
-                            abstractCooldown.onDeathFromEnemies(event, damageValue, isCrit, enemy == source);
-                            List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
-                            if (extraDamageInstances != null) {
-                                for (DamageInstance damageInstance : extraDamageInstances) {
-                                    damageInstance.onDeathFromEnemies(event, damageValue, isCrit, enemy == source);
-                                }
-                            }
-                        }
-                    }
-                    warlordsEntity.getEntity().showTitle(Title.title(
-                            Component.text("YOU DIED!", NamedTextColor.RED),
-                            Component.text(source.getName() + " killed you.", NamedTextColor.GRAY),
-                            Title.Times.times(Ticks.duration(0), Ticks.duration(40), Ticks.duration(0))
-                    ));
-                    warlordsEntity.die(source);
+                                        for (WarlordsEntity enemy : PlayerFilter.playingGame(warlordsEntity.getGame())
+                                                                                .enemiesOf(warlordsEntity)
+                                                                                .stream()
+                                                                                .toList()
+                                        ) {
+                                            for (AbstractCooldown<?> abstractCooldown : enemy.getCooldownManager().getCooldownsDistinct()) {
+                                                abstractCooldown.onDeathFromEnemies(event, finalDamageValue1, isCrit, enemy == source);
+                                                List<DamageInstance> extraDamageInstances = abstractCooldown.getExtraDamageInstances();
+                                                if (extraDamageInstances != null) {
+                                                    for (DamageInstance damageInstance : extraDamageInstances) {
+                                                        damageInstance.onDeathFromEnemies(event, finalDamageValue1, isCrit, enemy == source);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    })
+                    );
                 } else {
+                    warlordsEntity.setCurrentHealth(newHealth);
                     if (!flags.contains(InstanceFlags.NO_HIT_SOUND) && warlordsEntity != source && damageValue != 0) {
                         warlordsEntity.playHitSound(source);
                     }
@@ -1058,7 +1077,7 @@ public class InstanceManager {
 
         WarlordsDamageHealingFinalEvent finalEvent;
         // Spawn Protection / Undying Army / Game State
-        if ((warlordsEntity.isDead() && !warlordsEntity.getCooldownManager().checkUndyingArmy(false)) || !warlordsEntity.isActive()) {
+        if (warlordsEntity.isDead() || !warlordsEntity.isActive()) {
             return Optional.empty();
         }
 

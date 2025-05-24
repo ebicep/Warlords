@@ -2,7 +2,6 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
-import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.WoundingData;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
@@ -619,35 +618,6 @@ public class CooldownManager {
         } else {
             addCooldown(regularCooldown);
         }
-    }
-
-    public boolean checkUndyingArmy(boolean popped) {
-        return checkUndyingArmy(popped, null);
-    }
-
-    public boolean checkUndyingArmy(boolean popped, UndyingArmy exclude) {
-        for (UndyingArmy.UndyingArmyData data : new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.UndyingArmyData.class)
-                .toList()
-        ) {
-            if (Objects.equals(data.getUndyingArmy(), exclude)) {
-                continue;
-            }
-            if (popped) {
-                //returns true if any undying is popped
-                if (data.isArmyDead(warlordsEntity)) {
-                    return true;
-                }
-            } else {
-                //return true if theres any unpopped armies
-                if (!data.isArmyDead(warlordsEntity)) {
-                    return true;
-                }
-            }
-        }
-        //if popped returns false - all undying armies are not popped (there is no popped armies)
-        //if !popped return false - all undying armies are popped (there is no unpopped armies)
-        return false;
     }
 
 }

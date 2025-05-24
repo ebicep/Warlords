@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler;
 
 public class DuelsTeleportOption extends TeleportOnEventOption {
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDeathEvent(WarlordsDeathEvent e) {
         for (WarlordsEntity wp : PlayerFilter
                 .playingGame(game)

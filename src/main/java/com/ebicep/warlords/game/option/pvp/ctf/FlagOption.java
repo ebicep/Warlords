@@ -38,7 +38,7 @@ public class FlagOption implements Option {
                 return true;
             }
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onPlayerDeath(WarlordsDeathEvent event) {
                 dropFlag(event.getWarlordsEntity(), true);
             }

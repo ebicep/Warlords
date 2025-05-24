@@ -97,7 +97,7 @@ public class GraveOption implements Option, Listener {
         graves.clear();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEvent(WarlordsDeathEvent event) {
         if (event.getWarlordsEntity().shouldSpawnGrave()) {
             addGrave(event.getWarlordsEntity());

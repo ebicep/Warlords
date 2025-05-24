@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.game.pve.WarlordsMobSpawnEvent;
 import com.ebicep.warlords.events.player.ingame.AbstractWarlordsEntityEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -142,7 +143,7 @@ public abstract class EventInquisiteur extends AbstractMob implements BossMob {
                             2
                     );
                     EffectUtils.strikeLightning(mob.getWarlordsNPC().getLocation(), false);
-                    mob.getWarlordsNPC().die(warlordsNPC);
+                    mob.getWarlordsNPC().die(warlordsNPC, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                 }
                 Bukkit.getServer().getPluginManager().callEvent(new EventInquisteurKillingBlowEvent(warlordsNPC));
                 if (damageResistance.get() < 10) {

@@ -85,7 +85,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         this.critMultiplier = critMultiplier;
         this.isCrit = isCrit;
         this.hasFlag = player.hasFlag();
-        this.isDead = isDamageInstance && player.getCurrentHealth() <= 0 && !player.getCooldownManager().checkUndyingArmy(false);
+        this.isDead = isDamageInstance && player.isDead();
 
         this.attackerInCombat = source.getRegenTickTimer() > 6 * 20;
 

@@ -408,7 +408,6 @@ public class WarlordsEvents implements Listener {
                         if (!itemHeld.equals(UndyingArmy.BONE)) {
                             break;
                         }
-                        player.getInventory().remove(UndyingArmy.BONE);
                         wp.addInstance(InstanceBuilder
                                 .melee()
                                 .source(wp)

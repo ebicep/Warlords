@@ -3,6 +3,7 @@ package com.ebicep.warlords.pve.mobs.events.boltarobonanza;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -63,7 +64,7 @@ public class EventBoltaro extends AbstractMob implements BossMob {
 
             split(option);
 
-            warlordsNPC.die(warlordsNPC);
+            warlordsNPC.die(warlordsNPC, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
         }
     }
 

@@ -155,7 +155,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         public void register(@Nonnull Game game) {
             super.register(game);
             game.registerEvents(new Listener() {
-                @EventHandler
+                @EventHandler(ignoreCancelled = true)
                 public void onEvent(WarlordsDeathEvent event) {
                     Collection<Team> teams = TeamMarker.getTeams(event.getGame());
                     List<Team> toReward = new ArrayList<>(teams.size() - 1);

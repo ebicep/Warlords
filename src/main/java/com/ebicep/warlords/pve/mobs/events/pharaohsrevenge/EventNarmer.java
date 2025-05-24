@@ -169,7 +169,7 @@ public class EventNarmer extends AbstractMob implements BossMob {
                 }
             }
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             private void onAllyDeath(WarlordsDeathEvent event) {
                 WarlordsEntity eventPlayer = event.getWarlordsEntity();
                 Location location = warlordsNPC.getLocation();

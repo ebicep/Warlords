@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -571,7 +572,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
             }
             if (imprisonTicks >= IMPRISONMENT_TICKS) {
                 Utils.playGlobalSound(imprisonedPlayer.getLocation(), Sound.BLOCK_ANVIL_PLACE, 2, .1f);
-                imprisonedPlayer.die(warlordsEntity);
+                imprisonedPlayer.die(warlordsEntity, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                 reset(true);
             } else if (imprisonTicks > IMPRISONMENT_TICKS - 40 && imprisonTicks % 3 == 0) {
                 Utils.playGlobalSound(imprisonedPlayer.getLocation(), Instrument.PIANO, new Note(24));

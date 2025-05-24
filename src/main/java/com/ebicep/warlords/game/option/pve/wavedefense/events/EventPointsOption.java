@@ -97,7 +97,7 @@ public class EventPointsOption implements Option, Listener {
         });
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onKill(WarlordsDeathEvent event) {
         WarlordsEntity deadEntity = event.getWarlordsEntity();
         WarlordsEntity killer = event.getKiller();
@@ -114,7 +114,7 @@ public class EventPointsOption implements Option, Listener {
         if (Objects.equals(deadEntity, killer)) {
             return;
         }
-        addKillPoints((WarlordsNPC) deadEntity, killer);
+        addKillPoints(warlordsNPC, killer);
     }
 
     private void addKillPoints(WarlordsNPC deadEntity, @Nullable WarlordsEntity killer) {

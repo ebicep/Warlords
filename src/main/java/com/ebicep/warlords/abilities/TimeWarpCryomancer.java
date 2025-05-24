@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractTimeWarp;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -131,7 +132,7 @@ public class TimeWarpCryomancer extends AbstractTimeWarp {
                 cooldownManager -> {
                     warpTrail.clear();
                     if (pveOption != null && cryoPod != null && pveOption.getMobs().contains(cryoPod)) {
-                        cryoPod.getWarlordsNPC().die(cryoPod.getWarlordsNPC());
+                        cryoPod.getWarlordsNPC().die(cryoPod.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                     }
                 },
                 tickDuration,

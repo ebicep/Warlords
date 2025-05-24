@@ -65,8 +65,8 @@ public class RespawnWaveOption implements Option, Listener {
             }
         }.runTaskTimer(GameRunnable.SECOND, GameRunnable.SECOND);
     }
-    
-    @EventHandler
+
+    @EventHandler(ignoreCancelled = true)
     public void onEvent(WarlordsDeathEvent event) {
         giveRespawnTimer(event.getWarlordsEntity());
     }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.pve.mobs.events.baneofimpurities;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -138,7 +139,7 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
                 }
             } else if (secondsElapsed == killTime) {
                 playDeathAnimation(() -> {
-                    warlordsNPC.die(warlordsNPC);
+                    warlordsNPC.die(warlordsNPC, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                     for (WarlordsEntity we : PlayerFilter
                             .playingGame(getWarlordsNPC().getGame())
                             .aliveEnemiesOf(warlordsNPC)

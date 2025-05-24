@@ -163,7 +163,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(WarlordsDeathEvent event) {
         CooldownData dead = playerSettings.get(event.getWarlordsEntity());
         if (dead == null) {

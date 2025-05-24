@@ -157,7 +157,7 @@ public class TutorialOption implements Option {
                 }
             }
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
                 if (event.getWarlordsEntity().equals(warlordsPlayer)) {
                     warlordsPlayer.respawn();

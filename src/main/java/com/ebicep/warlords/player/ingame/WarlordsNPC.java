@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -26,7 +27,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -115,8 +115,8 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public void die(@Nullable WarlordsEntity attacker) {
-        super.die(attacker);
+    public void die(@org.jetbrains.annotations.Nullable WarlordsEntity attacker, WarlordsDeathEvent.DeathInfoBuilder deathInfoBuilder) {
+        super.die(attacker, deathInfoBuilder);
         cleanup();
     }
 

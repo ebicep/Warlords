@@ -92,7 +92,7 @@ public class RevenantTower extends AbstractTower implements Upgradeable.Path2, L
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onMobKill(WarlordsDeathEvent event) {
         WarlordsEntity warlordsEntity = event.getWarlordsEntity();
         if (spawnedNearby.remove(warlordsEntity)) {

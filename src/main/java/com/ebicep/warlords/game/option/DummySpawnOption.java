@@ -43,7 +43,8 @@ public class DummySpawnOption implements Option {
     public void register(@Nonnull Game game) {
         this.game = game;
         game.registerEvents(new Listener() {
-            @EventHandler
+
+            @EventHandler(ignoreCancelled = true)
             public void onDummyDeath(WarlordsDeathEvent event) {
                 WarlordsEntity dead = event.getWarlordsEntity();
                 if (Objects.equals(dead, testDummy)) {

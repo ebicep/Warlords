@@ -67,7 +67,7 @@ public class Boltaro extends AbstractMob implements BossMob {
         super.onSpawn(option);
 
         option.getGame().registerEvents(listener = new Listener() {
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onMobDeath(WarlordsDeathEvent event) {
                 if (!split && event.getWarlordsEntity() instanceof WarlordsNPC) {
                     mobsKilledBeforeSplit++;
@@ -94,7 +94,7 @@ public class Boltaro extends AbstractMob implements BossMob {
         if (warlordsNPC.getCurrentHealth() < 6000) {
             split = true;
             split(option);
-            warlordsNPC.die(warlordsNPC);
+            warlordsNPC.die(warlordsNPC, WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
         }
     }
 

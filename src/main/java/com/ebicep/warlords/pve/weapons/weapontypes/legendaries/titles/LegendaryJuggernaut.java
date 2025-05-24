@@ -57,7 +57,7 @@ public class LegendaryJuggernaut extends AbstractLegendaryWeapon implements Even
             final FloatModifiable.FloatModifier modifier = player.getHealth().addMultiplicativeModifierAdd(getTitleName() + " (Base)", 0);
 
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
                 WarlordsEntity killer = event.getKiller();
 

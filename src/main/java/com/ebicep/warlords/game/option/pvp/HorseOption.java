@@ -202,7 +202,7 @@ public class HorseOption implements Option, Listener {
         getHorseForPlayer(warlordsEntity).damage(event.getValue());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onWarlordsDeathEvent(WarlordsDeathEvent event) {
         getHorseForPlayer(event.getWarlordsEntity()).kill();
     }

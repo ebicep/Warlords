@@ -114,7 +114,7 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
             @Override
             protected Listener getListener() {
                 return new Listener() {
-                    @EventHandler(priority = EventPriority.HIGHEST)
+                    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
                     public void onDeath(WarlordsDeathEvent event) {
                         WarlordsEntity dead = event.getWarlordsEntity();
                         if (!(dead instanceof WarlordsNPC npc) || dead == warlordsNPC) {

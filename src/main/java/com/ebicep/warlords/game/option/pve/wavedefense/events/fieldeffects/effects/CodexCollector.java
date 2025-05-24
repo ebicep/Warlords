@@ -97,7 +97,7 @@ public class CodexCollector implements FieldEffect {
         Game game = players.get(0).getGame();
         game.registerEvents(new Listener() {
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onKill(WarlordsDeathEvent event) {
                 if (codexesEquipped < 2) {
                     return;

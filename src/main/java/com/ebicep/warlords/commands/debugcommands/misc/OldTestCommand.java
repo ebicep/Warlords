@@ -116,6 +116,36 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
+//            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
+//            for (int i = 0; i < 5; i++) {
+//                int finalI = i;
+//                warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+//                        "TEST " + i,
+//                        "" + i,
+//                        OldTestCommand.class,
+//                        null,
+//                        warlordsEntity,
+//                        CooldownTypes.INTERNAL,
+//                        cooldownManager -> {
+//                        },
+//                        false
+//                ) {
+//                    @Override
+//                    protected Listener getListener() {
+//                        return new Listener() {
+//                            @EventHandler(priority = EventPriority.LOWEST)
+//                            public void onDeath(WarlordsDeathEvent event) {
+//                                System.out.println("DEATH EVENT - " + finalI);
+//                            }
+//
+//                            @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+//                            public void onDeath2(WarlordsDeathEvent event) {
+//                                System.out.println("DEATH EVENT 2 - " + finalI);
+//                            }
+//                        };
+//                    }
+//                });
+//            }
             SpecBoostMenu.open(player);
 //            Value.RangedValueCritable strikeDamage = ConfigManager.ABILITIES_CONFIG.getValue("strikeDamage", Value.RangedValueCritable.class, this);
 //            System.out.println(strikeDamage);

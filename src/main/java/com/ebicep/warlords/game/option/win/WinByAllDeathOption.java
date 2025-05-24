@@ -36,7 +36,7 @@ public class WinByAllDeathOption implements Option {
 
         game.registerEvents(new Listener() {
 
-            @EventHandler
+            @EventHandler(ignoreCancelled = true)
             public void onDeath(WarlordsDeathEvent event) {
                 if (!(event.getWarlordsEntity() instanceof WarlordsPlayer)) {
                     return;

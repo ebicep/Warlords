@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.BlueAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -127,7 +128,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     pveOption.spawnNewMob(animus, wp.getTeam());
                     addSecondaryAbility(2, () -> {
                                 if (wp.isAlive()) {
-                                    animus.getWarlordsNPC().die(animus.getWarlordsNPC());
+                                    animus.getWarlordsNPC().die(animus.getWarlordsNPC(), WarlordsDeathEvent.DeathInfoBuilder.create().setForced(true));
                                     for (WarlordsEntity enemy : PlayerFilter.entitiesAround(animus.getWarlordsNPC().getLocation(), 4, 4, 4).aliveEnemiesOf(wp)) {
                                         enemy.addInstance(InstanceBuilder.damage().cause("Animus").source(wp).min(400).max(600));
                                     }

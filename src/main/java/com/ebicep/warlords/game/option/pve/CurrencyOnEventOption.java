@@ -181,7 +181,7 @@ public class CurrencyOnEventOption implements Option, Listener {
         player.addCurrency(startingCurrency);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onKill(WarlordsDeathEvent event) {
         WarlordsEntity mob = event.getWarlordsEntity();
         if (currencyOnKill == 0 || !(mob instanceof WarlordsNPC warlordsNPC)) {
