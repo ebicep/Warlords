@@ -385,8 +385,8 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     }
 
     @Nonnull
-    public PlayerFilter requireLineOfSightIntervene(@Nonnull WarlordsEntity warlordsPlayer) {
-        return filter(wp -> LocationUtils.isLookingAtIntervene(warlordsPlayer, wp));
+    public PlayerFilter requireLineOfSightIntervene(@Nonnull WarlordsEntity warlordsPlayer, boolean seeThroughBlocks) {
+        return filter(wp -> LocationUtils.isLookingAtIntervene(warlordsPlayer, wp) && (seeThroughBlocks || LocationUtils.hasLineOfSight(warlordsPlayer, wp)));
     }
 
     @Nonnull

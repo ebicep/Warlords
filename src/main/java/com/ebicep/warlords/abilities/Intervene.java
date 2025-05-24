@@ -93,7 +93,7 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
         List<InterveneData> venes = new ArrayList<>();
         for (WarlordsEntity veneTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                                      .aliveTeammatesOfExcludingSelf(wp)
-                                                     .requireLineOfSightIntervene(wp)
+                                                     .requireLineOfSightIntervene(wp, true)
                                                      .lookingAtFirst(wp)
                                                      .limit(maxTargets)) {
             stats.playersIntervened++;

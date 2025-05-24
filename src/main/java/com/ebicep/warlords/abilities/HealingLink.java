@@ -54,7 +54,7 @@ public class HealingLink extends AbstractAbility implements PurpleAbilityIcon, D
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Set<WarlordsEntity> targets = PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                                   .aliveTeammatesOfExcludingSelf(wp)
-                                                  .requireLineOfSightIntervene(wp)
+                                                  .requireLineOfSightIntervene(wp, false)
                                                   .lookingAtFirst(wp)
                                                   .limit(maxTargets)
                                                   .stream()
