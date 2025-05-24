@@ -108,7 +108,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                 radius,
                 new CircumferenceEffect(Particle.HAPPY_VILLAGER, Particle.DUST).particlesPerCircumference(2)
         ).playEffects();
-        UndyingArmyData data = new UndyingArmyData(this);
+        UndyingArmyData data = new UndyingArmyData();
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
         if (pveMasterUpgrade) {
             wp.doOnStaticAbility(RecklessCharge.class, ability -> modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f)));
@@ -413,17 +413,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
 
     public static class UndyingArmyData {
 
-        private final UndyingArmy undyingArmy;
-
         private final HashMap<WarlordsEntity, Boolean> playersPopped = new HashMap<>();
-
-        public UndyingArmyData(UndyingArmy undyingArmy) {
-            this.undyingArmy = undyingArmy;
-        }
-
-        public UndyingArmy getUndyingArmy() {
-            return undyingArmy;
-        }
 
         public HashMap<WarlordsEntity, Boolean> getPlayersPopped() {
             return playersPopped;
