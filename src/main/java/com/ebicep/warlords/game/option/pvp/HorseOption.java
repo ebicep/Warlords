@@ -75,7 +75,7 @@ public class HorseOption implements Option, Listener {
                 playerHorses.forEach((warlordsEntity, warlordsHorse) -> {
                     warlordsHorse.tick();
                     float previousCooldown = warlordsHorse.getCurrentCooldown();
-                    if (previousCooldown > 0) {
+                    if (previousCooldown > 0 && warlordsEntity.getEntity().getVehicle() == null) {
                         warlordsHorse.setCurrentCooldown(previousCooldown - .05f);
                     }
                     float currentCooldown = warlordsHorse.getCurrentCooldown();
