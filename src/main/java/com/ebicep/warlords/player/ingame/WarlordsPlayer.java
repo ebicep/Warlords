@@ -395,7 +395,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             }
 
             //Undying army bone
-            if (UndyingArmy.checkUndyingArmy(this, true, null)) {
+            if (!UndyingArmy.checkUndyingArmy(this, true, null)) {
                 playerInventory.setItem(5, UndyingArmy.BONE);
             } else {
                 playerInventory.remove(UndyingArmy.BONE);

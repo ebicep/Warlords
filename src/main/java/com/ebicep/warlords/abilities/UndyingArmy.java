@@ -280,7 +280,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             undyingArmyCooldown.setNameAbbreviation("POPPED");
             undyingArmyCooldown.setTicksLeft(16 * 20);
             undyingArmyCooldown.setOnRemove(cooldownManager -> {
-                if (warlordsEntity.getEntity() instanceof Player player && checkUndyingArmy(warlordsEntity, true, data)) {
+                if (warlordsEntity.getEntity() instanceof Player player && !checkUndyingArmy(warlordsEntity, true, data)) {
                     player.getInventory().remove(BONE);
                 }
             });
