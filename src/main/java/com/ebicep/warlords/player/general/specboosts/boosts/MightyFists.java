@@ -51,11 +51,11 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
     public class Boost implements SpecBoostManager.Boost {
 
-        private WarlordsPlayer warlordsPlayer;
+        private WarlordsEntity warlordsEntity;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            this.warlordsPlayer = warlordsPlayer;
+            this.warlordsEntity = warlordsPlayer;
 
             warlordsPlayer.getAbilitiesMatching(WoundingStrikeBerserker.class).forEach(woundingStrike -> {
                 woundingStrike.getWounding().addAdditiveModifier("Spec Boost", woundingIncreasePercent);
@@ -71,13 +71,13 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
         @EventHandler
         public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
-            if (!event.getSource().equals(warlordsPlayer)) {
+            if (!event.getSource().equals(warlordsEntity)) {
                 return;
             }
             if (!event.getCause().equals("Seismic Wave") && !event.getAbility().getName().equals("Ground Slam")) {
                 return;
             }
-            if (!warlordsPlayer.getCooldownManager().hasCooldown(Berserk.class)) {
+            if (!warlordsEntity.getCooldownManager().hasCooldown(Berserk.class)) {
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
@@ -89,7 +89,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
                           "WND",
                           WoundingData.class,
                           data,
-                          warlordsPlayer,
+                          warlordsEntity,
                           CooldownTypes.DEBUFF,
                           cooldownManager -> {},
                           cooldownManager -> sendWoundExpired(target),
@@ -103,7 +103,7 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
                       @Override
                       public PlayerNameData addSuffixFromOther() {
-                          return getSuffixFromOther(warlordsPlayer, target);
+                          return getSuffixFromOther(warlordsEntity, target);
                       }
                   });
         }

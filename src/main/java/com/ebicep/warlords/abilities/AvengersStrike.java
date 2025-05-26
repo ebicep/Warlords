@@ -175,6 +175,14 @@ public class AvengersStrike extends AbstractStrike<AvengersStrike, AvengersStrik
             return new AvengersStrikeStats();
         }
 
+        public float getEnergyStole() {
+            return energyStole;
+        }
+
+        public void setEnergyStole(float energyStole) {
+            this.energyStole = energyStole;
+        }
+
     }
 
 }

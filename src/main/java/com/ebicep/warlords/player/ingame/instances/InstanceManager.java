@@ -697,11 +697,7 @@ public class InstanceManager {
 
                     return Optional.empty();
                 } else {
-                    double totalShieldHealth = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                            .mapToDouble(Shield::getShieldHealth)
-                            .sum();
-                    warlordsEntity.giveAbsorption((float) (totalShieldHealth / warlordsEntity.getMaxHealth() * 40));
+                    Shield.updateAbsorption(warlordsEntity);
 
                     if (isMeleeHit) {
                         ownMessage.append(WarlordsEntity.RECEIVE_ARROW_RED

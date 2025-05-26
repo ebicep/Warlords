@@ -14,8 +14,6 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -395,17 +393,13 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             }
 
             //Undying army bone
-            if (!UndyingArmy.checkUndyingArmy(this, true, null)) {
+            if (UndyingArmy.checkUndyingArmy(this, true, null)) {
                 playerInventory.setItem(5, UndyingArmy.BONE);
             } else {
                 playerInventory.remove(UndyingArmy.BONE);
             }
 
-            double totalShieldHealth = new CooldownFilter<>(this, RegularCooldown.class)
-                    .filterCooldownClassAndMapToObjectsOfClass(Shield.class)
-                    .mapToDouble(Shield::getShieldHealth)
-                    .sum();
-            giveAbsorption((float) (totalShieldHealth / getMaxHealth() * 40));
+            Shield.updateAbsorption(this);
         }
     }
 
