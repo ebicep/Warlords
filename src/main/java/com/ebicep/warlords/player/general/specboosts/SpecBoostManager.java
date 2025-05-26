@@ -28,6 +28,7 @@ public class SpecBoostManager {
     public static final SpecBoost<TyphoonBolt> TYPHOON_BOLT = new TyphoonBolt();
     public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
     public static final SpecBoost<ArcaneReflection> ARCANE_REFLECTION = new ArcaneReflection();
+    public static final SpecBoost<DivinePurification> DIVINE_PURIFICATION = new DivinePurification();
     public static final SpecBoost<BerserkersFury> BERSERKERS_FURY = new BerserkersFury();
     public static final SpecBoost<EfficientStrikes> EFFICIENT_STRIKES = new EfficientStrikes();
     public static final SpecBoost<MightyFists> MIGHTY_FISTS = new MightyFists();
@@ -55,7 +56,7 @@ public class SpecBoostManager {
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, ARCANE_SHATTER, DIMENSIONAL_WARP, BURST_CHAIN, FLAME_BREATH));
         SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, ARCANE_RECLUSE, CHILLY_AURA, BLIZZARD_BREATH, STEADFAST_WARP));
-        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, FORTIFIED_AEGIS, CLAIRVOYANCE, ARCANE_REFLECTION));
+        SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, FORTIFIED_AEGIS, CLAIRVOYANCE, ARCANE_REFLECTION, DIVINE_PURIFICATION));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(BERSERKERS_FURY, EFFICIENT_STRIKES, MIGHTY_FISTS, BLOOD_FRENZY, SEISMIC_SHIFT));
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(HEROIC_INTERVENTION, STRIKER, SOLITARY, FERVENT_FORCE, VITALITY_BOOST));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(VIBRANT_ORBS, RECKLESS_ASCENT, UNDYING_STEED, HEALING_LINK, ONE_MAN_ARMY));
