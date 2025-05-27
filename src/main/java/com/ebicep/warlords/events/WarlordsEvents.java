@@ -30,6 +30,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.flags.Unsilencable;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.pve.weapons.weapontypes.legendaries.AbstractLegendaryWeapon;
@@ -174,6 +175,8 @@ public class WarlordsEvents implements Listener {
         if (attribute != null) {
             attribute.setBaseValue(Integer.MAX_VALUE); // give absorption capability
         }
+        player.setWalkSpeed(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED);
+        player.setFlySpeed(0.15f);
         UUID uuid = player.getUniqueId();
         Location rejoinPoint = Warlords.getRejoinPoint(uuid);
         boolean isSpawnWorld = Objects.requireNonNull(StatsLeaderboardManager.MAIN_LOBBY).equals(rejoinPoint.getWorld());
