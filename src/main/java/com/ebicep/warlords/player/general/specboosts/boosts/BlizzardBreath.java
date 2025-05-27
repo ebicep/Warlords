@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.List;
@@ -98,10 +97,10 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
             if (!(event.getAbility() instanceof FreezingBreath)) {
                 return;
             }
-            warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
+            RegularCooldown<Boost> breathCooldown = new RegularCooldown<>(
                     getStringName(),
                     null,
-                    BlizzardBreath.Boost.class,
+                    Boost.class,
                     null,
                     warlordsEntity,
                     CooldownTypes.SPEC_BOOST,
@@ -119,12 +118,9 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
                         }
                     };
                 }
-
-                @Override
-                public void multiplyKB(Vector currentVector) {
-                    currentVector.zero();
-                }
-            });
+            };
+            warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, breathCooldown);
+            warlordsEntity.getCooldownManager().addCooldown(breathCooldown);
             if (breathTargetsHit.isEmpty()) {
                 return;
             }

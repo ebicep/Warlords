@@ -23,7 +23,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -127,7 +126,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         // remove other instances of vindicate buff to override
         target.getCooldownManager().removeCooldownByName("Vindicate");
         boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>("Vindicate", "VIND", cooldownClass, cooldownObject, from, CooldownTypes.BUFF, cooldownManager -> {
+        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>("Vindicate", "VIND", cooldownClass, cooldownObject, from, CooldownTypes.BUFF, cooldownManager -> {
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
         })
         ) {
@@ -138,18 +137,15 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             }
 
             @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(knockbackResistance / 100f);
-            }
-
-            @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (vindPveMaster2) {
                     return currentDamageValue * .85f;
                 }
                 return currentDamageValue;
             }
-        });
+        };
+        target.addKnockbackModifier(from, "Vindicate", -knockbackResistance, vindiateCooldown);
+        target.getCooldownManager().addCooldown(vindiateCooldown);
         if (vindPveMaster2) {
             EffectUtils.playParticleLinkAnimation(from.getLocation(), target.getLocation(), Particle.FALLING_HONEY, 1, 1, -1);
         }

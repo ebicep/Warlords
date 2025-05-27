@@ -15,7 +15,6 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -98,7 +97,7 @@ public class TycheProsperity implements FieldEffect {
     }
 
     private void warriorBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
+        PermanentCooldown<FieldEffectOption> warriorCooldown = new PermanentCooldown<>(
                 getName(),
                 null,
                 FieldEffectOption.class,
@@ -113,12 +112,9 @@ public class TycheProsperity implements FieldEffect {
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 return currentDamageValue * 1.05f;
             }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(.95);
-            }
-        });
+        };
+        warlordsEntity.getCooldownManager().addCooldown(warriorCooldown);
+        warlordsEntity.addKnockbackModifier(warlordsEntity, getName(), -5, warriorCooldown);
     }
 
     private void shamanBonus(WarlordsEntity warlordsEntity) {

@@ -10,7 +10,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.items.types.AbstractItem;
 import com.ebicep.warlords.pve.mobs.Aspect;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +25,11 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
                 .ifPresentOrElse(permanentCooldown -> {
                     ItemAdditiveCooldown itemAdditiveCooldown = (ItemAdditiveCooldown) permanentCooldown;
                     consumer.accept(itemAdditiveCooldown);
+                    warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
                 }, () -> {
                     ItemAdditiveCooldown itemAdditiveCooldown = new ItemAdditiveCooldown(warlordsEntity);
                     consumer.accept(itemAdditiveCooldown);
+                    warlordsEntity.addKnockbackModifier(warlordsEntity, "Item Additive", -itemAdditiveCooldown.kbMultiplier, itemAdditiveCooldown);
                     warlordsEntity.getCooldownManager().addCooldown(itemAdditiveCooldown);
                 });
     }
@@ -36,7 +37,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     private final Map<Aspect, AspectModifier> aspectModifiers = new HashMap<>();
     private float damageMultiplier = 1;
     private float healMultiplier = 1;
-    private float kbMultiplier = 1;
+    private float kbMultiplier = 0;
     private float thorns = 0;
     private int maxThornsDamage = 0;
     private float additionalCritChance = 0;
@@ -65,7 +66,7 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     }
 
     public void addKBRes(float kbRes) {
-        this.kbMultiplier -= kbRes / 250f; //dividing more than 100 because reducing kb reduces too much
+        this.kbMultiplier -= kbRes / 2; //dividing more than 100 because reducing kb reduces too much
     }
 
     public void addThorns(float thorns, int maxThornsDamage) {
@@ -168,11 +169,6 @@ public class ItemAdditiveCooldown extends PermanentCooldown<AbstractItem> {
     @Override
     public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
         return currentHealValue * healMultiplier;
-    }
-
-    @Override
-    public void multiplyKB(Vector currentVector) {
-        currentVector.multiply(kbMultiplier);
     }
 
     /**

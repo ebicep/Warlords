@@ -22,7 +22,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -580,25 +579,7 @@ public class CooldownManager {
 
                 });
         int counter = soulbindings.size();
-        incrementCooldown(
-                new RegularCooldown<Void>("KB Resistance",
-                        "KB",
-                        null,
-                        null,
-                        this.warlordsEntity,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {
-                        },
-                        counter * 20
-                ) {
-                    @Override
-                    public void multiplyKB(Vector currentVector) {
-                        currentVector.multiply(0.75);
-                    }
-                },
-                (int) (counter * 1.2 * 20),
-                (int) (3.6 * 20)
-        );
+        warlordsPlayer.addKnockbackModifier(warlordsPlayer, "Spirit Link", -25, (int) (counter * 1.2 * 20));
         return soulbindings;
     }
 

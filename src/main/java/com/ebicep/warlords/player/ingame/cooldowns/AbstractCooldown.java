@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, KnockbackInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
+public abstract class AbstractCooldown<T> implements DamageInstance, HealingInstance, EnergyInstance, PlayerNameInstance, SpecDamageReductionInstance, DebugInstance {
 
     public static final TextColor PSEUDO_DEBUFF_COLOR = TextColor.color(255, 50, 50);
     public static List<AbstractCooldown<?>> COOLDOWNS_WITH_LISTENERS = new ArrayList<>();
@@ -29,7 +29,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     private final Listener activeListener;
     private List<DamageInstance> extraDamageInstances = null;
     private List<HealingInstance> extraHealingInstances = null;
-    private List<KnockbackInstance> extraKnockbackInstances = null;
 
     public AbstractCooldown(
             String name,
@@ -131,11 +130,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         return extraHealingInstances;
     }
 
-    @Override
-    public @Nullable List<KnockbackInstance> getExtraKnockbackInstances() {
-        return extraKnockbackInstances;
-    }
-
     public abstract Component getNameAbbreviation();
 
     public void setNameAbbreviation(String nameAbbreviation) {
@@ -214,13 +208,6 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             extraHealingInstances = new ArrayList<>();
         }
         extraHealingInstances.add(extraHealingInstance);
-    }
-
-    public void addExtraKnockbackInstance(KnockbackInstance extraKnockbackInstance) {
-        if (extraKnockbackInstances == null) {
-            extraKnockbackInstances = new ArrayList<>();
-        }
-        extraKnockbackInstances.add(extraKnockbackInstance);
     }
 
     public Listener getActiveListener() {

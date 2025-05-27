@@ -21,7 +21,6 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -168,16 +167,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
     private void pveMasterOnLand(WarlordsEntity we) {
         we.addSpeedModifier(we, name, 80, 5 * 20);
-        we.getCooldownManager().removeCooldown(ShadowStep.class, false);
-        we.getCooldownManager().addCooldown(new RegularCooldown<>("STEP KB", "STEP KB", ShadowStep.class, new ShadowStep(), we, CooldownTypes.ABILITY, cooldownManager -> {
-        }, 5 * 20
-        ) {
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(0.2);
-            }
-        });
+        we.addKnockbackModifier(we, name, -80, 5 * 20);
         for (IncendiaryCurse incendiaryCurse : we.getAbilitiesMatching(IncendiaryCurse.class)) {
             incendiaryCurse.onImpact(we, we.getLocation());
             break;

@@ -21,7 +21,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -118,22 +117,26 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                         continue;
                     }
                     nearBy.getCooldownManager().removeCooldownByObject(beacon.getM2Object());
-                    nearBy.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>("Shadow Garden", null, Object.class, beacon.getM2Object(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-                          }, // a little longer to make sure there's no gaps in the effect
-                                  6
-                          ) {
+                    RegularCooldown<Object> shadowGardenCooldown = new RegularCooldown<>("Shadow Garden",
+                            null,
+                            Object.class,
+                            beacon.getM2Object(),
+                            wp,
+                            CooldownTypes.ABILITY,
+                            cooldownManager -> {
+                            },
+                            // a little longer to make sure there's no gaps in the effect
+                            6
+                    ) {
 
-                              @Override
-                              public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
-                                  return currentCritMultiplier + 15;
-                              }
+                        @Override
+                        public float setCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, float currentCritMultiplier) {
+                            return currentCritMultiplier + 15;
+                        }
 
-                              @Override
-                              public void multiplyKB(Vector currentVector) {
-                                  currentVector.multiply(.9);
-                              }
-                          });
+                    };
+                    nearBy.addKnockbackModifier(wp, "Shadow Garden", -10, shadowGardenCooldown);
+                    nearBy.getCooldownManager().addCooldown(shadowGardenCooldown);
                 } else {
                     nearBy.getCooldownManager().removeCooldownByObject(beacon);
                     nearBy.getCooldownManager().addCooldown(new RegularCooldown<>(name, null, SanctifiedBeaconData.class, beacon, wp, CooldownTypes.ABILITY, cooldownManager -> {

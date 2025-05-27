@@ -21,7 +21,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -168,13 +167,6 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                 }
 
                 @Override
-                public void multiplyKB(Vector currentVector) {
-                    if (pveMasterUpgrade2) {
-                        currentVector.zero();
-                    }
-                }
-
-                @Override
                 public PlayerNameData addPrefixFromOther() {
                     return new PlayerNameData(Component.text((int) (data.getMaxDamagePrevented() - data.getDamagePrevented()), NamedTextColor.GOLD), we -> we.isTeammate(wp));
                 }
@@ -190,6 +182,10 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
                     );
                 }
             };
+            if (pveMasterUpgrade) {
+                wp.addKnockbackModifier(wp, name, -100, interveneCooldown);
+                veneTarget.addKnockbackModifier(wp, name, -100, interveneCooldown);
+            }
             wp.getCooldownManager().addCooldown(interveneCooldown);
             veneTarget.getCooldownManager().addCooldown(interveneCooldown);
             Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent.WarlordsBlueAbilityTargetEvent(wp, name, veneTarget));

@@ -14,7 +14,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.annotation.Transient;
 
 import javax.annotation.Nonnull;
@@ -142,19 +141,6 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
         }
 
         @Override
-        public void updateDescription(Player player) {
-            description = Component.text("Increase movement speed by ")
-                                   .append(Component.text("50%", NamedTextColor.YELLOW))
-                                   .append(Component.text(", decrease energy consumption of all abilities by "))
-                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease), NamedTextColor.YELLOW))
-                                   .append(Component.text(" and gain "))
-                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "%", NamedTextColor.YELLOW))
-                                   .append(Component.text(" knockback resistance for "))
-                                   .append(Component.text(duration, NamedTextColor.GOLD))
-                                   .append(Component.text(" seconds."));
-        }
-
-        @Override
         protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
             wp.addSpeedModifier(wp, name, 50, 10 * 20);
             List<FloatModifiable.FloatModifier> modifiers = wp
@@ -162,7 +148,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                     .stream()
                     .map(a -> a.getEnergyCost().addAdditiveModifier("Gale", -abilityEnergyDecrease))
                     .toList();
-            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+            RegularCooldown<LegendaryGale> galeCooldown = new RegularCooldown<>(
                     name,
                     "GALE",
                     LegendaryGale.class,
@@ -176,14 +162,25 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                         wp.getSpeed().removeModifier(name);
                     },
                     duration * 20
-            ) {
-                @Override
-                public void multiplyKB(Vector currentVector) {
-                    currentVector.multiply(1 - knockbackResistance / 100);
-                }
-            });
-
+            );
+            wp.addKnockbackModifier(wp, "Gale", -knockbackResistance, galeCooldown);
+            wp.getCooldownManager().addCooldown(galeCooldown);
             return true;
         }
+
+        @Override
+        public void updateDescription(Player player) {
+            description = Component.text("Increase movement speed by ")
+                                   .append(Component.text("50%", NamedTextColor.YELLOW))
+                                   .append(Component.text(", decrease energy consumption of all abilities by "))
+                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(abilityEnergyDecrease), NamedTextColor.YELLOW))
+                                   .append(Component.text(" and gain "))
+                                   .append(Component.text(DECIMAL_FORMAT_TITLE.format(knockbackResistance) + "%", NamedTextColor.YELLOW))
+                                   .append(Component.text(" knockback resistance for "))
+                                   .append(Component.text(duration, NamedTextColor.GOLD))
+                                   .append(Component.text(" seconds."));
+        }
+
     }
+
 }

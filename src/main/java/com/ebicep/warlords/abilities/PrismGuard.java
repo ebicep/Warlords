@@ -27,7 +27,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -108,7 +107,13 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
         Set<WarlordsEntity> playersHit = new HashSet<>();
         PrismGuardData data = new PrismGuardData();
         wp.getCooldownManager().removeCooldown(PrismGuardData.class, false);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Prism Guard", "GUARD", PrismGuardData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        RegularCooldown<PrismGuardData> prismGuardCooldown = new RegularCooldown<>("Prism Guard",
+                "GUARD",
+                PrismGuardData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
             if (data.totalDamageReduced >= 8000) {
                 ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.VENERED_REFRACTION);
             }
@@ -241,14 +246,11 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                 data.totalDamageReduced += currentDamageValue - afterReduction;
                 return afterReduction;
             }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                if (pveMasterUpgrade2) {
-                    currentVector.multiply(.001);
-                }
-            }
-        });
+        };
+        if (pveMasterUpgrade) {
+            wp.addKnockbackModifier(wp, name, -100, prismGuardCooldown);
+        }
+        wp.getCooldownManager().addCooldown(prismGuardCooldown);
         return true;
     }
 

@@ -6,12 +6,9 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
-import com.ebicep.warlords.player.ingame.instances.type.KnockbackInstance;
 import org.bukkit.event.EventHandler;
-import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -95,31 +92,12 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
                         if (remainingKbResTickDuration < 0) {
                             return;
                         }
-                        warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                getStringName(),
-                                null,
-                                SteadfastWarp.Boost.class,
-                                null,
-                                warlordsEntity,
-                                CooldownTypes.SPEC_BOOST,
-                                cooldownManager -> {},
-                                remainingKbResTickDuration
-                        ) {
-                            @Override
-                            public void multiplyKB(Vector currentVector) {
-                                currentVector.zero();
-                            }
-                        });
+                        warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, remainingKbResTickDuration);
                     },
                     false,
                     secondaryAbility -> !warlordsEntity.getCooldownManager().hasCooldown(regularCooldown)
             );
-            cooldown.addExtraKnockbackInstance(new KnockbackInstance() {
-                @Override
-                public void multiplyKB(Vector currentVector) {
-                    currentVector.zero();
-                }
-            });
+            warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, regularCooldown);
         }
 
     }

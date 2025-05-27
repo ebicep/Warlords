@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.ingame.motionsystem;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.motionsystem.motionaddon.MotionAddon;
 
 import java.util.ArrayList;
@@ -31,6 +32,12 @@ public class MotionModifierBuilder {
 
     public MotionModifierBuilder setDuration(int duration) {
         this.duration = duration;
+        return this;
+    }
+
+    public MotionModifierBuilder linkToCooldown(WarlordsEntity warlordsEntity, AbstractCooldown<?> cooldown) {
+        this.duration = -1;
+        this.addons.add(new LinkedCooldownRemovalCondition(warlordsEntity, cooldown));
         return this;
     }
 

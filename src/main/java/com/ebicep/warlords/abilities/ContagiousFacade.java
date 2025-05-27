@@ -23,7 +23,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
@@ -154,14 +153,10 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
                 totalAbsorbed.addAndGet(absorbedAmount);
                 return afterValue;
             }
-
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                if (pveMasterUpgrade2) {
-                    currentVector.zero();
-                }
-            }
         };
+        if (pveMasterUpgrade2) {
+            wp.addKnockbackModifier(wp, name, -100, protectiveLayerCooldown);
+        }
         wp.getCooldownManager().addCooldown(protectiveLayerCooldown);
         addSecondaryAbility(5, () -> {
                     wp.getCooldownManager().removeCooldownNoForce(protectiveLayerCooldown);

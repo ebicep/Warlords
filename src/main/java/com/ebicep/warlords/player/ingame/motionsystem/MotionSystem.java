@@ -77,7 +77,7 @@ public class MotionSystem {
         return newValue.getCalculatedValue();
     }
 
-    public void addSpeedModifier(MotionModifier mod) {
+    public void addModifier(MotionModifier mod) {
         modifiers.removeIf(modifier -> modifier.getName().equalsIgnoreCase(mod.getName()));
         modifiers.add(mod);
     }

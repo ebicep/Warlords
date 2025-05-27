@@ -260,7 +260,7 @@ public enum Aspect {
         public void apply(WarlordsEntity warlordsEntity) {
             MotionModifier modifier = new MotionModifierBuilder().setFrom(warlordsEntity).setName("Swift").setModifier(20).setDuration(400000).build();
             MotionSystem calculateSpeed = warlordsEntity.getSpeed();
-            calculateSpeed.addSpeedModifier(modifier);
+            calculateSpeed.addModifier(modifier);
             warlordsEntity.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     "Aspect - Armoured",
                     null,

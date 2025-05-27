@@ -10,7 +10,6 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -19,7 +18,6 @@ import com.ebicep.warlords.pve.mobs.tiers.ChampionMob;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.*;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -74,23 +72,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
         super.onSpawn(option);
         EffectUtils.strikeLightning(warlordsNPC.getLocation(), true);
 
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "Damage Check",
-                null,
-                DamageCheck.class,
-                DamageCheck.DAMAGE_CHECK,
-                warlordsNPC,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {
-                },
-                true
-        ) {
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                // immune to KB
-                currentVector.multiply(0.05);
-            }
-        });
+        warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, -1);
     }
 
     @Override

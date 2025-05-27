@@ -22,7 +22,6 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.icebarrier.activation", 2, 1);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ICE", IceBarrier.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        RegularCooldown<IceBarrier> iceBarrierCooldown = new RegularCooldown<>(name, "ICE", IceBarrier.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 5 != 0) {
                 return;
@@ -137,13 +136,11 @@ public class IceBarrier extends AbstractAbility implements OrangeAbilityIcon, Du
                 return currentDamageValue * getDamageReduction();
             }
 
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                if (pveMasterUpgrade) {
-                    currentVector.multiply(0.7);
-                }
-            }
-        });
+        };
+        wp.getCooldownManager().addCooldown(iceBarrierCooldown);
+        if (pveMasterUpgrade) {
+            wp.addKnockbackModifier(wp, name, -30, iceBarrierCooldown);
+        }
         return true;
     }
 

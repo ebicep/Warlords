@@ -79,7 +79,7 @@ public class WarlordsNPC extends WarlordsEntity {
         this.maxMeleeDamage = maxMeleeDamage;
         this.meleeCritChance = meleeCritChance;
         this.meleeCritMultiplier = meleeCritMultiplier;
-        this.speed.addSpeedModifier(new MotionModifierBuilder()
+        this.speed.addModifier(new MotionModifierBuilder()
                 .setFrom(this)
                 .setName("BASE")
                 .setModifier(13)

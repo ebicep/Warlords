@@ -3,8 +3,6 @@ package com.ebicep.warlords.pve.mobs.bosses.bossminions;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Unimmobilizable;
@@ -17,7 +15,6 @@ import net.kyori.adventure.util.Ticks;
 import org.bukkit.Location;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,22 +66,7 @@ public class CursedPsion extends AbstractMob implements BossMinionMob, Unimmobil
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
 
-        warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
-                "KB RES",
-                null,
-                CursedPsion.class,
-                null,
-                warlordsNPC,
-                CooldownTypes.INTERNAL,
-                cooldownManager -> {
-                },
-                true
-        ) {
-            @Override
-            public void multiplyKB(Vector currentVector) {
-                currentVector.multiply(0);
-            }
-        });
+        warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, -1);
     }
 
     @Override
