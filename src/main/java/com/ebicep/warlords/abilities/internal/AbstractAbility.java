@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
+import com.ebicep.warlords.events.player.ingame.WarlordsSecondaryAbilityRunEvent;
 import com.ebicep.warlords.game.option.towerdefense.towers.TDAbility;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -21,6 +22,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
@@ -220,11 +222,12 @@ public abstract class AbstractAbility implements AbilityIcon {
         }.runTaskLater(Warlords.getInstance(), ticksDelay);
     }
 
-    public void runSecondAbilities() {
+    public void runSecondAbilities(WarlordsEntity wp) {
         for (int i = 0; i < secondaryAbilities.size(); i++) {
             SecondaryAbility secondaryAbility = secondaryAbilities.get(i);
 
             secondaryAbility.runnable().run();
+            Bukkit.getPluginManager().callEvent(new WarlordsSecondaryAbilityRunEvent(wp, this));
             if (!secondaryAbility.hasInfiniteUses()) {
                 secondaryAbilities.remove(i);
                 i--;

@@ -139,7 +139,7 @@ public abstract class AbstractPlayerClass {
     public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player, int slot) {
         if (ability.getCurrentCooldown() != 0) {
             if (secondaryAbilityCD && !ability.getSecondaryAbilities().isEmpty()) {
-                ability.runSecondAbilities();
+                ability.runSecondAbilities(wp);
                 resetSecondaryAbilityCD(wp);
             } else {
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
