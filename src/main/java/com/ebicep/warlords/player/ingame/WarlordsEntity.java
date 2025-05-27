@@ -41,7 +41,6 @@ import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
-import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
 import io.papermc.paper.entity.TeleportFlag;
@@ -104,7 +103,6 @@ public abstract class WarlordsEntity {
     protected String name;
     protected UUID uuid;
     protected AbstractPlayerClass spec;
-    protected float walkSpeed = 1;
     protected Entity entity;
     protected Specializations specClass;
     @Nullable
@@ -130,7 +128,6 @@ public abstract class WarlordsEntity {
     private int respawnTickTimer = -1;
     private boolean dead = false;
     private float energy = 0;
-    private float currentHealthModifier = 1;
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
@@ -1198,30 +1195,17 @@ public abstract class WarlordsEntity {
         return blocksTravelledCM / 100;
     }
 
-    public float getWalkSpeed() {
-        return walkSpeed;
-    }
-
-    protected void setWalkSpeed(float walkspeed) {
-        this.walkSpeed = walkspeed;
+    protected void setWalkSpeed(float walkSpeed) {
         Player player = Bukkit.getPlayer(uuid);
         if (player != null) {
-            player.setWalkSpeed(MathUtils.clamp(this.walkSpeed, -1f, 1f));
+            player.setWalkSpeed(MathUtils.clamp(walkSpeed, -1f, 1f));
         } else if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(this.walkSpeed);
+            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(walkSpeed);
         }
     }
 
     public List<Float> getRecordDamage() {
         return recordDamage;
-    }
-
-    public float getCurrentHealthModifier() {
-        return currentHealthModifier;
-    }
-
-    public void setCurrentHealthModifier(float currentHealthModifier) {
-        this.currentHealthModifier = currentHealthModifier;
     }
 
     @Nullable
@@ -1291,14 +1275,6 @@ public abstract class WarlordsEntity {
             setCurrentHealth(getMaxHealth());
         }
 
-        // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
-        float newHealth = getCurrentHealth() / getMaxHealth() * 40;
-        if (newHealth < 0) {
-            newHealth = 0;
-        } else if (newHealth > 40) {
-            newHealth = 40;
-        }
-
         // Energy
         if (getEnergy() < getMaxEnergy()) {
             // Standard energy value per second.
@@ -1317,26 +1293,6 @@ public abstract class WarlordsEntity {
                 newEnergy = getMaxEnergy();
             }
             setEnergy(newEnergy);
-        }
-
-        // setting health/energy to player
-        if (this instanceof WarlordsPlayer && getEntity() instanceof Player player) {
-            //precaution
-            if (newHealth != 0) {
-                player.setHealth(newHealth);
-            }
-            // Respawn fix for when a player is stuck or leaves the game.
-            if (getCurrentHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
-                heal();
-            }
-            // Checks whether the player has under 0 energy to avoid infinite energy bugs.
-            if (getEnergy() < 0) {
-                setEnergy(1);
-            }
-            player.setLevel((int) getEnergy());
-            player.setExp(getEnergy() / getMaxEnergy());
-            // Saves the amount of blocks travelled per player.
-            setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
         }
 
         // Melee Cooldown

@@ -24,6 +24,7 @@ import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -281,6 +282,32 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @Override
     public void runEveryTick() {
         super.runEveryTick();
+        // Checks whether the displayed health can be above or under 40 health total. (20 hearts.)
+        float newHealth = getCurrentHealth() / getMaxHealth() * 40;
+        if (newHealth < 0) {
+            newHealth = 0;
+        } else if (newHealth > 40) {
+            newHealth = 40;
+        }
+        // setting health/energy to player
+        if (getEntity() instanceof Player player) {
+            //precaution
+            if (newHealth != 0) {
+                player.setHealth(newHealth);
+            }
+            // Respawn fix for when a player is stuck or leaves the game.
+            if (getCurrentHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
+                heal();
+            }
+            // Checks whether the player has under 0 energy to avoid infinite energy bugs.
+            if (getEnergy() < 0) {
+                setEnergy(1);
+            }
+            player.setLevel((int) getEnergy());
+            player.setExp(getEnergy() / getMaxEnergy());
+            // Saves the amount of blocks travelled per player.
+            setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
+        }
         if (stunTicks > 0) {
             stunTicks--;
             if (stunTicks == 0) {
@@ -321,7 +348,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         if (entity instanceof Player player) {
             player.removeMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, Warlords.getInstance());
             player.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
-            player.setWalkSpeed(walkSpeed);
+            player.setWalkSpeed(getSpeed().getLastValue());
             player.setMaxHealth(40);
             player.setLevel((int) this.getMaxEnergy());
 

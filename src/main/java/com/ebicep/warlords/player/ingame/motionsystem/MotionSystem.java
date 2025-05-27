@@ -14,7 +14,6 @@ public class MotionSystem {
     private final List<MotionModifier> modifiers = new LinkedList<>();
     private final List<Consumer<Float>> onChangeListeners = new ArrayList<>();
     private float lastValue = 0;
-    private float lastModifierValue = 0;
 
     public void tick() {
         modifiers.forEach(MotionModifier::tick);
@@ -74,7 +73,6 @@ public class MotionSystem {
                 }
             }
         }
-        lastModifierValue = newValue.getBaseValue();
         newValue.refresh();
         return newValue.getCalculatedValue();
     }
@@ -107,10 +105,6 @@ public class MotionSystem {
                 return;
             }
         }
-    }
-
-    public float getLastModifierValue() {
-        return lastModifierValue;
     }
 
     public List<MotionModifier> getModifiers() {
