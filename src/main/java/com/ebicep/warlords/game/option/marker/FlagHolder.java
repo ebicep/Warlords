@@ -99,11 +99,17 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
     }
 
     static boolean dropFlagForPlayer(WarlordsEntity player, boolean manual) {
-        for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
+        Game game = player.getGame();
+        for (FlagHolder holder : game.getMarkers(FlagHolder.class)) {
             FlagInfo info = holder.getInfo();
             boolean drop = info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer().equals(player);
             if (drop) {
-                if (!(player.getGame().getState() instanceof EndState)) {
+                if (game.getState() instanceof EndState || game.isClosed()) {
+                    holder.update(i ->
+                            i.getFlag() instanceof PlayerFlagLocation &&
+                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
+                    );
+                } else {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
@@ -113,11 +119,6 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
                             );
                         }
                     }.runTaskLater(Warlords.getInstance(), 1);
-                } else {
-                    holder.update(i ->
-                            i.getFlag() instanceof PlayerFlagLocation &&
-                                    ((PlayerFlagLocation) i.getFlag()).getPlayer().equals(player) ? new GroundFlagLocation((PlayerFlagLocation) i.getFlag(), manual) : null
-                    );
                 }
                 return true;
             }
