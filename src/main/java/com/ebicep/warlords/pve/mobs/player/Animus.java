@@ -5,8 +5,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
-import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.flags.Untargetable;
@@ -49,13 +47,7 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
                 spawnLocation,
                 owner.getName() + "'s Animus",
                 (int) inherited.getMaxHealth(),
-                owner.getSpeed().getLastValue() * owner.getSpeed().getModifiers().stream().filter(motionModifier -> motionModifier.getName().equals("BASE"))
-                                                       .map(MotionModifier::getAddons)
-                                                       .filter(BaseToWalkingSpeedValueModifier.class::isInstance)
-                                                       .map(BaseToWalkingSpeedValueModifier.class::cast)
-                                                       .map(BaseToWalkingSpeedValueModifier::getBaseWalkSpeed)
-                                                       .findFirst()
-                                                       .orElse(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED),
+                owner.getSpeed().getLastValue(),
                 0,
                 150,
                 250
