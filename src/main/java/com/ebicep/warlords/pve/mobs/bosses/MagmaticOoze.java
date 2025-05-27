@@ -234,7 +234,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
             WarlordsNPC wNPC = (WarlordsNPC) Warlords.getPlayer(passenger);
             if (wNPC != null) {
                 wNPC.getNpc().getOrAddTrait(MountTrait.class).unmount();
-                wNPC.addSpeedModifier(wNPC, "Unmounted", 35, Integer.MAX_VALUE, "BASE");
+                wNPC.addSpeedModifier(wNPC, "Unmounted", 35, Integer.MAX_VALUE);
             }
             top = passenger;
         }

@@ -473,7 +473,7 @@ public class DebugMenuPlayerOptions {
                                                                amountNumber * 20
                                                        );
                                                        if (cooldown == StatusEffectCooldowns.SPEED) {
-                                                           target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20, "BASE");
+                                                           target.addSpeedModifier(target, "Speed Powerup", 40, amountNumber * 20);
                                                        }
                                                        sendDebugMessage(player, Component.text("Gave ", NamedTextColor.GREEN)
                                                                                          .append(coloredName)

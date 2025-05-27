@@ -110,7 +110,7 @@ public class WitchDeacon extends AbstractMob implements IntermediateMob {
                 ally.addSpeedModifier(wp, "Witch Speed Buff", 20, 3 * 20);
                 if (removeDebuffs) {
                     ally.getCooldownManager().removeDebuffCooldowns();
-                    ally.getSpeed().removeSlownessModifiers();
+                    ally.getSpeed().removeNegativeModifiers();
                 }
             }
             return true;

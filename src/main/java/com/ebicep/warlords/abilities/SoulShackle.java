@@ -124,7 +124,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
         EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
         EffectUtils.playFirework(shackleTarget.getLocation(), FireworkEffect.builder().withColor(Color.YELLOW).with(FireworkEffect.Type.BALL).build(), 1);
-        wp.addSpeedModifier(wp, "Shackle Speed", speedBuff, (int) speedDuration * 20, "BASE");
+        wp.addSpeedModifier(wp, "Shackle Speed", speedBuff, (int) speedDuration * 20);
         //        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;
         //        if (silenceDuration > maxSilenceDurationInTicks) {
         //            silenceDuration = maxSilenceDurationInTicks;

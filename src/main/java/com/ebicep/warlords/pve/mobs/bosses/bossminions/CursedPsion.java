@@ -124,7 +124,7 @@ public class CursedPsion extends AbstractMob implements BossMinionMob, Unimmobil
         WarlordsEntity receiver = event.getWarlordsEntity();
         boolean crit = event.isCrit();
         if (!crit) {
-            warlordsNPC.addSpeedModifier(warlordsNPC, "Melee", 30, 2 * 20, "BASE");
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Melee", 30, 2 * 20);
         }
         if (receiver.hasPotionEffect(PotionEffectType.DARKNESS) && crit) {
             boolean stunned = receiver.setStunTicks(STUN_TICKS);

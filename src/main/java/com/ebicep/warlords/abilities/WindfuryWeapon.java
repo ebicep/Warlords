@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -12,6 +11,8 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.thunderlord.WindfuryBranch;
@@ -70,12 +71,12 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
         wp.getCooldownManager().removeCooldown(WindfuryWeapon.class, false);
-        CalculateSpeed.Modifier shreddingFurySpeed = new CalculateSpeed.Modifier(wp, "Shredding Fury", 0, Integer.MAX_VALUE, Collections.emptyList(), false);
+        MotionModifier shreddingFurySpeed = new MotionModifierBuilder().setFrom(wp).setName("Shredding Fury").setModifier(0).setDuration(Integer.MAX_VALUE).build();
         wp.addSpeedModifier(shreddingFurySpeed);
         AtomicInteger procs = new AtomicInteger(0);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "FURY", WindfuryWeapon.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
-            shreddingFurySpeed.setDuration(0);
+            shreddingFurySpeed.setTicksLeft(0);
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 4 == 0) {
                 wp.getWorld().spawnParticle(Particle.CRIT, wp.getLocation().add(0, 1.2, 0), 3, 0.2, 0, 0.2, 0.1, null, true);
@@ -146,7 +147,6 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 }.runTaskTimer(3, 3);
                 if (pveMasterUpgrade2 && procs.get() <= 10) {
                     shreddingFurySpeed.setModifier(shreddingFurySpeed.getModifier() + 2.5f);
-                    wp.getSpeed().setChanged(true);
                 }
             }
         });

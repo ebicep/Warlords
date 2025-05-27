@@ -90,7 +90,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                                                                               .append(Component.text(" seconds!", NamedTextColor.GRAY)));
             }
             // Vindicate Immunity
-            vindicateTarget.getSpeed().removeSlownessModifiers();
+            vindicateTarget.getSpeed().removeNegativeModifiers();
             stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
             giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, null, vindTickDuration);
         }

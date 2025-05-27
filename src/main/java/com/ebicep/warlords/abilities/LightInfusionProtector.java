@@ -29,10 +29,10 @@ public class LightInfusionProtector extends AbstractLightInfusion {
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusionProtector.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
                 }, cooldownManager -> {
-                    cancelSpeed.run();
+            wp.getSpeed().removeModifier(name);
                 }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         wp.getWorld().spawnParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, null, true);
@@ -46,7 +46,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "INF GRACE", LightInfusionProtector.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, 4 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                 if (ticksElapsed % 2 == 0) {
-                    wp.getSpeed().removeSlownessModifiers();
+                    wp.getSpeed().removeNegativeModifiers();
                     wp.getCooldownManager().removeDebuffCooldowns();
                 }
             })
@@ -77,7 +77,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
             });
             for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveTeammatesOfExcludingSelf(wp)) {
                 playCastEffect(infusionTarget);
-                infusionTarget.getSpeed().removeSlownessModifiers();
+                infusionTarget.getSpeed().removeNegativeModifiers();
                 infusionTarget.getCooldownManager().removeDebuffCooldowns();
                 infusionTarget.addSpeedModifier(wp, "Chiron Light", speedBuff, tickDuration);
                 infusionTarget.getCooldownManager()

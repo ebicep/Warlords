@@ -128,25 +128,18 @@ public class Intervene extends AbstractAbility implements BlueAbilityIcon, Durat
             veneTarget.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + " is shielding you with their ", NamedTextColor.GRAY))
                                                                   .append(Component.text("Intervene", NamedTextColor.YELLOW))
                                                                   .append(Component.text("!", NamedTextColor.GRAY)));
-            Runnable wpInterference;
-            Runnable veneTargetInterference;
+
             if (pveMasterUpgrade2) {
-                //TODO test toDisable logic
-                wpInterference = wp.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration, "VENE");
-                veneTargetInterference = veneTarget.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration, "VENE");
-            } else {
-                wpInterference = null;
-                veneTargetInterference = null;
+                wp.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration);
+                veneTarget.addSpeedModifier(wp, "Interference - " + veneTarget.getName(), 25, tickDuration);
             }
             LinkedCooldown<InterveneData> interveneCooldown = new LinkedCooldown<>(name, "VENE", InterveneData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, cooldownManager -> {
                 if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
                     return;
                 }
-                if (wpInterference != null && veneTargetInterference != null) {
-                    wpInterference.run();
-                    veneTargetInterference.run();
-                }
+                wp.getSpeed().removeModifier("Interference - " + veneTarget.getName());
+                veneTarget.getSpeed().removeModifier("Interference - " + veneTarget.getName());
                 wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
                                                                .append(Component.text("Intervene", NamedTextColor.YELLOW))
                                                                .append(Component.text(" has expired!", NamedTextColor.GRAY)));

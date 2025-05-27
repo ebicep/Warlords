@@ -191,7 +191,7 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
     public void onFinalAttack(WarlordsDamageHealingFinalEvent event) {
         if (event.isDead()) {
             Utils.playGlobalSound(warlordsNPC.getLocation(), Sound.BLOCK_RESPAWN_ANCHOR_CHARGE, 10, .5f);
-            warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100, "BASE");
+            warlordsNPC.addSpeedModifier(warlordsNPC, "Purified", 50, 100);
         }
     }
 

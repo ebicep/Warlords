@@ -11,6 +11,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -181,7 +182,13 @@ public class EventNarmer extends AbstractMob implements BossMob {
                 if (ancestors.contains(eventPlayer)) {
                     ancestors.remove(eventPlayer);
                     if (ancestors.isEmpty()) {
-                        warlordsNPC.getSpeed().setBaseSpeedToWalkingSpeed(0.16f);
+                        warlordsNPC.getSpeed().modifyBase(motionModifier ->
+                                motionModifier.getAddons()
+                                              .stream()
+                                              .filter(BaseToWalkingSpeedValueModifier.class::isInstance)
+                                              .map(BaseToWalkingSpeedValueModifier.class::cast)
+                                              .forEach(baseToWalkingSpeedValueModifier -> baseToWalkingSpeedValueModifier.setBaseWalkSpeed(0.16f))
+                        );
                     }
                 }
 

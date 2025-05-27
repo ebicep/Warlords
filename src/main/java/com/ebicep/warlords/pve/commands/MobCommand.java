@@ -128,7 +128,7 @@ public class MobCommand extends BaseCommand {
     @Subcommand("speed")
     public void giveSpeed(@Conditions("requireGame:gamemode=PVE") Player player, Integer speed) {
         for (AbstractMob spawnedMob : SPAWNED_MOBS) {
-            spawnedMob.getWarlordsNPC().addSpeedModifier(null, "Test", speed, 30 * 20, "BASE");
+            spawnedMob.getWarlordsNPC().addSpeedModifier(null, "Test", speed, 30 * 20);
         }
         ChatChannels.sendDebugMessage(player,
                 Component.text("Set Speed: ", NamedTextColor.GREEN)

@@ -73,7 +73,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                     }
             );
         }
-        wp.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration, true);
+        wp.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "STIM", VitalityConcoction.class, new VitalityConcoction(), wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);

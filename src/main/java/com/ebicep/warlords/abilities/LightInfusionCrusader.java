@@ -25,10 +25,10 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         wp.addEnergy(wp, name, energyGiven);
         Utils.playGlobalSound(wp.getLocation(), "paladin.infusionoflight.activation", 2, 1);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Infusion", speedBuff, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusionCrusader.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
                 }, cooldownManager -> {
-                    cancelSpeed.run();
+            wp.getSpeed().removeModifier(name);
                 }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
                         wp.getWorld().spawnParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, null, true);
@@ -37,10 +37,11 @@ public class LightInfusionCrusader extends AbstractLightInfusion implements CanR
         );
         if (pveMasterUpgrade) {
             for (WarlordsEntity infusionTarget : PlayerFilter.entitiesAround(wp, 6, 6, 6).aliveTeammatesOfExcludingSelf(wp)) {
+                infusionTarget.addSpeedModifier(wp, name, speedBuff, tickDuration);
                 infusionTarget.addEnergy(wp, name, energyGiven / 2f);
                 infusionTarget.getCooldownManager().addRegularCooldown(name, "INF", LightInfusionCrusader.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
                         }, cooldownManager -> {
-                            cancelSpeed.run();
+                    infusionTarget.getSpeed().removeModifier(name);
                         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                             if (ticksElapsed % 4 == 0) {
                                 wp.getWorld().spawnParticle(Particle.EFFECT, wp.getLocation().add(0, 1.2, 0), 2, 0.3, 0.1, 0.3, 0.2, null, true);

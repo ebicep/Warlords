@@ -122,7 +122,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                 });
                 if (pveMasterUpgrade) {
                     PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveEnemiesOf(wp).forEach(enemy -> {
-                        enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20, "BASE");
+                        enemy.addSpeedModifier(wp, "Totem Slowness", -50, 20);
                         enemy.setDamageResistance(enemy.getSpec().getDamageResistance() - 5);
                         if (enemy instanceof WarlordsNPC npc) {
                             npc.setDamageResistance(npc.getSpec().getDamageResistance() - 5);

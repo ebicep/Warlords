@@ -54,7 +54,7 @@ public class ExtremeZealot extends AbstractMob implements ChampionMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        receiver.addSpeedModifier(attacker, name, -20, 20, "BASE");
+        receiver.addSpeedModifier(attacker, name, -20, 20);
     }
 
 }

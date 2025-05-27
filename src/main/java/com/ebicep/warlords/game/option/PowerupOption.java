@@ -249,7 +249,7 @@ public class PowerupOption implements Option {
                                         .append(Component.text("Speed for "))
                                         .append(Component.text(getSecondDuration(), NamedTextColor.GREEN))
                                         .append(Component.text(" seconds!")));
-                we.addSpeedModifier(we, "Speed Powerup", 40, getTickDuration(), "BASE");
+                we.addSpeedModifier(we, "Speed Powerup", 40, getTickDuration());
                 Utils.playGlobalSound(option.getLocation(), "ctf.powerup.speed", 2, 1);
             }
 
@@ -458,7 +458,7 @@ public class PowerupOption implements Option {
         PAYLOAD_BATTERY("PAYLOAD BATTERY", TextColor.color(255, 249, 23), 25, Material.YELLOW_TERRACOTTA) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsEntity we) {
-                Runnable speedModifier = we.addSpeedModifier(we, "Payload Battery", -15, getTickDuration(), "BASE");
+                we.addSpeedModifier(we, "Payload Battery", -15, getTickDuration());
                 we.getCooldownManager().addCooldown(new RegularCooldown<>(
                         "Payload Battery",
                         "BATTERY",
@@ -471,7 +471,7 @@ public class PowerupOption implements Option {
                         },
                         cooldownManager -> {
                             we.sendMessage(getWornOffMessage());
-                            speedModifier.run();
+                            we.getSpeed().removeModifier("Payload Battery");
                         },
                         getTickDuration(),
                         Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {

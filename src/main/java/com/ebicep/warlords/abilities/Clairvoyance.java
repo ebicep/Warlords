@@ -42,7 +42,7 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.activation", 3, 1.5f);
-        wp.addSpeedModifier(wp, name, speedIncrease, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedIncrease, tickDuration);
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.healing));
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
@@ -54,7 +54,7 @@ public class Clairvoyance extends AbstractAbility implements PurpleAbilityIcon, 
                 cooldownManager -> {
                 },
                 cooldownManager -> {
-
+                    wp.getSpeed().removeModifier(name);
                 },
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {

@@ -92,7 +92,7 @@ public class CryomancerTower extends AbstractTower implements Upgradeable.Path2 
                     EffectUtils.displayParticle(Particle.SNOWFLAKE, warlordsNPC.getLocation(), 15, .15, 0, .15, 0);
                     playIceBlockEffect(wp, warlordsNPC);
 
-                    warlordsNPC.addSpeedModifier(warlordsTower, "Cryomancer Tower Slow", -20, SLOW_TICKS, "BASE");
+                    warlordsNPC.addSpeedModifier(warlordsTower, "Cryomancer Tower Slow", -20, SLOW_TICKS);
                 });
             }
             return true;

@@ -138,7 +138,7 @@ public class EventIllumina extends AbstractMob implements BossMob {
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
         // immune to slowness
-        warlordsNPC.getSpeed().removeSlownessModifiers();
+        warlordsNPC.getSpeed().removeNegativeModifiers();
 
         long playerCount = option.getGame().warlordsPlayers().count();
         Location loc = warlordsNPC.getLocation();

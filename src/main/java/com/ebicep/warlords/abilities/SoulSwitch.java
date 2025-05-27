@@ -7,13 +7,13 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.CalculateSpeed;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.flags.DynamicFlags;
 import com.ebicep.warlords.pve.mobs.flags.Unswappable;
@@ -148,7 +148,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                                          .getModifiers()
                                                          .stream()
                                                          .filter(modifier -> modifier.getModifier() > 0)
-                                                         .mapToDouble(CalculateSpeed.Modifier::getModifier)
+                                                         .mapToDouble(MotionModifier::getModifier)
                                                          .sum();
                                     float damageBoost = Math.min(1.1f, (float) (1 + (speed * 0.5f) / 100));
                                     return currentDamageValue * damageBoost;
@@ -207,10 +207,10 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 });
                 PlayerFilter.entitiesAround(swapLocation, 3, 3, 3)
                             .aliveTeammatesOf(wp)
-                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20, "BASE"));
+                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20));
                 PlayerFilter.entitiesAround(ownLocation, 3, 3, 3)
                             .aliveTeammatesOf(wp)
-                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20, "BASE"));
+                            .forEach(warlordsEntity -> warlordsEntity.addSpeedModifier(wp, "Shadow Burst", 25, 3 * 20));
             }
             return true;
         }

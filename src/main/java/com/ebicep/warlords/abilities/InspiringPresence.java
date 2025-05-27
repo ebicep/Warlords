@@ -69,13 +69,13 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         float rad = radius.getCalculatedValue();
         List<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, rad, rad, rad).aliveTeammatesOfExcludingSelf(wp).toList();
         InspiringPresenceData data = new InspiringPresenceData();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "PRES", InspiringPresenceData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
-            cancelSpeed.run();
+            wp.getSpeed().removeModifier(name);
             ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.PORTABLE_ENERGIZER);
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 4 == 0) {
@@ -111,12 +111,12 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
                 resetCooldowns(presenceTarget);
             }
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
-                                                          .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                                                          .append(Component.text(name, NamedTextColor.YELLOW))
                                                           .append(Component.text(" inspired " + presenceTarget.getName() + "!", NamedTextColor.GRAY)));
             presenceTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                                                         .append(Component.text("Inspiring Presence", NamedTextColor.YELLOW))
+                                                                         .append(Component.text(name, NamedTextColor.YELLOW))
                                                                          .append(Component.text(" inspired you!", NamedTextColor.GRAY)));
-            Runnable cancelAllySpeed = presenceTarget.addSpeedModifier(wp, "Inspiring Presence", speedBuff, tickDuration, "BASE");
+            presenceTarget.addSpeedModifier(wp, name, speedBuff, tickDuration);
             List<FloatModifiable.FloatModifier> modifiers;
             if (pveMasterUpgrade) {
                 modifiers = presenceTarget.getAbilities().stream().map(ability -> ability.getCooldown().addMultiplicativeModifierMult(name + " Master", 0.8f)).toList();
@@ -125,7 +125,7 @@ public class InspiringPresence extends AbstractAbility implements OrangeAbilityI
             }
             presenceTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name, "PRES", InspiringPresenceData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, cooldownManager -> {
-                cancelAllySpeed.run();
+                presenceTarget.getSpeed().removeModifier(name);
                 modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
             }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             })

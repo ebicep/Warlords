@@ -101,11 +101,11 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         for (WarlordsEntity miasmaTarget : PlayerFilter.entitiesAround(wp, getRadius(), getRadius(), getRadius()).isAlive()) {
             stats.targetsHit++;
             if (miasmaTarget.isEnemy(wp)) {
-                Runnable cancelSlowness = miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20, "BASE");
+                miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20);
                 miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasmaData.class, false);
                 miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name, "MIAS", DrainingMiasmaData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
                 }, cooldownManager -> {
-                    cancelSlowness.run();
+                    miasmaTarget.getSpeed().removeModifier("Draining Miasma Slow");
                     if (data.numberOfLeechProcd >= 150) {
                         ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
                     }

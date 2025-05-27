@@ -145,7 +145,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (pveMasterUpgrade2 && ticksElapsed % 5 == 0) {
                         for (WarlordsEntity allyTarget : PlayerFilter.entitiesAround(data.getLocation(), rad, rad, rad).aliveTeammatesOfExcludingSelf(wp)) {
-                            allyTarget.getSpeed().removeSlownessModifiers();
+                            allyTarget.getSpeed().removeNegativeModifiers();
                             CooldownManager allyTargetCooldownManager = allyTarget.getCooldownManager();
                             allyTargetCooldownManager.removeDebuffCooldowns();
                             allyTargetCooldownManager.removeCooldownByObject(data);

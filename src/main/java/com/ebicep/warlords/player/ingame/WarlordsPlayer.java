@@ -14,6 +14,10 @@ import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.MaxSpeedReductionValueModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.MidSpeedReductionValueModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -139,6 +143,18 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 game,
                 team,
                 settings.getSelectedSpec()
+        );
+        this.speed.addSpeedModifier(new MotionModifierBuilder()
+                .setFrom(this)
+                .setName("BASE")
+                .setModifier(13)
+                .setDuration(-1)
+                .addAddons(
+                        new BaseToWalkingSpeedValueModifier(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED),
+                        new MaxSpeedReductionValueModifier(),
+                        new MidSpeedReductionValueModifier()
+                )
+                .build()
         );
         this.compassTarget = game
                 .getMarkers(CompassTargetMarker.class)

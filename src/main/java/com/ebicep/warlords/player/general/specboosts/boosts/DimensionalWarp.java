@@ -84,7 +84,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
             if (!(cooldown.getCooldownObject() instanceof TimeWarpPyromancer.TimeWarpPyromancerData data) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
-            warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncrease, ticks, true);
+            warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncrease, ticks);
             cooldown.addExtraDamageInstance(new DamageInstance() {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {

@@ -198,7 +198,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                 warlordsEntity.setEnergy(warlordsEntity.getMaxEnergy() / 2);
                             }
                             if (isPveMasterUpgrade()) {
-                                warlordsEntity.addSpeedModifier(warlordsEntity, "ARMY", 40, 16 * 20, "BASE");
+                                warlordsEntity.addSpeedModifier(warlordsEntity, "ARMY", 40, 16 * 20);
                             }
                             data.getOnPop().accept(undyingArmyCooldown, warlordsEntity);
                             Bukkit.getPluginManager().callEvent(new WarlordsUndyingArmyPopEvent(warlordsEntity, data));

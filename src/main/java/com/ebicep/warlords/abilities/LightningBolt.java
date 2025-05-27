@@ -38,7 +38,6 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     private final DamageValues damageValues = new DamageValues();
     private FloatModifiable hitbox = new FloatModifiable(3);
     private int cooldownReduction = 2;
-    private boolean explodeOnExpiration = false;
 
     public LightningBolt() {
         super(AbstractAbilityBuilder.create("lightningBolt").pvp());

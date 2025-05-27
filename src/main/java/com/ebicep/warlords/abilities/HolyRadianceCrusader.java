@@ -69,7 +69,7 @@ public class HolyRadianceCrusader extends AbstractHolyRadiance implements Heals<
                     modifiers.add(ability.getEnergyCost().addAdditiveModifier("Unrivalled Radiance", -10));
                 }
             }
-            markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration, "BASE");
+            markTarget.addSpeedModifier(wp, "Crusader Mark Speed", markSpeed, 20 * markDuration);
             markTarget.getCooldownManager()
                       .addCooldown(new RegularCooldown<>(name, "CRUS MARK", HolyRadianceCrusader.class, new HolyRadianceCrusader(), wp, CooldownTypes.BUFF, cooldownManager -> {
                       }, cooldownManager -> {

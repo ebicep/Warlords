@@ -159,8 +159,9 @@ public class FlagRenderer {
             renderedArmorStands.add(flagInteract);
 
         } else if (this.lastLocation instanceof PlayerFlagLocation flag) {
-            runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier(flag.getPlayer(), "FLAG", -20, 0, true));
-            Entity entity = ((PlayerFlagLocation) this.lastLocation).getPlayer().getEntity();
+            flag.getPlayer().addSpeedModifier(flag.getPlayer(), "FLAG", -20, -1);
+            runningTasksCancel.add(() -> flag.getPlayer().getSpeed().removeModifier("FLAG"));
+            Entity entity = flag.getPlayer().getEntity();
             if (entity instanceof Player player) {
                 this.affectedPlayers.add(player);
                 ItemStack item = new ItemStack(info.getTeam().getColors().banner);

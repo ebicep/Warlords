@@ -111,7 +111,6 @@ public class Chessking extends AbstractMob implements BossMob {
         if (size != newSize && 0 < newSize && newSize < 21) {
             slimeSize.setSize(newSize);
             warlordsNPC.addSpeedModifier(warlordsNPC, "Size Change", (21 - newSize) * 7, Integer.MAX_VALUE);
-            warlordsNPC.getSpeed().setChanged(true);
             float newJumpPower = 1 + ((20 - newSize) * .02f);
             npc.data().set(NPC.Metadata.JUMP_POWER_SUPPLIER, (Function<NPC, Float>) npc -> newJumpPower);
             warlordsNPC.getAbilitiesMatching(Belch.class)

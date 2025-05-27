@@ -32,6 +32,10 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceManager;
 import com.ebicep.warlords.player.ingame.instances.type.KnockbackInstance;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifier;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
@@ -96,7 +100,7 @@ public abstract class WarlordsEntity {
     protected final List<Component> debugMessageLog = new ArrayList<>();
     protected DatabasePlayer cachedDatabasePlayer;
     protected boolean spawnGrave = true;
-    protected CalculateSpeed speed;
+    protected MotionSystem speed;
     protected String name;
     protected UUID uuid;
     protected AbstractPlayerClass spec;
@@ -199,20 +203,14 @@ public abstract class WarlordsEntity {
         this.team = team;
         this.spec = playerClass;
         this.currentHealth = this.spec.getMaxHealth();
-        this.health = new FloatModifiable(this.currentHealth) {{
-            addFilter(maxBaseHealthFilter);
-        }};
+        this.health = new FloatModifiable(this.currentHealth);
+        this.health.addFilter(maxBaseHealthFilter);
         this.spec.updateCustomStats(this);
         this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
-        this.speed = isInPve() ?
-                     new CalculateSpeed(this, this::setWalkSpeed, 13, true) :
-                     new CalculateSpeed(this, this::setWalkSpeed, 13);
+        this.speed = new MotionSystem();
+        this.speed.addChangeListener(this::setWalkSpeed);
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
-    }
-
-    public boolean isInPve() {
-        return isInPve;
     }
 
     @Override
@@ -222,6 +220,10 @@ public abstract class WarlordsEntity {
                 ", uuid=" + uuid +
                 ", specClass=" + specClass +
                 '}';
+    }
+
+    public boolean isInPve() {
+        return isInPve;
     }
 
     public List<Location> getLocations() {
@@ -956,22 +958,17 @@ public abstract class WarlordsEntity {
         return this.game;
     }
 
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
-        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), false));
+    public void addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration) {
+        addSpeedModifier(new MotionModifierBuilder().setFrom(from).setName(name).setModifier(modifier).setDuration(duration).build());
     }
 
-    public Runnable addSpeedModifier(CalculateSpeed.Modifier modifier) {
+    public void addSpeedModifier(MotionModifier modifier) {
         WarlordsAddSpeedModifierEvent speedModifierEvent = new WarlordsAddSpeedModifierEvent(this, modifier);
         Bukkit.getPluginManager().callEvent(speedModifierEvent);
         if (speedModifierEvent.isCancelled()) {
-            return () -> {
-            };
+            return;
         }
-        return this.speed.addSpeedModifier(modifier);
-    }
-
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, boolean afterLimit, String... toDisable) {
-        return addSpeedModifier(new CalculateSpeed.Modifier(from, name, modifier, duration, Arrays.asList(toDisable), afterLimit));
+        this.speed.addSpeedModifier(modifier);
     }
 
     public Location getDeathLocation() {
@@ -1277,7 +1274,7 @@ public abstract class WarlordsEntity {
         }
         this.health.tick();
         updateHealth();
-        getSpeed().updateSpeed();
+        getSpeed().tick();
         getCooldownManager().reduceCooldowns();
 
         setWasSneaking(isSneaking());
@@ -1382,6 +1379,25 @@ public abstract class WarlordsEntity {
         entity.sendActionBar(getActionBar(getDatabasePlayer()));
     }
 
+    @Nullable
+    public CompassTargetMarker getCompassTarget() {
+        return this.compassTarget;
+    }
+
+    public abstract void updateHealth();
+
+    public MotionSystem getSpeed() {
+        return speed;
+    }
+
+    public float getMaxHealth() {
+        return health.getCalculatedValue();
+    }
+
+    public void setSpeed(MotionSystem speed) {
+        this.speed = speed;
+    }
+
     public TextComponent getActionBar(DatabasePlayer databasePlayer) {
         ActionBarSettings actionBarSettings = databasePlayer.getActionBarSettings();
         ActionBarSettings.HealthCategory healthCategory = actionBarSettings.getHealthCategory();
@@ -1447,22 +1463,17 @@ public abstract class WarlordsEntity {
                 }
             }
         }
+        if (showDebugMessage) {
+            if (addedAny) {
+                actionBarMessage.append(Component.text("  "));
+            }
+            actionBarMessage.append(Component.text(
+                    "SPEED: " + NumberFormat.formatOptionalHundredths(getSpeed().getLastValue() / BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED),
+                    NamedTextColor.WHITE,
+                    TextDecoration.BOLD
+            ));
+        }
         return actionBarMessage.build();
-    }
-
-    @Nullable
-    public CompassTargetMarker getCompassTarget() {
-        return this.compassTarget;
-    }
-
-    public abstract void updateHealth();
-
-    public CalculateSpeed getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(CalculateSpeed speed) {
-        this.speed = speed;
     }
 
     public AbstractPlayerClass getSpec() {
@@ -1479,10 +1490,6 @@ public abstract class WarlordsEntity {
         if (this instanceof WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.queueUpdateTabName();
         }
-    }
-
-    public float getMaxHealth() {
-        return health.getCalculatedValue();
     }
 
     public void updateItems() {

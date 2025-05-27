@@ -123,7 +123,7 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
                     }
                     if (secondsElapsed % 15 == 0) {
                         we.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 0));
-                        we.addSpeedModifier(warlordsNPC, "CHAOS", -20, 100, "BASE");
+                        we.addSpeedModifier(warlordsNPC, "CHAOS", -20, 100);
                         we.getCooldownManager().addCooldown(new RegularCooldown<>(
                                 "Chaos",
                                 "CHAOS",

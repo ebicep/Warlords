@@ -105,12 +105,12 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, "Order of Eviscerate", speedBuff, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerateData.class, false);
         OrderOfEviscerateData data = new OrderOfEviscerateData(maxDamageThreshold);
         wp.getCooldownManager().addCooldown(new RegularCooldown<>("Order of Eviscerate", "ORDER", OrderOfEviscerateData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
-            cancelSpeed.run();
+            wp.getSpeed().removeModifier(name);
             removeCloak(wp, true);
             if (inPve) {
                 if (data.damageDoneWithOrder >= 15000 && data.mobsKilledWithOrder >= 6) {

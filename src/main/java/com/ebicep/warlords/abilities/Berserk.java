@@ -62,7 +62,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.berserk.activation", 2, 1);
-        Runnable cancelSpeed = wp.addSpeedModifier(wp, name, speedBuff, tickDuration, "BASE");
+        wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(Berserk.class, false);
         List<FloatModifiable.FloatModifier> modifiers;
         if (pveMasterUpgrade2) {
@@ -76,7 +76,7 @@ public class Berserk extends AbstractAbility implements OrangeAbilityIcon, Durat
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "BERS", Berserk.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
-            cancelSpeed.run();
+            wp.getSpeed().removeModifier(name);
             modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
         }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 3 == 0) {

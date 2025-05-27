@@ -134,7 +134,7 @@ public class TimeWarpAquamancer extends AbstractTimeWarp {
                     if (pveMasterUpgrade && baseLocation != null) {
                         if (ticksElapsed % 4 == 0) {
                             PlayerFilter.entitiesAround(baseLocation, 15, 14, 15).aliveTeammatesOf(wp).forEach(warlordsEntity -> {
-                                warlordsEntity.getSpeed().removeSlownessModifiers();
+                                warlordsEntity.getSpeed().removeNegativeModifiers();
                                 warlordsEntity.getCooldownManager().removeDebuffCooldowns();
                             });
                         }

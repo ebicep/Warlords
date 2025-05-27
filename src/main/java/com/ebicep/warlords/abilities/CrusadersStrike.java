@@ -79,7 +79,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
             );
         } else if (pveMasterUpgrade2) {
             PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius).aliveTeammatesOfExcludingSelf(wp).limit(2).forEach(teammate -> {
-                teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40, "BASE");
+                teammate.addSpeedModifier(wp, "Crusading Strike", 10, 40);
             });
         }
         float previousEnergyGiven = stats.totalEnergyGiven;
@@ -91,7 +91,7 @@ public class CrusadersStrike extends AbstractStrike<CrusadersStrike, CrusadersSt
                                                        .limit(energyMaxAllies)) {
             if (energyTarget.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
                 // 20 ticks
-                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks, "BASE");
+                energyTarget.addSpeedModifier(wp, "CRUSADER MARK", allySpeedBoost, allySpeedBoostDurationInTicks);
             }
             stats.totalEnergyGiven += energyTarget.addEnergy(wp, name, energyGiven + (pveMasterUpgrade2 && crit ? 5 : 0));
         }

@@ -117,7 +117,7 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     }
 
     private void damageIncreaseOnUse(WarlordsEntity we) {
-        we.addSpeedModifier(we, "Rod Speed", 20, 12 * 20, "BASE");
+        we.addSpeedModifier(we, "Rod Speed", 20, 12 * 20);
         we.getCooldownManager().removeCooldown(LightningRod.class, false);
         we.getCooldownManager().addCooldown(new RegularCooldown<>(name, "ROD DMG", LightningRod.class, new LightningRod(), we, CooldownTypes.ABILITY, cooldownManager -> {
         }, 12 * 20

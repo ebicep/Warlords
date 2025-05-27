@@ -64,7 +64,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                                                   .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
             ).ifPresent(finalEvent -> {
                 if (finalEvent.isCrit()) {
-                    wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20, "BASE");
+                    wp.addSpeedModifier(wp, "Judgement Speed", speedOnCrit, speedOnCritDuration * 20);
                 }
                 if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
                     wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.strikeHealing));

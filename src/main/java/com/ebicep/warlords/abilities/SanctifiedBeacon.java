@@ -169,7 +169,7 @@ public class SanctifiedBeacon extends AbstractBeaconAbility<SanctifiedBeacon, Sa
                     });
                     if (pveMasterUpgrade) {
                         nearBy.getSpeed().removeModifier(name);
-                        nearBy.addSpeedModifier(wp, name, -20, 6, "BASE");
+                        nearBy.addSpeedModifier(wp, name, -20, 6);
                     }
                 }
             }

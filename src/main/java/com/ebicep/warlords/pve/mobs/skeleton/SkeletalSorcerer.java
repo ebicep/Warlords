@@ -95,7 +95,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
 
     @Override
     public void whileAlive(int ticksElapsed, PveOption option) {
-        warlordsNPC.getSpeed().removeSlownessModifiers();
+        warlordsNPC.getSpeed().removeNegativeModifiers();
     }
 
     @Override

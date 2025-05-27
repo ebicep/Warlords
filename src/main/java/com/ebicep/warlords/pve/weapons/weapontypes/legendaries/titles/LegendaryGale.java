@@ -156,7 +156,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
 
         @Override
         protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-            Runnable cancelSpeed = wp.addSpeedModifier(wp, name, 50, 10 * 20, "BASE");
+            wp.addSpeedModifier(wp, name, 50, 10 * 20);
             List<FloatModifiable.FloatModifier> modifiers = wp
                     .getAbilities()
                     .stream()
@@ -173,7 +173,7 @@ public class LegendaryGale extends AbstractLegendaryWeapon {
                     },
                     cooldownManager -> {
                         modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-                        cancelSpeed.run();
+                        wp.getSpeed().removeModifier(name);
                     },
                     duration * 20
             ) {

@@ -5,6 +5,8 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Aspect;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
@@ -77,8 +79,14 @@ public class WarlordsNPC extends WarlordsEntity {
         this.maxMeleeDamage = maxMeleeDamage;
         this.meleeCritChance = meleeCritChance;
         this.meleeCritMultiplier = meleeCritMultiplier;
-        this.speed = new CalculateSpeed(this, this::setWalkSpeed, 13, true);
-        this.speed.setBaseSpeedToWalkingSpeed(walkSpeed);
+        this.speed.addSpeedModifier(new MotionModifierBuilder()
+                .setFrom(this)
+                .setName("BASE")
+                .setModifier(13)
+                .setDuration(-1)
+                .addAddons(new BaseToWalkingSpeedValueModifier(walkSpeed))
+                .build()
+        );
         updateEntity();
         entity.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
         setSpawnGrave(false);
@@ -181,7 +189,7 @@ public class WarlordsNPC extends WarlordsEntity {
     }
 
     @Override
-    public Runnable addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration, String... toDisable) {
+    public void addSpeedModifier(WarlordsEntity from, String name, float modifier, int duration) {
         if (modifier != -99) {
             if (getMob() instanceof BossLike) {
                 if (modifier < 0) {
@@ -193,7 +201,7 @@ public class WarlordsNPC extends WarlordsEntity {
                 }
             }
         }
-        return super.addSpeedModifier(from, name, modifier, duration, toDisable);
+        super.addSpeedModifier(from, name, modifier, duration);
     }
 
     @Override

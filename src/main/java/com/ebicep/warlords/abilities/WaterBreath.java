@@ -95,7 +95,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
         );
         int previousDebuffsRemoved = stats.debuffsRemoved;
         stats.debuffsRemoved += wp.getCooldownManager().removeDebuffCooldowns();
-        wp.getSpeed().removeSlownessModifiers();
+        wp.getSpeed().removeNegativeModifiers();
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.breathHealing));
         Location playerEyeLoc = new LocationBuilder(wp.getLocation()).pitch(0).backward(1);
         Vector viewDirection = playerLoc.getDirection();
@@ -108,7 +108,7 @@ public class WaterBreath extends AbstractAbility implements RedAbilityIcon, CanR
             if (wp.isTeammate(breathTarget)) {
                 stats.targetsHealed++;
                 stats.debuffsRemoved += breathTargetCooldownManager.removeDebuffCooldowns();
-                breathTarget.getSpeed().removeSlownessModifiers();
+                breathTarget.getSpeed().removeNegativeModifiers();
                 breathTarget.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.breathHealing).flags(InstanceFlags.CAN_OVERHEAL_OTHERS));
                 Overheal.giveOverHeal(wp, breathTarget);
                 if (pveMasterUpgrade || pveMasterUpgrade2) {
