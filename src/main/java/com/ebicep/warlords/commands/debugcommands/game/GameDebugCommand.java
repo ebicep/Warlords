@@ -23,7 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import static com.ebicep.warlords.util.chat.ChatChannels.sendDebugMessage;
 
 @CommandAlias("gamedebug|gd")
-@CommandPermission("group.administrator")
+@CommandPermission("warlords.game.debuggame")
 public class GameDebugCommand extends BaseCommand {
 
     @Default

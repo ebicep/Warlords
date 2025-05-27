@@ -31,7 +31,7 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
 
     @Override
     public String getConfigFieldName() {
-        return "vibrantOrbs";
+        return "divinePurification";
     }
 
     @Override

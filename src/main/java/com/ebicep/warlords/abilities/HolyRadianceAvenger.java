@@ -76,7 +76,8 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         target.getCooldownManager().removeCooldownByName("Strike Priority");
         AbstractStrike.giveStrikePriority(giver, target, markDuration * 20);
         target.getCooldownManager().removeCooldown(RadianceData.class, false);
-        target.getCooldownManager().addCooldown(new RegularCooldown<>(name, "AVE MARK", RadianceData.class, radianceData, giver, CooldownTypes.DEBUFF, cooldownManager -> {
+        target.getCooldownManager()
+              .addCooldown(new RegularCooldown<>("Avenger's Mark", "AVE MARK", RadianceData.class, radianceData, giver, CooldownTypes.DEBUFF, cooldownManager -> {
         }, markDuration * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 10 == 0) {
                 EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
@@ -106,9 +107,16 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
     }
 
     private void mark(WarlordsEntity wp, WarlordsEntity markTarget) {
+        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
+                                                      .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
+                                                      .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY)));
+        markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
+                                                               .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
+                                                               .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY)));
         RadianceData radianceData = new RadianceData();
         markTarget.getCooldownManager().removeCooldown(RadianceData.class, false);
-        markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name, "AVE MARK", RadianceData.class, radianceData, wp, CooldownTypes.DEBUFF, cooldownManager -> {
+        markTarget.getCooldownManager()
+                  .addCooldown(new RegularCooldown<>("Avenger's Mark", "AVE MARK", RadianceData.class, radianceData, wp, CooldownTypes.DEBUFF, cooldownManager -> {
         }, markDuration * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 10 == 0) {
                 EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
@@ -121,12 +129,6 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                 return energyGainPerTick - energyDrainPerSecond / 20f;
             }
         });
-        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your ", NamedTextColor.GRAY))
-                                                      .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
-                                                      .append(Component.text(" marked " + markTarget.getName() + "!", NamedTextColor.GRAY)));
-        markTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" You have been cursed with ", NamedTextColor.GRAY))
-                                                               .append(Component.text("Avenger's Mark", NamedTextColor.YELLOW))
-                                                               .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY)));
     }
 
     @Override

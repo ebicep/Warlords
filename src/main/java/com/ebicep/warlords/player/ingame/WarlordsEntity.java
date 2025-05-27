@@ -962,6 +962,10 @@ public abstract class WarlordsEntity {
         this.speed.addModifier(modifier);
     }
 
+    public void addSpeedModifier(WarlordsEntity from, String name, float modifier, AbstractCooldown<?> linkedCooldown) {
+        addSpeedModifier(new MotionModifierBuilder().setFrom(from).setName(name).setModifier(modifier).linkToCooldown(this, linkedCooldown).build());
+    }
+
     public Location getDeathLocation() {
         return deathLocation;
     }
@@ -1358,22 +1362,6 @@ public abstract class WarlordsEntity {
         this.hitCooldown = hitCooldown;
     }
 
-    public void setSpec(Specializations spec) {
-        this.spec = spec.create.get();
-        this.spec.updateCustomStats(this);
-        this.health.setBaseValue(this.spec.getMaxHealth());
-        this.currentHealth = getMaxHealth();
-        heal();
-        this.energy = this.spec.getMaxEnergy();
-        if (this instanceof WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.queueUpdateTabName();
-        }
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
     public void respawn() {
         List<Location> candidates = new ArrayList<>();
         double priority = Double.NEGATIVE_INFINITY;
@@ -1432,8 +1420,24 @@ public abstract class WarlordsEntity {
 
     public abstract void updateEntity();
 
+    public void setSpec(Specializations spec) {
+        this.spec = spec.create.get();
+        this.spec.updateCustomStats(this);
+        this.health.setBaseValue(this.spec.getMaxHealth());
+        this.currentHealth = getMaxHealth();
+        heal();
+        this.energy = this.spec.getMaxEnergy();
+        if (this instanceof WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.queueUpdateTabName();
+        }
+    }
+
     public void setSpeed(MotionSystem speed) {
         this.speed = speed;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
     public void displayCompassActionBar(@Nonnull Player player) {
