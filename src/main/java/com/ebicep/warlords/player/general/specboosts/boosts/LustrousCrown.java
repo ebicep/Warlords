@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.HammerOfLight;
 import com.ebicep.warlords.abilities.HammerOfLight.HammerOfLightData;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsHammerToCrownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -56,7 +57,7 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
             warlordsPlayer.getAbilitiesMatching(HammerOfLight.class).forEach(hammerOfLight -> {
                 hammerOfLight.setTickDuration(hammerOfLight.getTickDuration() - hammerOfLightDurationReductionTicks);
                 hammerOfLight.getCrownRadius().addAdditiveModifier("Spec Boost", crownOfLightRadiusIncrease);
-                hammerOfLight.setCrownBonusHealing(hammerOfLight.getCrownBonusHealing() + crownOfLightHealingIncreasePercent);
+                hammerOfLight.setCrownBonusHealing(hammerOfLight.getCrownBonusHealing() * AbstractAbility.convertToMultiplicationDecimal(crownOfLightHealingIncreasePercent));
             });
         }
 
