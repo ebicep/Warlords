@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -97,7 +98,10 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
 
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent);
+                    if (Utils.isProjectile(event.getCause())) {
+                        return currentDamageValue * AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent);
+                    }
+                    return currentDamageValue;
                 }
             });
         }
