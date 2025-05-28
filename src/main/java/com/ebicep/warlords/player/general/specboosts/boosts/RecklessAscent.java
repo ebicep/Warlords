@@ -64,16 +64,6 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(RecklessCharge.class).forEach(recklessCharge -> {
-                recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() - travelDistanceIncrease);
-                recklessCharge.getHitBoxRadius().removeModifier("Spec Boost");
-                recklessCharge.setVerticalMovement(false);
-//                recklessCharge.setMaxChargeDuration(recklessCharge.getMaxChargeDuration() - 1);
-            });
-        }
-
         @EventHandler
         public void onWarlordsAbilityActivate(WarlordsAbilityActivateEvent.Post event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

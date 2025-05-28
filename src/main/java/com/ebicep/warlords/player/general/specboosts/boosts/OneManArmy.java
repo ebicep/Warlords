@@ -53,13 +53,6 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(UndyingArmy.class).forEach(undyingArmy -> {
-                undyingArmy.getCooldown().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

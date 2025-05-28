@@ -65,13 +65,6 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(FreezingBreath.class).forEach(freezingBreath -> {
-                freezingBreath.setHitbox(freezingBreath.getHitbox() - breathRangeIncreaseBlocks);
-            });
-        }
-
         @EventHandler
         public void onDamageHealFinal(WarlordsDamageHealingFinalEvent event) {
             WarlordsDamageHealingEvent damageHealingEvent = event.getWarlordsDamageHealingEvent();

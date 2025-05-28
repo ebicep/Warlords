@@ -60,15 +60,6 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().removeModifier("Spec Boost");
-            warlordsPlayer.getSpeed().removeModifier("Spec Boost");
-            warlordsPlayer.getAbilitiesMatching(Berserk.class).forEach(berserk -> {
-                berserk.getCooldown().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onWarlordsAbilityActivate(WarlordsAbilityActivateEvent.Post event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

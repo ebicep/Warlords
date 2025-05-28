@@ -49,16 +49,6 @@ public class Striker implements SpecBoostManager.SpecBoost<Striker> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(WoundingStrikeDefender.class).forEach(woundingStrike -> {
-                woundingStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-                woundingStrike.getWounding().removeModifier("Spec Boost");
-            });
-        }
-
     }
 
 }

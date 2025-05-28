@@ -5,9 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
 
@@ -44,7 +42,6 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
 
     public class Boost implements SpecBoostManager.Boost {
 
-        private final Map<AbstractAbility, FlameBurst> swappedAbilities = new HashMap<>();
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
@@ -59,21 +56,6 @@ public class FlameBreath implements SpecBoostManager.SpecBoost<FlameBreath> {
                             floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
                     );
                     abilities.set(i, flameBreath);
-                    swappedAbilities.put(flameBreath, flameBurst);
-                }
-            }
-            warlordsPlayer.resetAbilityTree();
-        }
-
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
-            for (int i = 0; i < abilities.size(); i++) {
-                AbstractAbility ability = abilities.get(i);
-                FlameBurst flameBurst = swappedAbilities.get(ability);
-                if (flameBurst != null) {
-                    abilities.set(i, flameBurst);
-                    swappedAbilities.remove(ability);
                 }
             }
             warlordsPlayer.resetAbilityTree();

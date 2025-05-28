@@ -53,12 +53,6 @@ public class BigGuy implements SpecBoostManager.SpecBoost<BigGuy> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().removeModifier("Spec Boost");
-            warlordsPlayer.getEnergy().removeModifier("Spec Boost");
-        }
-
     }
 
 }

@@ -49,16 +49,6 @@ public class Conduit implements SpecBoostManager.SpecBoost<Conduit> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(AvengersStrike.class).forEach(avengerStrike -> {
-                avengerStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-                avengerStrike.setEnergySteal(avengerStrike.getEnergySteal() - energyRemovalIncrease);
-            });
-        }
-
     }
 
 }

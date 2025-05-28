@@ -74,19 +74,6 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(LightningBolt.class).forEach(lightningBolt -> {
-                lightningBolt.getMaxDistance().removeModifier("Spec Boost");
-                lightningBolt.getProjectileSpeed().removeModifier("Spec Boost");
-                lightningBolt.getHitbox().removeModifier("Spec Boost");
-            });
-            warlordsPlayer.getAbilitiesMatching(ChainLightning.class).forEach(chainLightning -> {
-                chainLightning.getDamageReductionPerBounce().removeModifier("Spec Boost");
-                chainLightning.getMaxDamageReduction().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onWarlordsProjectileFireEvent(WarlordsProjectileFireEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

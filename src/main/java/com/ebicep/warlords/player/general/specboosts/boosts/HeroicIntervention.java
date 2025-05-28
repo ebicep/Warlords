@@ -51,16 +51,6 @@ public class HeroicIntervention implements SpecBoostManager.SpecBoost<HeroicInte
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(Intervene.class).forEach(intervene -> {
-                intervene.setMaxDamagePrevented(intervene.getMaxDamagePrevented() - interveneCapIncrease);
-                intervene.setTickDuration(intervene.getTickDuration() - interveneDurationIncreaseTicks);
-                intervene.setRadius(intervene.getRadius() - interveneCastAndRangeIncrease);
-                intervene.setBreakRadius(intervene.getBreakRadius() - interveneCastAndRangeIncrease);
-            });
-        }
-
     }
 
 }

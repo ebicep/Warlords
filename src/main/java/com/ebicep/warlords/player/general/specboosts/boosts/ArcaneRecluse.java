@@ -51,16 +51,6 @@ public class ArcaneRecluse implements SpecBoostManager.SpecBoost<ArcaneRecluse> 
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().removeModifier("Spec Boost (Base)");
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
-                arcaneShield.setTickDuration(arcaneShield.getTickDuration() - shieldTickDurationIncrease);
-                arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() - absorptionIncreasePercent);
-                arcaneShield.updateCustomStats(warlordsPlayer);
-            });
-        }
-
     }
 
 }

@@ -58,10 +58,6 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
 
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-        }
-
         @EventHandler
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

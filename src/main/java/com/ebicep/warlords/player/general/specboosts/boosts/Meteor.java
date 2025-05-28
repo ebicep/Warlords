@@ -46,15 +46,6 @@ public class Meteor implements SpecBoostManager.SpecBoost<Meteor> {
             );
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(Fireball.class).forEach(fireball ->
-                    fireball.getDamageValues()
-                            .getFireballDamage()
-                            .forEachValue(floatModifiable -> floatModifiable.removeModifier("Spec Boost"))
-            );
-        }
-
     }
 
 }

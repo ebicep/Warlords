@@ -66,12 +66,6 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getEnergyPerHit().removeModifier("Spec Boost");
-            warlordsPlayer.getHealth().removeModifier("Spec Boost (Base)");
-        }
-
         @EventHandler
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

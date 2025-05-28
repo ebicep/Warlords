@@ -69,14 +69,6 @@ public class UnstoppableSurge implements SpecBoostManager.SpecBoost<UnstoppableS
             );
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(LightInfusionAvenger.class).forEach(lightInfusionAvenger -> {
-                lightInfusionAvenger.setSpeedBuff(lightInfusionAvenger.getSpeedBuff() - lightInfusionSpeedIncreasePercent);
-                lightInfusionAvenger.setTickDuration(lightInfusionAvenger.getTickDuration() - lightInfusionDurationIncreaseTicks);
-            });
-        }
-
         @EventHandler
         public void onWarlordsAbilityActivate(WarlordsAbilityActivateEvent.Post event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

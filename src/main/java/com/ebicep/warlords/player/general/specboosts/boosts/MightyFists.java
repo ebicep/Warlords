@@ -62,13 +62,6 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(WoundingStrikeBerserker.class).forEach(woundingStrike -> {
-                woundingStrike.getWounding().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
             if (!event.getSource().equals(warlordsEntity)) {

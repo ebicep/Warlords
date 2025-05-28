@@ -46,14 +46,6 @@ public class VibrantOrbs implements SpecBoostManager.SpecBoost<VibrantOrbs> {
             );
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(OrbsOfLife.class).forEach(fireball ->
-                    fireball.getHealValues()
-                            .getOrbHealing()
-                            .forEachValue(floatModifiable -> floatModifiable.removeModifier("Spec Boost"))
-            );
-        }
 
     }
 

@@ -44,13 +44,6 @@ public class EfficientStrikes implements SpecBoostManager.SpecBoost<EfficientStr
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(WoundingStrikeBerserker.class).forEach(woundingStrike -> {
-                woundingStrike.getEnergyCost().removeModifier("Spec Boost");
-            });
-        }
-
     }
 
 }

@@ -64,16 +64,6 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
-                holyRadiance.getHealValues().getRadianceHealing().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-                holyRadiance.getSpeed().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onWarlordsDamageHealing(WarlordsDamageHealingFinalEvent event) {
             if (!event.getSource().equals(warlordsEntity)) {

@@ -52,10 +52,6 @@ public class SteadfastWarp implements SpecBoostManager.SpecBoost<SteadfastWarp> 
             this.warlordsEntity = warlordsPlayer;
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-        }
-
         @EventHandler
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

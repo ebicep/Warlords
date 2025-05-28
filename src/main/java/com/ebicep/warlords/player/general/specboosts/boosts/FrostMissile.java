@@ -46,15 +46,6 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
             );
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(FrostBolt.class).forEach(frostBolt ->
-                    frostBolt.getDamageValues()
-                             .getBoltDamage()
-                             .forEachValue(floatModifiable -> floatModifiable.removeModifier("Spec Boost"))
-            );
-        }
-
     }
 
 }

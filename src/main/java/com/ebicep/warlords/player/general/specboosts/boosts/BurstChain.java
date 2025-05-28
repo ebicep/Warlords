@@ -64,17 +64,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
-                flameBurst.getProjectileSpeed().removeModifier("Spec Boost");
-                flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-                flameBurst.getSplashRadius().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onDamageHeal(WarlordsDamageHealingEvent event) {
             if (!event.getSource().equals(warlordsEntity)) {

@@ -50,16 +50,6 @@ public class FerventForce implements SpecBoostManager.SpecBoost<FerventForce> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(SeismicWaveDefender.class).forEach(seismicWave -> {
-                seismicWave.getCooldown().removeModifier("Spec Boost");
-            });
-            warlordsPlayer.getAbilitiesMatching(GroundSlamDefender.class).forEach(groundSlam -> {
-                groundSlam.getCooldown().removeModifier("Spec Boost");
-            });
-        }
-
     }
 
 }

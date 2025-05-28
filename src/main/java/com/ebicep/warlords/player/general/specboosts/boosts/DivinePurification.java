@@ -70,17 +70,6 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(WaterBreath.class).forEach(waterBreath -> {
-                waterBreath.getCooldown().removeModifier("Spec Boost");
-                waterBreath.getEnergyCost().removeModifier("Spec Boost");
-            });
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
-                arcaneShield.getEnergyCost().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
             if (!event.getSource().equals(warlordsEntity)) {

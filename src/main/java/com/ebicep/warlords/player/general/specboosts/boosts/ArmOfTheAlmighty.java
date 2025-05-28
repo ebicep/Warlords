@@ -57,10 +57,6 @@ public class ArmOfTheAlmighty implements SpecBoostManager.SpecBoost<ArmOfTheAlmi
             this.warlordsEntity = warlordsPlayer;
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-        }
-
         @EventHandler
         public void onDamageHealFinalEvent(WarlordsDamageHealingFinalEvent event) {
             if (!event.getSource().equals(warlordsEntity)) {

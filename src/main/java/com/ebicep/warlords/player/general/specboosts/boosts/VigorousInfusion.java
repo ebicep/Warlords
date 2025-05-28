@@ -51,15 +51,6 @@ public class VigorousInfusion implements SpecBoostManager.SpecBoost<VigorousInfu
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(LightInfusionCrusader.class).forEach(lightInfusion -> {
-                lightInfusion.setSpeedBuff(lightInfusion.getSpeedBuff() - infusionSpeedIncrease);
-                lightInfusion.setTickDuration(lightInfusion.getTickDuration() - infusionDurationIncreaseTicks);
-                lightInfusion.getCooldown().removeModifier("Spec Boost");
-            });
-        }
-
     }
 
 }

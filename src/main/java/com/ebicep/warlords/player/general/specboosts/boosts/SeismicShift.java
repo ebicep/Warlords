@@ -49,16 +49,6 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(SeismicWaveBerserker.class).forEach(seismicWave -> {
-                seismicWave.getDamageValues().getWaveDamage().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-                seismicWave.getCooldown().removeModifier("Spec Boost");
-            });
-        }
-
     }
 
 }

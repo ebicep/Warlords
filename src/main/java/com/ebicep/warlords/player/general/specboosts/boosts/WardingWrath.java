@@ -59,13 +59,6 @@ public class WardingWrath implements SpecBoostManager.SpecBoost<WardingWrath> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(AvengersWrath.class).forEach(avengerWrath -> {
-                avengerWrath.setHitRadius(avengerWrath.getHitRadius() - avengerWrathRadiusIncrease);
-            });
-        }
-
         @EventHandler
         public void onWarlordsStrikeEvent(WarlordsStrikeEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

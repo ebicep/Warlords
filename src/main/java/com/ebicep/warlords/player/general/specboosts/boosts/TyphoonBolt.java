@@ -49,16 +49,6 @@ public class TyphoonBolt implements SpecBoostManager.SpecBoost<TyphoonBolt> {
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(WaterBolt.class).forEach(waterBolt -> {
-                waterBolt.getHealValues().getBoltHealing().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-                waterBolt.getDirectHitMultiplier().removeModifier("Skill Boost");
-            });
-        }
-
     }
 
 }

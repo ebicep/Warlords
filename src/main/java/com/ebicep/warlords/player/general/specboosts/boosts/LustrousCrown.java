@@ -60,15 +60,6 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(HammerOfLight.class).forEach(hammerOfLight -> {
-                hammerOfLight.setTickDuration(hammerOfLight.getTickDuration() + hammerOfLightDurationReductionTicks);
-                hammerOfLight.getCrownRadius().removeModifier("Spec Boost");
-                hammerOfLight.setCrownBonusHealing(hammerOfLight.getCrownBonusHealing() - crownOfLightHealingIncreasePercent);
-            });
-        }
-
         @EventHandler
         public void onWarlordsHammerToCrownEventEvent(WarlordsHammerToCrownEvent event) {
             if (!event.getWarlordsEntity().equals(warlordsEntity)) {

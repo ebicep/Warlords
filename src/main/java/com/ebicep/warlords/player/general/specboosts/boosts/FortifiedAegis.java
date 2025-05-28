@@ -66,14 +66,6 @@ public class FortifiedAegis implements SpecBoostManager.SpecBoost<FortifiedAegis
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().removeModifier("Spec Boost");
-            warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
-                arcaneShield.getCooldown().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {

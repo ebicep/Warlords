@@ -57,21 +57,12 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
     public class Boost implements SpecBoostManager.Boost {
 
         private WarlordsEntity warlordsEntity;
-        private int previousTickDuration;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarp -> {
-                previousTickDuration = timeWarp.getTickDuration();
                 timeWarp.setTickDuration(ticks);
-            });
-        }
-
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(TimeWarpPyromancer.class).forEach(timeWarp -> {
-                timeWarp.setTickDuration(previousTickDuration);
             });
         }
 

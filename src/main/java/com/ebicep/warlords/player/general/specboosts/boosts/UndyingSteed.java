@@ -60,11 +60,6 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(CripplingStrike.class).forEach(cripplingStrike -> {
-                cripplingStrike.getDamageValues().getStrikeDamage().forEachValue(floatModifiable ->
-                        floatModifiable.removeModifier("Spec Boost")
-                );
-            });
             for (HorseOption horseOption : warlordsEntity.getGame().getOption(HorseOption.class)) {
                 horseOption.getHorseForPlayer(warlordsEntity).getHealth().removeModifier("Spec Boost");
             }

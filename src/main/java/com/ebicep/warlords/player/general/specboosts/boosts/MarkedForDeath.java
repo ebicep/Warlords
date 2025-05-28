@@ -65,14 +65,6 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(HolyRadianceAvenger.class).forEach(holyRadiance -> {
-                holyRadiance.getCooldown().removeModifier("Spec Boost");
-                holyRadiance.getEnergyCost().removeModifier("Spec Boost");
-            });
-        }
-
         @EventHandler
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();

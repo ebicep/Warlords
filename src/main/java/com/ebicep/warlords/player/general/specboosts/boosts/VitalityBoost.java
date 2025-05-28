@@ -69,15 +69,6 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
             });
         }
 
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().removeModifier("Spec Boost");
-            warlordsPlayer.getAbilitiesMatching(LastStand.class).forEach(lastStand -> {
-                lastStand.getCooldown().removeModifier("Spec Boost");
-            });
-            warlordsPlayer.getCooldownManager().removeCooldownByName(getStringName());
-        }
-
     }
 
 }

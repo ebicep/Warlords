@@ -6,9 +6,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.ebicep.warlords.database.repositories.config.ConfigManager.DEFAULT_NAMESPACES;
 
@@ -45,8 +43,6 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
 
     public class Boost implements SpecBoostManager.Boost {
 
-        private final Map<AbstractAbility, GroundSlamRevenant> swappedAbilities = new HashMap<>();
-
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
@@ -56,21 +52,6 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
                     com.ebicep.warlords.abilities.HealingLink healingLink = new com.ebicep.warlords.abilities.HealingLink();
                     healingLink.init(healingLink.getBuilder());
                     abilities.set(i, healingLink);
-                    swappedAbilities.put(healingLink, groundSlamRevenant);
-                }
-            }
-            warlordsPlayer.resetAbilityTree();
-        }
-
-        @Override
-        public void unapply(WarlordsPlayer warlordsPlayer) {
-            List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
-            for (int i = 0; i < abilities.size(); i++) {
-                AbstractAbility ability = abilities.get(i);
-                GroundSlamRevenant groundSlamRevenant = swappedAbilities.get(ability);
-                if (groundSlamRevenant != null) {
-                    abilities.set(i, groundSlamRevenant);
-                    swappedAbilities.remove(ability);
                 }
             }
             warlordsPlayer.resetAbilityTree();
