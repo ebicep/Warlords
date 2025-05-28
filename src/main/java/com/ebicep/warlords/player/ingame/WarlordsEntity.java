@@ -1447,15 +1447,16 @@ public abstract class WarlordsEntity {
         this.spec = spec.create.get();
         this.spec.updateCustomStats(this);
         this.health.setBaseValue(this.spec.getMaxHealth());
+        this.health.clearModifiers();
         this.energy.setBaseValue(this.spec.getMaxEnergy());
+        this.energy.clearModifiers();
         this.energyPerSec.setBaseValue(this.spec.getEnergyPerSec());
+        this.energyPerSec.clearModifiers();
         this.energyPerHit.setBaseValue(this.spec.getEnergyPerHit());
+        this.energyPerHit.clearModifiers();
         this.currentHealth = getMaxHealth();
-        heal();
         this.currentEnergy = this.spec.getMaxEnergy();
-        if (this instanceof WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.queueUpdateTabName();
-        }
+        this.cooldownManager.clearAllCooldowns();
     }
 
     public void setSpeed(MotionSystem speed) {

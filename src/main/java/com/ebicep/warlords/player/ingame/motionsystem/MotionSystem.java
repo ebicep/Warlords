@@ -87,11 +87,11 @@ public class MotionSystem {
     }
 
     public void removeNegativeModifiers() {
-        boolean isChanged = this.modifiers.removeIf(modifier -> modifier.getModifier() < 0);
+        this.modifiers.removeIf(modifier -> modifier.getModifier() < 0);
     }
 
     public void removeModifier(String name) {
-        boolean isChanged = this.modifiers.removeIf(modifier -> modifier.getName().equals(name));
+        this.modifiers.removeIf(modifier -> modifier.getName().equals(name));
     }
 
     public void addBaseModifier(float add) {

@@ -231,20 +231,13 @@ public class FloatModifiable {
                         .collect(Collectors.toList());
     }
 
-    public List<FloatModifier> getOverridingModifier() {
-        return overridingModifiers;
-    }
-
-    public List<FloatModifier> getAdditiveModifier() {
-        return additiveModifiers;
-    }
-
-    public List<FloatModifier> getMultiplicativeModifierAdditive() {
-        return multiplicativeModifiersAdditive;
-    }
-
-    public List<FloatModifier> getMultiplicativeModifierMultiplicative() {
-        return multiplicativeModifiersMultiplicative;
+    public void clearModifiers() {
+        overridingModifiers.clear();
+        additiveModifiers.clear();
+        multiplicativeModifiersAdditive.clear();
+        multiplicativeModifiersMultiplicative.clear();
+        filters.forEach((s, floatModifiableFilter) -> floatModifiableFilter.setCachedValue(baseValue));
+        refresh();
     }
 
     public void addRefreshListener(String source, Runnable runnable) {

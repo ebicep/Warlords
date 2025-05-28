@@ -155,7 +155,9 @@ public class SpecBoostManager {
 
         void apply(WarlordsPlayer warlordsPlayer);
 
-        void unapply(WarlordsPlayer warlordsPlayer);
+        default void unapply(WarlordsPlayer warlordsPlayer) {
+
+        }
 
     }
 

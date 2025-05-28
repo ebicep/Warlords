@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -325,6 +326,11 @@ public class WarlordsNPC extends WarlordsEntity {
 
     public void setNameColor(@Nonnull TextColor nameColor) {
         this.nameColor = nameColor;
+    }
+
+    @Override
+    public void setSpec(Specializations spec) {
+
     }
 
     public float getMinMeleeDamage() {

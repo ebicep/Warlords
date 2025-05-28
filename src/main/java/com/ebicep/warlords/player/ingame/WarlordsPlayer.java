@@ -235,6 +235,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             option.onSpecChange(this, oldSpec);
         }
         updateInventory(true);
+        queueUpdateTabName();
     }
 
     @Override
