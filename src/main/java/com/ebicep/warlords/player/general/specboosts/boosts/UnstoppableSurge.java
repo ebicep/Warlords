@@ -79,7 +79,7 @@ public class UnstoppableSurge implements SpecBoostManager.SpecBoost<UnstoppableS
                         .healing()
                         .cause(getStringName())
                         .source(warlordsEntity)
-                        .value(600)
+                        .value(lightInfusionHealing)
                 );
             }
         }
