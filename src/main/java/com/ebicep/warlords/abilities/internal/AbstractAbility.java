@@ -1,6 +1,5 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.icon.AbilityIcon;
 import com.ebicep.warlords.abilities.internal.icon.WeaponAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
@@ -28,7 +27,6 @@ import org.bukkit.Particle;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -214,17 +212,15 @@ public abstract class AbstractAbility implements AbilityIcon {
             boolean infiniteUses,
             Predicate<SecondaryAbility> shouldRemove
     ) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                secondaryAbilities.add(new SecondaryAbility(runnable, infiniteUses, shouldRemove));
-            }
-        }.runTaskLater(Warlords.getInstance(), ticksDelay);
+        secondaryAbilities.add(new SecondaryAbility(runnable, infiniteUses, shouldRemove, ticksDelay));
     }
 
     public void runSecondAbilities(WarlordsEntity wp) {
         for (int i = 0; i < secondaryAbilities.size(); i++) {
             SecondaryAbility secondaryAbility = secondaryAbilities.get(i);
+            if (secondaryAbility.getDelayTicks() > 0) {
+                continue;
+            }
 
             secondaryAbility.runnable().run();
             Bukkit.getPluginManager().callEvent(new WarlordsSecondaryAbilityRunEvent(wp, this));
@@ -234,9 +230,6 @@ public abstract class AbstractAbility implements AbilityIcon {
                 queueUpdateItem();
             }
         }
-    }
-
-    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
     }
 
     public void runEveryTick(@Nullable WarlordsEntity warlordsEntity) {
@@ -261,13 +254,27 @@ public abstract class AbstractAbility implements AbilityIcon {
             }
             if (getCurrentCooldown() > 0) {
                 ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, getCurrentCooldownItem());
-                if (!getSecondaryAbilities().isEmpty()) {
+                if (hasActiveSecondaryAbilities()) {
                     cooldown.enchant(Enchantment.RESPIRATION, 1);
                 }
                 player.getInventory().setItem(inventoryIndex, cooldown.get());
             } else {
                 player.getInventory().setItem(inventoryIndex, getItem(this instanceof WeaponAbilityIcon ? warlordsEntity.getWeaponItem() : getAbilityIcon()));
             }
+        }
+    }
+
+    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
+    }
+
+    public void checkSecondaryAbilities() {
+        secondaryAbilities.forEach(secondaryAbility -> {
+            if (secondaryAbility.getDelayTicks() > 0) {
+                secondaryAbility.setDelayTicks(secondaryAbility.getDelayTicks() - 1);
+            }
+        });
+        if (secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility))) {
+            queueUpdateItem();
         }
     }
 
@@ -290,10 +297,8 @@ public abstract class AbstractAbility implements AbilityIcon {
         }
     }
 
-    public void checkSecondaryAbilities() {
-        if (secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility))) {
-            queueUpdateItem();
-        }
+    public boolean hasActiveSecondaryAbilities() {
+        return secondaryAbilities.stream().anyMatch(secondaryAbility -> secondaryAbility.getDelayTicks() <= 0);
     }
 
     public float getCurrentCooldown() {
@@ -419,7 +424,40 @@ public abstract class AbstractAbility implements AbilityIcon {
         return updateItem;
     }
 
-    public record SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove) {
+    public static final class SecondaryAbility {
+
+        private final Runnable runnable;
+        private final boolean hasInfiniteUses;
+        private final Predicate<SecondaryAbility> shouldRemove;
+        private int delayTicks = 0;
+
+        public SecondaryAbility(Runnable runnable, boolean hasInfiniteUses, Predicate<SecondaryAbility> shouldRemove, int delayTicks) {
+            this.runnable = runnable;
+            this.hasInfiniteUses = hasInfiniteUses;
+            this.shouldRemove = shouldRemove;
+            this.delayTicks = delayTicks;
+        }
+
+        public int getDelayTicks() {
+            return delayTicks;
+        }
+
+        public void setDelayTicks(int delayTicks) {
+            this.delayTicks = delayTicks;
+        }
+
+        public Runnable runnable() {
+            return runnable;
+        }
+
+        public boolean hasInfiniteUses() {
+            return hasInfiniteUses;
+        }
+
+        public Predicate<SecondaryAbility> shouldRemove() {
+            return shouldRemove;
+        }
+
 
     }
 

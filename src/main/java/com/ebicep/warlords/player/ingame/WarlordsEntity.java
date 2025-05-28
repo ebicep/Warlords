@@ -613,7 +613,7 @@ public abstract class WarlordsEntity {
     public void updateCustomItem(Player player, int slot, AbstractAbility ability, @Nullable ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
             ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, ability.getCurrentCooldownItem());
-            if (!ability.getSecondaryAbilities().isEmpty()) {
+            if (ability.hasActiveSecondaryAbilities()) {
                 cooldown.enchant(Enchantment.RESPIRATION, 1);
             }
             player.getInventory().setItem(slot, cooldown.get());

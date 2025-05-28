@@ -137,9 +137,12 @@ public abstract class AbstractPlayerClass {
 
     public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player, int slot) {
         if (ability.getCurrentCooldown() != 0) {
-            if (secondaryAbilityCD && !ability.getSecondaryAbilities().isEmpty()) {
+            if (secondaryAbilityCD && ability.hasActiveSecondaryAbilities()) {
                 ability.runSecondAbilities(wp);
                 resetSecondaryAbilityCD(wp);
+                if (wp.isDisableCooldowns() && ability.getSecondaryAbilities().isEmpty()) {
+                    ability.setCurrentCooldown(0);
+                }
             } else {
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
@@ -160,7 +163,7 @@ public abstract class AbstractPlayerClass {
                 if (ability instanceof AbilityStats<?, ?> abilityStats) {
                     abilityStats.getAbilityStats().addTimesUsed();
                 }
-                if (!wp.isDisableCooldowns()) {
+                if (!wp.isDisableCooldowns() || !ability.getSecondaryAbilities().isEmpty()) {
                     ability.setCurrentCooldown(ability.getCooldownValue());
                 }
                 sendRightClickPacket(player);
