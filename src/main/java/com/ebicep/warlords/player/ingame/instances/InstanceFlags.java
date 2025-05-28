@@ -32,4 +32,7 @@ public enum InstanceFlags {
     TD_PHYSICAL,
     TD_MAGIC,
 
+    // spec boost
+    HAMMER_OF_JUDGEMENT_CONS,
+
 }

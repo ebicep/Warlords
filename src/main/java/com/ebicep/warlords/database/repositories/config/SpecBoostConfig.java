@@ -129,7 +129,7 @@ public class SpecBoostConfig implements ConfigManager.Config {
 
         // If the value is a document and we're expecting a complex type, build the object
         if (value instanceof Document && !isSimpleType(fieldType)) {
-            return new Result<>(ValueResult.INVALID_OBJECT);
+            return buildValueObject(fieldType, (Document) value);
         }
 
         return new Result<>(cast(value, fieldType), ValueResult.SUCCESS);
@@ -143,6 +143,35 @@ public class SpecBoostConfig implements ConfigManager.Config {
                 type.equals(Double.class) ||
                 type.equals(Boolean.class) ||
                 type.equals(Long.class);
+    }
+
+    private <T> Result<T> buildValueObject(Class<T> type, Document doc) {
+        try {
+            T value = null;
+            if (type.equals(Value.RangedValue.class)) {
+                value = type.getConstructor(float.class, float.class)
+                            .newInstance(
+                                    getFloatValue(doc.get("min")),
+                                    getFloatValue(doc.get("max"))
+                            );
+            } else if (type.equals(Value.RangedValueCritable.class)) {
+                value = type.getConstructor(float.class, float.class, float.class, float.class)
+                            .newInstance(
+                                    getFloatValue(doc.get("min")),
+                                    getFloatValue(doc.get("max")),
+                                    getFloatValue(doc.get("critChance")),
+                                    getFloatValue(doc.get("critMultiplier"))
+                            );
+            } else if (type.equals(Value.SetValue.class)) {
+                value = type.getConstructor(float.class)
+                            .newInstance(getFloatValue(doc.get("value")));
+            } else {
+                return new Result<>(ValueResult.INVALID_OBJECT);
+            }
+            return new Result<>(value, ValueResult.SUCCESS);
+        } catch (Exception e) {
+            return new Result<>(ValueResult.INVALID_OBJECT);
+        }
     }
 
     @SuppressWarnings("unchecked")

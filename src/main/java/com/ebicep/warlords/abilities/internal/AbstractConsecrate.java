@@ -45,24 +45,6 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder
-                .create("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
-                .damage(getConsecrateDamage())
-                .text(" damage every ")
-                .durationSeconds(1)
-                .text(" and take ")
-                .percent(strikeDamageBoost, NamedTextColor.RED)
-                .text(" increased damage from your paladin strikes. Has a radius of ")
-                .blocks(hitBox.getCalculatedValue())
-                .text(". Lasts ")
-                .durationTicks(tickDuration)
-                .text(".")
-                .build();
-
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location location = wp.getLocation().clone();
 
@@ -98,14 +80,15 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
                         PlayerFilter.entitiesAround(location, radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(enemy -> {
-                                        stats.playersHit++;
                                         enemy.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
                                                 .source(wp)
                                                 .value(getConsecrateDamage())
                                                 .flags(InstanceFlags.DOT)
-                                        );
+                                        ).ifPresent(event -> {
+                                            stats.playersHit++;
+                                        });
                                     });
                     }
                 })
@@ -128,14 +111,32 @@ public abstract class AbstractConsecrate extends AbstractAbility implements RedA
         return true;
     }
 
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("Consecrate the ground below your feet, declaring it sacred. Enemies standing on it will take ")
+                .damage(getConsecrateDamage())
+                .text(" damage every ")
+                .durationSeconds(1)
+                .text(" and take ")
+                .percent(strikeDamageBoost, NamedTextColor.RED)
+                .text(" increased damage from your paladin strikes. Has a radius of ")
+                .blocks(hitBox.getCalculatedValue())
+                .text(". Lasts ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .build();
+
+    }
+
+    public abstract Value.RangedValueCritable getConsecrateDamage();
+
     @Nonnull
     public abstract String getStrikeName();
 
     public void addStrikesBoosted() {
         stats.strikesBoosted++;
     }
-
-    public abstract Value.RangedValueCritable getConsecrateDamage();
 
     @Override
     public FloatModifiable getHitBoxRadius() {

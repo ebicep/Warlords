@@ -73,7 +73,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
                 warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                         getStringName(),
                         "ASC",
-                        RecklessAscent.Boost.class,
+                        Boost.class,
                         null,
                         warlordsEntity,
                         CooldownTypes.SPEC_BOOST,

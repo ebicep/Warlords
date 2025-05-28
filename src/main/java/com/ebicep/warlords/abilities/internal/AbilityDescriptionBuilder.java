@@ -92,12 +92,8 @@ public class AbilityDescriptionBuilder {
         return this;
     }
 
-    public AbilityDescriptionBuilder damageReduction(float value, String prefix) {
-        if (prefix.isEmpty()) {
-            parentBuilder.text(NumberFormat.formatOptionalTenths(value) + "%", COLOR_BROWN);
-        } else {
-            parentBuilder.text(NumberFormat.formatOptionalTenths(value) + prefix, COLOR_BROWN);
-        }
+    public AbilityDescriptionBuilder damageReduction(float value, @Nullable String prefix) {
+        parentBuilder.text(NumberFormat.formatOptionalTenths(value) + Objects.requireNonNullElse(prefix, "%"), COLOR_BROWN);
         return this;
     }
 
@@ -298,8 +294,8 @@ public class AbilityDescriptionBuilder {
         return this;
     }
 
-    public AbilityDescriptionBuilder energy(int energy, String prefix) {
-        if (prefix.isEmpty()) {
+    public AbilityDescriptionBuilder energy(int energy, @Nullable String prefix) {
+        if (prefix == null) {
             parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
             parentBuilder.text(" energy");
         } else {
@@ -308,8 +304,8 @@ public class AbilityDescriptionBuilder {
         return this;
     }
 
-    public AbilityDescriptionBuilder energy(float energy, String prefix) {
-        if (prefix.isEmpty()) {
+    public AbilityDescriptionBuilder energy(float energy, @Nullable String prefix) {
+        if (prefix == null) {
             parentBuilder.text(NumberFormat.formatOptionalTenths(energy), NamedTextColor.YELLOW);
             parentBuilder.text(" energy");
         } else {

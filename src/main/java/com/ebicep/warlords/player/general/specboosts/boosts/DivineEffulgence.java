@@ -78,7 +78,7 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
             event.getWarlordsEntity().getCooldownManager().addCooldown(new RegularCooldown<>(
                     getStringName(),
                     "EFF",
-                    DivineEffulgence.Boost.class,
+                    Boost.class,
                     null,
                     warlordsEntity,
                     CooldownTypes.SPEC_BOOST,

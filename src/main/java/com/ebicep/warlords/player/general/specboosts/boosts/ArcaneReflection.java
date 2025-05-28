@@ -65,7 +65,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
                     null,
-                    ArcaneReflection.Boost.class,
+                    Boost.class,
                     null,
                     warlordsPlayer,
                     CooldownTypes.SPEC_BOOST,
