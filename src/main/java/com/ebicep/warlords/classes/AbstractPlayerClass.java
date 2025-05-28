@@ -31,7 +31,6 @@ public abstract class AbstractPlayerClass {
         }
         PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
     }
-    // TODO to floatmodifiable
     protected int maxHealth;
     protected int maxEnergy;
     protected float energyPerSec;
@@ -229,32 +228,16 @@ public abstract class AbstractPlayerClass {
         return maxHealth;
     }
 
-    public void setMaxHealth(int maxHealth) {
-        this.maxHealth = maxHealth;
-    }
-
     public int getMaxEnergy() {
         return maxEnergy;
-    }
-
-    public void setMaxEnergy(int maxEnergy) {
-        this.maxEnergy = maxEnergy;
     }
 
     public float getEnergyPerSec() {
         return energyPerSec;
     }
 
-    public void setEnergyPerSec(float energyPerSec) {
-        this.energyPerSec = energyPerSec;
-    }
-
     public float getEnergyPerHit() {
         return energyPerHit;
-    }
-
-    public void setEnergyPerHit(float energyPerHit) {
-        this.energyPerHit = energyPerHit;
     }
 
     public float getDamageResistance() {

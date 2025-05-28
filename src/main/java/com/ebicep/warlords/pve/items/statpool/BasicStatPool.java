@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.items.statpool;
 
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.custom.ItemAdditiveCooldown;
 import com.ebicep.warlords.pve.items.ItemTier;
@@ -31,8 +30,7 @@ public enum BasicStatPool implements StatPool {
     MAX_ENERGY("Max Energy") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setMaxEnergy(playerClass.getMaxEnergy() + (int) value);
+            warlordsPlayer.getEnergy().addAdditiveModifier("Item Basic Stat Pool", value);
         }
 
         @Override
@@ -48,8 +46,7 @@ public enum BasicStatPool implements StatPool {
     EPH("Energy Per Hit") {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + value);
+            warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Item Basic Stat Pool", value);
         }
 
         @Override

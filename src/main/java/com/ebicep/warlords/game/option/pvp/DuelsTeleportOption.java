@@ -21,7 +21,7 @@ public class DuelsTeleportOption extends TeleportOnEventOption {
             wp.getCooldownManager().removeBuffCooldowns();
             wp.getCooldownManager().removeDebuffCooldowns();
 
-            wp.setEnergy(wp.getSpec().getMaxEnergy());
+            wp.setCurrentEnergy(wp.getEnergy().getCalculatedValue());
             for (AbstractAbility ability : wp.getSpec().getAbilities()) {
                 ability.setCurrentCooldown(0);
             }

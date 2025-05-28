@@ -114,7 +114,7 @@ public class Zenith extends AbstractMob implements BossMob {
             sizeMin = 3;
             sizeMax = 6;
         }
-        this.playerClass.addAbility(new ThunderCloudAbility(
+        addAbility(new ThunderCloudAbility(
                 AbstractAbilityBuilder.create("zenithThunderCloud").pve().cooldown(cooldown),
                 true,
                 secondsMin, secondsMax,

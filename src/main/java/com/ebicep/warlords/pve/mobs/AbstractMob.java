@@ -140,6 +140,13 @@ public abstract class AbstractMob implements Mob {
 
     public abstract com.ebicep.warlords.pve.mobs.Mob getMobRegistry();
 
+    public void addAbility(AbstractAbility abilityToAdd) {
+        playerClass.addAbility(abilityToAdd);
+        warlordsNPC.getEnergy().setBaseValue(playerClass.getMaxEnergy());
+        warlordsNPC.getEnergyPerSec().setBaseValue(playerClass.getEnergyPerSec());
+    }
+
+
     public WarlordsNPC toNPC(Game game, Team team, Consumer<WarlordsNPC> modifyStats) {
         EntityType entityType = getMobRegistry().entityType;
         this.npc = NPCManager.NPC_REGISTRY.createNPC(entityType, name);
@@ -230,7 +237,7 @@ public abstract class AbstractMob implements Mob {
         );
         for (AbstractAbility ability : warlordsNPC.getAbilities()) {
             if (ability.getCurrentCooldown() < ability.getCooldownValue()) {
-                warlordsNPC.setEnergy(warlordsNPC.getEnergy() + ability.getEnergyCostValue());
+                warlordsNPC.setCurrentEnergy(warlordsNPC.getCurrentEnergy() + ability.getEnergyCostValue());
             }
         }
 
@@ -330,7 +337,7 @@ public abstract class AbstractMob implements Mob {
             if (ability.getCooldownValue() != 0 && ability.getCurrentCooldown() != 0) {
                 return;
             }
-            if (warlordsNPC.getEnergy() < ability.getEnergyCostValue() * warlordsNPC.getEnergyModifier()) {
+            if (warlordsNPC.getCurrentEnergy() < ability.getEnergyCostValue() * warlordsNPC.getEnergyModifier()) {
                 return;
             }
             WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsNPC, null, ability, -1);

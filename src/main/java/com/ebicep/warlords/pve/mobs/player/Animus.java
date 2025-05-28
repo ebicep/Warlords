@@ -80,37 +80,38 @@ public class Animus extends AbstractMob implements PlayerMob, Untargetable {
     @Override
     public void onSpawn(PveOption option) {
         super.onSpawn(option);
-        if (owner != null) {
-            // remove other animus
-            List<AbstractMob> toDespawn = new ArrayList<>();
-            for (AbstractMob mob : option.getMobs()) {
-                if (mob instanceof Animus animus && Objects.equals(animus.getOwner(), owner)) {
-                    toDespawn.add(mob);
-                }
+        if (owner == null) {
+            return;
+        }
+        // remove other animus
+        List<AbstractMob> toDespawn = new ArrayList<>();
+        for (AbstractMob mob : option.getMobs()) {
+            if (mob instanceof Animus animus && Objects.equals(animus.getOwner(), owner)) {
+                toDespawn.add(mob);
             }
-            toDespawn.forEach(option::despawnMob);
+        }
+        toDespawn.forEach(option::despawnMob);
 
-            // copy strike stats
-            for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {
-                JudgementStrike ability = new JudgementStrike();
-                ability.init(ability.getBuilder());
-                ability.getCooldown().setBaseValue(2);
-                ability.setSpeedOnCrit(judgementStrike.getSpeedOnCrit());
-                ability.setSpeedOnCritDuration(judgementStrike.getSpeedOnCritDuration());
-                ability.setStrikeCritInterval(judgementStrike.getStrikeCritInterval());
-                Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
-                Value.RangedValueCritable newStrikeDamage = ability.getDamageValues().getStrikeDamage();
-                newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
-                newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
-                newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
-                newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
-                ability.getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
-                ability.setInPve(judgementStrike.isInPve());
-                ability.setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
-                ability.setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
-                playerClass.addAbility(ability);
-                break;
-            }
+        // copy strike stats
+        for (JudgementStrike judgementStrike : owner.getAbilitiesMatching(JudgementStrike.class)) {
+            JudgementStrike ability = new JudgementStrike();
+            ability.init(ability.getBuilder());
+            ability.getCooldown().setBaseValue(2);
+            ability.setSpeedOnCrit(judgementStrike.getSpeedOnCrit());
+            ability.setSpeedOnCritDuration(judgementStrike.getSpeedOnCritDuration());
+            ability.setStrikeCritInterval(judgementStrike.getStrikeCritInterval());
+            Value.RangedValueCritable oldStrikeDamage = judgementStrike.getDamageValues().getStrikeDamage();
+            Value.RangedValueCritable newStrikeDamage = ability.getDamageValues().getStrikeDamage();
+            newStrikeDamage.min().setBaseValue(oldStrikeDamage.getMinValue());
+            newStrikeDamage.max().setBaseValue(oldStrikeDamage.getMaxValue());
+            newStrikeDamage.critChance().setBaseValue(oldStrikeDamage.getCritChanceValue());
+            newStrikeDamage.critMultiplier().setBaseValue(oldStrikeDamage.getCritMultiplierValue());
+            ability.getHealValues().getStrikeHealing().value().setBaseValue(judgementStrike.getHealValues().getStrikeHealing().value().getBaseValue());
+            ability.setInPve(judgementStrike.isInPve());
+            ability.setPveMasterUpgrade(judgementStrike.isPveMasterUpgrade());
+            ability.setPveMasterUpgrade2(judgementStrike.isPveMasterUpgrade2());
+            addAbility(ability);
+            break;
         }
     }
 

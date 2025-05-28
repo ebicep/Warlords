@@ -28,8 +28,8 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
 
     private final ProtectorsStrikeStats stats = new ProtectorsStrikeStats();
     private final DamageValues damageValues = new DamageValues();
-    private int allyHealing = 90;
-    private int selfHealing = 60;
+    private float allyHealing = 90;
+    private float selfHealing = 60;
     private int maxAllies = 2;
     private double strikeRadius = 10;
 
@@ -44,8 +44,8 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
     @Override
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
-        this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), int.class);
-        this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), int.class);
+        this.allyHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("allyHealing"), float.class);
+        this.selfHealing = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("selfHealing"), float.class);
         this.maxAllies = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAllies"), int.class);
         this.strikeRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeRadius"), float.class);
     }
@@ -154,12 +154,16 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
         return new ProtectorStrikeBranch(abilityTree, this);
     }
 
-    public int getAllyHealing() {
+    public float getAllyHealing() {
         return allyHealing;
     }
 
-    public void setAllyHealing(int convertPercent) {
+    public void setAllyHealing(float convertPercent) {
         this.allyHealing = convertPercent;
+    }
+
+    public void setSelfHealing(float selfHealing) {
+        this.selfHealing = selfHealing;
     }
 
     public int getMaxAllies() {

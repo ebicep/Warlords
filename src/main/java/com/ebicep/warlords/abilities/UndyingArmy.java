@@ -194,8 +194,8 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
                                 player.getWorld().spigot().strikeLightningEffect(warlordsEntity.getLocation(), false);
                             }
                             //gives 50% of max energy if player is less than half
-                            if (warlordsEntity.getEnergy() < warlordsEntity.getMaxEnergy() / 2) {
-                                warlordsEntity.setEnergy(warlordsEntity.getMaxEnergy() / 2);
+                            if (warlordsEntity.getCurrentEnergy() < warlordsEntity.getMaxEnergy() / 2) {
+                                warlordsEntity.setCurrentEnergy(warlordsEntity.getMaxEnergy() / 2);
                             }
                             if (isPveMasterUpgrade()) {
                                 warlordsEntity.addSpeedModifier(warlordsEntity, "ARMY", 40, 16 * 20);

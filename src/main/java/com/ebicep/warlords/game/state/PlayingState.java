@@ -229,7 +229,7 @@ public class PlayingState implements State, TimerDebugAble {
                 ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
                 if (wp != null) {
                     byteArrayDataOutput.writeUTF(wp.getName());
-                    byteArrayDataOutput.writeInt((int) wp.getEnergy());
+                    byteArrayDataOutput.writeInt((int) wp.getCurrentEnergy());
                     byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
                     AbstractPlayerClass spec = wp.getSpec();
                     List<AbstractAbility> abilities = spec.getAbilities();

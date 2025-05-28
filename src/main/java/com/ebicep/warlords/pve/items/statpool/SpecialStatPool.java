@@ -1,7 +1,6 @@
 package com.ebicep.warlords.pve.items.statpool;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.pve.items.ItemTier;
 
@@ -10,8 +9,7 @@ public enum SpecialStatPool implements StatPool {
     EPS {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setEnergyPerSec(playerClass.getEnergyPerSec() + value);
+            warlordsPlayer.getEnergyPerSec().addAdditiveModifier("Item Special Stat Pool", value);
         }
 
         @Override
@@ -23,18 +21,14 @@ public enum SpecialStatPool implements StatPool {
     EPH {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            float calculatedValue = 1 + value / 100f;
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() * calculatedValue);
+            warlordsPlayer.getEnergyPerHit().addMultiplicativeModifierAdd("Item Special Stat Pool", value / 100f);
         }
 
     },
     MAX_ENERGY {
         @Override
         public void applyToWarlordsPlayer(WarlordsPlayer warlordsPlayer, float value, ItemTier highestTier) {
-            float calculatedValue = 1 + value / 100f;
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setMaxEnergy((int) (playerClass.getMaxEnergy() * calculatedValue));
+            warlordsPlayer.getEnergy().addMultiplicativeModifierAdd("Item Special Stat Pool", value / 100f);
         }
 
     },

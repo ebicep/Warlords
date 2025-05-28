@@ -1,7 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.Berserk;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -54,9 +53,8 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            AbstractPlayerClass spec = warlordsPlayer.getSpec();
-            spec.setMaxEnergy(spec.getMaxEnergy() + maxEnergyIncrease);
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
+            warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(Berserk.class).forEach(berserk -> {
                 berserk.getCooldown().addAdditiveModifier("Spec Boost", -berserkCooldownIncreaseTicks / 20);
             });
@@ -64,8 +62,8 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
-            // TODO unapply energy
             warlordsPlayer.getHealth().removeModifier("Spec Boost");
+            warlordsPlayer.getSpeed().removeModifier("Spec Boost");
             warlordsPlayer.getAbilitiesMatching(Berserk.class).forEach(berserk -> {
                 berserk.getCooldown().removeModifier("Spec Boost");
             });

@@ -51,6 +51,7 @@ public class SpecBoostManager {
     public static final SpecBoost<MarkedForDeath> MARKED_FOR_DEATH = new MarkedForDeath();
     public static final SpecBoost<LustrousCrown> LUSTROUS_CROWN = new LustrousCrown();
     public static final SpecBoost<DivineEffulgence> DIVINE_EFFULGENCE = new DivineEffulgence();
+    public static final SpecBoost<BigGuy> BIG_GUY = new BigGuy();
 
 
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
@@ -66,7 +67,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(VIBRANT_ORBS, RECKLESS_ASCENT, UNDYING_STEED, HEALING_LINK, ONE_MAN_ARMY));
         SPEC_BOOSTS.put(Specializations.AVENGER, List.of(CONDUIT, WARDING_WRATH, ARM_OF_THE_ALMIGHTY, UNSTOPPABLE_SURGE, MARKED_FOR_DEATH));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(VIGOROUS_INFUSION));
-        SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(LUSTROUS_CROWN, DIVINE_EFFULGENCE));
+        SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(LUSTROUS_CROWN, DIVINE_EFFULGENCE, BIG_GUY));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(EYE_OF_THE_STORM));
     }
 

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.effects;
 
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.pve.wavedefense.events.fieldeffects.FieldEffect;
@@ -40,10 +39,7 @@ public class ConqueringEnergy implements FieldEffect {
 
     @Override
     public void onWarlordsEntityCreated(WarlordsEntity player) {
-        if (player instanceof WarlordsPlayer) {
-            AbstractPlayerClass spec = player.getSpec();
-            spec.setEnergyPerSec(spec.getEnergyPerSec() - 10);
-            spec.setEnergyPerHit(spec.getEnergyPerHit() * 2.5f);
-        }
+        player.getEnergyPerSec().addAdditiveModifier(getName(), -10);
+        player.getEnergyPerHit().addMultiplicativeModifierAdd(getName(), 1.5f);
     }
 }

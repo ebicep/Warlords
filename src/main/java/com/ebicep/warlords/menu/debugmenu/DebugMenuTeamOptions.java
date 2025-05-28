@@ -194,7 +194,7 @@ public class DebugMenuTeamOptions {
                     Component.text("Health", NamedTextColor.GREEN).append(Component.text(": ", NamedTextColor.GRAY))
                             .append(Component.text(Math.round(wp.getCurrentHealth()), NamedTextColor.RED)),
                     Component.text("Energy", NamedTextColor.GREEN).append(Component.text(": ", NamedTextColor.GRAY))
-                            .append(Component.text((int) wp.getEnergy(), NamedTextColor.YELLOW)),
+                            .append(Component.text((int) wp.getCurrentEnergy(), NamedTextColor.YELLOW)),
                     Component.text("Kills", NamedTextColor.GREEN).append(Component.text(": ", NamedTextColor.GRAY))
                             .append(Component.text(wp.getMinuteStats().total().getKills(), NamedTextColor.GOLD)),
                     Component.text("Assists", NamedTextColor.GREEN).append(Component.text(": ", NamedTextColor.GRAY))

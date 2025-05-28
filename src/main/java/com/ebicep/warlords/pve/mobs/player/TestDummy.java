@@ -49,6 +49,7 @@ public class TestDummy extends AbstractMob implements PlayerMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        warlordsNPC.setNameColor(warlordsNPC.getTeam().getTeamColor());
         warlordsNPC.addKnockbackModifier(warlordsNPC, "KB RES", -100, -1);
         warlordsNPC.setCurrentHealth(warlordsNPC.getMaxBaseHealth() / 2);
         warlordsNPC.updateHealth();

@@ -127,12 +127,12 @@ public class PlayerFilterGeneric<T extends WarlordsEntity> implements Iterable<T
 
     @Nonnull
     public PlayerFilterGeneric<T> leastEnergeticFirst() {
-        return sorted(Comparator.comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()));
+        return sorted(Comparator.comparing(wp -> wp.getCurrentEnergy() / (double) wp.getMaxEnergy()));
     }
 
     @Nonnull
     public PlayerFilterGeneric<T> mostEnergeticFirst() {
-        return sorted(Comparator.<WarlordsEntity, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()).reversed());
+        return sorted(Comparator.<WarlordsEntity, Double>comparing(wp -> wp.getCurrentEnergy() / (double) wp.getMaxEnergy()).reversed());
     }
 
     @Nonnull

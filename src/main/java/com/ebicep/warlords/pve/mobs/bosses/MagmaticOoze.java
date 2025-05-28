@@ -150,7 +150,7 @@ public class MagmaticOoze extends AbstractMob implements BossMob {
         if (splitNumber != INITIAL_SPLIT_NUMBER) {
             return;
         }
-        playerClass.addAbility(new MoltenFissure(previousBlocks));
+        addAbility(new MoltenFissure(previousBlocks));
         Game game = option.getGame();
         new GameRunnable(game) {
 

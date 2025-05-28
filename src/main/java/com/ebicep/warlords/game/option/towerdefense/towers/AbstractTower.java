@@ -179,7 +179,7 @@ public abstract class AbstractTower {
             if (ability.getCooldownValue() != 0 && ability.getCurrentCooldown() != 0) {
                 return;
             }
-            if (warlordsTower.getEnergy() < ability.getEnergyCostValue() * warlordsTower.getEnergyModifier()) {
+            if (warlordsTower.getCurrentEnergy() < ability.getEnergyCostValue() * warlordsTower.getEnergyModifier()) {
                 return;
             }
             WarlordsAbilityActivateEvent.Pre event = new WarlordsAbilityActivateEvent.Pre(warlordsTower, null, ability, -1);

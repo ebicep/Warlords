@@ -87,12 +87,12 @@ public class TycheProsperity implements FieldEffect {
     }
 
     private void mageBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getSpec().setEnergyPerSec(warlordsEntity.getSpec().getEnergyPerSec() + 5);
+        warlordsEntity.getEnergyPerSec().addAdditiveModifier(getName(), 5);
         warlordsEntity.getAbilitiesMatching(AbstractPiercingProjectile.class).forEach(proj -> proj.getProjectileSpeed().addMultiplicativeModifierAdd(getName(), .1f));
     }
 
     private void paladinBonus(WarlordsEntity warlordsEntity) {
-        warlordsEntity.getSpec().setEnergyPerHit(warlordsEntity.getSpec().getEnergyPerHit() + 5);
+        warlordsEntity.getEnergyPerHit().addAdditiveModifier(getName(), 5);
         warlordsEntity.getSpeed().addBaseModifier(5);
     }
 

@@ -88,7 +88,6 @@ public class DummySpawnOption implements Option {
 
     private void spawnTestDummy() {
         WarlordsNPC dummyNPC = Mob.TEST_DUMMY.createMob(loc).toNPC(game, team, warlordsNPC -> warlordsNPC.getMob().onSpawn(null));
-        dummyNPC.setNameColor(team.getTeamColor());
         onTestDummyCreate.accept(dummyNPC);
         testDummy = game.addNPC(dummyNPC);
         if (testDummy.getEntity() instanceof LivingEntity livingEntity) {

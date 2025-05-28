@@ -2,7 +2,6 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Shield;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -63,15 +62,13 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-            playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() + energyPerMelee);
+            warlordsPlayer.getEnergyPerHit().addAdditiveModifier("Spec Boost", energyPerMelee);
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
         }
 
         @Override
         public void unapply(WarlordsPlayer warlordsPlayer) {
-            AbstractPlayerClass playerClass = warlordsPlayer.getSpec();
-//            playerClass.setEnergyPerHit(playerClass.getEnergyPerHit() - energyPerMelee); // TODO
+            warlordsPlayer.getEnergyPerHit().removeModifier("Spec Boost");
             warlordsPlayer.getHealth().removeModifier("Spec Boost (Base)");
         }
 

@@ -39,6 +39,7 @@ public class PrintFloatModifiableCommand extends BaseCommand {
             }
         },
         DAMAGE_HEAL { // ability cooldowns
+
             @Override
             public void sendDebugInfo(CommandIssuer issuer, WarlordsPlayer player) {
                 for (AbstractAbility ability : player.getAbilities()) {
@@ -62,6 +63,13 @@ public class PrintFloatModifiableCommand extends BaseCommand {
 
             @Override
             public void sendDebugInfo(CommandIssuer issuer, WarlordsPlayer player) {
+                ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text("Max Energy", NamedTextColor.AQUA, TextDecoration.UNDERLINED).build());
+                sendDebugInfo(issuer, player.getEnergy().getDebugInfo());
+                ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text("Energy per Hit", NamedTextColor.AQUA, TextDecoration.UNDERLINED).build());
+                sendDebugInfo(issuer, player.getEnergyPerHit().getDebugInfo());
+                ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text("Energy per Sec", NamedTextColor.AQUA, TextDecoration.UNDERLINED).build());
+                sendDebugInfo(issuer, player.getEnergyPerSec().getDebugInfo());
+
                 for (AbstractAbility ability : player.getAbilities()) {
                     ChatChannels.sendDebugMessage(issuer, ComponentBuilder.create().text(ability.getName(), NamedTextColor.AQUA, TextDecoration.UNDERLINED).build());
                     sendDebugInfo(issuer, ability.getCooldown().getDebugInfo());

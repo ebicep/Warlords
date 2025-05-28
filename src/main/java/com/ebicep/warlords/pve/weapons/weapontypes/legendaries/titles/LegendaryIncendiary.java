@@ -1,6 +1,5 @@
 package com.ebicep.warlords.pve.weapons.weapontypes.legendaries.titles;
 
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -51,9 +50,8 @@ public class LegendaryIncendiary extends AbstractLegendaryWeapon implements Even
         super.applyToWarlordsPlayer(player, pveOption);
 
         float critChanceBoost = CRIT_CHANCE_BOOST + CRIT_CHANCE_BOOST_INCREASE_PER_UPGRADE * getTitleLevel();
-        AbstractPlayerClass playerSpec = player.getSpec();
 
-        playerSpec.setEnergyPerHit(playerSpec.getEnergyPerHit() * (1 + (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100));
+        player.getEnergyPerHit().addMultiplicativeModifierAdd(getTitleName(), (EPH_PERCENT_INCREASE + EPH_PERCENT_INCREASE_PER_UPGRADE * getTitleLevel()) / 100);
         player.getCooldownManager().addCooldown(new PermanentCooldown<>(
                 "Incendiary",
                 null,

@@ -111,6 +111,9 @@ public abstract class WarlordsEntity {
     protected CooldownManager cooldownManager = new CooldownManager(this);
     protected float currentHealth;
     protected FloatModifiable health;
+    protected FloatModifiable energy;
+    protected FloatModifiable energyPerSec;
+    protected FloatModifiable energyPerHit;
     protected FloatModifiableFilter maxBaseHealthFilter = new FloatModifiableFilter.BaseFilter();
     private final List<Float> recordDamage = new ArrayList<>();
     private final PlayerStatisticsMinute minuteStats = new PlayerStatisticsMinute();
@@ -121,6 +124,7 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
+    private float currentEnergy = 0;
     private Location deathLocation;
     private Vector currentVector;
     private Team team;
@@ -128,7 +132,6 @@ public abstract class WarlordsEntity {
     private float regenTickTimerModifier = 1;
     private int respawnTickTimer = -1;
     private boolean dead = false;
-    private float energy = 0;
     private int flagDropCooldown = 0;
     private int flagPickCooldown = 0;
     private int hitCooldown = 20;
@@ -137,7 +140,7 @@ public abstract class WarlordsEntity {
     private int blocksTravelledCM = 0;
     private boolean noEnergyConsumption;
     private boolean disableCooldowns;
-    private double energyModifier = 1;
+    private float energyModifier = 1;
     private boolean takeDamage = true;
     private boolean canCrit = true;
     @Nullable
@@ -156,9 +159,11 @@ public abstract class WarlordsEntity {
         this.specClass = specialization;
         this.spec = specialization.create.get();
         this.currentHealth = this.spec.getMaxHealth();
-        this.health = new FloatModifiable(this.currentHealth) {{
-            addFilter(maxBaseHealthFilter);
-        }};
+        this.health = new FloatModifiable(this.currentHealth);
+        this.health.addFilter(maxBaseHealthFilter);
+        this.energy = new FloatModifiable(this.spec.getMaxEnergy());
+        this.energyPerSec = new FloatModifiable(this.spec.getEnergyPerSec());
+        this.energyPerHit = new FloatModifiable(this.spec.getEnergyPerHit());
         this.spec.updateCustomStats(this);
     }
 
@@ -203,6 +208,9 @@ public abstract class WarlordsEntity {
         this.currentHealth = this.spec.getMaxHealth();
         this.health = new FloatModifiable(this.currentHealth);
         this.health.addFilter(maxBaseHealthFilter);
+        this.energy = new FloatModifiable(this.spec.getMaxEnergy());
+        this.energyPerSec = new FloatModifiable(this.spec.getEnergyPerSec());
+        this.energyPerHit = new FloatModifiable(this.spec.getEnergyPerHit());
         this.spec.updateCustomStats(this);
         this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
         this.speed = new MotionSystem();
@@ -671,14 +679,14 @@ public abstract class WarlordsEntity {
 
     public float addEnergy(WarlordsEntity giver, @Nullable String ability, float amount) {
         float energyGiven = 0;
-        if (energy + amount > getMaxEnergy()) {
-            energyGiven = getMaxEnergy() - energy;
-            this.energy = getMaxEnergy();
-        } else if (energy + amount > 0) {
+        if (currentEnergy + amount > getMaxEnergy()) {
+            energyGiven = getMaxEnergy() - currentEnergy;
+            this.currentEnergy = getMaxEnergy();
+        } else if (currentEnergy + amount > 0) {
             energyGiven = amount;
-            this.energy += amount;
+            this.currentEnergy += amount;
         } else {
-            this.energy = 1;
+            this.currentEnergy = 1;
         }
         if ((int) energyGiven != 0 && ability != null) {
             DatabasePlayer receiverSettings = this.getDatabasePlayer();
@@ -713,7 +721,7 @@ public abstract class WarlordsEntity {
     }
 
     public float getMaxEnergy() {
-        return spec.getMaxEnergy();
+        return this.energy.getCalculatedValue();
     }
 
     public float subtractEnergy(String from, FloatModifiable amount, boolean fromAttacker) {
@@ -724,10 +732,10 @@ public abstract class WarlordsEntity {
         float amountSubtracted = 0;
         if (!noEnergyConsumption) {
             amount *= energyModifier;
-            if (energy - amount > getMaxEnergy()) {
-                amountSubtracted = getMaxEnergy() - energy;
-            } else if (energy - amount < 0) {
-                amountSubtracted = energy;
+            if (currentEnergy - amount > getMaxEnergy()) {
+                amountSubtracted = getMaxEnergy() - currentEnergy;
+            } else if (currentEnergy - amount < 0) {
+                amountSubtracted = currentEnergy;
             } else {
                 amountSubtracted = amount;
             }
@@ -739,7 +747,7 @@ public abstract class WarlordsEntity {
                 amountSubtracted = 0;
             }
         }
-        energy -= amountSubtracted;
+        currentEnergy -= amountSubtracted;
         if (!fromAttacker) {
             Bukkit.getPluginManager().callEvent(new WarlordsEnergyUseEvent.Post(this, from, amountSubtracted));
         }
@@ -1154,11 +1162,11 @@ public abstract class WarlordsEntity {
         this.noEnergyConsumption = noEnergyConsumption;
     }
 
-    public double getEnergyModifier() {
+    public float getEnergyModifier() {
         return energyModifier;
     }
 
-    public void setEnergyModifier(double energyModifier) {
+    public void setEnergyModifier(float energyModifier) {
         this.energyModifier = energyModifier;
     }
 
@@ -1239,6 +1247,9 @@ public abstract class WarlordsEntity {
             }
         }
         this.health.tick();
+        this.energy.tick();
+        this.energyPerSec.tick();
+        this.energyPerHit.tick();
         updateHealth();
         getSpeed().tick();
         getKnockback().tick();
@@ -1259,7 +1270,7 @@ public abstract class WarlordsEntity {
         }
 
         // Energy
-        if (getEnergy() < getMaxEnergy()) {
+        if (getCurrentEnergy() < getMaxEnergy()) {
             // Standard energy value per second.
             float energyGainPerTick = getSpec().getEnergyPerSec() / 20;
 
@@ -1271,17 +1282,29 @@ public abstract class WarlordsEntity {
             }
 
             // Setting energy gain to the value after all ability instance multipliers have been applied.
-            float newEnergy = getEnergy() + energyGainPerTick;
+            float newEnergy = getCurrentEnergy() + energyGainPerTick;
             if (newEnergy > getMaxEnergy()) {
                 newEnergy = getMaxEnergy();
             }
-            setEnergy(newEnergy);
+            setCurrentEnergy(newEnergy);
         }
 
         // Melee Cooldown
         if (getHitCooldown() > 0) {
             setHitCooldown(getHitCooldown() - 1);
         }
+    }
+
+    public float getCurrentEnergy() {
+        return currentEnergy;
+    }
+
+    public void setCurrentEnergy(float currentEnergy) {
+        this.currentEnergy = currentEnergy;
+    }
+
+    public FloatModifiable getEnergy() {
+        return energy;
     }
 
     private void decrementRespawnTimer() {
@@ -1342,12 +1365,12 @@ public abstract class WarlordsEntity {
         return health.getCalculatedValue();
     }
 
-    public float getEnergy() {
-        return energy;
+    public FloatModifiable getEnergyPerSec() {
+        return energyPerSec;
     }
 
-    public void setEnergy(float energy) {
-        this.energy = energy;
+    public FloatModifiable getEnergyPerHit() {
+        return energyPerHit;
     }
 
     public AbstractPlayerClass getSpec() {
@@ -1401,7 +1424,7 @@ public abstract class WarlordsEntity {
             player.setGameMode(GameMode.ADVENTURE);
         }
         setRespawnTimerSeconds(-1);
-        setEnergy(getMaxEnergy() / 2);
+        setCurrentEnergy(getMaxEnergy() / 2);
         dead = false;
         teleport(respawnPoint);
 
@@ -1424,9 +1447,12 @@ public abstract class WarlordsEntity {
         this.spec = spec.create.get();
         this.spec.updateCustomStats(this);
         this.health.setBaseValue(this.spec.getMaxHealth());
+        this.energy.setBaseValue(this.spec.getMaxEnergy());
+        this.energyPerSec.setBaseValue(this.spec.getEnergyPerSec());
+        this.energyPerHit.setBaseValue(this.spec.getEnergyPerHit());
         this.currentHealth = getMaxHealth();
         heal();
-        this.energy = this.spec.getMaxEnergy();
+        this.currentEnergy = this.spec.getMaxEnergy();
         if (this instanceof WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.queueUpdateTabName();
         }

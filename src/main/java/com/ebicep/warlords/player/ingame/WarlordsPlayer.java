@@ -298,11 +298,11 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 heal();
             }
             // Checks whether the player has under 0 energy to avoid infinite energy bugs.
-            if (getEnergy() < 0) {
-                setEnergy(1);
+            if (getCurrentEnergy() < 0) {
+                setCurrentEnergy(1);
             }
-            player.setLevel((int) getEnergy());
-            player.setExp(getEnergy() / getMaxEnergy());
+            player.setLevel((int) getCurrentEnergy());
+            player.setExp(getCurrentEnergy() / getMaxEnergy());
             // Saves the amount of blocks travelled per player.
             setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
         }
