@@ -195,17 +195,25 @@ public class FloatModifiable {
         List<Component> components = new ArrayList<>();
         FloatModifiableFilter base = filters.get("Base");
         components.add(getDebugInfo("Calculated", getCalculatedValue()));
-        components.add(getDebugInfo("Base", baseValue));
+        if (getCalculatedValue() != baseValue) {
+            components.add(getDebugInfo("Base", baseValue));
+        }
         if (!overridingModifiers.isEmpty()) {
             components.add(getDebugInfo("Overriding", overridingModifiers.get(0).getModifier()));
             components.addAll(getDebugInfo(overridingModifiers));
         }
-        components.add(getDebugInfo("Additive", base.getCachedAdditiveModifier()));
-        components.addAll(getDebugInfo(additiveModifiers));
-        components.add(getDebugInfo("Multiplicative Additive", base.getCachedMultiplicativeModifierAdditive()));
-        components.addAll(getDebugInfo(multiplicativeModifiersAdditive));
-        components.add(getDebugInfo("Multiplicative Multiplicative", base.getCachedMultiplicativeModifierMultiplicative()));
-        components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative));
+        if (!additiveModifiers.isEmpty()) {
+            components.add(getDebugInfo("Additive", base.getCachedAdditiveModifier()));
+            components.addAll(getDebugInfo(additiveModifiers));
+        }
+        if (!multiplicativeModifiersAdditive.isEmpty()) {
+            components.add(getDebugInfo("Multiplicative Additive", base.getCachedMultiplicativeModifierAdditive()));
+            components.addAll(getDebugInfo(multiplicativeModifiersAdditive));
+        }
+        if (!multiplicativeModifiersMultiplicative.isEmpty()) {
+            components.add(getDebugInfo("Multiplicative Multiplicative", base.getCachedMultiplicativeModifierMultiplicative()));
+            components.addAll(getDebugInfo(multiplicativeModifiersMultiplicative));
+        }
         return components;
     }
 
