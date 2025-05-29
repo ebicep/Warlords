@@ -65,7 +65,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             });
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown)) {

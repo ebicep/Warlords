@@ -59,7 +59,7 @@ public class WardingWrath implements SpecBoostManager.SpecBoost<WardingWrath> {
             });
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onWarlordsStrikeEvent(WarlordsStrikeEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;

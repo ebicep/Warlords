@@ -60,7 +60,7 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
             });
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onWarlordsHammerToCrownEventEvent(WarlordsHammerToCrownEvent event) {
             if (!event.getWarlordsEntity().equals(warlordsEntity)) {
                 return;

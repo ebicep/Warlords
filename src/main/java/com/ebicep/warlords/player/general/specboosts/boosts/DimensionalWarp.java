@@ -66,7 +66,7 @@ public class DimensionalWarp implements SpecBoostManager.SpecBoost<DimensionalWa
             });
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;

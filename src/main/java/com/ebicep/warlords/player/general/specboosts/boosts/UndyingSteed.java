@@ -65,7 +65,7 @@ public class UndyingSteed implements SpecBoostManager.SpecBoost<UndyingSteed> {
             }
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onWarlordsRespawn(WarlordsRespawnEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;

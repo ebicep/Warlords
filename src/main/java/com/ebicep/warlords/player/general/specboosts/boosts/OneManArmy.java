@@ -53,7 +53,7 @@ public class OneManArmy implements SpecBoostManager.SpecBoost<OneManArmy> {
             });
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;

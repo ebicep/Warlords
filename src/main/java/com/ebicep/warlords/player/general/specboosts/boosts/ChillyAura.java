@@ -58,7 +58,7 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
 
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;

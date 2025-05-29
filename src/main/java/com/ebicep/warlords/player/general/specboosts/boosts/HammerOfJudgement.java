@@ -148,7 +148,7 @@ public class HammerOfJudgement implements SpecBoostManager.SpecBoost<HammerOfJud
                         );
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onDamageHeal(WarlordsDamageHealingEvent event) {
             if (!event.getSource().equals(warlordsEntity)) {
                 return;

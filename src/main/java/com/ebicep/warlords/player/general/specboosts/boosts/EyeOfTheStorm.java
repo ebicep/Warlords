@@ -74,7 +74,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
             });
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onWarlordsProjectileFireEvent(WarlordsProjectileFireEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;

@@ -66,7 +66,7 @@ public class FortifiedAegis implements SpecBoostManager.SpecBoost<FortifiedAegis
             });
         }
 
-        @EventHandler
+        @EventHandler(ignoreCancelled = true)
         public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
