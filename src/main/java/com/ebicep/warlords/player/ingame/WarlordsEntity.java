@@ -297,7 +297,7 @@ public abstract class WarlordsEntity {
         WarlordsDeathEvent.DeathInfo deathInfo = deathInfoBuilder.createDeathInfo();
         WarlordsDeathEvent deathEvent = new WarlordsDeathEvent(this, attacker, deathInfo);
         Bukkit.getPluginManager().callEvent(deathEvent);
-        if (deathEvent.isCancelled() || deathInfo.forced()) { // TODO check forced
+        if (deathEvent.isCancelled() && !deathInfo.forced()) { // TODO check forced
             return;
         }
 
