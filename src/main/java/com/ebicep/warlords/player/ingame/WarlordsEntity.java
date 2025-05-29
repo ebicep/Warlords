@@ -337,6 +337,8 @@ public abstract class WarlordsEntity {
             }
             //removing boner
             player.getInventory().remove(UndyingArmy.BONE);
+        } else {
+            entity.remove();
         }
         //removing yellow hearts
         giveAbsorption(0);

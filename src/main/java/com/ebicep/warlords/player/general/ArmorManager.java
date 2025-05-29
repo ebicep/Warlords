@@ -18,11 +18,13 @@ import java.util.List;
 public class ArmorManager {
 
     public static final List<Component> HELMET_DESCRIPTION = WordWrap.wrap(Component.text("A cosmetic item for your head. Each class has a different piece of headgear.",
-            NamedTextColor.GRAY
-    ), 160);
+                    NamedTextColor.GRAY
+            ), 160
+    );
     public static final List<Component> ARMOR_DESCRIPTION = WordWrap.wrap(Component.text("Cosmetic armor to complement your hat. The armor pieces are the same for each class.",
-            NamedTextColor.GRAY
-    ), 160);
+                    NamedTextColor.GRAY
+            ), 160
+    );
 
     public static void resetArmor(Player player) {
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player);
@@ -31,51 +33,57 @@ public class ArmorManager {
     }
 
     public static void resetArmor(Player player, Helmets helmet, ArmorSets armorSet, Team team) {
+        player.getInventory().setArmorContents(getArmor(helmet, armorSet, team));
+    }
+
+    public static ItemStack[] getArmor(Helmets helmet, ArmorSets armorSet, Team team) {
         boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
 
-        armor[2] = new ItemBuilder(onBlueTeam ? armorSet.itemBlue : armorSet.itemRed)
-                .name(Component.text(armorSet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+        NamedTextColor color = onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED;
+        armor[2] = new ItemBuilder(armorSet.getItem(team))
+                .name(Component.text(armorSet.name, color))
                 .lore(ARMOR_DESCRIPTION)
                 .get();
-        armor[3] = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
-                .name(Component.text(helmet.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+        armor[3] = new ItemBuilder(helmet.getItem(team))
+                .name(Component.text(helmet.name, color))
                 .lore(HELMET_DESCRIPTION)
                 .get();
 
         if (armorSet.name.contains("Simple")) {
             armor[2] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_CHESTPLATE.itemBlue, onBlueTeam))
-                    .name(Component.text(ArmorSets.SIMPLE_CHESTPLATE.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                    .name(Component.text(ArmorSets.SIMPLE_CHESTPLATE.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[1] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_LEGGINGS.itemBlue, onBlueTeam))
-                    .name(Component.text(ArmorSets.SIMPLE_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                    .name(Component.text(ArmorSets.SIMPLE_LEGGINGS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
             armor[0] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_BOOTS.itemBlue, onBlueTeam))
-                    .name(Component.text(ArmorSets.SIMPLE_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+                    .name(Component.text(ArmorSets.SIMPLE_BOOTS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
         } else if (armorSet.name.contains("Greater")) {
-            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_LEGGINGS.itemBlue : ArmorSets.GREATER_LEGGINGS.itemRed)
-                    .name(Component.text(ArmorSets.GREATER_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[1] = new ItemBuilder(ArmorSets.GREATER_LEGGINGS.getItem(team))
+                    .name(Component.text(ArmorSets.GREATER_LEGGINGS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
-            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_BOOTS.itemBlue : ArmorSets.GREATER_BOOTS.itemRed)
-                    .name(Component.text(ArmorSets.GREATER_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[0] = new ItemBuilder(ArmorSets.GREATER_BOOTS.getItem(team))
+                    .name(Component.text(ArmorSets.GREATER_BOOTS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
         } else if (armorSet.name.contains("Masterwork")) {
-            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_LEGGINGS.itemBlue : ArmorSets.MASTERWORK_LEGGINGS.itemRed)
-                    .name(Component.text(ArmorSets.MASTERWORK_LEGGINGS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[1] = new ItemBuilder(ArmorSets.MASTERWORK_LEGGINGS.getItem(team))
+                    .name(Component.text(ArmorSets.MASTERWORK_LEGGINGS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
-            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_BOOTS.itemBlue : ArmorSets.MASTERWORK_BOOTS.itemRed)
-                    .name(Component.text(ArmorSets.MASTERWORK_BOOTS.name, onBlueTeam ? NamedTextColor.BLUE : NamedTextColor.RED))
+            armor[0] = new ItemBuilder(ArmorSets.MASTERWORK_BOOTS.getItem(team))
+                    .name(Component.text(ArmorSets.MASTERWORK_BOOTS.name, color))
                     .lore(ARMOR_DESCRIPTION)
                     .get();
         }
-        player.getInventory().setArmorContents(armor);
+
+        return armor;
     }
 
     public static void resetArmor(Player player, WarlordsPlayer warlordsPlayer) {
@@ -250,6 +258,10 @@ public class ArmorManager {
             this.itemBlue = itemBlue;
         }
 
+        public ItemStack getItem(Team team) {
+            return team == Team.BLUE ? itemBlue : itemRed;
+        }
+
     }
 
     public enum ArmorSets {
@@ -267,15 +279,6 @@ public class ArmorManager {
         ;
 
         public static final ArmorSets[] VALUES = values();
-        public final String name;
-        public final ItemStack itemRed;
-        public final ItemStack itemBlue;
-
-        ArmorSets(String name, ItemStack itemRed, ItemStack itemBlue) {
-            this.name = name;
-            this.itemRed = itemRed;
-            this.itemBlue = itemBlue;
-        }
 
         public static ItemStack applyColor(ItemStack itemStack, boolean blueColor) {
             LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
@@ -286,6 +289,20 @@ public class ArmorManager {
             }
             itemStack.setItemMeta(leatherArmorMeta);
             return itemStack;
+        }
+
+        public final String name;
+        public final ItemStack itemRed;
+        public final ItemStack itemBlue;
+
+        ArmorSets(String name, ItemStack itemRed, ItemStack itemBlue) {
+            this.name = name;
+            this.itemRed = itemRed;
+            this.itemBlue = itemBlue;
+        }
+
+        public ItemStack getItem(Team team) {
+            return team == Team.BLUE ? itemBlue : itemRed;
         }
 
     }

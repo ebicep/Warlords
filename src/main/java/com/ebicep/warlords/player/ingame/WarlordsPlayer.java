@@ -56,6 +56,15 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     private static Zombie spawnSimpleJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         return loc.getWorld().spawn(loc, Zombie.class, zombie -> {
+            AttributeInstance attribute = zombie.getAttribute(Attribute.MOVEMENT_SPEED);
+            if (attribute != null) {
+                attribute.setBaseValue(0);
+            }
+            attribute = zombie.getAttribute(Attribute.FOLLOW_RANGE);
+            if (attribute != null) {
+                attribute.setBaseValue(0);
+            }
+
                     zombie.setAdult();
                     zombie.setCustomNameVisible(true);
 
@@ -74,6 +83,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 }
         );
     }
+
     protected final AbilityTree abilityTree = new AbilityTree(this);
     protected CosmeticSettings cosmeticSettings;
     //    @Override
@@ -215,30 +225,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     }
 
     @Override
-    public void setSpec(Specializations spec) {
-        Specializations oldSpec = this.specClass;
-        super.setSpec(spec);
-        if (weapon != null && weapon instanceof Listener listener) {
-            HandlerList.unregisterAll(listener);
-        }
-        this.specClass = spec;
-
-        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
-        cosmeticSettings.setWeaponSkin(playerSettings.getWeaponSkins().get(spec));
-        cosmeticSettings.setHelmet(playerSettings.getHelmet(spec));
-        cosmeticSettings.setArmorSet(playerSettings.getArmorSet(spec));
-
-        Player player = Bukkit.getPlayer(uuid);
-
-        ArmorManager.resetArmor(player, this);
-        for (Option option : game.getOptions()) {
-            option.onSpecChange(this, oldSpec);
-        }
-        updateInventory(true);
-        queueUpdateTabName();
-    }
-
-    @Override
     public boolean setStunTicks(int stunTicks) {
         WarlordsPlayerStunEvent stunEvent = new WarlordsPlayerStunEvent(this);
         Bukkit.getPluginManager().callEvent(stunEvent);
@@ -365,8 +351,44 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             }.runTaskLater(Warlords.getInstance(), 1);
         } else {
             this.entity.remove();
-            this.entity = spawnJimmy(this.entity.getLocation(), null);
+            if (!isDead()) {
+                ItemStack[] armor = cosmeticSettings.getArmor(getTeam());
+                this.entity = spawnJimmy(
+                        this.entity.getLocation(),
+                        new Utils.SimpleEntityEquipment(
+                                armor[3],
+                                armor[2],
+                                armor[1],
+                                armor[0],
+                                cosmeticSettings.getWeaponSkin().getItem()
+                        )
+                );
+            }
         }
+    }
+
+    @Override
+    public void setSpec(Specializations spec) {
+        Specializations oldSpec = this.specClass;
+        super.setSpec(spec);
+        if (weapon != null && weapon instanceof Listener listener) {
+            HandlerList.unregisterAll(listener);
+        }
+        this.specClass = spec;
+
+        PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
+        cosmeticSettings.setWeaponSkin(playerSettings.getWeaponSkins().get(spec));
+        cosmeticSettings.setHelmet(playerSettings.getHelmet(spec));
+        cosmeticSettings.setArmorSet(playerSettings.getArmorSet(spec));
+
+        Player player = Bukkit.getPlayer(uuid);
+
+        ArmorManager.resetArmor(player, this);
+        for (Option option : game.getOptions()) {
+            option.onSpecChange(this, oldSpec);
+        }
+        updateInventory(true);
+        queueUpdateTabName();
     }
 
     @Override
@@ -388,31 +410,35 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @org.jetbrains.annotations.Nullable
     @Override
     public ItemStack getHelmet() {
-        return entity instanceof Player player ? player.getInventory().getHelmet() : null;
+        return entity instanceof Player player ? player.getInventory().getHelmet() : cosmeticSettings.getArmor(getTeam())[3];
     }
 
     @org.jetbrains.annotations.Nullable
     @Override
     public ItemStack getChestplate() {
-        return entity instanceof Player player ? player.getInventory().getChestplate() : null;
+        return entity instanceof Player player ? player.getInventory().getChestplate() : cosmeticSettings.getArmor(getTeam())[2];
     }
 
     @org.jetbrains.annotations.Nullable
     @Override
     public ItemStack getLeggings() {
-        return entity instanceof Player player ? player.getInventory().getLeggings() : null;
+        return entity instanceof Player player ? player.getInventory().getLeggings() : cosmeticSettings.getArmor(getTeam())[1];
     }
 
     @org.jetbrains.annotations.Nullable
     @Override
     public ItemStack getBoots() {
-        return entity instanceof Player player ? player.getInventory().getBoots() : null;
+        return entity instanceof Player player ? player.getInventory().getBoots() : cosmeticSettings.getArmor(getTeam())[0];
     }
 
     @org.jetbrains.annotations.Nullable
     @Override
     public ItemStack getWeaponItem() {
         return weapon == null ? null : weapon.getSelectedWeaponSkin().getItem();
+    }
+
+    public void queueUpdateTabName() {
+        this.updateTabName = true;
     }
 
     public void resetPlayerAddons() {
@@ -479,26 +505,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
-        jimmy.customName(Component.empty()
-                                  .append(getSpec().getClassNameShortWithBrackets(getSpecClass().specType.getTextColor()))
-                                  .append(this.getColoredName())
-                                  .append(Component.text(" " + Math.round(this.getCurrentHealth()) + "❤",
-                                          NamedTextColor.RED
-                                  ))); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata(WarlordsEntity.WARLORDS_ENTITY_METADATA, new FixedMetadataValue(Warlords.getInstance(), this));
-        AttributeInstance attribute = jimmy.getAttribute(Attribute.MOVEMENT_SPEED);
-        if (attribute != null) {
-            attribute.setBaseValue(0);
-        }
-        attribute = jimmy.getAttribute(Attribute.FOLLOW_RANGE);
-        if (attribute != null) {
-            attribute.setBaseValue(0);
-        }
-        //prevents jimmy from moving
-        jimmy.setAI(false);
-        if (isDead()) {
-            jimmy.remove();
-        }
         return jimmy;
     }
 
@@ -533,10 +540,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     public boolean isUpdateTabName() {
         return updateTabName;
-    }
-
-    public void queueUpdateTabName() {
-        this.updateTabName = true;
     }
 
 }
