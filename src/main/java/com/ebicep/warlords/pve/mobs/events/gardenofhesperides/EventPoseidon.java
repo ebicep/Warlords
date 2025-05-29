@@ -35,6 +35,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilencable {
 
@@ -89,8 +90,8 @@ public class EventPoseidon extends AbstractMob implements BossMob, God, Unsilenc
                     }
 
                     @Override
-                    protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget) {
-                        super.onSpikeTarget(caster, spikeTarget);
+                    protected void onSpikeTarget(WarlordsEntity caster, WarlordsEntity spikeTarget, UUID uuid) {
+                        super.onSpikeTarget(caster, spikeTarget, uuid);
                         Optional<CripplingStrike.CripplingStrikeData> optionalCripplingStrike = new CooldownFilter<>(spikeTarget, RegularCooldown.class)
                                 .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.CripplingStrikeData.class)
                                 .findAny();

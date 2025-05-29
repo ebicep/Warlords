@@ -174,7 +174,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                               .addCooldown(new RegularCooldown<>(earthlivingWeapon.getName(),
                                       null,
                                       EarthlivingWeapon.EarthlivingData.class,
-                                      new EarthlivingWeapon.EarthlivingData(),
+                                      new EarthlivingWeapon.EarthlivingData(earthlivingWeapon.getGuaranteedHits()),
                                       wp,
                                       CooldownTypes.ABILITY,
                                       cooldownManager -> {

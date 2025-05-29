@@ -723,7 +723,7 @@ public class DebugMenuPlayerOptions {
                                 menu.setItem(i + 2, 1,
                                         new ItemBuilder(selectedSpec.specType.itemStack)
                                                 .name(specBoost.getName())
-                                                .lore(WordWrap.wrap(specBoost.getDescription(), 150))
+                                                .lore(WordWrap.wrap(specBoost.getDescription(), specBoost.getMaxDescriptionWidth()))
                                                 .get(),
                                         (m, e) -> {
                                             selectedBoosts.put(selectedSpec, finalI);

@@ -40,7 +40,7 @@ public class ApplySpecBoostsOption implements Option {
                         if (appliedBoost != null) {
                             SpecBoostManager.SpecBoost<?> boost = appliedBoost.specBoost;
                             description.add(Component.text("Active Boost: ", NamedTextColor.GREEN).append(Component.text(boost.getStringName(), NamedTextColor.AQUA)));
-                            description.addAll(WordWrap.wrap(boost.getDescription(), 150));
+                            description.addAll(WordWrap.wrap(boost.getDescription(), boost.getMaxDescriptionWidth()));
                             return description;
                         }
                         List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(wp.getSpecClass());
@@ -49,7 +49,7 @@ public class ApplySpecBoostsOption implements Option {
                         }
                         SpecBoostManager.SpecBoost<?> boost = specBoosts.getFirst();
                         description.add(boost.getName());
-                        description.addAll(WordWrap.wrap(boost.getDescription(), 150));
+                        description.addAll(WordWrap.wrap(boost.getDescription(), boost.getMaxDescriptionWidth()));
                         return description;
                     }
                 }

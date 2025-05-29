@@ -28,7 +28,7 @@ public class SpecBoostMenu {
                         int finalI = i;
                         ItemBuilder itemBuilder = new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(specBoost.getName())
-                                .lore(WordWrap.wrap(specBoost.getDescription(), 150))
+                                .lore(WordWrap.wrap(specBoost.getDescription(), specBoost.getMaxDescriptionWidth()))
                                 .glow(selected);
                         if (selected) {
                             itemBuilder.addLore(

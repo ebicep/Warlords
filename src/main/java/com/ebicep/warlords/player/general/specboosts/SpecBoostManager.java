@@ -59,6 +59,10 @@ public class SpecBoostManager {
     public static final SpecBoost<GalvanizedSpark> GALVANIZED_SPARK = new GalvanizedSpark();
     public static final SpecBoost<ElectromagneticChains> ELECTROMAGNETIC_CHAINS = new ElectromagneticChains();
     public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
+    public static final SpecBoost<AcceleratedSpike> ACCELERATED_SPIKE = new AcceleratedSpike();
+    public static final SpecBoost<MegalithicBoulder> MEGALITHIC_BOULDER = new MegalithicBoulder();
+    public static final SpecBoost<AugmentedChains> AUGMENTED_CHAINS = new AugmentedChains();
+    public static final SpecBoost<EarthboundInfusion> EARTHBOUND_INFUSION = new EarthboundInfusion();
 
 
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
@@ -75,6 +79,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(VIGOROUS_INFUSION));
         SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(LUSTROUS_CROWN, DIVINE_EFFULGENCE, BIG_GUY, HAMMER_OF_JUDGEMENT, LIGHT_SPEED_INFUSION));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, GALVANIZED_SPARK, ELECTROMAGNETIC_CHAINS, EYE_OF_THE_STORM, SYMPHONIC_WINDFURY));
+        SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
@@ -147,6 +152,10 @@ public class SpecBoostManager {
                 i--;
             }
             return abilityDescriptionBuilder.build();
+        }
+
+        default int getMaxDescriptionWidth() {
+            return 150;
         }
 
         List<Object> getVariables();

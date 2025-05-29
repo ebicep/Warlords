@@ -101,7 +101,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                                           .source(wp)
                                           .value(currentDamageValue * selfHealingMultiplier)
                                           .showAsCrit(isCrit)
-                                          .customFlags(new HealedPlayersInstanceFlag(healedPlayers))
+                                          .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(healedPlayers))
             ).ifPresent(event -> {
                 new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownFrom(wp)
                                                                .filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.HammerOfLightData.class)
@@ -119,7 +119,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                             .value(healing)
                             .showAsCrit(isCrit)
                             .flags(InstanceFlags.IGNORE_CRIT_MODIFIERS)
-                            .customFlags(new HealedPlayersInstanceFlag(healedPlayers))
+                            .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(healedPlayers))
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
@@ -135,7 +135,7 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                             .source(wp)
                             .value(currentDamageValue * allyHealingMultiplier)
                             .showAsCrit(isCrit)
-                            .customFlags(new HealedPlayersInstanceFlag(healedPlayers))
+                            .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(healedPlayers))
                     ).ifPresent(event -> {
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownFrom(wp)
@@ -203,10 +203,6 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
 
     public void setStrikeRadius(double strikeRadius) {
         this.strikeRadius = strikeRadius;
-    }
-
-    public record HealedPlayersInstanceFlag(List<WarlordsEntity> healedPlayers) implements CustomInstanceFlags {
-
     }
 
     public static class DamageValues implements Value.ValueHolder {

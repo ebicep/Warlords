@@ -1,7 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.HolyRadianceProtector;
-import com.ebicep.warlords.abilities.LightInfusionProtector;
+import com.ebicep.warlords.abilities.EarthlivingWeapon;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -12,27 +11,32 @@ import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 
 import java.util.List;
 
-public class LightSpeedInfusion implements SpecBoostManager.SpecBoost<LightSpeedInfusion> {
+public class EarthboundInfusion implements SpecBoostManager.SpecBoost<EarthboundInfusion> {
 
-    private int holyRadianceEnergyCost;
-    private int lightInfusionCooldownReductionTicks;
-    private float singleAllyHealBonusPercent;
+    private int healthIncrease;
+    private int earthlivingExtraGuaranteedHits;
+    private int earthlivingSingleHealBonus;
 
     @Override
     public void init() {
-        this.holyRadianceEnergyCost = getValue("holyRadianceEnergyCost", int.class);
-        this.lightInfusionCooldownReductionTicks = getValue("lightInfusionCooldownReductionTicks", int.class);
-        this.singleAllyHealBonusPercent = getValue("singleAllyHealBonusPercent", float.class);
+        this.healthIncrease = getValue("healthIncrease", int.class);
+        this.earthlivingExtraGuaranteedHits = getValue("earthlivingExtraGuaranteedHits", int.class);
+        this.earthlivingSingleHealBonus = getValue("earthlivingSingleHealBonus", int.class);
     }
 
     @Override
     public String getConfigFieldName() {
-        return "lightSpeedInfusion";
+        return "earthboundInfusion";
+    }
+
+    @Override
+    public int getMaxDescriptionWidth() {
+        return 151;
     }
 
     @Override
     public List<Object> getVariables() {
-        return List.of(holyRadianceEnergyCost, lightInfusionCooldownReductionTicks, singleAllyHealBonusPercent);
+        return List.of(healthIncrease, earthlivingExtraGuaranteedHits, earthlivingSingleHealBonus);
     }
 
     @Override
@@ -41,20 +45,17 @@ public class LightSpeedInfusion implements SpecBoostManager.SpecBoost<LightSpeed
     }
 
     @Override
-    public LightSpeedInfusion get() {
+    public EarthboundInfusion get() {
         return this;
     }
 
     public class Boost implements SpecBoostManager.Boost {
 
-
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getAbilitiesMatching(HolyRadianceProtector.class).forEach(holyRadiance -> {
-                holyRadiance.getEnergyCost().addOverridingModifier("Spec Boost", holyRadianceEnergyCost);
-            });
-            warlordsPlayer.getAbilitiesMatching(LightInfusionProtector.class).forEach(lightInfusion -> {
-                lightInfusion.getCooldown().addAdditiveModifier("Spec Boost", -lightInfusionCooldownReductionTicks / 20f);
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
+            warlordsPlayer.getAbilitiesMatching(EarthlivingWeapon.class).forEach(earthlivingWeapon -> {
+                earthlivingWeapon.setGuaranteedHits(earthlivingWeapon.getGuaranteedHits() + earthlivingExtraGuaranteedHits);
             });
             warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
                     getStringName(),
@@ -63,24 +64,21 @@ public class LightSpeedInfusion implements SpecBoostManager.SpecBoost<LightSpeed
                     null,
                     warlordsPlayer,
                     CooldownTypes.SPEC_BOOST,
-                    cooldownManager -> {
-                    },
+                    cooldownManager -> {},
                     false
             ) {
-
                 @Override
                 public float modifyHealingFromAttacker(WarlordsDamageHealingEvent event, float currentHealValue) {
-                    if (event.getSource().equals(warlordsPlayer) && event.getCause().equals("Protector's Strike")) {
+                    if (event.getWarlordsEntity().equals(warlordsPlayer) && event.getSource().equals(warlordsPlayer) && event.getCause().equals("Earthliving Weapon")) {
                         List<CustomInstanceFlags> customFlags = event.getCustomFlags();
                         for (CustomInstanceFlags customFlag : customFlags) {
-                            if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> healedPlayers) && healedPlayers.size() == 1) {
-                                return currentHealValue * (1 + singleAllyHealBonusPercent / 100);
+                            if (customFlag instanceof CustomInstanceFlags.PlayersEffectedInstanceFlag(List<WarlordsEntity> healedPlayers) && healedPlayers.isEmpty()) {
+                                return currentHealValue + earthlivingSingleHealBonus;
                             }
                         }
                     }
                     return currentHealValue;
                 }
-
             });
         }
 
