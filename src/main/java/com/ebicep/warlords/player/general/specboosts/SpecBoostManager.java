@@ -54,10 +54,14 @@ public class SpecBoostManager {
     public static final SpecBoost<BigGuy> BIG_GUY = new BigGuy();
     public static final SpecBoost<HammerOfJudgement> HAMMER_OF_JUDGEMENT = new HammerOfJudgement();
     public static final SpecBoost<LightSpeedInfusion> LIGHT_SPEED_INFUSION = new LightSpeedInfusion();
+    public static final SpecBoost<Transistor> TRANSISTOR = new Transistor();
+    public static final SpecBoost<EyeOfTheStorm> EYE_OF_THE_STORM = new EyeOfTheStorm();
+    public static final SpecBoost<GalvanizedSpark> GALVANIZED_SPARK = new GalvanizedSpark();
+    public static final SpecBoost<ElectromagneticChains> ELECTROMAGNETIC_CHAINS = new ElectromagneticChains();
+    public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
 
 
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
-    public static final SpecBoost<EyeOfTheStorm> EYE_OF_THE_STORM = new EyeOfTheStorm();
     private static final Map<Specializations, List<SpecBoost<?>>> SPEC_BOOSTS = new HashMap<>();
 
     static {
@@ -70,7 +74,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.AVENGER, List.of(CONDUIT, WARDING_WRATH, ARM_OF_THE_ALMIGHTY, UNSTOPPABLE_SURGE, MARKED_FOR_DEATH));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(VIGOROUS_INFUSION));
         SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(LUSTROUS_CROWN, DIVINE_EFFULGENCE, BIG_GUY, HAMMER_OF_JUDGEMENT, LIGHT_SPEED_INFUSION));
-        SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(EYE_OF_THE_STORM));
+        SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, GALVANIZED_SPARK, ELECTROMAGNETIC_CHAINS, EYE_OF_THE_STORM, SYMPHONIC_WINDFURY));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {

@@ -37,6 +37,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
     private float procChance = 35;
     private int maxHits = 2;
     private float weaponDamage = 135;
+    private int guaranteedHits = 1;
 
     public WindfuryWeapon() {
         super(AbstractAbilityBuilder.create("windfuryWeapon").pvp());
@@ -49,22 +50,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         this.procChance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("procChance"), float.class);
         this.maxHits = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHits"), int.class);
         this.weaponDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("weaponDamage"), float.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
-                                               .percent(procChance, NamedTextColor.BLUE)
-                                               .text(" chance to hit ")
-                                               .text(maxHits, NamedTextColor.BLUE)
-                                               .text(" additional times for ")
-                                               .percent(weaponDamage, NamedTextColor.RED)
-                                               .text(" weapon damage. Lasts ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("The first hit is guaranteed to activate Windfury.")
-                                               .build();
+        this.guaranteedHits = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("guaranteedHits"), int.class);
     }
 
     @Override
@@ -84,7 +70,7 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
         })
         ) {
 
-            private boolean firstProc = true;
+            private int guaranteedHitsLeft = guaranteedHits;
 
             @Override
             public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -102,8 +88,8 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 WarlordsEntity victim = event.getWarlordsEntity();
                 WarlordsEntity attacker = event.getSource();
                 double windfuryActivate = ThreadLocalRandom.current().nextDouble(100);
-                if (firstProc) {
-                    firstProc = false;
+                if (guaranteedHitsLeft > 0) {
+                    guaranteedHitsLeft--;
                     windfuryActivate = 0;
                 }
                 if (!(windfuryActivate < procChance)) {
@@ -113,11 +99,13 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
                 stats.timesProcd++;
                 new GameRunnable(victim.getGame()) {
 
-                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ? warlordsPlayer.getWeapon()
-                                                                                                                                              .getMeleeDamageMin() : 132;
+                    final float minDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMin() :
+                                            132;
 
-                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ? warlordsPlayer.getWeapon()
-                                                                                                                                              .getMeleeDamageMax() : 179;
+                    final float maxDamage = wp instanceof WarlordsPlayer warlordsPlayer && warlordsPlayer.getWeapon() != null ?
+                                            warlordsPlayer.getWeapon().getMeleeDamageMax() :
+                                            179;
 
                     int counter = 0;
 
@@ -151,6 +139,32 @@ public class WindfuryWeapon extends AbstractAbility implements PurpleAbilityIcon
             }
         });
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Imbue your weapon with the power of the wind, causing each of your melee attacks to have a ")
+                                               .percent(procChance, NamedTextColor.BLUE)
+                                               .text(" chance to hit ")
+                                               .text(maxHits, NamedTextColor.BLUE)
+                                               .text(" additional times for ")
+                                               .percent(weaponDamage, NamedTextColor.RED)
+                                               .text(" weapon damage. Lasts ")
+                                               .durationTicks(tickDuration)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("The first ")
+                                               .text(guaranteedHits, NamedTextColor.BLUE)
+                                               .text(" hits is guaranteed to activate Windfury.")
+                                               .build();
+    }
+
+    public int getGuaranteedHits() {
+        return guaranteedHits;
+    }
+
+    public void setGuaranteedHits(int guaranteedHits) {
+        this.guaranteedHits = guaranteedHits;
     }
 
     @Override
