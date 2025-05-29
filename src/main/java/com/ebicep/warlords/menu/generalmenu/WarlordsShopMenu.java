@@ -54,9 +54,7 @@ public class WarlordsShopMenu {
             int level = (int) ExperienceManager.calculateLevelFromExp(experience);
             ItemBuilder itemBuilder = new ItemBuilder(group.item)
                     .name(Component.text(group.name, NamedTextColor.GOLD)
-                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                   .append(Component.text("Lv" + ExperienceManager.getLevelString(level), NamedTextColor.GRAY))
-                                   .append(Component.text("]", NamedTextColor.DARK_GRAY)));
+                                   .append(ExperienceManager.getLevelStringBracket(level)));
             itemBuilder.addLore(WordWrap.wrap(Component.text(group.description, NamedTextColor.GRAY), 150));
             itemBuilder.addLore(Component.empty());
             itemBuilder.addLore(Component.text("Specializations:", NamedTextColor.GOLD));
@@ -96,12 +94,7 @@ public class WarlordsShopMenu {
             Specializations spec = values.get(i);
             ItemBuilder itemBuilder = new ItemBuilder(spec.specType.itemStack)
                     .name(Component.text("Specialization: " + spec.name, NamedTextColor.GREEN)
-                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                   .append(Component.text("Lv" + ExperienceManager.getLevelString(
-                                           ExperienceManager.getLevelForSpec(player.getUniqueId(),
-                                                   spec
-                                           )), NamedTextColor.GRAY))
-                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+                                   .append(ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(player.getUniqueId(), spec)))
                                    .append(ExperienceManager.getPrestigeLevelString(player.getUniqueId(), spec)));
             itemBuilder.addLore(WordWrap.wrap(spec.getDescription(), 150));
             itemBuilder.addLore(Component.empty());

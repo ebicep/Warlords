@@ -332,9 +332,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 getEntity().customName(Component.text(""));
             } else {
                 getEntity().customName(Component.textOfChildren(
-                        Component.text("[", NamedTextColor.DARK_GRAY)
-                                 .append(Component.text(getSpec().getClassNameShort(), getSpecClass().specType.getTextColor()))
-                                 .append(Component.text("] ")),
                         getColoredName(),
                         Component.text(" " + Math.round(getCurrentHealth()) + "❤", NamedTextColor.RED)
                 ));
@@ -483,8 +480,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = spawnSimpleJimmy(loc, inv);
         jimmy.customName(Component.empty()
-                                  .append(getSpec().getClassNameShortWithBrackets())
-                                  .append(Component.text(" "))
+                                  .append(getSpec().getClassNameShortWithBrackets(getSpecClass().specType.getTextColor()))
                                   .append(this.getColoredName())
                                   .append(Component.text(" " + Math.round(this.getCurrentHealth()) + "❤",
                                           NamedTextColor.RED

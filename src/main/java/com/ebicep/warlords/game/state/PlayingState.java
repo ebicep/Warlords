@@ -146,25 +146,19 @@ public class PlayingState implements State, TimerDebugAble {
 
             @Override
             public void run() {
-                game.forEachOnlinePlayer((player, team) -> {
-                    updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(player), (WarlordsPlayer) Warlords.getPlayer(player));
+                game.warlordsPlayers().forEach(warlordsPlayer -> {
+                    updateBasedOnGameState(CustomScoreboard.getPlayerScoreboard(warlordsPlayer.getUuid()), warlordsPlayer);
                 });
                 this.getGame().forEachOnlineWarlordsPlayer(warlordsPlayer -> {
                     if (!warlordsPlayer.isUpdateTabName()) {
                         return;
                     }
                     UUID uuid = warlordsPlayer.getUuid();
-                    String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass()));
-                    TextComponent.Builder playerTabName = Component.text()
-                                                                   .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text(warlordsPlayer.getSpec().getClassNameShort(),
-                                                                           warlordsPlayer.getSpecClass().specType.getTextColor()
-                                                                   ))
-                                                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
-                                                                   .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                                                   .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
-                                                                   .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                    TextComponent.Builder playerTabName = Component
+                            .text()
+                            .append(warlordsPlayer.getSpec().getClassNameShortWithBrackets(warlordsPlayer.getSpecClass().specType.getTextColor()))
+                            .append(Component.text(warlordsPlayer.getName(), warlordsPlayer.getTeam().getTeamColor()))
+                            .append(ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(uuid, warlordsPlayer.getSpecClass())));
                     if (warlordsPlayer.getCarriedFlag() != null) {
                         playerTabName.append(Component.text("⚑", NamedTextColor.WHITE));
                     }
@@ -205,9 +199,10 @@ public class PlayingState implements State, TimerDebugAble {
             }
         }.runTaskTimer(0, GameRunnable.SECOND);
         game.registerGameMarker(TimerSkipAbleMarker.class, (delay) -> {
-            counter += delay / GameRunnable.SECOND;
-            timer += delay;
-        });
+                    counter += delay / GameRunnable.SECOND;
+                    timer += delay;
+                }
+        );
 
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             if (StreamChaptersCommand.GAME_TIMES.containsKey(wp.getUuid())) {
@@ -387,7 +382,6 @@ public class PlayingState implements State, TimerDebugAble {
             Entity entity = otherPlayer.getEntity();
             UUID uuid = otherPlayer.getUuid();
             List<AbstractCooldown<?>> otherPlayerCooldowns = otherPlayer.getCooldownManager().getCooldowns();
-            String levelString = ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass()));
             Team playerTeam = scoreboard.getEntityTeam(entity);
             if (playerTeam == null) {
                 playerTeam = scoreboard.registerNewTeam(((CraftEntity) entity).getHandle().getScoreboardName());
@@ -413,10 +407,9 @@ public class PlayingState implements State, TimerDebugAble {
                 });
             }
             if (otherPlayer instanceof WarlordsPlayer) {
-                TextComponent.Builder basePrefix = Component.text()
-                                                            .append(Component.text("[", NamedTextColor.DARK_GRAY))
-                                                            .append(Component.text(otherPlayer.getSpec().getClassNameShort(), otherPlayer.getSpecClass().specType.getTextColor()))
-                                                            .append(Component.text("] ", NamedTextColor.DARK_GRAY));
+                TextComponent.Builder basePrefix = Component
+                        .text()
+                        .append(otherPlayer.getSpec().getClassNameShortWithBrackets(otherPlayer.getSpecClass().specType.getTextColor()));
                 prefix.append(basePrefix);
             }
             playerTeam.prefix(prefix.build());
@@ -425,10 +418,9 @@ public class PlayingState implements State, TimerDebugAble {
             //suffix
             TextComponent.Builder suffix = Component.text();
             if (otherPlayer instanceof WarlordsPlayer) {
-                TextComponent.Builder baseSuffix = Component.text()
-                                                            .append(Component.text(" [", NamedTextColor.DARK_GRAY))
-                                                            .append(Component.text("Lv" + levelString, NamedTextColor.GRAY))
-                                                            .append(Component.text("]", NamedTextColor.DARK_GRAY));
+                TextComponent.Builder baseSuffix = Component
+                        .text()
+                        .append(ExperienceManager.getLevelStringBracket(ExperienceManager.getLevelForSpec(uuid, otherPlayer.getSpecClass())));
                 if (otherPlayer.getCarriedFlag() != null) {
                     baseSuffix.append(Component.text(" ⚑", NamedTextColor.WHITE));
                 }

@@ -13,6 +13,7 @@ import com.ebicep.warlords.util.bukkit.packets.PacketUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -31,6 +32,7 @@ public abstract class AbstractPlayerClass {
         }
         PacketUtils.playRightClickAnimationForPlayer(((CraftPlayer) player).getHandle(), player);
     }
+
     protected int maxHealth;
     protected int maxEnergy;
     protected float energyPerSec;
@@ -268,9 +270,13 @@ public abstract class AbstractPlayerClass {
     }
 
     public Component getClassNameShortWithBrackets() {
+        return getClassNameShortWithBrackets(NamedTextColor.GOLD);
+    }
+
+    public Component getClassNameShortWithBrackets(TextColor classNameColor) {
         return Component.text("[", NamedTextColor.DARK_GRAY)
-                        .append(Component.text(this.classNameShort, NamedTextColor.GOLD))
-                        .append(Component.text("]", NamedTextColor.DARK_GRAY));
+                        .append(Component.text(this.classNameShort, classNameColor))
+                        .append(Component.text("] ", NamedTextColor.DARK_GRAY));
     }
 
     public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
