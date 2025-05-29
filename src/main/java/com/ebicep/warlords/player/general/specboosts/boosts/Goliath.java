@@ -11,7 +11,7 @@ import org.bukkit.event.EventHandler;
 
 import java.util.List;
 
-public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury> {
+public class Goliath implements SpecBoostManager.SpecBoost<Goliath> {
 
     private int healthIncrease;
     private int maxEnergyIncrease;
@@ -28,7 +28,7 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
 
     @Override
     public String getConfigFieldName() {
-        return "berserkersFury";
+        return "goliath";
     }
 
     @Override
@@ -42,7 +42,7 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
     }
 
     @Override
-    public BerserkersFury get() {
+    public Goliath get() {
         return this;
     }
 
