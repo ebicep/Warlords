@@ -45,7 +45,7 @@ public class BigGuy implements SpecBoostManager.SpecBoost<BigGuy> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(ProtectorsStrike.class).forEach(protectorsStrike -> {
                 protectorsStrike.setSelfHealing(strikeSelfHealingPercent);

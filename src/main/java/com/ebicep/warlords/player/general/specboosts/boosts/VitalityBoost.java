@@ -47,7 +47,7 @@ public class VitalityBoost implements SpecBoostManager.SpecBoost<VitalityBoost> 
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(LastStand.class).forEach(lastStand -> {
                 lastStand.getCooldown().addAdditiveModifier("Spec Boost", -lastStandCooldownReductionTicks / 20f);
             });

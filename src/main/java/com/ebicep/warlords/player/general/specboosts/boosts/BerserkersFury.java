@@ -53,7 +53,7 @@ public class BerserkersFury implements SpecBoostManager.SpecBoost<BerserkersFury
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(Berserk.class).forEach(berserk -> {
                 berserk.getCooldown().addAdditiveModifier("Spec Boost", -berserkCooldownIncreaseTicks / 20);

@@ -60,7 +60,7 @@ public class FortifiedAegis implements SpecBoostManager.SpecBoost<FortifiedAegis
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.getCooldown().addAdditiveModifier("Spec Boost", -arcaneShieldCooldownReductionSeconds);
             });
