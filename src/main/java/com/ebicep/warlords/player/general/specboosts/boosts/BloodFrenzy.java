@@ -1,20 +1,32 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.BloodLust;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import org.bukkit.event.EventHandler;
 
 import java.util.List;
 
 public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
 
-    private float bloodLustReductionPercent;
-    private float bloodLustHealingIncreasePercent;
+    private int bloodLustCooldownReductionTicks;
+    private int bloodLustDuration;
+    private int bloodLustEnergyCostReduction;
+    private float bloodLustHealingPercent;
+    private float bloodLustHealingPiercePercent;
 
     @Override
     public void init() {
-        this.bloodLustReductionPercent = getValue("bloodLustReductionPercent", float.class);
-        this.bloodLustHealingIncreasePercent = getValue("bloodLustHealingIncreasePercent", float.class);
+        this.bloodLustCooldownReductionTicks = getValue("bloodLustCooldownReductionTicks", int.class);
+        this.bloodLustDuration = getValue("bloodLustDuration", int.class);
+        this.bloodLustEnergyCostReduction = getValue("bloodLustEnergyCostReduction", int.class);
+        this.bloodLustHealingPercent = getValue("bloodLustHealingPercent", float.class);
+        this.bloodLustHealingPiercePercent = getValue("bloodLustHealingPiercePercent", float.class);
     }
 
     @Override
@@ -24,7 +36,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(bloodLustReductionPercent, bloodLustHealingIncreasePercent);
+        return List.of(bloodLustCooldownReductionTicks, bloodLustDuration, bloodLustEnergyCostReduction, bloodLustHealingPercent, bloodLustHealingPiercePercent);
     }
 
     @Override
@@ -39,14 +51,38 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
 
     public class Boost implements SpecBoostManager.Boost {
 
+        private WarlordsEntity warlordsEntity;
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(BloodLust.class).forEach(bloodLust -> {
-                bloodLust.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -bloodLustReductionPercent / 100);
-                bloodLust.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -bloodLustReductionPercent / 100);
-                bloodLust.multiplyTickDuration((100 - bloodLustReductionPercent) / 100);
-                bloodLust.setDamageConvertPercent(bloodLust.getDamageConvertPercent() + 5);
+                bloodLust.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -bloodLustCooldownReductionTicks / 100f);
+                bloodLust.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -bloodLustEnergyCostReduction);
+                bloodLust.setTickDuration(bloodLustDuration);
+                bloodLust.setDamageConvertPercent((int) bloodLustHealingPercent);
             });
+        }
+
+        @EventHandler
+        public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
+            if (!event.getSource().equals(warlordsEntity)) {
+                return;
+            }
+            if (!(event.getAbility() instanceof BloodLust bloodLust)) {
+                return;
+            }
+            if (event.getFlags().contains(InstanceFlags.NO_LUST_HEALING)) {
+                return;
+            }
+            for (CustomInstanceFlags customFlag : event.getCustomFlags()) {
+                if (customFlag instanceof CustomInstanceFlags.FinalEventInstanceFlag(WarlordsDamageHealingFinalEvent finalEvent)) {
+                    float additionalHealing = finalEvent.getValueBeforeAllReduction() * bloodLustHealingPiercePercent / 100f;
+                    event.setMin(event.getMin() + additionalHealing);
+                    event.setMax(event.getMax() + additionalHealing);
+                    return;
+                }
+            }
         }
 
     }
