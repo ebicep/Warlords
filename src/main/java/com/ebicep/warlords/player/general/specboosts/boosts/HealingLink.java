@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.GroundSlamRevenant;
+import com.ebicep.warlords.abilities.RecklessCharge;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -48,7 +48,7 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
-                if (ability instanceof GroundSlamRevenant groundSlamRevenant) {
+                if (ability instanceof RecklessCharge) {
                     com.ebicep.warlords.abilities.HealingLink healingLink = new com.ebicep.warlords.abilities.HealingLink();
                     healingLink.init(healingLink.getBuilder());
                     abilities.set(i, healingLink);
