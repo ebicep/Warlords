@@ -8,6 +8,8 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
     private float travelDistanceIncrease;
     private float damageReductionPercent;
     private int damageReductionDurationTicks;
+    private int verticalAscentDamage;
 
     @Override
     public void init() {
@@ -27,6 +30,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
         this.travelDistanceIncrease = getValue("travelDistanceIncrease", float.class);
         this.damageReductionPercent = getValue("damageReductionPercent", float.class);
         this.damageReductionDurationTicks = getValue("damageReductionDurationTicks", int.class);
+        this.verticalAscentDamage = getValue("verticalAscentDamage", int.class);
     }
 
     @Override
@@ -36,7 +40,7 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
 
     @Override
     public List<Object> getVariables() {
-        return List.of(radiusIncrease, travelDistanceIncrease, damageReductionPercent, damageReductionDurationTicks);
+        return List.of(radiusIncrease, travelDistanceIncrease, damageReductionPercent, damageReductionDurationTicks, verticalAscentDamage);
     }
 
     @Override
@@ -60,12 +64,35 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
                 recklessCharge.setAdditionalBlocks(recklessCharge.getAdditionalBlocks() + travelDistanceIncrease);
                 recklessCharge.getHitBoxRadius().addAdditiveModifier("Spec Boost", radiusIncrease);
                 recklessCharge.setVerticalMovement(true);
-//                recklessCharge.setMaxChargeDuration(recklessCharge.getMaxChargeDuration() + 1);
             });
         }
 
         @EventHandler
-        public void onWarlordsAbilityActivate(WarlordsAbilityActivateEvent.Post event) {
+        public void onWarlordsAbilityActivatePreEvent(WarlordsAbilityActivateEvent.Pre event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            if (!(event.getAbility() instanceof RecklessCharge)) {
+                return;
+            }
+            Location location = warlordsEntity.getLocation();
+            if (Math.abs(location.getPitch()) < 50) {
+                return;
+            }
+            if (warlordsEntity.getCurrentHealth() < verticalAscentDamage) {
+                event.setCancelled(true);
+                return;
+            }
+            warlordsEntity.addInstance(InstanceBuilder
+                    .fall()
+                    .cause(getStringName())
+                    .source(warlordsEntity)
+                    .value(verticalAscentDamage)
+            );
+        }
+
+        @EventHandler
+        public void onWarlordsAbilityActivatePostEvent(WarlordsAbilityActivateEvent.Post event) {
             if (!warlordsEntity.equals(event.getWarlordsEntity())) {
                 return;
             }
