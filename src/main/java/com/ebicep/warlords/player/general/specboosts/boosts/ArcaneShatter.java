@@ -12,6 +12,9 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -77,11 +80,16 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
                 return;
             }
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-            if (!Objects.equals(cooldown.getName(), "Arcane Shield") || !(cooldown.getCooldownObject() instanceof Shield shield) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!(cooldown instanceof RegularCooldown<?> regularCooldown) ||
+                    !Objects.equals(cooldown.getName(), "Arcane Shield") ||
+                    !(cooldown.getCooldownObject() instanceof Shield shield) ||
+                    !cooldown.getFrom().equals(warlordsEntity)
+            ) {
                 return;
             }
             Consumer<CooldownManager> oldOnRemove = cooldown.getOnRemove();
             cooldown.setOnRemove(cooldownManager -> {
+                warlordsEntity.playSound(warlordsEntity.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_BREAK, 2, 0.5f);
                 oldOnRemove.accept(cooldownManager);
                 PlayerFilter.entitiesAround(warlordsEntity, range, range, range)
                             .aliveEnemiesOf(warlordsEntity)
@@ -101,6 +109,28 @@ public class ArcaneShatter implements SpecBoostManager.SpecBoost<ArcaneShatter> 
                         return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(damageIncrease);
                     }
                 });
+            });
+            Consumer<CooldownManager> oldOnRemoveForce = cooldown.getOnRemoveForce();
+            cooldown.setOnRemoveForce(cooldownManager -> {
+                warlordsEntity.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                        .append(Component.text(" Your ", NamedTextColor.GRAY))
+                        .append(Component.text("Arcane Shield", NamedTextColor.YELLOW))
+                        .append(Component.text(" has expired!", NamedTextColor.GRAY))
+                );
+                oldOnRemoveForce.accept(cooldownManager);
+            });
+            regularCooldown.addTriConsumer((cd, ticksLeft, ticksElapsed) -> {
+                if (ticksElapsed % 20 == 0) {
+                    int timeLeft = Math.round(ticksLeft / 20f);
+                    warlordsEntity.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                            .append(Component.text(" Your ", NamedTextColor.GRAY))
+                            .append(Component.text("Arcane Shield", NamedTextColor.YELLOW))
+                            .append(Component.text(" will expire in ", NamedTextColor.GRAY))
+                            .append(Component.text(timeLeft, NamedTextColor.GOLD))
+                            .append(Component.text(" second" + (timeLeft == 1 ? "!" : "s!"), NamedTextColor.GRAY))
+                    );
+
+                }
             });
         }
 
