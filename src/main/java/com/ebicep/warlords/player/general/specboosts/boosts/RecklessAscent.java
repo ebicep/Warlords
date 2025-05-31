@@ -85,7 +85,6 @@ public class RecklessAscent implements SpecBoostManager.SpecBoost<RecklessAscent
             }
             warlordsEntity.addInstance(InstanceBuilder
                     .fall()
-                    .cause(getStringName())
                     .source(warlordsEntity)
                     .value(verticalAscentDamage)
             );

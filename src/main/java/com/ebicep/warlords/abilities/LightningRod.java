@@ -34,6 +34,8 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
     private final HealingValues healingValues = new HealingValues();
     private int knockbackRadius = 5;
     private int energyRestore = 160;
+    private float horizontalTotemProcRange;
+    private float verticalTotemProcRange;
 
     public LightningRod() {
         this(AbstractAbilityBuilder.create("lightningRod").pvp());
@@ -48,6 +50,8 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
         super.init(builder);
         this.knockbackRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("knockbackRadius"), int.class);
         this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), int.class);
+        this.horizontalTotemProcRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("horizontalTotemProcRange"), float.class);
+        this.verticalTotemProcRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalTotemProcRange"), float.class);
     }
 
     @Override
@@ -84,7 +88,12 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
             giveCallOfThunderEffect(wp, hit);
         }
         // pulsedamage
-        List<CapacitorTotem.CapacitorTotemData> totems = AbstractTotem.getTotemsDownAndClose(wp, wp.getEntity(), CapacitorTotem.CapacitorTotemData.class);
+        List<CapacitorTotem.CapacitorTotemData> totems = AbstractTotem.getTotemsDownAndClose(
+                wp,
+                CapacitorTotem.CapacitorTotemData.class,
+                horizontalTotemProcRange,
+                verticalTotemProcRange
+        );
         totems.forEach(data -> {
             ArmorStand totem = data.getArmorStand();
             Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
@@ -95,6 +104,22 @@ public class LightningRod extends AbstractAbility implements BlueAbilityIcon, He
             }
         });
         return true;
+    }
+
+    public float getHorizontalTotemProcRange() {
+        return horizontalTotemProcRange;
+    }
+
+    public void setHorizontalTotemProcRange(float horizontalTotemProcRange) {
+        this.horizontalTotemProcRange = horizontalTotemProcRange;
+    }
+
+    public float getVerticalTotemProcRange() {
+        return verticalTotemProcRange;
+    }
+
+    public void setVerticalTotemProcRange(float verticalTotemProcRange) {
+        this.verticalTotemProcRange = verticalTotemProcRange;
     }
 
     private List<WarlordsEntity> kbHealEnergy(@Nonnull WarlordsEntity wp) {

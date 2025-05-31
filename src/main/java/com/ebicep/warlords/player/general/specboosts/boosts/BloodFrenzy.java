@@ -15,7 +15,7 @@ import java.util.List;
 public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
 
     private int bloodLustCooldownReductionTicks;
-    private int bloodLustDuration;
+    private int bloodLustDurationReductionTicks;
     private int bloodLustEnergyCostReduction;
     private float bloodLustHealingPercent;
     private float bloodLustHealingPiercePercent;
@@ -23,7 +23,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
     @Override
     public void init() {
         this.bloodLustCooldownReductionTicks = getValue("bloodLustCooldownReductionTicks", int.class);
-        this.bloodLustDuration = getValue("bloodLustDuration", int.class);
+        this.bloodLustDurationReductionTicks = getValue("bloodLustDurationReductionTicks", int.class);
         this.bloodLustEnergyCostReduction = getValue("bloodLustEnergyCostReduction", int.class);
         this.bloodLustHealingPercent = getValue("bloodLustHealingPercent", float.class);
         this.bloodLustHealingPiercePercent = getValue("bloodLustHealingPiercePercent", float.class);
@@ -36,7 +36,7 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(bloodLustCooldownReductionTicks, bloodLustDuration, bloodLustEnergyCostReduction, bloodLustHealingPercent, bloodLustHealingPiercePercent);
+        return List.of(bloodLustCooldownReductionTicks, bloodLustDurationReductionTicks, bloodLustEnergyCostReduction, bloodLustHealingPercent, bloodLustHealingPiercePercent);
     }
 
     @Override
@@ -57,9 +57,9 @@ public class BloodFrenzy implements SpecBoostManager.SpecBoost<BloodFrenzy> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(BloodLust.class).forEach(bloodLust -> {
-                bloodLust.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -bloodLustCooldownReductionTicks / 100f);
-                bloodLust.getEnergyCost().addMultiplicativeModifierAdd("Spec Boost", -bloodLustEnergyCostReduction);
-                bloodLust.setTickDuration(bloodLustDuration);
+                bloodLust.getCooldown().addAdditiveModifier("Spec Boost", -bloodLustCooldownReductionTicks / 20f);
+                bloodLust.setTickDuration(bloodLust.getTickDuration() - bloodLustDurationReductionTicks);
+                bloodLust.getEnergyCost().addAdditiveModifier("Spec Boost", -bloodLustEnergyCostReduction);
                 bloodLust.setDamageConvertPercent((int) bloodLustHealingPercent);
             });
         }

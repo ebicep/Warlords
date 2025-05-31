@@ -118,7 +118,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected abstract float getSoundPitch();
 
     private void updateMaxTicks() {
-        this.maxTicks = Math.max((int) (maxDistance.getCalculatedValue() / projectileSpeed.getCalculatedValue()), 1);
+        this.maxTicks = Math.max((int) (maxDistance.getCalculatedValue() / projectileSpeed.getCalculatedValue()) - 1, 0);
     }
 
     @Override

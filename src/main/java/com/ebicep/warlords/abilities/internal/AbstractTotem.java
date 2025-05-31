@@ -1,12 +1,14 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
+import com.ebicep.warlords.events.player.ingame.WarlordsTotemPlaceEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,11 +31,17 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
                 .findFirst();
     }
 
-    public static <T extends TotemData<?>> List<T> getTotemsDownAndClose(WarlordsEntity warlordsPlayer, Entity searchNearby, Class<T> clazz) {
-        List<Entity> entitiesAround = searchNearby.getNearbyEntities(5, 3, 5);
+    public static <T extends TotemData<?>> List<T> getTotemsDownAndClose(
+            WarlordsEntity warlordsPlayer,
+            Class<T> clazz,
+            float horizontalRange,
+            float verticalRange
+    ) {
+        boolean searchAll = horizontalRange > 100 || verticalRange > 100;
+        List<Entity> entitiesAround = searchAll ? Collections.emptyList() : warlordsPlayer.getEntity().getNearbyEntities(horizontalRange, verticalRange, horizontalRange);
         return new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(clazz)
-                .filter(data -> entitiesAround.contains(data.getArmorStand()))
+                .filter(data -> searchAll || entitiesAround.contains(data.getArmorStand()))
                 .toList();
     }
 
@@ -43,8 +52,15 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location standLocation = LocationUtils.getGroundLocation(wp.getLocation());
+
+        WarlordsTotemPlaceEvent totemPlaceEvent = new WarlordsTotemPlaceEvent(wp, standLocation);
+        Bukkit.getPluginManager().callEvent(totemPlaceEvent);
+        if (totemPlaceEvent.isCancelled()) {
+            return false;
+        }
+
         standLocation.setYaw(0);
-        standLocation.setY(standLocation.getY() - 0.46);
+        standLocation.setY(standLocation.getY() - 0.55);
 
         playSound(wp, standLocation);
 

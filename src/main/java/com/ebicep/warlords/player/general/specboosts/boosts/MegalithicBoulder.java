@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.Boulder;
+import com.ebicep.warlords.abilities.ChainHeal;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -11,11 +12,12 @@ public class MegalithicBoulder implements SpecBoostManager.SpecBoost<MegalithicB
 
     private float boulderDamageIncreasePercent;
     private float boulderKnockbackIncreasePercent;
+    private int chainHealBoulderCooldownReductionIncreaseTicks;
 
     @Override
     public void init() {
         this.boulderDamageIncreasePercent = getValue("boulderDamageIncreasePercent", float.class);
-        this.boulderKnockbackIncreasePercent = getValue("boulderKnockbackIncreasePercent", float.class);
+        this.chainHealBoulderCooldownReductionIncreaseTicks = getValue("chainHealBoulderCooldownReductionIncreaseTicks", int.class);
     }
 
     @Override
@@ -25,7 +27,7 @@ public class MegalithicBoulder implements SpecBoostManager.SpecBoost<MegalithicB
 
     @Override
     public List<Object> getVariables() {
-        return List.of(boulderDamageIncreasePercent, boulderKnockbackIncreasePercent);
+        return List.of(boulderDamageIncreasePercent, boulderKnockbackIncreasePercent, chainHealBoulderCooldownReductionIncreaseTicks);
     }
 
     @Override
@@ -47,6 +49,9 @@ public class MegalithicBoulder implements SpecBoostManager.SpecBoost<MegalithicB
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", boulderDamageIncreasePercent / 100)
                 );
                 boulder.setVelocity(boulder.getVelocity() * AbstractAbility.convertToMultiplicationDecimal(boulderKnockbackIncreasePercent));
+            });
+            warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
+                chainHeal.setCooldownReductionInSeconds(chainHeal.getCooldownReductionInSeconds() + chainHealBoulderCooldownReductionIncreaseTicks / 20f);
             });
         }
 

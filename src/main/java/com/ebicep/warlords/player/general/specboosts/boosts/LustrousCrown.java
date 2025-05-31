@@ -56,7 +56,7 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
             warlordsPlayer.getAbilitiesMatching(HammerOfLight.class).forEach(hammerOfLight -> {
                 hammerOfLight.setTickDuration(hammerOfLight.getTickDuration() - hammerOfLightDurationReductionTicks);
                 hammerOfLight.getCrownRadius().addAdditiveModifier("Spec Boost", crownOfLightRadiusIncrease);
-                hammerOfLight.setCrownBonusHealing(hammerOfLight.getCrownBonusHealing() * crownOfLightHealingIncreasePercent / 10);
+                hammerOfLight.setCrownBonusHealing(hammerOfLight.getCrownBonusHealing() + crownOfLightHealingIncreasePercent);
             });
         }
 

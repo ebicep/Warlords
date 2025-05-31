@@ -16,10 +16,12 @@ import java.util.UUID;
 public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChains> {
 
     private int chainHealCooldownReductionTicks;
+    private float chainHealHealingReductionPercent;
 
     @Override
     public void init() {
         this.chainHealCooldownReductionTicks = getValue("chainHealCooldownReductionSeconds", int.class);
+        this.chainHealHealingReductionPercent = getValue("chainHealHealingReductionPercent", float.class);
     }
 
     @Override
@@ -29,7 +31,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
 
     @Override
     public List<Object> getVariables() {
-        return List.of(chainHealCooldownReductionTicks);
+        return List.of(chainHealCooldownReductionTicks, chainHealHealingReductionPercent);
     }
 
     @Override
@@ -50,6 +52,11 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
+                chainHeal.getHealValues().getChainHealing().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -chainHealHealingReductionPercent / 100)
+                );
+            });
         }
 
         @EventHandler

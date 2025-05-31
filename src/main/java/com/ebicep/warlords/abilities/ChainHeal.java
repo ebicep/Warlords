@@ -185,6 +185,14 @@ public class ChainHeal extends AbstractChain<ChainHeal, ChainHeal.ChainHealStats
         });
     }
 
+    public float getCooldownReductionInSeconds() {
+        return cooldownReductionInSeconds;
+    }
+
+    public void setCooldownReductionInSeconds(float cooldownReductionInSeconds) {
+        this.cooldownReductionInSeconds = cooldownReductionInSeconds;
+    }
+
     public static class HealingValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable chainHealing = new Value.RangedValueCritable(533, 719, 20, 175);

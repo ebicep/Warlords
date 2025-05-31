@@ -40,7 +40,7 @@ public class SeismicShift implements SpecBoostManager.SpecBoost<SeismicShift> {
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(SeismicWaveBerserker.class).forEach(seismicWave -> {
-                seismicWave.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -seismicWaveCooldownReductionTicks / 20);
+                seismicWave.getCooldown().addAdditiveModifier("Spec Boost", -seismicWaveCooldownReductionTicks / 20f);
             });
         }
 

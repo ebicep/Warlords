@@ -66,7 +66,7 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
 
         @EventHandler
         public void onWarlordsDamageHealing(WarlordsDamageHealingFinalEvent event) {
-            if (!event.getSource().equals(warlordsEntity)) {
+            if (!event.getWarlordsEntity().equals(warlordsEntity)) {
                 return;
             }
             if (event.isDamageInstance()) {

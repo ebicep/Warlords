@@ -117,6 +117,9 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                         }
                         WarlordsDamageHealingEvent damageHealingEvent = event.getWarlordsDamageHealingEvent();
                         float value = event.getValue();
+                        if (event.getFinalEventFlag() != WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR) {
+                            value = 0;
+                        }
                         EnumSet<InstanceFlags> flags = damageHealingEvent.getFlags();
                         if (pveMasterUpgrade2 && event.getCause().equals("Wounding Strike") && !flags.contains(InstanceFlags.RECURSIVE)) {
                             event.getWarlordsEntity().addInstance(InstanceBuilder

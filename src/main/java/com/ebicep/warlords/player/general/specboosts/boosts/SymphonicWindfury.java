@@ -3,11 +3,13 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.WindfuryWeapon;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -93,6 +95,17 @@ public class SymphonicWindfury implements SpecBoostManager.SpecBoost<SymphonicWi
                 warlordsEntity.getSpeed().removeNegativeModifiers();
                 warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), speedIncreasePercent, speedDurationTicks);
             }
+        }
+
+        @EventHandler
+        public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
+            if (!event.getSource().equals(warlordsEntity)) {
+                return;
+            }
+            if (!(event.getAbility() instanceof WindfuryWeapon windfuryWeapon)) {
+                return;
+            }
+            event.getFlags().add(InstanceFlags.IGNORE_SELF_RES);
         }
 
     }

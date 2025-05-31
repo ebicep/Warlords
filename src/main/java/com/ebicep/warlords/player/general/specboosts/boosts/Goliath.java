@@ -15,14 +15,14 @@ public class Goliath implements SpecBoostManager.SpecBoost<Goliath> {
 
     private int healthIncrease;
     private int maxEnergyIncrease;
-    private float berserkCooldownIncreaseTicks;
+    private int berserkCooldownIncreaseTicks;
     private int berserkActivationHeal;
 
     @Override
     public void init() {
         this.healthIncrease = getValue("healthIncrease", int.class);
         this.maxEnergyIncrease = getValue("maxEnergyIncrease", int.class);
-        this.berserkCooldownIncreaseTicks = getValue("berserkCooldownIncreaseTicks", float.class);
+        this.berserkCooldownIncreaseTicks = getValue("berserkCooldownIncreaseTicks", int.class);
         this.berserkActivationHeal = getValue("berserkActivationHeal", int.class);
     }
 
@@ -56,7 +56,7 @@ public class Goliath implements SpecBoostManager.SpecBoost<Goliath> {
             warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             warlordsPlayer.getEnergy().addAdditiveModifier("Spec Boost", maxEnergyIncrease);
             warlordsPlayer.getAbilitiesMatching(Berserk.class).forEach(berserk -> {
-                berserk.getCooldown().addAdditiveModifier("Spec Boost", berserkCooldownIncreaseTicks / 20);
+                berserk.getCooldown().addAdditiveModifier("Spec Boost", berserkCooldownIncreaseTicks / 20f);
             });
         }
 
