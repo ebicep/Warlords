@@ -162,7 +162,7 @@ public enum Specializations {
                             float leechAmount = 0;
                             if (impalingStrikeData.isPresent()) {
                                 Leech.LeechData data = impalingStrikeData.get();
-                                stacks = data.getStacks();
+                                stacks = data.getStacksCount();
                                 leechAmount = data.getLeechAmount();
                                 impalingStrikeHeal = finalEvent.getValueBeforeAllReduction() * AbstractAbility.convertToPercent(stacks * leechAmount);
                             }

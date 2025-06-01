@@ -18,8 +18,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Leech {
 
@@ -36,11 +40,11 @@ public class Leech {
         if (oldLeechCooldown.isPresent() && oldLeechCooldown.get().getFrom().equals(from)) {
             RegularCooldown<LeechData> leechCooldown = oldLeechCooldown.get();
             leechCooldown.setTicksLeft(leechTickDuration);
-            leechCooldown.getCooldownObject().stacks++;
+            leechCooldown.getCooldownObject().stacks.add(leechTickDuration);
         } else {
             // remove leech from other players
             oldLeechCooldown.ifPresent(abstractCooldown -> target.getCooldownManager().removeCooldown(abstractCooldown));
-            LeechData data = new LeechData(leechAmount, leechInstance.initialStacks);
+            LeechData data = new LeechData(leechAmount, leechInstance.initialStacks, leechTickDuration);
             target.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Leech Debuff",
                     "LCH",
@@ -50,7 +54,15 @@ public class Leech {
                     CooldownTypes.ABILITY,
                     cooldownManager -> {
                     },
-                    leechTickDuration
+                    leechTickDuration,
+                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                        List<Integer> stacks = data.stacks;
+                        for (int i = 0; i < stacks.size(); i++) {
+                            Integer integer = stacks.get(i);
+                            data.stacks.set(i, integer - 1);
+                        }
+                        data.stacks.removeIf(integer -> integer <= 0);
+                    })
             ) {
 
                 @Override
@@ -69,7 +81,7 @@ public class Leech {
                                 return;
                             }
                             float value = finalEvent.getValueBeforeAllReduction();
-                            float healValue = value * AbstractAbility.convertToPercent(leechAmount * data.stacks);
+                            float healValue = value * AbstractAbility.convertToPercent(leechAmount * data.getStacksCount());
                             if (inPve) {
                                 healValue = Math.min(500, healValue);
                             }
@@ -102,7 +114,10 @@ public class Leech {
                 @Nonnull
                 @Override
                 public Component getDebugMessage() {
-                    return Component.text(data.stacks).color(NamedTextColor.DARK_GREEN);
+                    return Component.text(data.getStacksCount() + ":" +
+                                    data.stacks.stream().map(Object::toString).collect(Collectors.joining(",")),
+                            NamedTextColor.DARK_GREEN
+                    );
                 }
 
                 @Override
@@ -175,25 +190,27 @@ public class Leech {
     public static class LeechData {
 
         private final float leechAmount;
-        private int stacks;
+        private List<Integer> stacks = new ArrayList<>();
         private float healingDoneFromEnemyCarrier = 0;
         private float totalHealingDone = 0;
 
-        public LeechData(float leechAmount, int stacks) {
+        public LeechData(float leechAmount, int stacks, int tickDurationPerStack) {
             this.leechAmount = leechAmount;
-            this.stacks = stacks;
+            for (int i = 0; i < stacks; i++) {
+                this.stacks.add(tickDurationPerStack);
+            }
         }
 
         public float getLeechAmount() {
             return leechAmount;
         }
 
-        public int getStacks() {
+        public List<Integer> getStacks() {
             return stacks;
         }
 
-        public void setStacks(int stacks) {
-            this.stacks = stacks;
+        public int getStacksCount() {
+            return stacks.size();
         }
 
         public float getTotalHealingDone() {
