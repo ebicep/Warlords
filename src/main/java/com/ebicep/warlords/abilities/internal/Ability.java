@@ -107,8 +107,9 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<TimeWarpPyromancer> TIME_WARP_PYROMANCER = new Ability<>(TimeWarpPyromancer.class, TimeWarpPyromancer::new);
     public static final Ability<UndyingArmy> UNDYING_ARMY = new Ability<>(UndyingArmy.class, UndyingArmy::new);
     public static final Ability<Vindicate> VINDICATE = new Ability<>(Vindicate.class, Vindicate::new);
-    public static final Ability<VitalityLiquor> VITALITY_LIQUOR = new Ability<>(VitalityLiquor.class, VitalityLiquor::new);
     public static final Ability<VitalityConcoction> VITALITY_CONCOCTION = new Ability<>(VitalityConcoction.class, VitalityConcoction::new);
+    public static final Ability<VitalityLiquor> VITALITY_LIQUOR = new Ability<>(VitalityLiquor.class, VitalityLiquor::new);
+    public static final Ability<VolatileBrew> VOLATILE_BREW = new Ability<>(VolatileBrew.class, VolatileBrew::new);
     public static final Ability<WaterBolt> WATER_BOLT = new Ability<>(WaterBolt.class, WaterBolt::new);
     public static final Ability<WaterBreath> WATER_BREATH = new Ability<>(WaterBreath.class, WaterBreath::new);
     public static final Ability<WindfuryWeapon> WINDFURY_WEAPON = new Ability<>(WindfuryWeapon.class, WindfuryWeapon::new);
@@ -206,8 +207,9 @@ public class Ability<T extends AbstractAbility> {
             TIME_WARP_PYROMANCER,
             UNDYING_ARMY,
             VINDICATE,
-            VITALITY_LIQUOR,
             VITALITY_CONCOCTION,
+            VITALITY_LIQUOR,
+            VOLATILE_BREW,
             WATER_BOLT,
             WATER_BREATH,
             WINDFURY_WEAPON,

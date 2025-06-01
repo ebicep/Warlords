@@ -339,11 +339,11 @@ public class AbilityDescriptionBuilder {
     }
 
     public AbilityDescriptionBuilder energy(int energy) {
-        return energy(energy, "");
+        return energy(energy, null);
     }
 
     public AbilityDescriptionBuilder energy(float energy) {
-        return energy(energy, "");
+        return energy(energy, null);
     }
 
     public AbilityDescriptionBuilder blocks(int blocks) {
