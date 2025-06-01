@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -90,7 +91,14 @@ public class ProtectorsStrike extends AbstractStrike<ProtectorsStrike, Protector
                 healedPlayers = PlayerFilter
                         .entitiesAround(wp, strikeRadius, strikeRadius, strikeRadius)
                         .aliveTeammatesOfExcludingSelf(wp)
-                        .sorted(Comparator.comparing((WarlordsEntity p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
+                        .sorted(Comparator.comparing((WarlordsEntity p) ->
+                                                  new CooldownFilter<>(p, AbstractCooldown.class)
+                                                          .filterCooldownClass(HolyRadianceProtector.class)
+                                                          .filterCooldownFrom(wp)
+                                                          .stream()
+                                                          .findAny()
+                                                          .isPresent() ? -1 : 1
+                                          )
                                           .thenComparing(LocationUtils.sortClosestBy(WarlordsEntity::getLocation, wp.getLocation())))
                         .limit(maxAllies)
                         .toList();

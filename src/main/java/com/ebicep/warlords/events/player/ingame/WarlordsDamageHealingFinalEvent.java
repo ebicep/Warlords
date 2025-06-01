@@ -5,10 +5,12 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
     private final int inGameTick;
 
     private final FinalEventFlag finalEventFlag;
+    private final List<CustomInstanceFlags> customFlags;
 
     public WarlordsDamageHealingFinalEvent(
             WarlordsDamageHealingEvent warlordsDamageHealingEvent,
@@ -60,10 +63,51 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
             boolean isDamageInstance,
             FinalEventFlag finalEventFlag
     ) {
+        this(
+                warlordsDamageHealingEvent,
+                instanceFlags,
+                player,
+                source,
+                ability,
+                cause,
+                initialHealth,
+                valueBeforeAllReduction,
+                valueBeforeInterveneReduction,
+                valueBeforeShieldReduction,
+                value,
+                critChance,
+                critMultiplier,
+                isCrit,
+                isDamageInstance,
+                finalEventFlag,
+                Collections.emptyList()
+        );
+    }
+
+    public WarlordsDamageHealingFinalEvent(
+            WarlordsDamageHealingEvent warlordsDamageHealingEvent,
+            EnumSet<InstanceFlags> instanceFlags,
+            WarlordsEntity player,
+            WarlordsEntity source,
+            AbstractAbility ability,
+            String cause,
+            float initialHealth,
+            float valueBeforeAllReduction,
+            float valueBeforeInterveneReduction,
+            float valueBeforeShieldReduction,
+            float value,
+            float critChance,
+            float critMultiplier,
+            boolean isCrit,
+            boolean isDamageInstance,
+            FinalEventFlag finalEventFlag,
+            List<CustomInstanceFlags> customFlags
+    ) {
         super(player);
         this.warlordsDamageHealingEvent = warlordsDamageHealingEvent;
         this.instanceFlags = instanceFlags;
         this.finalEventFlag = finalEventFlag;
+        this.customFlags = customFlags;
         this.playerCooldowns.addAll(player.getCooldownManager().getCooldowns().stream()
                                           .map(CooldownRecord::new)
                                           .toList()
@@ -92,6 +136,10 @@ public class WarlordsDamageHealingFinalEvent extends AbstractWarlordsEntityEvent
         this.isDamageInstance = isDamageInstance;
 
         this.inGameTick = player.getGame().getState().getTicksElapsed();
+    }
+
+    public List<CustomInstanceFlags> getCustomFlags() {
+        return customFlags;
     }
 
     @Override

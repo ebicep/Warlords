@@ -124,6 +124,7 @@ public abstract class WarlordsEntity {
     private final LinkedHashMap<WarlordsEntity, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsEntity, Integer> healedBy = new LinkedHashMap<>();
     private final List<Location> locations = new ArrayList<>();
+    private final Map<WarlordsEntityFlag, Boolean> flags = new EnumMap<>(WarlordsEntityFlag.class);
     private float currentEnergy = 0;
     private Location deathLocation;
     private Vector currentVector;
@@ -683,10 +684,14 @@ public abstract class WarlordsEntity {
         float energyGiven = 0;
         if (currentEnergy + amount > getMaxEnergy()) {
             energyGiven = getMaxEnergy() - currentEnergy;
-            this.currentEnergy = getMaxEnergy();
+            if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+                this.currentEnergy = getMaxEnergy();
+            }
         } else if (currentEnergy + amount > 0) {
             energyGiven = amount;
-            this.currentEnergy += amount;
+            if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+                this.currentEnergy += amount;
+            }
         } else {
             this.currentEnergy = 1;
         }
@@ -726,6 +731,14 @@ public abstract class WarlordsEntity {
         return this.energy.getCalculatedValue();
     }
 
+    public boolean flag(WarlordsEntityFlag flag) {
+        return flags.getOrDefault(flag, flag.getDefaultValue());
+    }
+
+    public void setFlag(WarlordsEntityFlag flag, boolean value) {
+        flags.put(flag, value);
+    }
+
     public float subtractEnergy(String from, FloatModifiable amount, boolean fromAttacker) {
         return subtractEnergy(from, amount.getCalculatedValue(), fromAttacker);
     }
@@ -749,7 +762,9 @@ public abstract class WarlordsEntity {
                 amountSubtracted = 0;
             }
         }
-        currentEnergy -= amountSubtracted;
+        if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+            currentEnergy -= amountSubtracted;
+        }
         if (!fromAttacker) {
             Bukkit.getPluginManager().callEvent(new WarlordsEnergyUseEvent.Post(this, from, amountSubtracted));
         }
@@ -1288,25 +1303,15 @@ public abstract class WarlordsEntity {
             if (newEnergy > getMaxEnergy()) {
                 newEnergy = getMaxEnergy();
             }
-            setCurrentEnergy(newEnergy);
+            if (flag(WarlordsEntityFlag.GAIN_ENERGY)) {
+                setCurrentEnergy(newEnergy);
+            }
         }
 
         // Melee Cooldown
         if (getHitCooldown() > 0) {
             setHitCooldown(getHitCooldown() - 1);
         }
-    }
-
-    public float getCurrentEnergy() {
-        return currentEnergy;
-    }
-
-    public void setCurrentEnergy(float currentEnergy) {
-        this.currentEnergy = currentEnergy;
-    }
-
-    public FloatModifiable getEnergy() {
-        return energy;
     }
 
     private void decrementRespawnTimer() {
@@ -1367,12 +1372,12 @@ public abstract class WarlordsEntity {
         return health.getCalculatedValue();
     }
 
-    public FloatModifiable getEnergyPerSec() {
-        return energyPerSec;
+    public float getCurrentEnergy() {
+        return currentEnergy;
     }
 
-    public FloatModifiable getEnergyPerHit() {
-        return energyPerHit;
+    public void setCurrentEnergy(float currentEnergy) {
+        this.currentEnergy = currentEnergy;
     }
 
     public AbstractPlayerClass getSpec() {
@@ -1467,6 +1472,18 @@ public abstract class WarlordsEntity {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+    }
+
+    public FloatModifiable getEnergy() {
+        return energy;
+    }
+
+    public FloatModifiable getEnergyPerSec() {
+        return energyPerSec;
+    }
+
+    public FloatModifiable getEnergyPerHit() {
+        return energyPerHit;
     }
 
     public void displayCompassActionBar(@Nonnull Player player) {

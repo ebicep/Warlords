@@ -42,10 +42,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -659,10 +656,11 @@ public class InstanceManager {
                 RegularCooldown cooldown = shieldCooldown.get();
                 Shield shield = (Shield) cooldown.getCooldownObject();
                 debugMessage.appendTitle("Shield (" + shield.getName() + ")", NamedTextColor.AQUA);
+                float preShieldHealth = shield.getShieldHealth();
                 debugMessage.append(InstanceDebugHoverable.LevelBuilder
                         .create(1)
                         .prefix(ComponentBuilder.create("Pre Health: ", NamedTextColor.GREEN))
-                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(shield.getShieldHealth()), NamedTextColor.GOLD))
+                        .value(ComponentBuilder.create(NumberFormat.formatOptionalHundredths(preShieldHealth), NamedTextColor.GOLD))
                 );
                 //adding dmg to shield
                 shield.addShieldHealth(-damageValue);
@@ -678,8 +676,18 @@ public class InstanceManager {
                     cooldown.setTicksLeft(0);
                 }
                 if (shield.isBroken()) {
+                    cooldown.getFrom().addAbsorbed(preShieldHealth);
                     float newDamage = -shield.getShieldHealth();
-                    addDamageInstance(warlordsEntity, new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
+                    List<CustomInstanceFlags> newCustomFlags = new ArrayList<>(customFlags);
+                    customFlags.stream()
+                               .filter(CustomInstanceFlags.InstanceShieldsInstanceFlag.class::isInstance)
+                               .map(CustomInstanceFlags.InstanceShieldsInstanceFlag.class::cast)
+                               .findAny()
+                               .ifPresentOrElse(
+                                       customInstanceFlags -> customInstanceFlags.shields().add(shield),
+                                       () -> newCustomFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(new ArrayList<>(List.of(shield))))
+                               );
+                    return addDamageInstance(warlordsEntity, new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
                                     warlordsEntity,
                             source,
                             cause,
@@ -689,14 +697,12 @@ public class InstanceManager {
                                     100,
                                     true,
                                     EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
-                                    customFlags
+                            newCustomFlags
                             )
                     );
-
-                    cooldown.getFrom().addAbsorbed(-(shield.getShieldHealth()));
-
-                    return Optional.empty();
                 } else {
+                    cooldown.getFrom().addAbsorbed(Math.abs(damageValue));
+
                     Shield.updateAbsorption(warlordsEntity);
 
                     if (isMeleeHit) {
@@ -714,8 +720,6 @@ public class InstanceManager {
                                 .append(Component.text(" Your " + cause + " was absorbed by " + warlordsEntity.getName() + ".", NamedTextColor.GRAY
                                 )));
                     }
-
-                    cooldown.getFrom().addAbsorbed(Math.abs(damageHealValueBeforeAllReduction));
                 }
 
                 if (shield.getShieldHealth() >= 0) {
@@ -817,7 +821,8 @@ public class InstanceManager {
                         critMultiplier,
                         isCrit,
                         true,
-                        WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED
+                        WarlordsDamageHealingFinalEvent.FinalEventFlag.SHIELDED,
+                        new ArrayList<>(List.of(new CustomInstanceFlags.InstanceShieldsInstanceFlag(List.of(shield))))
                 ));
                 warlordsEntity.getSecondStats().addDamageHealingEventAsSelf(finalEvent.get());
                 source.getSecondStats().addDamageHealingEventAsAttacker(finalEvent.get());

@@ -49,11 +49,11 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float max,
             float critChance,
             float critMultiplier,
-            boolean instanceType,
+            boolean instanceTypeDamage,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags
     ) {
-        this(player, source, cause, min, max, critChance, critMultiplier, instanceType, flags, customFlags, null);
+        this(player, source, cause, min, max, critChance, critMultiplier, instanceTypeDamage, flags, customFlags, null);
     }
 
     public WarlordsDamageHealingEvent(
@@ -64,7 +64,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float max,
             float critChance,
             float critMultiplier,
-            boolean instanceType,
+            boolean instanceTypeDamage,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
             @Nullable UUID uuid
@@ -76,7 +76,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.max = max;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
-        this.instanceType = instanceType ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING;
+        this.instanceType = instanceTypeDamage ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING;
         this.flags = flags;
         this.customFlags = customFlags;
         this.uuid = uuid;

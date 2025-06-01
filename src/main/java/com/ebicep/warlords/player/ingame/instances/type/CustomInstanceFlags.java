@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.ingame.instances.type;
 
+import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -26,6 +27,10 @@ public interface CustomInstanceFlags {
     }
 
     record FinalEventInstanceFlag(WarlordsDamageHealingFinalEvent finalEvent) implements CustomInstanceFlags {
+
+    }
+
+    record InstanceShieldsInstanceFlag(List<Shield> shields) implements CustomInstanceFlags {
 
     }
 
