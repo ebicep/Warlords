@@ -1,10 +1,10 @@
 package com.ebicep.warlords.player.ingame;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;

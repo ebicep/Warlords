@@ -1,11 +1,11 @@
 package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.SkillBoosts;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

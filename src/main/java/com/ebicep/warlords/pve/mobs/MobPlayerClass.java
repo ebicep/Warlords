@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 
 import java.util.Arrays;
 
@@ -37,13 +37,16 @@ public class MobPlayerClass extends AbstractPlayerClass {
             float damageResistance,
             AbstractAbility... abilities
     ) {
-        super(name,
+        super(
+                "MobPlayerClass",
+                name,
                 maxHealth,
                 maxEnergy,
                 0,
                 0,
                 damageResistance,
-                abilities
+                0,
+                Arrays.asList(abilities)
         );
         this.energyPerSec = (int) Math.round(
                 Arrays.stream(abilities)

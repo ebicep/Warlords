@@ -712,29 +712,28 @@ public class DebugMenuPlayerOptions {
                 setSpec(player, target, selectedSpec);
                 return;
             }
-            ApplySpecBoostsOption.PlayerSpecAppliedBoost appliedBoost = option.getPlayerSpecBoosts().get(target);
-            if (appliedBoost != null) {
-                DatabaseManager.getPlayer(target.getUuid(), databasePlayer -> {
-                            Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
-                            for (int i = 0; i < specBoosts.size(); i++) {
-                                SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
 
-                                int finalI = i;
-                                menu.setItem(i + 2, 1,
-                                        new ItemBuilder(selectedSpec.specType.itemStack)
-                                                .name(specBoost.getName())
-                                                .lore(WordWrap.wrap(specBoost.getDescription(), specBoost.getMaxDescriptionWidth()))
-                                                .get(),
-                                        (m, e) -> {
-                                            selectedBoosts.put(selectedSpec, finalI);
-                                            DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
-                                            setSpec(player, target, selectedSpec);
-                                        }
-                                );
-                            }
+            DatabaseManager.getPlayer(target.getUuid(), databasePlayer -> {
+                        Map<Specializations, Integer> selectedBoosts = databasePlayer.getSpecBoosts();
+                        for (int i = 0; i < specBoosts.size(); i++) {
+                            SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(i);
+
+                            int finalI = i;
+                            menu.setItem(i + 2, 1,
+                                    new ItemBuilder(selectedSpec.specType.itemStack)
+                                            .name(specBoost.getName())
+                                            .lore(WordWrap.wrap(specBoost.getDescription(), specBoost.getMaxDescriptionWidth()))
+                                            .get(),
+                                    (m, e) -> {
+                                        selectedBoosts.put(selectedSpec, finalI);
+                                        DatabaseManager.queueUpdatePlayerAsync(databasePlayer);
+                                        setSpec(player, target, selectedSpec);
+                                    }
+                            );
                         }
-                );
-            }
+                    }
+            );
+
             menu.setItem(3, 3, MENU_BACK, (m, e) -> openSpecMenu(player, target));
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
             menu.openForPlayer(player);

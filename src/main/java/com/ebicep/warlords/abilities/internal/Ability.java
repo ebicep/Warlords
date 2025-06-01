@@ -228,7 +228,7 @@ public class Ability<T extends AbstractAbility> {
         }
         for (Specializations spec : Specializations.VALUES) {
             Ability<?>[] abilities = new Ability[5];
-            List<AbstractAbility> abstractAbilities = spec.create.get().getAbilities();
+            List<AbstractAbility> abstractAbilities = spec.create().getAbilities();
             for (int i = 0; i < abstractAbilities.size(); i++) {
                 AbstractAbility ability = abstractAbilities.get(i);
                 Ability<?> abilityRegistry = getAbility(ability.getClass());

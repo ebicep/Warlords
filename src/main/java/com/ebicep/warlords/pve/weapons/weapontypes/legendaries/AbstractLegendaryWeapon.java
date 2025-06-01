@@ -2,7 +2,6 @@ package com.ebicep.warlords.pve.weapons.weapontypes.legendaries;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;

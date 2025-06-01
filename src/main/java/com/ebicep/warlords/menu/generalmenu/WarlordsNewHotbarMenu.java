@@ -4,8 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.Default;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
@@ -110,7 +110,13 @@ public class WarlordsNewHotbarMenu {
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
                               .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
-                                      noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
+                                      noDamageResistance ? NamedTextColor.RED : AbilityDescriptionBuilder.COLOR_BROWN
+                              ))
+        );
+        boolean noSpeed = apc.getSpeed() == 0;
+        icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY)
+                              .append(Component.text(noSpeed ? "None" : NumberFormat.formatOptionalTenths(apc.getSpeed()) + "%",
+                                      noSpeed ? NamedTextColor.RED : NamedTextColor.WHITE
                               ))
         );
 
@@ -317,7 +323,7 @@ public class WarlordsNewHotbarMenu {
                                     ArmorManager.resetArmor(player);
                                 }
 
-                                AbstractPlayerClass apc = spec.create.get();
+                                AbstractPlayerClass apc = spec.create();
                                 ItemStack weaponSkin = playerSettings
                                         .getWeaponSkins()
                                         .getOrDefault(spec, Weapons.STEEL_SWORD)
@@ -675,7 +681,7 @@ public class WarlordsNewHotbarMenu {
                                                             .append(Component.text("'s weapon skin to: §b" + weapon.getName() + "!")));
                                 playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                                 openWeaponMenu(player, pageNumber);
-                                AbstractPlayerClass apc = selectedSpec.create.get();
+                                AbstractPlayerClass apc = selectedSpec.create();
                                 ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
                                 player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(weaponSkin))
                                         .name(Component.text("Weapon Skin Preview", NamedTextColor.GREEN))
@@ -871,8 +877,8 @@ public class WarlordsNewHotbarMenu {
 
             //showing change of ability
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-            AbstractPlayerClass apc = selectedSpec.create.get();
-            AbstractPlayerClass apc2 = selectedSpec.create.get();
+            AbstractPlayerClass apc = selectedSpec.create();
+            AbstractPlayerClass apc2 = selectedSpec.create();
             List<AbstractAbility> abilities = apc.getAbilities();
             List<AbstractAbility> abilities2 = apc2.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {

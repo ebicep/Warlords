@@ -157,7 +157,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         this.speed.addModifier(new MotionModifierBuilder()
                 .setFrom(this)
                 .setName("BASE")
-                .setModifier(13)
+                .setModifier(13 + spec.getSpeed())
                 .setDuration(-1)
                 .addAddons(
                         new BaseToWalkingSpeedValueModifier(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED),

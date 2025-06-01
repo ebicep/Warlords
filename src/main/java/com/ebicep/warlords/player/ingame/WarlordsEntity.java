@@ -8,7 +8,6 @@ import com.ebicep.warlords.abilities.internal.HealingPowerup;
 import com.ebicep.warlords.abilities.internal.Overheal;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -23,6 +22,7 @@ import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.permissions.Permissions;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.ArmorManager;
 import com.ebicep.warlords.player.general.MinuteStats;
 import com.ebicep.warlords.player.general.Specializations;
@@ -158,7 +158,7 @@ public abstract class WarlordsEntity {
         this.uuid = player.getUniqueId();
         this.entity = player;
         this.specClass = specialization;
-        this.spec = specialization.create.get();
+        this.spec = specialization.create();
         this.currentHealth = this.spec.getMaxHealth();
         this.health = new FloatModifiable(this.currentHealth);
         this.health.addFilter(maxBaseHealthFilter);
@@ -189,7 +189,7 @@ public abstract class WarlordsEntity {
             @Nonnull Team team,
             @Nonnull Specializations specClass
     ) {
-        this(uuid, name, entity, game, team, specClass.create.get());
+        this(uuid, name, entity, game, team, specClass.create());
         this.specClass = specClass;
     }
 
@@ -1451,7 +1451,7 @@ public abstract class WarlordsEntity {
     public abstract void updateEntity();
 
     public void setSpec(Specializations spec) {
-        this.spec = spec.create.get();
+        this.spec = spec.create();
         this.spec.updateCustomStats(this);
         this.health.setBaseValue(this.spec.getMaxHealth());
         this.health.clearModifiers();

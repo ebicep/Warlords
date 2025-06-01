@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes;
+package com.ebicep.warlords.player.general;
 
 import com.ebicep.warlords.abilities.internal.AbilityStats;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
@@ -35,34 +35,44 @@ public abstract class AbstractPlayerClass {
 
     protected int maxHealth;
     protected int maxEnergy;
-    protected float energyPerSec;
-    protected float energyPerHit;
+    protected int energyPerSec;
+    protected int energyPerHit;
     protected float damageResistance;
+    protected int speed;
     protected List<AbstractAbility> abilities;
     protected int abilityGroup = 0; // each group is 4 abilities, excluding weapon
     protected boolean abilityCD = true;
     protected boolean secondaryAbilityCD = true;
     protected String name;
-    protected String className;
-    protected String classNameShort;
+    protected String className = "";
+    protected String classNameShort = "";
 
     public AbstractPlayerClass(
+            String className,
             String name,
             int maxHealth,
             int maxEnergy,
             int energyPerSec,
             int energyPerHit,
             float damageResistance,
-            AbstractAbility... abilities
+            int speed,
+            List<AbstractAbility> abilities
     ) {
+        this.className = className;
+        this.classNameShort = className.substring(0, 3).toUpperCase();
+        this.name = name;
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
         this.energyPerHit = energyPerHit;
         this.damageResistance = damageResistance;
-        this.abilities = new ArrayList<>(List.of(abilities));
+        this.speed = speed;
+        this.abilities = new ArrayList<>(abilities);
         this.abilities.forEach(abstractAbility -> abstractAbility.init(abstractAbility.getBuilder()));
-        this.name = name;
+    }
+
+    public float getSpeed() {
+        return speed;
     }
 
     public void updateCustomStats(WarlordsEntity warlordsEntity) {
@@ -237,11 +247,11 @@ public abstract class AbstractPlayerClass {
         return maxEnergy;
     }
 
-    public float getEnergyPerSec() {
+    public int getEnergyPerSec() {
         return energyPerSec;
     }
 
-    public float getEnergyPerHit() {
+    public int getEnergyPerHit() {
         return energyPerHit;
     }
 

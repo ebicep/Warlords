@@ -1,7 +1,6 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.repositories.events.pojos.DatabaseGameEvent;
 import com.ebicep.warlords.database.repositories.games.GamesCollections;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -37,10 +36,7 @@ import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.PlayerHotBarItemListener;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
-import com.ebicep.warlords.player.general.PlayerSettings;
-import com.ebicep.warlords.player.general.SpecType;
-import com.ebicep.warlords.player.general.Specializations;
-import com.ebicep.warlords.player.general.Weapons;
+import com.ebicep.warlords.player.general.*;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.bukkit.LocationFactory;
 import com.ebicep.warlords.util.bukkit.WordWrap;
@@ -768,7 +764,7 @@ public enum GameMode {
         options.add(new PreGameItemOption(1, (g, p) -> {
             PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(p.getUniqueId());
             Specializations selectedSpec = playerSettings.getSelectedSpec();
-            AbstractPlayerClass apc = selectedSpec.create.get();
+            AbstractPlayerClass apc = selectedSpec.create();
 
             ItemStack weaponSkin = playerSettings.getWeaponSkins().getOrDefault(selectedSpec, Weapons.STEEL_SWORD).getItem();
             return new ItemBuilder(apc.getWeapon().getItem(weaponSkin))

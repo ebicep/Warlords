@@ -2,10 +2,10 @@ package com.ebicep.warlords.game.option;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.marker.GameMarker;
 import com.ebicep.warlords.game.option.marker.WeaponDisplayMarker;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;

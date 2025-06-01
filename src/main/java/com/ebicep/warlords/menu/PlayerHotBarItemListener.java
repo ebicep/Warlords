@@ -1,12 +1,12 @@
 package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.PartyPlayer;
 import com.ebicep.warlords.party.RegularGamesMenu;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.Weapons;
@@ -111,7 +111,7 @@ public class PlayerHotBarItemListener implements Listener {
         UUID uuid = player.getUniqueId();
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         Specializations selectedSpec = playerSettings.getSelectedSpec();
-        AbstractPlayerClass apc = selectedSpec.create.get();
+        AbstractPlayerClass apc = selectedSpec.create();
 
         if (!fromGame) {
             Pair<Party, PartyPlayer> partyPlayerPair = PartyManager.getPartyAndPartyPlayerFromAny(uuid);

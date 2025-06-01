@@ -1,9 +1,9 @@
 package com.ebicep.warlords.abilities.internal;
 
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
+import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

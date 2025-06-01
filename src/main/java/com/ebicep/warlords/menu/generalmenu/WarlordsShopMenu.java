@@ -1,8 +1,8 @@
 package com.ebicep.warlords.menu.generalmenu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -120,7 +120,7 @@ public class WarlordsShopMenu {
                         playerSettings.setSelectedSpec(spec);
                         ArmorManager.resetArmor(player);
 
-                        AbstractPlayerClass apc = spec.create.get();
+                        AbstractPlayerClass apc = spec.create();
                         ItemStack weaponSkin = playerSettings.getWeaponSkins()
                                                              .getOrDefault(spec, Weapons.STEEL_SWORD)
                                                              .getItem();
@@ -178,8 +178,8 @@ public class WarlordsShopMenu {
 
         //showing change of ability
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
-        AbstractPlayerClass apc = selectedSpec.create.get();
-        AbstractPlayerClass apc2 = selectedSpec.create.get();
+        AbstractPlayerClass apc = selectedSpec.create();
+        AbstractPlayerClass apc2 = selectedSpec.create();
         List<AbstractAbility> abilities = apc.getAbilities();
         List<AbstractAbility> abilities2 = apc2.getAbilities();
         for (int i = 0; i < abilities.size(); i++) {
@@ -256,7 +256,7 @@ public class WarlordsShopMenu {
                                                         .append(Component.text(weapon.getName() + "!", NamedTextColor.AQUA)));
                             playerSettings.getWeaponSkins().put(selectedSpec, weapon);
                             openWeaponMenu(player, pageNumber);
-                            AbstractPlayerClass apc = selectedSpec.create.get();
+                            AbstractPlayerClass apc = selectedSpec.create();
                             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                                                                                                                    .getOrDefault(selectedSpec,
                                                                                                                            Weapons.FELFLAME_BLADE
@@ -542,7 +542,7 @@ public class WarlordsShopMenu {
         Menu menu = new Menu("Class Information", 9);
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(player.getUniqueId());
         Specializations selectedSpec = playerSettings.getSelectedSpec();
-        AbstractPlayerClass apc = selectedSpec.create.get();
+        AbstractPlayerClass apc = selectedSpec.create();
 
         ItemBuilder icon = new ItemBuilder(selectedSpec.specType.itemStack);
         icon.name(Component.text(selectedSpec.name, NamedTextColor.GREEN));
@@ -564,9 +564,16 @@ public class WarlordsShopMenu {
         boolean noDamageResistance = apc.getDamageResistance() == 0;
         icon.addLore(Component.text("Damage Reduction: ", NamedTextColor.GRAY)
                               .append(Component.text(noDamageResistance ? "None" : NumberFormat.formatOptionalTenths(apc.getDamageResistance()) + "%",
-                                      noDamageResistance ? NamedTextColor.RED : NamedTextColor.YELLOW
+                                      noDamageResistance ? NamedTextColor.RED : AbilityDescriptionBuilder.COLOR_BROWN
                               ))
         );
+        boolean noSpeed = apc.getSpeed() == 0;
+        icon.addLore(Component.text("Speed: ", NamedTextColor.GRAY)
+                              .append(Component.text(noSpeed ? "None" : NumberFormat.formatOptionalTenths(apc.getSpeed()) + "%",
+                                      noSpeed ? NamedTextColor.RED : NamedTextColor.WHITE
+                              ))
+        );
+
 
         // not including skill boost - these display base stats
         List<AbstractAbility> abilities = apc.getAbilities();
