@@ -28,11 +28,11 @@ public class RemedicChainsBranch extends AbstractUpgradeBranch<RemedicChains> {
                 """
                         +20 Block link break radius
                         
-                        Increase bonus damage dealt by an additional 8% and temporarily increase all linked allies' max health by 25%.""",
+                        Increase bonus damage dealt by an additional 80 and temporarily increase all linked allies' max health by 25%.""",
                 50000,
                 () -> {
                     ability.setLinkBreakRadius(ability.getLinkBreakRadius() + 20);
-                    ability.setAllyDamageIncrease(20);
+                    ability.getDamageValues().getBonusDamage().value().addAdditiveModifier("Crystallizing Chains", 80);
                 }
         );
         masterUpgrade2 = new Upgrade(

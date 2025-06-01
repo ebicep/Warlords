@@ -1,7 +1,7 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
-import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
+import com.ebicep.warlords.abilities.internal.Leech;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
@@ -74,23 +74,19 @@ public class EventForsakenRespite extends AbstractMob implements BossMinionMob, 
 
         @Override
         public boolean onPveActivate(@Nonnull WarlordsEntity wp, PveOption pveOption) {
-
-
             PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
                                .enemiesOf(wp)
                                .forEach(warlordsPlayer ->
-                                       ImpalingStrike.giveLeechCooldown(
-                                               wp,
-                                               warlordsPlayer,
-                                               3,
-                                               .25f,
-                                               .15f,
-                                               warlordsDamageHealingFinalEvent -> {
+                                       Leech.giveLeechCooldown(Leech.LeechInstance
+                                               .create(wp, warlordsPlayer)
+                                               .withLeechTickDuration(60)
+                                               .withLeechAmount(20)
+                                       )
+                               );
 
-                                               }
-                                       ));
             return true;
         }
 
     }
+
 }

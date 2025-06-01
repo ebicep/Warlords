@@ -191,6 +191,7 @@ public abstract class WarlordsEntity {
     ) {
         this(uuid, name, entity, game, team, specClass.create());
         this.specClass = specClass;
+        this.specClass.init(this);
     }
 
     public WarlordsEntity(

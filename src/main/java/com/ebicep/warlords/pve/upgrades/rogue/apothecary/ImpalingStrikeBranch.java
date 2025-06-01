@@ -6,8 +6,7 @@ import com.ebicep.warlords.pve.upgrades.*;
 
 public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> {
 
-    float selfLeech = ability.getLeechSelfAmount();
-    float allyLeech = ability.getLeechAllyAmount();
+    float leechAmount = ability.getLeechAmount();
 
     @Override
     public void runOnce() {
@@ -35,8 +34,7 @@ public class ImpalingStrikeBranch extends AbstractUpgradeBranch<ImpalingStrike> 
 
                     @Override
                     public void run(float value) {
-                        ability.setLeechSelfAmount(selfLeech + value);
-                        ability.setLeechAllyAmount(allyLeech + value);
+                        ability.setLeechAmount(leechAmount + value);
                     }
                 }, 1.5f)
                 .addTo(treeB);

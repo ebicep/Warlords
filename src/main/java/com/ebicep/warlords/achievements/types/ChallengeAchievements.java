@@ -2,6 +2,7 @@ package com.ebicep.warlords.achievements.types;
 
 import com.ebicep.warlords.abilities.*;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.abilities.internal.Leech;
 import com.ebicep.warlords.abilities.internal.Shield;
 import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -227,7 +228,7 @@ public enum ChallengeAchievements implements Achievement {
                                    .enemiesOf(warlordsEntity)
                                    .filter(enemy -> new CooldownFilter<>(enemy, RegularCooldown.class)
                                            .filterCooldownFrom(warlordsEntity)
-                                           .filterCooldownClassAndMapToObjectsOfClass(ImpalingStrike.ImpalingStrikeData.class)
+                                           .filterCooldownClassAndMapToObjectsOfClass(Leech.LeechData.class)
                                            .anyMatch(impalingStrike -> impalingStrike.getHealingDoneFromEnemyCarrier() >= 3000))
                                    .findAny()
                                    .isPresent();

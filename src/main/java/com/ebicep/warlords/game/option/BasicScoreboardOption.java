@@ -89,7 +89,7 @@ public class BasicScoreboardOption implements Option {
                 }
                 return Collections.singletonList(
                         Component.text("Spec: ", NamedTextColor.WHITE)
-                                 .append(Component.text(player.getSpec().getClassName(), NamedTextColor.GREEN))
+                                 .append(Component.text(player.getSpec().getName(), NamedTextColor.GREEN))
                 );
             }
         };

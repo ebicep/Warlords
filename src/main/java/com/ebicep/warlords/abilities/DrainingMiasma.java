@@ -38,10 +38,8 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
     private final DamageValues damageValues = new DamageValues();
     private int maxHealthDamage = 3;
     private int tickDuration = 100;
-    private int leechDuration = 5;
+    private int leechTickDuration = 5;
     private int radius = 8;
-    private float leechSelfAmount = 25;
-    private float leechAllyAmount = 15;
     private int slowness = 25;
     private int slownessDuration = 3;
 
@@ -54,36 +52,10 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         super.init(builder);
         this.maxHealthDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxHealthDamage"), int.class);
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-        this.leechDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechDuration"), int.class);
+        this.leechTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechTickDuration"), int.class);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
-        this.leechSelfAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechSelfAmount"), float.class);
-        this.leechAllyAmount = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechAllyAmount"), float.class);
         this.slowness = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slowness"), int.class);
         this.slownessDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("slownessDuration"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
-                                               .damage(damageValues.miasmaDamage)
-                                               .text(" + ")
-                                               .percent(maxHealthDamage, NamedTextColor.RED)
-                                               .text(" of their max health as damage per second, for ")
-                                               .durationTicks(tickDuration)
-                                               .text(". Enemies poisoned by your Draining Miasma are slowed by ")
-                                               .percent(slowness, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationSeconds(slownessDuration)
-                                               .text(" on cast. Has a radius of ")
-                                               .blocks(radius)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Each enemy hit will be afflicted with ")
-                                               .text("LEECH", NamedTextColor.DARK_GREEN)
-                                               .text(" for ")
-                                               .durationSeconds(leechDuration)
-                                               .text(".")
-                                               .build();
     }
 
     @Override
@@ -158,9 +130,13 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                                     }
                                 });
                 }
-                ImpalingStrike.giveLeechCooldown(wp, miasmaTarget, leechDuration, leechSelfAmount / 100f, leechAllyAmount / 100f, warlordsDamageHealingFinalEvent -> {
+                Leech.giveLeechCooldown(Leech.LeechInstance
+                        .create(wp, miasmaTarget)
+                        .withImpalingStrike()
+                        .withLeechTickDuration(leechTickDuration)
+                        .withFinalEventConsumer(finalEvent -> {
                             data.numberOfLeechProcd++;
-                        }
+                        })
                 );
             } else {
                 if (pveMasterUpgrade2) {
@@ -185,6 +161,30 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             }
         }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Summon a toxin-filled cloud around you, poisoning all enemies inside the area. Poisoned enemies take ")
+                                               .damage(damageValues.miasmaDamage)
+                                               .text(" + ")
+                                               .percent(maxHealthDamage, NamedTextColor.RED)
+                                               .text(" of their max health as damage per second, for ")
+                                               .durationTicks(tickDuration)
+                                               .text(". Enemies poisoned by your Draining Miasma are slowed by ")
+                                               .percent(slowness, NamedTextColor.WHITE)
+                                               .text(" for ")
+                                               .durationSeconds(slownessDuration)
+                                               .text(" on cast. Has a radius of ")
+                                               .blocks(radius)
+                                               .text(".")
+                                               .emptyLine()
+                                               .text("Each enemy hit will be afflicted with ")
+                                               .text("LEECH", NamedTextColor.DARK_GREEN)
+                                               .text(" for ")
+                                               .durationSeconds(leechTickDuration)
+                                               .text(".")
+                                               .build();
     }
 
     @Override
@@ -220,12 +220,12 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
         return stats;
     }
 
-    public int getLeechDuration() {
-        return leechDuration;
+    public int getLeechTickDuration() {
+        return leechTickDuration;
     }
 
-    public void setLeechDuration(int leechDuration) {
-        this.leechDuration = leechDuration;
+    public void setLeechTickDuration(int leechTickDuration) {
+        this.leechTickDuration = leechTickDuration;
     }
 
     public int getMaxHealthDamage() {
@@ -234,22 +234,6 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
     public void setMaxHealthDamage(int maxHealthDamage) {
         this.maxHealthDamage = maxHealthDamage;
-    }
-
-    public float getLeechSelfAmount() {
-        return leechSelfAmount;
-    }
-
-    public void setLeechSelfAmount(float leechSelfAmount) {
-        this.leechSelfAmount = leechSelfAmount;
-    }
-
-    public float getLeechAllyAmount() {
-        return leechAllyAmount;
-    }
-
-    public void setLeechAllyAmount(float leechAllyAmount) {
-        this.leechAllyAmount = leechAllyAmount;
     }
 
     public static class DamageValues implements Value.ValueHolder {

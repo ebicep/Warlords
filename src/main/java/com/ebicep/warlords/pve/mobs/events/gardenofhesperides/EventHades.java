@@ -1,10 +1,10 @@
 package com.ebicep.warlords.pve.mobs.events.gardenofhesperides;
 
 import com.ebicep.warlords.abilities.FallenSouls;
-import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.abilities.IncendiaryCurse;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
+import com.ebicep.warlords.abilities.internal.Leech;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
@@ -142,7 +142,11 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        ImpalingStrike.giveLeechCooldown(warlordsNPC, receiver, 3, .20f, .35f, finalEvent -> {});
+        Leech.giveLeechCooldown(Leech.LeechInstance
+                .create(warlordsNPC, receiver)
+                .withLeechTickDuration(60)
+                .withLeechAmount(20)
+        );
     }
 
     @Override
@@ -199,4 +203,5 @@ public class EventHades extends AbstractMob implements BossMob, God, ForceGivesE
     public double weaponDropRate() {
         return BossMob.super.weaponDropRate() * 3;
     }
+
 }

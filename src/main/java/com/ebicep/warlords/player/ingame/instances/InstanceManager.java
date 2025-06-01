@@ -53,6 +53,13 @@ public class InstanceManager {
             return Optional.empty();
         }
         InstanceDebugHoverable debugHoverable = new InstanceDebugHoverable();
+        List<TextComponent> debugMessages = event.getDebugMessages();
+        if (!debugMessages.isEmpty()) {
+            debugHoverable.appendTitle("Debug", NamedTextColor.AQUA);
+            for (TextComponent debugMessage : debugMessages) {
+                debugHoverable.append(InstanceDebugHoverable.LevelBuilder.create(1).value(debugMessage));
+            }
+        }
         debugHoverable.appendTitle("Pre Event", NamedTextColor.AQUA);
         debugHoverable.appendEvent(event);
         Bukkit.getPluginManager().callEvent(event);
@@ -96,6 +103,7 @@ public class InstanceManager {
         boolean isFallDamage = cause.equals("Fall");
         EnumSet<InstanceFlags> flags = event.getFlags();
         List<CustomInstanceFlags> customFlags = event.getCustomFlags();
+        List<TextComponent> debugMessages = event.getDebugMessages();
         boolean trueDamage = flags.contains(InstanceFlags.TRUE_DAMAGE);
         boolean pierceDamage = flags.contains(InstanceFlags.PIERCE);
         boolean ignoreDamageReduction = pierceDamage || flags.contains(InstanceFlags.IGNORE_DAMAGE_REDUCTION_ONLY);
@@ -697,7 +705,8 @@ public class InstanceManager {
                                     100,
                                     true,
                                     EnumSet.of(InstanceFlags.TRUE_DAMAGE, InstanceFlags.IGNORE_CRIT_MODIFIERS),
-                            newCustomFlags
+                            newCustomFlags,
+                            debugMessages
                             )
                     );
                 } else {

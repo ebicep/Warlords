@@ -14,6 +14,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.VitalityConcoctionBranch;
+import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -24,8 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class VitalityConcoction extends AbstractAbility implements PurpleAbilityIcon, Duration, AbilityStats<VitalityConcoction, VitalityConcoction.VitalityConcoctionStats> {
 
@@ -33,6 +33,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
     private int tickDuration = 15;
     private int damageResistance = 80;
     private int speedBoost = 150;
+    private float leechRadius = 3;
 
     public VitalityConcoction() {
         super(AbstractAbilityBuilder.create("vitalityConcoction").pvp());
@@ -44,20 +45,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.damageResistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageResistance"), int.class);
         this.speedBoost = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBoost"), int.class);
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Consume a powerful concoction, granting yourself an additional ")
-                                               .percent(speedBoost, NamedTextColor.WHITE)
-                                               .text(" movement speed, ")
-                                               .percent(damageResistance, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" damage reduction, and an immunity to de-buffs for ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Vitality Concoction has reduced effectiveness when holding a flag.")
-                                               .build();
+        this.leechRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechRadius"), float.class);
     }
 
     @Override
@@ -74,10 +62,34 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
             );
         }
         wp.addSpeedModifier(wp, name, wp.hasFlag() ? 40 : speedBoost, tickDuration);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>(name, "STIM", VitalityConcoction.class, new VitalityConcoction(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-        }, tickDuration
+        Set<WarlordsEntity> leeched = new HashSet<>();
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "STIM",
+                VitalityConcoction.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 3 == 0) {
+                        PlayerFilter.entitiesAround(wp, leechRadius, leechRadius, leechRadius)
+                                    .aliveEnemiesOf(wp)
+                                    .excluding(leeched)
+                                    .forEach(warlordsEntity -> {
+                                        leeched.add(warlordsEntity);
+                                        Leech.giveLeechCooldown(Leech.LeechInstance
+                                                .create(wp, warlordsEntity)
+                                                .withImpalingStrike()
+                                        );
+                                    });
+                    }
+                })
         ) {
 
             @Override
@@ -96,6 +108,24 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
             }
         }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Consume a powerful concoction, granting yourself an additional ")
+                                               .percent(speedBoost, NamedTextColor.WHITE)
+                                               .text(" movement speed, ")
+                                               .percent(damageResistance, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" damage reduction, and an immunity to de-buffs for ")
+                                               .durationTicks(tickDuration)
+                                               .text(". Enemies within ")
+                                               .blocks(leechRadius)
+                                               .text(" will be inflicted with ")
+                                               .text("LEECH", NamedTextColor.DARK_GREEN)
+                                               .text(" while " + name + " is active.")
+                                               .emptyLine()
+                                               .text("Vitality Concoction has reduced effectiveness when holding a flag.")
+                                               .build();
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -37,6 +38,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
     private float critMultiplier;
     private final EnumSet<InstanceFlags> flags;
     private final List<CustomInstanceFlags> customFlags;
+    private List<TextComponent> debugMessages;
     @Nullable
     private final UUID uuid;
     private boolean cancelled;
@@ -51,9 +53,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float critMultiplier,
             boolean instanceTypeDamage,
             EnumSet<InstanceFlags> flags,
-            List<CustomInstanceFlags> customFlags
+            List<CustomInstanceFlags> customFlags,
+            List<TextComponent> debugMessages
     ) {
-        this(player, source, cause, min, max, critChance, critMultiplier, instanceTypeDamage, flags, customFlags, null);
+        this(player, source, cause, min, max, critChance, critMultiplier, instanceTypeDamage, flags, customFlags, debugMessages, null);
     }
 
     public WarlordsDamageHealingEvent(
@@ -67,6 +70,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             boolean instanceTypeDamage,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
+            List<TextComponent> debugMessages,
             @Nullable UUID uuid
     ) {
         super(player);
@@ -79,6 +83,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.instanceType = instanceTypeDamage ? InstanceBuilder.InstanceType.DAMAGE : InstanceBuilder.InstanceType.HEALING;
         this.flags = flags;
         this.customFlags = customFlags;
+        this.debugMessages = debugMessages;
         this.uuid = uuid;
     }
 
@@ -94,6 +99,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
             float critMultiplier,
             EnumSet<InstanceFlags> flags,
             List<CustomInstanceFlags> customFlags,
+            List<TextComponent> debugMessages,
             @Nullable UUID uuid
     ) {
         super(player);
@@ -107,6 +113,7 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         this.customFlags = customFlags;
+        this.debugMessages = debugMessages;
         this.uuid = uuid;
     }
 
@@ -195,6 +202,10 @@ public class WarlordsDamageHealingEvent extends AbstractWarlordsEntityEvent impl
 
     public List<CustomInstanceFlags> getCustomFlags() {
         return customFlags;
+    }
+
+    public List<TextComponent> getDebugMessages() {
+        return debugMessages;
     }
 
     @Nullable

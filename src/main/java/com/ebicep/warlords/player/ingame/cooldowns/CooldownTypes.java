@@ -12,6 +12,7 @@ public enum CooldownTypes {
     ADDON("ADDON"),
     ASPECT("ASPECT"),
     FIELD_EFFECT("FIELD EFFECT"),
+    SPEC("SPEC"),
     SPEC_BOOST("SPEC BOOST"),
 
     ;

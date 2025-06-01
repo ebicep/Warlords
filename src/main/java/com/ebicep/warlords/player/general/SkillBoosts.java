@@ -1187,7 +1187,7 @@ public enum SkillBoosts {
             ImpalingStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ImpalingStrike impalingStrike) {
-                    impalingStrike.setLeechDuration(impalingStrike.getLeechDuration() + 5);
+                    impalingStrike.setLeechTickDuration(impalingStrike.getLeechTickDuration() + 5);
                     impalingStrike.getDamageValues()
                                   .getStrikeDamage()
                                   .forEachValue(floatModifiable -> {
@@ -1230,7 +1230,7 @@ public enum SkillBoosts {
     REMEDIC_CHAINS("Remedic Chains",
             List.of(
                     Component.text("Increase the damage bonus of Remedic Chains by "),
-                    Component.text("10%", NamedTextColor.RED),
+                    Component.text("30", NamedTextColor.RED),
                     Component.text(" and increase the link break range by "),
                     Component.text("10", NamedTextColor.RED),
                     Component.text(" blocks.")
@@ -1238,7 +1238,7 @@ public enum SkillBoosts {
             RemedicChains.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RemedicChains remedicChains) {
-                    remedicChains.setAllyDamageIncrease(remedicChains.getAllyDamageIncrease() + 10);
+                    remedicChains.getDamageValues().getBonusDamage().value().addAdditiveModifier("Skill Boost", 30);
                     remedicChains.setLinkBreakRadius(remedicChains.getLinkBreakRadius() + 10);
                 }
             }
@@ -1254,7 +1254,7 @@ public enum SkillBoosts {
             DrainingMiasma.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DrainingMiasma drainingMiasma) {
-                    drainingMiasma.setLeechDuration(drainingMiasma.getLeechDuration() + 5);
+                    drainingMiasma.setLeechTickDuration(drainingMiasma.getLeechTickDuration() + 5);
                     abstractAbility.getCooldown().addMultiplicativeModifierMult("Skill Boost", .8f);
                 }
             }

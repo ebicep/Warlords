@@ -79,6 +79,11 @@ public class InstanceDebugHoverable {
         debugMessage.append(levelBuilder.build());
     }
 
+    public void append(Component component) {
+        debugMessage.append(Component.newline());
+        debugMessage.append(component);
+    }
+
     public TextComponent.Builder getDebugMessage() {
         return debugMessage;
     }
@@ -118,6 +123,11 @@ public class InstanceDebugHoverable {
 
         public LevelBuilder value(ComponentBuilder componentBuilder) {
             this.value = componentBuilder.build();
+            return this;
+        }
+
+        public LevelBuilder value(TextComponent component) {
+            this.value = component;
             return this;
         }
 

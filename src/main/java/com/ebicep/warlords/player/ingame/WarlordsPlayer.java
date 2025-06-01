@@ -375,6 +375,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             HandlerList.unregisterAll(listener);
         }
         this.specClass = spec;
+        this.specClass.init(this);
 
         PlayerSettings playerSettings = PlayerSettings.getPlayerSettings(uuid);
         cosmeticSettings.setWeaponSkin(playerSettings.getWeaponSkins().get(spec));
