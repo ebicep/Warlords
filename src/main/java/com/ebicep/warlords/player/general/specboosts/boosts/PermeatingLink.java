@@ -1,0 +1,87 @@
+package com.ebicep.warlords.player.general.specboosts.boosts;
+
+import com.ebicep.warlords.abilities.Soulbinding;
+import com.ebicep.warlords.abilities.SpiritLink;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
+import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PersistentCooldown;
+
+import java.util.List;
+
+public class PermeatingLink implements SpecBoostManager.SpecBoost<PermeatingLink> {
+
+    private float meleeDamageIncreasePercent;
+    private float spiritLinkDamageReductionDecreasePercent;
+    private float spiritLinkDamageToSoulboundIncreasePercent;
+
+    @Override
+    public void init() {
+        this.meleeDamageIncreasePercent = getValue("meleeDamageIncreasePercent", float.class);
+        this.spiritLinkDamageReductionDecreasePercent = getValue("spiritLinkDamageReductionDecreasePercent", float.class);
+        this.spiritLinkDamageToSoulboundIncreasePercent = getValue("spiritLinkDamageToSoulboundIncreasePercent", float.class);
+    }
+
+    @Override
+    public String getConfigFieldName() {
+        return "permeatingLink";
+    }
+
+    @Override
+    public List<Object> getVariables() {
+        return List.of(meleeDamageIncreasePercent, spiritLinkDamageReductionDecreasePercent, spiritLinkDamageToSoulboundIncreasePercent);
+    }
+
+    @Override
+    public SpecBoostManager.Boost create() {
+        return new Boost();
+    }
+
+    @Override
+    public PermeatingLink get() {
+        return this;
+    }
+
+    public class Boost implements SpecBoostManager.Boost {
+
+        @Override
+        public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getAbilitiesMatching(SpiritLink.class).forEach(spiritLink -> {
+                spiritLink.setDamageReduction(spiritLink.getDamageReduction() - spiritLinkDamageReductionDecreasePercent);
+            });
+
+            warlordsPlayer.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                    getStringName(),
+                    null,
+                    Boost.class,
+                    null,
+                    warlordsPlayer,
+                    CooldownTypes.SPEC_BOOST,
+                    cooldownManager -> {},
+                    false
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (event.getCause().isEmpty()) {
+                        return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(meleeDamageIncreasePercent);
+                    }
+                    if (event.getAbility() instanceof SpiritLink) {
+                        boolean boundPlayer = new CooldownFilter<>(warlordsPlayer, PersistentCooldown.class)
+                                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
+                                .anyMatch(soulbindingData -> soulbindingData.hasBoundPlayer(event.getWarlordsEntity()));
+                        if (boundPlayer) {
+                            return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(spiritLinkDamageToSoulboundIncreasePercent);
+                        }
+                    }
+                    return currentDamageValue;
+                }
+            });
+        }
+
+    }
+
+}

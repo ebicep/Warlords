@@ -82,6 +82,14 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         return hitCounter;
     }
 
+    public float getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(float damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
     @Override
     protected void onHit(WarlordsEntity we, int hitCounter) {
         we.playSound(we.getLocation(), "mage.firebreath.activation", 1, 1);
