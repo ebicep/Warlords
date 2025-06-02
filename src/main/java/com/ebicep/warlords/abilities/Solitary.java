@@ -3,13 +3,17 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
+import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -37,6 +41,10 @@ public class Solitary extends AbstractAbility implements OrangeAbilityIcon, Dura
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
+        LocationUtils.getCircle(wp.getLocation().add(0, 3, 0), 2, 8).forEach(location -> {
+            EffectUtils.displayParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
+        });
         wp.addInstance(InstanceBuilder
                 .healing()
                 .cause(name)
