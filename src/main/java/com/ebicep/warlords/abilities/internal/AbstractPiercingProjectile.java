@@ -37,7 +37,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
 
     protected FloatModifiable projectileSpeed;
     protected FloatModifiable maxDistance;
-    protected int maxTicks;
     protected boolean hitTeammates;
     protected FloatModifiable hitboxInflation = new FloatModifiable(0.85f);
     protected float forwardTeleportAmount = 0;
@@ -54,11 +53,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.projectileSpeed = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("projectileSpeed"), float.class));
-        this.projectileSpeed.addRefreshListener("Projectile Max Ticks", this::updateMaxTicks);
         this.maxDistance = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDistance"), float.class));
-        this.maxDistance.addRefreshListener("Projectile Max Ticks", this::updateMaxTicks);
         this.hitTeammates = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitTeammates"), boolean.class);
-        updateMaxTicks();
     }
 
     @Override
@@ -116,10 +112,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected abstract float getSoundVolume();
 
     protected abstract float getSoundPitch();
-
-    private void updateMaxTicks() {
-        this.maxTicks = Math.max((int) (maxDistance.getCalculatedValue() / projectileSpeed.getCalculatedValue()) - 1, 0);
-    }
 
     @Override
     public FloatModifiable getHitBoxRadius() {
@@ -296,11 +288,14 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             currentPosition = new Vec3(startingLocation.getX(), startingLocation.getY(), startingLocation.getZ());
         }
         try {
+            double distanceRemaining = maxDistance.getCalculatedValue() - projectile.getBlocksTravelled();
+            double distanceToMove = projectileSpeed.getCalculatedValue() + 1;
+            double maxDistance = distanceRemaining < distanceToMove && distanceRemaining > 0 ? distanceRemaining : distanceToMove;
             BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
                     new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
                     speed,
                     0,
-                    (int) (projectileSpeed.getCalculatedValue() + 1)
+                    (int) maxDistance
             );
             while (itr.hasNext()) {
                 Block block = itr.next();
@@ -553,12 +548,13 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
                     getAbilityStats().targetsHitBySplash += hitBySplash;
                 }
                 cancel();
-            } else if (ticksLived >= maxTicks) {
-                cancel();
             } else {
                 playEffect(this);
                 ticksLived++;
                 blocksTravelled += speed.length();
+                if (blocksTravelled >= maxDistance.getCalculatedValue()) {
+                    cancel();
+                }
                 //cancel after 15 seconds
                 if (ticksLived > 15 * 20) {
                     cancel();
