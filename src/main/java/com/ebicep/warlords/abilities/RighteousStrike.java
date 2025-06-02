@@ -25,7 +25,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     private final DamageValues damageValues = new DamageValues();
     private int abilityReductionInTicks = 16;
     private int additionalReductionInTicks = 4;
-    private float vindicateCooldownReduction = 0.5f;
+    private float prismGuardCooldownReduction = 0.5f;
 
     public RighteousStrike() {
         super(AbstractAbilityBuilder.create("righteousStrike").pvp());
@@ -40,7 +40,7 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         super.init(builder);
         this.abilityReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("abilityReductionInTicks"), int.class);
         this.additionalReductionInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalReductionInTicks"), int.class);
-        this.vindicateCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindicateCooldownReduction"), float.class);
+        this.prismGuardCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("prismGuardCooldownReduction"), float.class);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
         if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
             stats.silencedTargetStruck++;
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks + additionalReductionInTicks, CooldownTypes.ABILITY);
-            for (Vindicate vindicate : wp.getAbilitiesMatching(Vindicate.class)) {
-                vindicate.subtractCurrentCooldown(vindicateCooldownReduction);
+            for (PrismGuard prismGuard : wp.getAbilitiesMatching(PrismGuard.class)) {
+                prismGuard.subtractCurrentCooldown(prismGuardCooldownReduction);
             }
         } else {
             nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);
@@ -100,8 +100,8 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
                                                .durationTicks(abilityReductionInTicks)
                                                .text(".")
                                                .emptyLine()
-                                               .text("If your struck target is silenced, reduce the cooldown of your Vindicate by ")
-                                               .durationSeconds(vindicateCooldownReduction)
+                                               .text("If your struck target is silenced, reduce the cooldown of your Prism Guard by ")
+                                               .durationSeconds(prismGuardCooldownReduction)
                                                .text(" and reduce their active ability timers by ")
                                                .durationTicks((abilityReductionInTicks + additionalReductionInTicks))
                                                .text(" instead.")
