@@ -43,6 +43,15 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     }
 
     @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
+        this.alliesAffected = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("alliesAffected"), int.class);
+        this.linkBreakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkBreakRadius"), int.class);
+        this.castRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castRange"), int.class);
+    }
+
+    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Set<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, castRange, castRange, castRange)
                                                         .aliveTeammatesOfExcludingSelf(wp)
@@ -186,40 +195,33 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     }
 
     @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
-        this.alliesAffected = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("alliesAffected"), int.class);
-        this.linkBreakRadius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("linkBreakRadius"), int.class);
-        this.castRange = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("castRange"), int.class);
-    }
-
-    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Bind yourself to up to ")
                                                .text(alliesAffected, NamedTextColor.BLUE)
                                                .text(" allies near you, increasing the damage they deal by ")
                                                .damage(damageValues.bonusDamage)
-                                               .text(" and healing for them for ")
+                                               .text(" and healing all bound for ")
                                                .heal(healingValues.chainHealing)
                                                .text(" health per second while the link is active. Lasts ")
                                                .durationTicks(tickDuration)
                                                .text(".")
                                                .emptyLine()
-                                               .text("The link will break if you are more than ")
+                                               .text("The link instantly activates natural regeneration and will break if you are more than ")
                                                .blocks(linkBreakRadius)
                                                .text(" apart.")
+                                               .emptyLine()
+                                               .initialRange(castRange)
                                                .build();
-    }
-
-    @Override
-    public DamageValues getDamageValues() {
-        return damageValues;
     }
 
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new RemedicChainsBranch(abilityTree, this);
+    }
+
+    @Override
+    public DamageValues getDamageValues() {
+        return damageValues;
     }
 
     @Override
