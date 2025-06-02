@@ -51,10 +51,12 @@ public class SpecBoostManager {
     public static final SpecBoost<Meteor> METEOR = new Meteor();
     public static final SpecBoost<MightyFists> MIGHTY_FISTS = new MightyFists();
     public static final SpecBoost<OneManArmy> ONE_MAN_ARMY = new OneManArmy();
+    public static final SpecBoost<PenitentResolve> PENITENT_RESOLVE = new PenitentResolve();
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
     public static final SpecBoost<SeismicShift> SEISMIC_SHIFT = new SeismicShift();
     public static final SpecBoost<Solitary> SOLITARY = new Solitary();
+    public static final SpecBoost<SoulRend> SOUL_REND = new SoulRend();
     public static final SpecBoost<SovereignSolitude> SOVEREIGN_SOLITUDE = new SovereignSolitude();
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
     public static final SpecBoost<Striker> STRIKER = new Striker();
@@ -82,6 +84,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));
         SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(BIG_GUY, LIGHT_SPEED_INFUSION, DIVINE_EFFULGENCE, LUSTROUS_CROWN, HAMMER_OF_JUDGEMENT));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
+        SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS));
     }
 
