@@ -130,6 +130,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
             );
         } else {
             float damageBoost = 1;
+            float blocksTravelled = (float) projectile.getBlocksTravelled();
             if (pveMasterUpgrade2) {
                 damageBoost += Math.min(.75f, (projectile.getHit().size() - 1) * .05f);
             }
@@ -139,7 +140,7 @@ public class FlameBurst extends AbstractPiercingProjectile<FlameBurst, FlameBurs
                     .source(shooter)
                     .min(damageValues.flameBurstDamage.getMinValue() * damageBoost)
                     .max(damageValues.flameBurstDamage.getMaxValue() * damageBoost)
-                    .critChance(damageValues.flameBurstDamage.getCritChanceValue())
+                    .critChance(damageValues.flameBurstDamage.getCritChanceValue() + Math.min(100, blocksTravelled))
                     .critMultiplier(damageValues.flameBurstDamage.getCritMultiplierValue())
                     .uuid(projectile.getUuid())
             );
