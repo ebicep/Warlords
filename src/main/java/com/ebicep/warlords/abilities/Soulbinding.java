@@ -98,9 +98,11 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     public SoulbindingData activeSoulbinding(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
         wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, wp.isInPve() ? 2 : maxStacks);
+        this.energyCost.addOverridingModifier("Soulbinding Reactivation", 0);
         SoulbindingData data = new SoulbindingData(this);
         wp.getCooldownManager().addCooldown(new PersistentCooldown<>(name, "SOUL", SoulbindingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
+            this.energyCost.removeModifier("Soulbinding Reactivation");
             if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
                 if (wp.getEntity() instanceof Player) {
                     ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
