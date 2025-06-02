@@ -154,17 +154,6 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 team,
                 settings.getSelectedSpec()
         );
-        this.speed.addModifier(new MotionModifierBuilder()
-                .setFrom(this)
-                .setName("BASE")
-                .setModifier(13 + spec.getSpeed())
-                .setDuration(-1)
-                .addAddons(
-                        new BaseToWalkingSpeedValueModifier(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED),
-                        new MaxSpeedReductionValueModifier()
-                )
-                .build()
-        );
         this.compassTarget = game
                 .getMarkers(CompassTargetMarker.class)
                 .stream().filter(CompassTargetMarker::isEnabled)
@@ -187,6 +176,22 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         if (player.getPlayer() != null && Permissions.isAdmin(player.getPlayer())) {
             this.setShowDebugMessage(true);
         }
+    }
+
+    @Override
+    protected void resetSpeed() {
+        super.resetSpeed();
+        this.speed.addModifier(new MotionModifierBuilder()
+                .setFrom(this)
+                .setName("BASE")
+                .setModifier(13 + spec.getSpeed())
+                .setDuration(-1)
+                .addAddons(
+                        new BaseToWalkingSpeedValueModifier(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED),
+                        new MaxSpeedReductionValueModifier()
+                )
+                .build()
+        );
     }
 
     @Override

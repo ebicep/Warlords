@@ -214,21 +214,16 @@ public abstract class WarlordsEntity {
         this.energyPerSec = new FloatModifiable(this.spec.getEnergyPerSec());
         this.energyPerHit = new FloatModifiable(this.spec.getEnergyPerHit());
         this.spec.updateCustomStats(this);
+        this.resetSpeed();
         this.isInPve = com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode());
-        this.speed = new MotionSystem();
-        this.speed.addChangeListener(this::setWalkSpeed);
         this.knockback = new MotionSystem();
         this.entity = entity;
         this.deathLocation = this.entity.getLocation();
     }
 
-    protected void setWalkSpeed(float walkSpeed) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player != null) {
-            player.setWalkSpeed(MathUtils.clamp(walkSpeed, -1f, 1f));
-        } else if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(walkSpeed);
-        }
+    protected void resetSpeed() {
+        this.speed = new MotionSystem();
+        this.speed.addChangeListener(this::setWalkSpeed);
     }
 
     @Override
@@ -238,6 +233,15 @@ public abstract class WarlordsEntity {
                 ", uuid=" + uuid +
                 ", specClass=" + specClass +
                 '}';
+    }
+
+    protected void setWalkSpeed(float walkSpeed) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player != null) {
+            player.setWalkSpeed(MathUtils.clamp(walkSpeed, -1f, 1f));
+        } else if (entity instanceof LivingEntity livingEntity) {
+            livingEntity.getAttribute(Attribute.MOVEMENT_SPEED).setBaseValue(walkSpeed);
+        }
     }
 
     public boolean isInPve() {
@@ -1465,6 +1469,7 @@ public abstract class WarlordsEntity {
         this.currentHealth = getMaxHealth();
         this.currentEnergy = this.spec.getMaxEnergy();
         this.cooldownManager.clearAllCooldowns();
+        this.resetSpeed();
     }
 
     public void setSpeed(MotionSystem speed) {
