@@ -19,16 +19,6 @@ public class BaseToWalkingSpeedValueModifier implements NewValueModifier {
     }
 
     @Override
-    public boolean skipOthers() {
-        return false;
-    }
-
-    @Override
-    public boolean skipIfNotMinMax() {
-        return false;
-    }
-
-    @Override
     public boolean forceApply() {
         return true;
     }

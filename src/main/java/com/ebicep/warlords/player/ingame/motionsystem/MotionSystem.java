@@ -115,7 +115,54 @@ public class MotionSystem {
         onChangeListeners.add(listener);
     }
 
-    public record NewValueData(FloatModifiable newValue, float min, float max) {
+    public static final class NewValueData {
+
+        private final FloatModifiable newValue;
+        private float min;
+        private float max;
+
+        public NewValueData(FloatModifiable newValue, float min, float max) {
+            this.newValue = newValue;
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public String toString() {
+            return "NewValueData[" +
+                    "newValue=" + newValue + ", " +
+                    "min=" + min + ", " +
+                    "max=" + max + ']';
+        }
+
+        public FloatModifiable newValue() {
+            return newValue;
+        }
+
+        public float min() {
+            return min;
+        }
+
+        public float max() {
+            return max;
+        }
+
+        public float getMin() {
+            return min;
+        }
+
+        public void setMin(float min) {
+            this.min = min;
+        }
+
+        public float getMax() {
+            return max;
+        }
+
+        public void setMax(float max) {
+            this.max = max;
+        }
+
     }
 
 }

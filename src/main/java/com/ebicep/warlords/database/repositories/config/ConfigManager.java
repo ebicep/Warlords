@@ -14,7 +14,8 @@ public class ConfigManager {
     public static final AbilitiesConfig ABILITIES_CONFIG = new AbilitiesConfig();
     public static final SpecBoostConfig SPEC_BOOST_CONFIG = new SpecBoostConfig();
     public static final SpecializationsConfig SPECIALIZATIONS_CONFIG = new SpecializationsConfig();
-    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG};
+    public static final GameConfig GAME_CONFIG = new GameConfig();
+    public static final Config[] CONFIGS = {ABILITIES_CONFIG, SPEC_BOOST_CONFIG, SPECIALIZATIONS_CONFIG, GAME_CONFIG};
     private static final String COLLECTION_NAME = "Config";
 
     public static void loadConfigs(MongoDatabase warlordsDatabase) {
@@ -53,6 +54,9 @@ public class ConfigManager {
         return SPECIALIZATIONS_CONFIG.getListValue(namespaces, key, fieldType);
     }
 
+    public static <T> T getGameConfigValue(List<String> namespaces, String key, Class<T> fieldType) {
+        return GAME_CONFIG.getValue(namespaces, key, fieldType);
+    }
 
     public interface Config {
 

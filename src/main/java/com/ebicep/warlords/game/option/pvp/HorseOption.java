@@ -5,6 +5,7 @@ import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.ShadowStep;
 import com.ebicep.warlords.commands.debugcommands.misc.MountCommand;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.option.Option;
@@ -49,18 +50,24 @@ import java.util.function.Function;
 public class HorseOption implements Option, Listener {
 
     private static final String ON_USE_ID = "USE_HORSE_ITEM";
-    private static final ItemStack HORSE_ITEM = new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
-            .name(Component.text("Mount", NamedTextColor.GREEN)
-                           .append(Component.text(" - ", NamedTextColor.GRAY))
-                           .append(Component.text("Right-Click!", NamedTextColor.YELLOW))
-            )
-            .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                           .append(Component.text("14 seconds", NamedTextColor.GOLD)),
-                    Component.empty(),
-                    Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
-            )
-            .setOnUseID(ON_USE_ID)
-            .get();
+    public static ItemStack horseItem = getUpdatedHorseItem();
+
+    public static ItemStack getUpdatedHorseItem() {
+        return new ItemBuilder(Material.GOLDEN_HORSE_ARMOR)
+                .name(Component.text("Mount", NamedTextColor.GREEN)
+                               .append(Component.text(" - ", NamedTextColor.GRAY))
+                               .append(Component.text("Right-Click!", NamedTextColor.YELLOW))
+                )
+                .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
+                               .append(Component.text(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.horseCooldown", Integer.class) + " seconds",
+                                       NamedTextColor.GOLD
+                               )),
+                        Component.empty(),
+                        Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
+                )
+                .setOnUseID(ON_USE_ID)
+                .get();
+    }
     private final HashMap<WarlordsEntity, WarlordsHorse> playerHorses = new HashMap<>();
     private Game game;
 
@@ -104,7 +111,7 @@ public class HorseOption implements Option, Listener {
         if (horse.getCurrentCooldown() > 0) {
             inventory.setItem(7, new ItemStack(Material.IRON_HORSE_ARMOR, (int) horse.getCurrentCooldown() + 1));
         } else {
-            inventory.setItem(7, HORSE_ITEM);
+            inventory.setItem(7, horseItem);
         }
     }
 
@@ -223,7 +230,7 @@ public class HorseOption implements Option, Listener {
 
         private static final ItemStack SADDLE = new ItemStack(Material.SADDLE);
 
-        private final FloatModifiable cooldown = new FloatModifiable(14);
+        private final FloatModifiable cooldown = new FloatModifiable(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.horseCooldown", Integer.class));
         private final float speed = .32f;
         private final FloatModifiable health = new FloatModifiable(0);
         private float currentCooldown = 0;
@@ -282,15 +289,6 @@ public class HorseOption implements Option, Listener {
             updateHealthDisplay();
         }
 
-        public void kill() {
-            if (horse != null) {
-                horse.remove();
-            }
-            if (npc != null) {
-                npc.despawn();
-            }
-        }
-
         private void updateHealthDisplay() {
             float maxHealth = health.getCalculatedValue();
             if (maxHealth == 0) {
@@ -307,6 +305,15 @@ public class HorseOption implements Option, Listener {
                 if (entity instanceof Damageable damageable) {
                     damageable.setHealth(newHealth);
                 }
+            }
+        }
+
+        public void kill() {
+            if (horse != null) {
+                horse.remove();
+            }
+            if (npc != null) {
+                npc.despawn();
             }
         }
 

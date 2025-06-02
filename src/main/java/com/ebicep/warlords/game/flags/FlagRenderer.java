@@ -3,6 +3,8 @@ package com.ebicep.warlords.game.flags;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import com.ebicep.warlords.player.ingame.motionsystem.speed.FlagDebuffValueModifier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -142,24 +144,32 @@ public class FlagRenderer {
             }
 
             ArmorStand flag = Utils.spawnArmorStand(block.getLocation().add(.5, 0, .5), armorStand -> {
-                armorStand.customName(Component.text(info.getTeam().getChatTag() + " FLAG",
-                        info.getTeam().getTeamColor(),
-                        TextDecoration.BOLD
-                ));
-                armorStand.setCustomNameVisible(true);
-                armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-            });
+                        armorStand.customName(Component.text(info.getTeam().getChatTag() + " FLAG",
+                                info.getTeam().getTeamColor(),
+                                TextDecoration.BOLD
+                        ));
+                        armorStand.setCustomNameVisible(true);
+                        armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
+                    }
+            );
             renderedArmorStands.add(flag);
 
             ArmorStand flagInteract = Utils.spawnArmorStand(block.getLocation().add(.5, -0.3, .5), armorStand -> {
-                armorStand.customName(Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD));
-                armorStand.setCustomNameVisible(true);
-                armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
-            });
+                        armorStand.customName(Component.text("LEFT-CLICK TO STEAL IT", NamedTextColor.WHITE, TextDecoration.BOLD));
+                        armorStand.setCustomNameVisible(true);
+                        armorStand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
+                    }
+            );
             renderedArmorStands.add(flagInteract);
 
         } else if (this.lastLocation instanceof PlayerFlagLocation flag) {
-            flag.getPlayer().addSpeedModifier(flag.getPlayer(), "FLAG", -20, -1);
+            flag.getPlayer().addSpeedModifier(new MotionModifierBuilder()
+                    .setFrom(flag.getPlayer())
+                    .setName("FLAG")
+                    .setModifier(0)
+                    .setDuration(-1)
+                    .addAddons(new FlagDebuffValueModifier())
+                    .build());
             runningTasksCancel.add(() -> flag.getPlayer().getSpeed().removeModifier("FLAG"));
             Entity entity = flag.getPlayer().getEntity();
             if (entity instanceof Player player) {
@@ -202,4 +212,5 @@ public class FlagRenderer {
         }
         runningTasksCancel.clear();
     }
+
 }
