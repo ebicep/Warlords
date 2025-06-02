@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.AvengersStrike;
 import com.ebicep.warlords.abilities.HolyRadianceAvenger;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -22,6 +23,8 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
     private float avengerMarkIncreaseDamagePercent;
     private int holyRadianceCooldownReductionTicks;
     private float holyRadianceEnergyCost;
+    private int strikeMarkDurationIncreaseTicks;
+    private int maxStrikeMarkDurationIncreaseTicks;
 
     @Override
     public void init() {
@@ -30,6 +33,8 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
         this.avengerMarkIncreaseDamagePercent = getValue("avengerMarkIncreaseDamagePercent", float.class);
         this.holyRadianceCooldownReductionTicks = getValue("holyRadianceCooldownReductionTicks", int.class);
         this.holyRadianceEnergyCost = getValue("holyRadianceEnergyCost", float.class);
+        this.strikeMarkDurationIncreaseTicks = getValue("strikeMarkDurationIncreaseTicks", int.class);
+        this.maxStrikeMarkDurationIncreaseTicks = getValue("maxStrikeMarkDurationIncreaseTicks", int.class);
     }
 
     @Override
@@ -39,7 +44,15 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
 
     @Override
     public List<Object> getVariables() {
-        return List.of(avengerMarkDamage, avengerMarkSlowPercent, avengerMarkIncreaseDamagePercent, holyRadianceCooldownReductionTicks, holyRadianceEnergyCost);
+        return List.of(
+                avengerMarkDamage,
+                avengerMarkSlowPercent,
+                avengerMarkIncreaseDamagePercent,
+                holyRadianceCooldownReductionTicks,
+                holyRadianceEnergyCost,
+                strikeMarkDurationIncreaseTicks,
+                maxStrikeMarkDurationIncreaseTicks
+        );
     }
 
     @Override
@@ -60,7 +73,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HolyRadianceAvenger.class).forEach(holyRadiance -> {
-                holyRadiance.getCooldown().addAdditiveModifier("Spec Boost", -holyRadianceCooldownReductionTicks / holyRadiance.getCooldownValue());
+                holyRadiance.getCooldown().addAdditiveModifier("Spec Boost", -holyRadianceCooldownReductionTicks / 20f);
                 holyRadiance.getEnergyCost().addOverridingModifier("Spec Boost", holyRadianceEnergyCost);
             });
         }
@@ -83,9 +96,23 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             );
             target.addSpeedModifier(warlordsEntity, getStringName(), -avengerMarkSlowPercent, regularCooldown);
             regularCooldown.addExtraDamageInstance(new DamageInstance() {
+
+                int ticksIncreased = 0;
+
                 @Override
                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent);
+                }
+
+                @Override
+                public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                    if (event.getSource().equals(warlordsEntity) && event.getAbility() instanceof AvengersStrike) {
+                        if (ticksIncreased >= strikeMarkDurationIncreaseTicks) {
+                            return;
+                        }
+                        regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + strikeMarkDurationIncreaseTicks);
+                        ticksIncreased += strikeMarkDurationIncreaseTicks;
+                    }
                 }
             });
 
