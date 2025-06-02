@@ -579,7 +579,7 @@ public class CooldownManager {
 
                 });
         int counter = soulbindings.size();
-        warlordsPlayer.addKnockbackModifier(warlordsPlayer, "Spirit Link", -25, (int) (counter * 1.2 * 20));
+        this.warlordsEntity.addKnockbackModifier(this.warlordsEntity, "Spirit Link", -25, (int) (counter * 1.2 * 20));
         return soulbindings;
     }
 
