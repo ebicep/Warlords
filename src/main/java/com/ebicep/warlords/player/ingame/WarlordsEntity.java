@@ -37,13 +37,13 @@ import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionSystem;
 import com.ebicep.warlords.player.ingame.motionsystem.speed.BaseToWalkingSpeedValueModifier;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
+import com.ebicep.warlords.util.bukkit.TeleportUtils;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.java.StringUtils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiableFilter;
-import io.papermc.paper.entity.TeleportFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -68,7 +68,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.potion.PotionEffect;
@@ -1090,13 +1089,8 @@ public abstract class WarlordsEntity {
     }
 
     public void teleportLocationOnly(Location location) {
-        if (this.entity instanceof Player) {
-            entity.teleport(location,
-                    PlayerTeleportEvent.TeleportCause.PLUGIN,
-                    TeleportFlag.Relative.VELOCITY_X,
-                    TeleportFlag.Relative.VELOCITY_Y,
-                    TeleportFlag.Relative.VELOCITY_Z
-            );
+        if (this.entity instanceof Player player) {
+            TeleportUtils.smoothTeleport(player, location);
         } else {
             Location location1 = this.getLocation();
             location1.setX(location.getX());

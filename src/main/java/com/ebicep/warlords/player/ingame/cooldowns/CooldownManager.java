@@ -2,6 +2,8 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
+import com.ebicep.warlords.abilities.SpiritLink;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.WoundingData;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
@@ -573,13 +575,13 @@ public class CooldownManager {
                 soulbindings.add(data);
             }
         }
-        new CooldownFilter<>(this, RegularCooldown.class)
-                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.SoulbindingData.class)
-                .forEachOrdered(data -> {
-
-                });
         int counter = soulbindings.size();
-        this.warlordsEntity.addKnockbackModifier(this.warlordsEntity, "Spirit Link", -25, (int) (counter * 1.2 * 20));
+        for (AbstractAbility ability : this.warlordsEntity.getAbilities()) {
+            if (ability instanceof SpiritLink spiritLink) {
+                this.warlordsEntity.addKnockbackModifier(this.warlordsEntity, "Spirit Link", -spiritLink.getKbRes(), (int) (counter * 1.2 * 20));
+                break;
+            }
+        }
         return soulbindings;
     }
 
