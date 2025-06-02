@@ -8,6 +8,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsTotemPlaceEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
@@ -112,18 +113,14 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
             Location location = warlordsEntity.getLocation();
             double maxDistance = MathUtils.calculateMaxDistance(Math.abs(location.getPitch()), totemPlaceRangeHorizontal, totemPlaceRangeVertical);
             Block targetBlock = Utils.getTargetBlock(warlordsEntity, (int) maxDistance);
-            if (targetBlock.getType() == Material.AIR) {
-                event.setCancelled(true);
-                return;
-            }
-            Location blockLocation = targetBlock.getLocation().clone().add(.6, 0, .6).clone();
-            while (blockLocation.getBlock().getType() != Material.AIR) {
-                blockLocation.setY(blockLocation.getY() + 1);
-                if (blockLocation.getY() > location.getY() + totemPlaceRangeVertical) {
+            Location targetLocation = LocationUtils.getGroundLocation(targetBlock.getLocation()).add(.6, 0, .6);
+            while (targetLocation.getBlock().getType() != Material.AIR) {
+                targetLocation.setY(targetLocation.getY() + 1);
+                if (targetLocation.getY() > location.getY() + totemPlaceRangeVertical) {
                     break;
                 }
             }
-            event.getLocation().set(blockLocation.getX(), blockLocation.getY(), blockLocation.getZ());
+            event.getLocation().set(targetLocation.getX(), targetLocation.getY(), targetLocation.getZ());
         }
 
     }
