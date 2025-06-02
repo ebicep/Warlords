@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.ChainLightning;
 import com.ebicep.warlords.abilities.LightningBolt;
 import com.ebicep.warlords.abilities.LightningRod;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
@@ -23,8 +22,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
     private int maxTravelBlocks;
     private float velocityIncreasePercentage;
     private float splashRadiusBlocks;
-    private float damageResistancePercentFirstHit;
-    private float maxDamageResistancePercent;
+    private float chainCooldownReductionIncrease;
     private float totemPlaceRangeHorizontal;
     private float totemPlaceRangeVertical;
 
@@ -33,8 +31,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
         this.maxTravelBlocks = getValue("maxTravelBlocks", int.class);
         this.velocityIncreasePercentage = getValue("velocityIncreasePercentage", float.class);
         this.splashRadiusBlocks = getValue("splashRadiusBlocks", float.class);
-        this.damageResistancePercentFirstHit = getValue("damageResistancePercentFirstHit", float.class);
-        this.maxDamageResistancePercent = getValue("maxDamageResistancePercent", float.class);
+        this.chainCooldownReductionIncrease = getValue("chainCooldownReductionIncrease", float.class);
         this.totemPlaceRangeHorizontal = getValue("totemPlaceRangeHorizontal", float.class);
         this.totemPlaceRangeVertical = getValue("totemPlaceRangeVertical", float.class);
     }
@@ -49,9 +46,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
         return List.of(
                 maxTravelBlocks,
                 velocityIncreasePercentage,
-                splashRadiusBlocks,
-                damageResistancePercentFirstHit,
-                maxDamageResistancePercent
+                splashRadiusBlocks
         );
     }
 
@@ -78,10 +73,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
                 lightningBolt.getMaxDistance().addOverridingModifier("Spec Boost", maxTravelBlocks);
                 lightningBolt.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
                 lightningBolt.getHitbox().addOverridingModifier("Spec Boost", splashRadiusBlocks);
-            });
-            warlordsPlayer.getAbilitiesMatching(ChainLightning.class).forEach(chainLightning -> {
-                chainLightning.getDamageReductionPerBounce().addOverridingModifier("Spec Boost", damageResistancePercentFirstHit);
-                chainLightning.getMaxDamageReduction().addOverridingModifier("Spec Boost", maxDamageResistancePercent);
+                lightningBolt.setCooldownReduction(lightningBolt.getCooldownReduction() + chainCooldownReductionIncrease);
             });
             warlordsPlayer.getAbilitiesMatching(LightningRod.class).forEach(lightningRod -> {
                 lightningRod.setHorizontalTotemProcRange(Float.MAX_VALUE);

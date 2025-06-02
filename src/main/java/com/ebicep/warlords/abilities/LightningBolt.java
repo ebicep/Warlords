@@ -37,7 +37,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     private final LightningBoltStats stats = new LightningBoltStats();
     private final DamageValues damageValues = new DamageValues();
     private FloatModifiable hitbox = new FloatModifiable(3);
-    private int cooldownReduction = 2;
+    private float cooldownReduction = 2;
 
     public LightningBolt() {
         super(AbstractAbilityBuilder.create("lightningBolt").pvp());
@@ -51,7 +51,7 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
-        this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), int.class);
+        this.cooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("cooldownReduction"), float.class);
     }
 
     @Override
@@ -231,6 +231,14 @@ public class LightningBolt extends AbstractPiercingProjectile<LightningBolt, Lig
 
     public FloatModifiable getHitbox() {
         return hitbox;
+    }
+
+    public float getCooldownReduction() {
+        return cooldownReduction;
+    }
+
+    public void setCooldownReduction(float cooldownReduction) {
+        this.cooldownReduction = cooldownReduction;
     }
 
     public static class DamageValues implements Value.ValueHolder {
