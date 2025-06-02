@@ -88,12 +88,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                 wp,
                 CooldownTypes.ABILITY,
                 (cooldownManager, linkedCooldown) -> {
-                    if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
-                        return;
-                    }
-                    if (wp.isDead()) {
-                        return;
-                    }
                 },
                 (cooldownManager, linkedCooldown) -> {
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), wp)) {
@@ -142,6 +136,9 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                         }
                     }
                     linkedEntities.removeAll(toRemove);
+                    if (linkedEntities.isEmpty()) {
+                        cooldown.setTicksLeft(1);
+                    }
                 }),
                 teammatesNear
         ) {
