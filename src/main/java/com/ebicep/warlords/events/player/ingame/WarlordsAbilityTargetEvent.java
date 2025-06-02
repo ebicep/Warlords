@@ -42,7 +42,6 @@ public class WarlordsAbilityTargetEvent extends AbstractWarlordsEntityEvent {
         return handlers;
     }
 
-
     public static class WarlordsBlueAbilityTargetEvent extends WarlordsAbilityTargetEvent {
         public WarlordsBlueAbilityTargetEvent(@Nonnull WarlordsEntity player, String abilityName, WarlordsEntity... targets) {
             super(player, abilityName, targets);

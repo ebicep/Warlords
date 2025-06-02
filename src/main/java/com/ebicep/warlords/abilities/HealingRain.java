@@ -9,8 +9,8 @@ import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -19,7 +19,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.mage.aquamancer.HealingRainBranch;
-import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.Pair;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -27,7 +26,6 @@ import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -63,7 +61,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Conjure rain at targeted location that will restore ")
+        description = AbilityDescriptionBuilder.create("Cast a Healing Rain upon an ally or yourself that will restore ")
                                                .heal(healingValues.rainHealing)
                                                .text(" health every ")
                                                .durationSeconds(0.5f)
@@ -71,7 +69,7 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
                                                .durationTicks(tickDuration)
                                                .text(".")
                                                .emptyLine()
-                                               .text("Recast to move Healing Rain to your location.")
+                                               .text("Recast to retarget the Healing Rain.")
                                                .emptyLine()
                                                .text("Healing Rain can overheal allies for up to ")
                                                .percent(10, NamedTextColor.GREEN)
@@ -83,11 +81,21 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Block targetBlock = !(wp instanceof WarlordsPlayer) ? LocationUtils.getGroundLocation(wp.getLocation()).add(0, -1, 0).getBlock() : Utils.getTargetBlock(wp, 25);
-        if (targetBlock.getType() == Material.AIR) {
-            return false;
-        }
-        Location location = targetBlock.getLocation().clone();
+        float radius = this.radius.getCalculatedValue();
+        List<WarlordsEntity> targets = PlayerFilter
+                .entitiesAround(wp, radius, radius, radius)
+                .aliveTeammatesOfExcludingSelf(wp)
+                .requireLineOfSightIntervene(wp, false)
+                .lookingAtFirst(wp)
+                .limit(1)
+                .toList();
+        WarlordsAbilityTargetEvent placeEvent = new WarlordsAbilityTargetEvent(wp, name, targets.isEmpty() ? wp : targets.get(0));
+        Bukkit.getPluginManager().callEvent(placeEvent);
+
+        targets = new ArrayList<>(placeEvent.getTargets());
+        WarlordsEntity target = targets.isEmpty() ? wp : targets.get(0);
+
+        Location location = target.getLocation();
         location.add(0, 1, 0);
         Utils.playGlobalSound(location, "mage.healingrain.impact", 2, 1);
         List<EffectPlayer<? super CircleEffect>> effects = new ArrayList<>();
@@ -96,101 +104,156 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
             effects.add(new AreaEffect(5, Particle.CLOUD).particlesPerSurface(0.025));
             effects.add(new AreaEffect(5, Particle.DRIPPING_WATER).particlesPerSurface(0.025));
         }
-        float rad = radius.getCalculatedValue();
-        CircleEffect circleEffect = new CircleEffect(wp.getGame(), wp.getTeam(), location, rad, effects.toArray(new EffectPlayer[0]));
-        // pveMasterUpgrade2
-        AtomicReference<List<Pair<WarlordsEntity, CircleEffect>>> personalCloud = new AtomicReference<>(new ArrayList<>());
-        RegularCooldown<HealingRain> healingRainCooldown = new RegularCooldown<>(name, "RAIN", HealingRain.class, new HealingRain(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-            if (pveMasterUpgrade) {
-                for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(location, rad, rad, rad).aliveEnemiesOf(wp).limit(8)) {
-                    Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
-                    EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build());
-                    strikeInRain(wp, enemyInRain);
-                }
-            }
-        }, false, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            List<Pair<WarlordsEntity, CircleEffect>> personalCloudList = personalCloud.get();
-            if (pveMasterUpgrade2) {
-                personalCloudList.forEach(warlordsEntityCircleEffectPair -> {
-                    WarlordsEntity cloudTeammate = warlordsEntityCircleEffectPair.getA();
-                    CircleEffect effect = warlordsEntityCircleEffectPair.getB();
-                    Location cloudTeammateLocation = cloudTeammate.getLocation();
-                    Location center = effect.getCenter();
-                    center.set(cloudTeammateLocation.getX(), cloudTeammateLocation.getY(), cloudTeammateLocation.getZ());
-                    effect.playEffects();
-                });
-            }
-            if ((inPve && ticksElapsed % 8 == 0) || (!inPve && ticksElapsed % 5 == 0)) {
-                circleEffect.playEffects();
-            }
-            if (ticksElapsed % 10 == 0) {
-                List<WarlordsEntity> teammatesInRain = PlayerFilter.entitiesAround(location, rad, rad, rad).aliveTeammatesOf(wp).toList();
-                if (pveMasterUpgrade2) {
-                    // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
-                    personalCloudList.removeIf(teammate -> teammate.getA().getLocation().distanceSquared(wp.getLocation()) > 40 * 40);
-                    for (WarlordsEntity teammateInRain : teammatesInRain) {
-                        if (personalCloudList.stream().noneMatch(pair -> pair.getA() == teammateInRain)) {
-                            personalCloudList.add(new Pair<>(teammateInRain,
-                                    new CircleEffect(wp.getGame(),
-                                            wp.getTeam(),
-                                            teammateInRain.getLocation().clone(),
-                                            2,
-                                            new AreaEffect(4, Particle.CLOUD).particlesPerSurface(0.1),
-                                            new AreaEffect(4, Particle.DRIPPING_WATER).particlesPerSurface(0.1)
-                                    )
-                            ));
+        CircleEffect circleEffect = new CircleEffect(wp.getGame(), wp.getTeam(), location, radius, effects.toArray(new EffectPlayer[0]));
+        AtomicReference<List<Pair<WarlordsEntity, CircleEffect>>> personalCloud = new AtomicReference<>(new ArrayList<>()); // pveMasterUpgrade2
+        HealingRainData data = new HealingRainData(target);
+        if (wp == data.target) {
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You casted your ", NamedTextColor.GRAY)
+                                     .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                     .append(Component.text(" upon yourself."))
+                    ));
+        } else {
+            data.target.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You casted your ", NamedTextColor.GRAY)
+                                     .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                     .append(Component.text(" upon " + data.target.getName() + "."))
+                    ));
+        }
+        RegularCooldown<HealingRainData> healingRainCooldown = new RegularCooldown<>(
+                name,
+                "RAIN",
+                HealingRainData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (pveMasterUpgrade) {
+                        for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                            Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
+                            EffectUtils.playFirework(enemyInRain.getLocation(), FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build());
+                            strikeInRain(wp, enemyInRain);
                         }
                     }
-                    for (Pair<WarlordsEntity, CircleEffect> cloudTeammatePair : personalCloudList) {
-                        WarlordsEntity cloudTeammate = cloudTeammatePair.getA();
-                        heal(wp, cloudTeammate, "Rain Cloud");
-                        CooldownManager cloudTeammateCooldownManager = cloudTeammate.getCooldownManager();
-                        cloudTeammateCooldownManager.removeCooldownByName("Nimbus");
-                        cloudTeammateCooldownManager.addCooldown(new RegularCooldown<>("Nimbus",
-                                null,
-                                HealingRain.class,
-                                new HealingRain(),
-                                wp,
-                                CooldownTypes.ABILITY,
-                                cooldownManager -> {
-                                },
-                                10
-                        ) {
-
-                            @Override
-                            public float addEnergyGainPerTick(float energyGainPerTick) {
-                                return energyGainPerTick + .25f;
-                            }
+                },
+                false,
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    List<Pair<WarlordsEntity, CircleEffect>> personalCloudList = personalCloud.get();
+                    if (pveMasterUpgrade2) {
+                        personalCloudList.forEach(warlordsEntityCircleEffectPair -> {
+                            WarlordsEntity cloudTeammate = warlordsEntityCircleEffectPair.getA();
+                            CircleEffect effect = warlordsEntityCircleEffectPair.getB();
+                            Location cloudTeammateLocation = cloudTeammate.getLocation();
+                            Location center = effect.getCenter();
+                            center.set(cloudTeammateLocation.getX(), cloudTeammateLocation.getY(), cloudTeammateLocation.getZ());
+                            effect.playEffects();
                         });
                     }
-                } else {
-                    for (WarlordsEntity teammateInRain : teammatesInRain) {
-                        heal(wp, teammateInRain, name);
+                    if ((inPve && ticksElapsed % 8 == 0) || (!inPve && ticksElapsed % 4 == 0)) {
+                        if (data.target.isAlive()) {
+                            Location center = circleEffect.getCenter();
+                            Location newLocation = data.target.getLocation();
+                            center.set(newLocation.getX(), newLocation.getY() + .01, newLocation.getZ());
+                        }
+                        circleEffect.playEffects();
                     }
-                }
-            }
-            if (ticksElapsed % 40 == 0) {
-                if (pveMasterUpgrade) {
-                    for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(location, rad, rad, rad).aliveEnemiesOf(wp).limit(8)) {
-                        Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
-                        FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(), FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build());
-                        strikeInRain(wp, enemyInRain);
+                    if (ticksElapsed % 10 == 0) {
+                        List<WarlordsEntity> teammatesInRain = PlayerFilter.entitiesAround(target.getLocation(), radius, radius, radius).aliveTeammatesOf(wp).toList();
+                        if (pveMasterUpgrade2) {
+                            // cloud only give to those in cloud or has been in cloud and is within 40 blocks of player
+                            personalCloudList.removeIf(teammate -> teammate.getA().getLocation().distanceSquared(wp.getLocation()) > 40 * 40);
+                            for (WarlordsEntity teammateInRain : teammatesInRain) {
+                                if (personalCloudList.stream().noneMatch(pair -> pair.getA() == teammateInRain)) {
+                                    personalCloudList.add(new Pair<>(teammateInRain,
+                                            new CircleEffect(wp.getGame(),
+                                                    wp.getTeam(),
+                                                    teammateInRain.getLocation().clone(),
+                                                    2,
+                                                    new AreaEffect(4, Particle.CLOUD).particlesPerSurface(0.1),
+                                                    new AreaEffect(4, Particle.DRIPPING_WATER).particlesPerSurface(0.1)
+                                            )
+                                    ));
+                                }
+                            }
+                            for (Pair<WarlordsEntity, CircleEffect> cloudTeammatePair : personalCloudList) {
+                                WarlordsEntity cloudTeammate = cloudTeammatePair.getA();
+                                heal(wp, cloudTeammate, "Rain Cloud");
+                                CooldownManager cloudTeammateCooldownManager = cloudTeammate.getCooldownManager();
+                                cloudTeammateCooldownManager.removeCooldownByName("Nimbus");
+                                cloudTeammateCooldownManager.addCooldown(new RegularCooldown<>("Nimbus",
+                                        null,
+                                        HealingRain.class,
+                                        null,
+                                        wp,
+                                        CooldownTypes.ABILITY,
+                                        cooldownManager -> {
+                                        },
+                                        10
+                                ) {
+
+                                    @Override
+                                    public float addEnergyGainPerTick(float energyGainPerTick) {
+                                        return energyGainPerTick + .25f;
+                                    }
+                                });
+                            }
+                        } else {
+                            for (WarlordsEntity teammateInRain : teammatesInRain) {
+                                heal(wp, teammateInRain, name);
+                            }
+                        }
                     }
-                }
-            }
-        })
+                    if (ticksElapsed % 40 == 0) {
+                        if (pveMasterUpgrade) {
+                            for (WarlordsEntity enemyInRain : PlayerFilter.entitiesAround(target.getLocation(), radius, radius, radius).aliveEnemiesOf(wp).limit(8)) {
+                                Utils.playGlobalSound(enemyInRain.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 1.8f);
+                                FireWorkEffectPlayer.playFirework(enemyInRain.getLocation(),
+                                        FireworkEffect.builder().withColor(Color.AQUA).with(FireworkEffect.Type.BURST).build()
+                                );
+                                strikeInRain(wp, enemyInRain);
+                            }
+                        }
+                    }
+                })
         );
         wp.getCooldownManager().addCooldown(healingRainCooldown);
-        addSecondaryAbility(1, () -> {
+        addSecondaryAbility(
+                1,
+                () -> {
                     if (wp.isAlive()) {
                         Location wpLocation = wp.getLocation();
-                        wp.playSound(wpLocation, "mage.timewarp.teleport", 2, 1.35f);
-                        wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You moved your ", NamedTextColor.GRAY)
-                                                                                       .append(Component.text("Healing Rain", NamedTextColor.GREEN))
-                                                                                       .append(Component.text(" to your current location."))));
+                        List<WarlordsEntity> newTargets = PlayerFilter
+                                .entitiesAround(wp, radius, radius, radius)
+                                .aliveTeammatesOfExcludingSelf(wp)
+                                .requireLineOfSightIntervene(wp, false)
+                                .lookingAtFirst(wp)
+                                .limit(1)
+                                .toList();
+                        WarlordsAbilityTargetEvent newPlaceEvent = new WarlordsAbilityTargetEvent(wp, name, newTargets.isEmpty() ? wp : newTargets.get(0));
+                        Bukkit.getPluginManager().callEvent(newPlaceEvent);
+
+                        newTargets = new ArrayList<>(newPlaceEvent.getTargets());
+                        data.target = newTargets.isEmpty() ? wp : newTargets.get(0);
                         location.set(wpLocation.getX(), wpLocation.getY() + .01, wpLocation.getZ());
+                        wp.playSound(wpLocation, "mage.timewarp.teleport", 2, 1.35f);
+                        if (wp == data.target) {
+                            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                    .append(Component.text(" You recasted your ", NamedTextColor.GRAY)
+                                                     .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                                     .append(Component.text(" upon yourself."))
+                                    ));
+                        } else {
+                            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                    .append(Component.text(" You recasted your ", NamedTextColor.GRAY)
+                                                     .append(Component.text("Healing Rain", NamedTextColor.GREEN))
+                                                     .append(Component.text(" upon " + data.target.getName() + "."))
+                                    ));
+                        }
                     }
-                }, true, secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingRainCooldown)
+                },
+                true,
+                secondaryAbility -> !wp.getCooldownManager().hasCooldown(healingRainCooldown)
         );
         return true;
     }
@@ -210,14 +273,26 @@ public class HealingRain extends AbstractAbility implements OrangeAbilityIcon, D
 
     private void heal(@Nonnull WarlordsEntity wp, WarlordsEntity teammateInRain, String name) {
         stats.targetsHealed++;
-        teammateInRain.addInstance(InstanceBuilder.healing()
-                                                  .ability(this)
-                                                  .source(wp)
-                                                  .value(healingValues.rainHealing)
-                                                  .flags(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.NO_HIT_SOUND));
+        teammateInRain.addInstance(InstanceBuilder
+                .healing()
+                .ability(this)
+                .source(wp)
+                .value(healingValues.rainHealing)
+                .flags(InstanceFlags.CAN_OVERHEAL_OTHERS, InstanceFlags.NO_HIT_SOUND)
+        );
         if (teammateInRain != wp) {
             Overheal.giveOverHeal(wp, teammateInRain);
         }
+    }
+
+    public static class HealingRainData {
+
+        private WarlordsEntity target;
+
+        public HealingRainData(WarlordsEntity target) {
+            this.target = target;
+        }
+
     }
 
     @Override
