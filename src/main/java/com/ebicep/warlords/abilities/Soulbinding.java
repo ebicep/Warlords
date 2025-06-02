@@ -37,6 +37,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int bindDuration = 60;
     private int radius = 8;
     private int maxAlliesHit = 2;
+    private int maxStacks = 1;
 
     public Soulbinding() {
         super(AbstractAbilityBuilder.create("soulbindingWeapon").pvp());
@@ -51,6 +52,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         this.bindDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("bindDuration"), int.class);
         this.radius = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), int.class);
         this.maxAlliesHit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxAlliesHit"), int.class);
+        this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
     }
 
     @Override
@@ -95,9 +97,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
 
     public SoulbindingData activeSoulbinding(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
-        if (wp.isInPve()) {
-            wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, 2);
-        }
+        wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, wp.isInPve() ? 2 : maxStacks);
         SoulbindingData data = new SoulbindingData(this);
         wp.getCooldownManager().addCooldown(new PersistentCooldown<>(name, "SOUL", SoulbindingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, cooldownManager -> {
