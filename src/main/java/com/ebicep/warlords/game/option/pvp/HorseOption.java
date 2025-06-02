@@ -55,7 +55,7 @@ public class HorseOption implements Option, Listener {
                            .append(Component.text("Right-Click!", NamedTextColor.YELLOW))
             )
             .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                           .append(Component.text("15 seconds", NamedTextColor.GOLD)),
+                           .append(Component.text("14 seconds", NamedTextColor.GOLD)),
                     Component.empty(),
                     Component.text("Call your steed to assists you in battle", NamedTextColor.GRAY)
             )
@@ -223,7 +223,7 @@ public class HorseOption implements Option, Listener {
 
         private static final ItemStack SADDLE = new ItemStack(Material.SADDLE);
 
-        private final FloatModifiable cooldown = new FloatModifiable(15);
+        private final FloatModifiable cooldown = new FloatModifiable(14);
         private final float speed = .32f;
         private final FloatModifiable health = new FloatModifiable(0);
         private float currentCooldown = 0;
