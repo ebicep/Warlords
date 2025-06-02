@@ -173,6 +173,15 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         wp.getCooldownManager().addCooldown(brewCooldown);
         if (wp != data.target) {
             data.target.getCooldownManager().addCooldown(brewCooldown);
+            data.target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" You have been given a ", NamedTextColor.GRAY))
+                                                                      .append(Component.text(name, NamedTextColor.YELLOW))
+                                                                      .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY))
+            );
+        } else {
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You gave a ", NamedTextColor.GRAY))
+                                                          .append(Component.text(name, NamedTextColor.YELLOW))
+                                                          .append(Component.text(" to yourself!", NamedTextColor.GRAY)));
+
         }
         addSecondaryAbility(
                 5,
@@ -187,6 +196,16 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                         data.damageMode ? NamedTextColor.DARK_RED : NamedTextColor.DARK_GREEN
                                 )
                         )));
+                        if (data.target != wp) {
+                            data.target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.textOfChildren(
+                                    Component.text(" Your ", NamedTextColor.GRAY),
+                                    Component.text(name, NamedTextColor.YELLOW),
+                                    Component.text(" changed to ", NamedTextColor.GRAY),
+                                    Component.text(data.damageMode ? "Corrosive Concoction" : "Restorative Elixir",
+                                            data.damageMode ? NamedTextColor.DARK_RED : NamedTextColor.DARK_GREEN
+                                    )
+                            )));
+                        }
                     }
                 },
                 true,
@@ -237,7 +256,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
     public static class VolatileBrewData {
 
         private WarlordsEntity target;
-        private boolean damageMode;
+        private boolean damageMode = true;
 
         public VolatileBrewData(WarlordsEntity target) {
             this.target = target;
