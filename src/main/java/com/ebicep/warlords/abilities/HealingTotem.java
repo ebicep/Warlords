@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.shaman.earthwarden.HealingTotemBranch;
@@ -43,6 +44,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
     private int tickDuration = 100;
     private int crippleDuration = 6;
     private float healingIncrement = 25;
+    private int healingPeriod;
 
     public HealingTotem() {
         super(AbstractAbilityBuilder.create("healingTotem").pvp());
@@ -72,9 +74,16 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
             Utils.playGlobalSound(totemStand.getLocation(), Sound.ENTITY_BLAZE_DEATH, 1.2f, 0.7f);
             Utils.playGlobalSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
             new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SPRUCE_SAPLING).play();
-            PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveTeammatesOf(wp).forEach((nearPlayer) -> {
+            List<WarlordsEntity> toHeal = PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveTeammatesOf(wp).toList();
+            toHeal.forEach((nearPlayer) -> {
                 stats.playersHealed++;
-                nearPlayer.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.totemHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                nearPlayer.addInstance(InstanceBuilder
+                        .healing()
+                        .ability(this)
+                        .source(wp)
+                        .value(healingValues.totemHealing)
+                        .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(toHeal))
+                ).ifPresent(warlordsDamageHealingFinalEvent -> {
                     data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                 });
             });
@@ -91,7 +100,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                 circle.setCenter(totemStand.getLocation().add(0, 1, 0));
                 circle.playEffects();
             }
-            if (ticksElapsed % 20 == 0) {
+            if (ticksElapsed % healingPeriod == 0) {
                 Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, pveMasterUpgrade ? 0.4f : 0.9f);
                 totemStand.getLocation().getWorld().spawnParticle(Particle.HAPPY_VILLAGER, totemStand.getLocation().clone().add(0, 1.6, 0), 5, 0.4, 0.2, 0.4, 0.05, null, true);
                 Location totemLoc = totemStand.getLocation();
@@ -106,17 +115,20 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                         particleLoc.getWorld().spawnParticle(Particle.FIREWORK, particleLoc, 1, 0, 0, 0, 0, null, true);
                     }
                 }
-                // 1 / 1.35 / 1.7 / 2.05 / 2.4 / 2.75
-                int secondsElapsed = ticksElapsed / 20;
+                int secondsElapsed = ticksElapsed / healingPeriod;
                 float healMultiplier = (float) Math.pow((1 - healingIncrement / 100f), secondsElapsed);
-                PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveTeammatesOf(wp).forEach(teammate -> {
+                List<WarlordsEntity> toHeal = PlayerFilter.entitiesAround(totemStand, rad, rad, rad).aliveTeammatesOf(wp).toList();
+                toHeal.forEach(teammate -> {
                     stats.playersHealed++;
-                    teammate.addInstance(InstanceBuilder.healing()
-                                                        .ability(this)
-                                                        .source(wp)
-                                                        .min(healingValues.totemHealing.getMinValue() * healMultiplier)
-                                                        .max(healingValues.totemHealing.getMaxValue() * healMultiplier)
-                                                        .crit(healingValues.totemHealing)).ifPresent(warlordsDamageHealingFinalEvent -> {
+                    teammate.addInstance(InstanceBuilder
+                            .healing()
+                            .ability(this)
+                            .source(wp)
+                            .min(healingValues.totemHealing.getMinValue() * healMultiplier)
+                            .max(healingValues.totemHealing.getMaxValue() * healMultiplier)
+                            .crit(healingValues.totemHealing)
+                            .customFlags(new CustomInstanceFlags.PlayersEffectedInstanceFlag(toHeal))
+                    ).ifPresent(warlordsDamageHealingFinalEvent -> {
                         data.amountHealed += warlordsDamageHealingFinalEvent.getValue();
                     });
                 });
@@ -214,6 +226,15 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.crippleDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("crippleDuration"), int.class);
         this.healingIncrement = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingIncrement"), float.class);
+        this.healingPeriod = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("healingPeriod"), int.class);
+    }
+
+    public int getHealingPeriod() {
+        return healingPeriod;
+    }
+
+    public void setHealingPeriod(int healingPeriod) {
+        this.healingPeriod = healingPeriod;
     }
 
     @Override

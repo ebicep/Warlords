@@ -48,8 +48,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class InstanceManager {
 
-    public static Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsEntity warlordsEntity, WarlordsDamageHealingEvent event) {
-        if (warlordsEntity.isDead()) {
+    public static Optional<WarlordsDamageHealingFinalEvent> addDamageHealingInstance(WarlordsDamageHealingEvent event) {
+        if (event.getWarlordsEntity().isDead()) {
             return Optional.empty();
         }
         InstanceDebugHoverable debugHoverable = new InstanceDebugHoverable();
@@ -68,8 +68,8 @@ public class InstanceManager {
         }
         Optional<WarlordsDamageHealingFinalEvent> eventOptional;
         switch (event.getInstanceType()) {
-            case HEALING -> eventOptional = addHealingInstance(warlordsEntity, debugHoverable, event);
-            case DAMAGE -> eventOptional = addDamageInstance(warlordsEntity, debugHoverable, event);
+            case HEALING -> eventOptional = addHealingInstance(debugHoverable, event);
+            case DAMAGE -> eventOptional = addDamageInstance(debugHoverable, event);
             default -> eventOptional = Optional.empty();
         }
         eventOptional.ifPresent(warlordsDamageHealingFinalEvent -> Bukkit.getPluginManager().callEvent(warlordsDamageHealingFinalEvent));
@@ -77,7 +77,6 @@ public class InstanceManager {
     }
 
     private static Optional<WarlordsDamageHealingFinalEvent> addDamageInstance(
-            WarlordsEntity warlordsEntity,
             InstanceDebugHoverable debugMessage,
             WarlordsDamageHealingEvent event
     ) {
@@ -92,6 +91,7 @@ public class InstanceManager {
             }
         }
 
+        WarlordsEntity warlordsEntity = event.getWarlordsEntity();
         WarlordsEntity source = event.getSource();
         AbstractAbility ability = event.getAbility();
         String cause = event.getCause();
@@ -695,7 +695,7 @@ public class InstanceManager {
                                        customInstanceFlags -> customInstanceFlags.shields().add(shield),
                                        () -> newCustomFlags.add(new CustomInstanceFlags.InstanceShieldsInstanceFlag(new ArrayList<>(List.of(shield))))
                                );
-                    return addDamageInstance(warlordsEntity, new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
+                    return addDamageInstance(new InstanceDebugHoverable(), new WarlordsDamageHealingEvent(
                                     warlordsEntity,
                             source,
                             cause,
@@ -1045,10 +1045,10 @@ public class InstanceManager {
     }
 
     private static Optional<WarlordsDamageHealingFinalEvent> addHealingInstance(
-            WarlordsEntity warlordsEntity,
             InstanceDebugHoverable debugMessage,
             WarlordsDamageHealingEvent event
     ) {
+        WarlordsEntity warlordsEntity = event.getWarlordsEntity();
         WarlordsEntity source = event.getSource();
 
         List<AbstractCooldown<?>> selfCooldownsDistinct = warlordsEntity.getCooldownManager().getCooldownsDistinct();

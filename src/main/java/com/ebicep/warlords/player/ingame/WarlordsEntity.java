@@ -252,7 +252,7 @@ public abstract class WarlordsEntity {
     }
 
     public Optional<WarlordsDamageHealingFinalEvent> addInstance(InstanceBuilder instanceBuilder) {
-        return InstanceManager.addDamageHealingInstance(this, instanceBuilder.target(this).build());
+        return InstanceManager.addDamageHealingInstance(instanceBuilder.target(this).build());
     }
 
     /**

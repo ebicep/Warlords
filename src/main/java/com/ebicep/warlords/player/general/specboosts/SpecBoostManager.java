@@ -62,6 +62,7 @@ public class SpecBoostManager {
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
     public static final SpecBoost<Striker> STRIKER = new Striker();
     public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
+    public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
     public static final SpecBoost<Transistor> TRANSISTOR = new Transistor();
     public static final SpecBoost<TyphoonBolt> TYPHOON_BOLT = new TyphoonBolt();
     public static final SpecBoost<UndyingSteed> UNDYING_STEED = new UndyingSteed();
@@ -86,7 +87,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(BIG_GUY, LIGHT_SPEED_INFUSION, DIVINE_EFFULGENCE, LUSTROUS_CROWN, HAMMER_OF_JUDGEMENT));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
-        SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS));
+        SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
