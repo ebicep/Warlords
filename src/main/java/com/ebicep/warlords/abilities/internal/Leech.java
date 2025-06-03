@@ -40,7 +40,7 @@ public class Leech {
         if (oldLeechCooldown.isPresent() && oldLeechCooldown.get().getFrom().equals(from)) {
             RegularCooldown<LeechData> leechCooldown = oldLeechCooldown.get();
             leechCooldown.setTicksLeft(leechTickDuration);
-            leechCooldown.getCooldownObject().stacks.add(leechTickDuration);
+            leechCooldown.getCooldownObject().add(leechTickDuration);
         } else {
             // remove leech from other players
             oldLeechCooldown.ifPresent(abstractCooldown -> target.getCooldownManager().removeCooldown(abstractCooldown));
@@ -190,7 +190,7 @@ public class Leech {
     public static class LeechData {
 
         private final float leechAmount;
-        private List<Integer> stacks = new ArrayList<>();
+        private final List<Integer> stacks = new ArrayList<>();
         private float healingDoneFromEnemyCarrier = 0;
         private float totalHealingDone = 0;
 
@@ -201,24 +201,19 @@ public class Leech {
             }
         }
 
+        public void add(int stack) {
+            if (stacks.size() >= 4) {
+                stacks.removeFirst();
+            }
+            stacks.add(stack);
+        }
+
         public float getLeechAmount() {
             return leechAmount;
         }
 
-        public List<Integer> getStacks() {
-            return stacks;
-        }
-
         public int getStacksCount() {
             return stacks.size();
-        }
-
-        public float getTotalHealingDone() {
-            return totalHealingDone;
-        }
-
-        public void setTotalHealingDone(float totalHealingDone) {
-            this.totalHealingDone = totalHealingDone;
         }
 
         public void addHealingDoneFromEnemyCarrier(float amount) {
