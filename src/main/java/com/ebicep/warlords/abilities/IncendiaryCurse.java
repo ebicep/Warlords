@@ -37,6 +37,8 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     private FloatModifiable hitbox = new FloatModifiable(5);
 
     private int blindDurationInTicks = 30;
+    private int damageIncrease;
+    private int damageIncreaseHealthThreshold;
 
     public IncendiaryCurse() {
         this(AbstractAbilityBuilder.create("incendiaryCurse").pvp());
@@ -51,12 +53,15 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         super.init(builder);
         this.hitbox = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("hitbox"), float.class));
         this.blindDurationInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindDurationInTicks"), int.class);
+        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
+        this.damageIncreaseHealthThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncreaseHealthThreshold"), int.class);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Ignite the targeted area with a cross flame, dealing")
                                                .damage(damageValues.curseDamage)
+                                               .text("damage. Deals ")
                                                .text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
                                                .durationTicks(blindDurationInTicks)
                                                .text(".")
@@ -89,7 +94,18 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         List<WarlordsEntity> enemies = PlayerFilter.entitiesAround(newLoc, hitboxValue, hitboxValue, hitboxValue).aliveEnemiesOf(wp).toList();
         for (WarlordsEntity nearEntity : enemies) {
             stats.playersHit++;
-            nearEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.curseDamage));
+            float damageMultiplier = convertToMultiplicationDecimal(
+                    (nearEntity.getCurrentHealth() / nearEntity.getMaxBaseHealth()) > damageIncreaseHealthThreshold
+                    ? damageIncrease
+                    : 0
+            );
+            nearEntity.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .min(damageValues.curseDamage.getMinValue() * damageMultiplier)
+                    .max(damageValues.curseDamage.getMaxValue() * damageMultiplier)
+            );
             if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.setStunTicks(blindDurationInTicks);
             } else {
