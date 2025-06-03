@@ -1288,7 +1288,7 @@ public abstract class WarlordsEntity {
         // Energy
         if (getCurrentEnergy() < getMaxEnergy()) {
             // Standard energy value per second.
-            float energyGainPerTick = getSpec().getEnergyPerSec() / 20;
+            float energyGainPerTick = getEnergyPerSec().getCalculatedValue() / 20;
 
             for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
                 energyGainPerTick = abstractCooldown.addEnergyGainPerTick(energyGainPerTick);
