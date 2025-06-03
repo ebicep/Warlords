@@ -48,7 +48,9 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
         return List.of(
                 maxTravelBlocks,
                 velocityIncreasePercentage,
-                splashRadiusBlocks
+                splashRadiusBlocks,
+                chainCooldownReductionIncrease,
+                totemPlaceRangeHorizontal
         );
     }
 

@@ -286,10 +286,10 @@ public class AbilityDescriptionBuilder {
 
     public AbilityDescriptionBuilder durationSeconds(float seconds, String prefix) {
         if (prefix.isEmpty()) {
-            parentBuilder.text(NumberFormat.formatOptionalTenths(seconds), NamedTextColor.GOLD);
+            parentBuilder.text(NumberFormat.formatOptionalHundredths(seconds), NamedTextColor.GOLD);
             parentBuilder.text(seconds == 1 ? " second" : " seconds");
         } else {
-            parentBuilder.text(NumberFormat.formatOptionalTenths(seconds) + prefix, NamedTextColor.GOLD);
+            parentBuilder.text(NumberFormat.formatOptionalHundredths(seconds) + prefix, NamedTextColor.GOLD);
         }
         return this;
     }
