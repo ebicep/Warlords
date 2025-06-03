@@ -127,14 +127,15 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 tickDuration,
                 soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 4 == 0) {
-                Location location = wp.getLocation();
-                location.add(0, 1.2, 0);
-                location.getWorld().spawnParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1, null, true);
-            }
-            data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
-            data.getSoulBindedPlayers().removeIf(soulBoundPlayer -> soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()));
-        })
+                    if (ticksElapsed % 4 == 0) {
+                        Location location = wp.getLocation();
+                        location.add(0, 1.2, 0);
+                        location.getWorld().spawnParticle(Particle.WITCH, location, 2, 0.2, 0, 0.2, 0.1, null, true);
+                    }
+                    data.getSoulBindedPlayers().forEach(SoulBoundPlayer::decrementTimeLeft);
+                    data.getSoulBindedPlayers()
+                        .removeIf(soulBoundPlayer -> soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithSoul() && soulBoundPlayer.isHitWithLink()));
+                })
         ) {
 
             @Override
@@ -142,6 +143,9 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 WarlordsEntity wpAttacker = event.getSource();
                 WarlordsEntity wpVictim = event.getWarlordsEntity();
                 if (!event.getCause().isEmpty() || wpAttacker == wpVictim) {
+                    return;
+                }
+                if (!hasTicksLeft()) {
                     return;
                 }
                 data.bindPlayer(wpAttacker, wpVictim);
