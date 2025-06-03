@@ -15,11 +15,15 @@ import java.util.UUID;
 
 public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChains> {
 
+    private int energyCostReduction;
+    private float earthenSpikeDamageReductionPercent;
     private int chainHealCooldownReductionTicks;
     private float chainHealHealingReductionPercent;
 
     @Override
     public void init() {
+        this.energyCostReduction = getValue("energyCostReduction", int.class);
+        this.earthenSpikeDamageReductionPercent = getValue("earthenSpikeDamageReductionPercent", float.class);
         this.chainHealCooldownReductionTicks = getValue("chainHealCooldownReductionSeconds", int.class);
         this.chainHealHealingReductionPercent = getValue("chainHealHealingReductionPercent", float.class);
     }
@@ -31,7 +35,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
 
     @Override
     public List<Object> getVariables() {
-        return List.of(chainHealCooldownReductionTicks, chainHealHealingReductionPercent);
+        return List.of(energyCostReduction, earthenSpikeDamageReductionPercent, chainHealCooldownReductionTicks, chainHealHealingReductionPercent);
     }
 
     @Override
@@ -52,6 +56,12 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getAbilitiesMatching(EarthenSpike.class).forEach(earthenSpike -> {
+                earthenSpike.getEnergyCost().addAdditiveModifier("Spec Boost", -energyCostReduction);
+                earthenSpike.getDamageValues().getSpikeDamage().forEachValue(floatModifiable ->
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -earthenSpikeDamageReductionPercent / 100)
+                );
+            });
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
                 chainHeal.getHealValues().getChainHealing().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -chainHealHealingReductionPercent / 100)
