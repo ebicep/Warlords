@@ -36,7 +36,6 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
     private float damageReduction = 15;
     private float damageReductionDuration = 4.5f;
     private float damageDecreasePerBounce = 20;
-    private int kbRes = 10;
     private int maxStacks = 10;
 
     public SpiritLink() {
@@ -51,7 +50,6 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class);
         this.damageReductionDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionDuration"), float.class);
         this.damageDecreasePerBounce = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageDecreasePerBounce"), float.class);
-        this.kbRes = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("kbRes"), int.class);
         this.maxStacks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxStacks"), int.class);
     }
 
@@ -220,10 +218,6 @@ public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkS
 
     public void setDamageReductionDuration(float damageReductionDuration) {
         this.damageReductionDuration = damageReductionDuration;
-    }
-
-    public int getKbRes() {
-        return kbRes;
     }
 
     public static class DamageValues implements Value.ValueHolder {

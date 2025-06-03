@@ -2,7 +2,6 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
-import com.ebicep.warlords.abilities.SpiritLink;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -577,8 +576,8 @@ public class CooldownManager {
         }
         int counter = soulbindings.size();
         for (AbstractAbility ability : this.warlordsEntity.getAbilities()) {
-            if (ability instanceof SpiritLink spiritLink) {
-                this.warlordsEntity.addKnockbackModifier(this.warlordsEntity, "Spirit Link", -spiritLink.getKbRes(), (int) (counter * 1.2 * 20));
+            if (ability instanceof Soulbinding soulbinding) {
+                this.warlordsEntity.addKnockbackModifier(this.warlordsEntity, "Spirit Link", -soulbinding.getKbRes(), (int) (counter * 1.2 * 20));
                 break;
             }
         }

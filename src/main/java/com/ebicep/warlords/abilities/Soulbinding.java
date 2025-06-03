@@ -38,6 +38,7 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     private int radius = 8;
     private int maxAlliesHit = 2;
     private int maxStacks = 1;
+    private int kbRes = 10;
 
     public Soulbinding() {
         super(AbstractAbilityBuilder.create("soulbindingWeapon").pvp());
@@ -85,8 +86,8 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                                                .durationTicks(tickDuration)
                                                .text(".")
                                                .emptyLine()
-                                               .text("Successful soulbind procs will grant you ")
-                                               .percent(25, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text("Successful soulbind procs with Spirit Link will grant you ")
+                                               .percent(kbRes, AbilityDescriptionBuilder.COLOR_BROWN)
                                                .text(" knockback resistance for ")
                                                .durationSeconds(1.2f)
                                                .text(" (Max ")
@@ -167,6 +168,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             }
         }
         return data;
+    }
+
+    public int getKbRes() {
+        return kbRes;
     }
 
     @Override
