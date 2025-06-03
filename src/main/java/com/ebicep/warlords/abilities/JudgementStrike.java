@@ -25,6 +25,9 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     private int speedOnCrit = 25;
     private int speedOnCritDuration = 2;
     private int strikeCritInterval = 4;
+    private int damageIncrease;
+    private int damageIncreaseHealthThreshold;
+    private float orderCooldownReduction;
 
     public JudgementStrike() {
         super(AbstractAbilityBuilder.create("judgementStrike").pvp());
@@ -36,6 +39,9 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
         this.speedOnCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCrit"), int.class);
         this.speedOnCritDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedOnCritDuration"), int.class);
         this.strikeCritInterval = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("strikeCritInterval"), int.class);
+        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
+        this.damageIncreaseHealthThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncreaseHealthThreshold"), int.class);
+        this.orderCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderCooldownReduction"), float.class);
     }
 
     @Override
@@ -55,11 +61,16 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 critChance = 100;
             }
             float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
+            float damageMultiplier = convertToMultiplicationDecimal(
+                    (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) > damageIncreaseHealthThreshold
+                    ? damageIncrease
+                    : 0
+            );
             nearPlayer.addInstance(InstanceBuilder.damage()
                                                   .ability(this)
                                                   .source(wp)
-                                                  .min(damageValues.strikeDamage.getMinValue() + extraDamage)
-                                                  .max(damageValues.strikeDamage.getMaxValue() + extraDamage)
+                                                  .min((damageValues.strikeDamage.getMinValue() + extraDamage) * damageMultiplier)
+                                                  .max((damageValues.strikeDamage.getMaxValue() + extraDamage) * damageMultiplier)
                                                   .critChance(critChance)
                                                   .critMultiplier(damageValues.strikeDamage.getCritMultiplierValue())
             ).ifPresent(finalEvent -> {
@@ -68,6 +79,9 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 }
                 if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
                     wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.strikeHealing));
+                }
+                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
+                    orderOfEviscerate.subtractCurrentCooldown(orderCooldownReduction);
                 }
             });
         }
