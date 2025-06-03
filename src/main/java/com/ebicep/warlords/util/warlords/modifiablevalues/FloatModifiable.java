@@ -145,6 +145,12 @@ public class FloatModifiable {
         return modifier;
     }
 
+    public FloatModifier addOverridingModifier(String log, float overridingModifier, int ticksLeft) {
+        FloatModifier modifier = new FloatModifier(log, overridingModifier, ticksLeft);
+        addModifier(this.overridingModifiers, modifier);
+        return modifier;
+    }
+
     public FloatModifier addAdditiveModifier(String log, float additiveModifier, int ticksLeft) {
         FloatModifier modifier = new FloatModifier(log, additiveModifier, ticksLeft);
         addModifier(this.additiveModifiers, modifier);

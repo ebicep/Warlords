@@ -56,6 +56,12 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     }
 
     @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        activeSoulbinding(wp);
+        return true;
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Your melee attacks give enemies ")
                                                .text("BOUND", NamedTextColor.LIGHT_PURPLE)
@@ -90,28 +96,37 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     }
 
     @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        activeSoulbinding(wp);
-        return true;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new SoulbindingWeaponBranch(abilityTree, this);
     }
 
     public SoulbindingData activeSoulbinding(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
         wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, wp.isInPve() ? 2 : maxStacks);
-        this.energyCost.addOverridingModifier("Soulbinding Reactivation", 0);
+        this.energyCost.addOverridingModifier("Soulbinding Reactivation", 0, tickDuration);
         SoulbindingData data = new SoulbindingData(this);
-        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(name, "SOUL", SoulbindingData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            this.energyCost.removeModifier("Soulbinding Reactivation");
-            if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
-                if (wp.getEntity() instanceof Player) {
-                    ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
-                    if (item != null) {
-                        item.removeEnchantment(Enchantment.RESPIRATION);
+        wp.getCooldownManager().addCooldown(new PersistentCooldown<>(
+                name,
+                "SOUL",
+                SoulbindingData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.SoulbindingData.class).stream().count() == 1) {
+                        if (wp.getEntity() instanceof Player) {
+                            ItemStack item = ((Player) wp.getEntity()).getInventory().getItem(0);
+                            if (item != null) {
+                                item.removeEnchantment(Enchantment.RESPIRATION);
+                            }
+                        }
                     }
-                }
-            }
-        }, tickDuration, soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(), Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                },
+                tickDuration,
+                soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 4 == 0) {
                 Location location = wp.getLocation();
                 location.add(0, 1.2, 0);
@@ -148,11 +163,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
             }
         }
         return data;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new SoulbindingWeaponBranch(abilityTree, this);
     }
 
     @Override
