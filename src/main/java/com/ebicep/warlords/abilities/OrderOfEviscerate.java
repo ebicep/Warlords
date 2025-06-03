@@ -19,7 +19,6 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -44,6 +43,9 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private float backstabDamageBonus = 10;
     private int speedBuff = 40;
 
+    private float orderKillCooldownReduction;
+    private float orderAssistCooldownReduction;
+
     public OrderOfEviscerate() {
         super(AbstractAbilityBuilder.create("orderOfEviscerate").pvp());
     }
@@ -56,50 +58,53 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         this.vulnerableDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vulnerableDamageBonus"), float.class);
         this.backstabDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("backstabDamageBonus"), float.class);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
+        this.orderKillCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderKillCooldownReduction"), float.class);
+        this.orderAssistCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderAssistCooldownReduction"), float.class);
     }
 
     @Override
     public void updateDescription(Player player) {
-        TextComponent.Builder builder = AbilityDescriptionBuilder.create("Cloak yourself for ")
-                                                                 .durationTicks(tickDuration)
-                                                                 .text(", granting you ")
-                                                                 .percent(speedBuff, NamedTextColor.WHITE)
-                                                                 .text(" extra movement speed and making you ")
-                                                                 .text("INVIS", NamedTextColor.DARK_GREEN)
-                                                                 .text(" to the enemy for the duration. However, taking up to ")
-                                                                 .text(maxDamageThreshold, NamedTextColor.RED)
-                                                                 .text(" fall damage or any type of ability damage will end your invisibility.")
-                                                                 .emptyLine()
-                                                                 .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
-                                                                 .percent(vulnerableDamageBonus, NamedTextColor.RED)
-                                                                 .text(" more damage. Additionally, enemies hit from behind take an additional ")
-                                                                 .percent(backstabDamageBonus, NamedTextColor.RED)
-                                                                 .text(" more damage.")
-                                                                 .emptyLine()
-                                                                 .text("Successfully killing your mark will ")
-                                                                 .build()
-                                                                 .toBuilder();
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder.create("Cloak yourself for ")
+                                                                     .durationTicks(tickDuration)
+                                                                     .text(", granting you ")
+                                                                     .percent(speedBuff, NamedTextColor.WHITE)
+                                                                     .text(" extra movement speed and making you ")
+                                                                     .text("INVIS", NamedTextColor.DARK_GREEN)
+                                                                     .text(" to the enemy for the duration. However, taking up to ")
+                                                                     .text(maxDamageThreshold, NamedTextColor.RED)
+                                                                     .text(" fall damage or any type of ability damage will end your invisibility.")
+                                                                     .emptyLine()
+                                                                     .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
+                                                                     .percent(vulnerableDamageBonus, NamedTextColor.RED)
+                                                                     .text(" more damage. Additionally, enemies hit from behind take an additional ")
+                                                                     .percent(backstabDamageBonus, NamedTextColor.RED)
+                                                                     .text(" more damage.")
+                                                                     .emptyLine()
+                                                                     .text("Successfully killing your mark will ");
         if (inPve) {
             // 2 for shadow
             int killReduction = pveMasterUpgrade ? 12 : 8;
             // 0 for shadow
             int assistReduction = pveMasterUpgrade ? 6 : 4;
-            description = builder.append(AbilityDescriptionBuilder.create("reduce", NamedTextColor.YELLOW)
-                                                                  .text(" your Shadow Step cooldown by ")
-                                                                  .text(2, NamedTextColor.GOLD)
-                                                                  .text(" seconds and Order of Eviscerate by ")
-                                                                  .text(killReduction, NamedTextColor.GOLD)
-                                                                  .text(" seconds. Assisting in killing your mark will ")
-                                                                  .text("reduce", NamedTextColor.YELLOW)
-                                                                  .text(" your Order of Eviscerate cooldown by ")
-                                                                  .text(assistReduction, NamedTextColor.GOLD)
-                                                                  .text(" seconds.")
-                                                                  .build()).build();
+            builder.text("reduce", NamedTextColor.YELLOW)
+                   .text(" your Shadow Step cooldown by ")
+                   .text(2, NamedTextColor.GOLD)
+                   .text(" seconds and Order of Eviscerate by ")
+                   .text(killReduction, NamedTextColor.GOLD)
+                   .text(" seconds. Assisting in killing your mark will ")
+                   .text("reduce", NamedTextColor.YELLOW)
+                   .text(" your Order of Eviscerate cooldown by ")
+                   .text(assistReduction, NamedTextColor.GOLD)
+                   .text(" seconds.");
         } else {
-            description = builder.append(AbilityDescriptionBuilder.create("reset", NamedTextColor.YELLOW)
-                                                                  .text(" both your Shadow Step and Order of Eviscerate's cooldown and refund the energy cost. Assisting in killing your mark will only refund half the cooldown.")
-                                                                  .build()).build();
+            builder.text(" reduce your Order of Eviscerate's cooldown by ")
+                   .durationSeconds(orderKillCooldownReduction)
+                   .text(". Assists only reduce ")
+                   .durationSeconds(orderAssistCooldownReduction)
+                   .emptyLine()
+                   .text("If your mark does, the cooldown of Soul Switch is reset.");
         }
+        description = builder.build();
     }
 
     @Override
@@ -212,14 +217,20 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                       });
                                 }
                             } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You killed your mark,", NamedTextColor.GRAY))
-                                                                              .append(Component.text(" your cooldowns have been reset", NamedTextColor.YELLOW))
-                                                                              .append(Component.text("!", NamedTextColor.GRAY)));
-                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
-                                    shadowStep.setCurrentCooldown(0);
-                                }
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You killed your mark, ", NamedTextColor.GRAY))
+                                        .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
+                                        .append(Component.text(orderKillCooldownReduction, NamedTextColor.GOLD))
+                                        .append(Component.text(" seconds and ", NamedTextColor.GRAY))
+                                        .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
+                                );
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.setCurrentCooldown(0);
+                                    orderOfEviscerate.subtractCurrentCooldown(orderKillCooldownReduction);
+                                }
+                                for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
+                                    soulSwitch.setCurrentCooldown(0);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue());
                             }
@@ -243,14 +254,20 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                                     orderOfEviscerate.subtractCurrentCooldown(reduction);
                                 }
                             } else {
-                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You assisted in killing your mark,", NamedTextColor.GRAY))
-                                                                              .append(Component.text(" your cooldowns have been reduced by half", NamedTextColor.YELLOW))
-                                                                              .append(Component.text("!", NamedTextColor.GRAY)));
-                                for (ShadowStep shadowStep : wp.getAbilitiesMatching(ShadowStep.class)) {
-                                    shadowStep.subtractCurrentCooldown(shadowStep.getCurrentCooldown() / 2);
-                                }
+                                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                                        .append(Component.text(" You assisted in killing your mark, ", NamedTextColor.GRAY))
+                                        .append(Component.text(OrderOfEviscerate.this.name, NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reduced by ", NamedTextColor.GRAY))
+                                        .append(Component.text(orderAssistCooldownReduction, NamedTextColor.GOLD))
+                                        .append(Component.text(" seconds and ", NamedTextColor.GRAY))
+                                        .append(Component.text("Soul Switch", NamedTextColor.YELLOW))
+                                        .append(Component.text("'s cooldown was reset.", NamedTextColor.GRAY))
+                                );
                                 for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                                    orderOfEviscerate.subtractCurrentCooldown(orderOfEviscerate.getCooldownValue() / 2);
+                                    orderOfEviscerate.subtractCurrentCooldown(orderAssistCooldownReduction);
+                                }
+                                for (SoulSwitch soulSwitch : wp.getAbilitiesMatching(SoulSwitch.class)) {
+                                    soulSwitch.setCurrentCooldown(0);
                                 }
                                 wp.addEnergy(wp, name, energyCost.getBaseValue() / 2f);
                             }
