@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
 
 import java.util.List;
 
@@ -12,8 +13,11 @@ import static com.ebicep.warlords.database.repositories.config.ConfigManager.DEF
 
 public class Solitary implements SpecBoostManager.SpecBoost<Solitary> {
 
+    private float knockbackResistancePercent;
+
     @Override
     public void init() {
+        this.knockbackResistancePercent = getValue("knockbackResistancePercent", float.class);
     }
 
     @Override
@@ -24,6 +28,7 @@ public class Solitary implements SpecBoostManager.SpecBoost<Solitary> {
     @Override
     public List<Object> getVariables() {
         return List.of(
+                knockbackResistancePercent,
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "solitary.damageReduction", float.class),
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "solitary.healthPercentageHealing", float.class)
         );
@@ -43,6 +48,14 @@ public class Solitary implements SpecBoostManager.SpecBoost<Solitary> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getKnockback().addModifier(
+                    new MotionModifierBuilder()
+                            .setFrom(warlordsPlayer)
+                            .setName("BASE")
+                            .setModifier(-knockbackResistancePercent)
+                            .setDuration(-1)
+                            .build()
+            );
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
