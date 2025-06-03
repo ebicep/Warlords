@@ -71,6 +71,26 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         super.runEveryTick(warlordsEntity);
     }
 
+    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
+        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
+        List<InternalProjectile> internalProjectiles = new ArrayList<>();
+        for (Location projectileLocation : projectileLocations) {
+            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
+            internalProjectiles.add(projectile);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            internalProjectileGroup.put(projectile, internalProjectiles);
+        }
+
+        for (InternalProjectile projectile : internalProjectiles) {
+            onSpawn(projectile);
+            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
+        }
+        WarlordsProjectileFireEvent fireEvent = new WarlordsProjectileFireEvent(shooter, this, internalProjectiles);
+        Bukkit.getPluginManager().callEvent(fireEvent);
+    }
+
     /**
      * @return List of locations in a 2D cone to fire projectiles, number of projectiles depend on numberOfShotsAtATime
      */
@@ -149,65 +169,6 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
     protected void updateSpeed(InternalProjectile projectile) {
     }
 
-    public void fire(@Nonnull WarlordsEntity shooter, Location startingLocation) {
-        List<Location> projectileLocations = getLocationsToFireShots(startingLocation);
-        List<InternalProjectile> internalProjectiles = new ArrayList<>();
-        for (Location projectileLocation : projectileLocations) {
-            InternalProjectile projectile = new InternalProjectile(shooter, projectileLocation);
-            internalProjectiles.add(projectile);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            internalProjectileGroup.put(projectile, internalProjectiles);
-        }
-
-        for (InternalProjectile projectile : internalProjectiles) {
-            onSpawn(projectile);
-            projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
-        }
-        WarlordsProjectileFireEvent fireEvent = new WarlordsProjectileFireEvent(shooter, this, internalProjectiles);
-        Bukkit.getPluginManager().callEvent(fireEvent);
-    }
-
-    @Nullable
-    protected WarlordsEntity getFromEntity(Entity e) {
-        List<Entity> passengers = e.getPassengers();
-        return Warlords.getPlayer(passengers.isEmpty() ? e : passengers.get(0));
-    }
-
-    /**
-     * Should the collision with this object cause the projectile to consider itself destroyed?
-     *
-     * @param projectile
-     * @param wp
-     *
-     * @return true if it should destroy itself
-     */
-    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
-
-    /**
-     * Should the collision with this object cause the projectile to consider itself destroyed?
-     *
-     * @param projectile
-     * @param block
-     *
-     * @return true if it should destroy itself
-     */
-    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
-
-    /**
-     * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
-     *
-     * @param projectile
-     * @param hit
-     * @param impactLocation
-     */
-    protected abstract void onNonCancellingHit(
-            @Nonnull InternalProjectile projectile,
-            @Nonnull WarlordsEntity hit,
-            @Nonnull Location impactLocation
-    );
-
     /**
      * Calculated the initial projectile location
      *
@@ -234,6 +195,17 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
      */
     @Nullable
     protected HitResult checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter) {
+        double distanceRemaining = maxDistance.getCalculatedValue() - projectile.getBlocksTravelled();
+        double distanceToMove = speed.length();
+
+        Vector actualSpeed = speed.clone();
+        if (distanceToMove > distanceRemaining) {
+            if (distanceRemaining <= 0) {
+                return null;
+            }
+            actualSpeed.multiply(distanceRemaining / distanceToMove);
+            distanceToMove = distanceRemaining;
+        }
         Vec3 currentPosition;
         if (projectile.getTicksLived() == 0) {
             // for initially shooting entities directly in front of player
@@ -242,7 +214,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         } else {
             currentPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         }
-        currentLocation.add(speed);
+        currentLocation.add(actualSpeed);
         Vec3 nextPosition = new Vec3(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
 
         @Nullable
@@ -288,14 +260,11 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             currentPosition = new Vec3(startingLocation.getX(), startingLocation.getY(), startingLocation.getZ());
         }
         try {
-            double distanceRemaining = maxDistance.getCalculatedValue() - projectile.getBlocksTravelled();
-            double distanceToMove = projectileSpeed.getCalculatedValue() + 1;
-            double maxDistance = distanceRemaining < distanceToMove && distanceRemaining > 0 ? distanceRemaining : distanceToMove;
             BlockIterator itr = new BlockIterator(currentLocation.getWorld(),
                     new Vector(currentPosition.x, currentPosition.y, currentPosition.z),
-                    speed,
+                    actualSpeed.normalize(),
                     0,
-                    (int) maxDistance
+                    Math.max(1, (int) Math.ceil(distanceToMove))
             );
             while (itr.hasNext()) {
                 Block block = itr.next();
@@ -353,6 +322,45 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         }
         return hit;
     }
+
+    @Nullable
+    protected WarlordsEntity getFromEntity(Entity e) {
+        List<Entity> passengers = e.getPassengers();
+        return Warlords.getPlayer(passengers.isEmpty() ? e : passengers.get(0));
+    }
+
+    /**
+     * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
+     * @param projectile
+     * @param wp
+     *
+     * @return true if it should destroy itself
+     */
+    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, WarlordsEntity wp);
+
+    /**
+     * Should the collision with this object cause the projectile to consider itself destroyed?
+     *
+     * @param projectile
+     * @param block
+     *
+     * @return true if it should destroy itself
+     */
+    protected abstract boolean shouldEndProjectileOnHit(@Nonnull InternalProjectile projectile, Block block);
+
+    /**
+     * Called when the projectile hits a player, but the `shouldEndProjectileOnHit` says the projectile keeps flying
+     *
+     * @param projectile
+     * @param hit
+     * @param impactLocation
+     */
+    protected abstract void onNonCancellingHit(
+            @Nonnull InternalProjectile projectile,
+            @Nonnull WarlordsEntity hit,
+            @Nonnull Location impactLocation
+    );
 
     public void setShotsFiredAtATime(int shotsFiredAtATime) {
         this.shotsFiredAtATime = shotsFiredAtATime;
@@ -480,9 +488,9 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         private final Location currentLocation;
         private final Vector speed;
         private final WarlordsEntity shooter;
+        private final UUID uuid = UUID.randomUUID();
         private int ticksLived = 0;
         private double blocksTravelled = 0;
-        private final UUID uuid = UUID.randomUUID();
 
         private InternalProjectile(WarlordsEntity shooter, Location startingLocation) {
             this.currentLocation = modifyProjectileStartingLocation(shooter, startingLocation);
@@ -534,6 +542,8 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             }
             updateSpeed(this);
             currentLocation.setDirection(speed);
+
+            Location oldLocation = currentLocation.clone();
             HitResult hitResult = checkCollisionAndMove(this, currentLocation, speed, shooter);
             if (hitResult != null) {
                 int hitBySplash = onHit(this, hitResult instanceof EntityHitResult entityHitResult ?
@@ -551,9 +561,11 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             } else {
                 playEffect(this);
                 ticksLived++;
-                blocksTravelled += speed.length();
-                if (blocksTravelled >= maxDistance.getCalculatedValue()) {
+                double distanceMoved = oldLocation.distance(currentLocation);
+                blocksTravelled += distanceMoved;
+                if (Math.abs(blocksTravelled - maxDistance.getCalculatedValue()) < 0.1) {
                     cancel();
+                    return;
                 }
                 //cancel after 15 seconds
                 if (ticksLived > 15 * 20) {

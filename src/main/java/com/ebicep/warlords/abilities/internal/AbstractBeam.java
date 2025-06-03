@@ -21,7 +21,6 @@ public abstract class AbstractBeam<T extends AbstractPiercingProjectile<T, R>, R
 
     public AbstractBeam(AbstractAbilityBuilder builder) {
         super(builder);
-        this.maxTicks = 0;
         this.hitboxInflation.setBaseValue(hitboxInflation.getBaseValue() + .6f);
     }
 
