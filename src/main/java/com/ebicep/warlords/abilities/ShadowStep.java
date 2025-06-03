@@ -29,11 +29,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Damages<ShadowStep.DamageValues>, AbilityStats<ShadowStep, ShadowStep.ShadowStepStats> {
+public class ShadowStep extends AbstractAbility implements
+        PurpleAbilityIcon,
+        Damages<ShadowStep.DamageValues>,
+        Heals<ShadowStep.HealValues>,
+        AbilityStats<ShadowStep,
+                ShadowStep.ShadowStepStats> {
 
     private final ShadowStepStats stats = new ShadowStepStats();
     private final DamageValues damageValues = new DamageValues();
+    private final HealValues healValues = new HealValues();
     private int fallDamageNegation = 10;
+    private int leapHealThreshold;
 
     public ShadowStep() {
         super(AbstractAbilityBuilder.create("shadowStep").pvp());
@@ -43,6 +50,7 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.fallDamageNegation = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallDamageNegation"), int.class);
+        this.leapHealThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leapHealThreshold"), int.class);
     }
 
     @Override
@@ -62,6 +70,9 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
         Utils.playGlobalSound(playerLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 2, 2);
         wp.setFlagPickCooldown(2);
         EffectUtils.playFirework(wp.getLocation().add(0, pveMasterUpgrade2 ? 1 : 0, 0), FireworkEffect.builder().withColor(Color.BLACK).with(FireworkEffect.Type.BALL).build());
+        if (wp.getCurrentHealth() < leapHealThreshold) {
+            wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healValues.leapHeal));
+        }
         if (pveMasterUpgrade2) {
             doShadowDash(wp);
         } else {
@@ -80,6 +91,11 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
     @Override
     public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
         return new ShadowStepBranch(abilityTree, this);
+    }
+
+    @Override
+    public HealValues getHealValues() {
+        return healValues;
     }
 
     private void doShadowDash(@Nonnull WarlordsEntity wp) {
@@ -210,6 +226,32 @@ public class ShadowStep extends AbstractAbility implements PurpleAbilityIcon, Da
 
         public Value.RangedValueCritable getShadowStepDamage() {
             return shadowStepDamage;
+        }
+
+    }
+
+    public static class HealValues implements Value.ValueHolder {
+
+        private Value.SetValue leapHeal = new Value.SetValue(600);
+
+        private List<Value> values = List.of(leapHeal);
+
+        @Override
+        public List<Value> getValues() {
+            return values;
+        }
+
+        @Override
+        public void init(AbstractAbilityBuilder builder) {
+            this.leapHeal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                    builder.getAppendedFieldNameDamage("leapHeal"),
+                    Value.SetValue.class
+            );
+            this.values = List.of(leapHeal);
+        }
+
+        public Value.SetValue getLeapHeal() {
+            return leapHeal;
         }
 
     }

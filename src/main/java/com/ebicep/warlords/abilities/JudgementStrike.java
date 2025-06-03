@@ -62,7 +62,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
             }
             float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
             float damageMultiplier = convertToMultiplicationDecimal(
-                    (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) > damageIncreaseHealthThreshold
+                    (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) > damageIncreaseHealthThreshold / 100f
                     ? damageIncrease
                     : 0
             );

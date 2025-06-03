@@ -95,7 +95,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         for (WarlordsEntity nearEntity : enemies) {
             stats.playersHit++;
             float damageMultiplier = convertToMultiplicationDecimal(
-                    (nearEntity.getCurrentHealth() / nearEntity.getMaxBaseHealth()) > damageIncreaseHealthThreshold
+                    (nearEntity.getCurrentHealth() / nearEntity.getMaxBaseHealth()) > damageIncreaseHealthThreshold / 100f
                     ? damageIncrease
                     : 0
             );
