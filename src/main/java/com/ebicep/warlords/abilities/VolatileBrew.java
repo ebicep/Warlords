@@ -36,6 +36,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
     private int ticksUntilExplosion = 240;
     private FloatModifiable radius = new FloatModifiable(7.0f);
     private float energyRestore = 80;
+    private int earlyActivationEffectivenessReduction;
 
     public VolatileBrew() {
         super(AbstractAbilityBuilder.create("volatileBrew").pvp());
@@ -56,6 +57,10 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         this.ticksUntilExplosion = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ticksUntilExplosion"), int.class);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.energyRestore = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyRestore"), float.class);
+        this.earlyActivationEffectivenessReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                builder.getAppendedFieldName("earlyActivationEffectivenessReduction"),
+                int.class
+        );
     }
 
     @Override
@@ -85,6 +90,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), data.target)) {
                         return;
                     }
+                    float multiplier = data.activatedEarly ? convertToDivisionDecimal(earlyActivationEffectivenessReduction) : 1.0f;
                     if (data.damageMode) {
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_SPIDER_HURT, 2, .25f);
                         EffectUtils.displayParticle(
@@ -104,7 +110,8 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .ability(this)
                                                 .cause("Corrosive Concoction")
                                                 .source(wp)
-                                                .value(damageValues.brewDamage)
+                                                .min(damageValues.brewDamage.getMinValue() * multiplier)
+                                                .max(damageValues.brewDamage.getMaxValue() * multiplier)
                                         );
                                     });
                     } else {
@@ -126,7 +133,8 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .ability(this)
                                                 .cause("Restorative Elixir")
                                                 .source(wp)
-                                                .value(healingValues.brewHealing)
+                                                .min(healingValues.brewHealing.getValue() * multiplier)
+                                                .max(healingValues.brewHealing.getValue() * multiplier)
                                         );
                                         warlordsEntity.addEnergy(wp, "Restorative Elixir", energyRestore);
                                     });
@@ -163,6 +171,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                             return;
                         }
                         if (data.target.equals(wp)) {
+                            data.activatedEarly = true;
                             setTicksLeft(1);
                             return;
                         }
@@ -239,7 +248,10 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 .energy(energyRestore)
                 .text(" to nearby allies.")
                 .emptyLine()
-                .text("Recast to toggle between the two states. Sneak to recall the brew to yourself; the brew detonates if you already have it.")
+                .text("Recast to toggle between the two states. Sneak to recall the brew to yourself; the brew detonates if you already have it. The effectiveness of the brew " +
+                        "decreases by ")
+                .percent(earlyActivationEffectivenessReduction, NamedTextColor.BLUE)
+                .text(" if detonated early.")
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .build();
@@ -264,6 +276,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
 
         private WarlordsEntity target;
         private boolean damageMode = true;
+        private boolean activatedEarly = false;
 
         public VolatileBrewData(WarlordsEntity target) {
             this.target = target;
