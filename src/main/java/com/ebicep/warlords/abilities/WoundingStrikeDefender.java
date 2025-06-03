@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.flags.BossLike;
@@ -29,8 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.ebicep.warlords.abilities.internal.WoundingData.*;
 
 public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefender, WoundingStrikeDefender.WoundingStrikeDefenderStats> implements Damages<WoundingStrikeDefender.DamageValues> {
 
@@ -106,31 +103,13 @@ public class WoundingStrikeDefender extends AbstractStrike<WoundingStrikeDefende
         if (event.isCrit() && pveMasterUpgrade) {
             damageReductionOnCrit(wp, nearPlayer);
         }
-        WoundingData data = new WoundingData(wounding.getCalculatedValue());
-        applyNewWoundingInit(nearPlayer);
-        nearPlayer.getCooldownManager()
-                  .addCooldown(new RegularCooldown<>(
-                          name,
-                          "WND",
-                          WoundingData.class,
-                          data,
-                          wp,
-                          CooldownTypes.DEBUFF,
-                          cooldownManager -> {},
-                          cooldownManager -> sendWoundExpired(nearPlayer),
-                          woundingTickDuration
-                  ) {
-
-                      @Override
-                      public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                          return currentHealValue * (100 - data.amount()) / 100f;
-                      }
-
-                      @Override
-                      public PlayerNameData addSuffixFromOther() {
-                          return getSuffixFromOther(wp, nearPlayer);
-                      }
-                  });
+        WoundingCooldown.addWoundingCooldown(
+                nearPlayer,
+                name,
+                wp,
+                wounding.getCalculatedValue(),
+                woundingTickDuration
+        );
     }
 
     @Override

@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ebicep.warlords.abilities.internal.WoundingData.*;
-
 public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerserker, WoundingStrikeBerserker.WoundingStrikeBerserkerStats> implements Damages<WoundingStrikeBerserker.DamageValues> {
 
     private final WoundingStrikeBerserkerStats stats = new WoundingStrikeBerserkerStats();
@@ -115,31 +113,13 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
             bleedOnHit(wp, nearPlayer);
             return;
         }
-        WoundingData data = new WoundingData(wounding.getCalculatedValue());
-        applyNewWoundingInit(nearPlayer);
-        nearPlayer.getCooldownManager()
-                  .addCooldown(new RegularCooldown<>(
-                          name,
-                          "WND",
-                          WoundingData.class,
-                          data,
-                          wp,
-                          CooldownTypes.DEBUFF,
-                          cooldownManager -> {},
-                          cooldownManager -> sendWoundExpired(nearPlayer),
-                          woundingTickDuration
-                  ) {
-
-                      @Override
-                      public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                          return currentHealValue * (100 - data.amount()) / 100f;
-                      }
-
-                      @Override
-                      public PlayerNameData addSuffixFromOther() {
-                          return getSuffixFromOther(wp, nearPlayer);
-                      }
-                  });
+        WoundingCooldown.addWoundingCooldown(
+                nearPlayer,
+                name,
+                wp,
+                wounding.getCalculatedValue(),
+                woundingTickDuration
+        );
     }
 
     @Override

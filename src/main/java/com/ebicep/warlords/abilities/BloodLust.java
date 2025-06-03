@@ -165,7 +165,7 @@ public class BloodLust extends AbstractAbility implements BlueAbilityIcon, Durat
                 float damageMultiplier = 1;
                 CooldownManager cooldownManager = event.getWarlordsEntity().getCooldownManager();
                 if (pveMasterUpgrade) {
-                    if (cooldownManager.hasCooldown(WoundingData.class)) {
+                    if (cooldownManager.hasCooldown(WoundingCooldown.WoundingData.class)) {
                         damageMultiplier += 0.3f;
                     }
                 } else if (pveMasterUpgrade2) {

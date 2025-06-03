@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.SpiritLink;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.abilities.internal.WoundingData;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
@@ -539,7 +539,7 @@ public class CooldownManager {
     }
 
     public void removePreviousWounding() {
-        removeCooldown(WoundingData.class, true);
+        removeCooldown(WoundingCooldown.WoundingData.class, true);
     }
 
     public void removeCooldown(Class<?> cooldownClass, boolean noForce) {

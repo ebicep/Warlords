@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilities.Fireball;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.WoundingData;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -22,10 +22,9 @@ import org.bukkit.*;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-import static com.ebicep.warlords.abilities.internal.WoundingData.applyNewWoundingInit;
-import static com.ebicep.warlords.abilities.internal.WoundingData.sendWoundExpired;
 
 public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
+
     public SkeletalSorcerer(Location spawnLocation) {
         super(
                 spawnLocation,
@@ -82,34 +81,24 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
 
     @Override
     public void onAttack(WarlordsEntity attacker, WarlordsEntity receiver, WarlordsDamageHealingEvent event) {
-        applyNewWoundingInit(receiver);
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+        WoundingCooldown.addWoundingCooldown(
+                receiver,
                 name,
-                "WND",
-                WoundingData.class,
-                null,
                 attacker,
-                CooldownTypes.DEBUFF,
-                cooldownManager -> {
-                },
-                cooldownManager -> sendWoundExpired(receiver),
-                5 * 20
-        ) {
-            @Override
-            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                return currentHealValue * .5f;
-            }
-        });
+                50,
+                100
+        );
     }
 
     @Override
     public void onDeath(WarlordsEntity killer, Location deathLocation, @Nonnull PveOption option) {
         super.onDeath(killer, deathLocation, option);
         EffectUtils.playFirework(deathLocation, FireworkEffect.builder()
-                                                           .withColor(Color.ORANGE)
-                                                           .with(FireworkEffect.Type.BURST)
-                                                           .withTrail()
-                                                           .build());
+                                                              .withColor(Color.ORANGE)
+                                                              .with(FireworkEffect.Type.BURST)
+                                                              .withTrail()
+                                                              .build()
+        );
         Utils.playGlobalSound(deathLocation, Sound.ENTITY_SKELETON_DEATH, 2, 0.4f);
     }
 
@@ -155,5 +144,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
             }
             return true;
         }
+
     }
+
 }

@@ -2,7 +2,7 @@ package com.ebicep.warlords.pve.items.types.fixeditems;
 
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.internal.DamageCheck;
-import com.ebicep.warlords.abilities.internal.WoundingData;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
@@ -33,9 +33,6 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.ebicep.warlords.abilities.internal.WoundingData.applyNewWoundingInit;
-import static com.ebicep.warlords.abilities.internal.WoundingData.sendWoundExpired;
-
 public class DisasterFragment extends AbstractFixedItem implements FixedItemAppliesToPlayer {
 
     public static final HashMap<BasicStatPool, Float> STAT_POOL = new HashMap<>() {{
@@ -55,6 +52,11 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
 
     public DisasterFragment() {
         super(ItemTier.DELTA);
+    }
+
+    @Override
+    protected ItemStack getItemStack() {
+        return new ItemStack(Material.AMETHYST_SHARD);
     }
 
     @Override
@@ -78,31 +80,20 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                 }
                 String debuff = DEBUFFS.next();
                 attacker.sendMessage(Component.text("Your Disaster Fragment applied the ", NamedTextColor.GREEN)
-                        .append(Component.text(debuff, NamedTextColor.RED))
-                        .append(Component.text(" debuff to "))
-                        .append(victim.getColoredName())
-                        .append(Component.text("."))
+                                              .append(Component.text(debuff, NamedTextColor.RED))
+                                              .append(Component.text(" debuff to "))
+                                              .append(victim.getColoredName())
+                                              .append(Component.text("."))
                 );
                 switch (debuff) {
                     case "Wound" -> {
-                        applyNewWoundingInit(victim);
-                        victim.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        WoundingCooldown.addWoundingCooldown(
+                                victim,
                                 "Disaster Fragment - Wounding",
-                                "WND",
-                                WoundingData.class,
-                                null,
                                 attacker,
-                                CooldownTypes.DEBUFF,
-                                cooldownManager -> {
-                                },
-                                cooldownManager -> sendWoundExpired(victim),
+                                25,
                                 40
-                        ) {
-                            @Override
-                            public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                return currentHealValue * .6f;
-                            }
-                        });
+                        );
                     }
                     case "Burn" -> {
                         victim.getCooldownManager().removeCooldownByName("Disaster Fragment - Burn");
@@ -284,11 +275,6 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
     }
 
     @Override
-    protected ItemStack getItemStack() {
-        return new ItemStack(Material.AMETHYST_SHARD);
-    }
-
-    @Override
     public String getEffect() {
         return "Mark of Chaos";
     }
@@ -297,7 +283,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
     public String getEffectDescription() {
         return """
                 Your strikes have 20% chance to give mobs a random debuff below for 2s.
-                                
+                
                 25% Wounding
                 15% Burn
                 15% Bleed
@@ -306,4 +292,5 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                 5% Stun
                 """;
     }
+
 }

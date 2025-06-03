@@ -1,12 +1,10 @@
 package com.ebicep.warlords.pve.mobs.events.spidersburrow;
 
 import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
-import com.ebicep.warlords.abilities.internal.WoundingData;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
-import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.abilities.AbstractPveAbility;
@@ -17,8 +15,6 @@ import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 
-import static com.ebicep.warlords.abilities.internal.WoundingData.applyNewWoundingInit;
-import static com.ebicep.warlords.abilities.internal.WoundingData.sendWoundExpired;
 
 public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Spider {
 
@@ -89,27 +85,17 @@ public class EventForsakenCruor extends AbstractMob implements BossMinionMob, Sp
             PlayerFilterGeneric.playingGameWarlordsPlayers(pveOption.getGame())
                                .enemiesOf(wp)
                                .forEach(receiver -> {
-                                   applyNewWoundingInit(receiver);
-                                   receiver.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                   WoundingCooldown.addWoundingCooldown(
+                                           receiver,
                                            name,
-                                           "WND",
-                                           WoundingData.class,
-                                           null,
                                            wp,
-                                           CooldownTypes.DEBUFF,
-                                           cooldownManager -> {
-                                           },
-                                           cooldownManager -> sendWoundExpired(receiver),
-                                           3 * 20
-                                   ) {
-                                       @Override
-                                       public float modifyHealingFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
-                                           return currentHealValue * .5f;
-                                       }
-                                   });
+                                           50,
+                                           60
+                                   );
                                });
             return true;
         }
 
     }
+
 }
