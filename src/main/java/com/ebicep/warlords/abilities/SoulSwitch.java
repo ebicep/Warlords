@@ -49,6 +49,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private int decoyMaxTicksLived = 60;
     // pve
     private int invisTicks = 30;
+    private int damageIncrease;
+    private int damageIncreaseTickDuration;
 
     public SoulSwitch() {
         super(AbstractAbilityBuilder.create("soulSwitch").pvp());
@@ -61,6 +63,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
         this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
         this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
+        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
+        this.damageIncreaseTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncreaseTickDuration"), int.class);
     }
 
     @Override
@@ -118,6 +122,21 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                                           .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
                                                           .append(Component.text("!", NamedTextColor.GRAY)));
             wp.teleport(new Location(swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
+            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                    "Soul Switch Damage",
+                    "DMG",
+                    SoulSwitch.class,
+                    null,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    damageIncreaseTickDuration
+            ) {
+                @Override
+                public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * convertToMultiplicationDecimal(damageIncrease);
+                }
+            });
             if (swapTarget instanceof WarlordsNPC npc) {
                 PveOption pveOption = wp.getGame().getOption(PveOption.class).stream().findFirst().orElse(null);
                 if (pveOption != null) {
