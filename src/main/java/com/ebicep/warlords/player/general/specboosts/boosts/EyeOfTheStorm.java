@@ -9,6 +9,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsProjectileFireEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
@@ -27,6 +28,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
     private float chainCooldownReductionIncrease;
     private float totemPlaceRangeHorizontal;
     private float totemPlaceRangeVertical;
+    private float verticalCheckPlaceLimit;
 
     @Override
     public void init() {
@@ -36,6 +38,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
         this.chainCooldownReductionIncrease = getValue("chainCooldownReductionIncrease", float.class);
         this.totemPlaceRangeHorizontal = getValue("totemPlaceRangeHorizontal", float.class);
         this.totemPlaceRangeVertical = getValue("totemPlaceRangeVertical", float.class);
+        this.verticalCheckPlaceLimit = getValue("verticalCheckPlaceLimit", float.class);
     }
 
     @Override
@@ -122,11 +125,14 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
             Location targetLocation = LocationUtils.getGroundLocation(targetBlock.getLocation()).add(.6, 0, .6);
             while (targetLocation.getBlock().getType() != Material.AIR) {
                 targetLocation.setY(targetLocation.getY() + 1);
-                if (targetLocation.getY() > location.getY() + totemPlaceRangeVertical) {
+                if (targetLocation.getY() > location.getY() + verticalCheckPlaceLimit) {
                     break;
                 }
             }
-            event.getLocation().set(targetLocation.getX(), targetLocation.getY(), targetLocation.getZ());
+            if (targetLocation.getBlock().getType() != Material.AIR) {
+                targetLocation = LocationUtils.getGroundLocation(new LocationBuilder(targetLocation).faceTowards(warlordsEntity.getLocation()).forward(1));
+            }
+            event.getLocation().set(targetLocation.getBlockX() + .6, targetLocation.getBlockY(), targetLocation.getBlockZ() + .6);
         }
 
     }
