@@ -21,6 +21,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
     private float avengerMarkDamage;
     private float avengerMarkSlowPercent;
     private float avengerMarkIncreaseDamagePercent;
+    private float avengerMarkDebuffTickDuration;
     private int holyRadianceCooldownReductionTicks;
     private float holyRadianceEnergyCost;
     private int strikeMarkDurationIncreaseTicks;
@@ -31,6 +32,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
         this.avengerMarkDamage = getValue("avengerMarkDamage", float.class);
         this.avengerMarkSlowPercent = getValue("avengerMarkSlowPercent", float.class);
         this.avengerMarkIncreaseDamagePercent = getValue("avengerMarkIncreaseDamagePercent", float.class);
+        this.avengerMarkDebuffTickDuration = getValue("avengerMarkDebuffTickDuration", int.class);
         this.holyRadianceCooldownReductionTicks = getValue("holyRadianceCooldownReductionTicks", int.class);
         this.holyRadianceEnergyCost = getValue("holyRadianceEnergyCost", float.class);
         this.strikeMarkDurationIncreaseTicks = getValue("strikeMarkDurationIncreaseTicks", int.class);
@@ -48,6 +50,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
                 avengerMarkDamage,
                 avengerMarkSlowPercent,
                 avengerMarkIncreaseDamagePercent,
+                avengerMarkDebuffTickDuration,
                 strikeMarkDurationIncreaseTicks,
                 maxStrikeMarkDurationIncreaseTicks,
                 holyRadianceCooldownReductionTicks,
@@ -101,6 +104,9 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
 
                 @Override
                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    if (regularCooldown.getTicksElapsed() > avengerMarkDebuffTickDuration) {
+                        return currentDamageValue;
+                    }
                     return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent);
                 }
 

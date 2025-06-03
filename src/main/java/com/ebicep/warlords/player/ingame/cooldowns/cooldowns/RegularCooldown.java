@@ -156,6 +156,10 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
         subtractTime(1);
     }
 
+    public int getTicksElapsed() {
+        return ticksElapsed;
+    }
+
     @Override
     public boolean removeCheck() {
         return ticksLeft <= 0;
