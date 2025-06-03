@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.Berserk;
 import com.ebicep.warlords.abilities.WoundingStrikeBerserker;
 import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerWoundedEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -14,12 +15,16 @@ import java.util.List;
 public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
     private float woundingIncreasePercent;
+    private float consecutiveStrikeWoundingIncreasePercent;
+    private float maxConsecutiveStrikeWoundingIncreasePercent;
     private float seismicWaveGroundSlamWoundingPercent;
     private int seismicWaveGroundSlamWoundingDurationTicks;
 
     @Override
     public void init() {
         this.woundingIncreasePercent = getValue("woundingIncreasePercent", float.class);
+        this.consecutiveStrikeWoundingIncreasePercent = getValue("consecutiveStrikeWoundingIncreasePercent", float.class);
+        this.maxConsecutiveStrikeWoundingIncreasePercent = getValue("maxConsecutiveStrikeWoundingIncreasePercent", float.class);
         this.seismicWaveGroundSlamWoundingPercent = getValue("seismicWaveGroundSlamWoundingPercent", float.class);
         this.seismicWaveGroundSlamWoundingDurationTicks = getValue("seismicWaveGroundSlamWoundingDurationTicks", int.class);
     }
@@ -31,7 +36,12 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(woundingIncreasePercent, seismicWaveGroundSlamWoundingPercent, seismicWaveGroundSlamWoundingDurationTicks);
+        return List.of(woundingIncreasePercent,
+                consecutiveStrikeWoundingIncreasePercent,
+                maxConsecutiveStrikeWoundingIncreasePercent,
+                seismicWaveGroundSlamWoundingPercent,
+                seismicWaveGroundSlamWoundingDurationTicks
+        );
     }
 
     @Override
@@ -76,6 +86,30 @@ public class MightyFists implements SpecBoostManager.SpecBoost<MightyFists> {
                     seismicWaveGroundSlamWoundingPercent,
                     seismicWaveGroundSlamWoundingDurationTicks
             );
+        }
+
+        @EventHandler
+        public void onPlayerWoundedEvent(WarlordsPlayerWoundedEvent event) {
+            if (!event.getFrom().equals(warlordsEntity)) {
+                return;
+            }
+            if (!event.getName().equals("Wounding Strike")) {
+                return;
+            }
+            WoundingCooldown woundingCooldown = event.getWoundingCooldown();
+            if (woundingCooldown == null) {
+                return;
+            }
+            WoundingCooldown.WoundingData woundingData = woundingCooldown.getCooldownObject();
+            for (WoundingCooldown.WoundingData.WoundingInstance instance : woundingData.instances()) {
+                if (instance.getFrom().equals(warlordsEntity) && instance.getName().equals("Wounding Strike")) {
+                    instance.setAmount(Math.min(maxConsecutiveStrikeWoundingIncreasePercent, instance.getAmount() + consecutiveStrikeWoundingIncreasePercent));
+                    instance.setTicksLeft(event.getTickDuration());
+                    woundingCooldown.updateTicksLeft();
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
 
     }

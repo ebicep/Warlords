@@ -1,6 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerWoundedEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -28,10 +30,20 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
     ) {
         new CooldownFilter<>(target, WoundingCooldown.class)
                 .findAny()
-                .ifPresentOrElse(woundingData -> {
-                            woundingData.getCooldownObject().addWoundingInstance(amount, tickDuration);
-                            woundingData.setTicksLeft(tickDuration);
+                .ifPresentOrElse(woundingCooldown -> {
+                    WarlordsPlayerWoundedEvent woundedEvent = new WarlordsPlayerWoundedEvent(target, from, name, amount, tickDuration, woundingCooldown);
+                    Bukkit.getPluginManager().callEvent(woundedEvent);
+                    if (woundedEvent.isCancelled()) {
+                        return;
+                    }
+                    woundingCooldown.getCooldownObject().addWoundingInstance(from, name, amount, tickDuration);
+                    woundingCooldown.updateTicksLeft();
                         }, () -> {
+                    WarlordsPlayerWoundedEvent woundedEvent = new WarlordsPlayerWoundedEvent(target, from, name, amount, tickDuration, null);
+                    Bukkit.getPluginManager().callEvent(woundedEvent);
+                    if (woundedEvent.isCancelled()) {
+                        return;
+                    }
                             target.sendMessage(
                                     Component.text("You are ", NamedTextColor.GRAY)
                                              .append(Component.text("wounded", NamedTextColor.RED))
@@ -44,18 +56,12 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
 
     private final WarlordsEntity target;
 
-    public WoundingCooldown(
-            WarlordsEntity target,
-            String name,
-            WarlordsEntity from,
-            float amount,
-            int tickDuration
-    ) {
-        this(
-                target, name,
-                from,
-                new WoundingData.WoundingInstance(amount, tickDuration)
-        );
+    public void updateTicksLeft() {
+        ticksLeft = getCooldownObject().instances
+                .stream()
+                .mapToInt(WoundingData.WoundingInstance::getTicksLeft)
+                .max()
+                .orElse(0);
     }
 
     public WoundingCooldown(
@@ -109,6 +115,20 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
         );
     }
 
+    public WoundingCooldown(
+            WarlordsEntity target,
+            String name,
+            WarlordsEntity from,
+            float amount,
+            int tickDuration
+    ) {
+        this(
+                target, name,
+                from,
+                new WoundingData.WoundingInstance(from, name, amount, tickDuration)
+        );
+    }
+
     public record WoundingData(List<WoundingInstance> instances) {
 
         public WoundingData(WoundingInstance instance) {
@@ -124,8 +144,8 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
             );
         }
 
-        public void addWoundingInstance(float amount, int ticksLeft) {
-            instances.add(new WoundingInstance(amount, ticksLeft));
+        public void addWoundingInstance(WarlordsEntity from, String name, float amount, int ticksLeft) {
+            instances.add(new WoundingInstance(from, name, amount, ticksLeft));
         }
 
         public void tick() {
@@ -137,10 +157,14 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
 
         public static class WoundingInstance {
 
+            private final WarlordsEntity from;
+            private final String name;
             private float amount;
             private int ticksLeft;
 
-            public WoundingInstance(float amount, int ticksLeft) {
+            public WoundingInstance(WarlordsEntity from, String name, float amount, int ticksLeft) {
+                this.from = from;
+                this.name = name;
                 this.amount = amount;
                 this.ticksLeft = ticksLeft;
             }
@@ -164,6 +188,14 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
 
             public void setTicksLeft(int ticksLeft) {
                 this.ticksLeft = ticksLeft;
+            }
+
+            public WarlordsEntity getFrom() {
+                return from;
+            }
+
+            public String getName() {
+                return name;
             }
 
         }
