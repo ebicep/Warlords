@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
@@ -22,17 +21,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     @Override
     public TextComponent getDescription() {
-        com.ebicep.warlords.abilities.Parry parry = new com.ebicep.warlords.abilities.Parry();
-        parry.init(parry.getBuilder());
-        parry.updateDescription(null);
-        return SpecBoostManager.SpecBoost.super
-                .getDescription()
-                .appendNewline()
-                .appendNewline()
-                .append(parry.getItemHeader().stream().collect(Component.toComponent(Component.newline())))
-                .appendNewline()
-                .appendNewline()
-                .append(parry.getDescription());
+        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Parry());
     }
 
     @Override

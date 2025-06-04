@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts;
 
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.boosts.*;
@@ -167,6 +168,18 @@ public class SpecBoostManager {
                 i--;
             }
             return abilityDescriptionBuilder.build();
+        }
+
+        default TextComponent getDescriptionWithAbility(AbstractAbility ability) {
+            ability.init(ability.getBuilder());
+            ability.updateDescription(null);
+            return getDescription()
+                    .appendNewline()
+                    .appendNewline()
+                    .append(ability.getItemHeader().stream().collect(Component.toComponent(Component.newline())))
+                    .appendNewline()
+                    .appendNewline()
+                    .append(ability.getDescription());
         }
 
         List<Object> getVariables();
