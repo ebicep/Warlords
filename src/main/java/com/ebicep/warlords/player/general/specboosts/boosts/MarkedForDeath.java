@@ -21,7 +21,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
     private float avengerMarkDamage;
     private float avengerMarkSlowPercent;
     private float avengerMarkIncreaseDamagePercent;
-    private float avengerMarkDebuffTickDuration;
+    private int avengerMarkDebuffTickDuration;
     private int holyRadianceCooldownReductionTicks;
     private float holyRadianceEnergyCost;
     private int strikeMarkDurationIncreaseTicks;
