@@ -29,6 +29,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
     public static final SpecBoost<Conduit> CONDUIT = new Conduit();
     public static final SpecBoost<CrusadersMight> CRUSADERS_MIGHT = new CrusadersMight();
+    public static final SpecBoost<DetonationCatalyst> DETONATION_CATALYST = new DetonationCatalyst();
     public static final SpecBoost<DimensionalWarp> DIMENSIONAL_WARP = new DimensionalWarp();
     public static final SpecBoost<DivineEffulgence> DIVINE_EFFULGENCE = new DivineEffulgence();
     public static final SpecBoost<DivinePurification> DIVINE_PURIFICATION = new DivinePurification();
@@ -92,7 +93,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE));
-        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT));
+        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
