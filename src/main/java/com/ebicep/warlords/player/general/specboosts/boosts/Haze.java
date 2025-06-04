@@ -5,7 +5,6 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
 
@@ -21,18 +20,14 @@ public class Haze implements SpecBoostManager.SpecBoost<Haze> {
     }
 
     @Override
-    public TextComponent getDescription() {
+    public List<Component> getDescriptionLore() {
         com.ebicep.warlords.abilities.Haze haze = new com.ebicep.warlords.abilities.Haze();
         haze.init(haze.getBuilder());
         haze.updateDescription(null);
-        return SpecBoostManager.SpecBoost.super
-                .getDescription()
-                .appendNewline()
-                .appendNewline()
-                .append(haze.getItemHeader().stream().collect(Component.toComponent(Component.newline())))
-                .appendNewline()
-                .appendNewline()
-                .append(haze.getDescription());
+        List<Component> lore = SpecBoostManager.SpecBoost.super.getDescriptionLore();
+        lore.add(Component.empty());
+        lore.addAll(haze.getItemBody());
+        return lore;
     }
 
     @Override

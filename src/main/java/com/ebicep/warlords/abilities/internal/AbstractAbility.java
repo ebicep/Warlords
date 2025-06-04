@@ -325,7 +325,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         return name;
     }
 
-    private List<Component> getItemBody() {
+    public List<Component> getItemBody() {
         List<Component> lore = new ArrayList<>();
         lore.addAll(getItemHeader());
         lore.add(Component.empty());

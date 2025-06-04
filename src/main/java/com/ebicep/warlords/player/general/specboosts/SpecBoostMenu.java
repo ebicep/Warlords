@@ -5,7 +5,6 @@ import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.menu.generalmenu.WarlordsNewHotbarMenu;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -28,7 +27,7 @@ public class SpecBoostMenu {
                         int finalI = i;
                         ItemBuilder itemBuilder = new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(specBoost.getName())
-                                .lore(WordWrap.wrap(specBoost.getDescription(), specBoost.getMaxDescriptionWidth()))
+                                .lore(specBoost.getDescriptionLore())
                                 .glow(selected);
                         if (selected) {
                             itemBuilder.addLore(

@@ -8,7 +8,6 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -40,7 +39,7 @@ public class ApplySpecBoostsOption implements Option {
                         if (appliedBoost != null) {
                             SpecBoostManager.SpecBoost<?> boost = appliedBoost.specBoost;
                             description.add(Component.text("Active Boost: ", NamedTextColor.GREEN).append(Component.text(boost.getStringName(), NamedTextColor.AQUA)));
-                            description.addAll(WordWrap.wrap(boost.getDescription(), boost.getMaxDescriptionWidth()));
+                            description.addAll(boost.getDescriptionLore());
                             return description;
                         }
                         List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(wp.getSpecClass());
@@ -49,7 +48,7 @@ public class ApplySpecBoostsOption implements Option {
                         }
                         SpecBoostManager.SpecBoost<?> boost = specBoosts.getFirst();
                         description.add(boost.getName());
-                        description.addAll(WordWrap.wrap(boost.getDescription(), boost.getMaxDescriptionWidth()));
+                        description.addAll(boost.getDescriptionLore());
                         return description;
                     }
                 }

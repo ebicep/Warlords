@@ -5,6 +5,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.boosts.*;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.util.bukkit.WordWrap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -123,6 +124,10 @@ public class SpecBoostManager {
         }
 
         String getConfigFieldName();
+
+        default List<Component> getDescriptionLore() {
+            return WordWrap.wrap(getDescription(), getMaxDescriptionWidth());
+        }
 
         default TextComponent getDescription() {
             Queue<Object> variables = new LinkedList<>(getVariables());
