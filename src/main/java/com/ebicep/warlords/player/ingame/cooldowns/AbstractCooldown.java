@@ -196,6 +196,10 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
         this.onRemoveForce = onRemoveForce;
     }
 
+    public void setCooldownType(CooldownTypes cooldownType) {
+        this.cooldownType = cooldownType;
+    }
+
     public void addExtraDamageInstance(DamageInstance extraDamageInstance) {
         if (extraDamageInstances == null) {
             extraDamageInstances = new ArrayList<>();
