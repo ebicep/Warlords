@@ -90,8 +90,8 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), data.target)) {
                         return;
                     }
-                    float multiplier = data.activatedEarly ? convertToDivisionDecimal(earlyActivationEffectivenessReduction) : 1.0f;
                     if (data.damageMode) {
+                        float multiplier = data.activatedEarly ? convertToDivisionDecimal(earlyActivationEffectivenessReduction) : 1.0f;
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_SPIDER_HURT, 2, .25f);
                         EffectUtils.displayParticle(
                                 Particle.EXPLOSION_EMITTER,
@@ -133,8 +133,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .ability(this)
                                                 .cause("Restorative Elixir")
                                                 .source(wp)
-                                                .min(healingValues.brewHealing.getValue() * multiplier)
-                                                .max(healingValues.brewHealing.getValue() * multiplier)
+                                                .value(healingValues.brewHealing)
                                         );
                                         warlordsEntity.addEnergy(wp, "Restorative Elixir", energyRestore);
                                     });
@@ -172,7 +171,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                         }
                         if (data.target.equals(wp)) {
                             data.activatedEarly = true;
-                            setTicksLeft(1);
+                            cooldown.setTicksLeft(1);
                             return;
                         }
                         cooldown.getLinkedEntities().remove(data.target);
@@ -240,7 +239,9 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 .text("Corrosive Concoction", NamedTextColor.DARK_RED)
                 .text(": Deals ")
                 .damage(damageValues.brewDamage)
-                .text(" true damage to nearby enemies.")
+                .text(" true damage to nearby enemies. Deals ")
+                .percent(earlyActivationEffectivenessReduction, NamedTextColor.BLUE)
+                .text(" less damage if detonated early.")
                 .text("Restorative Elixir", NamedTextColor.DARK_GREEN)
                 .text(": Restores ")
                 .heal(healingValues.brewHealing)
@@ -248,10 +249,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                 .energy(energyRestore)
                 .text(" to nearby allies.")
                 .emptyLine()
-                .text("Recast to toggle between the two states. Sneak to recall the brew to yourself; the brew detonates if you already have it. The effectiveness of the brew " +
-                        "decreases by ")
-                .percent(earlyActivationEffectivenessReduction, NamedTextColor.BLUE)
-                .text(" if detonated early.")
+                .text("Recast to toggle between the two states. Sneak to recall the brew to yourself; the brew detonates if you already have it.")
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .build();
