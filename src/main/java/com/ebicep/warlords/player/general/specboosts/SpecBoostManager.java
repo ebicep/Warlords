@@ -63,6 +63,7 @@ public class SpecBoostManager {
     public static final SpecBoost<SovereignSolitude> SOVEREIGN_SOLITUDE = new SovereignSolitude();
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
     public static final SpecBoost<Striker> STRIKER = new Striker();
+    public static final SpecBoost<SustainedOnslaught> SUSTAINED_ONSLAUGHT = new SustainedOnslaught();
     public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
     public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
     public static final SpecBoost<Transistor> TRANSISTOR = new Transistor();
@@ -91,7 +92,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE));
-        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(ALCHEMISTS_FURY));
+        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
