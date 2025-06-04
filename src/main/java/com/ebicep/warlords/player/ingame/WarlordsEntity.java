@@ -562,9 +562,17 @@ public abstract class WarlordsEntity {
     }
 
     public <T> List<T> getAbilitiesMatching(Class<T> clazz) {
-        return spec.getAbilities().stream()
+        return spec.getAbilities()
+                   .stream()
                    .filter(clazz::isInstance)
                    .map(clazz::cast)
+                   .collect(Collectors.toList());
+    }
+
+    public <T> List<AbstractAbility> getAbilitiesImplementing(Class<T> clazz) {
+        return spec.getAbilities()
+                   .stream()
+                   .filter(clazz::isInstance)
                    .collect(Collectors.toList());
     }
 
