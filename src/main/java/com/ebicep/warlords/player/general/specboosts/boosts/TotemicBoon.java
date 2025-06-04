@@ -52,6 +52,8 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HealingTotem.class).forEach(healingTotem -> {
+                healingTotem.setHealingPeriod((int) (healingTotem.getHealingPeriod() / healingTotemSpeedMultiplier));
+                healingTotem.setTickDuration((int) (healingTotem.getTickDuration() / healingTotemSpeedMultiplier));
                 healingTotem.getHitBoxRadius().addAdditiveModifier("Spec Boost", healingTotemRadiusIncrease);
             });
         }
@@ -65,7 +67,7 @@ public class TotemicBoon implements SpecBoostManager.SpecBoost<TotemicBoon> {
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
-            boolean aboveThreshold = target.getCurrentHealth() / target.getMaxBaseHealth() > healthTransferThresholdPercent;
+            boolean aboveThreshold = target.getCurrentHealth() / target.getMaxBaseHealth() > healthTransferThresholdPercent / 100f;
             if (!aboveThreshold) {
                 return;
             }
