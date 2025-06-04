@@ -18,14 +18,14 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
     private int energyCostReduction;
     private float earthenSpikeDamageReductionPercent;
     private int chainHealCooldownReductionTicks;
-    private float chainHealHealingReductionPercent;
+    private float chainHealHealingIncreasePercent;
 
     @Override
     public void init() {
         this.energyCostReduction = getValue("energyCostReduction", int.class);
         this.earthenSpikeDamageReductionPercent = getValue("earthenSpikeDamageReductionPercent", float.class);
         this.chainHealCooldownReductionTicks = getValue("chainHealCooldownReductionSeconds", int.class);
-        this.chainHealHealingReductionPercent = getValue("chainHealHealingReductionPercent", float.class);
+        this.chainHealHealingIncreasePercent = getValue("chainHealHealingIncreasePercent", float.class);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
 
     @Override
     public List<Object> getVariables() {
-        return List.of(energyCostReduction, earthenSpikeDamageReductionPercent, chainHealCooldownReductionTicks, chainHealHealingReductionPercent);
+        return List.of(energyCostReduction, earthenSpikeDamageReductionPercent, chainHealCooldownReductionTicks, chainHealHealingIncreasePercent);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class AugmentedChains implements SpecBoostManager.SpecBoost<AugmentedChai
             });
             warlordsPlayer.getAbilitiesMatching(ChainHeal.class).forEach(chainHeal -> {
                 chainHeal.getHealValues().getChainHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", -chainHealHealingReductionPercent / 100)
+                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", chainHealHealingIncreasePercent / 100)
                 );
             });
         }

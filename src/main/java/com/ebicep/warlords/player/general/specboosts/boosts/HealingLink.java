@@ -24,8 +24,8 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
     @Override
     public List<Object> getVariables() {
         return List.of(
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.healingValues.energyCost", float.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.healingValues.cooldown", float.class),
+                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.energyCost", float.class),
+                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.cooldown", float.class),
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.healingValues.linkHealing.value", float.class),
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.tickDuration", int.class),
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.damagePercentTaken", float.class),
