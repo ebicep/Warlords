@@ -98,6 +98,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     protected String name;
     protected float currentCooldown;
     protected FloatModifiable cooldown;
+    protected FloatModifiable cooldownReductionPerTick = new FloatModifiable(.05f);
     protected FloatModifiable energyCost;
     protected TextComponent description = Component.empty();
     protected boolean boosted = false;
@@ -157,6 +158,10 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void updateDescription(Player player) {
 
+    }
+
+    public FloatModifiable getCooldownReductionPerTick() {
+        return cooldownReductionPerTick;
     }
 
     public boolean isInitialized() {
@@ -243,7 +248,8 @@ public abstract class AbstractAbility implements AbilityIcon {
             splash.getSplashRadius().tick();
         }
         if (getCooldownValue() > 0) {
-            subtractCurrentCooldownForce(.05f);
+            cooldownReductionPerTick.tick();
+            subtractCurrentCooldownForce(cooldownReductionPerTick.getCalculatedValue());
         }
         checkSecondaryAbilities();
         if (updateItem && warlordsEntity != null && warlordsEntity.getEntity() instanceof Player player && warlordsEntity.getGame() != null) {
