@@ -74,7 +74,7 @@ public class AbilityDescriptionBuilder {
     }
 
     public AbilityDescriptionBuilder damageReduction(float value) {
-        return damageReduction(value, "");
+        return damageReduction(value, null);
     }
 
     public AbilityDescriptionBuilder percent(int percent, TextColor color) {

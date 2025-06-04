@@ -54,6 +54,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Meteor> METEOR = new Meteor();
     public static final SpecBoost<MightyFists> MIGHTY_FISTS = new MightyFists();
     public static final SpecBoost<OneManArmy> ONE_MAN_ARMY = new OneManArmy();
+    public static final SpecBoost<Parry> PARRY = new Parry();
     public static final SpecBoost<PenitentResolve> PENITENT_RESOLVE = new PenitentResolve();
     public static final SpecBoost<PermeatingLink> PERMEATING_LINK = new PermeatingLink();
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
@@ -87,7 +88,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, VITALITY_BOOST, SOLITARY));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(VIBRANT_ORBS, RECKLESS_ASCENT, HEALING_LINK, ONE_MAN_ARMY, UNDYING_STEED));
         SPEC_BOOSTS.put(Specializations.AVENGER, List.of(CONDUIT, ARM_OF_THE_ALMIGHTY, UNSTOPPABLE_SURGE, MARKED_FOR_DEATH, WARDING_WRATH));
-        SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));
+        SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, PARRY, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));
         SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(BIG_GUY, LIGHT_SPEED_INFUSION, DIVINE_EFFULGENCE, LUSTROUS_CROWN, HAMMER_OF_JUDGEMENT));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
