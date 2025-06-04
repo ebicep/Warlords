@@ -68,28 +68,6 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     }
 
     @Override
-    public void updateDescription(Player player) {
-        if (inPve) {
-            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, stunning them for ")
-                                                   .durationTicks(blindnessTicks)
-                                                   .text(". Upon swapping, self heal for ")
-                                                   .heal(healingValues.switchHealing)
-                                                   .text(" health, go invisible for ")
-                                                   .durationTicks(invisTicks)
-                                                   .text(", and transform the swapped enemy into your own Animus. " + "The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " + "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " + "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
-                                                   .maxRange(radius)
-                                                   .build();
-        } else {
-            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
-                                                   .durationTicks(blindnessTicks)
-                                                   .text(".")
-                                                   .maxRange(radius)
-                                                   .text(" Soul Switch has low vertical range.")
-                                                   .build();
-        }
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         if (wp.getCarriedFlag() != null) {
             wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
@@ -234,6 +212,36 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        if (inPve) {
+            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, stunning them for ")
+                                                   .durationTicks(blindnessTicks)
+                                                   .text(". Upon swapping, gain ")
+                                                   .percent(damageIncrease, NamedTextColor.RED)
+                                                   .text(" increased damage for ")
+                                                   .durationTicks(damageIncreaseTickDuration)
+                                                   .text(" and self heal for ")
+                                                   .heal(healingValues.switchHealing)
+                                                   .text(" health, go invisible for ")
+                                                   .durationTicks(invisTicks)
+                                                   .text(", and transform the swapped enemy into your own Animus. " + "The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " + "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " + "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
+                                                   .maxRange(radius)
+                                                   .build();
+        } else {
+            description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
+                                                   .durationTicks(blindnessTicks)
+                                                   .text(". Upon swapping, gain ")
+                                                   .percent(damageIncrease, NamedTextColor.RED)
+                                                   .text(" increased damage for ")
+                                                   .durationTicks(damageIncreaseTickDuration)
+                                                   .text(".")
+                                                   .maxRange(radius)
+                                                   .text(" Soul Switch has low vertical range.")
+                                                   .build();
+        }
     }
 
     @Override

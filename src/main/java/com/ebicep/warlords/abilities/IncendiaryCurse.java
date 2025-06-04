@@ -16,6 +16,7 @@ import com.ebicep.warlords.pve.upgrades.rogue.assassin.IncendiaryCurseBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -58,17 +59,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Ignite the targeted area with a cross flame, dealing")
-                                               .damage(damageValues.curseDamage)
-                                               .text("damage. Deals ")
-                                               .text("damage. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
-                                               .durationTicks(blindDurationInTicks)
-                                               .text(".")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
         Utils.spawnThrowableProjectile(wp.getGame(), Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
@@ -80,6 +70,25 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 }
         );
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Ignite the targeted area with a cross flame, dealing")
+                                               .damage(damageValues.curseDamage)
+                                               .text("damage. Deals ")
+                                               .percent(damageIncrease, NamedTextColor.RED)
+                                               .text(" more damage to enemies above ")
+                                               .percent(damageIncreaseHealthThreshold, NamedTextColor.RED)
+                                               .text("health. Enemies hit are " + (inPve ? "stunned" : "blinded") + " for ")
+                                               .durationTicks(blindDurationInTicks)
+                                               .text(".")
+                                               .build();
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new IncendiaryCurseBranch(abilityTree, this);
     }
 
     protected Vector calculateSpeed(WarlordsEntity we) {
@@ -132,11 +141,6 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
         if (pveMasterUpgrade2) {
             wp.addEnergy(wp, "Unforseen Curse", Math.min(200, enemies.size() * 10));
         }
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new IncendiaryCurseBranch(abilityTree, this);
     }
 
     @Override

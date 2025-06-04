@@ -62,7 +62,7 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
             }
             float extraDamage = pveMasterUpgrade ? DamageCheck.clamp(nearPlayer.getMaxHealth() * 0.01f) : 0;
             float damageMultiplier = convertToMultiplicationDecimal(
-                    (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) > damageIncreaseHealthThreshold / 100f
+                    (nearPlayer.getCurrentHealth() / nearPlayer.getMaxBaseHealth()) < damageIncreaseHealthThreshold / 100f
                     ? damageIncrease
                     : 0
             );
@@ -107,7 +107,15 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder.create("Strike the targeted enemy, dealing ")
                                                .damage(damageValues.strikeDamage)
-                                               .text("damage. Every ")
+                                               .text("damage. Deals ")
+                                               .percent(damageIncrease, NamedTextColor.RED)
+                                               .text(" more damage to enemies below ")
+                                               .percent(damageIncreaseHealthThreshold, NamedTextColor.RED)
+                                               .text(" health.")
+                                               .emptyLine()
+                                               .text("Every strike reduces the cooldown of Order of Eviscerate by ")
+                                               .durationSeconds(orderCooldownReduction)
+                                               .text(". Every ")
                                                .text(strikeCritInterval, NamedTextColor.BLUE)
                                                .text("th strike is a guaranteed critical strike. Critical strikes temporarily increase your movement speed by ")
                                                .percent(speedOnCrit, NamedTextColor.WHITE)

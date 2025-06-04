@@ -17,6 +17,7 @@ import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
@@ -54,16 +55,6 @@ public class ShadowStep extends AbstractAbility implements
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Leap forward, dealing ")
-                                               .damage(damageValues.shadowStepDamage)
-                                               .text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping.")
-                                               .emptyLine()
-                                               .text("Shadow Step has reduced range when holding a flag.")
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location playerLoc = wp.getLocation();
         Utils.playGlobalSound(playerLoc, "rogue.drainingmiasma.activation", 1, 2);
@@ -89,13 +80,24 @@ public class ShadowStep extends AbstractAbility implements
     }
 
     @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new ShadowStepBranch(abilityTree, this);
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Leap forward, dealing ")
+                                               .damage(damageValues.shadowStepDamage)
+                                               .text(" damage to all enemies close on cast or when landing on the ground. You take reduced fall damage while leaping.")
+                                               .emptyLine()
+                                               .text("If you are below ")
+                                               .text(leapHealThreshold, NamedTextColor.GREEN)
+                                               .text(" health, you will heal for ")
+                                               .heal(healValues.leapHeal)
+                                               .text(" health on cast.")
+                                               .emptyLine()
+                                               .text("Shadow Step has reduced range when holding a flag.")
+                                               .build();
     }
 
     @Override
-    public HealValues getHealValues() {
-        return healValues;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new ShadowStepBranch(abilityTree, this);
     }
 
     private void doShadowDash(@Nonnull WarlordsEntity wp) {
@@ -191,6 +193,11 @@ public class ShadowStep extends AbstractAbility implements
     }
 
     @Override
+    public HealValues getHealValues() {
+        return healValues;
+    }
+
+    @Override
     public DamageValues getDamageValues() {
         return damageValues;
     }
@@ -244,7 +251,7 @@ public class ShadowStep extends AbstractAbility implements
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.leapHeal = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldNameDamage("leapHeal"),
+                    builder.getAppendedFieldNameHealing("leapHeal"),
                     Value.SetValue.class
             );
             this.values = List.of(leapHeal);

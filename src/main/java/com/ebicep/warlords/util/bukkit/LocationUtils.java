@@ -164,7 +164,7 @@ public class LocationUtils {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(1)
                 .addY(.7);
-        return lookingAt(player2, eye, 0.7);
+        return lookingAt(player2, eye, 0.2);
     }
 
     public static boolean isLineOfSightVindicator(WarlordsEntity player1, WarlordsEntity player2) {
