@@ -300,7 +300,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         }
     }
 
-    public static RegularCooldown<OrderOfEviscerateData> giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
+    public static void giveCloak(@Nonnull WarlordsEntity wp, int tickDuration) {
         wp.getCooldownManager().removeCooldownByName("Cloaked");
         RegularCooldown<OrderOfEviscerateData> orderOfEviscerateCooldown = new RegularCooldown<>("Cloaked",
                 "INVIS",
@@ -341,7 +341,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 })
         );
         wp.getCooldownManager().addCooldown(orderOfEviscerateCooldown);
-        return orderOfEviscerateCooldown;
     }
 
     @Override

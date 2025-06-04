@@ -264,20 +264,6 @@ public abstract class AbstractAbility implements AbilityIcon {
         }
     }
 
-    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
-    }
-
-    public void checkSecondaryAbilities() {
-        secondaryAbilities.forEach(secondaryAbility -> {
-            if (secondaryAbility.getDelayTicks() > 0) {
-                secondaryAbility.setDelayTicks(secondaryAbility.getDelayTicks() - 1);
-            }
-        });
-        if (secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility))) {
-            queueUpdateItem();
-        }
-    }
-
     public float getCooldownValue() {
         return cooldown.getCalculatedValue();
     }
@@ -297,8 +283,15 @@ public abstract class AbstractAbility implements AbilityIcon {
         }
     }
 
-    public boolean hasActiveSecondaryAbilities() {
-        return secondaryAbilities.stream().anyMatch(secondaryAbility -> secondaryAbility.getDelayTicks() <= 0);
+    public void checkSecondaryAbilities() {
+        secondaryAbilities.forEach(secondaryAbility -> {
+            if (secondaryAbility.getDelayTicks() > 0) {
+                secondaryAbility.setDelayTicks(secondaryAbility.getDelayTicks() - 1);
+            }
+        });
+        if (secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility))) {
+            queueUpdateItem();
+        }
     }
 
     public float getCurrentCooldown() {
@@ -309,8 +302,8 @@ public abstract class AbstractAbility implements AbilityIcon {
         return (int) Math.round(currentCooldown + .5);
     }
 
-    public List<SecondaryAbility> getSecondaryAbilities() {
-        return secondaryAbilities;
+    public boolean hasActiveSecondaryAbilities() {
+        return secondaryAbilities.stream().anyMatch(secondaryAbility -> secondaryAbility.getDelayTicks() <= 0);
     }
 
     public ItemStack getItem(@Nullable ItemStack item) {
@@ -322,36 +315,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         if (this instanceof TDAbility) {
 
         } else {
-            if (getCooldownValue() != 0) {
-                lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                                  .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.GOLD)));
-            }
-            if (getEnergyCostValue() != 0) {
-                lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)
-                                  .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
-            }
-            List<Component> critChanceLore = new ArrayList<>();
-            List<Component> critMultiplierLore = new ArrayList<>();
-            Value.applyDamageHealing(this, (damage, value) -> {
-                        if (value instanceof Value.RangedValueCritable critable) {
-                            TextColor textColor = damage ? NamedTextColor.RED : NamedTextColor.GREEN;
-                            critChanceLore.add(Component.text(format(Math.min(critable.critChance().getCalculatedValue(), 100)) + "%", textColor));
-                            critMultiplierLore.add(Component.text(format(critable.critMultiplier().getCalculatedValue()) + "%", textColor));
-                        }
-                    }
-            );
-            if (!critChanceLore.isEmpty()) {
-                lore.add(ComponentBuilder
-                        .create("Crit Chance: ", NamedTextColor.GRAY)
-                        .append(critChanceLore.stream().collect(Component.toComponent(Component.text("/", NamedTextColor.GRAY))))
-                        .build());
-                lore.add(ComponentBuilder
-                        .create("Crit Multiplier: ", NamedTextColor.GRAY)
-                        .append(critMultiplierLore.stream().collect(Component.toComponent(Component.text("/", NamedTextColor.GRAY))))
-                        .build());
-            }
-            lore.add(Component.empty());
-            lore.addAll(getDescription());
+            lore.addAll(getItemBody());
         }
 
         return itemBuilder.lore(lore).get();
@@ -361,12 +325,53 @@ public abstract class AbstractAbility implements AbilityIcon {
         return name;
     }
 
-    public float getEnergyCostValue() {
-        return energyCost.getCalculatedValue();
+    private List<Component> getItemBody() {
+        List<Component> lore = new ArrayList<>();
+        lore.addAll(getItemHeader());
+        lore.add(Component.empty());
+        lore.addAll(getDescription());
+        return lore;
+    }
+
+    public List<Component> getItemHeader() {
+        List<Component> lore = new ArrayList<>();
+        if (getCooldownValue() != 0) {
+            lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
+                              .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.GOLD)));
+        }
+        if (getEnergyCostValue() != 0) {
+            lore.add(Component.text("Energy Cost: ", NamedTextColor.GRAY)
+                              .append(Component.text(NumberFormat.formatOptionalTenths(getEnergyCostValue()), NamedTextColor.YELLOW)));
+        }
+        List<Component> critChanceLore = new ArrayList<>();
+        List<Component> critMultiplierLore = new ArrayList<>();
+        Value.applyDamageHealing(this, (damage, value) -> {
+                    if (value instanceof Value.RangedValueCritable critable) {
+                        TextColor textColor = damage ? NamedTextColor.RED : NamedTextColor.GREEN;
+                        critChanceLore.add(Component.text(format(Math.min(critable.critChance().getCalculatedValue(), 100)) + "%", textColor));
+                        critMultiplierLore.add(Component.text(format(critable.critMultiplier().getCalculatedValue()) + "%", textColor));
+                    }
+                }
+        );
+        if (!critChanceLore.isEmpty()) {
+            lore.add(ComponentBuilder
+                    .create("Crit Chance: ", NamedTextColor.GRAY)
+                    .append(critChanceLore.stream().collect(Component.toComponent(Component.text("/", NamedTextColor.GRAY))))
+                    .build());
+            lore.add(ComponentBuilder
+                    .create("Crit Multiplier: ", NamedTextColor.GRAY)
+                    .append(critMultiplierLore.stream().collect(Component.toComponent(Component.text("/", NamedTextColor.GRAY))))
+                    .build());
+        }
+        return lore;
     }
 
     public List<Component> getDescription() {
         return WordWrap.wrap(Component.empty().color(NamedTextColor.GRAY).append(description), DESCRIPTION_WIDTH);
+    }
+
+    public float getEnergyCostValue() {
+        return energyCost.getCalculatedValue();
     }
 
     public void setCurrentCooldown(float currentCooldown) {
@@ -382,6 +387,31 @@ public abstract class AbstractAbility implements AbilityIcon {
                 queueUpdateItem();
             }
         }
+    }
+
+    public void runEverySecond(@Nullable WarlordsEntity warlordsEntity) {
+    }
+
+    public List<SecondaryAbility> getSecondaryAbilities() {
+        return secondaryAbilities;
+    }
+
+    public List<Component> getItemComponent() {
+        List<Component> lore = new ArrayList<>();
+        lore.add(getItemName());
+        lore.add(Component.empty());
+
+        if (this instanceof TDAbility) {
+
+        } else {
+            lore.addAll(getItemBody());
+        }
+
+        return lore;
+    }
+
+    public Component getItemName() {
+        return Component.text(getName(), NamedTextColor.GREEN);
     }
 
     public ItemStack getItem() {

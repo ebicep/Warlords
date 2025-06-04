@@ -42,6 +42,7 @@ public class SpecBoostManager {
     public static final SpecBoost<GalvanizedSpark> GALVANIZED_SPARK = new GalvanizedSpark();
     public static final SpecBoost<Goliath> GOLIATH = new Goliath();
     public static final SpecBoost<HammerOfJudgement> HAMMER_OF_JUDGEMENT = new HammerOfJudgement();
+    public static final SpecBoost<Haze> HAZE = new Haze();
     public static final SpecBoost<HealingLink> HEALING_LINK = new HealingLink();
     public static final SpecBoost<HeroicIntervention> HEROIC_INTERVENTION = new HeroicIntervention();
     public static final SpecBoost<LightSpeedInfusion> LIGHT_SPEED_INFUSION = new LightSpeedInfusion();
@@ -88,6 +89,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
+        SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
