@@ -10,6 +10,7 @@ import com.ebicep.warlords.achievements.Achievement;
 import com.ebicep.warlords.achievements.types.ChallengeAchievements;
 import com.ebicep.warlords.commands.debugcommands.misc.AdminCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.player.ingame.*;
 import com.ebicep.warlords.events.player.ingame.pve.WarlordsAddCurrencyEvent;
@@ -1759,7 +1760,7 @@ public abstract class WarlordsEntity {
     public abstract void setDamageResistance(float damageResistance);
 
     public int getBaseHitCooldownValue() {
-        return 20;
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "meleeCooldown", Integer.class);
     }
 
     public abstract ItemStack getHead();
