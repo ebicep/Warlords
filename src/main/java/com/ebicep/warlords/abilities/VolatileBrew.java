@@ -270,6 +270,14 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
         return radius;
     }
 
+    public int getEarlyActivationEffectivenessReduction() {
+        return earlyActivationEffectivenessReduction;
+    }
+
+    public void setEarlyActivationEffectivenessReduction(int earlyActivationEffectivenessReduction) {
+        this.earlyActivationEffectivenessReduction = earlyActivationEffectivenessReduction;
+    }
+
     public static class VolatileBrewData {
 
         private WarlordsEntity target;

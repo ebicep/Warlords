@@ -15,6 +15,7 @@ import java.util.*;
 public class SpecBoostManager {
 
     public static final SpecBoost<AcceleratedSpike> ACCELERATED_SPIKE = new AcceleratedSpike();
+    public static final SpecBoost<AlchemistsFury> ALCHEMISTS_FURY = new AlchemistsFury();
     public static final SpecBoost<ArcaneRecluse> ARCANE_RECLUSE = new ArcaneRecluse();
     public static final SpecBoost<ArcaneReflection> ARCANE_REFLECTION = new ArcaneReflection();
     public static final SpecBoost<ArcaneShatter> ARCANE_SHATTER = new ArcaneShatter();
@@ -90,6 +91,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE));
+        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(ALCHEMISTS_FURY));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {

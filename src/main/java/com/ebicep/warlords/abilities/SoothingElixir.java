@@ -36,13 +36,14 @@ import java.util.List;
 
 public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, Damages<SoothingElixir.DamageValues>, Heals<SoothingElixir.HealingValues>, AbilityStats<SoothingElixir, SoothingElixir.SoothingElixirStats> {
 
-    private static final double SPEED = 0.220;
-    private static final double GRAVITY = -0.008;
+    private double speed = 0.220;
+    private double gravity = -0.008;
     private final SoothingElixirStats stats = new SoothingElixirStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable puddleRadius = new FloatModifiable(5);
     private int puddleTickDuration = 80;
+    private int leechStacksApplied;
 
     public SoothingElixir() {
         super(AbstractAbilityBuilder.create("soothingElixir").pvp());
@@ -53,12 +54,30 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         super.init(builder);
         this.puddleRadius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleRadius"), float.class));
         this.puddleTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("puddleTickDuration"), int.class);
+        this.leechStacksApplied = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leechStacksApplied"), int.class);
+    }
+
+
+    public double getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(double gravity) {
+        this.gravity = gravity;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location location = wp.getLocation();
-        Vector speed = wp.getLocation().getDirection().multiply(SPEED);
+        Vector speed = wp.getLocation().getDirection().multiply(this.speed);
         Utils.spawnThrowableProjectile(
                 wp.getGame(),
                 Utils.spawnArmorStand(
@@ -68,8 +87,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         }
                 ),
                 speed,
-                GRAVITY,
-                SPEED,
+                gravity,
+                this.speed,
                 (newLoc, integer) -> {
                     Matrix4d center = new Matrix4d(newLoc);
                     for (float i = 0; i < 6; i++) {
@@ -150,7 +169,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         Leech.giveLeechCooldown(Leech.LeechInstance
                                 .create(wp, nearEntity)
                                 .withImpalingStrike()
-                                .withInitialStacks(pveMasterUpgrade ? 3 : 1)
+                                .withInitialStacks(pveMasterUpgrade ? 3 : leechStacksApplied)
                         );
                         nearEntity.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.elixirDamage));
                     }
@@ -181,6 +200,14 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                                                .durationTicks(puddleTickDuration)
                                                .text(".")
                                                .build();
+    }
+
+    public int getLeechStacksApplied() {
+        return leechStacksApplied;
+    }
+
+    public void setLeechStacksApplied(int leechStacksApplied) {
+        this.leechStacksApplied = leechStacksApplied;
     }
 
     @Override
@@ -235,6 +262,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
             this.values = List.of(elixirDamage);
         }
 
+        public Value.RangedValueCritable getElixirDamage() {
+            return elixirDamage;
+        }
+
     }
 
     public static class HealingValues implements Value.ValueHolder {
@@ -263,6 +294,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
         public Value.RangedValueCritable getElixirHealing() {
             return elixirHealing;
+        }
+
+        public Value.RangedValueCritable getElixirDOTHealing() {
+            return elixirDOTHealing;
         }
 
     }
