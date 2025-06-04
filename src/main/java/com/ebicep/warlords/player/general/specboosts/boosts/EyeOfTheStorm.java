@@ -130,7 +130,11 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
                 }
             }
             if (targetLocation.getBlock().getType() != Material.AIR) {
-                targetLocation = LocationUtils.getGroundLocation(new LocationBuilder(targetLocation).faceTowards(warlordsEntity.getLocation()).forward(1));
+                LocationBuilder newTargetLocation = new LocationBuilder(targetLocation).faceTowards(warlordsEntity.getLocation()).forward(1);
+                while (newTargetLocation.getBlock().getType() != Material.AIR) {
+                    newTargetLocation.forward(1);
+                }
+                targetLocation = LocationUtils.getGroundLocation(newTargetLocation);
             }
             event.getLocation().set(targetLocation.getBlockX() + .6, targetLocation.getBlockY(), targetLocation.getBlockZ() + .6);
         }
