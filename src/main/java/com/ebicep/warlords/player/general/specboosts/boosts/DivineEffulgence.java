@@ -88,7 +88,7 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
 
                 @Override
                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (Utils.isProjectile(event.getCause())) {
+                    if (Utils.isProjectile(event.getCause()) || isCustomProjectile(event.getCause())) {
                         return currentDamageValue * AbstractAbility.convertToDivisionDecimal(rangedDamageReductionPercent);
                     }
                     return currentDamageValue;
@@ -96,6 +96,16 @@ public class DivineEffulgence implements SpecBoostManager.SpecBoost<DivineEffulg
             });
         }
 
+    }
+
+    public static boolean isCustomProjectile(String cause) {
+        return cause.equals("Chain Lightning") ||
+                cause.equals("Spirit Link") ||
+                cause.equals("Soulfire Beam") ||
+                cause.equals("Guardian Beam") ||
+                cause.equals("Ray of Light") ||
+                cause.equals("Incendiary Curse") ||
+                cause.equals("Boulder");
     }
 
 }
