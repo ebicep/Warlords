@@ -2,9 +2,7 @@ package com.ebicep.warlords.game.state;
 
 import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
-import com.ebicep.warlords.commands.debugcommands.misc.WarlordsPlusCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGameBase;
@@ -14,7 +12,10 @@ import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.game.option.marker.*;
 import com.ebicep.warlords.game.option.marker.scoreboard.ScoreboardHandler;
-import com.ebicep.warlords.player.general.*;
+import com.ebicep.warlords.player.general.CustomScoreboard;
+import com.ebicep.warlords.player.general.ExperienceManager;
+import com.ebicep.warlords.player.general.PlayerSettings;
+import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.ingame.*;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
@@ -27,12 +28,9 @@ import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -215,35 +213,6 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Override
     public State run() {
-        if (WarlordsPlusCommand.enabled) {
-            game.warlordsPlayers().forEach(wp -> {
-                ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-                if (wp != null) {
-                    byteArrayDataOutput.writeUTF(wp.getName());
-                    byteArrayDataOutput.writeInt((int) wp.getCurrentEnergy());
-                    byteArrayDataOutput.writeInt((int) wp.getMaxEnergy());
-                    AbstractPlayerClass spec = wp.getSpec();
-                    List<AbstractAbility> abilities = spec.getAbilities();
-                    for (int i = 1; i < abilities.size() && i < 5; i++) {
-                        AbstractAbility ability = abilities.get(i);
-                        byteArrayDataOutput.writeInt(ability.getCurrentCooldown() == 0 ? 0 : (int) Math.round(ability.getCurrentCooldown() + .5));
-                    }
-                    if (com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode())) {
-                        game.onlinePlayers().forEach(playerTeamEntry -> {
-                            playerTeamEntry.getKey().sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
-                        });
-                    } else {
-                        game.spectators().forEach(uuid -> {
-                            Player player = Bukkit.getPlayer(uuid);
-                            if (player != null && WarlordsPlusCommand.UUIDS.contains(player.getUniqueId())) {
-                                player.sendPluginMessage(Warlords.getInstance(), "warlords:warlords", byteArrayDataOutput.toByteArray());
-                            }
-                        });
-                    }
-                }
-            });
-        }
-
         return null;
     }
 
