@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-public class WarlordAbilityPlaceEvent extends AbstractWarlordsEntityEvent implements Cancellable {
+public class WarlordsAbilityPlaceEvent extends AbstractWarlordsEntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
@@ -21,7 +21,7 @@ public class WarlordAbilityPlaceEvent extends AbstractWarlordsEntityEvent implem
     private final Location location;
     private boolean cancelled;
 
-    public WarlordAbilityPlaceEvent(@Nonnull WarlordsEntity player, AbstractAbility ability, Location location) {
+    public WarlordsAbilityPlaceEvent(@Nonnull WarlordsEntity player, AbstractAbility ability, Location location) {
         super(player);
         this.ability = ability;
         this.location = location;

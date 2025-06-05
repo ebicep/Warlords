@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.upgrades.rogue.apothecary.SoothingElixirBranch;
@@ -107,7 +108,8 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                               );
                     }
                 },
-                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveTeammatesOfExcludingSelf(wp).findFirstOrNull(), (newLoc, directHit) -> {
+                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveTeammatesOfExcludingSelf(wp).findFirstOrNull(),
+                (newLoc, directHit) -> {
                     Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.1f);
                     Utils.playGlobalSound(newLoc, Sound.BLOCK_GLASS_BREAK, 1.5f, 0.7f);
                     Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
@@ -155,7 +157,13 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                         public void run() {
                             PlayerFilter.entitiesAround(newLoc, radius, radius, radius)
                                         .aliveTeammatesOf(wp)
-                                        .forEach(ally -> ally.addInstance(InstanceBuilder.healing().ability(SoothingElixir.this).source(wp).value(healingValues.elixirDOTHealing)));
+                                        .forEach(ally -> ally.addInstance(InstanceBuilder
+                                                .healing()
+                                                .ability(SoothingElixir.this)
+                                                .source(wp)
+                                                .value(healingValues.elixirDOTHealing)
+                                                .flags(InstanceFlags.DOT)
+                                        ));
                             timeLeft--;
                             if (timeLeft <= 0) {
                                 this.cancel();
@@ -182,6 +190,10 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
         );
         Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
         return true;
+    }
+
+    public int getPuddleTickDuration() {
+        return puddleTickDuration;
     }
 
     @Override
@@ -289,7 +301,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                     builder.getAppendedFieldNameHealing("elixirDOTHealing"),
                     Value.RangedValueCritable.class
             );
-            this.values = List.of(elixirHealing, elixirHealing);
+            this.values = List.of(elixirHealing, elixirDOTHealing);
         }
 
         public Value.RangedValueCritable getElixirHealing() {

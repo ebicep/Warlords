@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.Soulbinding;
 import com.ebicep.warlords.abilities.UndyingArmy;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Shield;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
@@ -405,7 +406,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @Override
     public int getBaseHitCooldownValue() {
-        return 12;
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "playerMeleeCooldown", Integer.class);
     }
 
     @Override

@@ -1760,7 +1760,7 @@ public abstract class WarlordsEntity {
     public abstract void setDamageResistance(float damageResistance);
 
     public int getBaseHitCooldownValue() {
-        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "meleeCooldown", Integer.class);
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "baseMeleeCooldown", Integer.class);
     }
 
     public abstract ItemStack getHead();

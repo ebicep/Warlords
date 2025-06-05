@@ -4,7 +4,7 @@ import com.ebicep.warlords.abilities.CapacitorTotem;
 import com.ebicep.warlords.abilities.LightningBolt;
 import com.ebicep.warlords.abilities.LightningRod;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
-import com.ebicep.warlords.events.player.ingame.WarlordAbilityPlaceEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityPlaceEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsProjectileFireEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -112,7 +112,7 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
         }
 
         @EventHandler
-        public void onWarlordsTotemPlaceEvent(WarlordAbilityPlaceEvent event) {
+        public void onWarlordsTotemPlaceEvent(WarlordsAbilityPlaceEvent event) {
             if (!event.getWarlordsEntity().equals(warlordsEntity)) {
                 return;
             }

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.abilities.internal;
 
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
-import com.ebicep.warlords.events.player.ingame.WarlordAbilityPlaceEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAbilityPlaceEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -53,7 +53,7 @@ public abstract class AbstractTotem extends AbstractAbility implements OrangeAbi
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Location standLocation = LocationUtils.getGroundLocation(wp.getLocation());
 
-        WarlordAbilityPlaceEvent placeEvent = new WarlordAbilityPlaceEvent(wp, this, standLocation);
+        WarlordsAbilityPlaceEvent placeEvent = new WarlordsAbilityPlaceEvent(wp, this, standLocation);
         Bukkit.getPluginManager().callEvent(placeEvent);
         if (placeEvent.isCancelled()) {
             return false;

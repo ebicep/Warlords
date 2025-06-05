@@ -209,7 +209,6 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
                                                .text("The link instantly activates natural regeneration and will break if you are more than ")
                                                .blocks(linkBreakRadius)
                                                .text(" apart.")
-                                               .emptyLine()
                                                .initialRange(castRange)
                                                .build();
     }

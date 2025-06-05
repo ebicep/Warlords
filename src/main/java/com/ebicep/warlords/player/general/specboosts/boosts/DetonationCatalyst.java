@@ -40,7 +40,7 @@ public class DetonationCatalyst implements SpecBoostManager.SpecBoost<Detonation
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(VolatileBrew.class).forEach(volatileBrew -> {
-                volatileBrew.getCooldown().addMultiplicativeModifierAdd("Spec Boost", -volatileBrewCooldownReductionSeconds);
+                volatileBrew.getCooldown().addAdditiveModifier("Spec Boost", -volatileBrewCooldownReductionSeconds);
                 volatileBrew.setBothStatesActive(true);
             });
         }

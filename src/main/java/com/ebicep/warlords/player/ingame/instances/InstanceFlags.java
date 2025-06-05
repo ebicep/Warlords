@@ -35,5 +35,6 @@ public enum InstanceFlags {
 
     // spec boost
     HAMMER_OF_JUDGEMENT_CONS,
+    AURA_OF_RESTORATION_SOOTHING_ELIXIR,
 
 }

@@ -12,7 +12,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
     private float soothingElixirDamageIncreasePercent;
     private float soothingElixirProjectileSpeedMultiplier;
     private float soothingElixirRadiusIncrease;
-    private float soothingElixirPuddleRadiusIncrease;
     private int soothingElixirExtraLeechStacks;
 
     @Override
@@ -20,7 +19,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
         this.soothingElixirDamageIncreasePercent = getValue("soothingElixirDamageIncreasePercent", float.class);
         this.soothingElixirProjectileSpeedMultiplier = getValue("soothingElixirProjectileSpeedMultiplier", float.class);
         this.soothingElixirRadiusIncrease = getValue("soothingElixirRadiusIncrease", float.class);
-        this.soothingElixirPuddleRadiusIncrease = getValue("soothingElixirPuddleRadiusIncrease", float.class);
         this.soothingElixirExtraLeechStacks = getValue("soothingElixirExtraLeechStacks", int.class);
     }
 
@@ -35,7 +33,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
                 soothingElixirDamageIncreasePercent,
                 soothingElixirProjectileSpeedMultiplier,
                 soothingElixirRadiusIncrease,
-                soothingElixirPuddleRadiusIncrease,
                 soothingElixirExtraLeechStacks
         );
     }
@@ -56,6 +53,7 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(SoothingElixir.class).forEach(soothingElixir -> {
                 soothingElixir.setSpeed(soothingElixir.getSpeed() * soothingElixirProjectileSpeedMultiplier);
+                soothingElixir.setGravity(soothingElixir.getGravity() * soothingElixirProjectileSpeedMultiplier);
                 soothingElixir.getDamageValues().getElixirDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", soothingElixirDamageIncreasePercent / 100)
                 );

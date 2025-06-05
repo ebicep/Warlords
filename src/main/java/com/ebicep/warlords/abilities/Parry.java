@@ -8,17 +8,20 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.java.NumberFormat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.util.Vector;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -67,7 +70,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
 
                     boolean blocked = false;
 
-                    @EventHandler(ignoreCancelled = true)
+                    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
                     public void onDamageHeal(WarlordsDamageHealingEvent event) {
                         if (blocked) {
                             return;
@@ -81,9 +84,15 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                         if (event.getCause().isEmpty()) {
                             return;
                         }
+                        if (event.getFlags().contains(InstanceFlags.DOT)) {
+                            return;
+                        }
                         blocked = true;
                         stats.timesBlocked++;
-                        event.setCancelled(true);
+                        event.setMin(0);
+                        event.setMax(0);
+                        event.setCritChance(0);
+                        event.setCritMultiplier(100);
                         setTicksLeft(0);
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownClass(ParryDamageReduction.class)
@@ -103,11 +112,16 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                                     cooldownManager -> {
 
                                                     },
-                                                    blockTickDuration
+                                                    damageReductionTickDuration,
+                                                    Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                                                        List<Integer> instances = cooldown.getCooldownObject().instances;
+                                                        instances.replaceAll(integer -> integer - 1);
+                                                        instances.removeIf(integer -> integer <= 0);
+                                                    })
                                             ) {
                                                 @Override
                                                 public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                                    return currentDamageValue * convertToDivisionDecimal(cooldownObject.instances.size() * damageReduction / 100f);
+                                                    return currentDamageValue * convertToDivisionDecimal(cooldownObject.instances.size() * damageReduction);
                                                 }
 
                                                 @Nonnull

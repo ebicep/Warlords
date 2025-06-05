@@ -41,7 +41,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
     private int tickDuration = 160;
     private float maxDamageThreshold = 600;
     private float vulnerableDamageBonus = 20;
-    private float backstabDamageBonus = 10;
     private int speedBuff = 40;
 
     private float orderKillCooldownReduction;
@@ -57,7 +56,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         this.tickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("tickDuration"), int.class);
         this.maxDamageThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxDamageThreshold"), float.class);
         this.vulnerableDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vulnerableDamageBonus"), float.class);
-        this.backstabDamageBonus = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("backstabDamageBonus"), float.class);
         this.speedBuff = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("speedBuff"), int.class);
         this.orderKillCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderKillCooldownReduction"), float.class);
         this.orderAssistCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderAssistCooldownReduction"), float.class);
@@ -104,7 +102,7 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
             public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                 if (Objects.equals(data.getMarkedPlayer(), event.getWarlordsEntity()) && !LocationUtils.isLineOfSightAssassin(event.getWarlordsEntity(), event.getSource())) {
                     stats.numberOfBackstabs++;
-                    return currentDamageValue * (inPve ? 2 : 1 + (vulnerableDamageBonus + backstabDamageBonus) / 100f);
+                    return currentDamageValue;
                 } else {
                     return currentDamageValue * (1 + vulnerableDamageBonus / 100f);
                 }
@@ -257,8 +255,6 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
                 .emptyLine()
                 .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
                 .percent(vulnerableDamageBonus, NamedTextColor.RED)
-                .text(" more damage. Additionally, enemies hit from behind take an additional ")
-                .percent(backstabDamageBonus, NamedTextColor.RED)
                 .text(" more damage.")
                 .emptyLine()
                 .text("Successfully killing your mark will ");

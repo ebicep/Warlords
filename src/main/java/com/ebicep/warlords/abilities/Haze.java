@@ -114,7 +114,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
 
             @Override
             public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
-                if (event.getAbility() instanceof ShadowStep) {
+                if (event.getAbility() instanceof ShadowStep || event.getAbility() instanceof Haze) {
                     return;
                 }
                 setTicksLeft(0);

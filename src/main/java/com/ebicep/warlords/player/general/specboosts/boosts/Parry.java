@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
-import com.ebicep.warlords.abilities.OrderOfEviscerate;
+import com.ebicep.warlords.abilities.ConsecrateCrusader;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
@@ -46,7 +46,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
-                if (ability instanceof OrderOfEviscerate) {
+                if (ability instanceof ConsecrateCrusader) {
                     com.ebicep.warlords.abilities.Parry parry = new com.ebicep.warlords.abilities.Parry();
                     parry.init(parry.getBuilder());
                     abilities.set(i, parry);
