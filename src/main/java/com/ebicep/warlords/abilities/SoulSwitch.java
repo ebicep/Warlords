@@ -47,7 +47,9 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private final SoulSwitchStats stats = new SoulSwitchStats();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(13);
+    private FloatModifiable radiusFlag = new FloatModifiable(3.5f);
     private float verticalLimit;
+    private float verticalLimitFlag;
     private int blindnessTicks = 30;
     private int damageReduction;
     private int damageReductionTickDuration;
@@ -63,7 +65,9 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
         this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
+        this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
         this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
         this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
         this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
@@ -73,12 +77,14 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        if (wp.getCarriedFlag() != null) {
-            wp.sendMessage(Component.text(" You cannot Soul Switch while holding the flag!", NamedTextColor.RED));
-            return false;
-        }
-        float rad = radius.getCalculatedValue();
-        for (WarlordsEntity swapTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad, verticalLimit, rad).aliveEnemiesOf(wp).requireLineOfSight(wp).lookingAtFirst(wp)) {
+        float maxHorizontal = wp.hasFlag() ? radiusFlag.getCalculatedValue() : radius.getCalculatedValue();
+        float maxVertical = wp.hasFlag() ? verticalLimitFlag : verticalLimit;
+        for (WarlordsEntity swapTarget : PlayerFilter
+                .entitiesAround(wp.getLocation(), maxHorizontal, maxVertical, maxHorizontal)
+                .aliveEnemiesOf(wp)
+                .requireLineOfSight(wp)
+                .lookingAtFirst(wp)
+        ) {
             if (swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
                 continue;
