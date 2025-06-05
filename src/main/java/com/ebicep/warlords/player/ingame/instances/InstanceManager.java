@@ -18,7 +18,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
@@ -576,7 +576,7 @@ public class InstanceManager {
                         .create(1)
                         .prefix(ComponentBuilder.create("Target Cooldowns", NamedTextColor.DARK_GREEN))
                 );
-                for (AbstractCooldown<?> abstractCooldown : CooldownManager.getPrioritizedCooldowns(selfCooldownsDistinct,
+                for (AbstractCooldown<?> abstractCooldown : CooldownUtils.getPrioritizedCooldowns(selfCooldownsDistinct,
                         "modifyDamageAfterInterveneFromSelf",
                         WarlordsDamageHealingEvent.class,
                         float.class

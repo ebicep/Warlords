@@ -78,7 +78,7 @@ public class LegendaryEnhanced extends AbstractLegendaryWeapon {
             @EventHandler
             public void onSpeedModify(WarlordsAddSpeedModifierEvent event) {
                 WarlordsEntity eventPlayer = event.getWarlordsEntity();
-                MotionModifier modifier = event.getModifier();
+                MotionModifier modifier = event.getMotionModifier();
                 if (!(eventPlayer instanceof WarlordsNPC)) {
                     return;
                 }

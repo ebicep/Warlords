@@ -12,10 +12,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsHammerToCrownEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.*;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -144,7 +141,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
                                 @Override
                                 protected Listener getListener() {
-                                    return CooldownManager.getDefaultDebuffImmunityListener(allyTarget);
+                                    return CooldownUtils.getDefaultDebuffImmunityListener(allyTarget);
                                 }
                             });
                         }

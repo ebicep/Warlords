@@ -4,8 +4,8 @@ import com.ebicep.warlords.abilities.internal.AbstractAbilityBuilder;
 import com.ebicep.warlords.abilities.internal.AbstractLightInfusion;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -90,7 +90,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
 
                                   @Override
                                   protected Listener getListener() {
-                                      return CooldownManager.getDefaultDebuffImmunityListener(infusionTarget);
+                                      return CooldownUtils.getDefaultDebuffImmunityListener(infusionTarget);
                                   }
                               });
             }

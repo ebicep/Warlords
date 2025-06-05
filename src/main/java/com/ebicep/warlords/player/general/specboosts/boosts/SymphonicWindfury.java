@@ -84,7 +84,7 @@ public class SymphonicWindfury implements SpecBoostManager.SpecBoost<SymphonicWi
                                 if (event.getWarlordsEntity() != warlordsEntity) {
                                     return;
                                 }
-                                if (event.getModifier().getModifier() < 0) {
+                                if (event.getMotionModifier().getModifier() < 0) {
                                     event.setCancelled(true);
                                 }
                             }

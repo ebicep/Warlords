@@ -1,8 +1,8 @@
 package com.ebicep.warlords.pve.mobs.zombie;
 
 import com.ebicep.warlords.game.option.pve.PveOption;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
@@ -69,7 +69,7 @@ public class ZombieRaider extends AbstractMob implements AdvancedMob {
         ) {
             @Override
             protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener(warlordsNPC);
+                return CooldownUtils.getDefaultDebuffImmunityListener(warlordsNPC);
             }
 
         };

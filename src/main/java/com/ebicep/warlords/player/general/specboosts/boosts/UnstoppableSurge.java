@@ -89,10 +89,10 @@ public class UnstoppableSurge implements SpecBoostManager.SpecBoost<UnstoppableS
             if (!event.getWarlordsEntity().equals(warlordsEntity)) {
                 return;
             }
-            if (event.getModifier().getModifier() > 0) {
+            if (event.getMotionModifier().getModifier() > 0) {
                 return;
             }
-            event.getModifier().setModifier(Math.min(0, event.getModifier().getModifier() + slowResistancePercent));
+            event.getMotionModifier().setModifier(Math.min(0, event.getMotionModifier().getModifier() + slowResistancePercent));
         }
 
     }

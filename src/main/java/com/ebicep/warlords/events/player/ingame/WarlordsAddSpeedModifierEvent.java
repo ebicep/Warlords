@@ -24,7 +24,7 @@ public class WarlordsAddSpeedModifierEvent extends AbstractWarlordsEntityEvent i
         this.modifier = modifier;
     }
 
-    public MotionModifier getModifier() {
+    public MotionModifier getMotionModifier() {
         return modifier;
     }
 

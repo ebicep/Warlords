@@ -8,8 +8,9 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -133,7 +134,15 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
             @Override
             protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener(target);
+                return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity.create(target)
+                                                                                           .cooldownPredicate(event -> {
+                                                                                               AbstractCooldown<?> cd = event.getAbstractCooldown();
+                                                                                               if (cd.getCooldownObject() instanceof WoundingCooldown.WoundingData && cd instanceof RegularCooldown regularCooldown) {
+                                                                                                   regularCooldown.subtractTime(30);
+                                                                                                   return false;
+                                                                                               }
+                                                                                               return cd.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
+                                                                                           }));
             }
 
             @Override

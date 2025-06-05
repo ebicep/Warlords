@@ -9,8 +9,8 @@ import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
@@ -144,7 +144,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
                                           @Override
                                           protected Listener getListener() {
-                                              return CooldownManager.getDefaultDebuffImmunityListener(nearEntity);
+                                              return CooldownUtils.getDefaultDebuffImmunityListener(nearEntity);
                                           }
                                       });
                         }

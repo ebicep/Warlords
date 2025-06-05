@@ -8,8 +8,8 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -167,7 +167,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
                                     @Override
                                     protected Listener getListener() {
-                                        return CooldownManager.getDefaultDebuffImmunityListener(miasmaTarget);
+                                        return CooldownUtils.getDefaultDebuffImmunityListener(miasmaTarget);
                                     }
                                 });
                 }

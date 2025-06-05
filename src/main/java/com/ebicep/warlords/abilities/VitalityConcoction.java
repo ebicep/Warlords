@@ -7,8 +7,8 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
@@ -94,7 +94,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
 
             @Override
             protected Listener getListener() {
-                return CooldownManager.getDefaultDebuffImmunityListener(wp);
+                return CooldownUtils.getDefaultDebuffImmunityListener(wp);
             }
 
             @Override

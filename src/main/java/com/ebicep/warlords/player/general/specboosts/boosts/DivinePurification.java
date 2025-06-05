@@ -6,8 +6,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -93,7 +93,7 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
 
                 @Override
                 protected Listener getListener() {
-                    return CooldownManager.getDefaultDebuffImmunityListener(target);
+                    return CooldownUtils.getDefaultDebuffImmunityListener(target);
                 }
             });
         }
