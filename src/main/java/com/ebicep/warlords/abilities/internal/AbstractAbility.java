@@ -96,6 +96,8 @@ public abstract class AbstractAbility implements AbilityIcon {
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected String name;
+    protected int currentCharges;
+    protected int maxCharges = 1;
     protected float currentCooldown;
     protected FloatModifiable cooldown;
     protected FloatModifiable cooldownReductionPerTick = new FloatModifiable(.05f);
@@ -145,6 +147,11 @@ public abstract class AbstractAbility implements AbilityIcon {
             heals.getHealValues().init(builder);
         }
         initialized = true;
+    }
+
+    public void useAbility() {
+        currentCharges = Math.max(0, currentCharges - 1);
+        currentCooldown = getCooldownValue();
     }
 
     /**
@@ -258,7 +265,7 @@ public abstract class AbstractAbility implements AbilityIcon {
             if (inventoryIndex == null || inventoryIndex == -1) { // exclude weapon
                 return;
             }
-            if (getCurrentCooldown() > 0) {
+            if (getCurrentCooldown() > 0 && !anyCharges()) {
                 ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, getCurrentCooldownItem());
                 if (hasActiveSecondaryAbilities()) {
                     cooldown.enchant(Enchantment.RESPIRATION, 1);
@@ -278,6 +285,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         if (currentCooldown != 0) {
             if (currentCooldown - cooldown < 0) {
                 currentCooldown = 0;
+                addCharge();
                 queueUpdateItem();
             } else {
                 int previousCooldown = (int) currentCooldown;
@@ -286,6 +294,13 @@ public abstract class AbstractAbility implements AbilityIcon {
                     queueUpdateItem();
                 }
             }
+        }
+    }
+
+    private void addCharge() {
+        currentCharges++;
+        if (currentCharges < maxCharges) {
+            currentCooldown = getCooldownValue();
         }
     }
 
@@ -298,6 +313,10 @@ public abstract class AbstractAbility implements AbilityIcon {
         if (secondaryAbilities.removeIf(secondaryAbility -> secondaryAbility.shouldRemove().test(secondaryAbility))) {
             queueUpdateItem();
         }
+    }
+
+    public boolean anyCharges() {
+        return currentCharges > 0;
     }
 
     public float getCurrentCooldown() {
@@ -384,6 +403,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         float previousCooldown = this.currentCooldown;
         if (currentCooldown < 0) {
             this.currentCooldown = 0;
+            addCharge();
             if (previousCooldown > 0) { // only update if it was on cooldown
                 queueUpdateItem();
             }

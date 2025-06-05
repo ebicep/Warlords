@@ -176,7 +176,7 @@ public abstract class AbstractPlayerClass {
                     abilityStats.getAbilityStats().addTimesUsed();
                 }
                 if (!wp.isDisableCooldowns() || !ability.getSecondaryAbilities().isEmpty()) {
-                    ability.setCurrentCooldown(ability.getCooldownValue());
+                    ability.useAbility();
                 }
                 sendRightClickPacket(player);
                 WarlordsAbilityActivateEvent.PostApply postApply = new WarlordsAbilityActivateEvent.PostApply(wp, player, ability, slot);

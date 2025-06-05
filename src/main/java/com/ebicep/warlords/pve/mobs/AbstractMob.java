@@ -334,7 +334,7 @@ public abstract class AbstractMob implements Mob {
             return;
         }
         warlordsNPC.getAbilities().forEach(ability -> {
-            if (ability.getCooldownValue() != 0 && ability.getCurrentCooldown() != 0) {
+            if (ability.getCooldownValue() != 0 && !ability.anyCharges()) {
                 return;
             }
             if (warlordsNPC.getCurrentEnergy() < ability.getEnergyCostValue() * warlordsNPC.getEnergyModifier()) {

@@ -236,7 +236,7 @@ public class PlayerCooldownDisplayOption implements Option, Listener {
                     cooldownEntity.addTo(warlordsEntity, entityDataByID);
                     cooldownEntities.set(cooldownIndex, cooldownEntity);
                 }
-                boolean onCooldown = ab.getCurrentCooldown() > 0;
+                boolean onCooldown = !ab.anyCharges();
                 ItemDisplay itemDisplay = cooldownEntity.itemDisplay;
                 if (itemDisplay.getItemStack() == null || itemDisplay.getItemStack().getType() != ab.getAbilityIcon().getType()) {
                     itemDisplay.setItemStack(onCooldown ? GRAY_DYE : ab.getAbilityIcon());

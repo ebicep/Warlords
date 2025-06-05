@@ -82,7 +82,7 @@ public class SwapSpecOption implements Option {
                     return;
                 }
                 try {
-                    List<Float> oldCooldowns = warlordsEntity.getAbilities().stream().map(AbstractAbility::getCurrentCooldown).toList();
+                    List<Float> oldCooldowns = warlordsEntity.getAbilities().stream().map(ability -> ability.anyCharges() ? 0 : ability.getCurrentCooldown()).toList();
                     SkillBoosts skillBoost = PlayerSettings.getPlayerSettings(warlordsEntity.getUuid()).getSkillBoostForSpec(swappedSpec);
                     warlordsEntity.setSpec(swappedSpec);
                     for (int i = 0; i < warlordsEntity.getAbilities().size(); i++) {

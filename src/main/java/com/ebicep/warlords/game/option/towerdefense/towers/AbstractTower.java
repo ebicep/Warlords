@@ -176,7 +176,7 @@ public abstract class AbstractTower {
             return;
         }
         warlordsTower.getAbilities().forEach(ability -> {
-            if (ability.getCooldownValue() != 0 && ability.getCurrentCooldown() != 0) {
+            if (ability.getCooldownValue() != 0 && !ability.anyCharges()) {
                 return;
             }
             if (warlordsTower.getCurrentEnergy() < ability.getEnergyCostValue() * warlordsTower.getEnergyModifier()) {
