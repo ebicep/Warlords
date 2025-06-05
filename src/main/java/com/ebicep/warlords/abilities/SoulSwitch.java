@@ -49,11 +49,11 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private FloatModifiable radius = new FloatModifiable(13);
     private float verticalLimit;
     private int blindnessTicks = 30;
-    private int decoyMaxTicksLived = 60;
-    // pve
-    private int invisTicks = 30;
     private int damageReduction;
     private int damageReductionTickDuration;
+    // pve
+    private int invisTicks = 30;
+    private int decoyMaxTicksLived = 60;
 
     public SoulSwitch() {
         super(AbstractAbilityBuilder.create("soulSwitch").pvp());
@@ -114,8 +114,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     .append(Component.text("!", NamedTextColor.GRAY)));
             wp.teleport(end);
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                    "Soul Switch Damage",
-                    "DMG",
+                    "Soul Switch Res",
+                    "SWITCH",
                     SoulSwitch.class,
                     null,
                     wp,

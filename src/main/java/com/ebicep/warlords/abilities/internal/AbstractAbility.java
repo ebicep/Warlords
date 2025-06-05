@@ -265,16 +265,24 @@ public abstract class AbstractAbility implements AbilityIcon {
             if (inventoryIndex == null || inventoryIndex == -1) { // exclude weapon
                 return;
             }
-            if (getCurrentCooldown() > 0 && !anyCharges()) {
+            if (!anyCharges()) {
                 ItemBuilder cooldown = new ItemBuilder(Material.GRAY_DYE, getCurrentCooldownItem());
                 if (hasActiveSecondaryAbilities()) {
                     cooldown.enchant(Enchantment.RESPIRATION, 1);
                 }
                 player.getInventory().setItem(inventoryIndex, cooldown.get());
             } else {
-                player.getInventory().setItem(inventoryIndex, getItem(this instanceof WeaponAbilityIcon ? warlordsEntity.getWeaponItem() : getAbilityIcon()));
+                ItemStack item = getItem(this instanceof WeaponAbilityIcon ? warlordsEntity.getWeaponItem() : getAbilityIcon());
+                if (getCurrentCooldown() > 0) {
+                    item.setAmount(getCurrentCooldownItem());
+                }
+                player.getInventory().setItem(inventoryIndex, item);
             }
         }
+    }
+
+    public void setMaxCharges(int maxCharges) {
+        this.maxCharges = maxCharges;
     }
 
     public float getCooldownValue() {
@@ -360,6 +368,10 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public List<Component> getItemHeader() {
         List<Component> lore = new ArrayList<>();
+        if (maxCharges > 1) {
+            lore.add(Component.text("Max Charges: ", NamedTextColor.GRAY)
+                              .append(Component.text(maxCharges, NamedTextColor.BLUE)));
+        }
         if (getCooldownValue() != 0) {
             lore.add(Component.text("Cooldown: ", NamedTextColor.GRAY)
                               .append(Component.text(NumberFormat.formatOptionalTenths(getCooldownValue()) + " seconds", NamedTextColor.GOLD)));
