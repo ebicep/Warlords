@@ -49,8 +49,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private int decoyMaxTicksLived = 60;
     // pve
     private int invisTicks = 30;
-    private int damageIncrease;
-    private int damageIncreaseTickDuration;
+    private int damageReduction;
+    private int damageReductionTickDuration;
 
     public SoulSwitch() {
         super(AbstractAbilityBuilder.create("soulSwitch").pvp());
@@ -63,8 +63,8 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
         this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
         this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
         this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
-        this.damageIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncrease"), int.class);
-        this.damageIncreaseTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageIncreaseTickDuration"), int.class);
+        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
+        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
     }
 
     @Override
@@ -108,11 +108,11 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                     wp,
                     CooldownTypes.BUFF,
                     cooldownManager -> {},
-                    damageIncreaseTickDuration
+                    damageReductionTickDuration
             ) {
                 @Override
-                public float modifyDamageAfterInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    return currentDamageValue * convertToMultiplicationDecimal(damageIncrease);
+                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * convertToDivisionDecimal(damageReduction);
                 }
             });
             if (swapTarget instanceof WarlordsNPC npc) {
@@ -220,23 +220,23 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             description = AbilityDescriptionBuilder.create("Switch locations with an enemy, stunning them for ")
                                                    .durationTicks(blindnessTicks)
                                                    .text(". Upon swapping, gain ")
-                                                   .percent(damageIncrease, NamedTextColor.RED)
-                                                   .text(" increased damage for ")
-                                                   .durationTicks(damageIncreaseTickDuration)
+                                                   .percent(damageReduction, NamedTextColor.RED)
+                                                   .text(" damage reduction for ")
+                                                   .durationTicks(damageReductionTickDuration)
                                                    .text(" and self heal for ")
                                                    .heal(healingValues.switchHealing)
                                                    .text(" health, go invisible for ")
                                                    .durationTicks(invisTicks)
-                                                   .text(", and transform the swapped enemy into your own Animus. " + "The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " + "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " + "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
+                                                   .text(", and transform the swapped enemy into your own Animus. The Animus will inherit the max HP of the mob swapped and your current movement speed when swapped, no longer has its original stats/abilities, and will use Judgment Strike every 2 seconds based on the current your own Judgment Strike. " + "Enemies cannot target the Animus, and only 1 Animus can exist at a time. " + "For every enemy the Animus defeats, reduce the cooldown of Soul Switch by 1 second.")
                                                    .maxRange(radius)
                                                    .build();
         } else {
             description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
                                                    .durationTicks(blindnessTicks)
                                                    .text(". Upon swapping, gain ")
-                                                   .percent(damageIncrease, NamedTextColor.RED)
-                                                   .text(" increased damage for ")
-                                                   .durationTicks(damageIncreaseTickDuration)
+                                                   .percent(damageReduction, NamedTextColor.RED)
+                                                   .text(" damage reduction for ")
+                                                   .durationTicks(damageReductionTickDuration)
                                                    .text(".")
                                                    .maxRange(radius)
                                                    .text(" Soul Switch has low vertical range.")

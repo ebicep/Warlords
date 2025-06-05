@@ -2,13 +2,11 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.RecklessCharge;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
-
-import static com.ebicep.warlords.database.repositories.config.ConfigManager.DEFAULT_NAMESPACES;
 
 public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
 
@@ -22,15 +20,13 @@ public class HealingLink implements SpecBoostManager.SpecBoost<HealingLink> {
     }
 
     @Override
+    public TextComponent getDescription() {
+        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.HealingLink());
+    }
+
+    @Override
     public List<Object> getVariables() {
-        return List.of(
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.energyCost", float.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.cooldown", float.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.healingValues.linkHealing.value", float.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.tickDuration", int.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.damagePercentTaken", float.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "healingLink.healingValues.linkEndHealing.value", float.class)
-        );
+        return List.of();
     }
 
     @Override

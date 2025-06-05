@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats> {
+public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityIcon, Duration, AbilityStats<OrderOfEviscerate, OrderOfEviscerate.OrderOfEviscerateStats>, OrderOfEviscerateLike {
 
     private final OrderOfEviscerateStats stats = new OrderOfEviscerateStats();
     private int tickDuration = 160;
@@ -244,23 +244,24 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
 
     @Override
     public void updateDescription(Player player) {
-        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder.create("Cloak yourself for ")
-                                                                     .durationTicks(tickDuration)
-                                                                     .text(", granting you ")
-                                                                     .percent(speedBuff, NamedTextColor.WHITE)
-                                                                     .text(" extra movement speed and making you ")
-                                                                     .text("INVIS", NamedTextColor.DARK_GREEN)
-                                                                     .text(" to the enemy for the duration. However, taking up to ")
-                                                                     .text(maxDamageThreshold, NamedTextColor.RED)
-                                                                     .text(" fall damage or any type of ability damage will end your invisibility.")
-                                                                     .emptyLine()
-                                                                     .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
-                                                                     .percent(vulnerableDamageBonus, NamedTextColor.RED)
-                                                                     .text(" more damage. Additionally, enemies hit from behind take an additional ")
-                                                                     .percent(backstabDamageBonus, NamedTextColor.RED)
-                                                                     .text(" more damage.")
-                                                                     .emptyLine()
-                                                                     .text("Successfully killing your mark will ");
+        AbilityDescriptionBuilder builder = AbilityDescriptionBuilder
+                .create("Cloak yourself for ")
+                .durationTicks(tickDuration)
+                .text(", granting you ")
+                .percent(speedBuff, NamedTextColor.WHITE)
+                .text(" extra movement speed and making you ")
+                .text("INVIS", NamedTextColor.DARK_GREEN)
+                .text(" to the enemy for the duration. However, taking up to ")
+                .text(maxDamageThreshold, NamedTextColor.RED)
+                .text(" fall damage or any type of ability damage will end your invisibility.")
+                .emptyLine()
+                .text("All your attacks against an enemy will mark them vulnerable. Vulnerable enemies take ")
+                .percent(vulnerableDamageBonus, NamedTextColor.RED)
+                .text(" more damage. Additionally, enemies hit from behind take an additional ")
+                .percent(backstabDamageBonus, NamedTextColor.RED)
+                .text(" more damage.")
+                .emptyLine()
+                .text("Successfully killing your mark will ");
         if (inPve) {
             // 2 for shadow
             int killReduction = pveMasterUpgrade ? 12 : 8;

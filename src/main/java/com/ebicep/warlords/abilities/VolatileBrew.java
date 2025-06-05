@@ -37,6 +37,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
     private FloatModifiable radius = new FloatModifiable(7.0f);
     private float energyRestore = 80;
     private int earlyActivationEffectivenessReduction;
+    private boolean bothStatesActive = false;
 
     public VolatileBrew() {
         super(AbstractAbilityBuilder.create("volatileBrew").pvp());
@@ -49,6 +50,10 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
     @Override
     public VolatileBrewStats getAbilityStats() {
         return stats;
+    }
+
+    public void setBothStatesActive(boolean bothStatesActive) {
+        this.bothStatesActive = bothStatesActive;
     }
 
     @Override
@@ -90,7 +95,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                     if (!Objects.equals(cooldownManager.getWarlordsEntity(), data.target)) {
                         return;
                     }
-                    if (data.damageMode) {
+                    if (bothStatesActive || data.damageMode) {
                         float multiplier = data.activatedEarly ? convertToDivisionDecimal(earlyActivationEffectivenessReduction) : 1.0f;
                         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_SPIDER_HURT, 2, .25f);
                         EffectUtils.displayParticle(
@@ -114,7 +119,8 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .max(damageValues.brewDamage.getMaxValue() * multiplier)
                                         );
                                     });
-                    } else {
+                    }
+                    if (bothStatesActive || !data.damageMode) {
                         Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 2f);
                         EffectUtils.displayParticle(
                                 Particle.HAPPY_VILLAGER,
@@ -196,36 +202,37 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You gave a ", NamedTextColor.GRAY))
                                                           .append(Component.text(name, NamedTextColor.YELLOW))
                                                           .append(Component.text(" to yourself!", NamedTextColor.GRAY)));
-
         }
-        addSecondaryAbility(
-                5,
-                () -> {
-                    if (wp.isAlive()) {
-                        data.damageMode = !data.damageMode;
-                        wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.textOfChildren(
-                                Component.text(" You changed your ", NamedTextColor.GRAY),
-                                Component.text(name, NamedTextColor.YELLOW),
-                                Component.text(" to ", NamedTextColor.GRAY),
-                                Component.text(data.damageMode ? "Corrosive Concoction" : "Restorative Elixir",
-                                        data.damageMode ? NamedTextColor.DARK_RED : NamedTextColor.DARK_GREEN
-                                )
-                        )));
-                        if (data.target != wp) {
-                            data.target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.textOfChildren(
-                                    Component.text(" Your ", NamedTextColor.GRAY),
+        if (!bothStatesActive) {
+            addSecondaryAbility(
+                    5,
+                    () -> {
+                        if (wp.isAlive()) {
+                            data.damageMode = !data.damageMode;
+                            wp.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.textOfChildren(
+                                    Component.text(" You changed your ", NamedTextColor.GRAY),
                                     Component.text(name, NamedTextColor.YELLOW),
-                                    Component.text(" changed to ", NamedTextColor.GRAY),
+                                    Component.text(" to ", NamedTextColor.GRAY),
                                     Component.text(data.damageMode ? "Corrosive Concoction" : "Restorative Elixir",
                                             data.damageMode ? NamedTextColor.DARK_RED : NamedTextColor.DARK_GREEN
                                     )
                             )));
+                            if (data.target != wp) {
+                                data.target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.textOfChildren(
+                                        Component.text(" Your ", NamedTextColor.GRAY),
+                                        Component.text(name, NamedTextColor.YELLOW),
+                                        Component.text(" changed to ", NamedTextColor.GRAY),
+                                        Component.text(data.damageMode ? "Corrosive Concoction" : "Restorative Elixir",
+                                                data.damageMode ? NamedTextColor.DARK_RED : NamedTextColor.DARK_GREEN
+                                        )
+                                )));
+                            }
                         }
-                    }
-                },
-                true,
-                secondaryAbility -> wp.isDead() || !wp.getCooldownManager().hasCooldown(brewCooldown)
-        );
+                    },
+                    true,
+                    secondaryAbility -> wp.isDead() || !wp.getCooldownManager().hasCooldown(brewCooldown)
+            );
+        }
         return true;
     }
 
@@ -268,6 +275,14 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
     @Override
     public FloatModifiable getHitBoxRadius() {
         return radius;
+    }
+
+    public int getEarlyActivationEffectivenessReduction() {
+        return earlyActivationEffectivenessReduction;
+    }
+
+    public void setEarlyActivationEffectivenessReduction(int earlyActivationEffectivenessReduction) {
+        this.earlyActivationEffectivenessReduction = earlyActivationEffectivenessReduction;
     }
 
     public static class VolatileBrewData {

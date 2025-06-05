@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts;
 
 import com.ebicep.warlords.abilities.internal.AbilityDescriptionBuilder;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.player.general.specboosts.boosts.*;
@@ -16,6 +17,7 @@ import java.util.*;
 public class SpecBoostManager {
 
     public static final SpecBoost<AcceleratedSpike> ACCELERATED_SPIKE = new AcceleratedSpike();
+    public static final SpecBoost<AlchemistsFury> ALCHEMISTS_FURY = new AlchemistsFury();
     public static final SpecBoost<ArcaneRecluse> ARCANE_RECLUSE = new ArcaneRecluse();
     public static final SpecBoost<ArcaneReflection> ARCANE_REFLECTION = new ArcaneReflection();
     public static final SpecBoost<ArcaneShatter> ARCANE_SHATTER = new ArcaneShatter();
@@ -29,6 +31,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
     public static final SpecBoost<Conduit> CONDUIT = new Conduit();
     public static final SpecBoost<CrusadersMight> CRUSADERS_MIGHT = new CrusadersMight();
+    public static final SpecBoost<DetonationCatalyst> DETONATION_CATALYST = new DetonationCatalyst();
     public static final SpecBoost<DimensionalWarp> DIMENSIONAL_WARP = new DimensionalWarp();
     public static final SpecBoost<DivineEffulgence> DIVINE_EFFULGENCE = new DivineEffulgence();
     public static final SpecBoost<DivinePurification> DIVINE_PURIFICATION = new DivinePurification();
@@ -53,6 +56,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Meteor> METEOR = new Meteor();
     public static final SpecBoost<MightyFists> MIGHTY_FISTS = new MightyFists();
     public static final SpecBoost<OneManArmy> ONE_MAN_ARMY = new OneManArmy();
+    public static final SpecBoost<Parry> PARRY = new Parry();
     public static final SpecBoost<PenitentResolve> PENITENT_RESOLVE = new PenitentResolve();
     public static final SpecBoost<PermeatingLink> PERMEATING_LINK = new PermeatingLink();
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
@@ -63,6 +67,7 @@ public class SpecBoostManager {
     public static final SpecBoost<SovereignSolitude> SOVEREIGN_SOLITUDE = new SovereignSolitude();
     public static final SpecBoost<SteadfastWarp> STEADFAST_WARP = new SteadfastWarp();
     public static final SpecBoost<Striker> STRIKER = new Striker();
+    public static final SpecBoost<SustainedOnslaught> SUSTAINED_ONSLAUGHT = new SustainedOnslaught();
     public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
     public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
     public static final SpecBoost<Transistor> TRANSISTOR = new Transistor();
@@ -85,12 +90,13 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, VITALITY_BOOST, SOLITARY));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(VIBRANT_ORBS, RECKLESS_ASCENT, HEALING_LINK, ONE_MAN_ARMY, UNDYING_STEED));
         SPEC_BOOSTS.put(Specializations.AVENGER, List.of(CONDUIT, ARM_OF_THE_ALMIGHTY, UNSTOPPABLE_SURGE, MARKED_FOR_DEATH, WARDING_WRATH));
-        SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));
+        SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, PARRY, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));
         SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(BIG_GUY, LIGHT_SPEED_INFUSION, DIVINE_EFFULGENCE, LUSTROUS_CROWN, HAMMER_OF_JUDGEMENT));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE));
+        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {
@@ -167,6 +173,18 @@ public class SpecBoostManager {
                 i--;
             }
             return abilityDescriptionBuilder.build();
+        }
+
+        default TextComponent getDescriptionWithAbility(AbstractAbility ability) {
+            ability.init(ability.getBuilder());
+            ability.updateDescription(null);
+            return getDescription()
+                    .appendNewline()
+                    .appendNewline()
+                    .append(ability.getItemHeader().stream().collect(Component.toComponent(Component.newline())))
+                    .appendNewline()
+                    .appendNewline()
+                    .append(ability.getDescription());
         }
 
         List<Object> getVariables();

@@ -8,7 +8,7 @@ import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
 
-public class Haze implements SpecBoostManager.SpecBoost<Haze> {
+public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     @Override
     public void init() {
@@ -16,12 +16,12 @@ public class Haze implements SpecBoostManager.SpecBoost<Haze> {
 
     @Override
     public String getConfigFieldName() {
-        return "haze";
+        return "parry";
     }
 
     @Override
     public TextComponent getDescription() {
-        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Haze());
+        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Parry());
     }
 
     @Override
@@ -35,7 +35,7 @@ public class Haze implements SpecBoostManager.SpecBoost<Haze> {
     }
 
     @Override
-    public Haze get() {
+    public Parry get() {
         return this;
     }
 
@@ -47,9 +47,9 @@ public class Haze implements SpecBoostManager.SpecBoost<Haze> {
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);
                 if (ability instanceof OrderOfEviscerate) {
-                    com.ebicep.warlords.abilities.Haze haze = new com.ebicep.warlords.abilities.Haze();
-                    haze.init(haze.getBuilder());
-                    abilities.set(i, haze);
+                    com.ebicep.warlords.abilities.Parry parry = new com.ebicep.warlords.abilities.Parry();
+                    parry.init(parry.getBuilder());
+                    abilities.set(i, parry);
                 }
             }
             warlordsPlayer.resetAbilityTree();

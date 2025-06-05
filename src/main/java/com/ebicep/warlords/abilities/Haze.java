@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.OrangeAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsAbilityActivateEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
@@ -18,8 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
@@ -27,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<Haze.DamageValues>, AbilityStats<Haze, Haze.VanishStats> {
+public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<Haze.DamageValues>, AbilityStats<Haze, Haze.VanishStats>, OrderOfEviscerateLike {
 
     private final VanishStats stats = new VanishStats();
     private final DamageValues damageValues = new DamageValues();
@@ -114,16 +111,13 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                     }
                 })
         ) {
+
             @Override
-            protected Listener getListener() {
-                return new Listener() {
-                    @EventHandler(ignoreCancelled = true)
-                    public void onAbilityActivatePostEvent(WarlordsAbilityActivateEvent.Post event) {
-                        if (event.getWarlordsEntity().equals(wp) && !(event.getAbility() instanceof ShadowStep) && !(event.getAbility() instanceof Haze)) {
-                            setTicksLeft(0);
-                        }
-                    }
-                };
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility() instanceof ShadowStep) {
+                    return;
+                }
+                setTicksLeft(0);
             }
 
             @Override

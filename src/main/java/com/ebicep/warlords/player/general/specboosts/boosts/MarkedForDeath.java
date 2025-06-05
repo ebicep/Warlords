@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.type.DamageInstance;
@@ -90,6 +91,8 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
             if (!(cooldown.getName().equals("Avenger's Mark") || !cooldown.getFrom().equals(warlordsEntity))) {
                 return;
             }
+            regularCooldown.setTicksLeft(avengerMarkDebuffTickDuration);
+            regularCooldown.setCooldownType(CooldownTypes.SPEC_BOOST);
             WarlordsEntity target = event.getWarlordsEntity();
             target.addInstance(InstanceBuilder
                     .damage()
@@ -104,9 +107,6 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
 
                 @Override
                 public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                    if (regularCooldown.getTicksElapsed() > avengerMarkDebuffTickDuration) {
-                        return currentDamageValue;
-                    }
                     return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(avengerMarkIncreaseDamagePercent);
                 }
 

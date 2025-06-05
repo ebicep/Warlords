@@ -1,0 +1,225 @@
+package com.ebicep.warlords.abilities;
+
+import com.ebicep.warlords.abilities.internal.*;
+import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.java.NumberFormat;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.ParryStats>, RedAbilityIcon {
+
+    private final ParryStats stats = new ParryStats();
+    private int blockTickDuration;
+    private int knockbackTickDuration;
+    private float damageReduction;
+    private int damageReductionTickDuration;
+
+    public Parry() {
+        super(AbstractAbilityBuilder.create("parry").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.blockTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blockTickDuration"), int.class);
+        this.knockbackTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("knockbackTickDuration"), int.class);
+        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), float.class);
+        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "BLOCK",
+                Parry.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+
+                },
+                cooldownManager -> {
+                },
+                blockTickDuration
+        ) {
+
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
+
+                    boolean blocked = false;
+
+                    @EventHandler(ignoreCancelled = true)
+                    public void onDamageHeal(WarlordsDamageHealingEvent event) {
+                        if (blocked) {
+                            return;
+                        }
+                        if (!Objects.equals(event.getWarlordsEntity(), wp)) {
+                            return;
+                        }
+                        if (event.isHealingInstance()) {
+                            return;
+                        }
+                        if (event.getCause().isEmpty()) {
+                            return;
+                        }
+                        blocked = true;
+                        stats.timesBlocked++;
+                        event.setCancelled(true);
+                        setTicksLeft(0);
+                        new CooldownFilter<>(wp, RegularCooldown.class)
+                                .filterCooldownClass(ParryDamageReduction.class)
+                                .findAny()
+                                .ifPresentOrElse(parryDamageReductionCooldown -> {
+                                            if (parryDamageReductionCooldown.getCooldownObject() instanceof ParryDamageReduction parryDamageReduction) {
+                                                parryDamageReduction.instances.add(damageReductionTickDuration);
+                                            }
+                                        }, () -> {
+                                            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                                    "Parry Damage Reduction",
+                                                    "REDUC",
+                                                    ParryDamageReduction.class,
+                                                    new ParryDamageReduction(damageReductionTickDuration),
+                                                    wp,
+                                                    CooldownTypes.ABILITY,
+                                                    cooldownManager -> {
+
+                                                    },
+                                                    blockTickDuration
+                                            ) {
+                                                @Override
+                                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                                    return currentDamageValue * convertToDivisionDecimal(cooldownObject.instances.size() * damageReduction / 100f);
+                                                }
+
+                                                @Nonnull
+                                                @Override
+                                                public Component getDebugMessage() {
+                                                    List<Integer> instances = cooldownObject.instances;
+                                                    return Component.text(NumberFormat.formatOptionalHundredths(instances.size()) + "=" +
+                                                                    instances.stream().map(Object::toString).collect(Collectors.joining(",")),
+                                                            NamedTextColor.YELLOW
+                                                    );
+                                                }
+                                            });
+                                        }
+                                );
+                    }
+                };
+            }
+        });
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                name,
+                "PARRY",
+                Parry.class,
+                null,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+
+                },
+                cooldownManager -> {
+                },
+                knockbackTickDuration
+        ) {
+            boolean parried = false;
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (!parried && event.getAbility() instanceof AbstractStrike<?, ?>) {
+                    parried = true;
+                    stats.timesKnockbacked++;
+                    WarlordsEntity victim = event.getWarlordsEntity();
+                    Vector v = wp.getLocation().toVector().subtract(victim.getLocation().toVector()).normalize().multiply(-1.5).setY(0.35);
+                    victim.setVelocity(name, v, false);
+                    setTicksLeft(0);
+                }
+            }
+        });
+        return true;
+    }
+
+    public static class ParryDamageReduction {
+
+        private final List<Integer> instances = new ArrayList<>();
+
+        public ParryDamageReduction(int instanceDuration) {
+            this.instances.add(instanceDuration);
+        }
+
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder
+                .create("For ")
+                .durationTicks(blockTickDuration)
+                .text(", you are able to block the first skill that hits you. For ")
+                .durationTicks(knockbackTickDuration)
+                .text(", you are able to deal massive knockback with your next strike.  Every time you block a skill you gain ")
+                .damageReduction(damageReduction)
+                .text(" damage reduction for ")
+                .durationTicks(damageReductionTickDuration)
+                .text(".")
+                .build();
+    }
+
+    @Override
+    public ParryStats getAbilityStats() {
+        return stats;
+    }
+
+    public static class ParryStats extends AbstractAbilityStats<Parry, ParryStats> {
+
+        @Field("times_blocks")
+        private int timesBlocked = 0;
+        @Field("times_knockbacked")
+        private int timesKnockbacked = 0;
+
+        @Override
+        public List<AbilityStatDisplay> getStatsDisplay() {
+            List<AbilityStatDisplay> statsDisplay = new ArrayList<>(super.getStatsDisplay());
+            statsDisplay.add(new AbilityStatDisplay("Times Blocked", timesBlocked));
+            statsDisplay.add(new AbilityStatDisplay("Times Knockbacked", timesKnockbacked));
+            return statsDisplay;
+        }
+
+        @Override
+        public ParryStats merge(ParryStats other, int multiplier) {
+            ParryStats stats = super.merge(other, multiplier);
+            stats.timesBlocked = this.timesBlocked + other.timesBlocked * multiplier;
+            stats.timesKnockbacked = this.timesKnockbacked + other.timesKnockbacked * multiplier;
+            return stats;
+        }
+
+        @Override
+        public Class<ParryStats> getClazz() {
+            return ParryStats.class;
+        }
+
+        @Override
+        public ParryStats create() {
+            return new ParryStats();
+        }
+
+    }
+
+}

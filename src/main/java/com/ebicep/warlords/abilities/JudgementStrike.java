@@ -80,8 +80,8 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
                 if (healingValues.strikeHealing.getValue() != 0 && finalEvent.isDead()) {
                     wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.strikeHealing));
                 }
-                for (OrderOfEviscerate orderOfEviscerate : wp.getAbilitiesMatching(OrderOfEviscerate.class)) {
-                    orderOfEviscerate.subtractCurrentCooldown(orderCooldownReduction);
+                for (AbstractAbility ability : wp.getAbilitiesImplementing(OrderOfEviscerateLike.class)) {
+                    ability.subtractCurrentCooldown(orderCooldownReduction);
                 }
             });
         }
@@ -105,24 +105,25 @@ public class JudgementStrike extends AbstractStrike<JudgementStrike, JudgementSt
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Strike the targeted enemy, dealing ")
-                                               .damage(damageValues.strikeDamage)
-                                               .text("damage. Deals ")
-                                               .percent(damageIncrease, NamedTextColor.RED)
-                                               .text(" more damage to enemies below ")
-                                               .percent(damageIncreaseHealthThreshold, NamedTextColor.RED)
-                                               .text(" health.")
-                                               .emptyLine()
-                                               .text("Every strike reduces the cooldown of Order of Eviscerate by ")
-                                               .durationSeconds(orderCooldownReduction)
-                                               .text(". Every ")
-                                               .text(strikeCritInterval, NamedTextColor.BLUE)
-                                               .text("th strike is a guaranteed critical strike. Critical strikes temporarily increase your movement speed by ")
-                                               .percent(speedOnCrit, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationSeconds(speedOnCritDuration)
-                                               .text(".")
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Strike the targeted enemy, dealing ")
+                .damage(damageValues.strikeDamage)
+                .text("damage. Deals ")
+                .percent(damageIncrease, NamedTextColor.RED)
+                .text(" more damage to enemies below ")
+                .percent(damageIncreaseHealthThreshold, NamedTextColor.RED)
+                .text(" health.")
+                .emptyLine()
+                .text("Every strike reduces the cooldown of Order of Eviscerate by ")
+                .durationSeconds(orderCooldownReduction)
+                .text(". Every ")
+                .text(strikeCritInterval, NamedTextColor.BLUE)
+                .text("th strike is a guaranteed critical strike. Critical strikes temporarily increase your movement speed by ")
+                .percent(speedOnCrit, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationSeconds(speedOnCritDuration)
+                .text(".")
+                .build();
     }
 
     @Override
