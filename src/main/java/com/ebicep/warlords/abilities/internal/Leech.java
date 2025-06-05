@@ -37,8 +37,10 @@ public class Leech {
                 .findAny();
         if (oldLeechCooldown.isPresent() && oldLeechCooldown.get().getFrom().equals(from)) {
             RegularCooldown<LeechData> leechCooldown = oldLeechCooldown.get();
-            leechCooldown.setTicksLeft(leechTickDuration);
-            leechCooldown.getCooldownObject().add(leechTickDuration);
+            leechCooldown.setTicksLeft(Math.max(leechCooldown.getTicksLeft(), leechTickDuration));
+            for (int i = 0; i < leechInstance.initialStacks; i++) {
+                leechCooldown.getCooldownObject().add(leechTickDuration);
+            }
         } else {
             // remove leech from other players
             oldLeechCooldown.ifPresent(abstractCooldown -> target.getCooldownManager().removeCooldown(abstractCooldown));
