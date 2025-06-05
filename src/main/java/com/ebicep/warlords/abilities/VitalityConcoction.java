@@ -61,6 +61,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
                     }
             );
         }
+        wp.getCooldownManager().removeDebuffCooldowns();
         wp.addSpeedModifier(wp, name, speedBoost, tickDuration);
         Set<WarlordsEntity> leeched = new HashSet<>();
         wp.getCooldownManager().addCooldown(new RegularCooldown<>(
