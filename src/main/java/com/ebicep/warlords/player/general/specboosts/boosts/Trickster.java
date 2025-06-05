@@ -16,6 +16,7 @@ import com.ebicep.warlords.player.ingame.MobHologram;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.pvp.TricksterDummy;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -139,6 +140,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
                                                 .cause(getStringName())
                                                 .source(warlordsEntity)
                                                 .value(incendiaryCurseIgniteDamage)
+                                                .flags(InstanceFlags.DOT)
                                         );
                                     });
                     }
