@@ -62,6 +62,7 @@ public class SpecBoostManager {
     public static final SpecBoost<PermeatingLink> PERMEATING_LINK = new PermeatingLink();
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
+    public static final SpecBoost<RiftAmbush> RIFT_AMBUSH = new RiftAmbush();
     public static final SpecBoost<SeismicShift> SEISMIC_SHIFT = new SeismicShift();
     public static final SpecBoost<Solitary> SOLITARY = new Solitary();
     public static final SpecBoost<SoulRend> SOUL_REND = new SoulRend();
@@ -98,7 +99,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
-        SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE, TRICKSTER, TORRENTIAL_SOUL));
+        SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE, TRICKSTER, RIFT_AMBUSH, TORRENTIAL_SOUL));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST));
     }
 

@@ -47,6 +47,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private final SoulSwitchStats stats = new SoulSwitchStats();
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(13);
+    private float verticalLimit;
     private int blindnessTicks = 30;
     private int decoyMaxTicksLived = 60;
     // pve
@@ -62,6 +63,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     public void init(AbstractAbilityBuilder builder) {
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
         this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
         this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
         this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
@@ -76,7 +78,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             return false;
         }
         float rad = radius.getCalculatedValue();
-        for (WarlordsEntity swapTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad, rad / 2f, rad).aliveEnemiesOf(wp).requireLineOfSight(wp).lookingAtFirst(wp)) {
+        for (WarlordsEntity swapTarget : PlayerFilter.entitiesAround(wp.getLocation(), rad, verticalLimit, rad).aliveEnemiesOf(wp).requireLineOfSight(wp).lookingAtFirst(wp)) {
             if (swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
                 continue;
@@ -84,25 +86,33 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             if (swapTarget instanceof WarlordsNPC warlordsNPC) {
                 AbstractMob mob = warlordsNPC.getMob();
                 if (mob instanceof Unswappable || mob.getDynamicFlags().contains(DynamicFlags.UNSWAPPABLE) || mob instanceof BossMob || mob instanceof BossMinionMob) {
-                    wp.sendMessage(Component.text(" You cannot Soul Switch with that mob!", NamedTextColor.RED));
+                    wp.sendMessage(Component.text("You cannot Soul Switch with that mob!", NamedTextColor.RED));
                     continue;
                 }
             }
-            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
             Location swapLocation = swapTarget.getLocation();
             Location ownLocation = wp.getLocation();
+            Location start = new Location(wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch());
+            Location end = new Location(swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch());
+            WarlordsPlayerSwapEvent playerSwapEvent = new WarlordsPlayerSwapEvent(wp, swapTarget, start, end);
+            Bukkit.getPluginManager().callEvent(playerSwapEvent);
+            if (playerSwapEvent.isCancelled()) {
+                return true;
+            }
+            Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 2, 1.5f);
             EffectUtils.playCylinderAnimation(swapLocation, 1.05, Particle.CLOUD, 1);
             EffectUtils.playCylinderAnimation(ownLocation, 1.05, Particle.CLOUD, 1);
             swapTarget.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, blindnessTicks, 0, true, false));
-            swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED.append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
-                                                                   .append(Component.text(wp.getName(), NamedTextColor.YELLOW))
-                                                                   .append(Component.text("!", NamedTextColor.GRAY)));
-            swapTarget.teleport(new Location(wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch()));
-            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" You swapped with ", NamedTextColor.GRAY))
-                                                          .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
-                                                          .append(Component.text("!", NamedTextColor.GRAY)));
-            wp.teleport(new Location(swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
-            Bukkit.getPluginManager().callEvent(new WarlordsPlayerSwapEvent(wp, swapTarget));
+            swapTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_RED
+                    .append(Component.text(" You've been Soul Swapped by ", NamedTextColor.GRAY))
+                    .append(Component.text(wp.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
+            swapTarget.teleport(start);
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You swapped with ", NamedTextColor.GRAY))
+                    .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
+                    .append(Component.text("!", NamedTextColor.GRAY)));
+            wp.teleport(end);
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Soul Switch Damage",
                     "DMG",
@@ -215,6 +225,22 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             return true;
         }
         return false;
+    }
+
+    public int getDamageReduction() {
+        return damageReduction;
+    }
+
+    public void setDamageReduction(int damageReduction) {
+        this.damageReduction = damageReduction;
+    }
+
+    public float getVerticalLimit() {
+        return verticalLimit;
+    }
+
+    public void setVerticalLimit(float verticalLimit) {
+        this.verticalLimit = verticalLimit;
     }
 
     @Override

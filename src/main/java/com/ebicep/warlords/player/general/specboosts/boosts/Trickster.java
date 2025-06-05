@@ -155,8 +155,8 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
             if (!event.getWarlordsEntity().equals(warlordsEntity)) {
                 return;
             }
-            Location oldLocation = event.getSwappedPlayer().getLocation();
-            Location newLocation = event.getWarlordsEntity().getLocation();
+            Location oldLocation = event.getWarlordsEntity().getLocation();
+            Location newLocation = event.getSwappedPlayer().getLocation();
             WarlordsNPC npc = warlordsEntity
                     .getGame()
                     .addNPC(new TricksterDummy(

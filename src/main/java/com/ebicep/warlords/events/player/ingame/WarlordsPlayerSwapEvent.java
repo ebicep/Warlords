@@ -1,6 +1,7 @@
 package com.ebicep.warlords.events.player.ingame;
 
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
@@ -13,12 +14,25 @@ public class WarlordsPlayerSwapEvent extends AbstractWarlordsEntityEvent impleme
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
     protected boolean cancelled = false;
     private final WarlordsEntity swappedPlayer;
+    private final Location start;
+    private final Location end;
 
-    public WarlordsPlayerSwapEvent(@Nonnull WarlordsEntity player, WarlordsEntity swappedPlayer) {
+    public WarlordsPlayerSwapEvent(@Nonnull WarlordsEntity player, WarlordsEntity swappedPlayer, Location start, Location end) {
         super(player);
         this.swappedPlayer = swappedPlayer;
+        this.start = start;
+        this.end = end;
+    }
+
+    public Location getStart() {
+        return start;
+    }
+
+    public Location getEnd() {
+        return end;
     }
 
     @Override
