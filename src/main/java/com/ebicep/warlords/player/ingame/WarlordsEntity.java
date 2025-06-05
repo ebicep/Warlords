@@ -682,7 +682,7 @@ public abstract class WarlordsEntity {
     }
 
     public void resetRegenTimer() {
-        regenTickTimer = (int) (200 * regenTickTimerModifier);
+        regenTickTimer = Math.max(regenTickTimer, (int) (200 * regenTickTimerModifier));
     }
 
     public void setRegenTickTimerModifier(float regenTickTimerModifier) {

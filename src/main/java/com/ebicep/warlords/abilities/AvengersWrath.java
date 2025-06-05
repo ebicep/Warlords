@@ -56,7 +56,7 @@ public class AvengersWrath extends AbstractAbility implements OrangeAbilityIcon,
                                                .text(" additional enemies that are within ")
                                                .blocks(hitRadius)
                                                .text(" of your target. Your energy per second is increased by ")
-                                               .energy(energyPerSecond)
+                                               .energy(energyPerSecond, "")
                                                .text(" for the duration of the effect. Lasts ")
                                                .durationTicks(tickDuration)
                                                .text(".")
