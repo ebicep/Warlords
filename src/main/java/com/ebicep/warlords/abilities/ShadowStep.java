@@ -211,6 +211,10 @@ public class ShadowStep extends AbstractAbility implements
         this.fallDamageNegation = fallDamageNegation;
     }
 
+    public void setLeapHealThreshold(int leapHealThreshold) {
+        this.leapHealThreshold = leapHealThreshold;
+    }
+
     public static class DamageValues implements Value.ValueHolder {
 
         private Value.RangedValueCritable shadowStepDamage = new Value.RangedValueCritable(466, 598, 15, 175);

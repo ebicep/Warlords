@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.IncendiaryCurse;
+import com.ebicep.warlords.abilities.ShadowStep;
 import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.AreaEffect;
@@ -98,6 +99,9 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
             });
             warlordsPlayer.getAbilitiesMatching(SoulSwitch.class).forEach(soulSwitch -> {
                 soulSwitch.getCooldown().addAdditiveModifier("Spec Boost", -soulSwitchCooldownReductionSeconds);
+            });
+            warlordsPlayer.getAbilitiesMatching(ShadowStep.class).forEach(shadowStep -> {
+                shadowStep.setLeapHealThreshold(shadowLeapHealthThreshold);
             });
         }
 
