@@ -8,7 +8,6 @@ import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
@@ -21,7 +20,6 @@ import com.ebicep.warlords.pve.upgrades.rogue.apothecary.DrainingMiasmaBranch;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -75,53 +73,68 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
             if (miasmaTarget.isEnemy(wp)) {
                 miasmaTarget.addSpeedModifier(wp, "Draining Miasma Slow", -slowness, slownessDuration * 20);
                 miasmaTarget.getCooldownManager().removeCooldown(DrainingMiasmaData.class, false);
-                miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(name, "MIAS", DrainingMiasmaData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                }, cooldownManager -> {
-                    miasmaTarget.getSpeed().removeModifier("Draining Miasma Slow");
-                    if (data.numberOfLeechProcd >= 150) {
-                        ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
-                    }
-                }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-                    if (ticksElapsed % 20 != 0) {
-                        return;
-                    }
-                    Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
-                    for (int i = 0; i < 3; i++) {
-                        EffectUtils.displayParticle(Particle.DUST,
-                                miasmaTarget.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
-                                1,
-                                0,
-                                0,
-                                0,
-                                0,
-                                new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1)
-                        );
-                    }
-                    float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
-                    healthDamage = DamageCheck.clamp(healthDamage);
-                    miasmaTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.miasmaDamage.getValue() + healthDamage).flags(InstanceFlags.DOT));
-                })
-                ) {
-
-                    @Override
-                    public TextColor customActionBarColor() {
-                        return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
-                    }
-                });
+                miasmaTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                        name,
+                        "MIAS",
+                        DrainingMiasmaData.class,
+                        data,
+                        wp,
+                        CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR,
+                        cooldownManager -> {
+                        },
+                        cooldownManager -> {
+                            miasmaTarget.getSpeed().removeModifier("Draining Miasma Slow");
+                            if (data.numberOfLeechProcd >= 150) {
+                                ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.LIFELEECHER);
+                            }
+                        },
+                        tickDuration,
+                        Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                            if (ticksElapsed % 20 != 0) {
+                                return;
+                            }
+                            Utils.playGlobalSound(miasmaTarget.getLocation(), Sound.BLOCK_SNOW_BREAK, 2, 0.4f);
+                            for (int i = 0; i < 3; i++) {
+                                EffectUtils.displayParticle(Particle.DUST,
+                                        miasmaTarget.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        1,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        new Particle.DustOptions(Color.fromRGB(30, 200, 30), 1)
+                                );
+                            }
+                            float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
+                            healthDamage = DamageCheck.clamp(healthDamage);
+                            miasmaTarget.addInstance(InstanceBuilder.damage()
+                                                                    .ability(this)
+                                                                    .source(wp)
+                                                                    .value(damageValues.miasmaDamage.getValue() + healthDamage)
+                                                                    .flags(InstanceFlags.DOT));
+                        })
+                ));
                 if (pveMasterUpgrade) {
                     miasmaTarget.getCooldownManager()
-                                .addCooldown(new PermanentCooldown<>("Liquidizing Miasma", "LIQ", DrainingMiasmaData.class, data, wp, CooldownTypes.DEBUFF, cooldownManager -> {
-                                    new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.BIRCH_SAPLING).play();
-                                    for (WarlordsEntity target : PlayerFilter.entitiesAround(miasmaTarget, 6, 6, 6).aliveEnemiesOf(wp)) {
-                                        float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
-                                        healthDamage = DamageCheck.clamp(healthDamage);
-                                        target.addInstance(InstanceBuilder.damage()
-                                                                          .ability(this)
-                                                                          .source(wp)
-                                                                          .value(damageValues.miasmaDamage.getValue() + healthDamage)
-                                                                          .flags(InstanceFlags.DOT));
-                                    }
-                                }, true
+                                .addCooldown(new PermanentCooldown<>("Liquidizing Miasma",
+                                        "LIQ",
+                                        DrainingMiasmaData.class,
+                                        data,
+                                        wp,
+                                        CooldownTypes.LOW_LEVEL_DEBUFF,
+                                        cooldownManager -> {
+                                            new FallingBlockWaveEffect(miasmaTarget.getLocation(), 3, 1, Material.BIRCH_SAPLING).play();
+                                            for (WarlordsEntity target : PlayerFilter.entitiesAround(miasmaTarget, 6, 6, 6).aliveEnemiesOf(wp)) {
+                                                float healthDamage = miasmaTarget.getMaxHealth() * 0.01f;
+                                                healthDamage = DamageCheck.clamp(healthDamage);
+                                                target.addInstance(InstanceBuilder.damage()
+                                                                                  .ability(this)
+                                                                                  .source(wp)
+                                                                                  .value(damageValues.miasmaDamage.getValue() + healthDamage)
+                                                                                  .flags(InstanceFlags.DOT));
+                                            }
+                                        },
+                                        true
                                 ) {
 
                                     @Override

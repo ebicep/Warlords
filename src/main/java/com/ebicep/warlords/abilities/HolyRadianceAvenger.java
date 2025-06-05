@@ -77,33 +77,33 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
         AbstractStrike.giveStrikePriority(giver, target, markDuration * 20);
         target.getCooldownManager().removeCooldown(RadianceData.class, false);
         target.getCooldownManager()
-              .addCooldown(new RegularCooldown<>("Avenger's Mark", "AVE MARK", RadianceData.class, radianceData, giver, CooldownTypes.DEBUFF, cooldownManager -> {
-        }, markDuration * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 10 == 0) {
-                EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
-            }
-        })
-        ) {
+              .addCooldown(new RegularCooldown<>("Avenger's Mark", "AVE MARK", RadianceData.class, radianceData, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
+              }, markDuration * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                  if (ticksElapsed % 10 == 0) {
+                      EffectUtils.playCylinderAnimation(target.getLocation(), 1, 250, 25, 25);
+                  }
+              })
+              ) {
 
-            @Override
-            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade && event.getCause().equals("Avenger's Strike")) {
-                    return currentDamageValue * 1.4f;
-                }
-                if (pveMasterUpgrade2) {
-                    return currentDamageValue * 1.2f;
-                }
-                return currentDamageValue;
-            }
+                  @Override
+                  public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                      if (pveMasterUpgrade && event.getCause().equals("Avenger's Strike")) {
+                          return currentDamageValue * 1.4f;
+                      }
+                      if (pveMasterUpgrade2) {
+                          return currentDamageValue * 1.2f;
+                      }
+                      return currentDamageValue;
+                  }
 
-            @Override
-            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                if (pveMasterUpgrade) {
-                    return currentDamageValue * .9f;
-                }
-                return currentDamageValue;
-            }
-        });
+                  @Override
+                  public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                      if (pveMasterUpgrade) {
+                          return currentDamageValue * .9f;
+                      }
+                      return currentDamageValue;
+                  }
+              });
     }
 
     private void mark(WarlordsEntity wp, WarlordsEntity markTarget) {
@@ -115,13 +115,21 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
                                                                .append(Component.text(" by " + wp.getName() + "!", NamedTextColor.GRAY)));
         RadianceData radianceData = new RadianceData();
         markTarget.getCooldownManager().removeCooldown(RadianceData.class, false);
-        markTarget.getCooldownManager()
-                  .addCooldown(new RegularCooldown<>("Avenger's Mark", "AVE MARK", RadianceData.class, radianceData, wp, CooldownTypes.DEBUFF, cooldownManager -> {
-        }, markDuration * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 10 == 0) {
-                EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
-            }
-        })
+        markTarget.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Avenger's Mark",
+                "AVE MARK",
+                RadianceData.class,
+                radianceData,
+                wp,
+                CooldownTypes.HIGH_LEVEL_DEBUFF,
+                cooldownManager -> {
+                },
+                markDuration * 20,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 10 == 0) {
+                        EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
+                    }
+                })
         ) {
 
             @Override

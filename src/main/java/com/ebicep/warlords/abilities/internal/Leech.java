@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.ImpalingStrike;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.SpecType;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -13,7 +12,6 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -51,7 +49,7 @@ public class Leech {
                     LeechData.class,
                     data,
                     from,
-                    CooldownTypes.ABILITY,
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
                     cooldownManager -> {
                     },
                     leechTickDuration,
@@ -106,11 +104,6 @@ public class Leech {
                     };
                 }
 
-                @Override
-                public TextColor customActionBarColor() {
-                    return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
-                }
-
                 @Nonnull
                 @Override
                 public Component getDebugMessage() {
@@ -122,7 +115,7 @@ public class Leech {
 
                 @Override
                 public PlayerNameData addSuffixFromOther() {
-                    return new PlayerNameData(Component.text("LCH(" + data.stacks + ")", AbstractCooldown.PSEUDO_DEBUFF_COLOR),
+                    return new PlayerNameData(Component.text("LCH(" + data.stacks + ")", CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR),
                             we -> we.isEnemy(target) || (we.isTeammate(target) && we.getSpecClass().specType == SpecType.HEALER)
                     );
                 }

@@ -130,7 +130,7 @@ public class WoundingStrikeBerserker extends AbstractStrike<WoundingStrikeBerser
     private void bleedOnHit(WarlordsEntity giver, WarlordsEntity hit) {
         hit.getCooldownManager().removePreviousWounding();
         hit.getCooldownManager()
-           .addCooldown(new RegularCooldown<>("Bleed", "BLEED", WoundingStrikeBerserker.class, null, giver, CooldownTypes.DEBUFF, cooldownManager -> {
+           .addCooldown(new RegularCooldown<>("Bleed", "BLEED", WoundingStrikeBerserker.class, null, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
            }, woundingTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                if (ticksLeft % 20 == 0) {
                    float healthDamage = hit.getMaxHealth() * 0.005f;

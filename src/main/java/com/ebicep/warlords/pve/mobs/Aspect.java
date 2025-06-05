@@ -162,7 +162,7 @@ public enum Aspect {
                             Aspect.class,
                             null,
                             warlordsEntity,
-                            CooldownTypes.DEBUFF,
+                            CooldownTypes.LOW_LEVEL_DEBUFF,
                             cooldownManager -> {
                             },
                             40,

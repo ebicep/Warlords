@@ -103,7 +103,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 DisasterFragment.class,
                                 null,
                                 attacker,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 40,
@@ -134,7 +134,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 DisasterFragment.class,
                                 null,
                                 attacker,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 40,
@@ -167,7 +167,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 DisasterFragment.class,
                                 null,
                                 attacker,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 40
@@ -204,7 +204,7 @@ public class DisasterFragment extends AbstractFixedItem implements FixedItemAppl
                                 SoulShackle.class,
                                 null,
                                 attacker,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 40,

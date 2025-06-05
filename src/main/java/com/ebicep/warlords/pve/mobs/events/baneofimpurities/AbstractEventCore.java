@@ -112,7 +112,7 @@ public abstract class AbstractEventCore extends AbstractMob implements BossMob, 
                                 AbstractEventCore.class,
                                 null,
                                 warlordsNPC,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 100

@@ -202,7 +202,13 @@ public class FreezingBreath extends AbstractProjectile<FreezingBreath, FreezingB
                                                   .max(damageValues.freezingBreathDamage.getMaxValue() * damageIncrease)
                                                   .crit(damageValues.freezingBreathDamage));
             nearEntity.getCooldownManager()
-                      .addCooldown(new RegularCooldown<>("Chilled", "CHILLED", FreezingBreath.class, new FreezingBreath(), shooter, CooldownTypes.DEBUFF, cooldownManager -> {
+                      .addCooldown(new RegularCooldown<>("Chilled",
+                              "CHILLED",
+                              FreezingBreath.class,
+                              new FreezingBreath(),
+                              shooter,
+                              CooldownTypes.LOW_LEVEL_DEBUFF,
+                              cooldownManager -> {
                       }, 4 * 20
                       ) {
 

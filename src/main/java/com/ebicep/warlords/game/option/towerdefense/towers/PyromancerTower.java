@@ -147,7 +147,7 @@ public class PyromancerTower extends AbstractTower implements Upgradeable.Path2 
                                 PyromancerTower.class,
                                 null,
                                 warlordsTower,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 60,

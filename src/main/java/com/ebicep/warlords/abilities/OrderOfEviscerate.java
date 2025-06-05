@@ -67,21 +67,31 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         wp.addSpeedModifier(wp, name, speedBuff, tickDuration);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerateData.class, false);
         OrderOfEviscerateData data = new OrderOfEviscerateData(maxDamageThreshold);
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Order of Eviscerate", "ORDER", OrderOfEviscerateData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            wp.getSpeed().removeModifier(name);
-            removeCloak(wp, true);
-            if (inPve) {
-                if (data.damageDoneWithOrder >= 15000 && data.mobsKilledWithOrder >= 6) {
-                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.SERIAL_KILLER);
-                }
-            }
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if (ticksElapsed % 2 == 0) {
-                Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
-            }
-            EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
-        })
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Order of Eviscerate",
+                "ORDER",
+                OrderOfEviscerateData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    wp.getSpeed().removeModifier(name);
+                    removeCloak(wp, true);
+                    if (inPve) {
+                        if (data.damageDoneWithOrder >= 15000 && data.mobsKilledWithOrder >= 6) {
+                            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.SERIAL_KILLER);
+                        }
+                    }
+                },
+                tickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed % 2 == 0) {
+                        Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENT_CAVE, 0.25f, 2);
+                    }
+                    EffectUtils.displayParticle(Particle.SMOKE, wp.getLocation(), 4, 0.2, 0.2, 0.2, 0.05);
+                })
         ) {
 
             @Override

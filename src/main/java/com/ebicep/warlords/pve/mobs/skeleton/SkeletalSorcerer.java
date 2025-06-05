@@ -124,7 +124,7 @@ public class SkeletalSorcerer extends AbstractMob implements ChampionMob {
                         BlightedScorch.class,
                         new BlightedScorch(),
                         wp,
-                        CooldownTypes.DEBUFF,
+                        CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {
                         },
                         4 * 20,

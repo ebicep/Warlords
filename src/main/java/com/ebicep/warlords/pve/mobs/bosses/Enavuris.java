@@ -339,7 +339,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                                             EnderStones.class,
                                             null,
                                             shooter,
-                                            CooldownTypes.DEBUFF,
+                                            CooldownTypes.LOW_LEVEL_DEBUFF,
                                             cooldownManager -> {
                                             },
                                             30
@@ -368,7 +368,7 @@ public class Enavuris extends AbstractMob implements BossMob, Unsilencable, Unst
                         EnderStones.class,
                         null,
                         shooter,
-                        CooldownTypes.DEBUFF,
+                        CooldownTypes.LOW_LEVEL_DEBUFF,
                         cooldownManager -> {
                         },
                         3 * 20

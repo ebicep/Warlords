@@ -154,7 +154,13 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                                 }
                                 EffectUtils.playParticleLinkAnimation(enemy.getLocation(), totemStand.getLocation(), 255, 255, 255, 1);
                                 enemy.getCooldownManager()
-                                     .addCooldown(new RegularCooldown<>("Totem Crippling", "CRIP", HealingTotemData.class, data, wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                                     .addCooldown(new RegularCooldown<>("Totem Crippling",
+                                             "CRIP",
+                                             HealingTotemData.class,
+                                             data,
+                                             wp,
+                                             CooldownTypes.LOW_LEVEL_DEBUFF,
+                                             cooldownManager -> {
                                      }, 20
                                      ) {
 
@@ -178,7 +184,8 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
                             wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Healing Totem has crippled ", NamedTextColor.GRAY))
                                                                           .append(Component.text(p.getName(), NamedTextColor.YELLOW))
                                                                           .append(Component.text("!", NamedTextColor.GRAY)));
-                            p.getCooldownManager().addCooldown(new RegularCooldown<>("Totem Crippling", "CRIP", HealingTotemData.class, data, wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                            p.getCooldownManager()
+                             .addCooldown(new RegularCooldown<>("Totem Crippling", "CRIP", HealingTotemData.class, data, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                             }, crippleDuration * 20
                             ) {
 

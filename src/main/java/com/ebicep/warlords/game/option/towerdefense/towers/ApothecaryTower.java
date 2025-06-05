@@ -208,7 +208,7 @@ public class ApothecaryTower extends AbstractTower implements Upgradeable.Path2 
                                             PoisonAttack.class,
                                             null,
                                             wp,
-                                            CooldownTypes.DEBUFF,
+                                            CooldownTypes.LOW_LEVEL_DEBUFF,
                                             cooldownManager -> {},
                                             POSION_TICKS,
                                             Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {

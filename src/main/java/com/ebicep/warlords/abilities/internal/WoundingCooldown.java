@@ -76,7 +76,7 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
                 WoundingData.class,
                 new WoundingData(instance),
                 from,
-                CooldownTypes.DEBUFF,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
                 cooldownManager -> {},
                 cooldownManager -> {
                     target.sendMessage(
@@ -111,7 +111,7 @@ public class WoundingCooldown extends RegularCooldown<WoundingCooldown.WoundingD
         List<WoundingData.WoundingInstance> instances = cooldownObject.instances;
         return Component.text(NumberFormat.formatOptionalHundredths(cooldownObject.getWoundingMultiplier()) + "=" +
                         instances.stream().map(Object::toString).collect(Collectors.joining(",")),
-                NamedTextColor.DARK_RED
+                cooldownType.getTextColor()
         );
     }
 

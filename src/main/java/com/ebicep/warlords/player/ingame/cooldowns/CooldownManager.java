@@ -62,7 +62,7 @@ public class CooldownManager {
                 if (event.getWarlordsEntity() != immune) {
                     return;
                 }
-                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
+                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF) {
                     return;
                 }
                 event.setCancelled(true);
@@ -106,7 +106,34 @@ public class CooldownManager {
     public int removeDebuffCooldowns() {
         List<AbstractCooldown<?>> toRemove = abstractCooldowns
                 .stream()
-                .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                .filter(cooldown -> {
+                    boolean isLowLevelDebuff = cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
+                    boolean clearedHighLevelDebuff = false;
+                    if (cooldown.getCooldownType() == CooldownTypes.HIGH_LEVEL_DEBUFF && cooldown instanceof RegularCooldown<?> regularCooldown) {
+                        regularCooldown.subtractTime(40);
+                        clearedHighLevelDebuff = !regularCooldown.hasTicksLeft();
+                    }
+                    return isLowLevelDebuff || clearedHighLevelDebuff;
+                })
+                .toList();
+        toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
+        abstractCooldowns.removeAll(toRemove);
+        toRemove.forEach(this::updatePlayerNames);
+        return toRemove.size();
+    }
+
+    public int removeDebuffCooldownsVind() {
+        List<AbstractCooldown<?>> toRemove = abstractCooldowns
+                .stream()
+                .filter(cooldown -> {
+                    boolean isLowLevelDebuff = cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF && !(cooldown.cooldownObject instanceof WoundingCooldown.WoundingData);
+                    boolean clearedHighLevelDebuff = false;
+                    if ((cooldown.getCooldownType() == CooldownTypes.HIGH_LEVEL_DEBUFF || cooldown.cooldownObject instanceof WoundingCooldown.WoundingData) && cooldown instanceof RegularCooldown<?> regularCooldown) {
+                        regularCooldown.subtractTime(40);
+                        clearedHighLevelDebuff = !regularCooldown.hasTicksLeft();
+                    }
+                    return isLowLevelDebuff || clearedHighLevelDebuff;
+                })
                 .toList();
         toRemove.forEach(cooldown -> cooldown.getOnRemoveForce().accept(this));
         abstractCooldowns.removeAll(toRemove);
@@ -238,11 +265,11 @@ public class CooldownManager {
     public List<AbstractCooldown<?>> getDebuffCooldowns(boolean distinct) {
         if (distinct) {
             return getCooldownsSingular().stream()
-                                         .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                         .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF)
                                          .toList();
         } else {
             return abstractCooldowns.stream()
-                                    .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF)
+                                    .filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF)
                                     .toList();
         }
     }
@@ -290,7 +317,7 @@ public class CooldownManager {
 
     public List<AbstractCooldown<?>> getNonDebuffCooldowns() {
         return abstractCooldowns.stream()
-                                .filter(cooldown -> cooldown.getCooldownType() != CooldownTypes.DEBUFF)
+                                .filter(cooldown -> cooldown.getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF)
                                 .toList();
     }
 

@@ -35,7 +35,7 @@ public class ChainLightning extends AbstractChain<ChainLightning, ChainLightning
     public static final ItemStack CHAIN_ITEM = new ItemStack(Material.GRAY_STAINED_GLASS);
 
     public static <T> void giveShockedEffect(WarlordsEntity giver, WarlordsEntity receiver, Class<T> clazz, T object) {
-        receiver.getCooldownManager().addCooldown(new RegularCooldown<>("Aftershock", "SHOCKED", clazz, object, giver, CooldownTypes.DEBUFF, cooldownManager -> {
+        receiver.getCooldownManager().addCooldown(new RegularCooldown<>("Aftershock", "SHOCKED", clazz, object, giver, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
         }, 3 * 20, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
             if (ticksElapsed % 20 == 0) {
                 EffectUtils.displayParticle(Particle.ELECTRIC_SPARK, receiver.getLocation().add(0, 1.2, 0), 5, .25, .25, .25, 0);

@@ -13,7 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import static com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes.BUFF;
-import static com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes.DEBUFF;
+import static com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes.LOW_LEVEL_DEBUFF;
 
 public enum StatusEffectCooldowns {
 
@@ -21,14 +21,14 @@ public enum StatusEffectCooldowns {
     ENERGY("Energy", new ItemStack(Material.ORANGE_WOOL), NamedTextColor.GOLD, EnergyPowerup.class, EnergyPowerup.ENERGY_POWERUP, "ENERGY", BUFF),
     SPEED("Speed", new ItemStack(Material.YELLOW_WOOL), NamedTextColor.YELLOW, SpeedPowerup.class, SpeedPowerup.SPEED_POWERUP, "SPEED", BUFF),
     RESISTANCE("Resistance", new ItemStack(Material.LIGHT_GRAY_WOOL), NamedTextColor.GRAY, null, null, "RES", BUFF),
-    CRIPPLING("Crippling", new ItemStack(Material.WOODEN_SWORD), NamedTextColor.DARK_RED, CripplingStrike.class, new CripplingStrike(), "CRIP", DEBUFF),
+    CRIPPLING("Crippling", new ItemStack(Material.WOODEN_SWORD), NamedTextColor.DARK_RED, CripplingStrike.class, new CripplingStrike(), "CRIP", LOW_LEVEL_DEBUFF),
     WOUNDING_BERS("Wounding Bers",
             new ItemStack(Material.IRON_SWORD),
             NamedTextColor.DARK_RED,
             WoundingStrikeBerserker.class,
             new WoundingStrikeBerserker(),
             "WND",
-            DEBUFF
+            LOW_LEVEL_DEBUFF
     ),
     WOUNDING_DEF("Wounding Def",
             new ItemStack(Material.STONE_SWORD),
@@ -36,7 +36,7 @@ public enum StatusEffectCooldowns {
             WoundingStrikeDefender.class,
             new WoundingStrikeDefender(),
             "WND",
-            DEBUFF
+            LOW_LEVEL_DEBUFF
     ),
 
     ;

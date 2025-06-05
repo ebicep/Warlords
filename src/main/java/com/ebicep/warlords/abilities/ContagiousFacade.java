@@ -62,30 +62,31 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Cover yourself in a protective layer that absorbs ")
-                                               .percent(damageAbsorption, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" of all incoming damage for ")
-                                               .durationTicks(tickDuration)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Reactivate the ability to increase your speed by")
-                                               .percent(speedIncrease, NamedTextColor.WHITE)
-                                               .text(" for ")
-                                               .durationTicks(speedIncreaseDuration)
-                                               .text(" and inflict ")
-                                               .text(stacksGranted, NamedTextColor.BLUE)
-                                               .text(" stacks of ")
-                                               .text("PHEX", NamedTextColor.DARK_RED)
-                                               .text(" on ")
-                                               .text(infectedPlayers, NamedTextColor.BLUE)
-                                               .text(" enemies within ")
-                                               .blocks(poisonRadius)
-                                               .text(".")
-                                               .emptyLine()
-                                               .text("Not reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts ")
-                                               .durationTicks(shieldTickDuration)
-                                               .text(".")
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("Cover yourself in a protective layer that absorbs ")
+                .percent(damageAbsorption, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" of all incoming damage for ")
+                .durationTicks(tickDuration)
+                .text(".")
+                .emptyLine()
+                .text("Reactivate the ability to increase your speed by")
+                .percent(speedIncrease, NamedTextColor.WHITE)
+                .text(" for ")
+                .durationTicks(speedIncreaseDuration)
+                .text(" and inflict ")
+                .text(stacksGranted, NamedTextColor.BLUE)
+                .text(" stacks of ")
+                .text("PHEX", NamedTextColor.DARK_RED)
+                .text(" on ")
+                .text(infectedPlayers, NamedTextColor.BLUE)
+                .text(" enemies within ")
+                .blocks(poisonRadius)
+                .text(".")
+                .emptyLine()
+                .text("Not reactivating the ability will grant yourself a shield equal to all the damage you have absorbed during " + name + ". Lasts ")
+                .durationTicks(shieldTickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -97,7 +98,7 @@ public class ContagiousFacade extends AbstractAbility implements BlueAbilityIcon
         RegularCooldown<ContagiousFacade> protectiveLayerCooldown = new RegularCooldown<>(name,
                 "FACADE",
                 ContagiousFacade.class,
-                new ContagiousFacade(),
+                null,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {

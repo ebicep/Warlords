@@ -8,10 +8,8 @@ import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
@@ -82,18 +80,13 @@ public class ElectromagneticChains implements SpecBoostManager.SpecBoost<Electro
                     Boost.class,
                     null,
                     warlordsEntity,
-                    CooldownTypes.SPEC_BOOST,
+                    CooldownTypes.HIGH_LEVEL_DEBUFF,
                     cooldownManager -> {},
                     chainLightning.getDamageReductionTickDuration()
             ) {
                 @Override
                 public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
                     return currentDamageValue * AbstractAbility.convertToDivisionDecimal(chainLightningDamageReductionPercent);
-                }
-
-                @Override
-                public TextColor customActionBarColor() {
-                    return AbstractCooldown.PSEUDO_DEBUFF_COLOR;
                 }
             });
         }

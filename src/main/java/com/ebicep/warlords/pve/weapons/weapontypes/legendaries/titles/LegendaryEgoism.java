@@ -63,7 +63,7 @@ public class LegendaryEgoism extends AbstractLegendaryWeapon implements PassiveC
                 if (!event.getWarlordsEntity().equals(player)) {
                     return;
                 }
-                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.DEBUFF) {
+                if (event.getAbstractCooldown().getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF) {
                     return;
                 }
                 if (Instant.now().isBefore(lastActivated.get())) {

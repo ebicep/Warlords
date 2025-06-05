@@ -184,7 +184,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                            return currentHealValue * 2;
                                        }
                                    });
-                        new CooldownFilter<>(otherPlayer, RegularCooldown.class).filter(cd -> cd.getCooldownType() != CooldownTypes.DEBUFF)
+                        new CooldownFilter<>(otherPlayer, RegularCooldown.class).filter(cd -> cd.getCooldownType() != CooldownTypes.LOW_LEVEL_DEBUFF)
                                                                                 .forEach(cd -> cd.setTicksLeft(cd.getTicksLeft() + 40));
                         EffectUtils.displayParticle(Particle.HEART, otherPlayer.getLocation().add(0, 2, 0), 10, .5, .25, .5, 0);
                     }

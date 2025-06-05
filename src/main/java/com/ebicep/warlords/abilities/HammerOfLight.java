@@ -385,7 +385,8 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
     private static void giveHammerOfDisillusionEffect(WarlordsEntity hammerTarget, @Nonnull WarlordsEntity wp) {
         hammerTarget.getCooldownManager().removeCooldownByName("Hammer of Disillusion");
-        hammerTarget.getCooldownManager().addCooldown(new RegularCooldown<>("Hammer of Disillusion", null, HammerOfLight.class, null, wp, CooldownTypes.DEBUFF, cooldownManager -> {
+        hammerTarget.getCooldownManager()
+                    .addCooldown(new RegularCooldown<>("Hammer of Disillusion", null, HammerOfLight.class, null, wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
         }, 20
         ) {
 

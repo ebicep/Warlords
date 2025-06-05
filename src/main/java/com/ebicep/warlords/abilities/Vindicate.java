@@ -90,7 +90,7 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             }
             // Vindicate Immunity
             vindicateTarget.getSpeed().removeNegativeModifiers();
-            stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldowns();
+            stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldownsVind();
             giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, null, vindTickDuration);
         }
         wp.getCooldownManager().addCooldown(new RegularCooldown<>("Vindicate Resistance", "VIND RESIST", Vindicate.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {

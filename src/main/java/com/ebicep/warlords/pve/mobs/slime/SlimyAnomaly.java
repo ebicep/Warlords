@@ -103,7 +103,7 @@ public class SlimyAnomaly extends AbstractMob implements BasicMob {
                     SlimyAnomaly.class,
                     null,
                     warlordsNPC,
-                    CooldownTypes.DEBUFF,
+                    CooldownTypes.LOW_LEVEL_DEBUFF,
                     cooldownManager -> {
                     },
                     4 * 20,

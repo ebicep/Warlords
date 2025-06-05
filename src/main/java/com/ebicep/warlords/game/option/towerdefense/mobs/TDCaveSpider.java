@@ -23,7 +23,7 @@ public class TDCaveSpider extends TowerDefenseMob implements BasicMob {
                 PoisonCooldown.class,
                 new PoisonCooldown() {},
                 from,
-                CooldownTypes.DEBUFF,
+                CooldownTypes.LOW_LEVEL_DEBUFF,
                 cooldownManager -> {
 
                 },

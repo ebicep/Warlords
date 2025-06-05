@@ -137,7 +137,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                 EffectUtils.playFirework(newLoc, FireworkEffect.builder().withColor(Color.RED).withColor(Color.BLACK).with(FireworkEffect.Type.BALL_LARGE).build(), 1);
                 nearEntity.getCooldownManager().removeCooldown(IncendiaryCurse.class, false);
                 nearEntity.getCooldownManager()
-                          .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                          .addCooldown(new RegularCooldown<>(name, "INCEN", IncendiaryCurse.class, new IncendiaryCurse(), wp, CooldownTypes.LOW_LEVEL_DEBUFF, cooldownManager -> {
                           }, 5 * 20
                           ) {
 

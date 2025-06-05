@@ -120,7 +120,7 @@ public class BerserkerTower extends AbstractTower implements Upgradeable.Path2 {
                                 StrikeAttack.class,
                                 null,
                                 wp,
-                                CooldownTypes.DEBUFF,
+                                CooldownTypes.LOW_LEVEL_DEBUFF,
                                 cooldownManager -> {
                                 },
                                 3 * 20, // TODO

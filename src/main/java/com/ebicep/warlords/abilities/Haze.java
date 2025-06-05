@@ -73,7 +73,7 @@ public class Haze extends AbstractAbility implements OrangeAbilityIcon, Damages<
                                             HazeData.class,
                                             null,
                                             wp,
-                                            CooldownTypes.DEBUFF,
+                                            CooldownTypes.HIGH_LEVEL_DEBUFF,
                                             cooldownManager2 -> {
                                             },
                                             vulnerableTickDuration

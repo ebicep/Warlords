@@ -92,7 +92,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
                 return;
             }
             regularCooldown.setTicksLeft(avengerMarkDebuffTickDuration);
-            regularCooldown.setCooldownType(CooldownTypes.SPEC_BOOST);
+            regularCooldown.setCooldownType(CooldownTypes.TRUE_DEBUFF);
             WarlordsEntity target = event.getWarlordsEntity();
             target.addInstance(InstanceBuilder
                     .damage()
