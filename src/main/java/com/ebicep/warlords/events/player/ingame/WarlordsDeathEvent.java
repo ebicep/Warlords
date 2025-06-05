@@ -20,6 +20,7 @@ public class WarlordsDeathEvent extends AbstractWarlordsEntityEvent implements C
     private final WarlordsEntity killer;
     private final DeathInfo deathInfo;
     private boolean cancelled = false;
+    private boolean forceCancel = false; // bypasses deathInfo forced
 
     public WarlordsDeathEvent(@NotNull WarlordsEntity player, @Nullable WarlordsEntity killer, DeathInfo deathInfo) {
         super(player);
@@ -44,6 +45,14 @@ public class WarlordsDeathEvent extends AbstractWarlordsEntityEvent implements C
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
+    }
+
+    public boolean isForceCancel() {
+        return forceCancel;
+    }
+
+    public void setForceCancel(boolean forceCancel) {
+        this.forceCancel = forceCancel;
     }
 
     @Nullable

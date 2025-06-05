@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerSwapEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
@@ -28,6 +29,7 @@ import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -100,6 +102,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                                                           .append(Component.text(swapTarget.getName(), NamedTextColor.YELLOW))
                                                           .append(Component.text("!", NamedTextColor.GRAY)));
             wp.teleport(new Location(swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
+            Bukkit.getPluginManager().callEvent(new WarlordsPlayerSwapEvent(wp, swapTarget));
             wp.getCooldownManager().addCooldown(new RegularCooldown<>(
                     "Soul Switch Damage",
                     "DMG",

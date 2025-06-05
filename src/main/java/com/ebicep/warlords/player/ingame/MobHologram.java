@@ -45,7 +45,11 @@ public abstract class MobHologram {
         }
         customHologramLines.removeIf(customHologramLine -> {
             if (customHologramLine.isDelete()) {
-                customHologramLine.getEntity().remove();
+                Entity hologramLineEntity = customHologramLine.getEntity();
+                if (hologramLineEntity == null || !hologramLineEntity.isValid()) {
+                    return true;
+                }
+                hologramLineEntity.remove();
                 return true;
             }
             return false;
@@ -112,7 +116,7 @@ public abstract class MobHologram {
                     if (!Objects.equals(textDisplay.text(), customHologramLine.getText())) {
                         textDisplay.text(customHologramLine.getText());
                     }
-                    textDisplay.teleport(location.add(0, .325, 0));
+                    textDisplay.teleport(location.add(0, .31, 0));
                 }
             }
         }

@@ -5,6 +5,7 @@ import com.ebicep.warlords.abilities.internal.icon.RedAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsThrowableProjectileImpactEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -61,11 +62,22 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
-        Utils.spawnThrowableProjectile(wp.getGame(), Utils.spawnArmorStand(wp.getLocation(), armorStand -> {
+        Utils.spawnThrowableProjectile(
+                wp.getGame(),
+                Utils.spawnArmorStand(wp.getLocation(),
+                        armorStand -> {
                             armorStand.getEquipment().setHelmet(new ItemStack(Material.FIRE_CHARGE));
                         }
-                ), calculateSpeed(wp), GRAVITY, SPEED, (newLoc, integer) -> {
-                }, newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(), (newLoc, directHit) -> {
+                ),
+                calculateSpeed(wp),
+                GRAVITY,
+                SPEED,
+                (newLoc, integer) -> {
+                },
+                newLoc -> PlayerFilter.entitiesAroundRectangle(newLoc, 1, 2, 1).aliveEnemiesOf(wp).findFirstOrNull(),
+                (newLoc, directHit) -> {
+                    WarlordsThrowableProjectileImpactEvent projectileImpactEvent = new WarlordsThrowableProjectileImpactEvent(wp, this, newLoc, directHit);
+                    Bukkit.getPluginManager().callEvent(projectileImpactEvent);
                     onImpact(wp, newLoc);
                 }
         );

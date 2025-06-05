@@ -357,7 +357,7 @@ public class PlayingState implements State, TimerDebugAble {
         Objective finalHealth = health;
         this.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
-            if (warlordsEntity != null) {
+            if (warlordsEntity instanceof WarlordsPlayer) {
                 finalHealth.getScore(warlordsEntity.getName()).setScore(Math.round(warlordsEntity.getCurrentHealth()));
             }
         });

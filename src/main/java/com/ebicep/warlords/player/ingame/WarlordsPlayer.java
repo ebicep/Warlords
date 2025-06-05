@@ -441,7 +441,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
     @org.jetbrains.annotations.Nullable
     @Override
     public ItemStack getWeaponItem() {
-        return weapon == null ? null : weapon.getSelectedWeaponSkin().getItem();
+        return weapon == null ? cosmeticSettings.getWeaponSkin().getItem() : weapon.getSelectedWeaponSkin().getItem();
     }
 
     public void queueUpdateTabName() {
