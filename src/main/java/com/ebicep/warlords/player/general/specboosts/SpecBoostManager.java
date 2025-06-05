@@ -70,6 +70,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Striker> STRIKER = new Striker();
     public static final SpecBoost<SustainedOnslaught> SUSTAINED_ONSLAUGHT = new SustainedOnslaught();
     public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
+    public static final SpecBoost<TorrentialSoul> TORRENTIAL_SOUL = new TorrentialSoul();
     public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
     public static final SpecBoost<Transistor> TRANSISTOR = new Transistor();
     public static final SpecBoost<Trickster> TRICKSTER = new Trickster();
@@ -97,7 +98,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
-        SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE, TRICKSTER));
+        SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE, TRICKSTER, TORRENTIAL_SOUL));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST));
     }
 

@@ -61,6 +61,14 @@ public class OrderOfEviscerate extends AbstractAbility implements OrangeAbilityI
         this.orderAssistCooldownReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("orderAssistCooldownReduction"), float.class);
     }
 
+    public int getSpeedBuff() {
+        return speedBuff;
+    }
+
+    public void setSpeedBuff(int speedBuff) {
+        this.speedBuff = speedBuff;
+    }
+
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1.5f, 0.7f);

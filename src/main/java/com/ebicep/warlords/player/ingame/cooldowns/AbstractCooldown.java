@@ -28,6 +28,7 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
     private final Listener activeListener;
     private List<DamageInstance> extraDamageInstances = null;
     private List<HealingInstance> extraHealingInstances = null;
+    private List<EnergyInstance> extraEnergyInstances = null;
 
     public AbstractCooldown(
             String name,
@@ -211,6 +212,13 @@ public abstract class AbstractCooldown<T> implements DamageInstance, HealingInst
             extraHealingInstances = new ArrayList<>();
         }
         extraHealingInstances.add(extraHealingInstance);
+    }
+
+    public void addExtraEnergyInstance(EnergyInstance extraEnergyInstance) {
+        if (extraEnergyInstances == null) {
+            extraEnergyInstances = new ArrayList<>();
+        }
+        extraEnergyInstances.add(extraEnergyInstance);
     }
 
     public Listener getActiveListener() {
