@@ -10,8 +10,11 @@ import java.util.List;
 
 public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
+    private int healthIncrease;
+
     @Override
     public void init() {
+        this.healthIncrease = getValue("healthIncrease", int.class);
     }
 
     @Override
@@ -26,7 +29,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(healthIncrease);
     }
 
     @Override
@@ -43,6 +46,7 @@ public class Parry implements SpecBoostManager.SpecBoost<Parry> {
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
             List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
             for (int i = 0; i < abilities.size(); i++) {
                 AbstractAbility ability = abilities.get(i);

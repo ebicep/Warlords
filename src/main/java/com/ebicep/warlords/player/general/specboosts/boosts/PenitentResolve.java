@@ -54,7 +54,7 @@ public class PenitentResolve implements SpecBoostManager.SpecBoost<PenitentResol
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost", healthIncrease);
+            warlordsPlayer.getHealth().addAdditiveModifier("Spec Boost (Base)", healthIncrease);
         }
 
         @EventHandler
