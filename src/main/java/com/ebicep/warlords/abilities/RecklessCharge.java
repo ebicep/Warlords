@@ -46,6 +46,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
     private float additionalBlocks = 0;
     private boolean verticalMovement = false;
     private int maxChargeDuration = 5;
+    private int flagBlockReduction;
 
     public RecklessCharge() {
         super(AbstractAbilityBuilder.create("recklessCharge").pvp());
@@ -56,6 +57,7 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
         super.init(builder);
         this.stunTimeInTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("stunTimeInTicks"), int.class);
         this.additionalBlocks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("additionalBlocks"), int.class);
+        this.flagBlockReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("flagBlockReduction"), int.class);
     }
 
     @Override
@@ -99,6 +101,9 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
             chargeDistance = Math.max(Math.min(LocationUtils.getDistance(wp, .1) * 5, 7.2), 6.3);
         }
         chargeDistance += additionalBlocks;
+        if (wp.hasFlag()) {
+            chargeDistance -= flagBlockReduction;
+        }
         double chargeDistanceSquared = (float) (chargeDistance * chargeDistance);
         float hitboxValue = hitbox.getCalculatedValue();
         new GameRunnable(wp.getGame()) {
