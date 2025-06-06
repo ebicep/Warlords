@@ -72,7 +72,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         modifiers.add(target.getEnergyPerSec().addAdditiveModifier(name, energyPerSecondIncrease));
         modifiers.add(target.getEnergy().addAdditiveModifier(name, maxEnergyIncrease));
         for (AbstractAbility ability : target.getAbilitiesImplementing(OrangeAbilityIcon.class)) {
-            modifiers.add(ability.getCooldownReductionPerTick().addMultiplicativeModifierAdd(name, ultCooldownReductionPercent / 100f));
+            modifiers.add(ability.getCooldownReductionPerTick().addMultiplicativeModifierMult(name, 100f / (100 - ultCooldownReductionPercent))); // 20% = 1.25
         }
         target.getCooldownManager().removeCooldown(SuperBrew.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
