@@ -56,20 +56,21 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     @Override
     public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("All allies within ")
-                                               .blocks(radius)
-                                               .text(" gain the status ")
-                                               .text("VIND", NamedTextColor.DARK_GREEN)
-                                               .text(" for ")
-                                               .durationTicks(vindTickDuration)
-                                               .text(", granting an immunity to de-buffs and ")
-                                               .percent(knockbackResistance, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" knockback resistance. You gain")
-                                               .percent(vindicateDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" damage reduction for ")
-                                               .durationTicks(damageReductionTickDuration)
-                                               .text(".")
-                                               .build();
+        description = AbilityDescriptionBuilder
+                .create("All allies within ")
+                .blocks(radius)
+                .text(" gain the status ")
+                .text("VIND", NamedTextColor.DARK_GREEN)
+                .text(" for ")
+                .durationTicks(vindTickDuration)
+                .text(", granting an immunity to de-buffs and ")
+                .percent(knockbackResistance, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" knockback resistance. You gain")
+                .percent(vindicateDamageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction for ")
+                .durationTicks(damageReductionTickDuration)
+                .text(".")
+                .build();
     }
 
     @Override
@@ -134,15 +135,16 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
             @Override
             protected Listener getListener() {
-                return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity.create(target)
-                                                                                           .cooldownPredicate(event -> {
-                                                                                               AbstractCooldown<?> cd = event.getAbstractCooldown();
-                                                                                               if (cd.getCooldownObject() instanceof WoundingCooldown.WoundingData && cd instanceof RegularCooldown regularCooldown) {
-                                                                                                   regularCooldown.subtractTime(30);
-                                                                                                   return false;
-                                                                                               }
-                                                                                               return cd.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
-                                                                                           }));
+                return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity
+                        .create(target)
+                        .cooldownPredicate(event -> {
+                            AbstractCooldown<?> cd = event.getAbstractCooldown();
+                            if (cd.getCooldownObject() instanceof WoundingCooldown.WoundingData && cd instanceof RegularCooldown<?> regularCooldown) {
+                                regularCooldown.subtractTime(30);
+                                return false;
+                            }
+                            return cd.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
+                        }));
             }
 
             @Override

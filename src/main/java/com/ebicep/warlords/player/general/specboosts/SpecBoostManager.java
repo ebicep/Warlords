@@ -72,6 +72,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Striker> STRIKER = new Striker();
     public static final SpecBoost<SuperBrew> SUPER_BREW = new SuperBrew();
     public static final SpecBoost<SustainedOnslaught> SUSTAINED_ONSLAUGHT = new SustainedOnslaught();
+    public static final SpecBoost<SwiftJustice> SWIFT_JUSTICE = new SwiftJustice();
     public static final SpecBoost<SymphonicWindfury> SYMPHONIC_WINDFURY = new SymphonicWindfury();
     public static final SpecBoost<TorrentialSoul> TORRENTIAL_SOUL = new TorrentialSoul();
     public static final SpecBoost<TotemicBoon> TOTEMIC_BOON = new TotemicBoon();
@@ -102,6 +103,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
+        SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
     }
 
