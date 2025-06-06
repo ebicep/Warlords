@@ -175,8 +175,6 @@ public class ShadowStep extends AbstractAbility implements
         }
         new GameRunnable(wp.getGame()) {
 
-            double y = playerLoc.getY();
-
             int counter = 0;
 
             @Override
@@ -188,7 +186,6 @@ public class ShadowStep extends AbstractAbility implements
                 }
                 wp.getLocation(playerLoc);
                 boolean hitGround = wp.getEntity().isOnGround() || wp.onHorse();
-                y = playerLoc.getY();
                 if (hitGround) {
                     for (WarlordsEntity landingTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveEnemiesOf(wp).excluding(playersHit)) {
                         stats.totalTargetsHit++;

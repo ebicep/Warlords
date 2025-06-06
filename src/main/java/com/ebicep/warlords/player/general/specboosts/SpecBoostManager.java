@@ -28,6 +28,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Blink> BLINK = new Blink();
     public static final SpecBoost<BlizzardBreath> BLIZZARD_BREATH = new BlizzardBreath();
     public static final SpecBoost<BloodFrenzy> BLOOD_FRENZY = new BloodFrenzy();
+    public static final SpecBoost<BullRush> BULL_RUSH = new BullRush();
     public static final SpecBoost<BurstChain> BURST_CHAIN = new BurstChain();
     public static final SpecBoost<ChillyAura> CHILLY_AURA = new ChillyAura();
     public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
@@ -103,7 +104,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
-        SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(SWIFT_JUSTICE));
+        SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(BULL_RUSH, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
     }
 

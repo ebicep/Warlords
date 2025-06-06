@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
 
@@ -74,7 +73,6 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                 return;
             }
             warlordsEntity.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
-                AtomicBoolean recasted = new AtomicBoolean(false);
                 RegularCooldown<Boost> cd = new RegularCooldown<>(
                         getStringName(),
                         "JUSTICE",
@@ -104,14 +102,13 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                 vindicate.addSecondaryAbility(
                         3,
                         () -> {
-                            recasted.set(true);
                             warlordsEntity.getSpeed().removeNegativeModifiers();
                             warlordsEntity.getCooldownManager().addCooldown(cd);
                             warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), recastSpeedIncreasePercent, cd);
                             warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, cd);
                         },
                         false,
-                        secondaryAbility -> warlordsEntity.isDead() || (recasted.get() && !warlordsEntity.getCooldownManager().hasCooldown(cooldown))
+                        secondaryAbility -> warlordsEntity.isDead() || !warlordsEntity.getCooldownManager().hasCooldown(cooldown)
                 );
             });
         }
