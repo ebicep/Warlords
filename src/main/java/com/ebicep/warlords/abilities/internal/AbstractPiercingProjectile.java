@@ -222,7 +222,7 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
         double hitDistance = Double.MAX_VALUE;
         for (Entity entity : currentLocation.getWorld().getEntities()) {
             WarlordsEntity wp = getFromEntity(entity);
-            if (wp == null || (!hitTeammates && !shooter.isEnemyAlive(wp)) || !wp.isAlive() || wp == shooter) {
+            if (nonCollisionCheck(projectile, currentLocation, actualSpeed, shooter, wp)) {
                 continue;
             }
             // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
@@ -321,6 +321,10 @@ public abstract class AbstractPiercingProjectile<T extends AbstractPiercingProje
             PENDING_HITS.clear();
         }
         return hit;
+    }
+
+    protected boolean nonCollisionCheck(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsEntity shooter, WarlordsEntity wp) {
+        return wp == null || (!hitTeammates && !shooter.isEnemyAlive(wp)) || !wp.isAlive() || wp == shooter;
     }
 
     @Nullable

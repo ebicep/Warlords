@@ -294,6 +294,8 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
             // Checks whether the player has under 0 energy to avoid infinite energy bugs.
             if (getCurrentEnergy() < 0) {
                 setCurrentEnergy(1);
+            } else if (getCurrentEnergy() > getMaxEnergy()) {
+                setCurrentEnergy(getMaxEnergy());
             }
             player.setLevel((int) getCurrentEnergy());
             player.setExp(MathUtils.clamp(getCurrentEnergy() / getMaxEnergy(), 0, 1));

@@ -55,6 +55,7 @@ public class RemedicChains extends AbstractAbility implements BlueAbilityIcon, D
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Set<WarlordsEntity> teammatesNear = PlayerFilter.entitiesAround(wp, castRange, castRange, castRange)
                                                         .aliveTeammatesOfExcludingSelf(wp)
+                                                        .excludingNPCPlayerLike()
                                                         .closestFirst(wp)
                                                         .limit(alliesAffected)
                                                         .stream()

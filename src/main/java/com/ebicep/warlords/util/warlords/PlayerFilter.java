@@ -4,7 +4,9 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -228,6 +230,11 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     @Nonnull
     public PlayerFilter excluding(@Nonnull Collection<WarlordsEntity> exclude) {
         return exclude.isEmpty() ? this : excluding0(exclude instanceof Set ? (Set<WarlordsEntity>) exclude : new HashSet<>(exclude));
+    }
+
+    @Nonnull
+    public PlayerFilter excludingNPCPlayerLike() {
+        return filter(warlordsEntity -> !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob));
     }
 
     @Nonnull

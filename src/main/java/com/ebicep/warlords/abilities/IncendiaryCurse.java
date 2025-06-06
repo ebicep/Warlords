@@ -126,6 +126,7 @@ public class IncendiaryCurse extends AbstractAbility implements RedAbilityIcon, 
                     .source(wp)
                     .min(damageValues.curseDamage.getMinValue() * damageMultiplier)
                     .max(damageValues.curseDamage.getMaxValue() * damageMultiplier)
+                    .crit(damageValues.curseDamage)
             );
             if (inPve && nearEntity instanceof WarlordsNPC warlordsNPC) {
                 warlordsNPC.setStunTicks(blindDurationInTicks);

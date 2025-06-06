@@ -7,7 +7,6 @@ import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
-import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDeathEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerSwapEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsThrowableProjectileImpactEvent;
@@ -206,17 +205,6 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
                 warlordsNPC.getGame().getPlayers().remove(warlordsNPC.getUuid());
                 Warlords.removePlayer(warlordsNPC.getUuid());
             }
-        }
-
-        @EventHandler
-        public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
-            if (!event.getWarlordsEntity().equals(warlordsEntity)) {
-                return;
-            }
-            if (!event.isHealingInstance()) {
-                return;
-            }
-            event.setCancelled(true);
         }
 
     }

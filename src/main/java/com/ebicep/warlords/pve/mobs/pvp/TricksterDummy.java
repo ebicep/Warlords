@@ -1,12 +1,17 @@
 package com.ebicep.warlords.pve.mobs.pvp;
 
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
 import com.ebicep.warlords.util.warlords.Utils;
 import org.bukkit.Location;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 public class TricksterDummy extends AbstractMob implements PlayerMob {
 
@@ -60,7 +65,34 @@ public class TricksterDummy extends AbstractMob implements PlayerMob {
 
     @Override
     public void onSpawn(PveOption option) {
+        this.warlordsNPC.getCooldownManager().addCooldown(new PermanentCooldown<>(
+                "Dummy Health",
+                null,
+                TricksterDummy.class,
+                null,
+                warlordsNPC,
+                CooldownTypes.INTERNAL,
+                cooldownManager -> {},
+                false
+        ) {
+            @Override
+            protected Listener getListener() {
+                return new Listener() {
 
+                    @EventHandler(ignoreCancelled = true)
+                    public void onDamageHealEvent(WarlordsDamageHealingEvent event) {
+                        if (!event.getWarlordsEntity().equals(warlordsEntity)) {
+                            return;
+                        }
+                        if (!event.isHealingInstance()) {
+                            return;
+                        }
+                        event.setPlayer(warlordsEntity);
+                    }
+
+                };
+            }
+        });
     }
 
 }

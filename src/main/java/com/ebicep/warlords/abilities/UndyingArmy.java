@@ -116,7 +116,10 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
             wp.doOnStaticAbility(GroundSlamRevenant.class, ability -> modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Relentless Army", -.5f)));
         }
         int numberOfPlayersWithArmy = 0;
-        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp).closestWarlordPlayersFirst(wp.getLocation())) {
+        for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
+                                                   .aliveTeammatesOf(wp)
+                                                   .excludingNPCPlayerLike()
+                                                   .closestWarlordPlayersFirst(wp.getLocation())) {
             data.getPlayersPopped().put(teammate, false);
             boolean isCaster = teammate != wp;
             if (isCaster) {
