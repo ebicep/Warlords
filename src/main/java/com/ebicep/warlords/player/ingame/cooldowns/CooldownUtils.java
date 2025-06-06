@@ -39,6 +39,10 @@ public class CooldownUtils {
                 .collect(Collectors.toList());
     }
 
+    public static Listener getDefaultDebuffImmunityListener(WarlordsEntity immune) {
+        return getDebuffImmunityListener(DebuffImmunity.getDefaultImmunity(immune));
+    }
+
     public static Listener getDebuffImmunityListener(DebuffImmunity defaultImmunity) {
         return new Listener() {
 
@@ -69,10 +73,6 @@ public class CooldownUtils {
         };
     }
 
-    public static Listener getDefaultDebuffImmunityListener(WarlordsEntity immune) {
-        return getDebuffImmunityListener(DebuffImmunity.getDefaultImmunity(immune));
-    }
-
     public static class DebuffImmunity {
 
         public static final Predicate<WarlordsAddCooldownEvent> DEFAULT_COOLDOWN = event -> event.getAbstractCooldown().getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
@@ -93,27 +93,25 @@ public class CooldownUtils {
             return new DebuffImmunity(warlordsEntity);
         }
 
-        private final WarlordsEntity warlordsEntity;
-        private Predicate<WarlordsAddCooldownEvent> cooldownPredicate;
-        private Predicate<WarlordsAddSpeedModifierEvent> speedPredicate;
-        private Predicate<WarlordsAddPotionEffectEvent> potionPredicate;
-
-        public DebuffImmunity(WarlordsEntity warlordsEntity) {
-            this.warlordsEntity = warlordsEntity;
-        }
-
-        public DebuffImmunity cooldownPredicate(Predicate<WarlordsAddCooldownEvent> predicate) {
-            this.cooldownPredicate = predicate;
-            return this;
-        }
-
         public DebuffImmunity speedPredicate(Predicate<WarlordsAddSpeedModifierEvent> predicate) {
             this.speedPredicate = predicate;
             return this;
         }
+        private final WarlordsEntity warlordsEntity;
+        private Predicate<WarlordsAddCooldownEvent> cooldownPredicate = event -> false;
+        private Predicate<WarlordsAddSpeedModifierEvent> speedPredicate = event -> false;
+        private Predicate<WarlordsAddPotionEffectEvent> potionPredicate = event -> false;
+        public DebuffImmunity(WarlordsEntity warlordsEntity) {
+            this.warlordsEntity = warlordsEntity;
+        }
 
         public DebuffImmunity potionPredicate(Predicate<WarlordsAddPotionEffectEvent> predicate) {
             this.potionPredicate = predicate;
+            return this;
+        }
+
+        public DebuffImmunity cooldownPredicate(Predicate<WarlordsAddCooldownEvent> predicate) {
+            this.cooldownPredicate = predicate;
             return this;
         }
 

@@ -12,7 +12,7 @@ public class FlagDebuffValueModifier implements NewValueModifier {
     public FlagDebuffValueModifier() {
         this.flagSpeedModifier = AbstractAbility.convertToDivisionDecimal(-ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES,
                 "ctf.flagSpeedModifier",
-                Integer.class
+                int.class
         ));
     }
 

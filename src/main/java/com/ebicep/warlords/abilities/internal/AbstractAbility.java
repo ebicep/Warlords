@@ -96,7 +96,7 @@ public abstract class AbstractAbility implements AbilityIcon {
     //Sneak ability
     protected final List<SecondaryAbility> secondaryAbilities = new ArrayList<>();
     protected String name;
-    protected int currentCharges;
+    protected int currentCharges = 1;
     protected int maxCharges = 1;
     protected float currentCooldown;
     protected FloatModifiable cooldown;
@@ -151,7 +151,9 @@ public abstract class AbstractAbility implements AbilityIcon {
 
     public void useAbility() {
         currentCharges = Math.max(0, currentCharges - 1);
-        currentCooldown = getCooldownValue();
+        if (currentCooldown == 0) {
+            currentCooldown = getCooldownValue();
+        }
     }
 
     /**
@@ -305,10 +307,19 @@ public abstract class AbstractAbility implements AbilityIcon {
         }
     }
 
-    private void addCharge() {
-        currentCharges++;
-        if (currentCharges < maxCharges) {
-            currentCooldown = getCooldownValue();
+    public void setCurrentCooldown(float currentCooldown) {
+        float previousCooldown = this.currentCooldown;
+        if (currentCooldown <= 0) {
+            this.currentCooldown = 0;
+            addCharge();
+            if (previousCooldown > 0) { // only update if it was on cooldown
+                queueUpdateItem();
+            }
+        } else {
+            this.currentCooldown = currentCooldown;
+            if ((int) previousCooldown != (int) currentCooldown) { // only update if second changed
+                queueUpdateItem();
+            }
         }
     }
 
@@ -411,19 +422,13 @@ public abstract class AbstractAbility implements AbilityIcon {
         return energyCost.getCalculatedValue();
     }
 
-    public void setCurrentCooldown(float currentCooldown) {
-        float previousCooldown = this.currentCooldown;
-        if (currentCooldown < 0) {
-            this.currentCooldown = 0;
-            addCharge();
-            if (previousCooldown > 0) { // only update if it was on cooldown
-                queueUpdateItem();
-            }
-        } else {
-            this.currentCooldown = currentCooldown;
-            if ((int) previousCooldown != (int) currentCooldown) { // only update if second changed
-                queueUpdateItem();
-            }
+    private void addCharge() {
+        if (currentCharges >= maxCharges) {
+            return;
+        }
+        currentCharges++;
+        if (currentCharges < maxCharges) {
+            currentCooldown = getCooldownValue();
         }
     }
 

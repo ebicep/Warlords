@@ -160,6 +160,9 @@ public class Utils {
     }
 
     public static List<Block> getTargetBlockInBetween(Location location, int maxDistance) {
+        if (maxDistance <= 0) {
+            return Collections.emptyList();
+        }
         if (maxDistance > 120) {
             maxDistance = 120;
         }

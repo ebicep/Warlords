@@ -35,7 +35,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     private int ultCooldownReductionPercent;
 
     public SuperBrew() {
-        super(AbstractAbilityBuilder.create("clairvoyance").pvp());
+        super(AbstractAbilityBuilder.create("superBrew").pvp());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         this.energyPerSecondIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("energyPerSecondIncrease"), float.class);
         this.maxEnergyIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnergyIncrease"), int.class);
         this.meleeDamageIncreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("meleeDamageIncreasePercent"), int.class);
-        this.ultCooldownReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ultCooldownReduction"), int.class);
+        this.ultCooldownReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ultCooldownReductionPercent"), int.class);
     }
 
 
@@ -74,6 +74,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         for (AbstractAbility ability : target.getAbilitiesImplementing(OrangeAbilityIcon.class)) {
             modifiers.add(ability.getCooldownReductionPerTick().addMultiplicativeModifierAdd(name, ultCooldownReductionPercent / 100f));
         }
+        target.getCooldownManager().removeCooldown(SuperBrew.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "SUPER",
@@ -87,6 +88,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 cooldownManager -> {
                     modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                 },
+                false,
                 tickDuration,
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                     if (ticksElapsed % 4 == 0) {
@@ -101,8 +103,8 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                         );
                     }
                     if (ticksElapsed % 20 == 0) {
-                        int regenHealth = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "regenHealth", Integer.class);
-                        target.setCurrentEnergy(Math.max(target.getCurrentHealth(), Math.min(target.getCurrentHealth() + regenHealth, target.getMaxHealth())));
+                        int regenHealth = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "regenHealth", int.class);
+                        target.setCurrentHealth(Math.max(target.getCurrentHealth(), Math.min(target.getCurrentHealth() + regenHealth, target.getMaxHealth())));
                     }
                 })
         ) {
@@ -115,6 +117,10 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
             }
         });
         if (wp != target) {
+            wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                    .append(Component.text(" You gave a ", NamedTextColor.GRAY))
+                    .append(Component.text(name, NamedTextColor.YELLOW))
+                    .append(Component.text(" to " + target.getName() + "!", NamedTextColor.GRAY)));
             target.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
                     .append(Component.text(" You have been given a ", NamedTextColor.GRAY))
                     .append(Component.text(name, NamedTextColor.YELLOW))

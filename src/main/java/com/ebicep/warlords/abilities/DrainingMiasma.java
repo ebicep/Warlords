@@ -79,7 +79,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                         DrainingMiasmaData.class,
                         data,
                         wp,
-                        CooldownTypes.HIGH_LEVEL_DEBUFF_COLOR,
+                        CooldownTypes.HIGH_LEVEL_DEBUFF,
                         cooldownManager -> {
                         },
                         cooldownManager -> {
@@ -107,11 +107,12 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
                             }
                             float healthDamage = miasmaTarget.getMaxHealth() * maxHealthDamage / 100f;
                             healthDamage = DamageCheck.clamp(healthDamage);
-                            miasmaTarget.addInstance(InstanceBuilder.damage()
-                                                                    .ability(this)
-                                                                    .source(wp)
-                                                                    .value(damageValues.miasmaDamage.getValue() + healthDamage)
-                                                                    .flags(InstanceFlags.DOT));
+                            miasmaTarget.addInstance(InstanceBuilder
+                                    .damage()
+                                    .ability(this)
+                                    .source(wp)
+                                    .value(damageValues.miasmaDamage.getValue() + healthDamage)
+                                    .flags(InstanceFlags.DOT));
                         })
                 ));
                 if (pveMasterUpgrade) {

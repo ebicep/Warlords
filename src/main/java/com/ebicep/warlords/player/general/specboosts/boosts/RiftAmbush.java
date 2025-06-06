@@ -35,7 +35,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
         this.soulSwitchVerticalLimit = getValue("soulSwitchVerticalLimit", float.class);
         this.soulSwitchDamage = getValue("soulSwitchDamage", float.class);
         this.soulSwitchDamageReductionIncreasePercent = getValue("soulSwitchDamageReductionIncreasePercent", int.class);
-        this.tetherRadius = getValue("soulSwitchTetherRadius", float.class);
+        this.tetherRadius = getValue("tetherRadius", float.class);
         this.tetherTickDuration = getValue("tetherTickDuration", int.class);
     }
 
@@ -46,7 +46,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(soulSwitchRadiusIncrease, soulSwitchVerticalLimit, soulSwitchDamage, soulSwitchDamageReductionIncreasePercent);
+        return List.of(soulSwitchDamage, soulSwitchRadiusIncrease, soulSwitchDamageReductionIncreasePercent, tetherRadius, tetherTickDuration);
     }
 
     @Override
@@ -80,6 +80,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
             }
             WarlordsEntity swappedPlayer = event.getSwappedPlayer();
             Location swappedPlayerLocation = swappedPlayer.getLocation();
+            Location chainLocation = swappedPlayer.getLocation().clone().add(0, -2, 0);
             event.getStart().set(swappedPlayerLocation.getX(), swappedPlayerLocation.getY(), swappedPlayerLocation.getZ());
             swappedPlayer.addInstance(InstanceBuilder
                     .damage()
@@ -101,14 +102,14 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
                     tetherTickDuration,
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 2 == 0) {
-                            EffectUtils.playChainAnimation(swappedPlayer.getEyeLocation(), swappedPlayerLocation, new ItemStack(Material.SPRUCE_LEAVES), 2);
-                            EffectUtils.playCylinderAnimation(swappedPlayerLocation, radius, Particle.CAMPFIRE_SIGNAL_SMOKE, 1);
                             Location playerLocation = swappedPlayer.getLocation();
+                            EffectUtils.playChainAnimation(playerLocation.clone().add(0, .5, 0), chainLocation, new ItemStack(Material.SPRUCE_LEAVES), 2);
+                            EffectUtils.playCylinderAnimation(swappedPlayerLocation, tetherRadius, Particle.INFESTED, 30, 3, 1);
                             if (playerLocation.distanceSquared(swappedPlayerLocation) >= radius) {
                                 LocationBuilder newLocation = new LocationBuilder(playerLocation)
                                         .faceTowards(swappedPlayerLocation)
                                         .forward(1);
-                                swappedPlayer.teleport(newLocation);
+                                swappedPlayer.teleportLocationOnly(newLocation);
                             }
                         }
                     })

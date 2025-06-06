@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -32,7 +31,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
     private FloatModifiable radiusFlag = new FloatModifiable(3.5f);
     private float verticalLimit;
     private float verticalLimitFlag;
-    private int blindnessTicks = 30;
     private int damageReduction;
     private int damageReductionTickDuration;
     private float maxGroundTeleportDistance;
@@ -48,7 +46,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
         this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
         this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
         this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
-        this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
         this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
         this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
         this.maxGroundTeleportDistance = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxGroundTeleportDistance"), float.class);
@@ -93,7 +90,34 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
                 return currentDamageValue * convertToDivisionDecimal(damageReduction);
             }
         });
-        return false;
+        return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+
+        description = AbilityDescriptionBuilder
+                .create("Teleport ")
+                .blocks(radius)
+                .text(" blocks forward and gain ")
+                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
+                .text(" damage reduction for ")
+                .durationTicks(damageReductionTickDuration)
+                .text(". Instantly active your passive regeneration.")
+                .emptyLine()
+                .text(" Blink has low vertical range.")
+                .build();
+
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
+    @Override
+    public BlinkStats getAbilityStats() {
+        return stats;
     }
 
     public int getDamageReduction() {
@@ -110,40 +134,6 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
 
     public void setVerticalLimit(float verticalLimit) {
         this.verticalLimit = verticalLimit;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-
-        description = AbilityDescriptionBuilder.create("Switch locations with an enemy, blinding them for ")
-                                               .durationTicks(blindnessTicks)
-                                               .text(". Upon swapping, gain ")
-                                               .percent(damageReduction, NamedTextColor.RED)
-                                               .text(" damage reduction for ")
-                                               .durationTicks(damageReductionTickDuration)
-                                               .text(".")
-                                               .maxRange(radius)
-                                               .text(" Soul Switch has low vertical range.")
-                                               .build();
-
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
-    }
-
-    @Override
-    public BlinkStats getAbilityStats() {
-        return stats;
-    }
-
-    public int getBlindnessTicks() {
-        return blindnessTicks;
-    }
-
-    public void setBlindnessTicks(int blindnessTicks) {
-        this.blindnessTicks = blindnessTicks;
     }
 
     public static class BlinkStats extends AbstractAbilityStats<Blink, BlinkStats> {

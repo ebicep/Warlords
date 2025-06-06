@@ -59,7 +59,7 @@ public class HorseOption implements Option, Listener {
                                .append(Component.text("Right-Click!", NamedTextColor.YELLOW))
                 )
                 .lore(Component.text("Cooldown: ", NamedTextColor.GRAY)
-                               .append(Component.text(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.horseCooldown", Integer.class) + " seconds",
+                               .append(Component.text(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.horseCooldown", int.class) + " seconds",
                                        NamedTextColor.GOLD
                                )),
                         Component.empty(),
@@ -230,7 +230,7 @@ public class HorseOption implements Option, Listener {
 
         private static final ItemStack SADDLE = new ItemStack(Material.SADDLE);
 
-        private final FloatModifiable cooldown = new FloatModifiable(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.horseCooldown", Integer.class));
+        private final FloatModifiable cooldown = new FloatModifiable(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.horseCooldown", int.class));
         private final float speed = .32f;
         private final FloatModifiable health = new FloatModifiable(0);
         private float currentCooldown = 0;

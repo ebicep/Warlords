@@ -115,6 +115,7 @@ public class OldTestCommand implements CommandExecutor {
         }
         int level = 20;
         if (commandSender instanceof Player player) {
+            player.setLevel(500);
 //            WarlordsEntity warlordsEntity = Warlords.getPlayer(player);
 //            for (int i = 0; i < 5; i++) {
 //                int finalI = i;

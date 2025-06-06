@@ -14,6 +14,7 @@ public class Blink implements SpecBoostManager.SpecBoost<Blink> {
 
     @Override
     public void init() {
+        this.maxAbilityCharges = getValue("maxAbilityCharges", int.class);
     }
 
     @Override

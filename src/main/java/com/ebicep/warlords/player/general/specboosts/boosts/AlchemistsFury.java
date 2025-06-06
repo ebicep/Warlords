@@ -60,9 +60,6 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
                 soothingElixir.getHealValues().getElixirHealing().forEachValue(floatModifiable ->
                         floatModifiable.addOverridingModifier("Spec Boost", 0)
                 );
-                soothingElixir.getHealValues().getElixirDOTHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addOverridingModifier("Spec Boost", 0)
-                );
                 soothingElixir.getHitBoxRadius().addAdditiveModifier("Spec Boost", soothingElixirRadiusIncrease);
                 soothingElixir.setLeechStacksApplied(soothingElixir.getLeechStacksApplied() + soothingElixirExtraLeechStacks);
             });

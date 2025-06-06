@@ -148,7 +148,7 @@ public abstract class AbstractPlayerClass {
     }
 
     public void onRightClickAbility(AbstractAbility ability, WarlordsEntity wp, Player player, int slot) {
-        if (ability.getCurrentCooldown() != 0) {
+        if (!ability.anyCharges()) {
             if (secondaryAbilityCD && ability.hasActiveSecondaryAbilities()) {
                 ability.runSecondAbilities(wp);
                 resetSecondaryAbilityCD(wp);

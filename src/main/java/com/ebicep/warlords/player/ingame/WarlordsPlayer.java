@@ -23,6 +23,7 @@ import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
 import com.ebicep.warlords.pve.weapons.AbstractWeapon;
 import com.ebicep.warlords.util.bukkit.HeadUtils;
+import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import com.ebicep.warlords.util.warlords.Utils;
 import net.kyori.adventure.text.Component;
@@ -295,7 +296,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
                 setCurrentEnergy(1);
             }
             player.setLevel((int) getCurrentEnergy());
-            player.setExp(getCurrentEnergy() / getMaxEnergy());
+            player.setExp(MathUtils.clamp(getCurrentEnergy() / getMaxEnergy(), 0, 1));
             // Saves the amount of blocks travelled per player.
             setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
         }
@@ -312,7 +313,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
         }
         //negative regen tick timer means the player is regenning, cant check per second because not fine enough
         if (regenTickTimer <= 0 && -regenTickTimer % 20 == 0) {
-            int regenHealth = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "regenHealth", Integer.class);
+            int regenHealth = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "regenHealth", int.class);
             setCurrentHealth(Math.max(getCurrentHealth(), Math.min(getCurrentHealth() + regenHealth, getMaxHealth())));
         }
     }
@@ -406,7 +407,7 @@ public class WarlordsPlayer extends WarlordsEntity implements Listener {
 
     @Override
     public int getBaseHitCooldownValue() {
-        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "playerMeleeCooldown", Integer.class);
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "playerMeleeCooldown", int.class);
     }
 
     @Override

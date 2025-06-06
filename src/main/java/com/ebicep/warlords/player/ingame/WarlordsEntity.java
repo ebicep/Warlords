@@ -22,6 +22,7 @@ import com.ebicep.warlords.game.flags.PlayerFlagLocation;
 import com.ebicep.warlords.game.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.option.marker.SpawnLocationMarker;
+import com.ebicep.warlords.game.option.pvp.HorseOption;
 import com.ebicep.warlords.permissions.Permissions;
 import com.ebicep.warlords.player.general.AbstractPlayerClass;
 import com.ebicep.warlords.player.general.ArmorManager;
@@ -1099,6 +1100,9 @@ public abstract class WarlordsEntity {
 
     public void teleportLocationOnly(Location location) {
         if (this.entity instanceof Player player) {
+            for (HorseOption horseOption : game.getOption(HorseOption.class)) {
+                horseOption.getHorseForPlayer(this).kill();
+            }
             TeleportUtils.smoothTeleport(player, location);
         } else {
             Location location1 = this.getLocation();
@@ -1760,7 +1764,7 @@ public abstract class WarlordsEntity {
     public abstract void setDamageResistance(float damageResistance);
 
     public int getBaseHitCooldownValue() {
-        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "baseMeleeCooldown", Integer.class);
+        return ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "baseMeleeCooldown", int.class);
     }
 
     public abstract ItemStack getHead();

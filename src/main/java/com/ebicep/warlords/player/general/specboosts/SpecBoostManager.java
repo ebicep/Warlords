@@ -25,6 +25,7 @@ public class SpecBoostManager {
     public static final SpecBoost<AugmentedChains> AUGMENTED_CHAINS = new AugmentedChains();
     public static final SpecBoost<AuraOfRestoration> AURA_OF_RESTORATION = new AuraOfRestoration();
     public static final SpecBoost<BigGuy> BIG_GUY = new BigGuy();
+    public static final SpecBoost<Blink> BLINK = new Blink();
     public static final SpecBoost<BlizzardBreath> BLIZZARD_BREATH = new BlizzardBreath();
     public static final SpecBoost<BloodFrenzy> BLOOD_FRENZY = new BloodFrenzy();
     public static final SpecBoost<BurstChain> BURST_CHAIN = new BurstChain();
@@ -100,8 +101,8 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
-        SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE, TRICKSTER, RIFT_AMBUSH, TORRENTIAL_SOUL, SUPER_BREW));
-        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST));
+        SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(HAZE, TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL));
+        SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
     }
 
     public static List<SpecBoost<?>> getSpecBoosts(Specializations specializations) {

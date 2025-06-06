@@ -6,10 +6,13 @@ import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.ingame.instances.type.EnergyInstance;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.event.EventHandler;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TorrentialSoul implements SpecBoostManager.SpecBoost<TorrentialSoul> {
 
@@ -66,14 +69,17 @@ public class TorrentialSoul implements SpecBoostManager.SpecBoost<TorrentialSoul
                 return;
             }
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-            if (!(cooldown.getCooldownObject() instanceof OrderOfEviscerate.OrderOfEviscerateData data) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!(cooldown instanceof RegularCooldown<?> regularCooldown) || !(cooldown.getCooldownObject() instanceof OrderOfEviscerate.OrderOfEviscerateData data) || !cooldown.getFrom()
+                                                                                                                                                                                 .equals(warlordsEntity)) {
                 return;
             }
-            cooldown.addExtraEnergyInstance(new EnergyInstance() {
-                @Override
-                public float addEnergyGainPerTick(float energyGainPerTick) {
-                    return energyGainPerTick + orderOfEviscerateEnergyPerSecond / 20f;
-                }
+            FloatModifiable.FloatModifier modifier = warlordsEntity
+                    .getEnergyPerSec()
+                    .addAdditiveModifier("Spec Boost", orderOfEviscerateEnergyPerSecond, regularCooldown.getStartingTicks());
+            Consumer<CooldownManager> oldOnRemoveForce = cooldown.getOnRemoveForce();
+            cooldown.setOnRemoveForce(cooldownManager -> {
+                oldOnRemoveForce.accept(cooldownManager);
+                modifier.forceEnd();
             });
         }
 
