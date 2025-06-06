@@ -160,19 +160,27 @@ public class RecklessCharge extends AbstractAbility implements RedAbilityIcon, H
                                                Title.Times.times(Ticks.duration(0), Ticks.duration(stunTimeInTicks), Ticks.duration(0))
                                        ));
                         }
-                        otherPlayer.getCooldownManager()
-                                   .addCooldown(new RegularCooldown<>("Reckless Rampage", "RECK", RecklessCharge.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                   }, getStunTimeInTicks()
-                                   ) {
-
-                                       @Override
-                                       public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                           if (event.getCause().contains("Strike")) {
-                                               return currentDamageValue * 1.15f;
-                                           }
-                                           return currentDamageValue;
-                                       }
-                                   });
+                        if (pveMasterUpgrade) {
+                            otherPlayer.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    "Reckless Rampage",
+                                    "RECK",
+                                    RecklessCharge.class,
+                                    null,
+                                    wp,
+                                    CooldownTypes.ABILITY,
+                                    cooldownManager -> {
+                                    },
+                                    getStunTimeInTicks()
+                            ) {
+                                @Override
+                                public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                    if (event.getCause().contains("Strike")) {
+                                        return currentDamageValue * 1.15f;
+                                    }
+                                    return currentDamageValue;
+                                }
+                            });
+                        }
                     } else if (pveMasterUpgrade2 && otherPlayer.isTeammateAlive(wp)) {
                         otherPlayer.getCooldownManager()
                                    .addCooldown(new RegularCooldown<>("Probiotic", "PROBIO", RecklessCharge.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
