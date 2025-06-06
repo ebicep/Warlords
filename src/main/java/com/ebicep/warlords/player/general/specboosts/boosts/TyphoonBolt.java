@@ -9,12 +9,10 @@ import java.util.List;
 public class TyphoonBolt implements SpecBoostManager.SpecBoost<TyphoonBolt> {
 
     private float waterBoltHealingIncreasePercent;
-    private float waterBoltDirectHitDamageAndHealingIncreasePercent;
 
     @Override
     public void init() {
         this.waterBoltHealingIncreasePercent = getValue("waterBoltHealingIncreasePercent", float.class);
-        this.waterBoltDirectHitDamageAndHealingIncreasePercent = getValue("waterBoltDirectHitDamageAndHealingIncreasePercent", float.class);
     }
 
     @Override
@@ -24,7 +22,7 @@ public class TyphoonBolt implements SpecBoostManager.SpecBoost<TyphoonBolt> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(waterBoltHealingIncreasePercent, waterBoltDirectHitDamageAndHealingIncreasePercent);
+        return List.of(waterBoltHealingIncreasePercent);
     }
 
     @Override
@@ -45,7 +43,6 @@ public class TyphoonBolt implements SpecBoostManager.SpecBoost<TyphoonBolt> {
                 waterBolt.getHealValues().getBoltHealing().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", waterBoltHealingIncreasePercent / 100)
                 );
-                waterBolt.getDirectHitMultiplier().addAdditiveModifier("Skill Boost", waterBoltDirectHitDamageAndHealingIncreasePercent);
             });
         }
 

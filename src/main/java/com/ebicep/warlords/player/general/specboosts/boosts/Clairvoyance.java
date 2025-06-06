@@ -3,13 +3,11 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.HealingRain;
 import com.ebicep.warlords.abilities.TimeWarpAquamancer;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
-import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
-
-import static com.ebicep.warlords.database.repositories.config.ConfigManager.DEFAULT_NAMESPACES;
 
 public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
@@ -28,15 +26,13 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
     }
 
     @Override
+    public TextComponent getDescription() {
+        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Clairvoyance());
+    }
+
+    @Override
     public List<Object> getVariables() {
-        return List.of(
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "clairvoyance.healingValues.healing.value", int.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "clairvoyance.healingIncreasePercent", float.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "clairvoyance.speedIncrease", float.class),
-                ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "clairvoyance.tickDuration", int.class),
-                healingRainDurationTicks,
-                healingRainHealIncreasePercent
-        );
+        return List.of();
     }
 
     @Override

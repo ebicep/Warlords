@@ -15,6 +15,7 @@ import java.util.UUID;
 public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
     private float velocityIncreasePercentage;
+    private int energyCostIncrease;
     private float damageIncrease;
     private float radiusIncrease;
     private int guaranteedCrit;
@@ -22,6 +23,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
     @Override
     public void init() {
         this.velocityIncreasePercentage = getValue("velocityIncreasePercentage", float.class);
+        this.energyCostIncrease = getValue("energyCostIncrease", int.class);
         this.damageIncrease = getValue("damageIncrease", float.class);
         this.radiusIncrease = getValue("radiusIncrease", float.class);
         this.guaranteedCrit = getValue("guaranteedCrit", int.class);
@@ -34,7 +36,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(velocityIncreasePercentage, damageIncrease, radiusIncrease, guaranteedCrit);
+        return List.of(velocityIncreasePercentage, energyCostIncrease, damageIncrease, radiusIncrease, guaranteedCrit);
     }
 
     @Override
@@ -57,6 +59,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(FlameBurst.class).forEach(flameBurst -> {
                 flameBurst.getProjectileSpeed().addMultiplicativeModifierAdd("Spec Boost", (velocityIncreasePercentage + 100) / 100);
+                flameBurst.getEnergyCost().addAdditiveModifier("Spec Boost", energyCostIncrease);
                 flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
                 );

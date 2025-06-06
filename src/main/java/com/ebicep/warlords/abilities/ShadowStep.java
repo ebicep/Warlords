@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShadowStep extends AbstractAbility implements
         PurpleAbilityIcon,
@@ -42,6 +43,7 @@ public class ShadowStep extends AbstractAbility implements
     private final HealValues healValues = new HealValues();
     private int fallDamageNegation = 10;
     private int leapHealThreshold;
+    private int guaranteedCrit;
 
     public ShadowStep() {
         super(AbstractAbilityBuilder.create("shadowStep").pvp());
@@ -52,6 +54,7 @@ public class ShadowStep extends AbstractAbility implements
         super.init(builder);
         this.fallDamageNegation = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("fallDamageNegation"), int.class);
         this.leapHealThreshold = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("leapHealThreshold"), int.class);
+        this.guaranteedCrit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("guaranteedCrit"), int.class);
     }
 
     @Override
@@ -89,7 +92,9 @@ public class ShadowStep extends AbstractAbility implements
                                                .text(leapHealThreshold, NamedTextColor.GREEN)
                                                .text(" health, you will heal for ")
                                                .heal(healValues.leapHeal)
-                                               .text(" health on cast.")
+                                               .text(" health on cast. Guarantees at least ")
+                                               .text(guaranteedCrit, NamedTextColor.RED)
+                                               .text(" critical hit.")
                                                .emptyLine()
                                                .text("Shadow Step has reduced range when holding a flag.")
                                                .build();
@@ -111,13 +116,17 @@ public class ShadowStep extends AbstractAbility implements
             }
         });
         Set<WarlordsEntity> hit = new HashSet<>();
+        AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
         LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
         for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), 8)) {
-            if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() || !locationBuilder.getBlock().getType().isAir() || !locationBuilder.clone()
-                                                                                                                                                .addY(1)
-                                                                                                                                                .getBlock()
-                                                                                                                                                .getType()
-                                                                                                                                                .isAir()) {
+            if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() ||
+                    !locationBuilder.getBlock().getType().isAir() ||
+                    !locationBuilder.clone()
+                                    .addY(1)
+                                    .getBlock()
+                                    .getType()
+                                    .isAir()
+            ) {
                 locationBuilder.centerXZBlock();
                 boolean isSlab = locationBuilder.clone().addY(-1).getBlock().getBlockData() instanceof Slab;
                 locationBuilder.addY(isSlab ? -0.5 : 0);
@@ -125,7 +134,13 @@ public class ShadowStep extends AbstractAbility implements
             }
             PlayerFilter.entitiesAround(locationBuilder.clone().addY(-1), 2, 2, 2).aliveEnemiesOf(wp).excluding(hit).forEach(warlordsEntity -> {
                 hit.add(warlordsEntity);
-                warlordsEntity.addInstance(InstanceBuilder.damage().cause("Shadow Dash").source(wp).value(damageValues.shadowStepDamage));
+                warlordsEntity.addInstance(InstanceBuilder
+                        .damage()
+                        .cause("Shadow Dash")
+                        .source(wp)
+                        .value(damageValues.shadowStepDamage)
+                        .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
+                );
             });
             locationBuilder = locationBuilder.forward(1);
             EffectUtils.displayParticle(Particle.SMOKE, locationBuilder.clone().addY(-.5), 10, .1, .1, .1, 0);
@@ -145,9 +160,16 @@ public class ShadowStep extends AbstractAbility implements
 
     private void doShadowStep(@Nonnull WarlordsEntity wp, Location playerLoc) {
         List<WarlordsEntity> playersHit = new ArrayList<>();
+        AtomicInteger guaranteedCrit = new AtomicInteger(this.guaranteedCrit);
         for (WarlordsEntity assaultTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveEnemiesOf(wp)) {
             stats.totalTargetsHit++;
-            assaultTarget.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.shadowStepDamage));
+            assaultTarget.addInstance(InstanceBuilder
+                    .damage()
+                    .ability(this)
+                    .source(wp)
+                    .value(damageValues.shadowStepDamage)
+                    .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
+            );
             Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
             playersHit.add(assaultTarget);
         }
@@ -170,7 +192,13 @@ public class ShadowStep extends AbstractAbility implements
                 if (hitGround) {
                     for (WarlordsEntity landingTarget : PlayerFilter.entitiesAround(wp, 5, 5, 5).aliveEnemiesOf(wp).excluding(playersHit)) {
                         stats.totalTargetsHit++;
-                        landingTarget.addInstance(InstanceBuilder.damage().ability(ShadowStep.this).source(wp).value(damageValues.shadowStepDamage));
+                        landingTarget.addInstance(InstanceBuilder
+                                .damage()
+                                .ability(ShadowStep.this)
+                                .source(wp)
+                                .value(damageValues.shadowStepDamage)
+                                .critChance(guaranteedCrit.getAndDecrement() > 0 ? 100 : damageValues.shadowStepDamage.getCritChanceValue())
+                        );
                         Utils.playGlobalSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                     }
                     if (pveMasterUpgrade) {

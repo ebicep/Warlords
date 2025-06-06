@@ -5,10 +5,12 @@ import com.ebicep.warlords.abilities.LightningBolt;
 import com.ebicep.warlords.abilities.LightningRod;
 import com.ebicep.warlords.abilities.internal.AbstractPiercingProjectile;
 import com.ebicep.warlords.events.player.ingame.WarlordsAbilityPlaceEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsProjectileFireEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import com.ebicep.warlords.util.java.MathUtils;
@@ -137,6 +139,18 @@ public class EyeOfTheStorm implements SpecBoostManager.SpecBoost<EyeOfTheStorm> 
                 targetLocation = LocationUtils.getGroundLocation(newTargetLocation);
             }
             event.getLocation().set(targetLocation.getBlockX() + .6, targetLocation.getBlockY(), targetLocation.getBlockZ() + .6);
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+            if (!(cooldown.getCooldownObject() instanceof CapacitorTotem.CapacitorTotemData data) || !cooldown.getFrom().equals(warlordsEntity)) {
+                return;
+            }
+            data.proc();
         }
 
     }
