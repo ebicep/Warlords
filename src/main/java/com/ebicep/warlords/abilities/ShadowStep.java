@@ -34,13 +34,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ShadowStep extends AbstractAbility implements
         PurpleAbilityIcon,
         Damages<ShadowStep.DamageValues>,
-        Heals<ShadowStep.HealValues>,
+        Heals<ShadowStep.HealingValues>,
         AbilityStats<ShadowStep,
                 ShadowStep.ShadowStepStats> {
 
     private final ShadowStepStats stats = new ShadowStepStats();
     private final DamageValues damageValues = new DamageValues();
-    private final HealValues healValues = new HealValues();
+    private final HealingValues healingValues = new HealingValues();
     private int fallDamageNegation = 10;
     private int leapHealThreshold;
     private int guaranteedCrit;
@@ -65,7 +65,7 @@ public class ShadowStep extends AbstractAbility implements
         wp.setFlagPickCooldown(2);
         EffectUtils.playFirework(wp.getLocation().add(0, pveMasterUpgrade2 ? 1 : 0, 0), FireworkEffect.builder().withColor(Color.BLACK).with(FireworkEffect.Type.BALL).build());
         if (wp.getCurrentHealth() < leapHealThreshold) {
-            wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healValues.leapHeal));
+            wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.leapHeal));
         }
         if (pveMasterUpgrade2) {
             doShadowDash(wp);
@@ -91,7 +91,7 @@ public class ShadowStep extends AbstractAbility implements
                                                .text("If you are below ")
                                                .text(leapHealThreshold, NamedTextColor.GREEN)
                                                .text(" health, you will heal for ")
-                                               .heal(healValues.leapHeal)
+                                               .heal(healingValues.leapHeal)
                                                .text(" health on cast. Guarantees at least ")
                                                .text(guaranteedCrit, NamedTextColor.RED)
                                                .text(" critical hit.")
@@ -221,8 +221,8 @@ public class ShadowStep extends AbstractAbility implements
     }
 
     @Override
-    public HealValues getHealValues() {
-        return healValues;
+    public HealingValues getHealValues() {
+        return healingValues;
     }
 
     @Override
@@ -269,7 +269,7 @@ public class ShadowStep extends AbstractAbility implements
 
     }
 
-    public static class HealValues implements Value.ValueHolder {
+    public static class HealingValues implements Value.ValueHolder {
 
         private Value.SetValue leapHeal = new Value.SetValue(600);
 

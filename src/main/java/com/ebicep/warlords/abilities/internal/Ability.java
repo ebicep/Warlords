@@ -26,6 +26,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<Berserk> BERSERK = new Ability<>(Berserk.class, Berserk::new);
     public static final Ability<BloodLust> BLOOD_LUST = new Ability<>(BloodLust.class, BloodLust::new);
     public static final Ability<Boulder> BOULDER = new Ability<>(Boulder.class, Boulder::new);
+    public static final Ability<BullRush> BULL_RUSH = new Ability<>(BullRush.class, BullRush::new);
     public static final Ability<CapacitorTotem> CAPACITOR_TOTEM = new Ability<>(CapacitorTotem.class, CapacitorTotem::new);
     public static final Ability<ChainHeal> CHAIN_HEAL = new Ability<>(ChainHeal.class, ChainHeal::new);
     public static final Ability<ChainLightning> CHAIN_LIGHTNING = new Ability<>(ChainLightning.class, ChainLightning::new);
@@ -128,6 +129,7 @@ public class Ability<T extends AbstractAbility> {
             BERSERK,
             BLOOD_LUST,
             BOULDER,
+            BULL_RUSH,
             CAPACITOR_TOTEM,
             CHAIN_HEAL,
             CHAIN_LIGHTNING,

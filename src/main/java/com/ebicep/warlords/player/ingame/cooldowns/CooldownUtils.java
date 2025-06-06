@@ -3,6 +3,7 @@ package com.ebicep.warlords.player.ingame.cooldowns;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Priority;
@@ -70,6 +71,14 @@ public class CooldownUtils {
                 event.setCancelled(defaultImmunity.potionPredicate.test(event));
             }
 
+            @EventHandler
+            public void onStunEvent(WarlordsPlayerStunEvent event) {
+                if (event.getWarlordsEntity() != defaultImmunity.warlordsEntity) {
+                    return;
+                }
+                event.setCancelled(defaultImmunity.stunPredicate.test(event));
+            }
+
         };
     }
 
@@ -80,6 +89,7 @@ public class CooldownUtils {
         public static final Predicate<WarlordsAddPotionEffectEvent> DEFAULT_POTION = event ->
                 PotionEffectType.BLINDNESS.equals(event.getPotionEffect().getType()) ||
                         PotionEffectType.NAUSEA.equals(event.getPotionEffect().getType());
+        public static final Predicate<WarlordsPlayerStunEvent> DEFAULT_STUN = event -> true;
 
         public static DebuffImmunity getDefaultImmunity(WarlordsEntity warlordsEntity) {
             return DebuffImmunity
@@ -97,10 +107,13 @@ public class CooldownUtils {
             this.speedPredicate = predicate;
             return this;
         }
+
         private final WarlordsEntity warlordsEntity;
         private Predicate<WarlordsAddCooldownEvent> cooldownPredicate = event -> false;
         private Predicate<WarlordsAddSpeedModifierEvent> speedPredicate = event -> false;
         private Predicate<WarlordsAddPotionEffectEvent> potionPredicate = event -> false;
+        private Predicate<WarlordsPlayerStunEvent> stunPredicate = event -> false;
+
         public DebuffImmunity(WarlordsEntity warlordsEntity) {
             this.warlordsEntity = warlordsEntity;
         }
@@ -112,6 +125,11 @@ public class CooldownUtils {
 
         public DebuffImmunity cooldownPredicate(Predicate<WarlordsAddCooldownEvent> predicate) {
             this.cooldownPredicate = predicate;
+            return this;
+        }
+
+        public DebuffImmunity stunPredicate(Predicate<WarlordsPlayerStunEvent> predicate) {
+            this.stunPredicate = predicate;
             return this;
         }
 
@@ -127,6 +145,11 @@ public class CooldownUtils {
 
         public DebuffImmunity potionPredicate() {
             this.potionPredicate = DEFAULT_POTION;
+            return this;
+        }
+
+        public DebuffImmunity stunPredicate() {
+            this.stunPredicate = DEFAULT_STUN;
             return this;
         }
 
