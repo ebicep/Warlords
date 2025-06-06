@@ -37,6 +37,7 @@ import java.util.List;
 
 public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, Duration, HitBox, Damages<SoothingElixir.DamageValues>, Heals<SoothingElixir.HealingValues>, AbilityStats<SoothingElixir, SoothingElixir.SoothingElixirStats> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.CORNFLOWER);
     private double speed = 0.220;
     private double gravity = -0.008;
     private final SoothingElixirStats stats = new SoothingElixirStats();
@@ -84,7 +85,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
                 Utils.spawnArmorStand(
                         location,
                         armorStand -> {
-                            armorStand.getEquipment().setHelmet(new ItemStack(Material.PINK_STAINED_GLASS));
+                            armorStand.getEquipment().setHelmet(ITEM_STACK);
                         }
                 ),
                 speed,

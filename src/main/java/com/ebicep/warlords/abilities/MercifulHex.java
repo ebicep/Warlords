@@ -44,6 +44,7 @@ import java.util.List;
 
 public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, MercifulHex.MercifulHexStats> implements WeaponAbilityIcon, Duration, Damages<MercifulHex.DamageValues> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.LILY_OF_THE_VALLEY);
     private final MercifulHexStats stats = new MercifulHexStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
@@ -243,7 +244,7 @@ public class MercifulHex extends AbstractPiercingProjectile<MercifulHex, Mercifu
         Location startingLocation = projectile.getStartingLocation();
         LocationBuilder location = new LocationBuilder(startingLocation).pitch(0);
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-                    itemDisplay.setItemStack(new ItemStack(Material.WARPED_FENCE));
+            itemDisplay.setItemStack(ITEM_STACK);
                     itemDisplay.setTeleportDuration(1);
                     itemDisplay.setBrightness(new Display.Brightness(15, 15));
                     itemDisplay.setTransformation(new Transformation(new Vector3f(),

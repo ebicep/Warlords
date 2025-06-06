@@ -38,6 +38,7 @@ import java.util.Optional;
 
 public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenSouls.FallenSoulsStats> implements WeaponAbilityIcon, Damages<FallenSouls.DamageValues> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
     private final FallenSoulsStats stats = new FallenSoulsStats();
     private final DamageValues damageValues = new DamageValues();
     private int cooldownReduction = 2;
@@ -65,7 +66,7 @@ public class FallenSouls extends AbstractPiercingProjectile<FallenSouls, FallenS
         Location startingLocation = projectile.getStartingLocation();
         LocationBuilder location = new LocationBuilder(startingLocation).pitch(0);
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-                    itemDisplay.setItemStack(new ItemStack(Material.ACACIA_FENCE_GATE));
+            itemDisplay.setItemStack(ITEM_STACK);
                     itemDisplay.setTeleportDuration(1);
                     itemDisplay.setBrightness(new Display.Brightness(15, 15));
                     itemDisplay.setTransformation(new Transformation(new Vector3f(),

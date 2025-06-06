@@ -34,6 +34,7 @@ import java.util.List;
 
 public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, HitBox, Damages<HeartToHeart.DamageValues>, Heals<HeartToHeart.HealingValues>, AbilityStats<HeartToHeart, HeartToHeart.HeartToHeartStats> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.CRIMSON_ROOTS);
     private final HeartToHeartStats stats = new HeartToHeartStats();
     private final DamageValues damageValues = new DamageValues();
     private final HealingValues healingValues = new HealingValues();
@@ -149,7 +150,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                         targetLoc.getYaw(),
                         targetLoc.getPitch()
                 );
-                EffectUtils.playChainAnimation(wp, heartTarget, new ItemStack(Material.SPRUCE_LEAVES), timer);
+                EffectUtils.playChainAnimation(wp, heartTarget, ITEM_STACK, timer);
                 wp.teleportLocationOnly(newLocation);
                 wp.setFallDistance(-5);
                 newLocation.add(0, 1, 0);

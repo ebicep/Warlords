@@ -36,6 +36,7 @@ import java.util.Objects;
 
 public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Damages<SoulShackle.DamageValues>, AbilityStats<SoulShackle, SoulShackle.SoulShackleStats> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.FIRE_CORAL);
     private final SoulShackleStats stats = new SoulShackleStats();
     private final DamageValues damageValues = new DamageValues();
     private int shackleRange = 15;
@@ -122,7 +123,7 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
     }
 
     private void activateAbility(@Nonnull WarlordsEntity wp, WarlordsEntity shackleTarget) {
-        EffectUtils.playChainAnimation(wp, shackleTarget, new ItemStack(Material.PUMPKIN), 15);
+        EffectUtils.playChainAnimation(wp, shackleTarget, ITEM_STACK, 15);
         EffectUtils.playFirework(shackleTarget.getLocation(), FireworkEffect.builder().withColor(Color.YELLOW).with(FireworkEffect.Type.BALL).build(), 1);
         wp.addSpeedModifier(wp, "Shackle Speed", speedBuff, (int) speedDuration * 20);
         //        int silenceDuration = minSilenceDurationInTicks + (int) (shacklePool / 1000) * 20;

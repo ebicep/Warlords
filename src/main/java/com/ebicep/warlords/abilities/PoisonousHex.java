@@ -39,6 +39,7 @@ import java.util.List;
 
 public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, PoisonousHex.PoisonousHexStats> implements WeaponAbilityIcon, Duration, Damages<PoisonousHex.DamageValues> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.CYAN_STAINED_GLASS_PANE);
     private final PoisonousHexStats stats = new PoisonousHexStats();
     private final DamageValues damageValues = new DamageValues();
     private int maxFullDistance = 40;
@@ -77,7 +78,7 @@ public class PoisonousHex extends AbstractPiercingProjectile<PoisonousHex, Poiso
         Location startingLocation = projectile.getStartingLocation();
         LocationBuilder location = new LocationBuilder(startingLocation).pitch(0).yaw(startingLocation.getYaw() - 180);
         ItemDisplay display = startingLocation.getWorld().spawn(location, ItemDisplay.class, itemDisplay -> {
-                    itemDisplay.setItemStack(new ItemStack(Material.GREEN_STAINED_GLASS));
+            itemDisplay.setItemStack(ITEM_STACK);
                     itemDisplay.setTeleportDuration(1);
                     itemDisplay.setBrightness(new Display.Brightness(15, 15));
                     itemDisplay.setTransformation(new Transformation(new Vector3f(),

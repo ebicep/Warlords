@@ -36,6 +36,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<DeathsDebt, DeathsDebt.DeathsDebtStats> {
 
+    public static final ItemStack BLUE_TOTEM = new ItemStack(Material.COPPER_BLOCK);
+    public static final ItemStack PURPLE_TOTEM = new ItemStack(Material.CHISELED_COPPER);
     private final DeathsDebtStats stats = new DeathsDebtStats();
     private int tickDuration = 120;
     private int respiteRadius = 10;
@@ -56,7 +58,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
 
     @Override
     protected ItemStack getTotemItemStack() {
-        return new ItemStack(Material.JUNGLE_FENCE_GATE);
+        return BLUE_TOTEM;
     }
 
     @Override
@@ -160,7 +162,7 @@ public class DeathsDebt extends AbstractTotem implements Duration, AbilityStats<
                     circleEffect.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(Particle.WITCH));
                     circleEffect.setRadius(debtRadius);
                     //blue to purple totem
-                    totemStand.getEquipment().setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
+                    totemStand.getEquipment().setHelmet(PURPLE_TOTEM);
                 },
                 cooldownManager -> {
                     Optional<RegularCooldown> cd = new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownObject(data).findAny();

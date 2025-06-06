@@ -96,20 +96,20 @@ public class ArmorManager {
         SIMPLE_MAGE_HELMET(
                 "Simple Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.LIGHT_BLUE_CARPET),
+                new ItemStack(Material.GREEN_CANDLE),
                 new ItemStack(Material.LIME_CARPET)
         ),
         GREATER_MAGE_HELMET(
                 "Greater Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.MAGENTA_CARPET),
-                new ItemStack(Material.ORANGE_CARPET)
+                new ItemStack(Material.LIME_CANDLE),
+                new ItemStack(Material.BLACK_CANDLE)
         ),
         MASTERWORK_MAGE_HELMET(
                 "Masterwork Mage Helmet",
                 Classes.MAGE,
-                new ItemStack(Material.PINK_CARPET),
-                new ItemStack(Material.PURPLE_CARPET)
+                new ItemStack(Material.PINK_CANDLE),
+                new ItemStack(Material.GRAY_CANDLE)
         ),
         LEGENDARY_MAGE_HELMET(
                 "Legendary Mage Helmet",
@@ -121,45 +121,45 @@ public class ArmorManager {
         SIMPLE_WARRIOR_HELMET(
                 "Simple Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.BLACK_CARPET),
-                new ItemStack(Material.BLUE_CARPET)
+                new ItemStack(Material.YELLOW_CANDLE),
+                new ItemStack(Material.CANDLE)
         ),
         GREATER_WARRIOR_HELMET(
                 "Greater Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.BROWN_CARPET),
-                new ItemStack(Material.CYAN_CARPET)
+                new ItemStack(Material.LIGHT_BLUE_CANDLE),
+                new ItemStack(Material.BLUE_CANDLE)
         ),
         MASTERWORK_WARRIOR_HELMET(
                 "Masterwork Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.GRAY_CARPET),
-                new ItemStack(Material.GREEN_CARPET)
+                new ItemStack(Material.BROWN_CANDLE),
+                new ItemStack(Material.ORANGE_CARPET)
         ),
         LEGENDARY_WARRIOR_HELMET(
                 "Legendary Warrior Helmet",
                 Classes.WARRIOR,
-                new ItemStack(Material.STONE_PRESSURE_PLATE),
-                new ItemStack(Material.OAK_PRESSURE_PLATE)
+                new ItemStack(Material.MAGENTA_CANDLE),
+                new ItemStack(Material.LIGHT_GRAY_CANDLE)
         ),
 
         SIMPLE_PALADIN_HELMET(
                 "Simple Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.RED_CARPET),
-                new ItemStack(Material.LIGHT_GRAY_CARPET)
+                new ItemStack(Material.BEETROOT),
+                new ItemStack(Material.BEETROOT_SOUP)
         ),
         GREATER_PALADIN_HELMET(
                 "Greater Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.WHITE_CARPET),
-                new ItemStack(Material.YELLOW_CARPET)
+                new ItemStack(Material.NAUTILUS_SHELL),
+                new ItemStack(Material.RESIN_CLUMP)
         ),
         MASTERWORK_PALADIN_HELMET(
                 "Masterwork Paladin Helmet",
                 Classes.PALADIN,
-                new ItemStack(Material.ACACIA_SLAB),
-                new ItemStack(Material.ACACIA_STAIRS)
+                new ItemStack(Material.RED_CANDLE),
+                new ItemStack(Material.PURPLE_CANDLE)
         ),
         LEGENDARY_PALADIN_HELMET(
                 "Legendary Paladin Helmet",
@@ -196,51 +196,51 @@ public class ArmorManager {
         SIMPLE_ROGUE_HELMET(
                 "Simple Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.OAK_LOG),
-                new ItemStack(Material.OAK_PLANKS)
+                new ItemStack(Material.OXIDIZED_COPPER_DOOR),
+                new ItemStack(Material.MANGROVE_DOOR)
         ),
         GREATER_ROGUE_HELMET(
                 "Greater Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.SPRUCE_LOG),
-                new ItemStack(Material.SPRUCE_PLANKS)
+                new ItemStack(Material.ACACIA_DOOR),
+                new ItemStack(Material.BIRCH_DOOR)
         ),
         MASTERWORK_ROGUE_HELMET(
                 "Masterwork Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.BIRCH_LOG),
-                new ItemStack(Material.BIRCH_PLANKS)
+                new ItemStack(Material.JUNGLE_DOOR),
+                new ItemStack(Material.PALE_OAK_DOOR)
         ),
         LEGENDARY_ROGUE_HELMET(
                 "Legendary Rogue Helmet",
                 Classes.ROGUE,
-                new ItemStack(Material.JUNGLE_LOG),
-                new ItemStack(Material.JUNGLE_PLANKS)
+                new ItemStack(Material.SPRUCE_DOOR),
+                new ItemStack(Material.IRON_DOOR)
         ),
 
         SIMPLE_ARCANIST_HELMET(
                 "Simple Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.STRIPPED_MANGROVE_LOG),
-                new ItemStack(Material.GILDED_BLACKSTONE)
+                new ItemStack(Material.COPPER_DOOR),
+                new ItemStack(Material.OAK_DOOR)
         ),
         GREATER_ARCANIST_HELMET(
                 "Greater Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.STRIPPED_CHERRY_LOG),
-                new ItemStack(Material.BLACKSTONE_STAIRS)
+                new ItemStack(Material.WEATHERED_COPPER_DOOR),
+                new ItemStack(Material.DARK_OAK_DOOR)
         ),
         MASTERWORK_ARCANIST_HELMET(
                 "Masterwork Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.CHERRY_PLANKS),
-                new ItemStack(Material.BLACKSTONE_SLAB)
+                new ItemStack(Material.EXPOSED_COPPER_DOOR),
+                new ItemStack(Material.BAMBOO_DOOR)
         ),
         LEGENDARY_ARCANIST_HELMET(
                 "Legendary Arcanist Helmet",
                 Classes.ARCANIST,
-                new ItemStack(Material.CHERRY_STAIRS),
-                new ItemStack(Material.BLACKSTONE_WALL)
+                new ItemStack(Material.CHERRY_DOOR),
+                new ItemStack(Material.CYAN_CANDLE)
         ),
 
         ;

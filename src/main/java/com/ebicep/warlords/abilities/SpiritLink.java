@@ -28,7 +28,7 @@ import java.util.*;
 
 public class SpiritLink extends AbstractChain<SpiritLink, SpiritLink.SpiritLinkStats> implements RedAbilityIcon, Damages<SpiritLink.DamageValues> {
 
-    public static final ItemStack CHAIN_ITEM = new ItemStack(Material.SPRUCE_FENCE_GATE);
+    public static final ItemStack CHAIN_ITEM = new ItemStack(Material.BRAIN_CORAL);
     private final SpiritLinkStats stats = new SpiritLinkStats();
     private final DamageValues damageValues = new DamageValues();
     private float speedBuff = 40;

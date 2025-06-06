@@ -24,6 +24,7 @@ import java.util.List;
 
 public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<HolyRadianceAvenger.HealingValues> {
 
+    public static final ItemStack ITEM_STACK = new ItemStack(Material.PITCHER_PLANT);
     private final HealingValues healingValues = new HealingValues();
     private int markDuration = 8;
     private int markRadius = 15;
@@ -52,7 +53,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
             for (WarlordsEntity markTarget : PlayerFilter.entitiesAround(wp, 8, 8, 8).aliveEnemiesOf(wp)) {
                 Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
-                EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
+                EffectUtils.playChainAnimation(wp, markTarget, ITEM_STACK, 8);
                 aoeMark(wp, markTarget);
             }
             return true;
@@ -64,7 +65,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadiance implements Heals<H
             }
             Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
             EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 255, 50, 0, 1);
-            EffectUtils.playChainAnimation(wp, markTarget, new ItemStack(Material.BIRCH_LEAVES), 8);
+            EffectUtils.playChainAnimation(wp, markTarget, ITEM_STACK, 8);
             mark(wp, markTarget);
             return true;
         }
