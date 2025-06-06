@@ -144,7 +144,9 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
                                 return false;
                             }
                             return cd.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
-                        }));
+                        })
+                        .potionPredicate(CooldownUtils.DebuffImmunity.DEFAULT_POTION)
+                );
             }
 
             @Override
