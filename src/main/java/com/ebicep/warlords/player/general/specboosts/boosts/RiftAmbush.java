@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.abilities.SoulSwitch;
+import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.effects.EffectUtils;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerSwapEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
@@ -89,6 +90,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
                     .value(soulSwitchDamage)
                     .flags(InstanceFlags.TRUE_DAMAGE)
             );
+            AbstractStrike.giveStrikePriority(warlordsEntity, swappedPlayer, tetherTickDuration);
             float radius = tetherRadius * tetherRadius;
             warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(
                     getStringName(),
