@@ -13,12 +13,14 @@ import java.util.List;
 
 public class SustainedOnslaught implements SpecBoostManager.SpecBoost<SustainedOnslaught> {
 
+    private int speedIncrease;
     private int vitalityConcoctionHealing;
     private float vitalityConcoctionCooldownReductionSeconds;
     private int impalingStrikeEnergyCostReduction;
 
     @Override
     public void init() {
+        this.speedIncrease = getValue("speedIncrease", int.class);
         this.vitalityConcoctionHealing = getValue("vitalityConcoctionHealing", int.class);
         this.vitalityConcoctionCooldownReductionSeconds = getValue("vitalityConcoctionCooldownReductionSeconds", float.class);
         this.impalingStrikeEnergyCostReduction = getValue("impalingStrikeEnergyCostReduction", int.class);
@@ -31,7 +33,7 @@ public class SustainedOnslaught implements SpecBoostManager.SpecBoost<SustainedO
 
     @Override
     public List<Object> getVariables() {
-        return List.of(vitalityConcoctionHealing, vitalityConcoctionCooldownReductionSeconds, impalingStrikeEnergyCostReduction);
+        return List.of(speedIncrease, vitalityConcoctionHealing, vitalityConcoctionCooldownReductionSeconds, impalingStrikeEnergyCostReduction);
     }
 
     @Override
@@ -51,6 +53,7 @@ public class SustainedOnslaught implements SpecBoostManager.SpecBoost<SustainedO
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getSpeed().addBaseModifier(speedIncrease);
             warlordsPlayer.getAbilitiesMatching(VitalityConcoction.class).forEach(vitalityConcoction -> {
                 vitalityConcoction.getCooldown().addAdditiveModifier("Spec Boost", -vitalityConcoctionCooldownReductionSeconds);
             });
