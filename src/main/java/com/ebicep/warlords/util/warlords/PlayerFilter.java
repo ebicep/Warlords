@@ -6,7 +6,7 @@ import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
-import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
+import com.ebicep.warlords.pve.mobs.pvp.TricksterDummy;
 import com.ebicep.warlords.util.bukkit.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -23,10 +23,6 @@ import java.util.stream.StreamSupport;
 
 import static com.ebicep.warlords.util.bukkit.LocationUtils.radiusAround;
 import static com.ebicep.warlords.util.bukkit.LocationUtils.sortClosestBy;
-
-// TODO run regex
-// Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)
-// Replace: $1PlayerFilter.entitiesAround($2, $3, $4, $5)$1    .enemiesOf($6)$1
 
 public class PlayerFilter implements Iterable<WarlordsEntity> {
     private static final Location LOCATION_CACHE_ENTITIES_AROUND = new Location(null, 0, 0, 0);
@@ -233,8 +229,8 @@ public class PlayerFilter implements Iterable<WarlordsEntity> {
     }
 
     @Nonnull
-    public PlayerFilter excludingNPCPlayerLike() {
-        return filter(warlordsEntity -> !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof PlayerMob));
+    public PlayerFilter excludingDummy() {
+        return filter(warlordsEntity -> !(warlordsEntity instanceof WarlordsNPC warlordsNPC && warlordsNPC.getMob() instanceof TricksterDummy));
     }
 
     @Nonnull

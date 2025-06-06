@@ -118,7 +118,7 @@ public class UndyingArmy extends AbstractAbility implements OrangeAbilityIcon, D
         int numberOfPlayersWithArmy = 0;
         for (WarlordsEntity teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                                                    .aliveTeammatesOf(wp)
-                                                   .excludingNPCPlayerLike()
+                                                   .excludingDummy()
                                                    .closestWarlordPlayersFirst(wp.getLocation())) {
             data.getPlayersPopped().put(teammate, false);
             boolean isCaster = teammate != wp;
