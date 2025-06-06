@@ -2,6 +2,7 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.abilities.IncendiaryCurse;
+import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.abilities.ShadowStep;
 import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.abilities.internal.Value;
@@ -39,6 +40,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
     private Value.RangedValue incendiaryCurseIgniteDamage;
     private int incendiaryCurseEnergyCostIncrease;
     private float soulSwitchCooldownReductionSeconds;
+    private int soulSwitchInvisTickDuration;
     private int soulSwitchDummyDurationTicks;
     private int soulSwitchDummyHealth;
     private int shadowLeapHealthThreshold;
@@ -51,6 +53,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
         this.incendiaryCurseIgniteDamage = getValue("incendiaryCurseIgniteDamage", Value.RangedValue.class);
         this.incendiaryCurseEnergyCostIncrease = getValue("incendiaryCurseEnergyCostIncrease", int.class);
         this.soulSwitchCooldownReductionSeconds = getValue("soulSwitchCooldownReductionSeconds", float.class);
+        this.soulSwitchInvisTickDuration = getValue("soulSwitchInvisTickDuration", int.class);
         this.soulSwitchDummyDurationTicks = getValue("soulSwitchDummyDurationTicks", int.class);
         this.soulSwitchDummyHealth = getValue("soulSwitchDummyHealth", int.class);
         this.shadowLeapHealthThreshold = getValue("shadowLeapHealthThreshold", int.class);
@@ -157,6 +160,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
             if (!event.getWarlordsEntity().equals(warlordsEntity)) {
                 return;
             }
+            OrderOfEviscerate.giveCloak(warlordsEntity, soulSwitchInvisTickDuration);
             Location oldLocation = event.getWarlordsEntity().getLocation();
             Location newLocation = event.getSwappedPlayer().getLocation();
             WarlordsNPC npc = warlordsEntity
