@@ -17,6 +17,7 @@ import java.util.*;
 
 public class SpecBoostManager {
 
+    public static final SpecBoost<AbyssalGrasp> ABYSSAL_GRASP = new AbyssalGrasp();
     public static final SpecBoost<AcceleratedSpike> ACCELERATED_SPIKE = new AcceleratedSpike();
     public static final SpecBoost<AlchemistsFury> ALCHEMISTS_FURY = new AlchemistsFury();
     public static final SpecBoost<ArcaneRecluse> ARCANE_RECLUSE = new ArcaneRecluse();
@@ -66,6 +67,7 @@ public class SpecBoostManager {
     public static final SpecBoost<RallyingPresence> RALLYING_PRESENCE = new RallyingPresence();
     public static final SpecBoost<RecklessAscent> RECKLESS_ASCENT = new RecklessAscent();
     public static final SpecBoost<RiftAmbush> RIFT_AMBUSH = new RiftAmbush();
+    public static final SpecBoost<SanctionBurst> SANCTION_BURST = new SanctionBurst();
     public static final SpecBoost<SeismicShift> SEISMIC_SHIFT = new SeismicShift();
     public static final SpecBoost<Solitary> SOLITARY = new Solitary();
     public static final SpecBoost<SoulRend> SOUL_REND = new SoulRend();
@@ -86,6 +88,7 @@ public class SpecBoostManager {
     public static final SpecBoost<VibrantOrbs> VIBRANT_ORBS = new VibrantOrbs();
     public static final SpecBoost<VigorousInfusion> VIGOROUS_INFUSION = new VigorousInfusion();
     public static final SpecBoost<VitalityBoost> VITALITY_BOOST = new VitalityBoost();
+    public static final SpecBoost<VitalPulse> VITAL_PULSE = new VitalPulse();
     public static final SpecBoost<WardingWrath> WARDING_WRATH = new WardingWrath();
 
 
@@ -105,7 +108,7 @@ public class SpecBoostManager {
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
-        SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(BULL_RUSH, SWIFT_JUSTICE));
+        SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, BULL_RUSH, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
     }
 
@@ -147,6 +150,10 @@ public class SpecBoostManager {
 
         default TextComponent getDescription() {
             return getTextDescription();
+        }
+
+        default int getMaxDescriptionWidth() {
+            return 150;
         }
 
         default TextComponent getTextDescription() {
@@ -194,6 +201,8 @@ public class SpecBoostManager {
             }
         }
 
+        List<Object> getVariables();
+
         default TextComponent getDescriptionWithAbility(AbstractAbility ability) {
             ability.init(ability.getBuilder());
             ability.updateDescription(null);
@@ -204,12 +213,6 @@ public class SpecBoostManager {
                     .appendNewline()
                     .appendNewline()
                     .append(ability.getDescription());
-        }
-
-        List<Object> getVariables();
-
-        default int getMaxDescriptionWidth() {
-            return 150;
         }
 
         Boost create();

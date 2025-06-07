@@ -4,7 +4,6 @@ import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.abilities.internal.icon.PurpleAbilityIcon;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.effects.EffectUtils;
-import com.ebicep.warlords.events.player.ingame.WarlordsAbilityTargetEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -20,7 +19,6 @@ import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -40,6 +38,7 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
     private final HealingValues healingValues = new HealingValues();
     private FloatModifiable radius = new FloatModifiable(15);
     private int vindDuration = 6;
+    private boolean targetEnemies = false;
 
     public HeartToHeart() {
         super(AbstractAbilityBuilder.create("heartToHeart").pvp());
@@ -50,6 +49,50 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         super.init(builder);
         this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
         this.vindDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("vindDuration"), int.class);
+    }
+
+    @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        float radius = getHitBoxRadius().getCalculatedValue();
+        float verticalRadius = getHitBoxRadius().getCalculatedValue();
+        if (wp.hasFlag()) {
+            radius = 7.5f;
+            verticalRadius = 2;
+        } else {
+            wp.setFlagPickCooldown(2);
+        }
+        if (inPve) {
+            for (WarlordsEntity heartTarget : PlayerFilter
+                    .entitiesAround(wp, radius, verticalRadius, radius)
+                    .requireLineOfSight(wp)
+                    .lookingAtFirst(wp)
+            ) {
+                activateAbility(wp, heartTarget);
+                return true;
+            }
+        } else if (targetEnemies) {
+            for (WarlordsEntity heartTarget : PlayerFilter
+                    .entitiesAround(wp, radius, verticalRadius, radius)
+                    .excluding(wp)
+                    .requireLineOfSight(wp)
+                    .lookingAtFirst(wp)
+            ) {
+                activateAbility(wp, heartTarget);
+                return true;
+            }
+        } else {
+            for (WarlordsEntity heartTarget : PlayerFilter
+                    .entitiesAround(wp, radius, verticalRadius, radius)
+                    .aliveTeammatesOfExcludingSelf(wp)
+                    .requireLineOfSight(wp)
+                    .lookingAtFirst(wp)
+                    .limit(1)
+            ) {
+                activateAbility(wp, heartTarget);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -65,45 +108,6 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                                                .emptyLine()
                                                .text("Heart to Heart has reduced range when holding a flag.")
                                                .build();
-    }
-
-    @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        float radius = getHitBoxRadius().getCalculatedValue();
-        float verticalRadius = getHitBoxRadius().getCalculatedValue();
-        if (wp.hasFlag()) {
-            radius = 7.5f;
-            verticalRadius = 2;
-        } else {
-            wp.setFlagPickCooldown(2);
-        }
-        if (wp.isInPve()) {
-            for (WarlordsEntity heartTarget : PlayerFilter.entitiesAround(wp, radius, verticalRadius, radius).requireLineOfSight(wp).lookingAtFirst(wp)) {
-                activateAbility(wp, heartTarget);
-                Bukkit.getPluginManager().callEvent(new WarlordsAbilityTargetEvent(wp, name, heartTarget));
-                return true;
-            }
-        } else {
-            for (WarlordsEntity heartTarget : PlayerFilter.entitiesAround(wp, radius, verticalRadius, radius)
-                                                          .aliveTeammatesOfExcludingSelf(wp)
-                                                          .requireLineOfSight(wp)
-                                                          .lookingAtFirst(wp)
-                                                          .limit(1)) {
-                activateAbility(wp, heartTarget);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new HeartToHeartBranch(abilityTree, this);
-    }
-
-    @Override
-    public FloatModifiable getHitBoxRadius() {
-        return radius;
     }
 
     private void activateAbility(WarlordsEntity wp, WarlordsEntity heartTarget) {
@@ -180,13 +184,29 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
                 if (timer >= 8) {
                     wp.setVelocity(name, playerLoc.getDirection().multiply(0.4).setY(0.2), true);
                     wp.addInstance(InstanceBuilder.healing().ability(HeartToHeart.this).source(wp).value(healingValues.heartToHeartHealing));
-                    heartTarget.addInstance(InstanceBuilder.create(heartTarget.isTeammate(wp) ? InstanceBuilder.InstanceType.HEALING : InstanceBuilder.InstanceType.DAMAGE)
-                                                           .ability(HeartToHeart.this)
-                                                           .source(wp)
-                                                           .value(healingValues.heartToHeartHealing));
+                    if (inPve) {
+                        heartTarget.addInstance(InstanceBuilder.create(heartTarget.isTeammate(wp) ? InstanceBuilder.InstanceType.HEALING : InstanceBuilder.InstanceType.DAMAGE)
+                                                               .ability(HeartToHeart.this)
+                                                               .source(wp)
+                                                               .value(healingValues.heartToHeartHealing));
+                    }
                 }
             }
         }.runTaskTimer(0, 1);
+    }
+
+    @Override
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new HeartToHeartBranch(abilityTree, this);
+    }
+
+    @Override
+    public FloatModifiable getHitBoxRadius() {
+        return radius;
+    }
+
+    public void setTargetEnemies(boolean targetEnemies) {
+        this.targetEnemies = targetEnemies;
     }
 
     @Override

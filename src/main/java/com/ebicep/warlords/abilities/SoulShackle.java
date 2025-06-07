@@ -217,6 +217,10 @@ public class SoulShackle extends AbstractAbility implements RedAbilityIcon, Dama
         }
     }
 
+    public void setShackleRange(int shackleRange) {
+        this.shackleRange = shackleRange;
+    }
+
     @Override
     public DamageValues getDamageValues() {
         return damageValues;

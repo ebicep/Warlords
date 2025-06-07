@@ -131,6 +131,7 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
             }
             PlayerFilter.entitiesAround(event.getWarlordsEntity().getLocation(), soulShackleAoERadius, soulShackleAoERadius, soulShackleAoERadius)
                         .aliveEnemiesOf(warlordsEntity)
+                        .excluding(event.getWarlordsEntity())
                         .forEach(aoeTarget -> {
                             float aoeDamage = event.getValue() * (soulShackleAoEDamagePercent / 100);
                             aoeTarget.addInstance(InstanceBuilder
