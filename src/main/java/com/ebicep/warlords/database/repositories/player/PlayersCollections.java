@@ -39,7 +39,7 @@ public enum PlayersCollections {
             ));
         }
     },
-    SEASON_9("Season 9", "Players_Information_Season_9") {
+    SEASON_10("Season 10", "Players_Information_Season_10") {
         @Override
         public boolean shouldUpdate(Instant dateOfGame) {
             return ACTIVE_COLLECTIONS.contains(this);
@@ -48,11 +48,25 @@ public enum PlayersCollections {
         @Override
         public Query getQuery() {
             return new Query(new Criteria().orOperator(
-                    Criteria.where("plays").gt(30),
-                    Criteria.where("pve_stats.plays").gt(30)
+                    Criteria.where("plays").gt(10),
+                    Criteria.where("pve_stats.plays").gt(10)
             ));
         }
     },
+//    SEASON_9("Season 9", "Players_Information_Season_9") {
+//        @Override
+//        public boolean shouldUpdate(Instant dateOfGame) {
+//            return ACTIVE_COLLECTIONS.contains(this);
+//        }
+//
+//        @Override
+//        public Query getQuery() {
+//            return new Query(new Criteria().orOperator(
+//                    Criteria.where("plays").gt(30),
+//                    Criteria.where("pve_stats.plays").gt(30)
+//            ));
+//        }
+//    },
 //    SEASON_8("Season 8", "Players_Information_Season_8") {
 //        @Override
 //        public boolean shouldUpdate(Instant dateOfGame) {
@@ -129,8 +143,8 @@ public enum PlayersCollections {
     ;
 
     public static final PlayersCollections[] VALUES = values();
-    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_9, WEEKLY, DAILY);
-    public static final List<PlayersCollections> ACTIVE_LEADERBOARD_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_9, WEEKLY, DAILY);//Arrays.asList(LIFETIME);
+    public static final List<PlayersCollections> ACTIVE_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_10, WEEKLY, DAILY);
+    public static final List<PlayersCollections> ACTIVE_LEADERBOARD_COLLECTIONS = Arrays.asList(LIFETIME, MONTHLY, SEASON_10, WEEKLY, DAILY);//Arrays.asList(LIFETIME);
 
     public static PlayersCollections getAfterCollection(PlayersCollections playersCollections) {
         int index = ACTIVE_LEADERBOARD_COLLECTIONS.indexOf(playersCollections);
