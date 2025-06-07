@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.HeartToHeart;
 import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.abilities.internal.AbstractStrike;
 import com.ebicep.warlords.effects.EffectUtils;
@@ -13,10 +14,8 @@ import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.bukkit.LocationBuilder;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.event.EventHandler;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.List;
@@ -105,7 +104,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
                     Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
                         if (ticksElapsed % 2 == 0) {
                             Location playerLocation = swappedPlayer.getLocation();
-                            EffectUtils.playChainAnimation(playerLocation.clone().add(0, .5, 0), chainLocation, new ItemStack(Material.SPRUCE_LEAVES), 2);
+                            EffectUtils.playChainAnimation(playerLocation.clone().add(0, .5, 0), chainLocation, HeartToHeart.ITEM_STACK, 2);
                             EffectUtils.playCylinderAnimation(swappedPlayerLocation, tetherRadius, Particle.INFESTED, 30, 3, 1);
                             if (playerLocation.distanceSquared(swappedPlayerLocation) >= radius) {
                                 LocationBuilder newLocation = new LocationBuilder(playerLocation)
