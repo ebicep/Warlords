@@ -351,7 +351,7 @@ public enum ChallengeAchievements implements Achievement {
                                                   .map(RegularCooldown.class::cast)
                                                   .anyMatch(regularCooldown ->
                                                           regularCooldown.getCooldownClass().equals(Shield.class) ||
-                                                                  regularCooldown.getCooldownClass().equals(IceBarrier.class) ||
+                                                                  regularCooldown.getCooldownClass().equals(IceBarrier.IceBarrierData.class) ||
                                                                   regularCooldown.getCooldownClass().equals(LastStand.LastStandData.class)
                                                   )
                     ) {
@@ -570,7 +570,7 @@ public enum ChallengeAchievements implements Achievement {
                     return false;
                 }
                 for (WarlordsDamageHealingFinalEvent.CooldownRecord playerCooldown : lastEventAsSelf.getPlayerCooldowns()) {
-                    if (Objects.equals(playerCooldown.getAbstractCooldown().getCooldownClass(), IceBarrier.class)) {
+                    if (Objects.equals(playerCooldown.getAbstractCooldown().getCooldownClass(), IceBarrier.IceBarrierData.class)) {
                         int secondsLeft = playerCooldown.getTicksLeft() / 20;
                         int totalDamage = 0;
                         for (WarlordsDamageHealingFinalEvent event : warlordsEntity.getSecondStats()
@@ -579,7 +579,7 @@ public enum ChallengeAchievements implements Achievement {
                                                                                    )) {
                             if (event.getPlayerCooldowns()
                                      .stream()
-                                     .anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(), IceBarrier.class))) {
+                                     .anyMatch(cooldownRecord -> Objects.equals(cooldownRecord.getAbstractCooldown().getCooldownClass(), IceBarrier.IceBarrierData.class))) {
                                 totalDamage += event.getValue();
                             }
                         }
