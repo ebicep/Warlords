@@ -113,7 +113,7 @@ public class MarkedForDeath implements SpecBoostManager.SpecBoost<MarkedForDeath
                 @Override
                 public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                     if (event.getSource().equals(warlordsEntity) && event.getAbility() instanceof AvengersStrike) {
-                        if (ticksIncreased >= strikeMarkDurationIncreaseTicks) {
+                        if (ticksIncreased >= maxStrikeMarkDurationIncreaseTicks) {
                             return;
                         }
                         regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + strikeMarkDurationIncreaseTicks);

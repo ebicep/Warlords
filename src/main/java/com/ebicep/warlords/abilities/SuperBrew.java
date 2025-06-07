@@ -33,6 +33,7 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     private int maxEnergyIncrease;
     private int meleeDamageIncreasePercent;
     private int ultCooldownReductionPercent;
+    private int trueDamageLeechIncreasePercent;
 
     public SuperBrew() {
         super(AbstractAbilityBuilder.create("superBrew").pvp());
@@ -47,6 +48,10 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         this.maxEnergyIncrease = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("maxEnergyIncrease"), int.class);
         this.meleeDamageIncreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("meleeDamageIncreasePercent"), int.class);
         this.ultCooldownReductionPercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("ultCooldownReductionPercent"), int.class);
+        this.trueDamageLeechIncreasePercent = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
+                builder.getAppendedFieldName("trueDamageLeechIncreasePercent"),
+                int.class
+        );
     }
 
 
@@ -74,12 +79,13 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
         for (AbstractAbility ability : target.getAbilitiesImplementing(OrangeAbilityIcon.class)) {
             modifiers.add(ability.getCooldownReductionPerTick().addMultiplicativeModifierMult(name, 100f / (100 - ultCooldownReductionPercent))); // 20% = 1.25
         }
-        target.getCooldownManager().removeCooldown(SuperBrew.class, false);
+        SuperBrewData data = new SuperBrewData(this);
+        target.getCooldownManager().removeCooldown(SuperBrewData.class, false);
         target.getCooldownManager().addCooldown(new RegularCooldown<>(
                 name,
                 "SUPER",
-                SuperBrew.class,
-                null,
+                SuperBrewData.class,
+                data,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {
@@ -146,10 +152,16 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
                 .percent(meleeDamageIncreasePercent, NamedTextColor.RED)
                 .text(" melee damage, ")
                 .percent(ultCooldownReductionPercent, NamedTextColor.GOLD)
-                .text(" ultimate cooldown reduction, and permanent passive health regen.")
+                .text(" ultimate cooldown reduction, permanent passive health regen, and Apothecary's gain ")
+                .percent(trueDamageLeechIncreasePercent, NamedTextColor.GREEN)
+                .text(" more true damage leech heal.")
                 .emptyLine()
                 .text("If no ally is targeted, receive the brew yourself.")
                 .build();
+    }
+
+    public int getTrueDamageLeechIncreasePercent() {
+        return trueDamageLeechIncreasePercent;
     }
 
     @Override
@@ -160,6 +172,20 @@ public class SuperBrew extends AbstractAbility implements OrangeAbilityIcon, Hit
     @Override
     public SuperBrewStats getAbilityStats() {
         return stats;
+    }
+
+    public static class SuperBrewData {
+
+        private SuperBrew superBrew;
+
+        public SuperBrewData(SuperBrew superBrew) {
+            this.superBrew = superBrew;
+        }
+
+        public SuperBrew getSuperBrew() {
+            return superBrew;
+        }
+
     }
 
     @Override

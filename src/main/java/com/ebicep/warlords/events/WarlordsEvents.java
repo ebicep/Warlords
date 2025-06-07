@@ -179,6 +179,10 @@ public class WarlordsEvents implements Listener {
         if (attribute != null) {
             attribute.setBaseValue(1.05);
         }
+        attribute = player.getAttribute(Attribute.JUMP_STRENGTH);
+        if (attribute != null) {
+            attribute.setBaseValue(0.42);
+        }
         player.setWalkSpeed(BaseToWalkingSpeedValueModifier.BASE_PLAYER_WALK_SPEED);
         player.setFlySpeed(0.15f);
         UUID uuid = player.getUniqueId();

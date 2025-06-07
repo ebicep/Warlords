@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player.general;
 
+import com.ebicep.warlords.abilities.SuperBrew;
 import com.ebicep.warlords.abilities.internal.Ability;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Leech;
@@ -168,7 +169,14 @@ public enum Specializations {
                             }
                             float passiveHeal = 0;
                             if (finalEvent.getFinalEventFlag() == WarlordsDamageHealingFinalEvent.FinalEventFlag.REGULAR) {
-                                passiveHeal = finalEvent.getValue() * leechHeal;
+                                float passiveLeechHeal = leechHeal;
+                                Optional<SuperBrew.SuperBrewData> superBrewData = new CooldownFilter<>(warlordsEntity, RegularCooldown.class)
+                                        .filterCooldownClassAndMapToObjectsOfClass(SuperBrew.SuperBrewData.class)
+                                        .findAny();
+                                if (superBrewData.isPresent()) {
+                                    passiveLeechHeal += superBrewData.get().getSuperBrew().getTrueDamageLeechIncreasePercent() / 100f;
+                                }
+                                passiveHeal = finalEvent.getValue() * passiveLeechHeal;
                             }
                             warlordsEntity.addInstance(InstanceBuilder
                                     .healing()

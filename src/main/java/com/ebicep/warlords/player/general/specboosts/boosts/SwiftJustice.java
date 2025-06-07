@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
@@ -22,6 +23,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
     private float recastSpeedIncreasePercent;
     private int recastDurationTicks; // 3 seconds * 20 ticks/sec
     private float nextStrikeDamageIncreasePercent;
+    private int nextStrikeCooldownReductionTicks;
 
     @Override
     public void init() {
@@ -29,6 +31,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
         this.recastSpeedIncreasePercent = getValue("recastSpeedIncreasePercent", float.class);
         this.recastDurationTicks = getValue("recastDurationTicks", int.class);
         this.nextStrikeDamageIncreasePercent = getValue("nextStrikeDamageIncreasePercent", float.class);
+        this.nextStrikeCooldownReductionTicks = getValue("nextStrikeCooldownReductionTicks", int.class);
     }
 
     @Override
@@ -38,7 +41,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(vindicateCooldownReductionSeconds, recastSpeedIncreasePercent, recastDurationTicks, nextStrikeDamageIncreasePercent);
+        return List.of(vindicateCooldownReductionSeconds, recastSpeedIncreasePercent, recastDurationTicks, nextStrikeDamageIncreasePercent, nextStrikeCooldownReductionTicks);
     }
 
     @Override
@@ -69,7 +72,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                 return;
             }
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
-            if (!cooldown.getName().equals("Vindicate Resistance") || !(cooldown.getCooldownObject() instanceof Vindicate) || !cooldown.getFrom().equals(warlordsEntity)) {
+            if (!cooldown.getName().equals("Vindicate Resistance") || !(cooldown.getCooldownClass().equals(Vindicate.class)) || !cooldown.getFrom().equals(warlordsEntity)) {
                 return;
             }
             warlordsEntity.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
@@ -83,13 +86,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                         cooldownManager -> {},
                         recastDurationTicks
                 ) {
-                    @Override
-                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                        if (event.getAbility() instanceof RighteousStrike) {
-                            return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(nextStrikeDamageIncreasePercent);
-                        }
-                        return currentDamageValue;
-                    }
+                    private boolean strikeUsed = false;
 
                     @Override
                     protected Listener getListener() {
@@ -97,6 +94,17 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                                 .create(warlordsEntity)
                                 .speedPredicate(CooldownUtils.DebuffImmunity.DEFAULT_SPEED)
                         );
+                    }
+
+                    @Override
+                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                        WarlordsEntity victim = event.getWarlordsEntity();
+                        if (event.getAbility() instanceof RighteousStrike && !strikeUsed) {
+                            strikeUsed = true;
+                            victim.getCooldownManager().subtractTicksOnRegularCooldowns(nextStrikeCooldownReductionTicks, CooldownTypes.ABILITY);
+                            return currentDamageValue * AbstractAbility.convertToMultiplicationDecimal(nextStrikeDamageIncreasePercent);
+                        }
+                        return currentDamageValue;
                     }
                 };
                 vindicate.addSecondaryAbility(

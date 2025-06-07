@@ -3,21 +3,26 @@ package com.ebicep.warlords.player.general.specboosts.boosts;
 import com.ebicep.warlords.abilities.ArcaneShield;
 import com.ebicep.warlords.abilities.WaterBolt;
 import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.Utils;
+import org.bukkit.event.EventHandler;
 
 import java.util.List;
 
 public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflection> {
 
     private int arcaneShieldDurationIncreaseTicks;
+    private int arcaneShieldSpeedPercent;
     private float damageReflectionPercent;
     private float meleeDamageIncreasePercent;
     private float waterBoltDamageIncreasePercent;
@@ -25,6 +30,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
     @Override
     public void init() {
         this.arcaneShieldDurationIncreaseTicks = getValue("arcaneShieldDurationIncreaseTicks", int.class);
+        this.arcaneShieldSpeedPercent = getValue("arcaneShieldSpeedPercent", int.class);
         this.damageReflectionPercent = getValue("damageReflectionPercent", float.class);
         this.meleeDamageIncreasePercent = getValue("meleeDamageIncreasePercent", float.class);
         this.waterBoltDamageIncreasePercent = getValue("waterBoltDamageIncreasePercent", float.class);
@@ -37,7 +43,7 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
 
     @Override
     public List<Object> getVariables() {
-        return List.of(arcaneShieldDurationIncreaseTicks, damageReflectionPercent, meleeDamageIncreasePercent, waterBoltDamageIncreasePercent);
+        return List.of(arcaneShieldDurationIncreaseTicks, arcaneShieldSpeedPercent, damageReflectionPercent, meleeDamageIncreasePercent, waterBoltDamageIncreasePercent);
     }
 
     @Override
@@ -52,8 +58,11 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
 
     public class Boost implements SpecBoostManager.Boost {
 
+        private WarlordsEntity warlordsEntity;
+
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
+            this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(ArcaneShield.class).forEach(arcaneShield -> {
                 arcaneShield.setTickDuration(arcaneShield.getTickDuration() + arcaneShieldDurationIncreaseTicks);
             });
@@ -98,6 +107,21 @@ public class ArcaneReflection implements SpecBoostManager.SpecBoost<ArcaneReflec
                     Utils.playGlobalSound(warlordsPlayer.getLocation(), "warrior.intervene.block", 2, 2);
                 }
             });
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onCooldownAddEvent(WarlordsAddCooldownEvent event) {
+            if (!warlordsEntity.equals(event.getWarlordsEntity())) {
+                return;
+            }
+            AbstractCooldown<?> cooldown = event.getAbstractCooldown();
+            if (!(cooldown instanceof RegularCooldown<?> regularCooldown) ||
+                    !(cooldown.getName().equals("Arcane Shield")) ||
+                    !cooldown.getFrom().equals(warlordsEntity)
+            ) {
+                return;
+            }
+            warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), arcaneShieldSpeedPercent, regularCooldown);
         }
 
     }

@@ -1,10 +1,13 @@
 package com.ebicep.warlords.pve.mobs.pvp;
 
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingFinalEvent;
 import com.ebicep.warlords.game.option.pve.PveOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.PermanentCooldown;
+import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.mobs.AbstractMob;
 import com.ebicep.warlords.pve.mobs.Mob;
 import com.ebicep.warlords.pve.mobs.tiers.PlayerMob;
@@ -93,6 +96,24 @@ public class TricksterDummy extends AbstractMob implements PlayerMob {
                 };
             }
         });
+    }
+
+    @Override
+    public void onFinalDamageTaken(WarlordsDamageHealingFinalEvent event) {
+        WarlordsEntity attacker = event.getSource();
+        float energyPerHit = attacker.getEnergyPerHit().getCalculatedValue();
+        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+            energyPerHit = abstractCooldown.addEnergyPerHit(attacker, energyPerHit);
+        }
+        attacker.addEnergy(attacker, null, -energyPerHit);
+
+        attacker.addInstance(InstanceBuilder
+                .damage()
+                .cause("Trickster Dummy")
+                .source(warlordsEntity)
+                .value(event.getValue())
+                .showAsCrit(event.isCrit())
+        );
     }
 
 }

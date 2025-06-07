@@ -12,7 +12,7 @@ import com.ebicep.warlords.player.ingame.instances.type.CustomInstanceFlags;
 
 import java.util.List;
 
-public class LightSpeedInfusion implements SpecBoostManager.SpecBoost<LightSpeedInfusion> {
+public class EcoDrive implements SpecBoostManager.SpecBoost<EcoDrive> {
 
     private int holyRadianceEnergyCost;
     private int lightInfusionCooldownReductionTicks;
@@ -27,7 +27,7 @@ public class LightSpeedInfusion implements SpecBoostManager.SpecBoost<LightSpeed
 
     @Override
     public String getConfigFieldName() {
-        return "lightSpeedInfusion";
+        return "ecoDrive";
     }
 
     @Override
@@ -41,7 +41,7 @@ public class LightSpeedInfusion implements SpecBoostManager.SpecBoost<LightSpeed
     }
 
     @Override
-    public LightSpeedInfusion get() {
+    public EcoDrive get() {
         return this;
     }
 

@@ -117,7 +117,9 @@ public class HeartToHeart extends AbstractAbility implements PurpleAbilityIcon, 
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation", 2, 1);
         Utils.playGlobalSound(wp.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
         Vindicate.giveVindicateCooldown(wp, wp, HeartToHeart.class, null, vindDuration * 20);
-        Vindicate.giveVindicateCooldown(wp, heartTarget, HeartToHeart.class, null, vindDuration * 20);
+        if (heartTarget.isTeammateAlive(wp)) {
+            Vindicate.giveVindicateCooldown(wp, heartTarget, HeartToHeart.class, null, vindDuration * 20);
+        }
         List<WarlordsEntity> playersHit = new ArrayList<>();
         new GameRunnable(wp.getGame()) {
 

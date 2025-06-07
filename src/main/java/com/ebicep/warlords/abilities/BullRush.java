@@ -85,6 +85,7 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
                                         warlordsEntity.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
+                                                .cause("Vindictive Leap")
                                                 .source(wp)
                                                 .value(damageValues.bullRushDamage)
                                         );

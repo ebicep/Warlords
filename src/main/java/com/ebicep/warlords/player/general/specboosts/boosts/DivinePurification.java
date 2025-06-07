@@ -79,6 +79,7 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
                 return;
             }
             WarlordsEntity target = event.getWarlordsEntity();
+            target.getCooldownManager().removeDebuffCooldowns();
             target.getCooldownManager().addCooldown(new RegularCooldown<>(
                     getStringName(),
                     "PURI",
@@ -93,7 +94,14 @@ public class DivinePurification implements SpecBoostManager.SpecBoost<DivinePuri
 
                 @Override
                 protected Listener getListener() {
-                    return CooldownUtils.getDefaultDebuffImmunityListener(target);
+                    return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity
+                            .create(warlordsEntity)
+                            .potionPredicate(CooldownUtils.DebuffImmunity.DEFAULT_POTION)
+                            .cooldownPredicate(event -> {
+                                CooldownTypes type = event.getAbstractCooldown().getCooldownType();
+                                return type == CooldownTypes.TRUE_DEBUFF || type == CooldownTypes.HIGH_LEVEL_DEBUFF || type == CooldownTypes.LOW_LEVEL_DEBUFF;
+                            })
+                    );
                 }
             });
         }

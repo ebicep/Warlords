@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.motionsystem.MotionModifierBuilder;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
 
@@ -32,6 +33,11 @@ public class Solitary implements SpecBoostManager.SpecBoost<Solitary> {
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "solitary.damageReduction", float.class),
                 ConfigManager.getAbilityConfigValue(DEFAULT_NAMESPACES, "solitary.healthPercentageHealing", float.class)
         );
+    }
+
+    @Override
+    public TextComponent getDescription() {
+        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.Solitary());
     }
 
     @Override

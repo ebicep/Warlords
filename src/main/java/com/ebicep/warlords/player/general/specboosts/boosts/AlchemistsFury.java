@@ -9,6 +9,7 @@ import java.util.List;
 
 public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury> {
 
+    private float soothingElixirCooldownReductionSeconds;
     private float soothingElixirDamageIncreasePercent;
     private float soothingElixirProjectileSpeedMultiplier;
     private float soothingElixirRadiusIncrease;
@@ -16,6 +17,7 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
 
     @Override
     public void init() {
+        this.soothingElixirCooldownReductionSeconds = getValue("soothingElixirCooldownReductionSeconds", float.class);
         this.soothingElixirDamageIncreasePercent = getValue("soothingElixirDamageIncreasePercent", float.class);
         this.soothingElixirProjectileSpeedMultiplier = getValue("soothingElixirProjectileSpeedMultiplier", float.class);
         this.soothingElixirRadiusIncrease = getValue("soothingElixirRadiusIncrease", float.class);
@@ -30,6 +32,7 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
     @Override
     public List<Object> getVariables() {
         return List.of(
+                soothingElixirCooldownReductionSeconds,
                 soothingElixirDamageIncreasePercent,
                 soothingElixirProjectileSpeedMultiplier,
                 soothingElixirRadiusIncrease,
@@ -52,12 +55,13 @@ public class AlchemistsFury implements SpecBoostManager.SpecBoost<AlchemistsFury
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             warlordsPlayer.getAbilitiesMatching(SoothingElixir.class).forEach(soothingElixir -> {
+                soothingElixir.getCooldown().addAdditiveModifier("Spec Boost", -soothingElixirCooldownReductionSeconds);
                 soothingElixir.setSpeed(soothingElixir.getSpeed() * soothingElixirProjectileSpeedMultiplier);
                 soothingElixir.setGravity(soothingElixir.getGravity() * soothingElixirProjectileSpeedMultiplier);
                 soothingElixir.getDamageValues().getElixirDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", soothingElixirDamageIncreasePercent / 100)
                 );
-                soothingElixir.getHealValues().getElixirHealing().forEachValue(floatModifiable ->
+                soothingElixir.getHealValues().getElixirDOTHealing().forEachValue(floatModifiable ->
                         floatModifiable.addOverridingModifier("Spec Boost", 0)
                 );
                 soothingElixir.getHitBoxRadius().addAdditiveModifier("Spec Boost", soothingElixirRadiusIncrease);

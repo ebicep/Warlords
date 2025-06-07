@@ -17,6 +17,7 @@ public class MegalithicBoulder implements SpecBoostManager.SpecBoost<MegalithicB
     @Override
     public void init() {
         this.boulderDamageIncreasePercent = getValue("boulderDamageIncreasePercent", float.class);
+        this.boulderKnockbackIncreasePercent = getValue("boulderKnockbackIncreasePercent", float.class);
         this.chainHealBoulderCooldownReductionIncreaseTicks = getValue("chainHealBoulderCooldownReductionIncreaseTicks", int.class);
     }
 

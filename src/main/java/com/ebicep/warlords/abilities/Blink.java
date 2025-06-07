@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.java.MathUtils;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -54,14 +55,21 @@ public class Blink extends AbstractAbility implements BlueAbilityIcon, HitBox, A
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         wp.setRegenTickTimer(1);
-        LocationBuilder locationBuilder = new LocationBuilder(wp.getEyeLocation());
+        Location startLocation = wp.getEyeLocation();
+        LocationBuilder locationBuilder = new LocationBuilder(startLocation);
+        if (locationBuilder.getWorld().getBlockAt(locationBuilder.getBlockX(), locationBuilder.getBlockY() + 1, locationBuilder.getBlockZ()).getType() != Material.AIR) {
+            locationBuilder.pitch(0);
+        }
         float maxHorizontal = wp.hasFlag() ? radiusFlag.getCalculatedValue() : radius.getCalculatedValue();
         float maxVertical = wp.hasFlag() ? verticalLimitFlag : verticalLimit;
-        int maxDistance = (int) MathUtils.calculateMaxDistance(Math.abs(wp.getEyeLocation().getPitch()), maxHorizontal, maxVertical);
-        for (Block ignored : Utils.getTargetBlockInBetween(wp.getEyeLocation(), maxDistance)) {
+        int maxDistance = (int) MathUtils.calculateMaxDistance(Math.abs(locationBuilder.getPitch()), maxHorizontal, maxVertical) - 1;
+        LocationBuilder endLocation = new LocationBuilder(locationBuilder).forward(maxDistance);
+//        EffectUtils.displayParticle(Particle.HAPPY_VILLAGER, endLocation, 10, 0, 0, 0, 0);
+        for (Block ignored : Utils.getTargetBlockInBetween(locationBuilder, maxDistance)) {
             if (!Utils.getTargetBlock(locationBuilder, 1).getType().isAir() ||
-                    !locationBuilder.getBlock().getType().isAir() ||
-                    !locationBuilder.clone().addY(1).getBlock().getType().isAir()
+                    !locationBuilder.getBlock().getType().isAir()
+                    || locationBuilder.distanceSquared(startLocation) > startLocation.distanceSquared(endLocation)
+                // || !locationBuilder.clone().addY(1).getBlock().getType().isAir()
             ) {
                 locationBuilder.centerXZBlock();
                 boolean isSlab = locationBuilder.clone().addY(-1).getBlock().getBlockData() instanceof Slab;

@@ -30,7 +30,7 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
+public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRampage> {
 
     private float soulShackleAoEDamagePercent;
     private float soulShackleAoERadius;
@@ -65,7 +65,7 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
 
     @Override
     public String getConfigFieldName() {
-        return "bullRush";
+        return "righteousRampage";
     }
 
     @Override
@@ -92,7 +92,7 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
     }
 
     @Override
-    public BullRush get() {
+    public RighteousRampage get() {
         return this;
     }
 

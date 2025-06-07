@@ -22,12 +22,10 @@ import java.util.function.Consumer;
 public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> {
 
     private int heartToHeartSelfHealing;
-    private float prismGuardExplosionKnockbackRadius;
 
     @Override
     public void init() {
         this.heartToHeartSelfHealing = getValue("heartToHeartSelfHealing", int.class);
-        this.prismGuardExplosionKnockbackRadius = getValue("prismGuardExplosionKnockbackRadius", float.class);
     }
 
     @Override
@@ -37,7 +35,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(heartToHeartSelfHealing, prismGuardExplosionKnockbackRadius);
+        return List.of(heartToHeartSelfHealing);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Blink> BLINK = new Blink();
     public static final SpecBoost<BlizzardBreath> BLIZZARD_BREATH = new BlizzardBreath();
     public static final SpecBoost<BloodFrenzy> BLOOD_FRENZY = new BloodFrenzy();
-    public static final SpecBoost<BullRush> BULL_RUSH = new BullRush();
+    public static final SpecBoost<RighteousRampage> RIGHTEOUS_RAMPAGE = new RighteousRampage();
     public static final SpecBoost<BurstChain> BURST_CHAIN = new BurstChain();
     public static final SpecBoost<ChillyAura> CHILLY_AURA = new ChillyAura();
     public static final SpecBoost<Clairvoyance> CLAIRVOYANCE = new Clairvoyance();
@@ -41,6 +41,7 @@ public class SpecBoostManager {
     public static final SpecBoost<DivineEffulgence> DIVINE_EFFULGENCE = new DivineEffulgence();
     public static final SpecBoost<DivinePurification> DIVINE_PURIFICATION = new DivinePurification();
     public static final SpecBoost<EarthboundInfusion> EARTHBOUND_INFUSION = new EarthboundInfusion();
+    public static final SpecBoost<EcoDrive> ECO_DRIVE = new EcoDrive();
     public static final SpecBoost<EfficientStrikes> EFFICIENT_STRIKES = new EfficientStrikes();
     public static final SpecBoost<ElectromagneticChains> ELECTROMAGNETIC_CHAINS = new ElectromagneticChains();
     public static final SpecBoost<EyeOfTheStorm> EYE_OF_THE_STORM = new EyeOfTheStorm();
@@ -54,7 +55,7 @@ public class SpecBoostManager {
     public static final SpecBoost<Haze> HAZE = new Haze();
     public static final SpecBoost<HealingLink> HEALING_LINK = new HealingLink();
     public static final SpecBoost<HeroicIntervention> HEROIC_INTERVENTION = new HeroicIntervention();
-    public static final SpecBoost<LightSpeedInfusion> LIGHT_SPEED_INFUSION = new LightSpeedInfusion();
+    public static final SpecBoost<IceBlock> ICE_BLOCK = new IceBlock();
     public static final SpecBoost<LustrousCrown> LUSTROUS_CROWN = new LustrousCrown();
     public static final SpecBoost<MarkedForDeath> MARKED_FOR_DEATH = new MarkedForDeath();
     public static final SpecBoost<MegalithicBoulder> MEGALITHIC_BOULDER = new MegalithicBoulder();
@@ -96,19 +97,19 @@ public class SpecBoostManager {
 
     static {
         SPEC_BOOSTS.put(Specializations.PYROMANCER, List.of(METEOR, FLAME_BREATH, BURST_CHAIN, DIMENSIONAL_WARP, ARCANE_SHATTER));
-        SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, ARCANE_RECLUSE, CHILLY_AURA));
+        SPEC_BOOSTS.put(Specializations.CRYOMANCER, List.of(FROST_MISSILE, BLIZZARD_BREATH, STEADFAST_WARP, CHILLY_AURA, ICE_BLOCK));
         SPEC_BOOSTS.put(Specializations.AQUAMANCER, List.of(TYPHOON_BOLT, DIVINE_PURIFICATION, CLAIRVOYANCE, FORTIFIED_AEGIS, ARCANE_REFLECTION));
         SPEC_BOOSTS.put(Specializations.BERSERKER, List.of(EFFICIENT_STRIKES, MIGHTY_FISTS, SEISMIC_SHIFT, BLOOD_FRENZY, GOLIATH));
         SPEC_BOOSTS.put(Specializations.DEFENDER, List.of(STRIKER, FERVENT_FORCE, HEROIC_INTERVENTION, VITALITY_BOOST, SOLITARY));
         SPEC_BOOSTS.put(Specializations.REVENANT, List.of(VIBRANT_ORBS, RECKLESS_ASCENT, HEALING_LINK, ONE_MAN_ARMY, UNDYING_STEED));
         SPEC_BOOSTS.put(Specializations.AVENGER, List.of(CONDUIT, ARM_OF_THE_ALMIGHTY, UNSTOPPABLE_SURGE, MARKED_FOR_DEATH, WARDING_WRATH));
         SPEC_BOOSTS.put(Specializations.CRUSADER, List.of(CRUSADERS_MIGHT, PARRY, VIGOROUS_INFUSION, SOVEREIGN_SOLITUDE, RALLYING_PRESENCE));
-        SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(BIG_GUY, LIGHT_SPEED_INFUSION, DIVINE_EFFULGENCE, LUSTROUS_CROWN, HAMMER_OF_JUDGEMENT));
+        SPEC_BOOSTS.put(Specializations.PROTECTOR, List.of(BIG_GUY, ECO_DRIVE, DIVINE_EFFULGENCE, LUSTROUS_CROWN, HAMMER_OF_JUDGEMENT));
         SPEC_BOOSTS.put(Specializations.THUNDERLORD, List.of(TRANSISTOR, ELECTROMAGNETIC_CHAINS, SYMPHONIC_WINDFURY, GALVANIZED_SPARK, EYE_OF_THE_STORM));
         SPEC_BOOSTS.put(Specializations.SPIRITGUARD, List.of(SOUL_REND, PERMEATING_LINK, PENITENT_RESOLVE));
         SPEC_BOOSTS.put(Specializations.EARTHWARDEN, List.of(ACCELERATED_SPIKE, MEGALITHIC_BOULDER, EARTHBOUND_INFUSION, AUGMENTED_CHAINS, TOTEMIC_BOON));
         SPEC_BOOSTS.put(Specializations.ASSASSIN, List.of(TRICKSTER, BLINK, RIFT_AMBUSH, TORRENTIAL_SOUL, HAZE));
-        SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, BULL_RUSH, SWIFT_JUSTICE));
+        SPEC_BOOSTS.put(Specializations.VINDICATOR, List.of(ABYSSAL_GRASP, VITAL_PULSE, SANCTION_BURST, RIGHTEOUS_RAMPAGE, SWIFT_JUSTICE));
         SPEC_BOOSTS.put(Specializations.APOTHECARY, List.of(AURA_OF_RESTORATION, ALCHEMISTS_FURY, SUSTAINED_ONSLAUGHT, DETONATION_CATALYST, SUPER_BREW));
     }
 

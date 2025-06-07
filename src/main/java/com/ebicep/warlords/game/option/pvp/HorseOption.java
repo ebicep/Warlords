@@ -157,7 +157,6 @@ public class HorseOption implements Option, Listener {
             player.sendMessage(Component.text("You can't mount while holding the flag!", NamedTextColor.RED));
             return;
         }
-        player.playSound(player.getLocation(), "mountup", 1, 1);
         WarlordsHorse warlordsHorse = activateHorseForPlayer(wp);
         if (!wp.isDisableCooldowns() && warlordsHorse != null) {
             warlordsHorse.setCurrentCooldown(warlordsHorse.getCooldown().getCalculatedValue());
@@ -180,6 +179,7 @@ public class HorseOption implements Option, Listener {
                 if (horseEvent.isCancelled()) {
                     return null;
                 }
+                player.playSound(player.getLocation(), "mountup", 1, 1);
                 warlordsHorse.spawn(player);
                 return warlordsHorse;
             }
