@@ -3,7 +3,9 @@ package com.ebicep.warlords.abilities;
 import com.ebicep.warlords.abilities.internal.*;
 import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
 import com.ebicep.warlords.pve.upgrades.AbilityTree;
 import com.ebicep.warlords.pve.upgrades.AbstractUpgradeBranch;
@@ -54,14 +56,36 @@ public class RighteousStrike extends AbstractStrike<RighteousStrike, RighteousSt
     protected boolean onHit(@Nonnull WarlordsEntity wp, @Nonnull WarlordsEntity nearPlayer) {
         targetsStruck++;
         nearPlayer.addInstance(InstanceBuilder.damage().ability(this).source(wp).value(damageValues.strikeDamage));
-        if (nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class)) {
+        boolean silenced = nearPlayer.getCooldownManager().hasCooldown(SoulShackle.class);
+        new CooldownFilter<>(nearPlayer, RegularCooldown.class)
+                .filter(regularCooldown -> regularCooldown.getCooldownType() == CooldownTypes.ABILITY)
+                .forEach(regularCooldown -> {
+                    String cooldownName = regularCooldown.getName();
+                    if (cooldownName.equals("Ice Barrier") || cooldownName.equals("Ice Block") || cooldownName.equals("Lustrous Crown")) {
+                        regularCooldown.subtractTime(8);
+                    } else if (cooldownName.equals("Last Stand")) {
+                        regularCooldown.subtractTime(8);
+                        Object data = regularCooldown.getCooldownObject();
+                        nearPlayer.getGame()
+                                  .warlordsPlayers()
+                                  .filter(warlordsPlayer -> warlordsPlayer.isTeammateAlive(nearPlayer) && warlordsPlayer != nearPlayer)
+                                  .forEach(warlordsPlayer -> {
+                                      new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                                              .filterCooldownObject(data)
+                                              .findAny()
+                                              .ifPresent(cd -> {
+                                                  cd.subtractTime(8);
+                                              });
+                                  });
+                    } else {
+                        regularCooldown.subtractTime(abilityReductionInTicks + (silenced ? additionalReductionInTicks : 0));
+                    }
+                });
+        if (silenced) {
             stats.silencedTargetStruck++;
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks + additionalReductionInTicks, CooldownTypes.ABILITY);
             for (PrismGuard prismGuard : wp.getAbilitiesMatching(PrismGuard.class)) {
                 prismGuard.subtractCurrentCooldown(prismGuardCooldownReduction);
             }
-        } else {
-            nearPlayer.getCooldownManager().subtractTicksOnRegularCooldowns(abilityReductionInTicks, CooldownTypes.ABILITY);
         }
         if (pveMasterUpgrade || pveMasterUpgrade2) {
             if (pveMasterUpgrade) {

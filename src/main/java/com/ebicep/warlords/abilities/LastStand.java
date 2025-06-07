@@ -63,22 +63,6 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    public void updateDescription(Player player) {
-        description = AbilityDescriptionBuilder.create("Enter a defensive stance, reducing all damage you take by ")
-                                               .percent(selfDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" for ")
-                                               .durationTicks(selfTickDuration)
-                                               .text(" and also reduces all damage allies within")
-                                               .blocks(radius)
-                                               .text(" by ")
-                                               .percent(teammateDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
-                                               .text(" for ")
-                                               .durationTicks(allyTickDuration)
-                                               .text(". You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))
-                                               .build();
-    }
-
-    @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "warrior.laststand.activation", 2, 1);
         LastStandData data = new LastStandData();
@@ -92,21 +76,32 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
                 modifiers.add(ability.getCooldown().addMultiplicativeModifierAdd("Enduring Defense", -.5f));
             }
         }
-        RegularCooldown<LastStandData> lastStandCooldown = new RegularCooldown<>(name, "LAST", LastStandData.class, data, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, cooldownManager -> {
-            ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
-            if (pveMasterUpgrade2) {
-                modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
-            }
-        }, selfTickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-            if ((pveMasterUpgrade || pveMasterUpgrade2) && ticksLeft % 15 == 0) {
-                for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp).closestFirst(wp)) {
-                    if (we instanceof WarlordsNPC) {
-                        ((WarlordsNPC) we).getMob().setTarget(wp);
+        RegularCooldown<LastStandData> lastStandCooldown = new RegularCooldown<>(
+                name,
+                "LAST",
+                LastStandData.class,
+                data,
+                wp,
+                CooldownTypes.ABILITY,
+
+                cooldownManager -> {
+                },
+                cooldownManager -> {
+                    ChallengeAchievements.checkForAchievement(wp, ChallengeAchievements.HARDENED_SCALES);
+                    if (pveMasterUpgrade2) {
+                        modifiers.forEach(FloatModifiable.FloatModifier::forceEnd);
                     }
-                }
-            }
-        })
+                },
+                selfTickDuration,
+                Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if ((pveMasterUpgrade || pveMasterUpgrade2) && ticksLeft % 15 == 0) {
+                        for (WarlordsEntity we : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp).closestFirst(wp)) {
+                            if (we instanceof WarlordsNPC) {
+                                ((WarlordsNPC) we).getMob().setTarget(wp);
+                            }
+                        }
+                    }
+                })
         ) {
 
             @Override
@@ -199,6 +194,22 @@ public class LastStand extends AbstractAbility implements OrangeAbilityIcon, Dur
             }
         }
         return true;
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = AbilityDescriptionBuilder.create("Enter a defensive stance, reducing all damage you take by ")
+                                               .percent(selfDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" for ")
+                                               .durationTicks(selfTickDuration)
+                                               .text(" and also reduces all damage allies within")
+                                               .blocks(radius)
+                                               .text(" by ")
+                                               .percent(teammateDamageReductionPercent, AbilityDescriptionBuilder.COLOR_BROWN)
+                                               .text(" for ")
+                                               .durationTicks(allyTickDuration)
+                                               .text(". You are healed for the amount of damage prevented on allies." + (inPve ? "Additionally, constantly take aggro of nearby mobs." : ""))
+                                               .build();
     }
 
     @Override

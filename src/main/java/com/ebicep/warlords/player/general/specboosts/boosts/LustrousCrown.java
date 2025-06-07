@@ -69,6 +69,7 @@ public class LustrousCrown implements SpecBoostManager.SpecBoost<LustrousCrown> 
             if (!(cooldown.getCooldownObject() instanceof HammerOfLightData)) {
                 return;
             }
+            cooldown.setName(getStringName());
             warlordsEntity.addSpeedModifier(warlordsEntity, getStringName(), crownOfLightSpeedPercent, cooldown);
         }
 
