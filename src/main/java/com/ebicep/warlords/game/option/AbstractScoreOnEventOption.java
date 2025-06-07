@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.game.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.events.game.WarlordsScoreOnEventEvent;
@@ -68,7 +69,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         public static int DEFAULT_SCORE = 250;
 
         public FlagCapture() {
-            this(DEFAULT_SCORE);
+            this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.pointsFlagCap", int.class, DEFAULT_SCORE));
         }
 
         public FlagCapture(int scoreIncrease) {
@@ -156,7 +157,7 @@ public abstract class AbstractScoreOnEventOption<T> implements Option {
         public static int DEFAULT_SCORE = 5;
 
         public OnKill() {
-            this(DEFAULT_SCORE);
+            this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.pointsKill", int.class, DEFAULT_SCORE));
         }
 
         public OnKill(int scoreIncrease) {

@@ -12,6 +12,7 @@ import com.ebicep.warlords.game.Game;
 import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.game.option.win.WinAfterTimeoutOption;
+import com.ebicep.warlords.game.option.win.WinByPointsOption;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.util.bukkit.ComponentBuilder;
 import com.ebicep.warlords.util.java.NumberFormat;
@@ -119,7 +120,11 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
 
     @Field("time_left")
     protected int timeLeft;
+    @Field("time_initial")
+    protected int timeInitial;
     protected Team winner;
+    @Field("target_points")
+    protected int targetPoints;
     @Field("blue_points")
     protected int bluePoints;
     @Field("red_points")
@@ -132,7 +137,9 @@ public class DatabaseGameCTF extends DatabaseGameBase<DatabaseGamePlayerCTF> {
     public DatabaseGameCTF(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         super(game, counted);
         this.timeLeft = WinAfterTimeoutOption.getTimeRemaining(game).orElse(-1);
+        this.timeInitial = WinAfterTimeoutOption.getTimeInitial(game).orElse(-1);
         this.winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
+        this.targetPoints = WinByPointsOption.getPointLimit(game).orElse(-1);
         this.bluePoints = game.getPoints(Team.BLUE);
         this.redPoints = game.getPoints(Team.RED);
         game.warlordsPlayers().forEach(warlordsPlayer -> {

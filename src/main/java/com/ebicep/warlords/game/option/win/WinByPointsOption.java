@@ -1,5 +1,6 @@
 package com.ebicep.warlords.game.option.win;
 
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.events.game.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.game.Game;
@@ -19,8 +20,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 public class WinByPointsOption implements Option, Listener {
+
+    public static OptionalInt getPointLimit(@Nonnull Game game) {
+        for (Option option : game.getOptions()) {
+            if (option instanceof WinByPointsOption winByPointsOption) {
+                return OptionalInt.of(winByPointsOption.getPointLimit());
+            }
+        }
+        return OptionalInt.empty();
+    }
     public static final int DEFAULT_POINT_LIMIT = 1000;
     private static final int SCOREBOARD_PRIORITY = 5;
 
@@ -29,7 +40,7 @@ public class WinByPointsOption implements Option, Listener {
     private ScoreboardHandler scoreboard;
 
     public WinByPointsOption() {
-        this(DEFAULT_POINT_LIMIT);
+        this(ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.pointsToWin", int.class, DEFAULT_POINT_LIMIT));
     }
 
     public WinByPointsOption(int pointLimit) {

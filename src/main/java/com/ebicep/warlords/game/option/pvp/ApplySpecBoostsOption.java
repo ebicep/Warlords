@@ -22,6 +22,16 @@ import java.util.Map;
 
 public class ApplySpecBoostsOption implements Option {
 
+    public static String getPlayerSpecBoost(WarlordsPlayer warlordsPlayer) {
+        for (ApplySpecBoostsOption applySpecBoostsOption : warlordsPlayer.getGame().getOption(ApplySpecBoostsOption.class)) {
+            PlayerSpecAppliedBoost appliedBoost = applySpecBoostsOption.getPlayerSpecBoosts().get(warlordsPlayer);
+            if (appliedBoost != null) {
+                return appliedBoost.specBoost.getDatabaseName();
+            }
+        }
+        return "";
+    }
+
     private final Map<WarlordsEntity, PlayerSpecAppliedBoost> playerSpecBoosts = new HashMap<>();
 
     @Override

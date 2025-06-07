@@ -58,6 +58,10 @@ public class ConfigManager {
         return GAME_CONFIG.getValue(namespaces, key, fieldType);
     }
 
+    public static <T> T getGameConfigValue(List<String> namespaces, String key, Class<T> fieldType, T defaultValue) {
+        return GAME_CONFIG.getValue(namespaces, key, fieldType, defaultValue);
+    }
+
     public interface Config {
 
         String getName();

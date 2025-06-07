@@ -6,6 +6,7 @@ import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.AbstractAbilityStats;
 import com.ebicep.warlords.database.repositories.games.pojos.pve.wavedefense.DatabaseGamePlayerPvEWaveDefense;
 import com.ebicep.warlords.events.game.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.game.option.pvp.ApplySpecBoostsOption;
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.PlayerSettings;
 import com.ebicep.warlords.player.general.SkillBoosts;
@@ -32,6 +33,8 @@ public class DatabaseGamePlayerBase {
     protected Specializations spec;
     @Field("skill_boost")
     protected SkillBoosts skillBoost;
+    @Field("spec_boost")
+    protected String specBoost;
     @Field("blocks_travelled")
     protected int blocksTravelled;
     @Field("x_locations")
@@ -74,6 +77,7 @@ public class DatabaseGamePlayerBase {
         this.name = warlordsPlayer.getName();
         this.spec = warlordsPlayer.getSpecClass();
         this.skillBoost = PlayerSettings.getPlayerSettings(warlordsPlayer.getUuid()).getSkillBoostForClass();
+        this.specBoost = ApplySpecBoostsOption.getPlayerSpecBoost(warlordsPlayer);
         this.blocksTravelled = warlordsPlayer.getBlocksTravelled();
         this.xLocations = warlordsPlayer.getLocations()
                                         .stream()

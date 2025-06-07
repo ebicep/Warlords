@@ -1,6 +1,5 @@
 package com.ebicep.warlords.game.state;
 
-import co.aikar.commands.CommandIssuer;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.misc.RecordGamesCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.StreamChaptersCommand;
@@ -21,7 +20,6 @@ import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.instances.type.PlayerNameInstance;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.bukkit.RemoveEntities;
-import com.ebicep.warlords.util.chat.ChatChannels;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.JavaUtils;
 import com.ebicep.warlords.util.warlords.GameRunnable;
@@ -69,14 +67,14 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void begin() {
         ChatUtils.MessageType.GAME_DEBUG.sendMessage("Game " + game.getGameId() + " has started");
-        Warlords.getGameManager().getGames().stream()
-                .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().equals(game))
-                .findAny()
-                .ifPresent(gameHolder -> {
-                    ChatChannels.sendDebugMessage((CommandIssuer) null,
-                            Component.text("Started Game: " + game.getGameMode() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
-                    );
-                });
+//        Warlords.getGameManager().getGames().stream()
+//                .filter(gameHolder -> gameHolder.getGame() != null && gameHolder.getGame().equals(game))
+//                .findAny()
+//                .ifPresent(gameHolder -> {
+//                    ChatChannels.sendDebugMessage((CommandIssuer) null,
+//                            Component.text("Started Game: " + game.getGameMode() + " - " + gameHolder.getName(), NamedTextColor.LIGHT_PURPLE)
+//                    );
+//                });
         this.game.setAcceptsSpectators(true);
         this.game.setAcceptsPlayers(false);
         this.resetTimer();
@@ -240,7 +238,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
 
         if (winEvent != null) {
-            boolean isCompGame = game.getAddons().contains(GameAddon.PRIVATE_GAME) &&
+            boolean isCompGame = true || game.getAddons().contains(GameAddon.PRIVATE_GAME) &&
                     !com.ebicep.warlords.game.GameMode.isPvE(game.getGameMode()) &&
                     players.size() >= game.getGameMode().minPlayersToAddToDatabase &&
                     timer >= 6000;
