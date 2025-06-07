@@ -263,7 +263,7 @@ public class PrismGuard extends AbstractAbility implements BlueAbilityIcon, Dura
                                                .text(" the bubble will burst, healing you and all allies for ")
                                                .heal(healingValues.bubbleBaseHealing)
                                                .text(" + ")
-                                               .heal(healingValues.bubbleMissingHealthHealing)
+                                               .percent(healingValues.bubbleMissingHealthHealing.getValue(), NamedTextColor.GREEN)
                                                .text(" missing health and grant ")
                                                .percent(damageReduction, AbilityDescriptionBuilder.COLOR_BROWN)
                                                .text(" damage reduction for ")
