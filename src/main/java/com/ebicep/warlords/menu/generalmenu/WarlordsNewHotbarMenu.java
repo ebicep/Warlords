@@ -634,8 +634,8 @@ public class WarlordsNewHotbarMenu {
             menu.setItem(1, 1, MENU_ABILITY_DESCRIPTION, (m, e) -> openLobbyAbilityMenu(player, false, MENU_BACK_PVP, (m1, e1) -> openPvPMenu(player)));
             menu.setItem(2, 1, MENU_SKINS, (m, e) -> openWeaponMenu(player, 1));
             menu.setItem(3, 1, MENU_ARMOR_SETS, (m, e) -> openArmorMenu(player, 1));
-            menu.setItem(4, 1, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec()));
-            menu.setItem(5, 1, MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
+//            menu.setItem(4, 1, MENU_BOOSTS, (m, e) -> openSkillBoostMenu(player, PlayerSettings.getPlayerSettings(player.getUniqueId()).getSelectedSpec()));
+            menu.setItem(4, 1, MENU_SPEC_BOOSTS, (m, e) -> SpecBoostMenu.open(player));
 
             menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
 
