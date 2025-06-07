@@ -55,6 +55,61 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
+    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
+        Utils.playGlobalSound(wp.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
+        Utils.playGlobalSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
+        new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), radius, new CircumferenceEffect(Particle.EFFECT, Particle.DUST).particlesPerCircumference(2)).playEffects();
+        EffectUtils.playHelixAnimation(wp.getLocation(), radius, 230, 130, 5);
+        for (WarlordsEntity vindicateTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp)) {
+            if (vindicateTarget != wp) {
+                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN
+                        .append(Component.text(" Your Vindicate is now protecting ", NamedTextColor.GRAY))
+                        .append(Component.text(vindicateTarget.getName(), NamedTextColor.YELLOW))
+                        .append(Component.text("!", NamedTextColor.GRAY))
+                );
+                vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN
+                        .append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
+                        .append(Component.text("Vindicate", NamedTextColor.YELLOW))
+                        .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
+                        .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
+                        .append(Component.text(" seconds!", NamedTextColor.GRAY))
+                );
+            }
+            stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldownsVind();
+            giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, null, vindTickDuration);
+        }
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Vindicate Resistance", "VIND RESIST", Vindicate.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, damageReductionTickDuration
+        ) {
+
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                WarlordsEntity hit = event.getWarlordsEntity();
+                WarlordsEntity attacker = event.getSource();
+                if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
+                    Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
+                    attacker.addInstance(InstanceBuilder
+                            .damage()
+                            .cause(name)
+                            .source(hit)
+                            .value(currentDamageValue * .75f)
+                            .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE)
+                    );
+                    return currentDamageValue * .1f;
+                } else {
+                    return currentDamageValue * getCalculatedVindicateDamageReduction();
+                }
+            }
+        });
+        if (pveMasterUpgrade2) {
+            for (WarlordsEntity vindicateTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp)) {
+                SoulShackle.shacklePlayer(wp, vindicateTarget, 10 * 20);
+            }
+        }
+        return true;
+    }
+
+    @Override
     public void updateDescription(Player player) {
         description = AbilityDescriptionBuilder
                 .create("All allies within ")
@@ -74,54 +129,8 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
     }
 
     @Override
-    protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
-        Utils.playGlobalSound(wp.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
-        Utils.playGlobalSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
-        new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), radius, new CircumferenceEffect(Particle.EFFECT, Particle.DUST).particlesPerCircumference(2)).playEffects();
-        EffectUtils.playHelixAnimation(wp.getLocation(), radius, 230, 130, 5);
-        for (WarlordsEntity vindicateTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveTeammatesOf(wp)) {
-            if (vindicateTarget != wp) {
-                wp.sendMessage(WarlordsEntity.GIVE_ARROW_GREEN.append(Component.text(" Your Vindicate is now protecting ", NamedTextColor.GRAY))
-                                                              .append(Component.text(vindicateTarget.getName(), NamedTextColor.YELLOW))
-                                                              .append(Component.text("!", NamedTextColor.GRAY)));
-                vindicateTarget.sendMessage(WarlordsEntity.RECEIVE_ARROW_GREEN.append(Component.text(" " + wp.getName() + "'s ", NamedTextColor.GRAY))
-                                                                              .append(Component.text("Vindicate", NamedTextColor.YELLOW))
-                                                                              .append(Component.text(" is now protecting you from de-buffs for ", NamedTextColor.GRAY))
-                                                                              .append(Component.text(format(vindTickDuration / 20f), NamedTextColor.GOLD))
-                                                                              .append(Component.text(" seconds!", NamedTextColor.GRAY)));
-            }
-            // Vindicate Immunity
-            vindicateTarget.getSpeed().removeNegativeModifiers();
-            stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldownsVind();
-            giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, null, vindTickDuration);
-        }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Vindicate Resistance", "VIND RESIST", Vindicate.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, damageReductionTickDuration
-        ) {
-
-            @Override
-            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                WarlordsEntity hit = event.getWarlordsEntity();
-                WarlordsEntity attacker = event.getSource();
-                if (pveMasterUpgrade && !Objects.equals(attacker, hit)) {
-                    Utils.addKnockback(name, wp.getLocation(), attacker, -1, 0.15);
-                    attacker.addInstance(InstanceBuilder.damage()
-                                                        .cause(name)
-                                                        .source(hit)
-                                                        .value(currentDamageValue * .75f)
-                                                        .flags(InstanceFlags.IGNORE_SELF_RES, InstanceFlags.RECURSIVE, InstanceFlags.REFLECTIVE_DAMAGE));
-                    return currentDamageValue * .1f;
-                } else {
-                    return currentDamageValue * getCalculatedVindicateDamageReduction();
-                }
-            }
-        });
-        if (pveMasterUpgrade2) {
-            for (WarlordsEntity vindicateTarget : PlayerFilter.entitiesAround(wp, radius, radius, radius).aliveEnemiesOf(wp)) {
-                SoulShackle.shacklePlayer(wp, vindicateTarget, 10 * 20);
-            }
-        }
-        return true;
+    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
+        return new VindicateBranch(abilityTree, this);
     }
 
     public static <T> void giveVindicateCooldown(WarlordsEntity from, WarlordsEntity target, Class<T> cooldownClass, T cooldownObject, int tickDuration) {
@@ -166,11 +175,6 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
 
     public float getCalculatedVindicateDamageReduction() {
         return (100 - vindicateDamageReduction) / 100f;
-    }
-
-    @Override
-    public AbstractUpgradeBranch<?> getUpgradeBranch(AbilityTree abilityTree) {
-        return new VindicateBranch(abilityTree, this);
     }
 
     @Override

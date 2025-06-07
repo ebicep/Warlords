@@ -54,7 +54,7 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
         List<FloatModifiable.FloatModifier> modifiers = new ArrayList<>();
 
         wp.addInstance(InstanceBuilder.healing().ability(this).source(wp).value(healingValues.bullRushHealing));
-        wp.setStunTicks(0);
+        wp.unstun();
         Set<WarlordsEntity> hit = new HashSet<>();
         float radius = this.radius.getCalculatedValue();
         RegularCooldown<BullRush> cd = new RegularCooldown<>(
@@ -78,8 +78,10 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
                                     .excluding(hit)
                                     .forEach(warlordsEntity -> {
                                         hit.add(warlordsEntity);
-                                        Vector v = wp.getCurrentVector().normalize().multiply(magnitude).setY(knockbackY);
-                                        warlordsEntity.setVelocity(name, v, false);
+                                        if (!warlordsEntity.hasFlag()) {
+                                            Vector v = wp.getCurrentVector().normalize().multiply(magnitude).setY(knockbackY);
+                                            warlordsEntity.setVelocity(name, v, false);
+                                        }
                                         warlordsEntity.addInstance(InstanceBuilder
                                                 .damage()
                                                 .ability(this)
@@ -164,7 +166,7 @@ public class BullRush extends AbstractAbility implements PurpleAbilityIcon, HitB
         @Override
         public void init(AbstractAbilityBuilder builder) {
             this.bullRushDamage = ConfigManager.getAbilityConfigValue(builder.getNamespaces(),
-                    builder.getAppendedFieldNameDamage("boulderDamage"),
+                    builder.getAppendedFieldNameDamage("bullRushDamage"),
                     Value.RangedValue.class
             );
             this.values = List.of(bullRushDamage);

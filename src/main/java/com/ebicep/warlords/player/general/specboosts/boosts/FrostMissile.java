@@ -24,7 +24,7 @@ public class FrostMissile implements SpecBoostManager.SpecBoost<FrostMissile> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(damageIncrease);
+        return List.of(damageIncrease, directHitDamageIncrease);
     }
 
     @Override

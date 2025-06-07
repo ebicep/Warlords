@@ -104,7 +104,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     public SoulbindingData activeSoulbinding(@Nonnull WarlordsEntity wp) {
         Utils.playGlobalSound(wp.getLocation(), "paladin.consecrate.activation", 2, 2);
         wp.getCooldownManager().limitCooldowns(PersistentCooldown.class, Soulbinding.SoulbindingData.class, wp.isInPve() ? 2 : maxStacks);
-        this.energyCost.addOverridingModifier("Soulbinding Reactivation", 0, tickDuration);
         SoulbindingData data = new SoulbindingData(this);
         wp.getCooldownManager().addCooldown(new PersistentCooldown<>(
                 name,
@@ -128,6 +127,9 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
                 tickDuration,
                 soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty(),
                 Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
+                    if (ticksElapsed == 1) {
+                        this.energyCost.addOverridingModifier("Soulbinding Reactivation", 0, tickDuration);
+                    }
                     if (ticksElapsed % 4 == 0) {
                         Location location = wp.getLocation();
                         location.add(0, 1.2, 0);
@@ -170,10 +172,6 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
         return data;
     }
 
-    public int getKbRes() {
-        return kbRes;
-    }
-
     @Override
     public int getTickDuration() {
         return tickDuration;
@@ -192,6 +190,10 @@ public class Soulbinding extends AbstractAbility implements PurpleAbilityIcon, D
     @Override
     public SoulbindingStats getAbilityStats() {
         return stats;
+    }
+
+    public int getKbRes() {
+        return kbRes;
     }
 
     public void addPlayersBinded() {

@@ -32,7 +32,7 @@ public class Clairvoyance implements SpecBoostManager.SpecBoost<Clairvoyance> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of();
+        return List.of(healingRainDurationTicks, healingRainHealIncreasePercent);
     }
 
     @Override

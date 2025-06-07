@@ -171,7 +171,7 @@ public abstract class AbstractPlayerClass {
                 WarlordsAbilityActivateEvent.Post post = new WarlordsAbilityActivateEvent.Post(wp, player, ability, slot);
                 Bukkit.getPluginManager().callEvent(post);
 
-                wp.subtractEnergy(ability.getName(), ability.getEnergyCost(), false);
+                wp.subtractEnergy(ability.getName(), ability.getEnergyCostValue(), false);
                 if (ability instanceof AbilityStats<?, ?> abilityStats) {
                     abilityStats.getAbilityStats().addTimesUsed();
                 }

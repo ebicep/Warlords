@@ -72,6 +72,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
                 incendiaryCurseIgniteDamage,
                 incendiaryCurseEnergyCostIncrease,
                 soulSwitchCooldownReductionSeconds,
+                soulSwitchInvisTickDuration,
                 soulSwitchDummyDurationTicks,
                 soulSwitchDummyHealth,
                 shadowLeapHealthThreshold

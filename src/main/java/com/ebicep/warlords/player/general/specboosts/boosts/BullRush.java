@@ -1,7 +1,9 @@
 package com.ebicep.warlords.player.general.specboosts.boosts;
 
+import com.ebicep.warlords.abilities.HeartToHeart;
 import com.ebicep.warlords.abilities.SoulShackle;
 import com.ebicep.warlords.abilities.Vindicate;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
 import com.ebicep.warlords.abilities.internal.Value;
 import com.ebicep.warlords.effects.FireWorkEffectPlayer;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
@@ -18,6 +20,7 @@ import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -31,7 +34,6 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
 
     private float soulShackleAoEDamagePercent;
     private float soulShackleAoERadius;
-
     private int vindicateVINDDurationTicks;
     private int vindicateDamageResistanceDurationTicks;
     private Value.RangedValue vindicateLeapDamage;
@@ -64,6 +66,11 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
     @Override
     public String getConfigFieldName() {
         return "bullRush";
+    }
+
+    @Override
+    public TextComponent getDescription() {
+        return getDescriptionWithAbility(new com.ebicep.warlords.abilities.BullRush());
     }
 
     @Override
@@ -100,6 +107,15 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
                 vindicate.setTickDuration(vindicateVINDDurationTicks);
                 vindicate.setDamageReductionTickDuration(vindicateDamageResistanceDurationTicks);
             });
+            List<AbstractAbility> abilities = warlordsPlayer.getAbilities();
+            for (int i = 0; i < abilities.size(); i++) {
+                if (abilities.get(i) instanceof HeartToHeart) {
+                    com.ebicep.warlords.abilities.BullRush bullRush = new com.ebicep.warlords.abilities.BullRush();
+                    bullRush.init(bullRush.getBuilder());
+                    abilities.set(i, bullRush);
+                }
+            }
+            warlordsPlayer.resetAbilityTree();
         }
 
         @EventHandler
@@ -119,7 +135,7 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
                             float aoeDamage = event.getValue() * (soulShackleAoEDamagePercent / 100);
                             aoeTarget.addInstance(InstanceBuilder
                                     .damage()
-                                    .cause(getStringName())
+                                    .cause("Soul Shackle")
                                     .source(warlordsEntity)
                                     .value(aoeDamage)
                                     .flags(InstanceFlags.RECURSIVE)
@@ -135,7 +151,6 @@ public class BullRush implements SpecBoostManager.SpecBoost<BullRush> {
             AbstractCooldown<?> cooldown = event.getAbstractCooldown();
             if (!(cooldown instanceof RegularCooldown<?> regularCooldown) ||
                     !cooldown.getName().equals("Vindicate Resistance") ||
-                    !(cooldown.getCooldownObject() instanceof Vindicate) ||
                     !cooldown.getFrom().equals(warlordsEntity)
             ) {
                 return;
