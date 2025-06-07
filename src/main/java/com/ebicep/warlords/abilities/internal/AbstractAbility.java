@@ -155,7 +155,7 @@ public abstract class AbstractAbility implements AbilityIcon {
         }
         currentCharges = Math.max(0, currentCharges - 1);
         if (currentCooldown == 0) {
-            currentCooldown = getCooldownValue();
+            setCurrentCooldown(getCooldownValue());
         }
     }
 
