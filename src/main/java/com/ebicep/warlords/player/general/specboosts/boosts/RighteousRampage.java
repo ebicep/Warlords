@@ -158,7 +158,7 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
             }
             warlordsEntity.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
                 vindicate.addSecondaryAbility(
-                        3,
+                        5,
                         () -> {
                             warlordsEntity.addKnockbackModifier(warlordsEntity, getStringName(), -100, regularCooldown);
                             warlordsEntity.getCooldownManager().addCooldown(new RegularCooldown<>(

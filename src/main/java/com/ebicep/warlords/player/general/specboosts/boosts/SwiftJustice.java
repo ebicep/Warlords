@@ -108,7 +108,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
                     }
                 };
                 vindicate.addSecondaryAbility(
-                        3,
+                        5,
                         () -> {
                             warlordsEntity.getSpeed().removeNegativeModifiers();
                             warlordsEntity.getCooldownManager().addCooldown(cd);

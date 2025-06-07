@@ -236,7 +236,9 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
         };
         wp.getCooldownManager().addCooldown(hammerOfLightCooldown);
         location.add(0, 1, 0);
-        addSecondaryAbility(3, () -> {
+        addSecondaryAbility(
+                5,
+                () -> {
                     if (!wp.isAlive() || !wp.getCooldownManager().hasCooldown(hammerOfLightCooldown)) {
                         return;
                     }

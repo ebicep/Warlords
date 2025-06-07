@@ -176,7 +176,7 @@ public class HealingTotem extends AbstractTotem implements Duration, HitBox, Hea
         );
         wp.getCooldownManager().addCooldown(healingTotemCooldown);
         if (inPve) {
-            addSecondaryAbility(1, () -> {
+            addSecondaryAbility(5, () -> {
                         Utils.playGlobalSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
                         new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SPRUCE_SAPLING).play();
                         PlayerFilter.entitiesAround(totemStand.getLocation(), rad, rad, rad).aliveEnemiesOf(wp).forEach((p) -> {
