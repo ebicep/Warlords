@@ -8,7 +8,6 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
-import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownUtils;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
@@ -28,7 +27,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,8 +76,16 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
             stats.debuffsRemovedOnCast += vindicateTarget.getCooldownManager().removeDebuffCooldownsVind();
             giveVindicateCooldown(wp, vindicateTarget, Vindicate.class, null, vindTickDuration);
         }
-        wp.getCooldownManager().addCooldown(new RegularCooldown<>("Vindicate Resistance", "VIND RESIST", Vindicate.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, damageReductionTickDuration
+        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                "Vindicate Resistance",
+                "VIND RESIST",
+                Vindicate.class,
+                null,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                damageReductionTickDuration
         ) {
 
             @Override
@@ -137,25 +143,20 @@ public class Vindicate extends AbstractAbility implements OrangeAbilityIcon, Dur
         // remove other instances of vindicate buff to override
         target.getCooldownManager().removeCooldownByName("Vindicate");
         boolean vindPveMaster2 = cooldownClass.equals(Vindicate.class) && from.getAbilitiesMatching(Vindicate.class).stream().anyMatch(t -> t.pveMasterUpgrade2);
-        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>("Vindicate", "VIND", cooldownClass, cooldownObject, from, CooldownTypes.BUFF, cooldownManager -> {
-        }, tickDuration, Collections.singletonList((cooldown, ticksLeft, ticksElapsed) -> {
-        })
+        RegularCooldown<T> vindiateCooldown = new RegularCooldown<>(
+                "Vindicate", "VIND",
+                cooldownClass,
+                cooldownObject,
+                from,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                tickDuration
         ) {
 
             @Override
             protected Listener getListener() {
-                return CooldownUtils.getDebuffImmunityListener(CooldownUtils.DebuffImmunity
-                        .create(target)
-                        .cooldownPredicate(event -> {
-                            AbstractCooldown<?> cd = event.getAbstractCooldown();
-                            if (cd.getCooldownObject() instanceof WoundingCooldown.WoundingData && cd instanceof RegularCooldown<?> regularCooldown) {
-                                regularCooldown.subtractTime(30);
-                                return false;
-                            }
-                            return cd.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
-                        })
-                        .potionPredicate(CooldownUtils.DebuffImmunity.DEFAULT_POTION)
-                );
+                return CooldownUtils.getPartialDebuffImmunityListener(target);
             }
 
             @Override

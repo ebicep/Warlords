@@ -95,7 +95,7 @@ public class VitalityConcoction extends AbstractAbility implements PurpleAbility
 
             @Override
             protected Listener getListener() {
-                return CooldownUtils.getDefaultDebuffImmunityListener(wp);
+                return CooldownUtils.getPartialDebuffImmunityListener(wp);
             }
 
             @Override

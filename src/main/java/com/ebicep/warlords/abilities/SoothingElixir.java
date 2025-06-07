@@ -145,7 +145,7 @@ public class SoothingElixir extends AbstractAbility implements RedAbilityIcon, D
 
                                           @Override
                                           protected Listener getListener() {
-                                              return CooldownUtils.getDefaultDebuffImmunityListener(nearEntity);
+                                              return CooldownUtils.getFullDebuffImmunityListener(nearEntity);
                                           }
                                       });
                         }

@@ -141,7 +141,7 @@ public class HammerOfLight extends AbstractAbility implements OrangeAbilityIcon,
 
                                 @Override
                                 protected Listener getListener() {
-                                    return CooldownUtils.getDefaultDebuffImmunityListener(allyTarget);
+                                    return CooldownUtils.getFullDebuffImmunityListener(allyTarget);
                                 }
                             });
                         }

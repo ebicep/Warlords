@@ -168,7 +168,7 @@ public class DrainingMiasma extends AbstractAbility implements OrangeAbilityIcon
 
                                     @Override
                                     protected Listener getListener() {
-                                        return CooldownUtils.getDefaultDebuffImmunityListener(miasmaTarget);
+                                        return CooldownUtils.getFullDebuffImmunityListener(miasmaTarget);
                                     }
                                 });
                 }

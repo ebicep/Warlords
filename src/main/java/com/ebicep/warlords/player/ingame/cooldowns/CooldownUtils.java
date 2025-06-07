@@ -1,10 +1,16 @@
 package com.ebicep.warlords.player.ingame.cooldowns;
 
+import com.ebicep.warlords.abilities.CripplingStrike;
+import com.ebicep.warlords.abilities.PoisonousHex;
+import com.ebicep.warlords.abilities.SoulShackle;
+import com.ebicep.warlords.abilities.internal.Leech;
+import com.ebicep.warlords.abilities.internal.WoundingCooldown;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddPotionEffectEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddSpeedModifierEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsPlayerStunEvent;
 import com.ebicep.warlords.player.ingame.WarlordsEntity;
+import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.chat.ChatUtils;
 import com.ebicep.warlords.util.java.Priority;
 import org.bukkit.event.EventHandler;
@@ -40,8 +46,8 @@ public class CooldownUtils {
                 .collect(Collectors.toList());
     }
 
-    public static Listener getDefaultDebuffImmunityListener(WarlordsEntity immune) {
-        return getDebuffImmunityListener(DebuffImmunity.getDefaultImmunity(immune));
+    public static Listener getFullDebuffImmunityListener(WarlordsEntity immune) {
+        return getDebuffImmunityListener(DebuffImmunity.getFullImmunity(immune));
     }
 
     public static Listener getDebuffImmunityListener(DebuffImmunity defaultImmunity) {
@@ -82,6 +88,33 @@ public class CooldownUtils {
         };
     }
 
+    public static Listener getPartialDebuffImmunityListener(WarlordsEntity immune) {
+        return getDebuffImmunityListener(DebuffImmunity
+                .create(immune)
+                .cooldownPredicate(event -> {
+                    AbstractCooldown<?> cd = event.getAbstractCooldown();
+                    if (cd instanceof RegularCooldown<?> regularCooldown) {
+                        if (cd.getCooldownObject() instanceof WoundingCooldown.WoundingData) {
+                            regularCooldown.subtractTime(30);
+                        } else if (cd.getCooldownObject() instanceof CripplingStrike.CripplingStrikeData) {
+                            regularCooldown.subtractTime(30);
+                        } else if (cd.getCooldownClass().equals(PoisonousHex.class)) {
+                            regularCooldown.subtractTime(40);
+                        } else if (cd.getCooldownClass().equals(SoulShackle.class)) {
+                            regularCooldown.subtractTime(10);
+                        } else if (cd.getCooldownObject() instanceof Leech.LeechData) {
+                            regularCooldown.subtractTime(50);
+                        } else {
+                            return cd.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
+                        }
+                        return false;
+                    }
+                    return cd.getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
+                })
+                .potionPredicate(DebuffImmunity.DEFAULT_POTION)
+        );
+    }
+
     public static class DebuffImmunity {
 
         public static final Predicate<WarlordsAddCooldownEvent> DEFAULT_COOLDOWN = event -> event.getAbstractCooldown().getCooldownType() == CooldownTypes.LOW_LEVEL_DEBUFF;
@@ -91,7 +124,7 @@ public class CooldownUtils {
                         PotionEffectType.NAUSEA.equals(event.getPotionEffect().getType());
         public static final Predicate<WarlordsPlayerStunEvent> DEFAULT_STUN = event -> true;
 
-        public static DebuffImmunity getDefaultImmunity(WarlordsEntity warlordsEntity) {
+        public static DebuffImmunity getFullImmunity(WarlordsEntity warlordsEntity) {
             return DebuffImmunity
                     .create(warlordsEntity)
                     .cooldownPredicate(DEFAULT_COOLDOWN)
@@ -99,13 +132,23 @@ public class CooldownUtils {
                     .potionPredicate(DEFAULT_POTION);
         }
 
-        public static DebuffImmunity create(WarlordsEntity warlordsEntity) {
-            return new DebuffImmunity(warlordsEntity);
+        public DebuffImmunity potionPredicate(Predicate<WarlordsAddPotionEffectEvent> predicate) {
+            this.potionPredicate = predicate;
+            return this;
         }
 
         public DebuffImmunity speedPredicate(Predicate<WarlordsAddSpeedModifierEvent> predicate) {
             this.speedPredicate = predicate;
             return this;
+        }
+
+        public DebuffImmunity cooldownPredicate(Predicate<WarlordsAddCooldownEvent> predicate) {
+            this.cooldownPredicate = predicate;
+            return this;
+        }
+
+        public static DebuffImmunity create(WarlordsEntity warlordsEntity) {
+            return new DebuffImmunity(warlordsEntity);
         }
 
         private final WarlordsEntity warlordsEntity;
@@ -116,16 +159,6 @@ public class CooldownUtils {
 
         public DebuffImmunity(WarlordsEntity warlordsEntity) {
             this.warlordsEntity = warlordsEntity;
-        }
-
-        public DebuffImmunity potionPredicate(Predicate<WarlordsAddPotionEffectEvent> predicate) {
-            this.potionPredicate = predicate;
-            return this;
-        }
-
-        public DebuffImmunity cooldownPredicate(Predicate<WarlordsAddCooldownEvent> predicate) {
-            this.cooldownPredicate = predicate;
-            return this;
         }
 
         public DebuffImmunity stunPredicate(Predicate<WarlordsPlayerStunEvent> predicate) {

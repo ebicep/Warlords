@@ -90,7 +90,7 @@ public class LightInfusionProtector extends AbstractLightInfusion {
 
                                   @Override
                                   protected Listener getListener() {
-                                      return CooldownUtils.getDefaultDebuffImmunityListener(infusionTarget);
+                                      return CooldownUtils.getFullDebuffImmunityListener(infusionTarget);
                                   }
                               });
             }
