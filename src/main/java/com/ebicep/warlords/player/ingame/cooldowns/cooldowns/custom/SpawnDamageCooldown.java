@@ -25,7 +25,7 @@ public class SpawnDamageCooldown extends RegularCooldown<SpawnDamageCooldown> {
 
     @Override
     public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
-        return currentDamageValue * damageBoost;
+        return currentDamageValue + damageBoost;
     }
 
 }
