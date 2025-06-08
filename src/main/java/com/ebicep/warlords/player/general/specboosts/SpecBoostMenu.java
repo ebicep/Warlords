@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.general.Specializations;
 import com.ebicep.warlords.util.bukkit.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -27,12 +28,23 @@ public class SpecBoostMenu {
                         int finalI = i;
                         ItemBuilder itemBuilder = new ItemBuilder(selectedSpec.specType.itemStack)
                                 .name(specBoost.getName())
-                                .lore(specBoost.getDescriptionLore())
+                                .lore(Component.textOfChildren(
+                                        Component.text("Difficulty: ", NamedTextColor.GRAY),
+                                        specBoost.getDifficulty()
+                                ))
+                                .addLore(Component.empty())
+                                .addLore(specBoost.getDescriptionLore())
                                 .glow(selected);
                         if (selected) {
                             itemBuilder.addLore(
                                     Component.empty(),
                                     Component.text("ACTIVE", NamedTextColor.GREEN)
+                            );
+                        }
+                        if (specBoost.isDisabled()) {
+                            itemBuilder.addLore(
+                                    Component.empty(),
+                                    Component.text("DISABLED", NamedTextColor.GREEN, TextDecoration.BOLD)
                             );
                         }
                         menu.setItem(i + 2, 1,

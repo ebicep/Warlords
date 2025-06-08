@@ -1,6 +1,8 @@
 package com.ebicep.warlords.game.option.pvp;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.abilities.internal.AbstractAbility;
+import com.ebicep.warlords.database.repositories.config.ConfigManager;
 import com.ebicep.warlords.events.game.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.player.ingame.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.game.Game;
@@ -192,33 +194,38 @@ public class FlagSpawnPointOption implements Option {
                         // Nothing
                         wp.sendMessage(Component.text("You cannot steal your own team's flag!", NamedTextColor.RED));
                     } else {
-                        List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
-                        for (FlagHolder flagHolder : flagHolders) {
-                            if (flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().getTeam() == info.getTeam()) {
-                                if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
-                                    wp.sendMessage(Component.text("No repick for you!", NamedTextColor.RED));
-                                    return true;
+                        if (ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagDisableRepicks", Boolean.class, true)) {
+                            List<FlagHolder> flagHolders = game.getMarkers(FlagHolder.class);
+                            for (FlagHolder flagHolder : flagHolders) {
+                                if (flagHolder.getFlag() instanceof PlayerFlagLocation playerFlagLocation && playerFlagLocation.getPlayer().getTeam() == info.getTeam()) {
+                                    if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
+                                        wp.sendMessage(Component.text("No repick for you!", NamedTextColor.RED));
+                                        return true;
+                                    }
                                 }
                             }
                         }
                         // Steal flag
                         info.setFlag(new PlayerFlagLocation(wp, 0, spawnFlagLocation.getFlagMultiplier()));
-                        wp.getCooldownManager().addCooldown(new RegularCooldown<>(
-                                "Flag Damage Resistance",
-                                "RES",
-                                FlagSpawnPointOption.class,
-                                null,
-                                wp,
-                                CooldownTypes.BUFF,
-                                cooldownManager -> {
-                                },
-                                15 * 20
-                        ) {
-                            @Override
-                            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
-                                return currentDamageValue * .9f;
-                            }
-                        });
+                        Integer flagRes = ConfigManager.getGameConfigValue(ConfigManager.DEFAULT_NAMESPACES, "ctf.flagPickResistance", int.class, 0);
+                        if (flagRes != null && flagRes == 0) {
+                            wp.getCooldownManager().addCooldown(new RegularCooldown<>(
+                                    "Flag Damage Resistance",
+                                    "RES",
+                                    FlagSpawnPointOption.class,
+                                    null,
+                                    wp,
+                                    CooldownTypes.BUFF,
+                                    cooldownManager -> {
+                                    },
+                                    15 * 20
+                            ) {
+                                @Override
+                                public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                    return currentDamageValue * AbstractAbility.convertToDivisionDecimal(flagRes);
+                                }
+                            });
+                        }
                     }
                     return true;
                 }

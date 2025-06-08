@@ -263,7 +263,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             Title.Times.times(Ticks.duration(0), Ticks.duration(100), Ticks.duration(40))
                                     ));
                                     targetPlayer.sendMessage(Component.text("Your spec was automatically changed to ", NamedTextColor.GREEN)
-                                                                      .append(Component.text(spec, NamedTextColor.YELLOW))
+                                                                      .append(getSpecComponent(spec))
                                                                       .append(Component.text("!", NamedTextColor.GREEN)));
                                 }
                                 targetPlayer.sendMessage("");
@@ -271,13 +271,13 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 blueTeam.forEach(s -> {
                                     targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.GREEN : NamedTextColor.BLUE)
                                                                       .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                                      .append(Component.text(s.spec, NamedTextColor.YELLOW)));
+                                                                      .append(getSpecComponent(s.spec)));
                                 });
                                 targetPlayer.sendMessage(Component.text("Red Team", NamedTextColor.DARK_RED).append(Component.text(" - ", NamedTextColor.DARK_GRAY)));
                                 redTeam.forEach(s -> {
                                     targetPlayer.sendMessage(Component.text(s.name, s.name.contains(name) ? NamedTextColor.GREEN : NamedTextColor.RED)
                                                                       .append(Component.text(" - ", NamedTextColor.GRAY))
-                                                                      .append(Component.text(s.spec, NamedTextColor.YELLOW)));
+                                                                      .append(getSpecComponent(s.spec)));
                                 });
                                 targetPlayer.sendMessage(Component.text("---------------------------------------", NamedTextColor.DARK_BLUE));
                             }
@@ -299,6 +299,11 @@ public class BotListener extends ListenerAdapter implements Listener {
 
     private record TeamBalance(String name, String spec) {
 
+    }
+
+    public static Component getSpecComponent(String spec) {
+        Specializations specFromName = Specializations.getSpecFromName(spec);
+        return Component.text(spec, specFromName.specType.getTextColor());
     }
 
 }

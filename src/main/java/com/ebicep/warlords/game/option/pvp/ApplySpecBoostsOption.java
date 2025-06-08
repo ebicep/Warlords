@@ -32,6 +32,32 @@ public class ApplySpecBoostsOption implements Option {
         return "";
     }
 
+    @Override
+    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity wp) {
+        Specializations newSpec = wp.getSpecClass();
+        if (wp instanceof WarlordsPlayer warlordsPlayer) {
+            DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
+                List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
+                if (specBoosts.isEmpty()) {
+                    return;
+                }
+                SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
+                if (specBoost.isDisabled()) {
+                    // find spec boost that is not disabled
+                    specBoost = specBoosts.stream()
+                                          .filter(boost -> !boost.isDisabled())
+                                          .findFirst()
+                                          .orElse(null);
+                    if (specBoost == null) {
+                        return;
+                    }
+                }
+                        applyBoost(warlordsPlayer, specBoost);
+                    }
+            );
+        }
+    }
+
     private final Map<WarlordsEntity, PlayerSpecAppliedBoost> playerSpecBoosts = new HashMap<>();
 
     @Override
@@ -65,23 +91,6 @@ public class ApplySpecBoostsOption implements Option {
         );
     }
 
-
-    @Override
-    public void onWarlordsEntityCreated(@Nonnull WarlordsEntity wp) {
-        Specializations newSpec = wp.getSpecClass();
-        if (wp instanceof WarlordsPlayer warlordsPlayer) {
-            DatabaseManager.getPlayer(wp.getUuid(), databasePlayer -> {
-                List<SpecBoostManager.SpecBoost<?>> specBoosts = SpecBoostManager.getSpecBoosts(newSpec);
-                if (specBoosts.isEmpty()) {
-                    return;
-                }
-                SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
-                        applyBoost(warlordsPlayer, specBoost);
-                    }
-            );
-        }
-    }
-
     @Override
     public void onSpecChange(@Nonnull WarlordsEntity wp, Specializations oldSpec) {
         Specializations newSpec = wp.getSpecClass();
@@ -97,10 +106,23 @@ public class ApplySpecBoostsOption implements Option {
                     return;
                 }
                 SpecBoostManager.SpecBoost<?> specBoost = specBoosts.get(databasePlayer.getSelectedSpecBoost(newSpec));
+                if (specBoost.isDisabled()) {
+                    specBoost = specBoosts.stream()
+                                          .filter(boost -> !boost.isDisabled())
+                                          .findFirst()
+                                          .orElse(null);
+                    if (specBoost == null) {
+                        return;
+                    }
+                }
                         applyBoost(warlordsPlayer, specBoost);
                     }
             );
         }
+    }
+
+    public Map<WarlordsEntity, PlayerSpecAppliedBoost> getPlayerSpecBoosts() {
+        return playerSpecBoosts;
     }
 
     private void applyBoost(WarlordsPlayer warlordsPlayer, SpecBoostManager.SpecBoost<?> specBoost) {
@@ -111,10 +133,6 @@ public class ApplySpecBoostsOption implements Option {
         if (warlordsPlayer.getEntity() instanceof Player player) {
             warlordsPlayer.getAbilities().forEach(abstractAbility -> abstractAbility.updateDescription(player));
         }
-    }
-
-    public Map<WarlordsEntity, PlayerSpecAppliedBoost> getPlayerSpecBoosts() {
-        return playerSpecBoosts;
     }
 
     public record PlayerSpecAppliedBoost(SpecBoostManager.SpecBoost<?> specBoost, SpecBoostManager.Boost boost) {

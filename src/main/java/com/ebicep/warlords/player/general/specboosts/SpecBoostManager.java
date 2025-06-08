@@ -128,6 +128,14 @@ public class SpecBoostManager {
 
         void init();
 
+        default boolean isDisabled() {
+            return getValue("disabled", boolean.class);
+        }
+
+        default TextComponent getDifficulty() {
+            return Component.text("☆".repeat(getValue("difficulty", int.class)), NamedTextColor.YELLOW);
+        }
+
         default TextComponent getName() {
             return Component.text(getStringName(), NamedTextColor.GREEN);
         }
