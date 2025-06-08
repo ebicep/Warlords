@@ -56,7 +56,7 @@ public class SwiftJustice implements SpecBoostManager.SpecBoost<SwiftJustice> {
 
     public class Boost implements SpecBoostManager.Boost {
 
-        private WarlordsPlayer warlordsEntity;
+        private WarlordsEntity warlordsEntity;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {

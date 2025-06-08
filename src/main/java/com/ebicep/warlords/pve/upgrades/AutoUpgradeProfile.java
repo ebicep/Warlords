@@ -44,6 +44,9 @@ public class AutoUpgradeProfile {
         List<AbstractUpgradeBranch<?>> upgradeBranches = abilityTree.getUpgradeBranches();
         for (int i = 0, autoUpgradeEntriesSize = autoUpgradeEntries.size(); i < autoUpgradeEntriesSize; i++) {
             AutoUpgradeEntry entry = autoUpgradeEntries.get(i);
+            if (entry.getBranchIndex() >= upgradeBranches.size()) {
+                continue;
+            }
             AbstractUpgradeBranch<?> upgradeBranch = upgradeBranches.get(entry.getBranchIndex());
             Upgrade upgrade = entry.getUpgradeType().getUpgradeFunction.apply(upgradeBranch).get(entry.getUpgradeIndex());
             NamedTextColor textColor = upgrade.isUnlocked() ? NamedTextColor.GOLD : NamedTextColor.GRAY;

@@ -14,6 +14,7 @@ import com.ebicep.warlords.events.player.ingame.WarlordsThrowableProjectileImpac
 import com.ebicep.warlords.player.general.ExperienceManager;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
 import com.ebicep.warlords.player.ingame.MobHologram;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsNPC;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
@@ -91,7 +92,7 @@ public class Trickster implements SpecBoostManager.SpecBoost<Trickster> {
 
     public class Boost implements SpecBoostManager.Boost {
 
-        private WarlordsPlayer warlordsEntity;
+        private WarlordsEntity warlordsEntity;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {

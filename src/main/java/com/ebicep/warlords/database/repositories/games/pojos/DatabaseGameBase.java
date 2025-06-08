@@ -173,7 +173,8 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
             ChatChannels.sendDebugMessage((CommandIssuer) null,
                     Component.text((updatePlayerStats ?
                                     "This game was added to the database and player information was updated" :
-                                    "This game was added to the database but player information remained the same"), NamedTextColor.GREEN)
+                                    "This game was added to the database but player information remained the same"), NamedTextColor.GREEN
+                    )
             );
         } catch (Exception e) {
             ChatUtils.MessageType.GAME_SERVICE.sendErrorMessage("Error adding game to database");
@@ -392,6 +393,10 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                     Map<Ability<?>, AbstractAbilityStats<?, ?>> abilityStats = player.getAbilityStats();
                     for (Map.Entry<Ability<?>, AbstractAbilityStats<?, ?>> entry : abilityStats.entrySet()) {
                         Ability<?> ability = entry.getKey();
+                        if (ability == null || ability.create == null) {
+                            componentBuilder.newLine("ERROR");
+                            continue;
+                        }
                         AbstractAbilityStats<?, ?> abstractAbilityStats = entry.getValue();
                         AbstractAbility abstractAbility = ability.create.get();
                         abstractAbility.init(abstractAbility.getBuilder());
@@ -768,43 +773,44 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
                 return; //Can return because if game is not in the same week then it will not be in the same day
             }
             DatabaseManager.updatePlayer(gamePlayer.getUuid(), activeCollection, databasePlayer -> {
-                //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
-                if (GameMode.isPvE(databaseGame.getGameMode())) {
-                    databasePlayer.updateStats(databasePlayer, databaseGame,
-                            databaseGame.getGameMode(),
-                            gamePlayer,
-                            DatabaseGamePlayerResult.NONE,
-                            multiplier,
-                            activeCollection
-                    );
-                } else {
-                    // TODO check this
-                    databasePlayer.updateStats(databasePlayer,
-                            databaseGame,
-                            databaseGame.getGameMode(),
-                            gamePlayer,
-                            databaseGame.getPlayerGameResult(gamePlayer),
-                            multiplier,
-                            activeCollection
-                    );
-                }
-                if (activeCollection == PlayersCollections.LIFETIME) {
-                    List<Achievement.AbstractAchievementRecord<?>> achievementRecords = Arrays
-                            .stream(TieredAchievements.values())
-                            .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
-                            .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
-                            .filter(tieredAchievements -> databasePlayer.getAchievements()
-                                                                        .stream()
-                                                                        .noneMatch(abstractAchievementRecord -> abstractAchievementRecord.getAchievement() == tieredAchievements))
-                            .map(TieredAchievements.TieredAchievementRecord::new)
-                            .collect(Collectors.toList());
-                    Player player = Bukkit.getOfflinePlayer(gamePlayer.getUuid()).getPlayer();
-                    if (player != null) {
-                        achievementRecords.forEach(record -> record.getAchievement().sendAchievementUnlockMessage(player));
+                        //ChatUtils.MessageTypes.GAME_DEBUG.sendMessage("Updating " + gamePlayer.getName() + " stats from team - " + activeCollection.name);
+                        if (GameMode.isPvE(databaseGame.getGameMode())) {
+                            databasePlayer.updateStats(databasePlayer, databaseGame,
+                                    databaseGame.getGameMode(),
+                                    gamePlayer,
+                                    DatabaseGamePlayerResult.NONE,
+                                    multiplier,
+                                    activeCollection
+                            );
+                        } else {
+                            // TODO check this
+                            databasePlayer.updateStats(databasePlayer,
+                                    databaseGame,
+                                    databaseGame.getGameMode(),
+                                    gamePlayer,
+                                    databaseGame.getPlayerGameResult(gamePlayer),
+                                    multiplier,
+                                    activeCollection
+                            );
+                        }
+                        if (activeCollection == PlayersCollections.LIFETIME) {
+                            List<Achievement.AbstractAchievementRecord<?>> achievementRecords = Arrays
+                                    .stream(TieredAchievements.values())
+                                    .filter(tieredAchievements -> tieredAchievements.gameMode == null || tieredAchievements.gameMode == databaseGame.getGameMode())
+                                    .filter(tieredAchievements -> tieredAchievements.databasePlayerPredicate.test(databasePlayer))
+                                    .filter(tieredAchievements -> databasePlayer.getAchievements()
+                                                                                .stream()
+                                                                                .noneMatch(abstractAchievementRecord -> abstractAchievementRecord.getAchievement() == tieredAchievements))
+                                    .map(TieredAchievements.TieredAchievementRecord::new)
+                                    .collect(Collectors.toList());
+                            Player player = Bukkit.getOfflinePlayer(gamePlayer.getUuid()).getPlayer();
+                            if (player != null) {
+                                achievementRecords.forEach(record -> record.getAchievement().sendAchievementUnlockMessage(player));
+                            }
+                            databasePlayer.addAchievements(achievementRecords);
+                        }
                     }
-                    databasePlayer.addAchievements(achievementRecords);
-                }
-            });
+            );
         }
     }
 
@@ -866,7 +872,8 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
         lore.add(Component.text("Mode: ", NamedTextColor.GRAY).append(Component.text(getGameMode().getName(), NamedTextColor.AQUA)));
         lore.add(Component.text("Addons: ", NamedTextColor.GRAY).append(Component.text(getGameAddons().stream()
                                                                                                       .map(GameAddon::getName)
-                                                                                                      .collect(Collectors.joining(", ")), NamedTextColor.GOLD)));
+                                                                                                      .collect(Collectors.joining(", ")), NamedTextColor.GOLD
+        )));
         lore.add(Component.text("Counted: ", NamedTextColor.GRAY).append(Component.text(counted, NamedTextColor.GREEN)));
         lore.add(Component.empty());
         lore.addAll(getExtraLore());
@@ -890,4 +897,5 @@ public abstract class DatabaseGameBase<T extends DatabaseGamePlayerBase> {
     public String getId() {
         return id;
     }
+
 }

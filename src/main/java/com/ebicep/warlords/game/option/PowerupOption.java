@@ -233,7 +233,7 @@ public class PowerupOption implements Option {
                         "SPEED",
                         SpeedPowerup.class,
                         SpeedPowerup.SPEED_POWERUP,
-                        null,
+                        we,
                         CooldownTypes.BUFF,
                         cooldownManager -> {
                         },
@@ -268,7 +268,7 @@ public class PowerupOption implements Option {
                         "HEAL",
                         HealingPowerup.class,
                         HealingPowerup.HEALING_POWERUP,
-                        null,
+                        we,
                         CooldownTypes.BUFF,
                         cooldownManager -> {
                         },
@@ -315,7 +315,7 @@ public class PowerupOption implements Option {
                         "ENERGY",
                         EnergyPowerup.class,
                         EnergyPowerup.ENERGY_POWERUP,
-                        null,
+                        we,
                         CooldownTypes.BUFF,
                         cooldownManager -> {
                         },

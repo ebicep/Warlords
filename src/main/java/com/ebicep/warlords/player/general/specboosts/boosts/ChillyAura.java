@@ -71,23 +71,20 @@ public class ChillyAura implements SpecBoostManager.SpecBoost<ChillyAura> {
                 return;
             }
             regularCooldown.addTriConsumer((cd, ticksLeft, ticksElapsed) -> {
-                if (ticksElapsed % 5 == 0) {
+                if (ticksElapsed % healthLossTickPeriod == 0) {
                     PlayerFilter.entitiesAround(warlordsEntity, rangeBlocks, rangeBlocks, rangeBlocks)
                                 .aliveEnemiesOf(warlordsEntity)
                                 .forEach(we -> {
                                     we.addSpeedModifier(warlordsEntity, getStringName(), -slowAmountPercent, 6);
-                                    if (ticksElapsed % healthLossTickPeriod == 0) {
-                                        float damage = we.getMaxHealth() * healthLossPercent / 100;
-                                        we.addInstance(InstanceBuilder
-                                                .damage()
-                                                .cause(getStringName())
-                                                .source(warlordsEntity)
-                                                .value(damage)
-                                        );
-                                    }
+                                    float damage = we.getMaxHealth() * healthLossPercent / 100;
+                                    we.addInstance(InstanceBuilder
+                                            .damage()
+                                            .cause(getStringName())
+                                            .source(warlordsEntity)
+                                            .value(damage)
+                                    );
                                 });
                 }
-
             });
         }
 

@@ -4,6 +4,7 @@ import com.ebicep.warlords.abilities.OrderOfEviscerate;
 import com.ebicep.warlords.abilities.SoulSwitch;
 import com.ebicep.warlords.events.player.ingame.WarlordsAddCooldownEvent;
 import com.ebicep.warlords.player.general.specboosts.SpecBoostManager;
+import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.player.ingame.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownManager;
@@ -49,7 +50,7 @@ public class TorrentialSoul implements SpecBoostManager.SpecBoost<TorrentialSoul
 
     public class Boost implements SpecBoostManager.Boost {
 
-        private WarlordsPlayer warlordsEntity;
+        private WarlordsEntity warlordsEntity;
 
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {

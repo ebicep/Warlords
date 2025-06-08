@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.ingame.WarlordsPlayer;
 import com.ebicep.warlords.util.java.NumberFormat;
 import com.ebicep.warlords.util.warlords.GameRunnable;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
+import com.ebicep.warlords.util.warlords.PlayerFilterGeneric;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -86,7 +87,7 @@ public class AFKDetectionOption implements Option {
                 }
 
                 game.getState(PlayingState.class).ifPresent(state -> {
-                    for (WarlordsEntity we : PlayerFilter.playingGame(game)) {
+                    for (WarlordsPlayer we : PlayerFilterGeneric.playingGame(game).warlordsPlayers()) {
                         if (we.isDead()) {
                             continue;
                         }
@@ -96,7 +97,7 @@ public class AFKDetectionOption implements Option {
                         if (we.isSneaking()) {
                             continue; //make sure no ppl that are sneaking are marked as AFK
                         }
-                        playerLocations.computeIfAbsent((WarlordsPlayer) we, k -> new ArrayList<>()).add(we.getLocation());
+                        playerLocations.computeIfAbsent(we, k -> new ArrayList<>()).add(we.getLocation());
                         List<Location> locations = playerLocations.get(we);
                         List<Location> lastLocations = locations.subList(Math.max(locations.size() - COUNTER_CHECK, 0), locations.size());
                         int counter = 0;

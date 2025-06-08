@@ -24,6 +24,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<AvengersWrath> AVENGERS_WRATH = new Ability<>(AvengersWrath.class, AvengersWrath::new);
     public static final Ability<BeaconOfLight> BEACON_OF_LIGHT = new Ability<>(BeaconOfLight.class, BeaconOfLight::new);
     public static final Ability<Berserk> BERSERK = new Ability<>(Berserk.class, Berserk::new);
+    public static final Ability<Blink> BLINK = new Ability<>(Blink.class, Blink::new);
     public static final Ability<BloodLust> BLOOD_LUST = new Ability<>(BloodLust.class, BloodLust::new);
     public static final Ability<Boulder> BOULDER = new Ability<>(Boulder.class, Boulder::new);
     public static final Ability<BullRush> BULL_RUSH = new Ability<>(BullRush.class, BullRush::new);
@@ -84,6 +85,7 @@ public class Ability<T extends AbstractAbility> {
     public static final Ability<NotAShield> NOT_A_SHIELD = new Ability<>(NotAShield.class, NotAShield::new);
     public static final Ability<OrbsOfLife> ORBS_OF_LIFE = new Ability<>(OrbsOfLife.class, OrbsOfLife::new);
     public static final Ability<OrderOfEviscerate> ORDER_OF_EVISCERATE = new Ability<>(OrderOfEviscerate.class, OrderOfEviscerate::new);
+    public static final Ability<Parry> PARRY = new Ability<>(Parry.class, Parry::new);
     public static final Ability<PoisonousHex> POISONOUS_HEX = new Ability<>(PoisonousHex.class, PoisonousHex::new);
     public static final Ability<PrismGuard> PRISM_GUARD = new Ability<>(PrismGuard.class, PrismGuard::new);
     public static final Ability<ProtectorsStrike> PROTECTORS_STRIKE = new Ability<>(ProtectorsStrike.class, ProtectorsStrike::new);
@@ -127,6 +129,7 @@ public class Ability<T extends AbstractAbility> {
             AVENGERS_WRATH,
             BEACON_OF_LIGHT,
             BERSERK,
+            BLINK,
             BLOOD_LUST,
             BOULDER,
             BULL_RUSH,
@@ -187,6 +190,7 @@ public class Ability<T extends AbstractAbility> {
             NOT_A_SHIELD,
             ORBS_OF_LIFE,
             ORDER_OF_EVISCERATE,
+            PARRY,
             POISONOUS_HEX,
             PRISM_GUARD,
             PROTECTORS_STRIKE,
