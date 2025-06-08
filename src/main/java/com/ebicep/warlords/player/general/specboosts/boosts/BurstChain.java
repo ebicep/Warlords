@@ -17,7 +17,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
     private float velocityIncreasePercentage;
     private int energyCostIncrease;
     private float damageIncrease;
-    private float radiusIncrease;
     private int guaranteedCrit;
 
     @Override
@@ -25,7 +24,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
         this.velocityIncreasePercentage = getValue("velocityIncreasePercentage", float.class);
         this.energyCostIncrease = getValue("energyCostIncrease", int.class);
         this.damageIncrease = getValue("damageIncrease", float.class);
-        this.radiusIncrease = getValue("radiusIncrease", float.class);
         this.guaranteedCrit = getValue("guaranteedCrit", int.class);
     }
 
@@ -36,7 +34,7 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
 
     @Override
     public List<Object> getVariables() {
-        return List.of(velocityIncreasePercentage, energyCostIncrease, damageIncrease, radiusIncrease, guaranteedCrit);
+        return List.of(velocityIncreasePercentage, energyCostIncrease, damageIncrease, guaranteedCrit);
     }
 
     @Override
@@ -63,7 +61,6 @@ public class BurstChain implements SpecBoostManager.SpecBoost<BurstChain> {
                 flameBurst.getDamageValues().getFlameBurstDamage().forEachValue(floatModifiable ->
                         floatModifiable.addMultiplicativeModifierAdd("Spec Boost", damageIncrease / 100)
                 );
-                flameBurst.getSplashRadius().addAdditiveModifier("Spec Boost", radiusIncrease);
             });
         }
 

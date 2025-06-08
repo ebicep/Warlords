@@ -100,6 +100,7 @@ public class Parry extends AbstractAbility implements AbilityStats<Parry, Parry.
                                 .ifPresentOrElse(parryDamageReductionCooldown -> {
                                             if (parryDamageReductionCooldown.getCooldownObject() instanceof ParryDamageReduction parryDamageReduction) {
                                                 parryDamageReduction.instances.add(damageReductionTickDuration);
+                                                parryDamageReductionCooldown.setTicksLeft(damageReductionTickDuration);
                                             }
                                         }, () -> {
                                             wp.getCooldownManager().addCooldown(new RegularCooldown<>(

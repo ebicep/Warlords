@@ -70,6 +70,7 @@ public class RiftAmbush implements SpecBoostManager.SpecBoost<RiftAmbush> {
                 soulSwitch.getHitBoxRadius().addAdditiveModifier("Spec Boost", soulSwitchRadiusIncrease);
                 soulSwitch.setVerticalLimit(soulSwitchVerticalLimit);
                 soulSwitch.setDamageReduction(soulSwitch.getDamageReduction() + soulSwitchDamageReductionIncreasePercent);
+                soulSwitch.setCanSwitchToCarrier(true);
             });
         }
 

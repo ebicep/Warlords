@@ -57,23 +57,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
     private int invisTicks = 30;
     private int decoyMaxTicksLived = 60;
 
-    public SoulSwitch() {
-        super(AbstractAbilityBuilder.create("soulSwitch").pvp());
-    }
-
-    @Override
-    public void init(AbstractAbilityBuilder builder) {
-        super.init(builder);
-        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
-        this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
-        this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
-        this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
-        this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
-        this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
-        this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
-        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
-        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
-    }
+    private boolean canSwitchToCarrier = false;
 
     @Override
     protected boolean onActivateInternal(@Nonnull WarlordsEntity wp) {
@@ -85,7 +69,7 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
                 .requireLineOfSight(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (swapTarget.getCarriedFlag() != null) {
+            if (canSwitchToCarrier && swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(Component.text(" You cannot Soul Switch with a player holding the flag!", NamedTextColor.RED));
                 continue;
             }
@@ -231,6 +215,28 @@ public class SoulSwitch extends AbstractAbility implements BlueAbilityIcon, HitB
             return true;
         }
         return false;
+    }
+
+    public SoulSwitch() {
+        super(AbstractAbilityBuilder.create("soulSwitch").pvp());
+    }
+
+    @Override
+    public void init(AbstractAbilityBuilder builder) {
+        super.init(builder);
+        this.radius = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radius"), float.class));
+        this.radiusFlag = new FloatModifiable(ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("radiusFlag"), float.class));
+        this.verticalLimit = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimit"), float.class);
+        this.verticalLimitFlag = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("verticalLimitFlag"), float.class);
+        this.blindnessTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("blindnessTicks"), int.class);
+        this.decoyMaxTicksLived = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("decoyMaxTicksLived"), int.class);
+        this.invisTicks = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("invisTicks"), int.class);
+        this.damageReduction = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReduction"), int.class);
+        this.damageReductionTickDuration = ConfigManager.getAbilityConfigValue(builder.getNamespaces(), builder.getAppendedFieldName("damageReductionTickDuration"), int.class);
+    }
+
+    public void setCanSwitchToCarrier(boolean canSwitchToCarrier) {
+        this.canSwitchToCarrier = canSwitchToCarrier;
     }
 
     public int getDamageReduction() {

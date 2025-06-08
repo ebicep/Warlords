@@ -21,11 +21,8 @@ import java.util.function.Consumer;
 
 public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> {
 
-    private int heartToHeartSelfHealing;
-
     @Override
     public void init() {
-        this.heartToHeartSelfHealing = getValue("heartToHeartSelfHealing", int.class);
     }
 
     @Override
@@ -35,7 +32,7 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
 
     @Override
     public List<Object> getVariables() {
-        return List.of(heartToHeartSelfHealing);
+        return List.of();
     }
 
     @Override
@@ -57,9 +54,6 @@ public class SanctionBurst implements SpecBoostManager.SpecBoost<SanctionBurst> 
             this.warlordsEntity = warlordsPlayer;
             warlordsPlayer.getAbilitiesMatching(HeartToHeart.class).forEach(heartToHeart -> {
                 heartToHeart.setTargetEnemies(true);
-                heartToHeart.getHealValues().getHeartToHeartHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addOverridingModifier("Spec Boost", heartToHeartSelfHealing)
-                );
             });
         }
 

@@ -21,14 +21,12 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
     private float soothingElixirCooldownIncreaseSeconds;
     private int puddleHealingIncrease;
     private float remedicChainsBreakRadiusIncrease;
-    private float remedicChainsHealingIncreasePercent;
 
     @Override
     public void init() {
         this.soothingElixirCooldownIncreaseSeconds = getValue("soothingElixirCooldownIncreaseSeconds", float.class);
         this.puddleHealingIncrease = getValue("puddleHealingIncrease", int.class);
         this.remedicChainsBreakRadiusIncrease = getValue("remedicChainsBreakRadiusIncrease", float.class);
-        this.remedicChainsHealingIncreasePercent = getValue("remedicChainsHealingIncreasePercent", float.class);
     }
 
     @Override
@@ -41,8 +39,7 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
         return List.of(
                 soothingElixirCooldownIncreaseSeconds,
                 puddleHealingIncrease,
-                remedicChainsBreakRadiusIncrease,
-                remedicChainsHealingIncreasePercent
+                remedicChainsBreakRadiusIncrease
         );
     }
 
@@ -70,9 +67,6 @@ public class AuraOfRestoration implements SpecBoostManager.SpecBoost<AuraOfResto
             });
             warlordsPlayer.getAbilitiesMatching(RemedicChains.class).forEach(remedicChains -> {
                 remedicChains.setLinkBreakRadius((int) (remedicChains.getLinkBreakRadius() + remedicChainsBreakRadiusIncrease));
-                remedicChains.getHealValues().getChainHealing().forEachValue(floatModifiable ->
-                        floatModifiable.addMultiplicativeModifierAdd("Spec Boost", remedicChainsHealingIncreasePercent / 100)
-                );
             });
         }
 

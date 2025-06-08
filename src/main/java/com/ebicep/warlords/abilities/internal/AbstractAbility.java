@@ -217,6 +217,10 @@ public abstract class AbstractAbility implements AbilityIcon {
 //        }
     }
 
+    public void setCurrentCharges(int currentCharges) {
+        this.currentCharges = currentCharges;
+    }
+
     /**
      * @param ticksDelay   how many ticks before it allows you to activate the ability
      * @param runnable     secondary ability runnable

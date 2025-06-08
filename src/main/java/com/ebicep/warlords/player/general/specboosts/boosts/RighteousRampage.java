@@ -32,13 +32,13 @@ import java.util.List;
 
 public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRampage> {
 
+    private float damageReductionDecrease;
     private float soulShackleAoEDamagePercent;
     private float soulShackleAoERadius;
     private int vindicateVINDDurationTicks;
     private int vindicateDamageResistanceDurationTicks;
     private Value.RangedValue vindicateLeapDamage;
     private float vindicateLeapRadius;
-    private int vindicateSilenceDurationTicks;
     private float knockbackMagnitude;
     private float knockbackY;
     private float leapMagnitude;
@@ -48,13 +48,13 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
 
     @Override
     public void init() {
+        this.damageReductionDecrease = getValue("damageReductionDecrease", float.class);
         this.soulShackleAoEDamagePercent = getValue("soulShackleAoEDamagePercent", float.class);
         this.soulShackleAoERadius = getValue("soulShackleAoERadius", float.class);
         this.vindicateVINDDurationTicks = getValue("vindicateVINDDurationTicks", int.class);
         this.vindicateDamageResistanceDurationTicks = getValue("vindicateDamageResistanceDurationTicks", int.class);
         this.vindicateLeapDamage = getValue("vindicateLeapDamage", Value.RangedValue.class);
         this.vindicateLeapRadius = getValue("vindicateLeapRadius", float.class);
-        this.vindicateSilenceDurationTicks = getValue("vindicateSilenceDurationTicks", int.class);
         this.knockbackMagnitude = getValue("knockbackMagnitude", float.class);
         this.knockbackY = getValue("knockbackY", float.class);
         this.leapMagnitude = getValue("leapMagnitude", float.class);
@@ -76,13 +76,13 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
     @Override
     public List<Object> getVariables() {
         return List.of(
+                damageReductionDecrease,
                 soulShackleAoERadius,
                 soulShackleAoEDamagePercent,
                 vindicateVINDDurationTicks,
                 vindicateDamageResistanceDurationTicks,
                 vindicateLeapRadius,
-                vindicateLeapDamage,
-                vindicateSilenceDurationTicks
+                vindicateLeapDamage
         );
     }
 
@@ -103,6 +103,7 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
+            warlordsPlayer.getSpec().setDamageResistance(warlordsPlayer.getSpec().getDamageResistance() - damageReductionDecrease); // TODO flaot modifable
             warlordsPlayer.getAbilitiesMatching(Vindicate.class).forEach(vindicate -> {
                 vindicate.setTickDuration(vindicateVINDDurationTicks);
                 vindicate.setDamageReductionTickDuration(vindicateDamageResistanceDurationTicks);
@@ -227,7 +228,6 @@ public class RighteousRampage implements SpecBoostManager.SpecBoost<RighteousRam
                                                 .multiply(-knockbackMagnitude)
                                                 .setY(knockbackY);
                                         landingTarget.setVelocity(getStringName(), v, false);
-                                        SoulShackle.shacklePlayer(warlordsEntity, landingTarget, vindicateSilenceDurationTicks);
                                         Utils.playGlobalSound(warlordsEntity.getLocation(), "warrior.revenant.orbsoflife", 2, .25f);
                                     }
                                     FireWorkEffectPlayer.playFirework(warlordsEntity.getLocation(), FireworkEffect

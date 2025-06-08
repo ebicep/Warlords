@@ -53,6 +53,7 @@ public class Blink implements SpecBoostManager.SpecBoost<Blink> {
                     com.ebicep.warlords.abilities.Blink blink = new com.ebicep.warlords.abilities.Blink();
                     blink.setMaxCharges(maxAbilityCharges);
                     blink.init(blink.getBuilder());
+                    blink.setCurrentCooldown(1);
                     abilities.set(i, blink);
                 }
             }

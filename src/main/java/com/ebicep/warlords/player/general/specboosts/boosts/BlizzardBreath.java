@@ -22,13 +22,11 @@ import java.util.UUID;
 public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath> {
 
     private float cooldownReductionPerEnemyHitPercent;
-    private float breathRangeIncreaseBlocks;
     private int immunityDurationTicks;
 
     @Override
     public void init() {
         this.cooldownReductionPerEnemyHitPercent = getValue("cooldownReductionPerEnemyHitPercent", float.class);
-        this.breathRangeIncreaseBlocks = getValue("breathRangeIncreaseBlocks", float.class);
         this.immunityDurationTicks = getValue("immunityDurationTicks", int.class);
     }
 
@@ -39,7 +37,7 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
 
     @Override
     public List<Object> getVariables() {
-        return List.of(cooldownReductionPerEnemyHitPercent, breathRangeIncreaseBlocks, immunityDurationTicks);
+        return List.of(cooldownReductionPerEnemyHitPercent, immunityDurationTicks);
     }
 
     @Override
@@ -60,9 +58,6 @@ public class BlizzardBreath implements SpecBoostManager.SpecBoost<BlizzardBreath
         @Override
         public void apply(WarlordsPlayer warlordsPlayer) {
             this.warlordsEntity = warlordsPlayer;
-            warlordsPlayer.getAbilitiesMatching(FreezingBreath.class).forEach(freezingBreath -> {
-                freezingBreath.setHitbox(freezingBreath.getHitbox() + breathRangeIncreaseBlocks);
-            });
         }
 
         @EventHandler
