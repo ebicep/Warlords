@@ -68,6 +68,7 @@ public class HorseOption implements Option, Listener {
                 .setOnUseID(ON_USE_ID)
                 .get();
     }
+
     private final HashMap<WarlordsEntity, WarlordsHorse> playerHorses = new HashMap<>();
     private Game game;
 
@@ -158,9 +159,6 @@ public class HorseOption implements Option, Listener {
             return;
         }
         WarlordsHorse warlordsHorse = activateHorseForPlayer(wp);
-        if (!wp.isDisableCooldowns() && warlordsHorse != null) {
-            warlordsHorse.setCurrentCooldown(warlordsHorse.getCooldown().getCalculatedValue());
-        }
     }
 
     @Nullable
@@ -180,6 +178,9 @@ public class HorseOption implements Option, Listener {
                     return null;
                 }
                 player.playSound(player.getLocation(), "mountup", 1, 1);
+                if (!warlordsEntity.isDisableCooldowns() && warlordsHorse != null) {
+                    warlordsHorse.setCurrentCooldown(warlordsHorse.getCooldown().getCalculatedValue());
+                }
                 warlordsHorse.spawn(player);
                 return warlordsHorse;
             }
