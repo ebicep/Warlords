@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.ingame.WarlordsEntity;
 import com.ebicep.warlords.player.ingame.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.ingame.cooldowns.cooldowns.LinkedCooldown;
 import com.ebicep.warlords.player.ingame.instances.InstanceBuilder;
+import com.ebicep.warlords.player.ingame.instances.InstanceFlags;
 import com.ebicep.warlords.util.warlords.PlayerFilter;
 import com.ebicep.warlords.util.warlords.Utils;
 import com.ebicep.warlords.util.warlords.modifiablevalues.FloatModifiable;
@@ -117,6 +118,7 @@ public class VolatileBrew extends AbstractAbility implements OrangeAbilityIcon, 
                                                 .source(wp)
                                                 .min(damageValues.brewDamage.getMinValue() * multiplier)
                                                 .max(damageValues.brewDamage.getMaxValue() * multiplier)
+                                                .flags(InstanceFlags.TRUE_DAMAGE)
                                         );
                                     });
                     }
