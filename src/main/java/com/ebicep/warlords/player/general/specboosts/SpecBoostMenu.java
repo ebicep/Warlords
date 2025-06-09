@@ -44,7 +44,7 @@ public class SpecBoostMenu {
                         if (specBoost.isDisabled()) {
                             itemBuilder.addLore(
                                     Component.empty(),
-                                    Component.text("DISABLED", NamedTextColor.GREEN, TextDecoration.BOLD)
+                                    Component.text("DISABLED", NamedTextColor.RED, TextDecoration.BOLD)
                             );
                         }
                         menu.setItem(i + 2, 1,
